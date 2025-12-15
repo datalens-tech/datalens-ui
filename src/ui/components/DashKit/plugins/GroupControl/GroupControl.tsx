@@ -23,6 +23,7 @@ import {
     CLICK_ACTION_TYPE,
     CONTROL_TYPE,
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
+import {getLocation} from 'ui/navigation';
 import {
     isGlobalWidgetVisibleByMainSetting,
     isGroupItemVisibleOnTab,
@@ -599,7 +600,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             },
             plugins: [pluginGroupControlBaseDL],
             defaultGlobalParams,
-            globalParams: getUrlGlobalParams(window.location.search, defaultGlobalParams) || {},
+            globalParams: getUrlGlobalParams(getLocation().search, defaultGlobalParams) || {},
             useStateAsInitial: true,
         });
 

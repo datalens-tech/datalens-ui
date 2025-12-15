@@ -48,11 +48,11 @@ import type {DataLensApiError} from 'typings';
 import {type DatalensGlobalState, URL_QUERY} from 'ui';
 import {GEOLAYER_VISUALIZATION} from 'ui/constants/visualizations';
 import {navigateHelper} from 'ui/libs';
+import {getLocation, getRouter} from 'ui/navigation';
 import {
     getAvailableVisualizations,
     getDefaultVisualization,
 } from 'ui/units/wizard/utils/visualization';
-import history from 'ui/utils/history';
 import type {DatasetState} from 'units/wizard/reducers/dataset';
 import {selectDataset, selectDatasets} from 'units/wizard/selectors/dataset';
 import {v1 as uuidv1} from 'uuid';
@@ -1987,10 +1987,8 @@ function processWidget(args: ProcessWidgetArgs) {
             const filterFields = getAllDatasetsFields(wizardDataset);
             const dimensions = wizardDataset?.dimensions || [];
 
-            const urlSearchParams = Array.from(new URLSearchParams(window.location.search));
-
             const {filtersParams, parametersParams} = splitParamsToParametersAndFilters(
-                urlSearchParams,
+                Array.from(getLocation().params()),
                 datasets.reduce(
                     (acc, dataset) => [...acc, ...getResultSchemaFromDataset(dataset)],
                     [] as Field[],
@@ -2184,7 +2182,7 @@ export function fetchWidget({entryId, revId, datasetsIds, unreleased}: FetchWidg
                             type: data.type,
                         }),
                     );
-                    history.replace({...history.location, pathname});
+                    getRouter().replace({pathname});
 
                     return;
                 }
@@ -2204,8 +2202,8 @@ export type SetDefaultsArgs = {
 export function setDefaults(args: SetDefaultsArgs) {
     const {entryId, revId, routeWorkbookId, unreleased} = args;
     return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
-        const searchPairs = new URLSearchParams(window.location.search);
-        const localConfigParam = searchPairs.get(URL_QUERY.LOCAL_CONFIG);
+        const router = getRouter();
+        const search = router.location().params();
 
         if (routeWorkbookId) {
             dispatch(setRouteWorkbookId(routeWorkbookId));
@@ -2220,15 +2218,12 @@ export function setDefaults(args: SetDefaultsArgs) {
                 }),
             );
         } else {
-            if (localConfigParam) {
+            if (search.get(URL_QUERY.LOCAL_CONFIG)) {
                 try {
                     const config = JSON.parse(String(localStorage.getItem(URL_QUERY.LOCAL_CONFIG)));
                     localStorage.removeItem(URL_QUERY.LOCAL_CONFIG);
-                    searchPairs.delete(URL_QUERY.LOCAL_CONFIG);
-                    history.replace({
-                        ...location,
-                        search: `?${searchPairs.toString()}`,
-                    });
+                    search.delete(URL_QUERY.LOCAL_CONFIG);
+                    router.replace({search});
                     await processWidget({widget: {data: config}, dispatch, getState});
                 } catch (e) {
                     console.error(e);
@@ -2248,8 +2243,8 @@ export function setDefaults(args: SetDefaultsArgs) {
             }
         }
 
-        if (searchPairs) {
-            const datasetId = searchPairs.get(WIZARD_DATASET_ID_PARAMETER_KEY);
+        if (search) {
+            const datasetId = search.get(WIZARD_DATASET_ID_PARAMETER_KEY);
 
             if (datasetId && !entryId) {
                 dispatch(

@@ -7,6 +7,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ConnectorType} from 'shared';
 import {ErrorContent} from 'ui/index';
+import {useRouter} from 'ui/navigation';
 
 import type {AppDispatch} from '../../store';
 import {closeDialog, openDialog} from '../../store/actions/dialog';
@@ -66,6 +67,7 @@ export const MigrateToWorkbookDialog: React.FC<Props> = ({
     const [isLoadingInited, setIsLoadingInited] = React.useState(false);
 
     const dispatch: AppDispatch = useDispatch();
+    const router = useRouter();
 
     const isLoadingTargetEntry = useSelector(selectIsLoadingTargetEntry);
     const isLoadingRelationsGraph = useSelector(selectIsLoadingRelationsGraph);
@@ -144,7 +146,10 @@ export const MigrateToWorkbookDialog: React.FC<Props> = ({
 
                             if (response) {
                                 onSuccess();
-                                location.href = `/workbooks/${workbookId}?tab=all&dialog=access`;
+                                router.open({
+                                    pathname: `/workbooks/${workbookId}`,
+                                    search: '?tab=all&dialog=access',
+                                });
                             }
                         }
                     },

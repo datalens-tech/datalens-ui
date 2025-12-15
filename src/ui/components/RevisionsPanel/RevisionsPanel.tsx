@@ -4,6 +4,7 @@ import {dateTimeParse} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {useLocation} from 'react-router-dom';
 import {type EntryScope, RevisionsPanelQa} from 'shared';
 import type {AppDispatch} from 'store';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
@@ -12,10 +13,10 @@ import {selectEntryContent} from 'store/selectors/entryContent';
 import type {EntryGlobalState} from 'store/typings/entryContent';
 import {RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
 import {TIMESTAMP_FORMAT, URL_QUERY} from 'ui/constants';
+import {useRouter} from 'ui/navigation';
 import {registry} from 'ui/registry';
 
 import {getUrlParamFromStr, isUnreleasedByUrlParams} from '../../utils';
-import history from '../../utils/history';
 import {getCapitalizedStr} from '../../utils/stringUtils';
 
 import RevisionsControls from './components/RevisionsControls';
@@ -135,16 +136,17 @@ const RevisionsPanel = ({
 
     const {getEntryScopesWithRevisionsList} = registry.common.functions.getAll();
 
+    const location = useLocation();
     const urlRevId = getUrlParamFromStr(location.search, URL_QUERY.REV_ID);
     const isUnreleased = isUnreleasedByUrlParams(location.search);
 
     const isInAvailableScopes = React.useMemo(
         () => getEntryScopesWithRevisionsList().includes(scope as EntryScope),
-        [location, scope],
+        [getEntryScopesWithRevisionsList, scope],
     );
     const isDraftInAvailableScopes = React.useMemo(
         () => getDraftWarningAvailableScopes().includes(scope as EntryScope),
-        [location, scope],
+        [scope],
     );
     const isCurrentRevDraft = savedId === urlRevId || isUnreleased;
 
@@ -167,6 +169,8 @@ const RevisionsPanel = ({
         !(typeof scope === 'undefined' || isInAvailableScopes) ||
         isEditing;
 
+    const router = useRouter();
+
     const handleMakeActualClick = React.useCallback(() => {
         onSetActualRevision();
     }, [onSetActualRevision]);
@@ -174,15 +178,11 @@ const RevisionsPanel = ({
     const handleOpenActualClick = React.useCallback(() => {
         onOpenActualRevision();
 
-        const searchParams = new URLSearchParams(location.search);
-        searchParams.delete(URL_QUERY.REV_ID);
-        searchParams.delete(URL_QUERY.UNRELEASED);
-
-        history.push({
-            ...location,
-            search: `?${searchParams.toString()}`,
-        });
-    }, [onOpenActualRevision, location]);
+        const search = router.location().params();
+        search.delete(URL_QUERY.REV_ID);
+        search.delete(URL_QUERY.UNRELEASED);
+        router.push({search});
+    }, [onOpenActualRevision, router]);
 
     const handleOpenRevisionsClick = React.useCallback(() => {
         dispatch(setRevisionsMode?.(RevisionsMode.Opened));
@@ -192,19 +192,17 @@ const RevisionsPanel = ({
     const handleOpenDraftClick = React.useCallback(() => {
         onOpenDraftRevision();
 
-        const searchParams = new URLSearchParams(location.search);
-        searchParams.delete(URL_QUERY.UNRELEASED);
+        const search = router.location().params();
+        search.delete(URL_QUERY.UNRELEASED);
 
         if (savedId === publishedId) {
-            searchParams.delete(URL_QUERY.REV_ID);
+            search.delete(URL_QUERY.REV_ID);
         } else {
-            searchParams.set(URL_QUERY.REV_ID, savedId);
+            search.set(URL_QUERY.REV_ID, savedId);
         }
-        history.push({
-            ...location,
-            search: `?${searchParams.toString()}`,
-        });
-    }, [onOpenDraftRevision, savedId, publishedId, location]);
+
+        router.push({search});
+    }, [onOpenDraftRevision, savedId, publishedId, router]);
 
     if (isPanelHidden && !showDraftWarningPanel && !showDeprecationMessage) {
         return null;

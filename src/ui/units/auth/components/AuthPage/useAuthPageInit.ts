@@ -1,10 +1,9 @@
 import {useDispatch} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
-
-import {DL} from '../../../../constants/common';
-import {useEffectOnce} from '../../../../hooks/useEffectOnce';
-import {AUTH_ROUTE, ROOT_AUTH_ROUTE} from '../../constants/routes';
-import {setAuthPageInited} from '../../store/actions/common';
+import {DL} from 'ui/constants/common';
+import {useEffectOnce} from 'ui/hooks/useEffectOnce';
+import {AUTH_ROUTE, ROOT_AUTH_ROUTE} from 'ui/units/auth/constants/routes';
+import {setAuthPageInited} from 'ui/units/auth/store/actions/common';
 
 export const useAuthPageInit = () => {
     const {pathname} = useLocation();
@@ -17,7 +16,7 @@ export const useAuthPageInit = () => {
             let rethPath: string | null = null;
             if (DL.IS_AUTH_PAGE) {
                 if (!pathname.includes(ROOT_AUTH_ROUTE)) {
-                    rethPath = window.location.toString();
+                    rethPath = history.createHref(history.location);
                 }
                 const page = DL.AUTH_PAGE_SETTINGS?.page;
                 switch (page) {

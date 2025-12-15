@@ -1,11 +1,13 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {i18n} from 'i18n';
 import type {ConnectedProps} from 'react-redux';
 import {connect} from 'react-redux';
 import SplitPane from 'react-split-pane';
 import {createStructuredSelector} from 'reselect';
+import {v1 as uuidv1} from 'uuid';
+
+import {i18n} from 'i18n';
 import type {
     CollectionId,
     DatasetAvatarRelation,
@@ -18,6 +20,8 @@ import type {BaseSource} from 'shared/schema';
 import {showToast} from 'store/actions/toaster';
 import {SPLIT_PANE_RESIZER_CLASSNAME} from 'ui';
 import type {DataLensApiError, SDK} from 'ui';
+import {getSdk} from 'ui/libs/schematic-sdk';
+import {getRouter} from 'ui/navigation';
 import {
     addAvatar,
     addAvatarPrototypes,
@@ -40,10 +44,8 @@ import {
     updateRelation,
     updateSource,
 } from 'units/datasets/store/actions/creators';
-import {v1 as uuidv1} from 'uuid';
 
 import logger from '../../../../libs/logger';
-import {getSdk} from '../../../../libs/schematic-sdk';
 import DragAndDrop from '../../components/DragAndDrop/DragAndDrop';
 import RelationDialog from '../../components/RelationDialog/RelationDialog';
 import RelationsMap from '../../components/RelationsMap/RelationsMap';
@@ -777,8 +779,7 @@ export class DatasetSources extends React.Component<Props, State> {
 
     openConnection = (connectionId?: string) => {
         if (connectionId) {
-            // eslint-disable-next-line
-            window.open(`/connections/${connectionId}`, '_blank', 'noopener');
+            getRouter().openTab({pathname: `/connections/${connectionId}`}, 'noopener');
         }
     };
 

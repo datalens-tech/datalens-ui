@@ -3,11 +3,11 @@ import {get} from 'lodash';
 import {batch} from 'react-redux';
 import type {ConnectionData} from 'shared';
 import {ConnectorType} from 'shared';
+import {getRouter} from 'ui/navigation';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import {showToast} from '../../../../store/actions/toaster';
 import {getEntityIdFromPathname} from '../../../../utils';
-import history from '../../../../utils/history';
 import {FieldKey} from '../../constants';
 import type {ConnectionsReduxDispatch, GetState} from '../typings';
 
@@ -64,10 +64,11 @@ export const createS3BasedConnection = (args: {
         }
 
         batch(() => {
+            const router = getRouter();
             if (id && collectionId) {
-                history.replace(`/collections/${collectionId}`);
+                router.replace({pathname: `/collections/${collectionId}`});
             } else if (id) {
-                history.replace(`/connections/${id}`);
+                router.replace({pathname: `/connections/${id}`});
             }
 
             if (error) {

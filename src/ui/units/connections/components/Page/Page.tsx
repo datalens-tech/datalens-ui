@@ -16,6 +16,7 @@ import type {DatalensGlobalState} from 'ui';
 import {PageTitle, SlugifyUrl, URL_QUERY, Utils} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import {SharedEntryIcon} from 'ui/components/SharedEntryIcon/SharedEntryIcon';
+import {useLocation} from 'ui/navigation';
 import {registry} from 'ui/registry';
 import {
     closeDialog,
@@ -151,14 +152,15 @@ const PageComponent = (props: PageProps) => {
         connectionData,
         loading,
     } = props;
+
+    const location = useLocation();
     const entryId = get(props.match?.params, 'id', '');
     const {extractEntryId} = registry.common.functions.getAll();
     const extractedEntryId = extractEntryId(entryId);
     const workbookId = get(props.match?.params, 'workbookId');
     const collectionId = get(props.match?.params, 'collectionId');
     const queryType = get(props.match?.params, 'type', '');
-    const currentSearchParams = new URLSearchParams(location.search);
-    const bindedWorkbookId = currentSearchParams.get(URL_QUERY.BINDED_WOKRBOOK);
+    const bindedWorkbookId = location.params().get(URL_QUERY.BINDED_WOKRBOOK);
     const isSharedConnection = getIsSharedConnection(originalEntry);
     const isWorkbookSharedEntry = isSharedConnection && bindedWorkbookId;
     const entry = isWorkbookSharedEntry
@@ -175,7 +177,7 @@ const PageComponent = (props: PageProps) => {
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
 
     const revisionsSupported = connector?.history;
-    const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
+    const revId = location.params().get(URL_QUERY.REV_ID) ?? undefined;
 
     const showSettings = !connector?.backend_driven_form;
     let isShowCreateButtons = true;
@@ -269,7 +271,6 @@ const PageComponent = (props: PageProps) => {
             <SlugifyUrl
                 entryId={entry?.entryId}
                 name={Utils.getEntryNameFromKey(entry?.key || '')}
-                history={history}
             />
             <AccessRightsUrlOpen history={history} />
             <div className={b()}>

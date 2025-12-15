@@ -1,6 +1,7 @@
 import {i18n} from 'i18n';
 import type {DatalensGlobalState} from 'ui';
 import {DL, URL_QUERY} from 'ui';
+import {getLocation} from 'ui/navigation';
 
 export const selectWidget = (state: DatalensGlobalState) => {
     if (state.wizard.widget.widget?.key) {
@@ -12,8 +13,7 @@ export const selectWidget = (state: DatalensGlobalState) => {
             fakeName: i18n('wizard', 'label_new-widget'),
         };
 
-        const searchParams = new URLSearchParams(location.search);
-
+        const searchParams = getLocation().params();
         const searchCurrentPath = searchParams.get(URL_QUERY.CURRENT_PATH);
 
         let path = searchCurrentPath || DL.USER_FOLDER;

@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 import {Link, withRouter} from 'react-router-dom';
 import {ENTRY_TYPES, EntryScope, Feature} from 'shared';
 import {closeNavigation} from 'store/actions/asideHeader/navigation';
+import {getRouter} from 'ui/navigation';
 import {copyTextWithToast} from 'ui/utils/copyText';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import Utils from 'ui/utils/utils';
@@ -160,7 +161,7 @@ class NavigationBase extends React.Component {
                         if (currentPageEntry.entryId === entry.entryId) {
                             const entryData = response.data ? response.data[0] : null;
                             if (!entryData) {
-                                window.location.reload();
+                                getRouter().reload();
                             }
                             setEntryKey(entryData);
                         }
@@ -169,7 +170,7 @@ class NavigationBase extends React.Component {
                         if ((currentPageEntry.key || '').startsWith(entry.key)) {
                             const entryData = response.data ? response.data.result[0] : null;
                             if (!entryData) {
-                                window.location.reload();
+                                getRouter().reload();
                             }
                             setEntryKey({...entryData, withRouting: false});
                         }

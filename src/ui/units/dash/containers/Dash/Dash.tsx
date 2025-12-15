@@ -273,7 +273,6 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                 <SlugifyUrl
                     entryId={entry ? entry.entryId : null}
                     name={entry ? Utils.getEntryNameFromKey(entry.key) : null}
-                    history={history}
                 />
                 <AccessRightsUrlOpen history={history} />
                 <Header

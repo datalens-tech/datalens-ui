@@ -15,6 +15,7 @@ import {I18n, i18n} from 'i18n';
 import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds, PREVIEW_ROUTE, WidgetKind} from 'shared';
 import {isWidgetTypeDoNotNeedOverlay} from 'ui/components/DashKit/plugins/Widget/components/helpers';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
+import {getLocation} from 'ui/navigation';
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -136,12 +137,17 @@ export const getNewWindowMenuItem = ({
         customConfig?.action ||
         (({loadedData, propsData, chartsDataProvider: dataProvider}) => {
             const enableAP = Boolean(extraOptions?.enableActionParams);
-            const link = (dataProvider || chartsDataProvider)?.getGoAwayLink(
-                {loadedData, propsData},
-                {
-                    idPrefix: '/preview/',
-                    extraParams: enableAP ? {[COMMON_URL_OPTIONS.ACTION_PARAMS_ENABLED]: '1'} : {},
-                },
+            const provider = dataProvider || chartsDataProvider;
+            const link = new URL(
+                provider?.getGoAwayLink(
+                    {loadedData, propsData},
+                    {
+                        idPrefix: '/preview/',
+                        extraParams: enableAP
+                            ? {[COMMON_URL_OPTIONS.ACTION_PARAMS_ENABLED]: '1'}
+                            : {},
+                    },
+                ),
             );
 
             window.open(link);
@@ -292,8 +298,7 @@ export const getFullscreenMenuItem = (customConfig: Partial<MenuItemConfig>): Me
         <Icon data={ChevronsExpandUpRight} size={ICONS_MENU_DEFAULT_SIZE} />
     ),
     isVisible: ({loadedData, error}: MenuItemArgs) => {
-        const searchParams = new URLSearchParams(window.location.search);
-        const isFullscreenMode = searchParams.has(FOCUSED_WIDGET_PARAM_NAME);
+        const isFullscreenMode = getLocation().params().has(FOCUSED_WIDGET_PARAM_NAME);
 
         return Boolean(
             DL.IS_MOBILE &&

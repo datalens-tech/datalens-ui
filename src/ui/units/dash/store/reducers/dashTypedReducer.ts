@@ -1,6 +1,9 @@
+import type {RefObject} from 'react';
+
 import type {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
-import {cloneDeep, pick} from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+import pick from 'lodash/pick';
 import type {
     DashData,
     DashDragOptions,
@@ -10,6 +13,7 @@ import type {
     WidgetType,
 } from 'shared';
 import type {DIALOG_TYPE} from 'ui/constants/dialogs';
+import {getLocation} from 'ui/navigation';
 import type {ValuesType} from 'utility-types';
 
 import {Mode} from '../../modules/constants';
@@ -71,7 +75,7 @@ export type DashState = {
     initialTabsSettings?: null | DashData['tabs'];
     mode: Mode;
     navigationPath: null | string;
-    dashKitRef: null | React.RefObject<DashKit>;
+    dashKitRef: null | RefObject<DashKit>;
     error: null | Error;
     openedDialog: null | ValuesType<typeof DIALOG_TYPE>;
     openedItemId: string | null;
@@ -172,7 +176,7 @@ export function dashTypedReducer(
                     }),
                 };
             }
-            const searchParams = new URLSearchParams(location.search);
+            const searchParams = getLocation().params();
             const stateHashId = searchParams.get('state') || state.stateHashId || null;
 
             if (tabId && hashStates) {

@@ -30,6 +30,7 @@ import {closeDialog, openDialog, openDialogParameter} from 'store/actions/dialog
 import type {DatalensGlobalState} from 'ui';
 import {DL, EntryDialogName, NavigationMinimal} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
+import {getLocation, getRouter} from 'ui/navigation';
 import {selectDebugMode} from 'ui/store/selectors/user';
 import {matchDatasetFieldFilter} from 'ui/utils/helpers';
 import {openDialogMultidataset} from 'units/wizard/actions/dialog';
@@ -453,7 +454,7 @@ class SectionDataset extends React.Component<Props, State> {
     };
 
     onOpenDatasetClick = (id: string) => {
-        window.open(`${DL.ENDPOINTS.dataset}/${id}`);
+        getRouter().openTab({pathname: `${DL.ENDPOINTS.dataset}/${id}`});
     };
 
     onAddDatasetClick = () => {
@@ -495,7 +496,7 @@ class SectionDataset extends React.Component<Props, State> {
 
     onButtonDatasetTryAgainClick = () => {
         const {extractEntryId} = registry.common.functions.getAll();
-        const entryId = extractEntryId(window.location.pathname);
+        const entryId = extractEntryId(getLocation().pathname);
 
         if (entryId) {
             this.props.fetchWidget({entryId});

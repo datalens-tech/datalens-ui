@@ -1,3 +1,4 @@
+import {getLocation} from 'ui/navigation';
 import {registry} from 'ui/registry';
 
 import {RESET_DATASET_STATE} from '../actions/types/dataset';
@@ -9,7 +10,7 @@ import dataset from './dataset';
 const datasetReducer = (state: DatasetReduxState, action: DatasetReduxAction) => {
     if (action.type === RESET_DATASET_STATE) {
         const {extractEntryId} = registry.common.functions.getAll();
-        const hasEntryId = Boolean(extractEntryId(window.location.pathname));
+        const hasEntryId = Boolean(extractEntryId(getLocation().pathname));
         const initialState = getInitialState({
             isLoading: hasEntryId,
             preview: {

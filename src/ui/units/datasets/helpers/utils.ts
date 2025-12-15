@@ -9,6 +9,8 @@ import type {
 } from 'shared';
 import {DL} from 'ui';
 import type {EntryContextMenuItem} from 'ui/components/EntryContextMenu/helpers';
+import {getRouter} from 'ui/navigation';
+import type {Target} from 'ui/navigation';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {
@@ -67,8 +69,8 @@ export default class DatasetUtils {
     }
 
     static getQueryParam(name: string) {
-        const searchParams = new URLSearchParams(window.location.search);
-        const param = searchParams.get(name);
+        const router = getRouter();
+        const param = router.location().params().get(name);
 
         return param ? decodeURIComponent(param) : undefined;
     }
@@ -79,16 +81,13 @@ export default class DatasetUtils {
         workbookId,
     }: {
         datasetId: string;
-        target?: string;
+        target?: Target;
         workbookId?: WorkbookId;
     }) {
         const {endpoints: {wizard = '/wizard'} = {}} = window.DL;
+        const pathname = workbookId ? `/workbooks/${workbookId}${wizard}/` : `${wizard}/`;
 
-        if (workbookId) {
-            window.open(`/workbooks/${workbookId}${wizard}/?__datasetId=${datasetId}`, target);
-        } else {
-            window.open(`${wizard}/?__datasetId=${datasetId}`, target);
-        }
+        getRouter().open({pathname, search: `__datasetId=${datasetId}`}, target);
     }
 
     static isEnabledFeature(featureName: Feature) {

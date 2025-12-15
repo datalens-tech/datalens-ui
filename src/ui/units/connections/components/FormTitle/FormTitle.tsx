@@ -5,9 +5,8 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Link} from 'react-router-dom';
 import {ConnectorIcon} from 'ui/components/ConnectorIcon/ConnectorIcon';
-
-import {getConnectorIconData, getConnectorIconDataByAlias} from '../../../../utils';
-import {getPreviousRalativePathname} from '../../utils';
+import {useLocation} from 'ui/navigation';
+import {getConnectorIconData, getConnectorIconDataByAlias} from 'ui/utils';
 
 import './FormTitle.scss';
 
@@ -25,9 +24,11 @@ type TitleProps = {
 };
 
 const ArrowBack = () => {
+    const {path, search} = useLocation();
+
     return (
         <div className={b('arrow')}>
-            <Link to={getPreviousRalativePathname()}>
+            <Link to={{pathname: '/' + path.slice(0, -1).join('/'), search}}>
                 <Button view="flat">
                     <Icon data={ArrowLeft} size={ARROW_ICON_SIZE} />
                 </Button>

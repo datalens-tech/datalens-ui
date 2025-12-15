@@ -4,6 +4,7 @@ import block from 'bem-cn-lite';
 import type {RouteComponentProps} from 'react-router-dom';
 import {Feature} from 'shared';
 import type {SDK} from 'ui';
+import {getRouter} from 'ui/navigation';
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -31,6 +32,8 @@ const b = block('dataset-page');
 
 class DatasetPage extends React.Component<DatasetPageProps> {
     render() {
+        const router = getRouter();
+
         return (
             <div className={b()}>
                 <DatasetPageProvider value={this.providerValue}>
@@ -44,7 +47,7 @@ class DatasetPage extends React.Component<DatasetPageProps> {
                         history={this.props.history}
                         location={this.props.location}
                         ytPath={this.ytPath}
-                        isCreationProcess={isCreationProcess(location.pathname)}
+                        isCreationProcess={isCreationProcess(router.location().pathname)}
                         isAuto={this.isAuto}
                     />
                 </DatasetPageProvider>

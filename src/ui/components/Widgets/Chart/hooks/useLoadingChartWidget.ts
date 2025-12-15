@@ -1,26 +1,26 @@
 import React from 'react';
 
 import debounce from 'lodash/debounce';
-import {useHistory} from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom';
 import type {DashSettings} from 'shared';
 import {FOCUSED_WIDGET_PARAM_NAME} from 'shared';
-import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
-import {YFM_CUT_MARKDOWN_CLASSNAME, YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
-import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
-
-import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
-import type {
-    ChartKitWrapperLoadStatusUnknown,
-    ChartKitWrapperOnLoadProps,
-} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
-import type {LoadedWidgetData, OnChangeData} from '../../../../libs/DatalensChartkit/types';
-import logger from '../../../../libs/logger';
 import type {
     CurrentTab,
     WidgetPluginDataWithTabs,
     WidgetPluginProps,
-} from '../../../DashKit/plugins/Widget/types';
+} from 'ui/components/DashKit/plugins/Widget/types';
+import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
+import {YFM_CUT_MARKDOWN_CLASSNAME, YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
+import {useBeforeLoad} from 'ui/hooks/useBeforeLoad';
+import type {
+    ChartKitWrapperLoadStatusUnknown,
+    ChartKitWrapperOnLoadProps,
+} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
+import type {ChartsData} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+import type {LoadedWidgetData, OnChangeData} from 'ui/libs/DatalensChartkit/types';
+import logger from 'ui/libs/logger';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
+
 import {
     getPreparedConstants,
     getWidgetMeta,
@@ -131,6 +131,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const dataProviderContextGetter = extDashkitContext?.dataProviderContextGetter || undefined;
 
     const history = useHistory();
+    const location = useLocation();
 
     const handleUpdate = useBeforeLoad(props.onBeforeLoad);
     const hideTitle = Boolean(data.hideTitle);
@@ -298,7 +299,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             noVeil,
             compactLoader,
             loaderDelay,
-            history.location.search,
+            location.search,
             hasHideTitleChanged,
             widgetId,
             hideTitle,
@@ -311,12 +312,10 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      */
     const handleToggleFullscreenMode = React.useCallback(() => {
         const searchParams = new URLSearchParams(history.location.search);
-        const isFullscreenNewMode = !searchParams.has(FOCUSED_WIDGET_PARAM_NAME);
-
-        if (isFullscreenNewMode) {
-            searchParams.set(FOCUSED_WIDGET_PARAM_NAME, widgetId);
-        } else {
+        if (searchParams.has(FOCUSED_WIDGET_PARAM_NAME)) {
             searchParams.delete(FOCUSED_WIDGET_PARAM_NAME);
+        } else {
+            searchParams.set(FOCUSED_WIDGET_PARAM_NAME, widgetId);
         }
 
         history.push({

@@ -2,6 +2,7 @@ import {DashKit} from '@gravity-ui/dashkit';
 import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
+
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
 import {getDefaultDashWidgetBgColorByType} from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
@@ -10,8 +11,8 @@ import {
     getUpdatedConnections,
     getUpdatedTextData,
 } from 'ui/utils/copyItems';
+import {isTvMode} from 'ui/utils/embedded';
 
-import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
 import {getAllTabItems, isItemGlobal} from '../../utils/selectors';
@@ -56,7 +57,7 @@ const initialState = {
     // TODO: not yet MODE.ERROR is not used, but it is worth resetting to null
     error: null,
 
-    isFullscreenMode: new URLSearchParams(window.location.search).get('mode') === EMBEDDED_MODE.TV,
+    isFullscreenMode: isTvMode(),
 
     skipReload: false,
 

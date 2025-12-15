@@ -1,10 +1,11 @@
-import {COLLECTIONS_PATHNAME, WORKBOOK_PATHNAME} from '../constants';
+import {COLLECTIONS_PATHNAME, WORKBOOK_PATHNAME} from 'ui/constants';
+import {getLocation} from 'ui/navigation';
 
 export const getEntityIdFromPathname = (isCollection = false) => {
-    const pathnameParts = window.location.pathname.split('/').filter(Boolean);
-    const entityPathnameIndex = pathnameParts.findIndex(
+    const path = getLocation().path;
+    const entityPathnameIndex = path.findIndex(
         (part) => part === (isCollection ? COLLECTIONS_PATHNAME : WORKBOOK_PATHNAME),
     );
     // Here we expect pathname like this: '/workbooks/${workbookId}/...'
-    return entityPathnameIndex === -1 ? '' : pathnameParts[entityPathnameIndex + 1];
+    return entityPathnameIndex === -1 ? '' : path[entityPathnameIndex + 1];
 };

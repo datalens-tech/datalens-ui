@@ -9,6 +9,7 @@ import {EntryScope} from 'shared';
 import type {FakeDashData} from 'shared/types/dash';
 import {DashLoadPriority} from 'shared/types/dash';
 import {DL, URL_QUERY} from 'ui/constants';
+import {getLocation} from 'ui/navigation';
 import Utils from 'ui/utils';
 
 import {DASHKIT_STATE_VERSION, Mode} from '../modules/constants';
@@ -21,7 +22,7 @@ export const getFakeDashEntry = (workbookId?: string) => {
     const {counter, id: newTabId} = generateUniqId({salt, counter: 0, ids: []});
 
     // For saving the full path when creating from a folder in navigation
-    const searchParams = new URLSearchParams(location.search);
+    const searchParams = getLocation().params();
     const searchCurrentPath = searchParams.get(URL_QUERY.CURRENT_PATH);
 
     const path = searchCurrentPath || DL.USER_FOLDER;

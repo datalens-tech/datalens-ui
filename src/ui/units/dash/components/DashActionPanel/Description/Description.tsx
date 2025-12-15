@@ -2,7 +2,6 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {useHistory} from 'react-router-dom';
 import {
     DIALOG_ENTRY_DESCRIPTION,
     EntryAnnotationDescriptionButton,
@@ -10,6 +9,7 @@ import {
     openDialogEntryAnnotationDescription,
 } from 'ui/components/DialogEntryDescription';
 import {URL_QUERY} from 'ui/constants/common';
+import {useRouter} from 'ui/navigation';
 import {closeDialog, updateDialogProps} from 'ui/store/actions/dialog';
 
 import {updateDashOpenedDesc, updateDescription} from '../../../store/actions/dashTyped';
@@ -29,7 +29,7 @@ type DescriptionProps = {
 export const Description = (props: DescriptionProps) => {
     const {canEdit, onEditClick, showOpenedDescription, iconSize = 20} = props;
 
-    const history = useHistory();
+    const router = useRouter();
 
     const dispatch = useDispatch();
     const isDashEditMode = useSelector(isEditMode);
@@ -43,15 +43,13 @@ export const Description = (props: DescriptionProps) => {
     );
 
     const handleOnClose = React.useCallback(() => {
-        const searchParams = new URLSearchParams(history.location.search);
-        searchParams.delete(URL_QUERY.OPEN_DASH_INFO);
-        history.push({
-            ...history.location,
-            search: `?${searchParams.toString()}`,
-        });
+        const search = router.location().params();
+
+        search.delete(URL_QUERY.OPEN_DASH_INFO);
+        router.push({search});
 
         dispatch(updateDashOpenedDesc(false));
-    }, [history, dispatch]);
+    }, [dispatch, router]);
 
     const handleOnEditClick = React.useCallback(() => {
         onEditClick?.(

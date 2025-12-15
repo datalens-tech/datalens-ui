@@ -8,21 +8,19 @@ type Props = {
     when: boolean;
 };
 
-const NavigationPrompt: React.FC<Props> = (props) => {
-    const currentLocation = useLocation();
+const NavigationPrompt: React.FC<Props> = ({when}) => {
+    const {pathname} = useLocation();
 
-    const message = React.useCallback(
-        (location: History.Location<unknown>) => {
-            if (location.pathname !== currentLocation.pathname) {
-                return i18n('component.navigation-prompt', 'label_prompt-message');
-            }
-
-            return true;
-        },
-        [currentLocation.pathname],
+    return (
+        <Prompt
+            when={when}
+            message={(location: History.Location<unknown>) => {
+                return location.pathname === pathname
+                    ? true
+                    : i18n('component.navigation-prompt', 'label_prompt-message');
+            }}
+        />
     );
-
-    return <Prompt when={props.when} message={message} />;
 };
 
 export default NavigationPrompt;

@@ -4,6 +4,7 @@ import block from 'bem-cn-lite';
 import LocationChange from 'components/LocationChange/LocationChange';
 import type {Location} from 'history';
 import {useDispatch} from 'react-redux';
+import {useLocation} from 'react-router-dom';
 import {setIsLanding} from 'store/actions/landing';
 import {DL} from 'ui/constants/common';
 import Utils from 'utils';
@@ -16,8 +17,8 @@ const b = block('dl-landing-page');
 
 export const LandingPage = () => {
     const dispatch = useDispatch();
-
-    const locationSearchOptions = Utils.getOptionsFromSearch(window.location.search);
+    const {search} = useLocation();
+    const {noControls} = React.useMemo(() => Utils.getOptionsFromSearch(search), [search]);
     const {errorType, title, description, entryMeta} = DL.LANDING_PAGE_SETTINGS || {};
 
     const handleLocationChanged = React.useCallback(
@@ -38,7 +39,7 @@ export const LandingPage = () => {
                 reqId={DL.REQUEST_ID}
                 description={description}
                 entryMeta={entryMeta}
-                noControls={locationSearchOptions.noControls}
+                noControls={noControls}
             />
             <LocationChange onLocationChanged={handleLocationChanged} />
         </div>

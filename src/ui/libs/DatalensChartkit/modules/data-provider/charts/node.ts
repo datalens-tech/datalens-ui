@@ -8,12 +8,7 @@ import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
-import {WidgetKind} from 'shared/types/widget';
-import {getRandomCKId} from 'ui/libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
-import type {Optional} from 'utility-types';
-
-import type {StringParams} from '../../../../../../shared';
+import type {StringParams} from 'shared';
 import {
     ChartkitHandlers,
     EDITOR_CHART_NODE,
@@ -23,11 +18,17 @@ import {
     WRAPPED_MARKDOWN_KEY,
     WRAPPED_MARKUP_KEY,
     isMarkupItem,
-} from '../../../../../../shared';
-import {DL} from '../../../../../constants/common';
-import {registry} from '../../../../../registry';
-import Utils, {getRenderMarkupToStringFn} from '../../../../../utils';
-import {getRenderYfmFn as getRenderMarkdownFn} from '../../../../../utils/markdown/get-render-yfm-fn';
+} from 'shared';
+import {WidgetKind} from 'shared/types/widget';
+import {DL} from 'ui/constants/common';
+import {getRandomCKId} from 'ui/libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
+import {getLocation} from 'ui/navigation';
+import {registry} from 'ui/registry';
+import Utils, {getRenderMarkupToStringFn} from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {getRenderYfmFn as getRenderMarkdownFn} from 'ui/utils/markdown/get-render-yfm-fn';
+import type {Optional} from 'utility-types';
+
 import type {
     ControlsOnlyWidget,
     GraphWidget,
@@ -63,7 +64,7 @@ function shouldShowSafeChartInfo(params: StringParams) {
         return false;
     }
     return (
-        Utils.getOptionsFromSearch(window.location.search).showSafeChartInfo ||
+        Utils.getOptionsFromSearch(getLocation().search).showSafeChartInfo ||
         (params &&
             SHARED_URL_OPTIONS.SAFE_CHART in params &&
             String(params?.[SHARED_URL_OPTIONS.SAFE_CHART]?.[0]) === '1')

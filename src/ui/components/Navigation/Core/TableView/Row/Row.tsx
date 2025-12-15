@@ -6,9 +6,9 @@ import block from 'bem-cn-lite';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {I18n} from 'i18n';
 import moment from 'moment';
-import {useHistory} from 'react-router-dom';
 import {DlNavigationQA, PLACE} from 'shared';
 import {DL} from 'ui/constants/common';
+import {useRouter} from 'ui/navigation';
 import {registry} from 'ui/registry';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 import Utils from 'utils';
@@ -31,7 +31,7 @@ const CollectionOrWorkbookItem: React.FC<{
     title?: string | null;
     isWorkbook: boolean;
 }> = ({id, title, isWorkbook}) => {
-    const history = useHistory();
+    const router = useRouter();
     const link = isWorkbook ? `/workbooks/${id}` : `/collections/${id}`;
     const icon = isWorkbook ? workbookIcon : collectionIcon;
     return (
@@ -40,8 +40,8 @@ const CollectionOrWorkbookItem: React.FC<{
             onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                 event.stopPropagation();
                 event.preventDefault();
-                history.push(link);
-                window.location.reload();
+                router.push(link);
+                router.reload();
             }}
         >
             <Icon className={b('folder-inline')} data={icon} size={13} />

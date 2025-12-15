@@ -16,6 +16,7 @@ import type {
     ChartProviderPropsWithRefProps,
     ChartWithWrapRefProps,
 } from 'ui/components/Widgets/Chart/types';
+import {getLocation} from 'ui/navigation';
 import {openDialogSaveChartConfirm} from 'ui/store/actions/dialog';
 import {getCustomExportActionWrapperWithSave} from 'ui/utils/custom-export-menu-item';
 
@@ -120,7 +121,7 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
             return null;
         }
 
-        const params = Utils.getParamsFromSearch(window.location.search);
+        const params = Utils.getParamsFromSearch(getLocation().search);
 
         return (
             <div className={b()}>

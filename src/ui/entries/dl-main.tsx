@@ -15,7 +15,7 @@ import DatalensPage from '../datalens';
 import {renderDatalens} from '../datalens/render';
 import {getStore} from '../store/configure';
 import {selectTheme, selectThemeSettings} from '../store/selectors/user';
-import history from '../utils/history';
+import {getHistory} from 'ui/navigation';
 import {getOverridedTheme} from 'ui/utils/getOverridedTheme';
 
 import {HOTKEYS_SCOPES} from '../constants/misc';
@@ -65,6 +65,7 @@ const Content = () => {
 function renderApp() {
     Utils.setup();
 
+    const history = getHistory();
     const store = getStore();
 
     registerSDKDispatch(store.dispatch);

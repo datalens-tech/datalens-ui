@@ -4,11 +4,12 @@ import type {TabItem} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
-import {useHistory, useLocation} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 import {DashTabsQA} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import DataLensTabs from 'ui/components/Tabs/Tabs';
 import {DL} from 'ui/constants/common';
+import {useRouter} from 'ui/navigation';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
@@ -39,8 +40,8 @@ type TabsProps<T> = OwnPops<T> & StateProps & DispatchProps;
 const TABS_VIRTUALIZATION_SELECT_LIMIT = 70;
 
 function TabsComponent<T>(props: TabsProps<T>) {
+    const router = useRouter();
     const location = useLocation();
-    const history = useHistory();
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'l';
 
@@ -58,13 +59,11 @@ function TabsComponent<T>(props: TabsProps<T>) {
 
                     props.setPageTab(tabId);
 
-                    const searchParams = {
-                        tab: tabId,
-                        state: getHashStateParam(props.hashStates, tabId),
-                    };
-                    history.push({
-                        ...location,
-                        search: appendSearchQuery(location.search, searchParams),
+                    router.push({
+                        search: appendSearchQuery(location.search, {
+                            tab: tabId,
+                            state: getHashStateParam(props.hashStates, tabId),
+                        }),
                         hash: isEmbeddedEntry() ? location.hash : '',
                     });
                 }}

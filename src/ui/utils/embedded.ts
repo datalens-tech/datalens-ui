@@ -1,4 +1,5 @@
-import {DL, EMBEDDED_MODE, URL_OPTIONS} from '../constants';
+import {DL, EMBEDDED_MODE, URL_OPTIONS} from 'ui/constants';
+import {getLocation} from 'ui/navigation';
 
 export const isIframe = () => {
     try {
@@ -9,22 +10,19 @@ export const isIframe = () => {
 };
 
 export const isEmbeddedMode = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const isEmbeddedPreview = urlParams.get(URL_OPTIONS.EMBEDDED) === '1';
-    const isEmbedded = urlParams.get('mode') === EMBEDDED_MODE.EMBEDDED;
-    return isIframe() || isEmbedded || isEmbeddedPreview;
+    const params = getLocation().params();
+
+    return (
+        isIframe() ||
+        params.get('mode') === EMBEDDED_MODE.EMBEDDED ||
+        params.get(URL_OPTIONS.EMBEDDED) === '1'
+    );
 };
 
-export const isTvMode = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const isTv = urlParams.get('mode') === EMBEDDED_MODE.TV;
-    return isTv;
-};
+export const isTvMode = () => getLocation().params().get('mode') === EMBEDDED_MODE.TV;
 
 export const isNoScrollMode = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const isNoScrollEnabled = urlParams.get(URL_OPTIONS.NO_SCROLL) === '1';
-    return isNoScrollEnabled && isEmbeddedMode();
+    return isEmbeddedMode() && getLocation().params().get(URL_OPTIONS.NO_SCROLL) === '1';
 };
 
 export const isEmbeddedEntry = () => Boolean(DL.EMBED);

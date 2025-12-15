@@ -1,6 +1,7 @@
 import {createSelector} from 'reselect';
 import type {DatalensGlobalState} from 'ui';
 import {DL, URL_QUERY} from 'ui';
+import {getLocation} from 'ui/navigation';
 
 import {selectDataset} from './dataset';
 import {selectWidget} from './widget';
@@ -20,10 +21,7 @@ export const selectDefaultPath = (state: DatalensGlobalState) => {
     const widget = selectWidget(state);
 
     if (widget.fake) {
-        const searchParams = new URLSearchParams(location.search);
-
-        const searchCurrentPath = searchParams.get(URL_QUERY.CURRENT_PATH);
-
+        const searchCurrentPath = getLocation().params().get(URL_QUERY.CURRENT_PATH);
         if (searchCurrentPath) {
             return searchCurrentPath;
         }

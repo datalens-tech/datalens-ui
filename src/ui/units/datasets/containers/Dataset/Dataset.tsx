@@ -8,8 +8,8 @@ import type {History, Location} from 'history';
 import {I18n} from 'i18n';
 import omit from 'lodash/omit';
 import type {HotkeysContextType} from 'react-hotkeys-hook/dist/HotkeysProvider';
-import type {ConnectedProps} from 'react-redux';
 import {connect} from 'react-redux';
+import type {ConnectedProps} from 'react-redux';
 import SplitPane from 'react-split-pane';
 import {createStructuredSelector} from 'reselect';
 import type {DatasetSource, DatasetSourceAvatar} from 'shared';
@@ -57,7 +57,6 @@ import EntryDialogues, {
 import ErrorContent from '../../../../components/ErrorContent/ErrorContent';
 import {PageTitle} from '../../../../components/PageTitle';
 import {SlugifyUrl} from '../../../../components/SlugifyUrl';
-import UIUtils from '../../../../utils/utils';
 import ContainerLoader from '../../components/ContainerLoader/ContainerLoader';
 import DatasetPanel from '../../components/DatasetPanel/DatasetPanel';
 import type {
@@ -615,7 +614,7 @@ class Dataset extends React.Component<Props, State> {
     renderErrorContent() {
         const {sdk, datasetError} = this.props;
         const {status, requestId, traceId, message, code} =
-            UIUtils.parseErrorResponse(datasetError);
+            CommonUtils.parseErrorResponse(datasetError);
         const {type, title, action} = this.getErrorMessageByCode({
             status,
             data: {message, code},
@@ -831,7 +830,6 @@ class Dataset extends React.Component<Props, State> {
                         <SlugifyUrl
                             entryId={entry.entryId}
                             name={CommonUtils.getEntryNameFromKey(entry.key)}
-                            history={this.props.history}
                         />
                         <AccessRightsUrlOpen history={this.props.history} />
                     </React.Fragment>

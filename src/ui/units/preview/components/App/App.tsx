@@ -10,9 +10,9 @@ import {bindActionCreators} from 'redux';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import type {DatalensGlobalState} from 'ui';
 import {DL} from 'ui';
+import {isEmbeddedMode, isNoScrollMode} from 'ui/utils/embedded';
 import Utils from 'ui/utils/utils';
 
-import {isEmbeddedMode, isNoScrollMode} from '../../../../utils/embedded';
 import IndexPage from '../IndexPage/IndexPage';
 import Preview from '../Preview/Preview';
 
@@ -45,10 +45,15 @@ const App: React.FunctionComponent<Props> = (props) => {
             <Switch>
                 <Route
                     path="/preview/:source/:id"
-                    render={({match, location}) => {
-                        const oldQueryAndHash = `${location.search}${location.hash}`;
-                        return <Redirect to={`/preview/${match.params.id}${oldQueryAndHash}`} />;
-                    }}
+                    render={({match, location}) => (
+                        <Redirect
+                            to={{
+                                pathname: `/preview/${match.params.id}`,
+                                search: location.search,
+                                hash: location.hash,
+                            }}
+                        />
+                    )}
                 />
                 <Route
                     path={`/preview/:id`}

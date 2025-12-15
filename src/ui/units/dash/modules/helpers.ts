@@ -26,10 +26,11 @@ import type {
 } from 'shared';
 import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
+import {ITEM_TYPE} from 'ui/constants/dialogs';
+import {getLocation} from 'ui/navigation';
 import {registry} from 'ui/registry';
 import {collectWidgetItemIds} from 'ui/utils/copyItems';
 
-import {ITEM_TYPE} from '../../../constants/dialogs';
 import type {TabsHashStates} from '../store/actions/dashTyped';
 
 import {CROSS_PASTE_ITEMS_ALLOWED} from './constants';
@@ -525,7 +526,7 @@ export const getDashkitSettings = (
 ): NonNullable<DashKitProps['settings']> => {
     const dashkitSettings = settings as NonNullable<DashKitProps['settings']>;
 
-    const {autoupdateInterval} = Utils.getOptionsFromSearch(window.location.search);
+    const {autoupdateInterval} = Utils.getOptionsFromSearch(getLocation().search);
     if (autoupdateInterval) {
         const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
         const minAutoupdateInterval = getMinAutoupdateInterval();

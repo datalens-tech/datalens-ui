@@ -16,6 +16,7 @@ import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {ChartWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
+import {getLocation, getRouter} from 'ui/navigation';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {isDraftVersion} from 'ui/utils/revisions';
 
@@ -54,7 +55,6 @@ import {
 } from '../../../../store/actions/entryContent';
 import {RevisionsMode} from '../../../../store/typings/entryContent';
 import {getUrlParamFromStr, isUnreleasedByUrlParams} from '../../../../utils';
-import history from '../../../../utils/history';
 import {isDraft, isEditMode} from '../../../dash/store/selectors/dashTypedSelectors';
 import type {SetDefaultsArgs} from '../../actions';
 import {resetWizardStore, setDefaults, setWizardStore} from '../../actions';
@@ -142,7 +142,7 @@ class Wizard extends React.Component<Props, State> {
 
         if (!isDefaultsSet) {
             const {extractEntryId} = registry.common.functions.getAll();
-            const entryId = extractEntryId(window.location.pathname);
+            const entryId = extractEntryId(getLocation().pathname);
 
             const revId = getUrlParamFromStr(this.props.location.search, URL_QUERY.REV_ID);
             const unreleased = isUnreleasedByUrlParams(this.props.location.search);
@@ -249,13 +249,11 @@ class Wizard extends React.Component<Props, State> {
             const entryId = newEntryId;
             const params: SetDefaultsArgs = {entryId};
             if (revId) {
-                const searchParams = new URLSearchParams(location.search);
-                searchParams.delete(URL_QUERY.REV_ID);
-                searchParams.delete(URL_QUERY.UNRELEASED);
-                history.replace({
-                    ...location,
-                    search: `?${searchParams.toString()}`,
-                });
+                const router = getRouter();
+                const search = router.location().params();
+                search.delete(URL_QUERY.REV_ID);
+                search.delete(URL_QUERY.UNRELEASED);
+                router.replace({search});
             }
             this.props.setDefaults(params);
         }
@@ -343,7 +341,7 @@ class Wizard extends React.Component<Props, State> {
         }
 
         if (result.status === EntryDialogResolveStatus.Success && Boolean(convert)) {
-            window.open(`${DL.ENDPOINTS.editor}/${result.data!.entryId}`, '_self');
+            getRouter().open({pathname: `${DL.ENDPOINTS.editor}/${result.data!.entryId}`});
 
             return;
         }
@@ -523,7 +521,6 @@ class Wizard extends React.Component<Props, State> {
                                 <SlugifyUrl
                                     entryId={widget.entryId}
                                     name={Utils.getEntryNameFromKey(widget.key)}
-                                    history={this.props.history}
                                 />
                                 <AccessRightsUrlOpen history={this.props.history} />
                             </React.Fragment>

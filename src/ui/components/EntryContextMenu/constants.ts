@@ -12,6 +12,7 @@ import {
 import type {ConnectorType} from 'shared/constants/connections';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {S3_BASED_CONNECTORS} from 'ui/constants/connections';
+import {getLocation} from 'ui/navigation';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {EntryScope, Feature, PLACE, isUsersFolder} from '../../../shared';
@@ -53,13 +54,9 @@ const CONTEXT_MENU_COPY = {
     },
     // remain Copy menu item in navigation, but show in actionPanel only if actual version is opened
     isVisible({showSpecificItems, entry}: ContextMenuParams) {
-        if (!showSpecificItems && entry?.workbookId) {
-            return false;
-        }
-
-        const searchParams = new URLSearchParams(window.location.search);
-        const revId = searchParams.get(URL_QUERY.REV_ID);
-        return showSpecificItems ? !revId : true;
+        return !showSpecificItems && entry?.workbookId
+            ? false
+            : !showSpecificItems || !getLocation().params().get(URL_QUERY.REV_ID);
     },
 };
 

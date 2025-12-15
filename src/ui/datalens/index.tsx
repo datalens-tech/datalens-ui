@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Switch, Redirect} from 'react-router-dom';
+import {Route, Switch, Redirect, useLocation} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import coreReducers from 'store/reducers';
 import {getIsAsideHeaderEnabled} from 'components/AsideHeaderAdapter';
@@ -48,10 +48,15 @@ const AuthPage = React.lazy(
     () => import(/* webpackChunkName: "auth-page" */ './pages/AuthPage/AuthPage'),
 );
 
-const DatalensPageView = () => {
+export type DatalensPageViewProps = {
+    homePathname?: string;
+};
+
+const DatalensPageView: React.FC<DatalensPageViewProps> = ({homePathname = '/collections'}) => {
     useClearReloadedQuery();
 
     const isLanding = useSelector(selectIsLanding);
+    const location = useLocation();
 
     if (isLanding) {
         return (
@@ -83,7 +88,7 @@ const DatalensPageView = () => {
 
                 {/* Prevent attempts to create a standalone (outside of workbook) connection */}
                 <Route path={['/connections/new/:type', '/connections/new']}>
-                    <Redirect to={`/collections${location.search}`} />
+                    <Redirect to={{pathname: homePathname, search: location.search}} />
                 </Route>
                 <Route
                     path={[
@@ -108,7 +113,7 @@ const DatalensPageView = () => {
                 />
 
                 <Route path="/">
-                    <Redirect to={`/collections${location.search}`} />
+                    <Redirect to={{pathname: homePathname, search: location.search}} />
                 </Route>
 
                 {/* comment till we have main page */}
@@ -119,7 +124,11 @@ const DatalensPageView = () => {
     );
 };
 
-const DatalensPage: React.FC = () => {
+export type DatalensPageProps = {
+    homePathname?: string;
+};
+
+const DatalensPage: React.FC<DatalensPageProps> = ({homePathname = '/collections'}) => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
     const showMobileHeader =
         !isEmbeddedMode() && DL.IS_MOBILE && !DL.IS_NOT_AUTHENTICATED && !DL.IS_AUTH_PAGE;
@@ -129,7 +138,7 @@ const DatalensPage: React.FC = () => {
     if (showMobileHeader) {
         return (
             <MobileHeaderComponent
-                renderContent={() => <DatalensPageView />}
+                renderContent={() => <DatalensPageView homePathname={homePathname} />}
                 logoTextProps={{installationInfo: OPEN_SOURCE_INSTALLATION_INFO}}
             />
         );
@@ -138,13 +147,13 @@ const DatalensPage: React.FC = () => {
     if (showAsideHeaderAdapter) {
         return (
             <AsideHeaderAdapter
-                renderContent={() => <DatalensPageView />}
+                renderContent={() => <DatalensPageView homePathname={homePathname} />}
                 logoTextProps={{installationInfo: OPEN_SOURCE_INSTALLATION_INFO}}
             />
         );
     }
 
-    return <DatalensPageView />;
+    return <DatalensPageView homePathname={homePathname} />;
 };
 
 export default DatalensPage;

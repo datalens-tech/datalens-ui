@@ -21,10 +21,6 @@ import {
 } from '@gravity-ui/icons';
 import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {EntryDialogues} from 'components/EntryDialogues';
-import {i18n} from 'i18n';
-import PaletteEditor from 'libs/DatalensChartkit/components/Palette/PaletteEditor/PaletteEditor';
-import logger from 'libs/logger';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import type {ResolveThunks} from 'react-redux';
@@ -32,6 +28,11 @@ import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
+
+import {EntryDialogues} from 'components/EntryDialogues';
+import {i18n} from 'i18n';
+import PaletteEditor from 'libs/DatalensChartkit/components/Palette/PaletteEditor/PaletteEditor';
+import logger from 'libs/logger';
 import type {DashTab, DashTabLayout} from 'shared';
 import {Feature, FixedHeaderQa, SCROLL_TITLE_DEBOUNCE_TIME} from 'shared';
 import type {DatalensGlobalState} from 'ui';

@@ -30,13 +30,14 @@ import {
     MAX_SEGMENTS_NUMBER,
     WidgetKind,
 } from 'shared';
+import type {ChartWidgetData} from 'ui/components/Widgets/Chart/types';
 import {DL} from 'ui/constants/common';
+import {toQueryString} from 'ui/navigation';
+import {registry} from 'ui/registry';
+import type {WidgetType} from 'ui/units/dash/modules/constants';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import type {ChartWidgetData} from '../../../../../components/Widgets/Chart/types';
-import {registry} from '../../../../../registry';
-import type {WidgetType} from '../../../../../units/dash/modules/constants';
 import {chartToTable} from '../../../ChartKit/helpers/gravity-charts/chart-to-table';
 import {isNavigatorSerie} from '../../../ChartKit/modules/graph/config/config';
 import type {
@@ -56,7 +57,6 @@ import type {ExtraParams} from '../../datalens-chartkit-custom-error/datalens-ch
 import DatalensChartkitCustomError, {
     ERROR_CODE,
 } from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
-import URI from '../../uri/uri';
 import {getChartKind} from '../helpers';
 
 import {getGraph} from './get-graph/get-graph';
@@ -865,9 +865,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
         url += id ? id : propsData.source;
 
-        const query = URI.makeQueryString({...propsData.params, ...extraParams});
-
-        return url + query;
+        return url + toQueryString({...propsData.params, ...extraParams});
     }
 
     private getExtendedResponse<

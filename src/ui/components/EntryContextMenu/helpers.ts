@@ -1,6 +1,7 @@
 import type React from 'react';
 
 import type {IconData} from '@gravity-ui/uikit';
+import {getRouter} from 'ui/navigation';
 import {registry} from 'ui/registry';
 import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -11,7 +12,6 @@ import {EntryScope, Feature, MenuItemsIds, getEntryNameByKey} from '../../../sha
 import type {GetEntryResponse} from '../../../shared/schema';
 import {DL, URL_OPTIONS, URL_QUERY} from '../../constants';
 import navigateHelper from '../../libs/navigateHelper';
-import history from '../../utils/history';
 import type {EntryDialogues} from '../EntryDialogues';
 import {EntryDialogName, EntryDialogResolveStatus} from '../EntryDialogues';
 
@@ -35,7 +35,7 @@ export async function renameEntry(entryDialoguesRef: EntryDialoguesRef, entry: M
             if (entryData) {
                 setEntryKey(entryData);
             } else {
-                window.location.reload();
+                getRouter().reload();
             }
         }
     }
@@ -57,7 +57,7 @@ export async function moveEntry(entryDialoguesRef: EntryDialoguesRef, entry: Men
             if (entryData) {
                 setEntryKey({...entryData, withRouting: false});
             } else {
-                window.location.reload();
+                getRouter().reload();
             }
         }
     }
@@ -92,12 +92,7 @@ export async function deleteEntry(entryDialoguesRef: EntryDialoguesRef, entry: M
             },
         });
         if (response.status === EntryDialogResolveStatus.Success) {
-            const pathname = navigateHelper.getRedirectLocation(entry);
-
-            history.replace({
-                ...history.location,
-                pathname,
-            });
+            getRouter().replace({pathname: navigateHelper.getRedirectLocation(entry)});
         }
     }
 }
@@ -179,10 +174,11 @@ export async function showShareDialog(
         }
 
         if (entry.scope === EntryScope.Dash) {
-            const searchParams = new URLSearchParams(location.search);
+            const router = getRouter();
+            const params = router.location().params();
             const {tabs} = entry.data as unknown as DashData;
 
-            dialogProps.currentTab = searchParams.get(URL_QUERY.TAB_ID) || tabs[0]?.id;
+            dialogProps.currentTab = params.get(URL_QUERY.TAB_ID) || tabs[0]?.id;
         }
 
         await entryDialoguesRef.current.open({
