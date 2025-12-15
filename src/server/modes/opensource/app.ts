@@ -4,7 +4,12 @@ import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {NodeKit} from '@gravity-ui/nodekit';
 import passport from 'passport';
 
-import {DASH_API_BASE_URL, Feature, PUBLIC_API_DASH_API_BASE_URL} from '../../../shared';
+import {
+    DASH_API_BASE_URL,
+    Feature,
+    PUBLIC_API_DASH_API_BASE_URL,
+    isEnabledServerFeature,
+} from '../../../shared';
 import {isApiMode, isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAppLayoutSettings} from '../../components/app-layout/app-layout-settings';
 import {createLayoutPlugin} from '../../components/app-layout/plugins/layout';
@@ -39,9 +44,7 @@ export default function initApp(nodekit: NodeKit) {
         initZitadel({nodekit, beforeAuth});
     }
 
-    const isEnabledServerFeature = nodekit.ctx.get('isEnabledServerFeature');
-
-    if (isEnabledServerFeature(Feature.UsDynamicMasterToken)) {
+    if (isEnabledServerFeature(nodekit.ctx, Feature.UsDynamicMasterToken)) {
         beforeAuth.push(createAuthArgsMiddleware(nodekit.config));
     }
 
