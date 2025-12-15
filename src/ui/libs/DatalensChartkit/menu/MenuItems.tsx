@@ -19,7 +19,6 @@ import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
-import {CHARTKIT_WIDGET_TYPE} from '../ChartKit/components/Widget/Widget';
 import {
     getExportItem,
     isExportItemDisabled,
@@ -87,9 +86,11 @@ export const getAlertsMenuItem = ({
                 return false;
             }
 
+            const widgetTypesWithAlert = [WidgetKind.Graph, WidgetKind.GravityCharts] as string[];
+
             return (
                 !isCriticalError &&
-                (loadedData.isNewWizard || loadedData.type === CHARTKIT_WIDGET_TYPE.GRAPH)
+                (loadedData.isNewWizard || widgetTypesWithAlert.includes(loadedData.type))
             );
         },
         action: ({loadedData}: AlertsActionArgs) => {

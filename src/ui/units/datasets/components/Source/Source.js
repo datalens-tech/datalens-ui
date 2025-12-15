@@ -26,7 +26,13 @@ const attachDnD = (drag, drop) => (node) => {
 };
 
 function SourceMenu(props) {
-    const {avatar, avatar: {id, isConnectedWithAvatar} = {}, onClickEditBtn, onDelete} = props;
+    const {
+        avatar,
+        avatar: {id, isConnectedWithAvatar} = {},
+        onClickEditBtn,
+        onDelete,
+        readonly,
+    } = props;
 
     return (
         <DropdownMenu
@@ -41,6 +47,7 @@ function SourceMenu(props) {
             items={[
                 {
                     text: i18n('label_menu-popup-modify-source'),
+                    disabled: readonly,
                     action: (e) => {
                         e.stopPropagation();
                         onClickEditBtn(avatar);
@@ -48,7 +55,7 @@ function SourceMenu(props) {
                 },
                 {
                     text: i18n('label_menu-popup-delete-source'),
-                    disabled: isConnectedWithAvatar,
+                    disabled: isConnectedWithAvatar || readonly,
                     action: (e) => {
                         e.stopPropagation();
                         onDelete({id});
@@ -71,6 +78,7 @@ function Source(props) {
         onClickEditBtn,
         onDeleteSource,
         position,
+        readonly,
     } = props;
     const {id, managed_by, isSource} = avatar;
 
@@ -97,6 +105,7 @@ function Source(props) {
             </span>
             {managed_by === MANAGED_BY.USER && (
                 <SourceMenu
+                    readonly={readonly}
                     avatar={avatar}
                     onClickEditBtn={onClickEditBtn}
                     onDelete={onDeleteSource}
@@ -110,6 +119,7 @@ SourceMenu.propTypes = {
     avatar: PropTypes.object.isRequired,
     onClickEditBtn: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
+    readonly: PropTypes.bool,
 };
 
 Source.propTypes = {
@@ -126,6 +136,7 @@ Source.propTypes = {
     onDeleteSource: PropTypes.func,
     onClickEditBtn: PropTypes.func,
     dragDisabled: PropTypes.bool,
+    readonly: PropTypes.bool,
 };
 Source.defaultProps = {
     isActive: false,

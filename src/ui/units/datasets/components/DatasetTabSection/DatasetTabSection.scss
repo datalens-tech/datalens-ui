@@ -32,4 +32,8 @@
     &__list {
         margin-top: 10px;
     }
+
+    &__readonly-notice {
+        margin-bottom: var(--g-spacing-3);
+    }
 }

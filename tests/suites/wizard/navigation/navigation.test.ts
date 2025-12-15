@@ -75,6 +75,7 @@ datalensTest.describe('Wizard - Navigation', () => {
             await wizardPage.saveInFolder(
                 PARAMS.FOLDER_NAME,
                 wizardPage.getUniqueEntryName(entryName),
+                PARAMS.FOLDER_NAME,
             );
 
             await wizardPage.waitForSelector(

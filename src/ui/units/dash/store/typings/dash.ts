@@ -1,4 +1,4 @@
-import type {DashKit} from '@gravity-ui/dashkit';
+import type {DashKit, ItemParams} from '@gravity-ui/dashkit';
 import type {
     DashData,
     DashDragOptions,
@@ -12,7 +12,7 @@ import type {ValuesType} from 'utility-types';
 
 import type {Mode} from '../../modules/constants';
 import type {TabsHashStates} from '../../store/actions/dashTyped';
-import type {DashUpdateStatus} from '../../typings/dash';
+import type {DashUpdateStatus, GlobalItem} from '../../typings/dash';
 
 export type DashState = {
     tabId: null | string;
@@ -43,4 +43,10 @@ export type DashState = {
     widgetsCurrentTab: {[key: string]: string};
     dragOperationProps: DashDragOptions | null;
     openInfoOnLoad?: boolean;
+};
+
+export type UpdateTabsWithGlobalStateArgs = {
+    params: ItemParams;
+    selectorItem: GlobalItem;
+    appliedSelectorsIds: string[];
 };

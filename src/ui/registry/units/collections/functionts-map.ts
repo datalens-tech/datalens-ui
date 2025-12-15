@@ -5,7 +5,7 @@ import {makeFunctionTemplate} from 'shared/utils/makeFunctionTemplate';
 import type {
     CustomizeEmptyPlaceholder,
     CustomizeNoCreatePermissionDialog,
-    GetPublicGalleryEntry,
+    UseCreateWorkbookDialogHandlers,
 } from './types';
 
 export const collectionsFunctionsMap = {
@@ -25,5 +25,5 @@ export const collectionsFunctionsMap = {
         >(),
     customizeEmptyPlaceholder: makeFunctionTemplate<CustomizeEmptyPlaceholder>(),
     customizeNoCreatePermissionDialog: makeFunctionTemplate<CustomizeNoCreatePermissionDialog>(),
-    getPublicGalleryEntry: makeFunctionTemplate<GetPublicGalleryEntry>(),
+    useCreateWorkbookDialogHandlers: makeFunctionTemplate<UseCreateWorkbookDialogHandlers>(),
 } as const;

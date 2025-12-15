@@ -3,25 +3,26 @@ import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
-import {
-    CustomPaletteTextColors,
-    TITLE_WIDGET_TEXT_COLORS_PRESET,
-    getDefaultDashWidgetBgColorByType,
-} from 'shared/constants/widgets';
+import {getDefaultDashWidgetBgColorByType} from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
-import {getUpdatedBackgroundValue, getUpdatedConnections} from 'ui/utils/copyItems';
+import {
+    getUpdatedBackgroundData,
+    getUpdatedConnections,
+    getUpdatedTextData,
+} from 'ui/utils/copyItems';
 
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
+import {getAllTabItems, isItemGlobal} from '../../utils/selectors';
 import * as actionTypes from '../constants/dashActionTypes';
 
 import {
     TAB_PROPERTIES,
     addGlobalItemToTab,
+    getCreatedItem,
     getGlobalItemsToCopy,
     getStateForControlWithGlobalLogic,
-    isItemGlobal,
 } from './dashHelpers';
 import {dashTypedReducer} from './dashTypedReducer';
 
@@ -255,23 +256,30 @@ function dash(state = initialState, action) {
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
             const itemData = action.payload.item.data;
-            if (
-                itemData.textColor &&
-                !CustomPaletteTextColors[itemData.textColor] &&
-                !TITLE_WIDGET_TEXT_COLORS_PRESET.includes(itemData.textColor)
-            ) {
-                delete itemData.textColor;
-            }
+
+            const textData =
+                action.payload.item.type === DashTabItemType.Title
+                    ? getUpdatedTextData({
+                          textColor: itemData.textColor,
+                          textSettings: itemData.textSettings,
+                          allowCustomValues: false,
+                          enableSeparateThemeColorSelector: true,
+                          themeType: action.payload.dashVisualSettings?.themeType,
+                      })
+                    : {};
+
             const defaultBgColorValue = getDefaultDashWidgetBgColorByType(itemData.type);
             const backgroundData =
-                'background' in itemData
-                    ? {
-                          background: getUpdatedBackgroundValue(
-                              itemData.background,
-                              false,
-                              defaultBgColorValue,
-                          ),
-                      }
+                action.payload.item.type !== DashTabItemType.Control &&
+                action.payload.item.type !== DashTabItemType.GroupControl
+                    ? getUpdatedBackgroundData({
+                          background: itemData.background,
+                          backgroundSettings: itemData.backgroundSettings,
+                          allowCustomValues: false,
+                          enableSeparateThemeColorSelector: true,
+                          defaultOldColor: defaultBgColorValue,
+                          themeType: action.payload.dashVisualSettings?.themeType,
+                      })
                     : {};
             const newItem = {
                 ...action.payload.item,
@@ -283,8 +291,16 @@ function dash(state = initialState, action) {
                             ? DashTabItemTitleSizes.XL
                             : itemData.size,
                     ...backgroundData,
+                    ...textData,
                 },
             };
+
+            const itemType = action.payload.item.type;
+
+            const isGlobal =
+                itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control
+                    ? isItemGlobal(action.payload.item)
+                    : false;
 
             const tabData = DashKit.setItem({
                 item: newItem,
@@ -292,6 +308,7 @@ function dash(state = initialState, action) {
                 options: {
                     ...action.payload.options,
                     excludeIds: getUniqIdsFromDashData(data),
+                    ...(isGlobal ? {useGlobalItems: true} : {}),
                 },
             });
 
@@ -303,7 +320,11 @@ function dash(state = initialState, action) {
                 state.entry.entryId === targetEntryId &&
                 targetIds?.length
             ) {
-                const copiedItem = tabData.items[tabData.items.length - 1];
+                const copiedItem = getCreatedItem({
+                    isGlobal,
+                    items: tabData.items,
+                    globalItems: tabData.globalItems,
+                });
 
                 const updatedConnections = getUpdatedConnections({
                     connections: tabData.connections,
@@ -312,6 +333,24 @@ function dash(state = initialState, action) {
                 });
 
                 tabData.connections = updatedConnections;
+            }
+
+            // Handle global control items (GroupControl and Control types)
+            if (itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control) {
+                const updatedState = getStateForControlWithGlobalLogic({
+                    state,
+                    data,
+                    tabData,
+                    tabIndex,
+                    itemType,
+                    itemData,
+                    isGlobal,
+                });
+
+                // If the function returned a state, return it
+                if (updatedState) {
+                    return updatedState;
+                }
             }
 
             return {
@@ -350,6 +389,8 @@ function dash(state = initialState, action) {
                 },
             });
 
+            const allTabItems = getAllTabItems(tabData);
+
             // migration of connections if old selector becomes a group selector
             // 1. state.openedItemId existance means that widget already exist
             // 2. !action.payload.data.group[0].id - first selector doesn't have an id because it was just converted
@@ -361,7 +402,7 @@ function dash(state = initialState, action) {
                 tabData.connections = migrateConnectionsForGroupControl({
                     openedItemId: state.openedItemId,
                     currentTab: tab,
-                    tabDataItems: tabData.items,
+                    tabDataItems: allTabItems,
                 });
             }
 
@@ -378,8 +419,12 @@ function dash(state = initialState, action) {
                 });
 
                 const item = state.openedItemId
-                    ? tabData.items.find((tabItem) => tabItem.id === state.openedItemId)
-                    : tabData.items[tabData.items.length - 1];
+                    ? allTabItems.find((tabItem) => tabItem.id === state.openedItemId)
+                    : getCreatedItem({
+                          isGlobal,
+                          items: tabData.items,
+                          globalItems: tabData.globalItems,
+                      });
 
                 const updatedConnections = getUpdatedConnections({
                     connections: tabData.connections,

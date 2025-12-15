@@ -16,7 +16,10 @@ import './FormRow.scss';
 const b = block('conn-form-row');
 
 type DispatchState = ReturnType<typeof mapStateToProps>;
-type FormRowComponentProps = DispatchState & Row;
+type FormRowComponentProps = DispatchState &
+    Row & {
+        queryReadonly: boolean;
+    };
 
 const RowContainer = ({children}: {children?: React.ReactNode}) => {
     if (Array.isArray(children) && children.length === 0) {
@@ -27,7 +30,7 @@ const RowContainer = ({children}: {children?: React.ReactNode}) => {
 };
 
 const FormRowComponent: React.FC<FormRowComponentProps> = (props) => {
-    const {form, innerForm, readonly} = props;
+    const {form, innerForm, readonly, queryReadonly} = props;
 
     if ('items' in props) {
         return (
@@ -45,7 +48,13 @@ const FormRowComponent: React.FC<FormRowComponentProps> = (props) => {
                             return null;
                         }
 
-                        return <FormItem key={`row-item-${i}`} item={item} readonly={readonly} />;
+                        return (
+                            <FormItem
+                                key={`row-item-${i}`}
+                                item={item}
+                                readonly={readonly || queryReadonly}
+                            />
+                        );
                     })
                     .filter(Boolean)}
             </RowContainer>
@@ -60,7 +69,7 @@ const FormRowComponent: React.FC<FormRowComponentProps> = (props) => {
 
         return (
             <RowContainer>
-                <PreparedRowItem {...props} disabled={readonly} />
+                <PreparedRowItem {...props} disabled={readonly || queryReadonly} />
             </RowContainer>
         );
     }

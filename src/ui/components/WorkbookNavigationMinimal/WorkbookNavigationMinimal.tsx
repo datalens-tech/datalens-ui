@@ -231,7 +231,10 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                             <span>{name}</span>
                         </div>
                         {getIsSharedEntry(entry) && (
-                            <SharedEntryIcon className={b('shared-item-icon')} entry={entry} />
+                            <SharedEntryIcon
+                                className={b('shared-item-icon')}
+                                isDelegated={entry.isDelegated}
+                            />
                         )}
                     </div>
 

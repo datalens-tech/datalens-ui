@@ -2,6 +2,7 @@
 import type {Config} from '@gravity-ui/dashkit';
 import {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
+import pick from 'lodash/pick';
 import type {
     DashData,
     DashTab,
@@ -13,7 +14,6 @@ import type {
 import {DashTabItemType} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 
-import type {SetItemDataArgs, SetItemDataGroupControl} from '../actions/dashTyped';
 import type {DashState} from '../typings/dash';
 
 // Tab properties that can be updated
@@ -27,42 +27,6 @@ export const TAB_PROPERTIES = [
     'settings',
     'globalItems',
 ] as const;
-
-export function isItemGlobal(item: SetItemDataArgs): boolean {
-    if (item.type === DashTabItemType.Control) {
-        const controlData = item.data;
-        return isControlGlobal(controlData.impactType, controlData.impactTabsIds);
-    }
-
-    if (item.type === DashTabItemType.GroupControl) {
-        return isGroupControlGlobal(item.data);
-    }
-
-    return false;
-}
-
-function isControlGlobal(impactType?: ImpactType, impactTabsIds?: ImpactTabsIds): boolean {
-    return (
-        impactType === 'allTabs' ||
-        (impactType === 'selectedTabs' && Boolean(impactTabsIds && impactTabsIds?.length > 0))
-    );
-}
-
-function isGroupControlGlobal(itemData: SetItemDataGroupControl): boolean {
-    const groupImpactType = itemData.impactType;
-    const groupImpactTabsIds = itemData.impactTabsIds;
-    const isGroupSettingApplied = itemData.group.some(
-        (selector) => selector.impactType === undefined || selector.impactType === 'asGroup',
-    );
-
-    if (isGroupSettingApplied && isControlGlobal(groupImpactType, groupImpactTabsIds)) {
-        return true;
-    }
-
-    return itemData.group.some((selector) =>
-        isControlGlobal(selector.impactType, selector.impactTabsIds),
-    );
-}
 
 type DetailedGlobalStatus = {
     hasAllScope: boolean;
@@ -143,7 +107,10 @@ export function getDetailedGlobalStatus(
                     impactTabsIds: selectorImpactTabsIds,
                 });
 
-                hasAllScope = usedTabsResult.hasAllScope;
+                // don't rewrite hasAllScope if it's already true
+                if (!hasAllScope) {
+                    hasAllScope = usedTabsResult.hasAllScope;
+                }
                 usedTabsResult.usedTabs.forEach((tabId) => usedTabs.add(tabId));
             }
         }
@@ -283,6 +250,8 @@ export function getStateForControlWithGlobalLogic({
     const {hasAllScope, usedTabs} = detailedGlobalStatus;
     const removeFromCurrentTab = !hasAllScope && !usedTabs.has(tabData.id);
 
+    const preparedTabData = pick(tabData, TAB_PROPERTIES);
+
     // Editing existing control
     if (state.openedItemId) {
         // find prev state of global item in old date
@@ -313,6 +282,7 @@ export function getStateForControlWithGlobalLogic({
                 tabIndex,
                 removeFromCurrentTab,
             );
+            updatedTabs[tabIndex] = preparedTabData;
 
             return {
                 ...state,
@@ -325,6 +295,7 @@ export function getStateForControlWithGlobalLogic({
         } else if (wasGlobal && !isGlobal) {
             // Case: Global to local - remove from globalItems in all tabs, update in current tab (updating for current tab is made in dashkit)
             const updatedTabs = removeGlobalItemFromTabs(data, state.openedItemId, tabIndex);
+            updatedTabs[tabIndex] = preparedTabData;
 
             return {
                 ...state,
@@ -353,6 +324,7 @@ export function getStateForControlWithGlobalLogic({
                 tabData,
                 tabIndex,
             );
+            updatedTabs[tabIndex] = preparedTabData;
 
             return {
                 ...state,
@@ -383,6 +355,7 @@ export function getStateForControlWithGlobalLogic({
             tabData,
             tabIndex,
         );
+        updatedTabs[tabIndex] = preparedTabData;
 
         return {
             ...state,
@@ -435,3 +408,15 @@ export function getGlobalItemsToCopy(tab?: DashTab | null) {
 
     return {globalItems: usedGlobalItems, layout};
 }
+
+export const getCreatedItem = ({
+    isGlobal,
+    items,
+    globalItems,
+}: {
+    isGlobal: boolean;
+    items: DashTabItem[];
+    globalItems: DashTabItem[];
+}) => {
+    return isGlobal ? globalItems[globalItems.length - 1] : items[items.length - 1];
+};
