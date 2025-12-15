@@ -1,5 +1,6 @@
 import {i18n} from 'i18n';
 import type {CollectionId, EntryScope, WorkbookId} from 'shared';
+import type {GetEntryResponse} from 'shared/schema';
 import {DL} from 'ui';
 
 import {getFakeEntry as genericGetFakeEntry} from '../../../components/ActionPanel';
@@ -48,7 +49,7 @@ export const getStaticSelectItems = (values: string[]) => {
 };
 export const getAppMetricGroupNameI18n = (key: string) => _getSelectItemTitle()[key];
 
-export const getFakeEntry = (
+export const getFakeEntry = <T extends GetEntryResponse = GetEntryResponse>(
     scope: EntryScope.Connection | EntryScope.Dataset,
     workbookId?: WorkbookId,
     collectionId?: CollectionId,
@@ -58,7 +59,7 @@ export const getFakeEntry = (
 
     path = path.endsWith('/') ? path : `${path}/`;
 
-    return genericGetFakeEntry({
+    return genericGetFakeEntry<T>({
         key: `${path}${i18n('connections.form', `section_creation-${scope}`)}`,
         workbookId,
         collectionId,

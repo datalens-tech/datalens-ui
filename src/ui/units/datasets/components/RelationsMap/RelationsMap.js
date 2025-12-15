@@ -6,6 +6,7 @@ import _differenceWith from 'lodash/differenceWith';
 import _flow from 'lodash/flow';
 import _isEmpty from 'lodash/isEmpty';
 import _isEqual from 'lodash/isEqual';
+import _noop from 'lodash/noop';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import {AvatarQA} from 'shared';
@@ -299,7 +300,8 @@ class RelationsMap extends React.Component {
 
             const lineParams = this.getLineParams({type: lineType});
 
-            const onClickJoinIcon = () => openRelationDialog({relationId});
+            const onClickJoinIcon = () =>
+                this.props.readonly ? _noop : openRelationDialog({relationId});
 
             this.drawLine(calculationsPoints, lineParams);
             this.drawJoinIcon(calculationsPoints, lineType, {onClickJoinIcon, joinType});
@@ -342,7 +344,7 @@ class RelationsMap extends React.Component {
     };
 
     render() {
-        const {drop, replaceSource, isOver, isDisabledDropSource} = this.props;
+        const {drop, replaceSource, isOver, isDisabledDropSource, readonly} = this.props;
         const avatar = this.rootSource;
         const {width, height} = this.treeLevelRect;
 
@@ -364,6 +366,7 @@ class RelationsMap extends React.Component {
                         <EmptyPlaceholder />
                     ) : (
                         <Avatars
+                            readonly={readonly}
                             isDisplayReplaceSourceZone={isOver}
                             root={avatar}
                             onDrop={this.onDrop}
@@ -422,6 +425,7 @@ RelationsMap.propTypes = {
     drop: PropTypes.func,
     isOver: PropTypes.bool,
     isDisabledDropSource: PropTypes.bool.isRequired,
+    readonly: PropTypes.bool,
 };
 
 RelationsMap.defaultProps = {

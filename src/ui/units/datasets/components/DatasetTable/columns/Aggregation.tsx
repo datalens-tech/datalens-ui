@@ -14,11 +14,13 @@ const i18n = I18n.keyset('dataset.dataset-editor.modify');
 type GetAggregationColumnArgs = {
     fields: DatasetOptionFieldItem[];
     onUpdate: (row: DatasetField, aggregation: DatasetFieldAggregation) => void;
+    readonly: boolean;
 };
 
 export const getAggregationColumn = ({
     fields,
     onUpdate,
+    readonly,
 }: GetAggregationColumnArgs): Column<DatasetField> => ({
     name: 'aggregation',
     className: b('column', {'with-padding-right': true}, b('column-aggregation')),
@@ -36,6 +38,7 @@ export const getAggregationColumn = ({
                 aggregations={aggregations}
                 selectedAggregation={value as string}
                 onSelect={onUpdate}
+                disabled={readonly}
             />
         );
     },

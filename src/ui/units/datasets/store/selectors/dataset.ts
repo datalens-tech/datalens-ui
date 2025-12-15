@@ -200,6 +200,10 @@ export const datasetPermissionsSelector = (state: DatalensGlobalState) => state.
 export const datasetFullPermissionsSelector = (state: DatalensGlobalState) =>
     state.dataset.fullPermissions;
 
+export const datasetDelegationSelector = (state: DatalensGlobalState) => {
+    return state.dataset.isDelegated;
+};
+
 export const workbookIdSelector = (state: DatalensGlobalState) => {
     return selectedConnectionSelector(state)?.workbookId || datasetWorkbookId(state) || null;
 };
