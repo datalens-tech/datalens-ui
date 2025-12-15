@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {ConfigLayout} from '@gravity-ui/dashkit';
+import type {ConfigItem, ConfigLayout, DashKitGroup, DashKitProps} from '@gravity-ui/dashkit';
 import {DashKitDnDWrapper, ActionPanel as DashkitActionPanel} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
@@ -12,6 +12,7 @@ import {
     Feature,
     LOADED_DASH_CLASS,
 } from 'shared';
+import type {DashTabLayout} from 'shared';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {selectUserSettings} from 'ui/store/selectors/user';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -34,10 +35,32 @@ import {
 import {DashError} from '../../../DashError/DashError';
 import TableOfContent from '../../../TableOfContent/TableOfContent';
 import {Tabs} from '../../../Tabs/Tabs';
+import {DashkitWrapper} from '../DashkitWrapper/DashkitWrapper';
 
 const b = block('dash-body');
 
 const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHeader);
+
+type DashKitWrapperProps = {
+    dashEl: HTMLDivElement | null;
+    dashkitSettings: DashKitProps['settings'];
+    disableUrlState?: boolean;
+    globalParams: DashKitProps['globalParams'];
+    groupsRenderers: DashKitGroup[];
+    hasFixedHeaderContainerElements: boolean;
+    hasFixedHeaderControlsElements: boolean;
+    isEditModeLoading?: boolean;
+    isFixedHeaderCollapsed: boolean; // getFixedHeaderCollapsedState()
+    isPublicMode?: boolean;
+    isSplitPaneLayout?: boolean;
+    isGlobalDragging: boolean;
+    getGroupsInsertCoords: (forSingleInsert?: boolean) => Record<string, {x: number; y: number}>;
+    getWidgetLayoutById: (widgetId: string) => DashTabLayout;
+    handleEditClick?: () => void;
+    onItemMountChange: (item: ConfigItem, data: {isMounted: boolean}) => void;
+    onItemRender: (item: ConfigItem) => void;
+    onWidgetMountChange: (isMounted: boolean, id: string, domElement: HTMLElement) => void;
+};
 
 type Props = {
     copiedData: CopiedConfigData | null;
@@ -47,19 +70,18 @@ type Props = {
     isCondensed: boolean;
     loaded: boolean;
     mode: Mode;
-    showEditActionPanel: boolean;
-    renderDashkit: () => void;
     onDragEnd: () => void;
     onDragStart: () => void;
     onItemClick: (itemTitle: string) => void;
     onRetry: () => void;
 } & (
-    | {onlyView: true}
+    | {onlyView: true; onPasteItem: undefined}
     | {
           onlyView?: boolean;
           onPasteItem: (data: CopiedConfigData, newLayout?: ConfigLayout[]) => void;
       }
-);
+) &
+    DashKitWrapperProps;
 
 const Content = ({
     copiedData,
@@ -69,12 +91,31 @@ const Content = ({
     isCondensed,
     loaded,
     mode,
-    showEditActionPanel,
-    renderDashkit,
     onDragEnd,
     onDragStart,
     onItemClick,
     onRetry,
+
+    // DashkitWrapperProps
+    dashEl,
+    dashkitSettings,
+    disableUrlState,
+    globalParams,
+    groupsRenderers,
+    hasFixedHeaderContainerElements,
+    hasFixedHeaderControlsElements,
+    isEditModeLoading,
+    isFixedHeaderCollapsed,
+    isPublicMode,
+    isSplitPaneLayout,
+    isGlobalDragging,
+    getGroupsInsertCoords,
+    getWidgetLayoutById,
+    handleEditClick,
+    onItemMountChange,
+    onItemRender,
+    onWidgetMountChange,
+
     ...restProps
 }: Props) => {
     const dispatch = useDispatch();
@@ -92,6 +133,8 @@ const Content = ({
         },
         [dispatch],
     );
+
+    const isEditMode = mode === Mode.Edit;
 
     switch (mode) {
         case Mode.Loading:
@@ -134,7 +177,7 @@ const Content = ({
                             'with-table-of-content': showTableOfContent && hasTableOfContentForTab,
                             mobile: DL.IS_MOBILE,
                             aside: getIsAsideHeaderEnabled(),
-                            'with-edit-panel': showEditActionPanel,
+                            'with-edit-panel': isEditMode,
                             'with-footer': isEnabledFeature(Feature.EnableFooter),
                         })}
                     >
@@ -144,11 +187,39 @@ const Content = ({
                             </div>
                         )}
                         {!settings.hideTabs && <Tabs className={b('tabs')} />}
-                        {renderDashkit()}
+
+                        <DashkitWrapper
+                            {...{
+                                dashEl,
+                                dashkitSettings,
+                                disableHashNavigation,
+                                disableUrlState,
+                                globalParams,
+                                groupsRenderers,
+                                hasFixedHeaderContainerElements,
+                                hasFixedHeaderControlsElements,
+                                hideErrorDetails,
+                                isEditMode,
+                                isEditModeLoading,
+                                isFixedHeaderCollapsed,
+                                isPublicMode,
+                                isSplitPaneLayout,
+                                isGlobalDragging,
+                                onlyView: restProps.onlyView,
+                                getGroupsInsertCoords,
+                                getWidgetLayoutById,
+                                handleEditClick,
+                                onItemMountChange,
+                                onItemRender,
+                                onWidgetMountChange,
+                                onPasteItem: restProps.onPasteItem,
+                            }}
+                        />
+
                         {!restProps.onlyView && (
                             <DashkitActionPanel
                                 toggleAnimation={true}
-                                disable={!showEditActionPanel}
+                                disable={!isEditMode}
                                 items={getActionPanelItems({
                                     copiedData,
                                     onPasteItem: restProps.onPasteItem,

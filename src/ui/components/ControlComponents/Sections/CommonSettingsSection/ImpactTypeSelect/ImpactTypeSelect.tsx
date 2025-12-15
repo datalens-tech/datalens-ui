@@ -4,6 +4,7 @@ import {FormRow} from '@gravity-ui/components';
 import type {SelectOption} from '@gravity-ui/uikit';
 import {Flex, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DashTabItemType, Feature} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
@@ -28,7 +29,8 @@ import {
 } from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {IMPACT_TYPE_OPTION_VALUE} from './constants';
+import {CurrentTabOption} from './CurrentTabOption/CurrentTabOption';
+import {IMPACT_TYPE_OPTION_VALUE, LABEL_BY_SCOPE_MAP} from './constants';
 import {
     getIconByImpactType,
     getImpactTypeByValue,
@@ -41,30 +43,7 @@ import './ImpactTypeSelect.scss';
 
 const b = block('impact-type-select');
 
-// const i18n = I18n.keyset('dash.control-dialog.edit');
-
-// TODO (global selectors): Add translations
-const i18n = (key: string) => {
-    const values: Record<string, string> = {
-        'label_tabs-scope': 'Показать во вкладках',
-        'label_selected-tabs-placeholder': 'Выберите вкладки',
-        'value_all-tabs': 'На всех вкладках',
-        'value_selected-tabs': 'Выбранные вкладки',
-        'value_current-tab': 'Текущая вкладка',
-        'value_as-group': 'Как у группы',
-        'validation_need-current-tab-impact':
-            'Должен быть хотя бы один селектор, видимый на текущей вкладке',
-    };
-
-    return values[key];
-};
-
-const LABEL_BY_SCOPE_MAP = {
-    [IMPACT_TYPE_OPTION_VALUE.ALL_TABS]: i18n('value_all-tabs'),
-    [IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB]: i18n('value_current-tab'),
-    [IMPACT_TYPE_OPTION_VALUE.AS_GROUP]: i18n('value_as-group'),
-    [IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS]: i18n('value_selected-tabs'),
-};
+const i18n = I18n.keyset('dash.control-dialog.edit');
 
 const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
@@ -114,17 +93,6 @@ export const ImpactTypeSelect = ({
         onRaiseTabVisibilityProblem,
     });
 
-    const optionTabTitle = React.useMemo(() => {
-        if (impactTabsIds.length !== 1) {
-            return currentTab?.title || '';
-        }
-
-        const optionTab = tabs.find((tab) => tab.id === impactTabsIds[0]);
-        const currentTabTitle = optionTab?.title || '';
-
-        return currentTabTitle;
-    }, [currentTab?.title, impactTabsIds, tabs]);
-
     const tabsOptions = React.useMemo(() => {
         return tabs.map((tab) => ({
             value: tab.id,
@@ -146,10 +114,12 @@ export const ImpactTypeSelect = ({
             {
                 value: IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB,
                 content: (
-                    <Flex gap={2} className={b('current-tab')}>
-                        <span>{LABEL_BY_SCOPE_MAP[IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB]}</span>
-                        {optionTabTitle && <span className={b('tab-hint')}>{optionTabTitle}</span>}
-                    </Flex>
+                    <CurrentTabOption
+                        tabs={tabs}
+                        currentImpactType={currentImpactType}
+                        currentTabTitle={currentTab?.title}
+                        impactTabsIds={impactTabsIds}
+                    />
                 ),
             },
             {
@@ -197,10 +167,13 @@ export const ImpactTypeSelect = ({
 
         return baseOptions;
     }, [
+        tabs,
+        currentImpactType,
+        currentTab?.title,
+        impactTabsIds,
         hasMultipleSelectors,
         isGroupSettings,
         isGroupControl,
-        optionTabTitle,
         selectorsGroup.impactType,
         groupImpactType,
     ]);
