@@ -5,7 +5,6 @@ import type {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import type {
     CustomizeEmptyPlaceholder,
     CustomizeNoCreatePermissionDialog,
-    GetPublicGalleryEntry,
 } from '../../../../registry/units/collections/types';
 
 export const customizeCollectionsActions = (
@@ -30,8 +29,4 @@ export const customizeNoCreatePermissionDialog: CustomizeNoCreatePermissionDialo
     return {
         message,
     };
-};
-
-export const getPublicGalleryEntry: GetPublicGalleryEntry = async () => {
-    return {publicGallery: undefined};
 };
