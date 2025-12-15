@@ -176,6 +176,7 @@ export const removeParamAndUpdate = (
     searchParams: URLSearchParams,
     param: string,
 ) => {
+    const location = {...history.location};
     searchParams.delete(param);
     history.replace({
         ...location,

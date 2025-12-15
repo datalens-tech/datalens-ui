@@ -194,9 +194,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
     return (
         <React.Fragment>
             <PageTitle entry={entry} />
-            {Boolean(possibleEntryId) && (
-                <SlugifyUrl entryId={possibleEntryId} name={name} history={history} />
-            )}
+            {possibleEntryId && <SlugifyUrl entryId={possibleEntryId} name={name} />}
             <div
                 className={b({mobile: DL.IS_MOBILE}, SNAPTER_DESIRED_CLASS)}
                 ref={previewRef}

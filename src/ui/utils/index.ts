@@ -5,7 +5,6 @@ export * from './absurd';
 export * from './connections';
 export * from './docs';
 export {getEntityIdFromPathname} from './workbooks';
-export * from './urlSearch';
 export * from './urlUtils';
 export * from './icons';
 export * from './colors';

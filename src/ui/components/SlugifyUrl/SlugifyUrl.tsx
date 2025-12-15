@@ -1,36 +1,31 @@
-import React from 'react';
+import {useEffect} from 'react';
+import type {FC} from 'react';
 
-import type {History} from 'history';
 import {isEntryId, makeSlugName} from 'shared';
+import {useRouter} from 'ui/navigation';
 import {registry} from 'ui/registry';
 
 export interface SlugifyUrlProps {
     entryId?: string | null;
     name?: string | null;
-    history?: History;
 }
 
-export const SlugifyUrl: React.FC<SlugifyUrlProps> = ({entryId, name, history}) => {
-    React.useEffect(() => {
+export const SlugifyUrl: FC<SlugifyUrlProps> = ({entryId, name}) => {
+    const router = useRouter();
+    useEffect(() => {
         if (entryId && name && isEntryId(entryId)) {
-            const url = new URL(window.location.href);
-            const urlPathname = url.pathname;
+            const currentPathname = router.location().pathname;
             const {extractEntryId} = registry.common.functions.getAll();
-            if (extractEntryId(urlPathname) && urlPathname.includes(entryId)) {
-                const pathname = urlPathname
+            if (extractEntryId(currentPathname) && currentPathname.includes(entryId)) {
+                const pathname = currentPathname
                     .split('/')
                     .map((path) => (path.includes(entryId) ? makeSlugName(entryId, name) : path))
                     .join('/');
-                if (pathname !== urlPathname) {
-                    const resultPath = `${pathname}${url.search}${url.hash}`;
-                    if (history) {
-                        history.replace(resultPath);
-                    } else {
-                        window.history.replaceState({}, '', resultPath);
-                    }
+                if (pathname !== currentPathname) {
+                    router.replace({pathname});
                 }
             }
         }
-    }, [entryId, name, history]);
+    }, [entryId, name, router]);
     return null;
 };

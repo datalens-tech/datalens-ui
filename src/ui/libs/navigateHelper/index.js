@@ -1,8 +1,7 @@
-import {NAVIGATION_ROUTE} from 'shared';
-
-import {EntryScope, getEntryNameByKey, makeSlugName} from '../../../shared';
-import {DL} from '../../constants/common';
-import {registry} from '../../registry';
+import {EntryScope, NAVIGATION_ROUTE, getEntryNameByKey, makeSlugName} from 'shared';
+import {DL} from 'ui/constants';
+import {getRouter} from 'ui/navigation';
+import {registry} from 'ui/registry';
 
 const formUrl = (url) => {
     return new URL(url, window.location.origin).toString();
@@ -27,15 +26,13 @@ const navigateHelper = {
         });
     },
     open(entry) {
-        const url = this.redirectUrlSwitcher(entry);
-        window.location.assign(url);
+        getRouter().open(this.redirectUrlSwitcher(entry));
     },
     openNavigation() {
-        window.location.assign(formUrl(DL.NAVIGATION_ENDPOINT));
+        getRouter().open(formUrl(DL.NAVIGATION_ENDPOINT));
     },
     openPlace(entry) {
-        const url = this.redirectToPlace(entry);
-        window.location.assign(url);
+        getRouter().open(this.redirectToPlace(entry));
     },
     redirectToPlace({scope}) {
         const endpoints = DL.ENDPOINTS;

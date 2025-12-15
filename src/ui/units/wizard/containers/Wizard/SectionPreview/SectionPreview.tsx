@@ -10,6 +10,7 @@ import {MenuItemsIds, WizardPageQa} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
+import {getLocation} from 'ui/navigation';
 import {getCustomExportActionWrapperWithSave} from 'ui/utils/custom-export-menu-item';
 import {setDrillDownLevel} from 'units/wizard/actions/visualization';
 import {selectDatasetError} from 'units/wizard/selectors/dataset';
@@ -161,9 +162,9 @@ class SectionPreview extends Component<Props> {
                 } as unknown as ConfigNode;
             }
 
-            const searchParams = Utils.getParamsFromSearch(window.location.search);
-            const params = omit(searchParams, FORBIDDEN_PARAMS);
-            const {actionParamsEnabled} = Utils.getOptionsFromSearch(window.location.search);
+            const search = getLocation().search;
+            const params = omit(Utils.getParamsFromSearch(search), FORBIDDEN_PARAMS);
+            const {actionParamsEnabled} = Utils.getOptionsFromSearch(search);
 
             return (
                 <ChartWrapper

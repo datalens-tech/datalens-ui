@@ -1,6 +1,6 @@
 import {CONNECTOR_VISIBILITY_MODE} from 'shared';
-
-import type {ConnectorItem} from '../../../../../../shared/schema';
+import type {ConnectorItem} from 'shared/schema';
+import {getLocation} from 'ui/navigation';
 
 export const getConnectorListItemUrl = (args: {
     connector: ConnectorItem;
@@ -8,7 +8,7 @@ export const getConnectorListItemUrl = (args: {
     collectionId?: string;
 }) => {
     const {connector, workbookId, collectionId} = args;
-    const {search = ''} = window.location;
+    const {search = ''} = getLocation();
     const type = connector.alias || connector.conn_type;
     let url = `/connections/new/${type}${search}`;
 
