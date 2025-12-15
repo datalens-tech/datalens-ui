@@ -1,9 +1,30 @@
 import type {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
-import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'shared';
+import type {ThemeType} from '@gravity-ui/uikit';
+import {
+    CustomPaletteBgColors,
+    CustomPaletteTextColors,
+    TITLE_WIDGET_TEXT_COLORS_PRESET,
+    WIDGET_BG_COLORS_PRESET,
+    getColorSettingsWithValue,
+} from 'shared/constants';
 import {getActualOldBackground} from 'shared/modules/dash-scheme-converter';
-import type {BackgroundSettings} from 'shared/types';
-import {DashTabItemType, isBackgroundSettings} from 'shared/types';
+import {DashTabItemType, Feature} from 'shared/types';
+import type {
+    BackgroundSettings,
+    ColorSettings,
+    OldBackgroundSettings,
+    TitleTextSettings,
+} from 'shared/types';
+import {
+    isBackgroundSettings,
+    isColorByTheme,
+    isOldBackgroundSettings,
+    isTextSettings,
+} from 'shared/utils';
 import type {ConnectionsData} from 'ui/components/DialogRelations/types';
+
+import {isEnabledFeature} from './isEnabledFeature';
+import {computeColorFromToken} from './widgetColors';
 
 // targetId - item is copied data from localStorage
 // id - item is already created via DashKit.setItem
@@ -95,12 +116,154 @@ export const getUpdatedConnections = ({
     return [...connections, ...copiedConnections];
 };
 
+const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
+
+export function getUpdatedBackgroundData({
+    background,
+    backgroundSettings,
+    allowCustomValues = false,
+    enableSeparateThemeColorSelector = true,
+    defaultOldColor,
+    themeType = 'light',
+}: {
+    background: unknown;
+    backgroundSettings: unknown;
+    allowCustomValues: boolean;
+    enableSeparateThemeColorSelector: boolean;
+    defaultOldColor: string;
+    themeType?: ThemeType;
+}): {
+    backgroundSettings: BackgroundSettings | undefined;
+    background: OldBackgroundSettings | undefined;
+} {
+    let oldColor: string | undefined;
+    let newColor: ColorSettings | undefined;
+
+    const isOldBackground = isOldBackgroundSettings(background);
+    const isBgSettings = isBackgroundSettings(backgroundSettings);
+
+    if (isOldBackground) {
+        oldColor = getActualOldBackground(background, defaultOldColor)?.color;
+
+        if (
+            !isDashColorPickersByThemeEnabled &&
+            !allowCustomValues &&
+            oldColor &&
+            !WIDGET_BG_COLORS_PRESET.includes(oldColor) &&
+            !Object.values<string>(CustomPaletteBgColors).includes(oldColor)
+        ) {
+            oldColor = defaultOldColor;
+        }
+    }
+
+    if (isBgSettings) {
+        const color = backgroundSettings.color;
+
+        if (!enableSeparateThemeColorSelector) {
+            if (isColorByTheme(color)) {
+                newColor = color[themeType] ?? Object.values(color).find((c) => c !== undefined);
+            } else {
+                newColor = color;
+            }
+        } else if (isColorByTheme(color)) {
+            newColor = color;
+        } else {
+            newColor = getColorSettingsWithValue(color, enableSeparateThemeColorSelector);
+        }
+    } else if (isDashColorPickersByThemeEnabled) {
+        newColor = getColorSettingsWithValue(
+            computeColorFromToken(oldColor ?? defaultOldColor),
+            enableSeparateThemeColorSelector,
+        );
+    }
+
+    return isBgSettings
+        ? {
+              background: undefined,
+              backgroundSettings: {color: newColor},
+          }
+        : {
+              background: {color: oldColor ?? defaultOldColor},
+              backgroundSettings: undefined,
+          };
+}
+
+export function getUpdatedTextData({
+    textColor,
+    textSettings,
+    allowCustomValues = false,
+    enableSeparateThemeColorSelector = true,
+    themeType = 'light',
+}: {
+    textColor: unknown;
+    textSettings: unknown;
+    allowCustomValues: boolean;
+    enableSeparateThemeColorSelector: boolean;
+    themeType?: ThemeType;
+}): {
+    textSettings: TitleTextSettings | undefined;
+    textColor: string | undefined;
+} {
+    const defaultOldColor = CustomPaletteTextColors.PRIMARY;
+    let oldColor: string | undefined;
+    let newColor: ColorSettings | undefined;
+
+    const isOldTextColor = typeof textColor === 'string';
+    const isTextColorSettings = isTextSettings(textSettings);
+
+    if (isOldTextColor) {
+        oldColor = textColor;
+
+        if (
+            !isDashColorPickersByThemeEnabled &&
+            !allowCustomValues &&
+            oldColor &&
+            !TITLE_WIDGET_TEXT_COLORS_PRESET.includes(oldColor) &&
+            !Object.values<string>(CustomPaletteTextColors).includes(oldColor)
+        ) {
+            oldColor = defaultOldColor;
+        }
+    }
+
+    if (isTextColorSettings) {
+        const color = textSettings.color;
+
+        if (!enableSeparateThemeColorSelector) {
+            if (isColorByTheme(color)) {
+                newColor = color[themeType] ?? Object.values(color).find((c) => c !== undefined);
+            } else {
+                newColor = color;
+            }
+        } else if (isColorByTheme(color)) {
+            newColor = color;
+        } else {
+            newColor = getColorSettingsWithValue(color, enableSeparateThemeColorSelector);
+        }
+    } else if (isDashColorPickersByThemeEnabled) {
+        newColor = getColorSettingsWithValue(
+            computeColorFromToken(oldColor ?? defaultOldColor),
+            enableSeparateThemeColorSelector,
+        );
+    }
+
+    return isTextColorSettings
+        ? {
+              textSettings: {color: newColor},
+              textColor: undefined,
+          }
+        : {
+              textSettings: undefined,
+              textColor: oldColor ?? defaultOldColor,
+          };
+}
+
+// TODO: remove this function in next PR
 export function getUpdatedBackgroundValue(
     background: unknown,
     allowCusomValues?: boolean,
     defaultOldColor?: string,
 ): Omit<BackgroundSettings, 'enabled'> | undefined {
-    if (isBackgroundSettings(background)) {
+    if (isOldBackgroundSettings(background)) {
         const newBg = getActualOldBackground(background, defaultOldColor);
 
         if (
