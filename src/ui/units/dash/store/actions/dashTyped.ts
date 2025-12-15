@@ -10,7 +10,6 @@ import type {
     PluginTitleProps,
     StateAndParamsMetaData,
 } from '@gravity-ui/dashkit';
-import type {ThemeType} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import {URL_QUERY, sdk} from 'index';
@@ -1068,9 +1067,6 @@ export const setCopiedItemData = (payload: {
     item: AddConfigItem;
     context?: CopiedConfigContext;
     options: AddNewItemOptions;
-    dashVisualSettings?: {
-        themeType?: ThemeType;
-    };
 }) => {
     return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
         const {tabId} = getState().dash;
