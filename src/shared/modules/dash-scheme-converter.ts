@@ -8,12 +8,8 @@ import {
     getDefaultDashWidgetBgColorByType,
 } from '../constants/widgets';
 import type {DashData, DashTab, DashTabItem, OldBackgroundSettings} from '../types';
-import {
-    DashTabConnectionKind,
-    DashTabItemControlElementType,
-    DashTabItemType,
-    isOldBackgroundSettings,
-} from '../types';
+import {DashTabConnectionKind, DashTabItemControlElementType, DashTabItemType} from '../types';
+import {isOldBackgroundSettings} from '../utils/dash';
 
 const DATE_FORMAT_V7 = 'YYYY-MM-DD';
 

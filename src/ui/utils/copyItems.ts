@@ -8,6 +8,7 @@ import {
     getColorSettingsWithValue,
 } from 'shared/constants';
 import {getActualOldBackground} from 'shared/modules/dash-scheme-converter';
+import {DashTabItemType, Feature} from 'shared/types';
 import type {
     BackgroundSettings,
     ColorSettings,
@@ -15,13 +16,11 @@ import type {
     TitleTextSettings,
 } from 'shared/types';
 import {
-    DashTabItemType,
-    Feature,
     isBackgroundSettings,
     isColorByTheme,
     isOldBackgroundSettings,
     isTextSettings,
-} from 'shared/types';
+} from 'shared/utils';
 import type {ConnectionsData} from 'ui/components/DialogRelations/types';
 
 import {isEnabledFeature} from './isEnabledFeature';
