@@ -1,8 +1,7 @@
 import React from 'react';
 
 import type {Plugin} from '@gravity-ui/dashkit';
-import {CustomPaletteBgColors} from 'shared/constants';
-import {isOldBackgroundSettings} from 'shared/utils';
+import {CustomPaletteBgColors, isBackgroundSettings} from 'shared';
 import type {ChartWidgetWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 
 import MarkdownProvider from '../../../../modules/markdownProvider';
@@ -18,18 +17,16 @@ type Props = WidgetPluginProps & CommonPluginProps;
 
 type PluginWidgetObjectSettings = CommonPluginSettings;
 
-type PluginWidget = Plugin<Props> &
-    CommonPluginSettings & {
-        setSettings: (settings: PluginWidgetObjectSettings) => PluginWidget;
-    };
+type PluginWidget = Plugin<Props> & {
+    setSettings: (settings: PluginWidgetObjectSettings) => PluginWidget;
+    scope?: string;
+};
 
 const widgetPlugin: PluginWidget = {
     type: 'widget',
     defaultLayout: {w: 12, h: 12},
     setSettings: (settings: PluginWidgetObjectSettings) => {
         widgetPlugin.scope = settings.scope;
-        widgetPlugin.globalBackground = settings.globalBackground;
-        widgetPlugin.globalBackgroundSettings = settings.globalBackgroundSettings;
         return widgetPlugin;
     },
     renderer: function Wrapper(
@@ -44,18 +41,13 @@ const widgetPlugin: PluginWidget = {
 
         const workbookId = props.context.workbookId;
         const enableAssistant = props.context.enableAssistant;
-        const propsBg = props.data.tabs?.[0]?.background;
-
-        let oldWidgetBg = isOldBackgroundSettings(propsBg) ? propsBg : undefined;
-        if (widgetPlugin.scope === 'dash' && !props.data.backgroundSettings) {
-            oldWidgetBg = {color: CustomPaletteBgColors.LIKE_CHART};
-        }
-
+        const propsBg =
+            widgetPlugin.scope === 'dash'
+                ? {color: CustomPaletteBgColors.LIKE_CHART}
+                : props.data.tabs?.[0]?.background;
         const {style} = usePreparedWrapSettings({
-            widgetBackground: oldWidgetBg,
-            globalBackground: widgetPlugin.globalBackground,
-            widgetBackgroundSettings: props.backgroundSettings,
-            globalBackgroundSettings: widgetPlugin.globalBackgroundSettings,
+            widgetBackground: isBackgroundSettings(propsBg) ? propsBg : undefined,
+            globalBackground: props.background,
             defaultOldColor:
                 widgetPlugin.scope === 'dash'
                     ? CustomPaletteBgColors.LIKE_CHART

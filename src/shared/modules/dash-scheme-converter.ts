@@ -7,14 +7,18 @@ import {
     DUPLICATED_WIDGET_BG_COLORS_PRESET,
     getDefaultDashWidgetBgColorByType,
 } from '../constants/widgets';
-import type {DashData, DashTab, DashTabItem, OldBackgroundSettings} from '../types';
-import {DashTabConnectionKind, DashTabItemControlElementType, DashTabItemType} from '../types';
-import {isOldBackgroundSettings} from '../utils/dash';
+import type {BackgroundSettings, DashData, DashTab, DashTabItem} from '../types';
+import {
+    DashTabConnectionKind,
+    DashTabItemControlElementType,
+    DashTabItemType,
+    isBackgroundSettings,
+} from '../types';
 
 const DATE_FORMAT_V7 = 'YYYY-MM-DD';
 
 export function getResultedOldBgColor(
-    oldBgColor: OldBackgroundSettings | undefined,
+    oldBgColor: BackgroundSettings | undefined,
     defaultColor: string | undefined,
 ): string | undefined {
     if (!oldBgColor) {
@@ -38,12 +42,12 @@ export function getResultedOldBgColor(
 }
 
 export function getActualOldBackground(
-    background: OldBackgroundSettings | undefined,
+    background: BackgroundSettings | undefined,
     defaultColor: string | undefined,
-): Omit<OldBackgroundSettings, 'enabled'> | undefined {
+): Omit<BackgroundSettings, 'enabled'> | undefined {
     if (
         background &&
-        isOldBackgroundSettings(background) &&
+        isBackgroundSettings(background) &&
         background.color &&
         DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(background.color)
     ) {
@@ -56,9 +60,6 @@ export function getActualOldBackground(
 }
 
 export function migrateBgColor(item: DashTabItem, defaultOldColor?: string): DashTabItem {
-    if (DashTabItemType.GroupControl === item.type || DashTabItemType.Control === item.type) {
-        return item;
-    }
     const newItem: DashTabItem = Object.assign({...item}, {data: Object.assign({}, item.data)});
 
     if ('background' in newItem.data) {

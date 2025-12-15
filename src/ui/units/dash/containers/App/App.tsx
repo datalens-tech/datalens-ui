@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import LocationChange from 'components/LocationChange/LocationChange';
 import {usePrevious} from 'hooks/usePrevious';
@@ -60,8 +59,6 @@ export function App({...routeProps}: RouteComponentProps) {
     const showAsideHeader = !isEmbedded && !isFullscreenMode && isAsideHeaderEnabled;
     const showMobileHeader = !isFullscreenMode && DL.IS_MOBILE;
 
-    const themeType = useThemeType();
-
     React.useMemo(() => {
         dispatch(initDashEditHistory());
     }, []);
@@ -114,7 +111,7 @@ export function App({...routeProps}: RouteComponentProps) {
         >
             <LocationChange onLocationChanged={locationChangeHandler} />
             <div className={b('content')} data-qa={DashBodyQa.App}>
-                <DashWrapper {...routeProps} themeType={themeType} />
+                <DashWrapper {...routeProps} />
             </div>
             {showFooter && <Footer />}
         </div>
