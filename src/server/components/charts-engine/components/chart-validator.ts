@@ -41,8 +41,10 @@ const MODEL_TABS: Record<string, Set<string>> = {
 
     [EDITOR_TYPE.MARKDOWN_NODE]: new Set([
         'js,params,shared,url',
+        'js,params,shared,url,ui',
         'js,meta,params,shared,url',
         'js,params,secrets,shared,url',
+        'js,params,secrets,shared,url,ui',
         'js,meta,params,secrets,shared,url',
     ]),
 
