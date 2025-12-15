@@ -6,7 +6,8 @@ import {Flex, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import ColorPickerInputWithPreset from 'ui/units/dash/containers/Dialogs/components/ColorPickerInputWithPreset/ColorPickerInputWithPreset';
 
-import {type ColorSettings, isColorByTheme} from '../../../../../../../shared';
+import type {ColorSettings} from '../../../../../../../shared/types';
+import {isColorByTheme} from '../../../../../../../shared/utils';
 
 import './ColorInputsGroup.scss';
 const b = block('color-inputs-group');

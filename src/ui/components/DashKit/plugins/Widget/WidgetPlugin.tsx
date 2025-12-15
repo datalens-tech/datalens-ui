@@ -1,7 +1,8 @@
 import React from 'react';
 
 import type {Plugin} from '@gravity-ui/dashkit';
-import {CustomPaletteBgColors, isOldBackgroundSettings} from 'shared';
+import {CustomPaletteBgColors} from 'shared/constants';
+import {isOldBackgroundSettings} from 'shared/utils';
 import type {ChartWidgetWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 
 import MarkdownProvider from '../../../../modules/markdownProvider';
