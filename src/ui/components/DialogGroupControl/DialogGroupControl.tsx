@@ -24,6 +24,15 @@ import './DialogGroupControl.scss';
 
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
+// TODO add to dash.group-controls-dialog.edit
+const mockI18n = (key: string) => {
+    const values: Record<string, string> = {
+        'label_selector-group': 'Группа селекторов',
+        'label_group-settings': 'Настройки группы',
+    };
+
+    return values[key];
+};
 
 export type DialogGroupControlFeaturesProps = {
     enableAutoheightDefault?: boolean;
@@ -98,7 +107,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
             onClose={handleClose}
             qa={ControlQA.dialogControl}
         >
-            <Dialog.Header caption={i18n('label_selector-group')} />
+            <Dialog.Header caption={mockI18n('label_selector-group')} />
             <Dialog.Body className={b('body')}>
                 <TabProvider value={activeTab} onUpdate={updateActiveTab}>
                     <TabList className={b('tab-list')}>
@@ -109,7 +118,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
                             value={SELECTOR_DIALOG_TABS.GROUP}
                             qa={DialogGroupControlQa.groupSettingsTab}
                         >
-                            {i18n('label_group-settings')}
+                            {mockI18n('label_group-settings')}
                         </Tab>
                     </TabList>
                     {activeTab === SELECTOR_DIALOG_TABS.SELECTORS && (

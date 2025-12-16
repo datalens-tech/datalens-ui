@@ -37,11 +37,12 @@ const i18n = I18n.keyset('dash.extended-settings-dialog.edit');
 
 // const dialogI18n = I18n.keyset('dash.control-dialog.edit');
 
-// TODO (global selectors): Add translations
+// TODO (global selectors): Add translations and delete "label_group-parameters", "label_title" keys
 const dialogI18n = (key: string) => {
     const values: Record<string, string> = {
         'validation_need-current-tab-impact':
             'Должен быть хотя бы один селектор, видимый на текущей вкладке',
+        'label_group-display': 'Отображение',
     };
 
     return values[key];
@@ -276,7 +277,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
 
     return (
         <React.Fragment>
-            <FormSection title={i18n('label_group-display')}>
+            <FormSection title={dialogI18n('label_group-display')}>
                 {showSelectorsGroupTitle && (
                     <FormRow className={b('row')} label={i18n('label_group-name')}>
                         <Flex gap={2}>
