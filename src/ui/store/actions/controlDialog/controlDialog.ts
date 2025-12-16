@@ -229,9 +229,11 @@ const isSelectorWithContext = (
 export const applyGroupControlDialog = ({
     setItemData,
     closeDialog,
+    groupTabError,
 }: {
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
+    groupTabError: boolean;
 }) => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
@@ -300,7 +302,7 @@ export const applyGroupControlDialog = ({
             return;
         }
 
-        if (!isEmpty(validatedSelectorsGroup.validation)) {
+        if (groupTabError) {
             dispatch(setActiveTab(SELECTOR_DIALOG_TABS.GROUP));
             return;
         }

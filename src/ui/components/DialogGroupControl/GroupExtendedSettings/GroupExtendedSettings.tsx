@@ -27,6 +27,8 @@ export type ExtendedSettingsDialogProps = {
     showSelectorsGroupTitle?: boolean;
     enableGlobalSelectors?: boolean;
     showErrors: boolean;
+    errorsIndexes: number[];
+    updateErrorsIndexes: (args: (indexes: number[]) => number[]) => void;
 };
 
 const b = block('group-extended-settings');
@@ -56,12 +58,13 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
     showSelectorsGroupTitle,
     enableGlobalSelectors,
     showErrors,
+    errorsIndexes,
+    updateErrorsIndexes,
 }) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const selectorValidation = useSelector(selectSelectorValidation);
     const tabId = useSelector(selectTabId);
 
-    const [errorsIndexes, setErrorsIndexes] = React.useState<number[]>([]);
     const dispatch = useDispatch();
 
     const dispatchGroupUpdate = React.useCallback(
@@ -135,11 +138,11 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
 
     const handleError = React.useCallback((index: number, isError: boolean) => {
         if (!isError) {
-            setErrorsIndexes((prevErrors) => prevErrors.filter((error) => error !== index));
+            updateErrorsIndexes((prevErrors) => prevErrors.filter((error) => error !== index));
             return;
         }
 
-        setErrorsIndexes((prevErrors) => {
+        updateErrorsIndexes((prevErrors) => {
             if (prevErrors.includes(index)) {
                 return prevErrors;
             }

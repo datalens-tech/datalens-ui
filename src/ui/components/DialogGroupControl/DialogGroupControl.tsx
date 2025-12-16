@@ -56,6 +56,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
     const {id, draftId} = useSelector(selectSelectorDialog);
 
     const [showErrors, setShowErrors] = React.useState(false);
+    const [groupTabErrorsIndexes, setGroupTabErrorsIndexes] = React.useState<number[]>([]);
 
     const dispatch = useDispatch();
     const handleApply = React.useCallback(() => {
@@ -65,9 +66,10 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
             applyGroupControlDialog({
                 setItemData,
                 closeDialog,
+                groupTabError: Boolean(groupTabErrorsIndexes.length),
             }),
         );
-    }, [closeDialog, dispatch, setItemData]);
+    }, [closeDialog, dispatch, groupTabErrorsIndexes.length, setItemData]);
 
     const activeTab = useSelector(selectControlDialogActiveTab) ?? SELECTOR_DIALOG_TABS.SELECTORS;
     const updateActiveTab = React.useCallback(
@@ -130,6 +132,8 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
                             showSelectorsGroupTitle={showSelectorsGroupTitle}
                             enableGlobalSelectors={enableGlobalSelectors}
                             showErrors={showErrors}
+                            errorsIndexes={groupTabErrorsIndexes}
+                            updateErrorsIndexes={setGroupTabErrorsIndexes}
                         />
                     )}
                 </TabProvider>
