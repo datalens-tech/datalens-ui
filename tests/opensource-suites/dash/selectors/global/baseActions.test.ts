@@ -1,10 +1,9 @@
 import {Page, expect} from '@playwright/test';
 
-import {ControlQA, DialogControlQa, Feature} from '../../../../../src/shared';
+import {ControlQA, DialogControlQa, Feature, UikitListQa} from '../../../../../src/shared';
 import DashboardPage from '../../../../page-objects/dashboard/DashboardPage';
 import {isEnabledFeature, openTestPage, slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
-import {ListQa} from '@gravity-ui/uikit';
 
 const PARAMS = {
     GLOBAL_SELECTOR_ALL_TABS: {
@@ -189,7 +188,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
             await expect(
                 page
-                    .locator(slct(ListQa.ACTIVE_ITEM))
+                    .locator(slct(UikitListQa.ACTIVE_ITEM))
                     .locator(slct(DialogControlQa.impactTypeValueSelectedTabs)),
             ).toBeVisible();
 
