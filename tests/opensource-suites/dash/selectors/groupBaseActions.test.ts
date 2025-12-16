@@ -141,7 +141,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
                 listSelector: slct(DialogGroupControlQa.placementControlList),
                 sourceIndex: 0,
                 targetIndex: 1,
-                moveXRation: 3,
+                moveXRation: 4,
             });
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
