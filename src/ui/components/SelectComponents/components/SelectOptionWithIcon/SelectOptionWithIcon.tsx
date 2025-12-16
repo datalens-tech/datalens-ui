@@ -15,10 +15,7 @@ const b = block('dl-select-option-with-icon');
 
 export const SelectOptionWithIcon = (props: BaseSelectOptionProps) => {
     return (
-        <div
-            className={b({disabled: props.option.disabled}, props.className)}
-            data-qa={props.option.qa}
-        >
+        <div className={b({disabled: props.option.disabled}, props.className)}>
             {props.option.data?.icon && (
                 <span className={b('icon', {disabled: props.disabledIcon})}>
                     {props.option.data?.icon}
