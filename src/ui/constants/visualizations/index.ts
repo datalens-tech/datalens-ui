@@ -20,6 +20,7 @@ export * from './line';
 export * from './metric';
 export * from './combined-chart';
 export * from './scatter';
+export * from './funnel';
 
 import {COMBINED_CHART_VISUALIZATION} from './combined-chart';
 import {DONUT_VISUALIZATION} from './donut';
