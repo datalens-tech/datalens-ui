@@ -13,7 +13,7 @@ import './ListWithMenu.scss';
 
 const b = block('list-with-menu');
 const i18n = I18n.keyset('component.list-with-menu.view');
-const ITEM_HEIGHT = 44;
+const ITEM_HEIGHT = 40;
 
 export interface ListWithMenuProps<T> {
     /* * Properties of the List component*/
