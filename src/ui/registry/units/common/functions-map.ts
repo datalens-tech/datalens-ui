@@ -59,11 +59,13 @@ import type {OpenDialogOrganizationInviteUsers} from './types/functions/openDial
 import type {RenderDialogRelatedEntitiesAlertHint} from './types/functions/renderDialogRelatedEntitiesAlertHint';
 import type {ResolveUsersByIds} from './types/functions/resolveUsersByIds';
 import type {SetEntryKey} from './types/functions/setEntryKey';
+import type {UseOrganizationData} from './types/functions/useOrganizationData';
 import type {UseSubjectsListId} from './types/functions/useSubjectsListId';
 
 export const commonFunctionsMap = {
     [EXAMPLE_FUNCTION]: makeFunctionTemplate<(arg: number) => string>(),
     useSubjectsListId: makeFunctionTemplate<() => UseSubjectsListId>(),
+    useOrganizationData: makeFunctionTemplate<() => UseOrganizationData>(),
     openDialogOrganizationInvite: makeFunctionTemplate<() => OpenDialogOrganizationInvite>(),
     openDialogOrganizationInviteUsers:
         makeFunctionTemplate<() => OpenDialogOrganizationInviteUsers>(),
