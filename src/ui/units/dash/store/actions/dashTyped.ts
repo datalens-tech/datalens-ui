@@ -1087,7 +1087,7 @@ export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
             });
         };
 
-        if (tabId && isSelectorItem) {
+        if (tabId && isSelectorItem && isEnabledFeature(Feature.EnableGlobalSelectors)) {
             const selectorData = payload.item.data as IsWidgetVisibleOnTabArgs['itemData'];
 
             const isWidgetVisible = isWidgetVisibleOnTab({
@@ -1097,6 +1097,7 @@ export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
 
             if (isWidgetVisible) {
                 dispatchEvents(payload);
+                return;
             }
 
             const hasEntryChanged = payload.context?.targetEntryId !== entryId;
