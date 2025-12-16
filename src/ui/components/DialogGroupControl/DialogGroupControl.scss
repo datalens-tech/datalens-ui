@@ -11,6 +11,7 @@
 
     &__selectors-list {
         height: fit-content;
+        overflow-y: auto;
     }
 
     &__divider {
