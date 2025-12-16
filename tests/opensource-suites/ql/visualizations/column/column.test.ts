@@ -19,7 +19,7 @@ datalensTest.describe('QL', () => {
             await qlPage.runScript();
         });
 
-        datalensTest.only(
+        datalensTest(
             'Check that fields order does not affect axis settings @screenshot',
             async ({page, config}, testInfo) => {
                 const qlPage = new QLPage({page});
