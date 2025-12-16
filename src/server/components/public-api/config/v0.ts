@@ -227,6 +227,24 @@ export const getPublicApiActionsV0 = <
                 tags: [ApiTag.QL],
             },
         },
+        updateQLChart: {
+            resolve: (api) => api.mix.__updateQLChart__,
+            openApi: {
+                summary: 'Update QL chart',
+                tags: [ApiTag.QL],
+                experimental: true,
+            },
+            rawAction: true,
+        },
+        createQLChart: {
+            resolve: (api) => api.mix.__createQLChart__,
+            openApi: {
+                summary: 'Create QL chart',
+                tags: [ApiTag.QL],
+                experimental: true,
+            },
+            rawAction: true,
+        },
 
         // Wizard
         getWizardChart: {

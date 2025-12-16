@@ -7,7 +7,7 @@ import {createTypedAction} from '../../../gateway-utils';
 
 const paramsSchema = z.looseObject({
     entryId: z.string(),
-    template: z.literal('datalens'),
+    template: z.literal('ql'),
     annotation: z
         .object({
             description: z.string(),
@@ -17,7 +17,7 @@ const paramsSchema = z.looseObject({
     data: z.looseObject({}),
 });
 
-export const __updateWizardChart__ = createTypedAction(
+export const __updateQLChart__ = createTypedAction(
     {
         paramsSchema,
         resultSchema: z.looseObject({}),

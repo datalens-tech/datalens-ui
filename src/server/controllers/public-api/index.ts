@@ -94,6 +94,10 @@ export const createPublicApiController = (chartsEngine?: ChartsEngine) => {
             const {paramsSchema} = validationSchema;
 
             if (action.rawAction) {
+                if (paramsSchema) {
+                    await validateRequestBody(paramsSchema, req.body);
+                }
+
                 await gatewayAction({
                     headers,
                     args: {req, res, chartsEngine},
