@@ -32,6 +32,8 @@ datalensTest.describe('Wizard', () => {
                 'ship_mode',
             );
 
+            // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+            await page.mouse.move(-1, -1);
             await expect(previewLoader).not.toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });

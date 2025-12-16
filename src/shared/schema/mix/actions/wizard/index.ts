@@ -7,7 +7,7 @@ export const wizardActions = {
     // WIP
     __getWizardChart__,
 
-    _deleteWizardChart: deleteWizardChart,
+    deleteWizardChart,
 
     // WIP
     __updateWizardChart__,
