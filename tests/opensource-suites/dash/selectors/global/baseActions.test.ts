@@ -195,16 +195,9 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
             // close popup of select
             await page.keyboard.press('Enter');
 
-            await dashboardPage.controlActions.dialogControl.impactTabsIdsSelector.click();
-
-            const selectedItems = page.locator(slct(UikitListQa.ACTIVE_ITEM));
-
-            await expect(selectedItems).toHaveCount(2);
-            await expect(selectedItems.nth(0)).toContainText(PARAMS.TAB_NAMES.TAB_1);
-            await expect(selectedItems.nth(1)).toContainText(PARAMS.TAB_NAMES.TAB_3);
-
-            // close popup of select
-            await page.keyboard.press('Enter');
+            await expect(
+                dashboardPage.controlActions.dialogControl.impactTabsIdsSelector.getLocator(),
+            ).toContainText(`${PARAMS.TAB_NAMES.TAB_1}, ${PARAMS.TAB_NAMES.TAB_3}`);
 
             await dashboardPage.controlActions.applyControlSettings();
             await dashboardPage.exitEditMode();
