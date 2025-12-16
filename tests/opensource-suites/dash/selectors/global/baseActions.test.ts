@@ -8,12 +8,12 @@ import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 const PARAMS = {
     GLOBAL_SELECTOR_ALL_TABS: {
         appearance: {title: 'All Tabs'},
-        items: ['Value 1', 'Value 2', 'Value 3'],
+        items: ['Value 1'],
         fieldName: 'global-field-all',
     },
     GLOBAL_SELECTOR_SELECTED_TABS: {
         appearance: {title: 'Selected Tabs'},
-        items: ['Option A', 'Option B', 'Option C'],
+        items: ['Option A'],
         fieldName: 'global-field-selected',
     },
     TAB_NAMES: {
@@ -61,12 +61,12 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
                 },
             });
 
-            // Verify selector appears on Tab 3
-            const selectorOnTab3 = dashboardPage.getSelectorLocatorByTitle({
+            // Verify selector appears on Tab 1
+            const selectorOnTab1 = dashboardPage.getSelectorLocatorByTitle({
                 title: PARAMS.GLOBAL_SELECTOR_ALL_TABS.appearance.title,
             });
-            await expect(selectorOnTab3).toBeVisible();
-            await expect(selectorOnTab3).toContainText(PARAMS.GLOBAL_SELECTOR_ALL_TABS.items[0]);
+            await expect(selectorOnTab1).toBeVisible();
+            await expect(selectorOnTab1).toContainText(PARAMS.GLOBAL_SELECTOR_ALL_TABS.items[0]);
 
             // Switch to Tab 2 and verify selector is visible
             await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_2});
@@ -75,12 +75,12 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
             });
             await expect(selectorOnTab2).toBeVisible();
 
-            // Switch to Tab 1 and verify selector is visible
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_1});
-            const selectorOnTab1 = dashboardPage.getSelectorLocatorByTitle({
+            // Switch to Tab 3 and verify selector is visible
+            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_3});
+            const selectorOnTab3 = dashboardPage.getSelectorLocatorByTitle({
                 title: PARAMS.GLOBAL_SELECTOR_ALL_TABS.appearance.title,
             });
-            await expect(selectorOnTab1).toBeVisible();
+            await expect(selectorOnTab3).toBeVisible();
         },
     );
 
@@ -99,18 +99,19 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
                         ...PARAMS.GLOBAL_SELECTOR_SELECTED_TABS,
                         defaultValue: PARAMS.GLOBAL_SELECTOR_SELECTED_TABS.items[0],
                         impactType: 'selectedTabs',
-                        impactTabsIds: [PARAMS.TAB_NAMES.TAB_2, PARAMS.TAB_NAMES.TAB_3],
+                        // Tab 1 is selected by default
+                        impactTabsIds: [PARAMS.TAB_NAMES.TAB_2],
                     });
                 },
             });
 
-            // Verify selector appears on Tab 3
+            // Verify selector appears on Tab 1
             const selectorTitle = PARAMS.GLOBAL_SELECTOR_SELECTED_TABS.appearance.title;
-            const selectorOnTab3 = dashboardPage.getSelectorLocatorByTitle({
+            const selectorOnTab1 = dashboardPage.getSelectorLocatorByTitle({
                 title: selectorTitle,
             });
-            await expect(selectorOnTab3).toBeVisible();
-            await expect(selectorOnTab3).toContainText(
+            await expect(selectorOnTab1).toBeVisible();
+            await expect(selectorOnTab1).toContainText(
                 PARAMS.GLOBAL_SELECTOR_SELECTED_TABS.items[0],
             );
 
@@ -121,12 +122,12 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
             });
             await expect(selectorOnTab2).toBeVisible();
 
-            // Switch to Tab 1 and verify selector is NOT visible
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_1});
-            const selectorOnTab1 = page.locator(slct(ControlQA.chartkitControl)).filter({
+            // Switch to Tab 3 and verify selector is NOT visible
+            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_3});
+            const selectorOnTab3 = page.locator(slct(ControlQA.chartkitControl)).filter({
                 hasText: selectorTitle,
             });
-            await expect(selectorOnTab1).not.toBeVisible();
+            await expect(selectorOnTab3).not.toBeVisible();
         },
     );
 
@@ -172,7 +173,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
             await dashboardPage.controlActions.editSelectorBySettings({
                 impactType: 'selectedTabs',
-                impactTabsIds: [PARAMS.TAB_NAMES.TAB_1, PARAMS.TAB_NAMES.TAB_3],
+                impactTabsIds: [PARAMS.TAB_NAMES.TAB_3],
             });
 
             await dashboardPage.controlActions.applyControlSettings();
@@ -243,19 +244,24 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
                         impactType: 'allTabs',
                     });
 
+                    await dashboardPage.clickFirstControlSettingsButton();
+
                     // Add "Selected Tabs" selector (Tab 1 and Tab 2)
-                    await dashboardPage.controlActions.addSelector({
+                    await dashboardPage.controlActions.addSelectorToGroup({
                         ...PARAMS.GLOBAL_SELECTOR_SELECTED_TABS,
                         defaultValue: PARAMS.GLOBAL_SELECTOR_SELECTED_TABS.items[0],
                         impactType: 'selectedTabs',
-                        impactTabsIds: [PARAMS.TAB_NAMES.TAB_1, PARAMS.TAB_NAMES.TAB_2],
+                        // Tab 1 is selected by default
+                        impactTabsIds: [PARAMS.TAB_NAMES.TAB_2],
                     });
 
                     // Add "Current Tab" selector (default behavior)
-                    await dashboardPage.controlActions.addSelector({
+                    await dashboardPage.controlActions.addSelectorToGroup({
                         ...CURRENT_TAB_SELECTOR,
                         defaultValue: CURRENT_TAB_SELECTOR.items[0],
                     });
+
+                    await page.click(slct(ControlQA.dialogControlApplyBtn));
                 },
             });
 
