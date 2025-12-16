@@ -39,7 +39,7 @@ export const GroupControlBody: React.FC<{
 
     return (
         <div className={props.className}>
-            <FormSection title={i18n('label_data')}>
+            <FormSection title={i18n('label_general')}>
                 <FormRow label={i18n('label_source')} className={b('row')}>
                     <SelectorTypeSelect showExternalType={false} mode="select" />
                 </FormRow>
