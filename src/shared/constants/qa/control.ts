@@ -65,7 +65,7 @@ export const DialogGroupControlQa = {
     applyButtonCheckbox: 'apply-button-checkbox',
     resetButtonCheckbox: 'reset-button-checkbox',
     updateControlOnChangeCheckbox: 'update-controls-button-checkbox',
-    extendedSettingsButton: 'extended-settings-button',
+    groupSettingsButton: 'group-settings-button',
     placementControlList: 'selectors-placement-control-list',
     extendedSettingsApplyButton: 'selectors-extended-settings-apply-button',
     controlMenu: 'control-menu',

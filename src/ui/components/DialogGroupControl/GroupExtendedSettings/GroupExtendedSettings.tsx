@@ -1,13 +1,13 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import {Checkbox, Dialog, Flex, HelpMark, List, TextInput} from '@gravity-ui/uikit';
+import {Flex, HelpMark, List, Switch, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DialogGroupControlQa, TitlePlacementOption} from 'shared';
-import {BackButton} from 'ui/components/ControlComponents/BackButton/BackButton';
+import {CONTROLS_PLACEMENT_MODE, DialogGroupControlQa, TitlePlacementOption} from 'shared';
+import {ImpactTypeSelect} from 'ui/components/ControlComponents/Sections/CommonSettingsSection/ImpactTypeSelect/ImpactTypeSelect';
+import {FormSection} from 'ui/components/FormSection/FormSection';
 import {
     updateControlsValidation,
     updateSelectorsGroup,
@@ -17,31 +17,18 @@ import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 import {selectTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {isWidgetVisibleOnTab} from 'ui/units/dash/utils/selectors';
 
-import {CONTROLS_PLACEMENT_MODE} from '../../constants/dialogs';
-import {ImpactTypeSelect} from '../ControlComponents/Sections/CommonSettingsSection/ImpactTypeSelect/ImpactTypeSelect';
-import {FormSection} from '../FormSection/FormSection';
+import {ControlPlacementRow} from './ControlPlacementRow';
 
-import {ControlPlacementRow} from './ControlPlacementRow/ControlPlacementRow';
-
-import './DialogExtendedSettings.scss';
-
-export const DIALOG_EXTENDED_SETTINGS = Symbol('DIALOG_EXTENDED_SETTINGS');
+import './GroupExtendedSettings.scss';
 
 export type ExtendedSettingsDialogProps = {
-    onClose: () => void;
-
     selectorsGroupTitlePlaceholder?: string;
     enableAutoheightDefault?: boolean;
     showSelectorsGroupTitle?: boolean;
     enableGlobalSelectors?: boolean;
 };
 
-export type OpenDialogExtendedSettingsArgs = {
-    id: typeof DIALOG_EXTENDED_SETTINGS;
-    props: ExtendedSettingsDialogProps;
-};
-
-const b = block('extended-settings-dialog');
+const b = block('group-extended-settings');
 
 const i18n = I18n.keyset('dash.extended-settings-dialog.edit');
 
@@ -62,8 +49,7 @@ const resetAutoValues = (group: SelectorDialogState[]) =>
         item.placementMode === CONTROLS_PLACEMENT_MODE.AUTO ? {...item, width: ''} : item,
     );
 
-const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
-    onClose,
+export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
     selectorsGroupTitlePlaceholder,
     enableAutoheightDefault,
     showSelectorsGroupTitle,
@@ -93,7 +79,8 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
         });
     }, []);
 
-    const handleApplyClick = React.useCallback(() => {
+    // TODO - вынести
+    const _handleApplyClick = React.useCallback(() => {
         if (errorsIndexes.length) {
             setShowErrors(true);
             return;
@@ -125,16 +112,7 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                 }),
             );
         }
-        onClose();
-    }, [
-        errorsIndexes.length,
-        itemsState,
-        dispatch,
-        selectorsGroup,
-        tabId,
-        selectorValidation,
-        onClose,
-    ]);
+    }, [errorsIndexes.length, itemsState, dispatch, selectorsGroup, tabId, selectorValidation]);
 
     const handlePlacementModeUpdate = React.useCallback(
         (targetIndex: number, newType: SelectorDialogState['placementMode']) => {
@@ -299,143 +277,116 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
     const showImpactTypeSelect = isMultipleSelectors && enableGlobalSelectors;
 
     return (
-        <Dialog onClose={onClose} open={true} className={b()}>
-            <Dialog.Header
-                className={b('header')}
-                caption={i18n('label_title')}
-                insertBefore={<BackButton onClose={onClose} />}
-            />
-            <Dialog.Body className={b('body')}>
-                <FormSection title={i18n('label_group-parameters')}>
-                    {showSelectorsGroupTitle && (
-                        <FormRow className={b('row')} label={i18n('label_group-name')}>
-                            <Flex gap={2}>
-                                <Checkbox
-                                    className={b('checkbox')}
-                                    checked={selectorsGroup.showGroupName}
-                                    onUpdate={handleChangeShowGroupName}
-                                    size="l"
-                                />
-                                <TextInput
-                                    disabled={!selectorsGroup.showGroupName}
-                                    value={selectorsGroup.groupName}
-                                    onUpdate={handleChangeGroupName}
-                                    placeholder={selectorsGroupTitlePlaceholder}
-                                />
-                            </Flex>
-                        </FormRow>
-                    )}
+        <React.Fragment>
+            <FormSection title={i18n('label_group-display')}>
+                {showSelectorsGroupTitle && (
+                    <FormRow className={b('row')} label={i18n('label_group-name')}>
+                        <Flex gap={2}>
+                            <Switch
+                                checked={selectorsGroup.showGroupName}
+                                onUpdate={handleChangeShowGroupName}
+                            />
+                            <TextInput
+                                disabled={!selectorsGroup.showGroupName}
+                                value={selectorsGroup.groupName}
+                                onUpdate={handleChangeGroupName}
+                                placeholder={selectorsGroupTitlePlaceholder}
+                            />
+                        </Flex>
+                    </FormRow>
+                )}
+                <FormRow
+                    className={b('row')}
+                    label={
+                        <React.Fragment>
+                            {i18n('label_apply-button-checkbox')}
+                            <HelpMark className={b('help-icon')}>
+                                {i18n('context_apply-button')}
+                            </HelpMark>
+                        </React.Fragment>
+                    }
+                >
+                    <Switch
+                        checked={selectorsGroup.buttonApply}
+                        onUpdate={handleChangeButtonApply}
+                        qa={DialogGroupControlQa.applyButtonCheckbox}
+                    />
+                </FormRow>
+                <FormRow
+                    className={b('row')}
+                    label={
+                        <React.Fragment>
+                            {i18n('label_reset-button-checkbox')}
+                            <HelpMark className={b('help-icon')}>
+                                {i18n('context_reset-button')}
+                            </HelpMark>
+                        </React.Fragment>
+                    }
+                >
+                    <Switch
+                        checked={selectorsGroup.buttonReset}
+                        onUpdate={handleChangeButtonReset}
+                        qa={DialogGroupControlQa.resetButtonCheckbox}
+                    />
+                </FormRow>
+                {showAutoHeight && (
+                    <FormRow className={b('row')} label={i18n('label_autoheight-checkbox')}>
+                        <Switch
+                            checked={selectorsGroup.autoHeight}
+                            onUpdate={handleChangeAutoHeight}
+                            qa={DialogGroupControlQa.autoHeightCheckbox}
+                        />
+                    </FormRow>
+                )}
+                {showUpdateControlsOnChange && (
                     <FormRow
                         className={b('row')}
                         label={
                             <React.Fragment>
-                                {i18n('label_apply-button-checkbox')}
+                                {i18n('label_update-controls-on-change')}
                                 <HelpMark className={b('help-icon')}>
-                                    {i18n('context_apply-button')}
+                                    {i18n('context_update-controls-on-change')}
                                 </HelpMark>
                             </React.Fragment>
                         }
                     >
-                        <Checkbox
-                            className={b('checkbox')}
-                            checked={selectorsGroup.buttonApply}
-                            onUpdate={handleChangeButtonApply}
-                            size="l"
-                            qa={DialogGroupControlQa.applyButtonCheckbox}
+                        <Switch
+                            checked={selectorsGroup.updateControlsOnChange}
+                            onUpdate={handleChangeUpdateControls}
+                            qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
                         />
                     </FormRow>
-                    <FormRow
-                        className={b('row')}
-                        label={
-                            <React.Fragment>
-                                {i18n('label_reset-button-checkbox')}
-                                <HelpMark className={b('help-icon')}>
-                                    {i18n('context_reset-button')}
-                                </HelpMark>
-                            </React.Fragment>
-                        }
-                    >
-                        <Checkbox
-                            className={b('checkbox')}
-                            checked={selectorsGroup.buttonReset}
-                            onUpdate={handleChangeButtonReset}
-                            size="l"
-                            qa={DialogGroupControlQa.resetButtonCheckbox}
-                        />
-                    </FormRow>
-                    {showAutoHeight && (
-                        <FormRow className={b('row')} label={i18n('label_autoheight-checkbox')}>
-                            <Checkbox
-                                className={b('checkbox')}
-                                checked={selectorsGroup.autoHeight}
-                                onUpdate={handleChangeAutoHeight}
-                                size="l"
-                                qa={DialogGroupControlQa.autoHeightCheckbox}
-                            />
-                        </FormRow>
-                    )}
-                    {showUpdateControlsOnChange && (
-                        <FormRow
-                            className={b('row')}
-                            label={
-                                <React.Fragment>
-                                    {i18n('label_update-controls-on-change')}
-                                    <HelpMark className={b('help-icon')}>
-                                        {i18n('context_update-controls-on-change')}
-                                    </HelpMark>
-                                </React.Fragment>
-                            }
-                        >
-                            <Checkbox
-                                className={b('checkbox')}
-                                checked={selectorsGroup.updateControlsOnChange}
-                                onUpdate={handleChangeUpdateControls}
-                                size="l"
-                                qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
-                            />
-                        </FormRow>
-                    )}
+                )}
 
-                    {showImpactTypeSelect && (
-                        <ImpactTypeSelect
-                            isGroupSettings={true}
-                            groupImpactType={selectorsGroup.impactType}
-                            groupImpactTabsIds={selectorsGroup.impactTabsIds}
-                            onRaiseTabVisibilityProblem={handleCurrentTabVisibilityProblem}
+                {showImpactTypeSelect && (
+                    <ImpactTypeSelect
+                        isGroupSettings={true}
+                        groupImpactType={selectorsGroup.impactType}
+                        groupImpactTabsIds={selectorsGroup.impactTabsIds}
+                        onRaiseTabVisibilityProblem={handleCurrentTabVisibilityProblem}
+                    />
+                )}
+            </FormSection>
+            {isMultipleSelectors && (
+                <FormSection title={i18n('label_selectors-representation')}>
+                    <div className={b('note')}>{i18n('label_note')}</div>
+                    <div className={b('selectors')}>
+                        <List
+                            qa={DialogGroupControlQa.placementControlList}
+                            items={itemsState}
+                            filterable={false}
+                            sortable={true}
+                            virtualized={false}
+                            onSortEnd={({oldIndex, newIndex}) => moveItem(oldIndex, newIndex)}
+                            itemClassName={b('list-item-container')}
+                            renderItem={renderControlPlacementRow}
                         />
+                    </div>
+                    {showErrors && (
+                        <div className={b('error')}>{i18n('label_field-validation')}</div>
                     )}
                 </FormSection>
-                {isMultipleSelectors && (
-                    <FormSection title={i18n('label_selectors-representation')}>
-                        <div className={b('note')}>{i18n('label_note')}</div>
-                        <div className={b('selectors')}>
-                            <List
-                                qa={DialogGroupControlQa.placementControlList}
-                                items={itemsState}
-                                filterable={false}
-                                sortable={true}
-                                virtualized={false}
-                                onSortEnd={({oldIndex, newIndex}) => moveItem(oldIndex, newIndex)}
-                                itemClassName={b('list-item-container')}
-                                renderItem={renderControlPlacementRow}
-                            />
-                        </div>
-                        {showErrors && (
-                            <div className={b('error')}>{i18n('label_field-validation')}</div>
-                        )}
-                    </FormSection>
-                )}
-            </Dialog.Body>
-            <Dialog.Footer
-                textButtonCancel={i18n('button_cancel')}
-                textButtonApply={i18n('button_save')}
-                propsButtonCancel={{view: 'flat'}}
-                propsButtonApply={{qa: DialogGroupControlQa.extendedSettingsApplyButton}}
-                onClickButtonApply={handleApplyClick}
-                onClickButtonCancel={onClose}
-            />
-        </Dialog>
+            )}
+        </React.Fragment>
     );
 };
-
-DialogManager.registerDialog(DIALOG_EXTENDED_SETTINGS, DialogExtendedSettings);
