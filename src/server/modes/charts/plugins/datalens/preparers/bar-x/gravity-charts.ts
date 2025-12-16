@@ -211,11 +211,17 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
     }
 
     let xAxis: ChartData['xAxis'] = {};
-    if (isCategoriesXAxis) {
+    if (isCategoriesXAxis && xCategories?.length) {
         xAxis = {
             type: 'category',
             // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
-            categories: xCategories,
+            categories: xCategories.map((category) => {
+                if (typeof category === 'number') {
+                    return String(category);
+                }
+
+                return category;
+            }),
             labels: {
                 html: isHtmlField(xField) || isMarkdownField(xField) || isMarkupField(xField),
             },
