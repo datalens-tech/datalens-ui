@@ -4,6 +4,7 @@ import {ControlQA, DialogControlQa, Feature} from '../../../../../src/shared';
 import DashboardPage from '../../../../page-objects/dashboard/DashboardPage';
 import {isEnabledFeature, openTestPage, slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
+import {ListQa} from '@gravity-ui/uikit';
 
 const PARAMS = {
     GLOBAL_SELECTOR_ALL_TABS: {
@@ -184,9 +185,11 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
             await dashboardPage.clickFirstControlSettingsButton();
 
+            await dashboardPage.controlActions.dialogControl.impactTypeSelector.click();
+
             await expect(
                 page
-                    .locator(slct(DialogControlQa.impactTypeSelect))
+                    .locator(slct(ListQa.ACTIVE_ITEM))
                     .locator(slct(DialogControlQa.impactTypeValueSelectedTabs)),
             ).toBeVisible();
 
@@ -259,6 +262,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
                     await dashboardPage.controlActions.addSelectorToGroup({
                         ...CURRENT_TAB_SELECTOR,
                         defaultValue: CURRENT_TAB_SELECTOR.items[0],
+                        impactType: 'currentTab',
                     });
 
                     await page.click(slct(ControlQA.dialogControlApplyBtn));
