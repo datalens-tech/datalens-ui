@@ -118,12 +118,12 @@ export const getPreparedCopiedSelectorData = ({
         }
 
         // Check if widget is still not visible after updating data
-        const isWidgetNotVisibleAfterUpdate = !isWidgetVisibleOnTab({
+        const isWidgetVisibleAfterUpdate = isWidgetVisibleOnTab({
             itemData: updatedData,
             tabId,
         });
 
-        if (isWidgetNotVisibleAfterUpdate) {
+        if (!isWidgetVisibleAfterUpdate) {
             openFailedCopyGlobalItemDialog(dispatch);
             return null;
         }
