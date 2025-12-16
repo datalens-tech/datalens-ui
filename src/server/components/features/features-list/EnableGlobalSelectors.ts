@@ -4,7 +4,8 @@ import {createFeatureConfig} from '../utils';
 export default createFeatureConfig({
     name: Feature.EnableGlobalSelectors,
     state: {
-        development: false,
-        production: false,
+        // TODO: TURN TO FALSE
+        development: true,
+        production: true,
     },
 });
