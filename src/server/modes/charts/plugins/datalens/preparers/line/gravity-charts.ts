@@ -19,6 +19,7 @@ import type {
 import {
     AxisMode,
     PlaceholderId,
+    getIsNavigatorEnabled,
     getXAxisMode,
     isDateField,
     isHtmlField,
@@ -29,6 +30,7 @@ import {
 import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
+import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slider';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
@@ -122,8 +124,16 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
 
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
+    const inNavigatorEnabled = getIsNavigatorEnabled(shared);
 
     const seriesData: ExtendedLineSeries[] = preparedData.graphs.map<LineSeries>((graph: any) => {
+        const rangeSlider = inNavigatorEnabled
+            ? getSeriesRangeSliderConfig({
+                  extraSettings: shared.extraSettings,
+                  seriesName: graph.title,
+              })
+            : undefined;
+
         return {
             name: graph.title,
             type: 'line',
@@ -174,6 +184,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 colorValue: graph.colorValue,
                 shapeValue: graph.shapeValue,
             },
+            rangeSlider,
         };
     });
 
