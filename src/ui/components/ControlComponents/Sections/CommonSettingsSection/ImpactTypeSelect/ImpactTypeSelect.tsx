@@ -6,7 +6,7 @@ import {Flex, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashTabItemType, Feature} from 'shared';
+import {DashTabItemType, DialogControlQa, Feature} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
@@ -97,6 +97,7 @@ export const ImpactTypeSelect = ({
         return tabs.map((tab) => ({
             value: tab.id,
             content: tab.title,
+            qa: DialogControlQa.impactTabsIdsSelectOption,
         }));
     }, [tabs]);
 
@@ -121,12 +122,14 @@ export const ImpactTypeSelect = ({
                         impactTabsIds={impactTabsIds}
                     />
                 ),
+                qa: DialogControlQa.impactTypeValueCurrentTab,
             },
             {
                 value: IMPACT_TYPE_OPTION_VALUE.ALL_TABS,
                 content: LABEL_BY_SCOPE_MAP[IMPACT_TYPE_OPTION_VALUE.ALL_TABS],
                 data: {icon: getIconByImpactType(IMPACT_TYPE_OPTION_VALUE.ALL_TABS)},
                 disabled: needDisableIncorrectOptions && selectorsGroup.impactType !== 'allTabs',
+                qa: DialogControlQa.impactTypeValueAllTabs,
             },
             {
                 value: IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS,
@@ -138,6 +141,7 @@ export const ImpactTypeSelect = ({
                     needDisableIncorrectOptions &&
                     selectorsGroup.impactType !== 'selectedTabs' &&
                     selectorsGroup.impactType !== 'allTabs',
+                qa: DialogControlQa.impactTypeValueSelectedTabs,
             },
         ];
 
@@ -160,6 +164,7 @@ export const ImpactTypeSelect = ({
                     data: {
                         icon: getIconByImpactType(groupImpactTypeItem),
                     },
+                    qa: DialogControlQa.impactTypeValueAsGroup,
                 },
                 ...baseOptions,
             ];
@@ -298,6 +303,7 @@ export const ImpactTypeSelect = ({
             <Flex direction="column" gap={2}>
                 <FieldWrapper error={impactTypeValidation}>
                     <Select
+                        qa={DialogControlQa.impactTypeSelect}
                         value={[currentImpactType]}
                         onUpdate={handleImpactTypeChange}
                         width="max"
@@ -311,6 +317,7 @@ export const ImpactTypeSelect = ({
                 {showTabsSelector && (
                     <FieldWrapper error={impactTabsIdsValidation}>
                         <Select
+                            qa={DialogControlQa.impactTabsIdsSelect}
                             value={impactTabsIds}
                             onUpdate={handleImpactTabsIdsChange}
                             width="max"

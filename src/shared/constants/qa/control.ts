@@ -53,6 +53,14 @@ export const DialogControlQa = {
     typeControlSelect: 'type-control-select',
     typeControlInput: 'type-control-input',
     typeControlCheckbox: 'type-control-checkbox',
+
+    impactTypeSelect: 'dialog-control-impact-type-select',
+    impactTabsIdsSelect: 'dialog-control-impact-tabs-ids-select',
+    impactTypeValueAllTabs: 'dialog-control-impact-type-value-all-tabs',
+    impactTypeValueSelectedTabs: 'dialog-control-impact-type-value-selected-tabs',
+    impactTypeValueCurrentTab: 'dialog-control-impact-type-value-current-tab',
+    impactTypeValueAsGroup: 'dialog-control-impact-type-value-as-group',
+    impactTabsIdsSelectOption: 'dialog-control-impact-tabs-ids-select-option',
 };
 
 export const DialogControlParamsQa = {

@@ -60,7 +60,7 @@ import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
 import {EditEntityButton} from '../workbook/EditEntityButton';
 import {Workbook} from '../workbook/Workbook';
 import {ChartkitControl} from './ChartkitControl';
-import ControlActions from './ControlActions';
+import ControlActions from './controlActions/ControlActions';
 import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
 import Description from './Description';
