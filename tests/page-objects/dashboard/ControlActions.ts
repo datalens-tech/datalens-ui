@@ -161,10 +161,8 @@ class ControlActions {
         }
 
         if (options && options.buttonApply) {
-            await this.page.locator(slct(DialogGroupControlQa.groupSettingsButton)).click();
-            await this.page
-                .locator(`${slct(DialogGroupControlQa.applyButtonCheckbox)} input`)
-                .setChecked(true);
+            await this.page.locator(slct(DialogGroupControlQa.groupSettingsTab)).click();
+            await this.page.locator(slct(DialogGroupControlQa.applyButtonSwitch)).click();
 
             await this.page
                 .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)

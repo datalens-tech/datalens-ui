@@ -976,7 +976,7 @@ class DashboardPage extends BasePage {
     async disableAutoupdateInFirstControl() {
         await this.enterEditMode();
         await this.clickFirstControlSettingsButton();
-        await this.page.locator(slct(DialogGroupControlQa.groupSettingsButton)).click();
+        await this.page.locator(slct(DialogGroupControlQa.groupSettingsTab)).click();
         await this.page
             .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)
             .setChecked(false);

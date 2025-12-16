@@ -133,7 +133,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             await dashboardPage.enterEditMode();
             await dashboardPage.clickFirstControlSettingsButton();
             await dashboardPage.controlActions.waitForDialog();
-            await page.locator(slct(DialogGroupControlQa.groupSettingsButton)).click();
+            await page.locator(slct(DialogGroupControlQa.groupSettingsTab)).click();
 
             // the controls of placement prevent you from clicking on the middle of item, so
             // moveXRation is 3 (x position of click is width of item / 3)

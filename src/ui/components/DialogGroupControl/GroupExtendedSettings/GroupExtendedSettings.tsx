@@ -307,7 +307,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                     <Switch
                         checked={selectorsGroup.buttonApply}
                         onUpdate={handleChangeButtonApply}
-                        qa={DialogGroupControlQa.applyButtonCheckbox}
+                        qa={DialogGroupControlQa.applyButtonSwitch}
                     />
                 </FormRow>
                 <FormRow
@@ -324,7 +324,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                     <Switch
                         checked={selectorsGroup.buttonReset}
                         onUpdate={handleChangeButtonReset}
-                        qa={DialogGroupControlQa.resetButtonCheckbox}
+                        qa={DialogGroupControlQa.resetButtonSwitch}
                     />
                 </FormRow>
                 {showAutoHeight && (
@@ -332,7 +332,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         <Switch
                             checked={selectorsGroup.autoHeight}
                             onUpdate={handleChangeAutoHeight}
-                            qa={DialogGroupControlQa.autoHeightCheckbox}
+                            qa={DialogGroupControlQa.autoHeightSwitch}
                         />
                     </FormRow>
                 )}

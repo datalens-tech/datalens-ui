@@ -107,7 +107,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
                         </Tab>
                         <Tab
                             value={SELECTOR_DIALOG_TABS.GROUP}
-                            qa={DialogGroupControlQa.groupSettingsButton}
+                            qa={DialogGroupControlQa.groupSettingsTab}
                         >
                             {i18n('label_group-settings')}
                         </Tab>
