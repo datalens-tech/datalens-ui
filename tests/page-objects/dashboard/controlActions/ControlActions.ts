@@ -326,7 +326,7 @@ class ControlActions {
         if (setting.impactType) {
             await this.dialogControl.impactTypeSelector.click();
             await this.dialogControl.impactTypeSelector.selectListItemByQa(
-                IMPACT_TYPE_QA_BY_VALUE[setting.impactType],
+                slct(IMPACT_TYPE_QA_BY_VALUE[setting.impactType]),
             );
 
             // If impact type is "selectedTabs", select the specified tabs
