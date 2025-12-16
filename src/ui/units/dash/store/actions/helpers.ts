@@ -16,6 +16,7 @@ import type {
     DashTabItemWidget,
     StringParams,
 } from 'shared';
+import {openDialogDefault} from 'ui/components/DialogDefault/DialogDefault';
 import {URL_QUERY} from 'ui/constants/common';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 
@@ -23,14 +24,114 @@ import ChartKit from '../../../../libs/DatalensChartkit';
 import {registry} from '../../../../registry';
 import {DASHKIT_STATE_VERSION} from '../../modules/constants';
 import type {GlobalItem} from '../../typings/dash';
-import {isGlobalWidgetVisibleByMainSetting, isGroupItemVisibleOnTab} from '../../utils/selectors';
+import {
+    type IsWidgetVisibleOnTabArgs,
+    isGlobalWidgetVisibleByMainSetting,
+    isGroupItemVisibleOnTab,
+    isWidgetVisibleOnTab,
+} from '../../utils/selectors';
 import type {DashState} from '../typings/dash';
 import {createNewTabState} from '../utils';
 
 import type {SetItemDataArgs, TabsHashStates} from './dashTyped';
 
+import type {DashDispatch} from './index';
+
 export const NOT_FOUND_ERROR_TEXT = 'No entry found';
 export const DOES_NOT_EXIST_ERROR_TEXT = "The entity doesn't exist";
+
+// TODO (global selectors): add translations
+const TEMP_I18N_DASH_MAIN_VIEW = {
+    'title_failed-copy-global-item': 'Не удалось скопировать',
+    'label_failed-copy-global-item':
+        'Настройки скопированного селектора делают невозможным отображение его на текущей вкладке. Поменяйти настройки в целевом селекторе перед копированием',
+    button_close: 'Закрыть',
+};
+
+export const openFailedCopyGlobalItemDialog = (dispatch: DashDispatch) => {
+    dispatch(
+        openDialogDefault({
+            // i18n('dash.main.view', 'title_failed-copy-global-item')
+            caption: TEMP_I18N_DASH_MAIN_VIEW['title_failed-copy-global-item'],
+            // i18n('dash.main.view', 'label_failed-copy-global-item')
+            message: TEMP_I18N_DASH_MAIN_VIEW['label_failed-copy-global-item'],
+            // i18n('dash.main.view', 'button_close')
+            textButtonCancel: TEMP_I18N_DASH_MAIN_VIEW['button_close'],
+            propsButtonCancel: {
+                view: 'action',
+            },
+            size: 's',
+        }),
+    );
+};
+
+export const getPreparedCopiedSelectorData = ({
+    selectorData,
+    hasEntryChanged,
+    hasTabChanged,
+    isWidgetVisible,
+    tabId,
+    dispatch,
+}: {
+    selectorData: IsWidgetVisibleOnTabArgs['itemData'];
+    hasEntryChanged: boolean;
+    hasTabChanged: boolean;
+    isWidgetVisible: boolean;
+    tabId: string;
+    dispatch: DashDispatch;
+}) => {
+    const updatedData = {
+        ...selectorData,
+        ...(selectorData.group ? {group: [...selectorData.group]} : {}),
+    };
+
+    const hasNotVisibleWidgetOnNewTab = !hasEntryChanged && hasTabChanged && !isWidgetVisible;
+
+    // when copying to another tab, we replace the non-existent IDs with the current one.
+    if (hasEntryChanged) {
+        if (selectorData.impactTabsIds?.length) {
+            updatedData.impactTabsIds = [tabId];
+        }
+
+        if (selectorData.group && updatedData.group) {
+            const updatedGroup = updatedData.group;
+            selectorData.group.forEach((groupItem, index) => {
+                if (groupItem.impactTabsIds?.length) {
+                    updatedGroup[index] = {...groupItem, impactTabsIds: [tabId]};
+                }
+            });
+        }
+        return updatedData;
+        // if we copy and paste within the same dash, the selectors with "current tab" should be re-linked to the new tab.
+    } else if (hasNotVisibleWidgetOnNewTab) {
+        if (selectorData.impactType === 'currentTab') {
+            updatedData.impactTabsIds = [tabId];
+        }
+
+        if (selectorData.group && updatedData.group) {
+            const updatedGroup = updatedData.group;
+            selectorData.group.forEach((groupItem, index) => {
+                if (groupItem.impactType === 'currentTab') {
+                    updatedGroup[index] = {...groupItem, impactTabsIds: [tabId]};
+                }
+            });
+        }
+
+        // Check if widget is still not visible after updating data
+        const isWidgetVisibleAfterUpdate = isWidgetVisibleOnTab({
+            itemData: updatedData,
+            tabId,
+        });
+
+        if (!isWidgetVisibleAfterUpdate) {
+            openFailedCopyGlobalItemDialog(dispatch);
+            return null;
+        }
+        return updatedData;
+    }
+
+    return updatedData;
+};
 
 // TODO remove id CHARTS-2692
 export {migrateBgColor, preparedData} from 'shared/modules/dash-scheme-converter';

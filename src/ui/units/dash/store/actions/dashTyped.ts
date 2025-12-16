@@ -4,6 +4,7 @@ import type {
     AddConfigItem,
     AddNewItemOptions,
     Config,
+    ConfigItemData,
     DashKit,
     ItemsStateAndParams,
     PluginTextProps,
@@ -30,7 +31,6 @@ import type {
     RecursivePartial,
 } from 'shared';
 import {DashTabItemType, EntryScope, EntryUpdateMode, Feature} from 'shared';
-import {openDialogDefault} from 'ui/components/DialogDefault/DialogDefault';
 import type {AppDispatch} from 'ui/store';
 import {
     addEditHistoryPoint,
@@ -55,11 +55,8 @@ import {LOCK_DURATION, Mode} from '../../modules/constants';
 import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
-import {
-    type IsWidgetVisibleOnTabArgs,
-    isItemGlobal,
-    isWidgetVisibleOnTab,
-} from '../../utils/selectors';
+import type {IsWidgetVisibleOnTabArgs} from '../../utils/selectors';
+import {isItemGlobal, isWidgetVisibleOnTab} from '../../utils/selectors';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
 import {
@@ -72,7 +69,11 @@ import {
 import type {DashState, UpdateTabsWithGlobalStateArgs} from '../typings/dash';
 
 import {save} from './base/actions';
-import {migrateDataSettings, processTabForGlobalUpdate} from './helpers';
+import {
+    getPreparedCopiedSelectorData,
+    migrateDataSettings,
+    processTabForGlobalUpdate,
+} from './helpers';
 
 import type {DashDispatch} from './index';
 
@@ -1056,61 +1057,72 @@ export const updateAllDashSettings = (data: {
     };
 };
 
-// TODO (global selectors): add translations
-const TEMP_I18N_DASH_MAIN_VIEW = {
-    'title_failed-copy-global-item': 'Не удалось скопировать',
-    'label_failed-copy-global-item':
-        'Настройки скопированного селектора делают невозможным отображение его на текущей вкладке. Поменяйти настройки в целевом селекторе перед копированием',
-    button_close: 'Закрыть',
-};
-
-export const setCopiedItemData = (payload: {
+type SetCopiedItemDataPayload = {
     item: AddConfigItem;
     context?: CopiedConfigContext;
     options: AddNewItemOptions;
     dashVisualSettings?: {
         themeType?: ThemeType;
     };
-}) => {
+};
+
+export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
     return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
-        const {tabId} = getState().dash;
+        const {
+            tabId,
+            entry: {entryId},
+        } = getState().dash;
 
         const isSelectorItem =
             payload.item.type === DashTabItemType.Control ||
             payload.item.type === DashTabItemType.GroupControl;
 
-        if (
-            tabId &&
-            isSelectorItem &&
-            !isWidgetVisibleOnTab({
-                itemData: payload.item.data as IsWidgetVisibleOnTabArgs['itemData'],
+        const dispatchEvents = (result: SetCopiedItemDataPayload) => {
+            batch(() => {
+                dispatch({
+                    type: actionTypes.SET_COPIED_ITEM_DATA as any, // TODO move to TS,
+                    payload: result,
+                });
+                dispatch(addDashEditHistoryPoint());
+            });
+        };
+
+        if (tabId && isSelectorItem && isEnabledFeature(Feature.EnableGlobalSelectors)) {
+            const selectorData = payload.item.data as IsWidgetVisibleOnTabArgs['itemData'];
+
+            const isWidgetVisible = isWidgetVisibleOnTab({
+                itemData: selectorData,
                 tabId,
-            })
-        ) {
-            dispatch(
-                openDialogDefault({
-                    // i18n('dash.main.view', 'title_failed-copy-global-item')
-                    caption: TEMP_I18N_DASH_MAIN_VIEW['title_failed-copy-global-item'],
-                    // i18n('dash.main.view', 'label_failed-copy-global-item')
-                    message: TEMP_I18N_DASH_MAIN_VIEW['label_failed-copy-global-item'],
-                    // i18n('dash.main.view', 'button_close')
-                    textButtonCancel: TEMP_I18N_DASH_MAIN_VIEW['button_close'],
-                    propsButtonCancel: {
-                        view: 'action',
-                    },
-                    size: 's',
-                }),
-            );
+            });
+
+            if (isWidgetVisible) {
+                dispatchEvents(payload);
+                return;
+            }
+
+            const hasEntryChanged = payload.context?.targetEntryId !== entryId;
+            const hasTabChanged = payload.context?.targetDashTabId !== tabId;
+
+            const updatedData = getPreparedCopiedSelectorData({
+                selectorData,
+                hasEntryChanged,
+                hasTabChanged,
+                isWidgetVisible,
+                tabId,
+                dispatch,
+            });
+
+            if (updatedData) {
+                dispatchEvents({
+                    ...payload,
+                    item: {...payload.item, data: updatedData as ConfigItemData},
+                });
+            }
+
             return;
         }
 
-        batch(() => {
-            dispatch({
-                type: actionTypes.SET_COPIED_ITEM_DATA as any, // TODO move to TS,
-                payload,
-            });
-            dispatch(addDashEditHistoryPoint());
-        });
+        dispatchEvents(payload);
     };
 };
 
