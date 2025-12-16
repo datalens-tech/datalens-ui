@@ -1,9 +1,9 @@
 .group-control-dialog {
+    $sidebarWidth: 260px;
+
     height: min(728px, 90vh);
     min-height: 400px;
     display: flex;
-
-    --_--sidebar-width: 260px;
 
     &__body {
         padding-top: 0;
@@ -56,7 +56,7 @@
 
     &__tab-selectors {
         display: grid;
-        grid-template-columns: var(--_--sidebar-width) 33px 1fr;
+        grid-template-columns: $sidebarWidth 33px 1fr;
         height: calc(100% - 62px);
     }
 
