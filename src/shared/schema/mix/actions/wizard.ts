@@ -61,7 +61,7 @@ export const wizardActions = {
         },
     ),
 
-    _deleteWizardChart: createTypedAction(
+    deleteWizardChart: createTypedAction(
         {
             paramsSchema: deleteWizardChartArgsSchema,
             resultSchema: deleteWizardChartResultSchema,
