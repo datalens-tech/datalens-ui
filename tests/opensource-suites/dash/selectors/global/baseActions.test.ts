@@ -192,6 +192,9 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
                     .locator(slct(DialogControlQa.impactTypeValueSelectedTabs)),
             ).toBeVisible();
 
+            // close popup of select
+            await page.keyboard.press('Enter');
+
             const selectedItems = page
                 .locator(slct(DialogControlQa.impactTabsIdsSelect))
                 .locator(slct(DialogControlQa.impactTabsIdsSelectOption));
