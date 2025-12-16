@@ -26,6 +26,7 @@ export type ExtendedSettingsDialogProps = {
     enableAutoheightDefault?: boolean;
     showSelectorsGroupTitle?: boolean;
     enableGlobalSelectors?: boolean;
+    showErrors: boolean;
 };
 
 const b = block('group-extended-settings');
@@ -54,92 +55,82 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
     enableAutoheightDefault,
     showSelectorsGroupTitle,
     enableGlobalSelectors,
+    showErrors,
 }) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const selectorValidation = useSelector(selectSelectorValidation);
     const tabId = useSelector(selectTabId);
 
-    const [itemsState, setItemsState] = React.useState(selectorsGroup.group);
     const [errorsIndexes, setErrorsIndexes] = React.useState<number[]>([]);
-    const [showErrors, setShowErrors] = React.useState(false);
     const dispatch = useDispatch();
 
-    React.useEffect(() => {
-        if (!errorsIndexes.length) {
-            setShowErrors(false);
-        }
-    }, [errorsIndexes.length]);
-
-    const moveItem = React.useCallback((oldIndex: number, newIndex: number) => {
-        setItemsState((prevItemsState) => {
-            const dragItem = prevItemsState[oldIndex];
-            const newItemsState = prevItemsState.filter((_, index) => index !== oldIndex);
-            newItemsState.splice(newIndex, 0, dragItem);
-            return newItemsState;
-        });
-    }, []);
-
-    // TODO - вынести
-    const _handleApplyClick = React.useCallback(() => {
-        if (errorsIndexes.length) {
-            setShowErrors(true);
-            return;
-        }
-        const updatedItemsState = resetAutoValues(itemsState);
-        dispatch(
-            updateSelectorsGroup({
-                ...selectorsGroup,
-                group: updatedItemsState,
-            }),
-        );
-
-        if (
-            tabId &&
-            (selectorsGroup.validation.currentTabVisibility ||
-                selectorValidation.currentTabVisibility) &&
-            isWidgetVisibleOnTab({itemData: selectorsGroup, tabId})
-        ) {
+    const dispatchGroupUpdate = React.useCallback(
+        (newGroup: SelectorDialogState[]) => {
+            const updatedGroup = resetAutoValues(newGroup);
             dispatch(
-                updateControlsValidation({
-                    groupValidation: {
-                        ...selectorsGroup.validation,
-                        currentTabVisibility: undefined,
-                    },
-                    itemsValidation: {
-                        ...selectorValidation,
-                        currentTabVisibility: undefined,
-                    },
+                updateSelectorsGroup({
+                    ...selectorsGroup,
+                    group: updatedGroup,
                 }),
             );
-        }
-    }, [errorsIndexes.length, itemsState, dispatch, selectorsGroup, tabId, selectorValidation]);
+
+            if (
+                tabId &&
+                (selectorsGroup.validation.currentTabVisibility ||
+                    selectorValidation.currentTabVisibility) &&
+                isWidgetVisibleOnTab({itemData: selectorsGroup, tabId})
+            ) {
+                dispatch(
+                    updateControlsValidation({
+                        groupValidation: {
+                            ...selectorsGroup.validation,
+                            currentTabVisibility: undefined,
+                        },
+                        itemsValidation: {
+                            ...selectorValidation,
+                            currentTabVisibility: undefined,
+                        },
+                    }),
+                );
+            }
+        },
+        [dispatch, selectorsGroup, tabId, selectorValidation],
+    );
+
+    const moveItem = React.useCallback(
+        (oldIndex: number, newIndex: number) => {
+            const dragItem = selectorsGroup.group[oldIndex];
+            const newGroup = selectorsGroup.group.filter((_, index) => index !== oldIndex);
+            newGroup.splice(newIndex, 0, dragItem);
+            dispatchGroupUpdate(newGroup);
+        },
+        [selectorsGroup.group, dispatchGroupUpdate],
+    );
 
     const handlePlacementModeUpdate = React.useCallback(
         (targetIndex: number, newType: SelectorDialogState['placementMode']) => {
-            setItemsState((prevItemsState) => {
-                return prevItemsState.map((item, index) => {
-                    if (index !== targetIndex) {
-                        return item;
-                    }
-                    return {...item, placementMode: newType};
-                });
+            const newGroup = selectorsGroup.group.map((item, index) => {
+                if (index !== targetIndex) {
+                    return item;
+                }
+                return {...item, placementMode: newType};
             });
+            dispatchGroupUpdate(newGroup);
         },
-        [],
+        [selectorsGroup.group, dispatchGroupUpdate],
     );
 
     const handlePlacementValueUpdate = React.useCallback(
         (targetIndex: number, newValue: string) => {
-            setItemsState((prevItemsState) => {
-                return prevItemsState.map((item, index) => {
-                    if (index !== targetIndex) {
-                        return item;
-                    }
-                    return {...item, width: newValue};
-                });
+            const newGroup = selectorsGroup.group.map((item, index) => {
+                if (index !== targetIndex) {
+                    return item;
+                }
+                return {...item, width: newValue};
             });
+            dispatchGroupUpdate(newGroup);
         },
-        [],
+        [selectorsGroup.group, dispatchGroupUpdate],
     );
 
     const handleError = React.useCallback((index: number, isError: boolean) => {
@@ -172,7 +163,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                 />
             );
         },
-        [handleError, handlePlacementModeUpdate, handlePlacementValueUpdate, showErrors],
+        [handlePlacementModeUpdate, handlePlacementValueUpdate, handleError, showErrors],
     );
 
     const isMultipleSelectors = selectorsGroup.group?.length > 1;
@@ -257,13 +248,17 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
             }),
         );
 
-        setItemsState((prevItemsState) => {
-            return prevItemsState.map((item) => ({
-                ...item,
-                validation: {...item.validation, currentTabVisibility: validationError},
-            }));
-        });
-    }, [dispatch]);
+        const updatedGroup = selectorsGroup.group.map((item) => ({
+            ...item,
+            validation: {...item.validation, currentTabVisibility: validationError},
+        }));
+        dispatch(
+            updateSelectorsGroup({
+                ...selectorsGroup,
+                group: updatedGroup,
+            }),
+        );
+    }, [dispatch, selectorsGroup]);
 
     const showAutoHeight =
         !enableAutoheightDefault &&
@@ -373,7 +368,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                     <div className={b('selectors')}>
                         <List
                             qa={DialogGroupControlQa.placementControlList}
-                            items={itemsState}
+                            items={selectorsGroup.group}
                             filterable={false}
                             sortable={true}
                             virtualized={false}
@@ -382,7 +377,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                             renderItem={renderControlPlacementRow}
                         />
                     </div>
-                    {showErrors && (
+                    {showErrors && errorsIndexes.length > 0 && (
                         <div className={b('error')}>{i18n('label_field-validation')}</div>
                     )}
                 </FormSection>

@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import {DashTabItemType, TitlePlacementOption} from 'shared';
 import type {
     DashTabItem,
@@ -59,6 +60,7 @@ import {
 } from '../../selectors/controlDialog';
 import {getValidScopeFields} from './helpers';
 import {selectTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {SELECTOR_DIALOG_TABS} from 'ui/store/constants/controlDialog';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
@@ -204,6 +206,20 @@ export const updateControlsValidation = (
     };
 };
 
+export const SET_ACTIVE_TAB = Symbol('controlDialog/SET_ACTIVE_TAB');
+
+export type SetActiveTabAction = {
+    type: typeof SET_ACTIVE_TAB;
+    payload: string;
+};
+
+export const setActiveTab = (payload: SetActiveTabAction['payload']): SetActiveTabAction => {
+    return {
+        type: SET_ACTIVE_TAB,
+        payload,
+    };
+};
+
 const isSelectorWithContext = (
     selector: SelectorDialogState,
 ): selector is PastedSelectorDialogState => {
@@ -276,9 +292,16 @@ export const applyGroupControlDialog = ({
                         validation: activeSelectorValidation,
                     }),
                 );
+                dispatch(setActiveTab(SELECTOR_DIALOG_TABS.SELECTORS));
                 return;
             }
             dispatch(setActiveSelectorIndex({activeSelectorIndex: firstInvalidIndex}));
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.SELECTORS));
+            return;
+        }
+
+        if (!isEmpty(validatedSelectorsGroup.validation)) {
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.GROUP));
             return;
         }
 

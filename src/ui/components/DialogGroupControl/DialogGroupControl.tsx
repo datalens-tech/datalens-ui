@@ -9,8 +9,10 @@ import {ControlQA, DialogGroupControlQa} from 'shared/constants/qa';
 import {
     applyGroupControlDialog,
     copyControlToStorage,
+    setActiveTab,
 } from 'ui/store/actions/controlDialog/controlDialog';
-import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
+import {SELECTOR_DIALOG_TABS} from 'ui/store/constants/controlDialog';
+import {selectControlDialogActiveTab, selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
 
 import {GroupControlBody} from './GroupControlBody/GroupControlBody';
@@ -22,11 +24,6 @@ import './DialogGroupControl.scss';
 
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
-
-const TABS = {
-    SELECTORS: 'selectors',
-    GROUP: 'group-settings',
-} as const;
 
 export type DialogGroupControlFeaturesProps = {
     enableAutoheightDefault?: boolean;
@@ -58,10 +55,12 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
 }) => {
     const {id, draftId} = useSelector(selectSelectorDialog);
 
-    const [activeTab, setActiveTab] = React.useState<string>('selectors');
+    const [showErrors, setShowErrors] = React.useState(false);
 
     const dispatch = useDispatch();
     const handleApply = React.useCallback(() => {
+        setShowErrors(true);
+
         dispatch(
             applyGroupControlDialog({
                 setItemData,
@@ -69,6 +68,14 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
             }),
         );
     }, [closeDialog, dispatch, setItemData]);
+
+    const activeTab = useSelector(selectControlDialogActiveTab) ?? SELECTOR_DIALOG_TABS.SELECTORS;
+    const updateActiveTab = React.useCallback(
+        (tabId: string) => {
+            dispatch(setActiveTab(tabId));
+        },
+        [dispatch],
+    );
 
     const handleClose = React.useCallback(() => {
         closeDialog();
@@ -91,14 +98,19 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
         >
             <Dialog.Header caption={i18n('label_selector-group')} />
             <Dialog.Body className={b('body')}>
-                <TabProvider value={activeTab} onUpdate={(t) => setActiveTab(t)}>
+                <TabProvider value={activeTab} onUpdate={updateActiveTab}>
                     <TabList className={b('tab-list')}>
-                        <Tab value={TABS.SELECTORS}>{i18n('label_selectors-list')}</Tab>
-                        <Tab value={TABS.GROUP} qa={DialogGroupControlQa.groupSettingsButton}>
+                        <Tab value={SELECTOR_DIALOG_TABS.SELECTORS}>
+                            {i18n('label_selectors-list')}
+                        </Tab>
+                        <Tab
+                            value={SELECTOR_DIALOG_TABS.GROUP}
+                            qa={DialogGroupControlQa.groupSettingsButton}
+                        >
                             {i18n('label_group-settings')}
                         </Tab>
                     </TabList>
-                    {activeTab === TABS.SELECTORS && (
+                    {activeTab === SELECTOR_DIALOG_TABS.SELECTORS && (
                         <div className={b('tab-selectors')}>
                             <GroupControlSidebar handleCopyItem={handleCopyItem} />
                             <Divider orientation="vertical" className={b('divider')} />
@@ -111,12 +123,13 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
                             />
                         </div>
                     )}
-                    {activeTab === TABS.GROUP && (
+                    {activeTab === SELECTOR_DIALOG_TABS.GROUP && (
                         <GroupExtendedSettings
                             selectorsGroupTitlePlaceholder={selectorsGroupTitlePlaceholder}
                             enableAutoheightDefault={enableAutoheightDefault}
                             showSelectorsGroupTitle={showSelectorsGroupTitle}
                             enableGlobalSelectors={enableGlobalSelectors}
+                            showErrors={showErrors}
                         />
                     )}
                 </TabProvider>

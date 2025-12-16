@@ -25,6 +25,7 @@ import {
     SET_LAST_USED_DATASET_ID,
     SET_LAST_USED_CONNECTION_ID,
     UPDATE_CONTROLS_VALIDATION,
+    SET_ACTIVE_TAB,
 } from '../actions/controlDialog/controlDialog';
 import type {
     SetLastUsedDatasetIdAction,
@@ -36,6 +37,7 @@ import type {
     UpdateSelectorsGroupAction,
     AddSelectorToGroupAction,
     UpdateControlsValidationAction,
+    SetActiveTabAction,
 } from '../actions/controlDialog/controlDialog';
 import {getActualUniqueFieldNameValidation, getInitialDefaultValue} from '../utils/controlDialog';
 import {I18n} from 'i18n';
@@ -53,6 +55,7 @@ export type ControlDialogStateItemMeta = {
 };
 export interface ControlDialogState {
     activeSelectorIndex: number;
+    activeTab: string | null;
     selectorsGroup: SelectorsGroupDialogState;
     selectorDialog: SelectorDialogState;
     openedDialog: DashTabItemType | null;
@@ -191,6 +194,7 @@ export function getSelectorGroupDialogFromData(data: DashTabItemGroupControlData
 
 const getInitialState = (): ControlDialogState => ({
     activeSelectorIndex: 0,
+    activeTab: null,
     selectorsGroup: getGroupSelectorDialogInitialState(),
     selectorDialog: getSelectorDialogInitialState(),
     openedDialog: null,
@@ -213,7 +217,8 @@ export function controlDialog(
         | AddSelectorToGroupAction
         | SetLastUsedDatasetIdAction
         | SetLastUsedConnectionIdAction
-        | UpdateControlsValidationAction,
+        | UpdateControlsValidationAction
+        | SetActiveTabAction,
 ): ControlDialogState {
     const {type} = action;
 
@@ -560,6 +565,12 @@ export function controlDialog(
                 };
             }
         }
+
+        case SET_ACTIVE_TAB:
+            return {
+                ...state,
+                activeTab: action.payload,
+            };
 
         default:
             return state;
