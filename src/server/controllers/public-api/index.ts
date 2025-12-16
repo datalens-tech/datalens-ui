@@ -3,6 +3,7 @@ import type {SchemasByScope} from '@gravity-ui/gateway';
 import {AppError, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 
 import {getValidationSchema} from '../../../shared/schema/gateway-utils';
+import type {ChartsEngine} from '../../components/charts-engine';
 import {registerActionToOpenApi} from '../../components/public-api';
 import {registry} from '../../registry';
 import type {AnyApiServiceActionConfig} from '../../types/gateway';
@@ -11,7 +12,7 @@ import Utils from '../../utils';
 import {PUBLIC_API_ERRORS, PublicApiError} from './constants';
 import {parseRequestApiVersion, prepareError, validateRequestBody} from './utils';
 
-export const createPublicApiController = () => {
+export const createPublicApiController = (chartsEngine?: ChartsEngine) => {
     const {gatewayApi} = registry.getGatewayApi<SchemasByScope>();
     const {baseConfig, getAuthArgs} = registry.getPublicApiConfig();
     const schemasByScope = registry.getGatewaySchemasByScope();
@@ -92,19 +93,29 @@ export const createPublicApiController = () => {
 
             const {paramsSchema} = validationSchema;
 
-            const validatedArgs = paramsSchema
-                ? await validateRequestBody(paramsSchema, req.body)
-                : undefined;
+            if (action.rawAction) {
+                await gatewayAction({
+                    headers,
+                    args: {req, res, chartsEngine},
+                    ctx,
+                    requestId,
+                    authArgs: getAuthArgs?.(req, res),
+                });
+            } else {
+                const validatedArgs = paramsSchema
+                    ? await validateRequestBody(paramsSchema, req.body)
+                    : undefined;
 
-            const result = await gatewayAction({
-                headers,
-                args: validatedArgs,
-                ctx,
-                requestId,
-                authArgs: getAuthArgs?.(req, res),
-            });
+                const result = await gatewayAction({
+                    headers,
+                    args: validatedArgs,
+                    ctx,
+                    requestId,
+                    authArgs: getAuthArgs?.(req, res),
+                });
 
-            res.status(200).send(result.responseData);
+                res.status(200).send(result.responseData);
+            }
         } catch (err: unknown) {
             const {status, message, code, details} = prepareError(err);
 
