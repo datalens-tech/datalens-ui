@@ -256,27 +256,3 @@ export function getUpdatedTextData({
               textColor: oldColor ?? defaultOldColor,
           };
 }
-
-// TODO: remove this function in next PR
-export function getUpdatedBackgroundValue(
-    background: unknown,
-    allowCusomValues?: boolean,
-    defaultOldColor?: string,
-): Omit<BackgroundSettings, 'enabled'> | undefined {
-    if (isOldBackgroundSettings(background)) {
-        const newBg = getActualOldBackground(background, defaultOldColor);
-
-        if (
-            allowCusomValues ||
-            WIDGET_BG_COLORS_PRESET.includes(background.color) ||
-            Object.values<string>(CustomPaletteBgColors).includes(background.color)
-        ) {
-            return newBg;
-        }
-    }
-    return defaultOldColor
-        ? {
-              color: defaultOldColor,
-          }
-        : undefined;
-}

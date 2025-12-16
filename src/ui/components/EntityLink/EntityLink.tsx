@@ -18,12 +18,7 @@ export const EntityLink: React.FC<EntityLinkProps> = React.memo(({title, entity}
     return (
         <div className={b()}>
             {title && <div className={b('title')}>{title}</div>}
-            <EntityRow
-                className={b('row')}
-                entity={entity}
-                showRelationButton={false}
-                showRightSide={false}
-            />
+            <EntityRow className={b('row')} entity={entity} showRightSide={false} />
         </div>
     );
 });

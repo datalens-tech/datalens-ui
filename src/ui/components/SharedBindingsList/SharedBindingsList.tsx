@@ -22,6 +22,7 @@ interface SharedBindingsListProps {
     entities: SharedEntryBindingsItem[];
     isLoading?: boolean;
     getListItemActions?: (item: SharedEntryBindingsItem) => DropdownMenuItem[];
+    onClickRelationButton?: (entry: SharedEntryBindingsItem) => void;
 }
 
 export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({
@@ -29,6 +30,7 @@ export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({
     searchProps,
     isLoading,
     title = getSharedEntryMockText('shared-bindings-list-title'),
+    onClickRelationButton,
     getListItemActions,
 }) => {
     const renderList = () => {
@@ -61,7 +63,16 @@ export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({
                 selectedItemIndex={-1}
                 renderItem={(item) => {
                     const actions = getListItemActions?.(item) ?? [];
-                    return <EntityRow entity={item} actions={actions} />;
+                    const onClick = onClickRelationButton
+                        ? () => onClickRelationButton?.(item)
+                        : undefined;
+                    return (
+                        <EntityRow
+                            onClickRelationButton={onClick}
+                            entity={item}
+                            actions={actions}
+                        />
+                    );
                 }}
             />
         );
