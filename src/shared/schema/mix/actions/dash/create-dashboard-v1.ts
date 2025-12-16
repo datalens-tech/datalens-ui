@@ -2,7 +2,6 @@ import {getTypedApi} from '../../..';
 import {DASH_CURRENT_SCHEME_VERSION, EntryScope} from '../../../..';
 import {Dash} from '../../../../../server/components/sdk';
 import {createTypedAction} from '../../../gateway-utils';
-import {DEFAULT_SETTINGS} from '../../constants/dash';
 import {
     createDashV1ArgsSchema,
     createDashV1ResultSchema,
@@ -23,7 +22,6 @@ export const createDashboardV1 = createTypedAction(
 
         const data = {
             ...argsData,
-            settings: argsData.settings ?? DEFAULT_SETTINGS,
             schemeVersion: DASH_CURRENT_SCHEME_VERSION,
         };
 

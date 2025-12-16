@@ -5,7 +5,7 @@ import {dataSchema} from '../../../../zod-schemas/dash';
 
 import {dashSchemaV1} from './dash-v1';
 
-const createDashData = dataSchema.partial({settings: true}).omit({schemeVersion: true});
+const createDashData = dataSchema.omit({schemeVersion: true});
 
 export const createDashV1ArgsSchema = z.strictObject({
     entry: z.strictObject({
