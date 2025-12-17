@@ -29,6 +29,7 @@ const RowContainer = ({children}: {children?: React.ReactNode}) => {
     return <div className={b()}>{children}</div>;
 };
 
+// CHARTS-12296
 const FormRowComponent: React.FC<FormRowComponentProps> = (props) => {
     const {form, innerForm, readonly, queryReadonly} = props;
 

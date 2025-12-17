@@ -27,6 +27,7 @@ type Props = {
     readonly?: boolean;
 };
 
+// CHARTS-12296
 export const ConnectorForm = ({type, readonly = false}: Props) => {
     const dispatch = useDispatch();
     const schema = useSelector(formSchemaSelector);
