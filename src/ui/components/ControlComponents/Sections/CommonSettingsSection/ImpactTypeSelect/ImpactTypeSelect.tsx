@@ -86,7 +86,7 @@ export const ImpactTypeSelect = ({
     );
 
     const {validateTabVisibility} = useTabVisibilityValidation({
-        isGroupControl,
+        hasMultipleSelectors,
         isGroupSettings,
         currentTabId,
         impactTabsIds,
@@ -206,9 +206,8 @@ export const ImpactTypeSelect = ({
             updatedImpactTabsIds?: string[] | null;
         }) => {
             if (
-                !isGroupControl ||
-                (!selectorsGroup.validation.currentTabVisibility &&
-                    !selectorDialog.validation.currentTabVisibility)
+                !selectorsGroup.validation.currentTabVisibility &&
+                !selectorDialog.validation.currentTabVisibility
             ) {
                 return;
             }
@@ -229,7 +228,6 @@ export const ImpactTypeSelect = ({
         [
             currentTabId,
             dispatch,
-            isGroupControl,
             selectorDialog.validation.currentTabVisibility,
             selectorsGroup.validation.currentTabVisibility,
         ],

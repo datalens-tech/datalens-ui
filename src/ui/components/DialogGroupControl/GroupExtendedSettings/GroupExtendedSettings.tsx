@@ -351,6 +351,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         groupImpactTabsIds={selectorsGroup.impactTabsIds}
                         selectorWidth={SELECTOR_WIDTH}
                         className={b('row')}
+                        hasMultipleSelectors={isMultipleSelectors}
                     />
                 )}
             </FormSection>
