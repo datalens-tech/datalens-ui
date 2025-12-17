@@ -1,12 +1,10 @@
 import React from 'react';
 
-import {Gear} from '@gravity-ui/icons';
-import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {DashTabItemControlData, DashTabItemGroupControlData} from 'shared';
-import {DashTabItemControlSourceType, DashTabItemType, DialogGroupControlQa} from 'shared';
+import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
 import {TabMenu} from 'ui/components/TabMenu/TabMenu';
 import type {UpdateState} from 'ui/components/TabMenu/types';
 import {TabActionType} from 'ui/components/TabMenu/types';
@@ -16,7 +14,6 @@ import {
     setSelectorDialogItem,
     updateSelectorsGroup,
 } from 'ui/store/actions/controlDialog/controlDialog';
-import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
     getSelectorDialogFromData,
     getSelectorGroupDialogFromData,
@@ -29,12 +26,19 @@ import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {selectCurrentTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {isGroupItemVisibleOnTab} from 'ui/units/dash/utils/selectors';
 
-import {DIALOG_EXTENDED_SETTINGS} from '../../DialogExtendedSettings/DialogExtendedSettings';
-
 import '../DialogGroupControl.scss';
 
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
+
+// TODO (global selectors): Add translations
+const mockI18n = (key: string) => {
+    const values: Record<string, string> = {
+        'button_add-selector': 'Добавить',
+    };
+
+    return values[key];
+};
 
 const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
     buttonApply: false,
@@ -91,19 +95,11 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
     return preparedPasteItems;
 };
 
-export const GroupControlSidebar: React.FC<{
+type GroupControlSidebarProps = {
     handleCopyItem: (itemIndex: number) => void;
-    selectorsGroupTitlePlaceholder?: string;
-    enableAutoheightDefault?: boolean;
-    showSelectorsGroupTitle?: boolean;
-    enableGlobalSelectors?: boolean;
-}> = ({
-    handleCopyItem,
-    selectorsGroupTitlePlaceholder,
-    enableAutoheightDefault,
-    showSelectorsGroupTitle,
-    enableGlobalSelectors,
-}) => {
+};
+
+export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleCopyItem}) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
     const currentTabId = useSelector(selectCurrentTabId);
@@ -145,32 +141,6 @@ export const GroupControlSidebar: React.FC<{
         return i18n('label_default-tab', {index: defaultTabIndex});
     }, [defaultTabIndex]);
 
-    const handleClosePlacementDialog = React.useCallback(() => {
-        dispatch(closeDialog());
-    }, [dispatch]);
-
-    const handleExtendedSettingsClick = React.useCallback(() => {
-        dispatch(
-            openDialog({
-                id: DIALOG_EXTENDED_SETTINGS,
-                props: {
-                    onClose: handleClosePlacementDialog,
-                    selectorsGroupTitlePlaceholder,
-                    enableAutoheightDefault,
-                    showSelectorsGroupTitle,
-                    enableGlobalSelectors,
-                },
-            }),
-        );
-    }, [
-        dispatch,
-        handleClosePlacementDialog,
-        selectorsGroupTitlePlaceholder,
-        enableAutoheightDefault,
-        showSelectorsGroupTitle,
-        enableGlobalSelectors,
-    ]);
-
     const handleUpdateItem = React.useCallback(
         (title: string) => {
             dispatch(
@@ -210,34 +180,21 @@ export const GroupControlSidebar: React.FC<{
     );
 
     return (
-        <div className={b('sidebar')}>
-            <div className={b('selectors-list')}>
-                <TabMenu
-                    items={selectorsGroup.group}
-                    selectedItemIndex={activeSelectorIndex}
-                    onUpdate={updateSelectorsList}
-                    addButtonText={i18n('button_add-selector')}
-                    pasteButtonText={i18n('button_paste-selector')}
-                    defaultTabText={getDefaultTabText}
-                    enableActionMenu={true}
-                    onPasteItems={handlePasteItems}
-                    canPasteItems={canPasteItems}
-                    onCopyItem={handleCopyItem}
-                    onUpdateItem={handleUpdateItem}
-                    renderWrapper={renderControlWrapper}
-                />
-            </div>
-            <div className={b('settings')}>
-                <Button
-                    className={b('extended-settings-button')}
-                    width="max"
-                    onClick={handleExtendedSettingsClick}
-                    qa={DialogGroupControlQa.extendedSettingsButton}
-                >
-                    <Icon data={Gear} height={16} width={16} />
-                    {i18n('button_extended-settings')}
-                </Button>
-            </div>
-        </div>
+        <TabMenu
+            view="new"
+            className={b('selectors-list')}
+            items={selectorsGroup.group}
+            selectedItemIndex={activeSelectorIndex}
+            onUpdate={updateSelectorsList}
+            addButtonText={mockI18n('button_add-selector')}
+            pasteButtonText={i18n('button_paste-selector')}
+            defaultTabText={getDefaultTabText}
+            enableActionMenu={true}
+            onPasteItems={handlePasteItems}
+            canPasteItems={canPasteItems}
+            onCopyItem={handleCopyItem}
+            onUpdateItem={handleUpdateItem}
+            renderWrapper={renderControlWrapper}
+        />
     );
 };

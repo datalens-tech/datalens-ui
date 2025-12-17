@@ -1,19 +1,8 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
-.extended-settings-dialog {
-    width: 600px;
-    display: flex;
-    flex-direction: column;
-
-    &__body {
-        display: flex;
-        flex-direction: column;
-        padding-block-end: 0;
-        height: 430px;
-    }
-
+.group-extended-settings {
     &__row {
-        --gc-form-row-label-width: 272px;
+        --gc-form-row-label-width: 280px;
         margin-block-end: var(--g-spacing-2);
 
         &:last-child {
@@ -23,8 +12,6 @@
 
     &__help-icon {
         left: var(--g-spacing-1);
-        position: relative;
-        vertical-align: middle;
     }
 
     &__note {
@@ -54,10 +41,6 @@
         white-space: nowrap;
     }
 
-    &__checkbox {
-        margin-block-start: 6px;
-    }
-
     &__radio-button {
         flex: 1;
     }
@@ -70,5 +53,9 @@
         width: 100%;
         margin-block-start: var(--g-spacing-2);
         color: var(--g-color-text-danger);
+    }
+
+    &__switch {
+        margin-top: var(--g-spacing-1);
     }
 }
