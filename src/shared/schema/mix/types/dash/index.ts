@@ -1,9 +1,13 @@
 import type z from 'zod';
 
-import type {WizardVisualizationId} from '../../../constants';
-import type {ChartsStats, DashStats, WorkbookId} from '../../../types';
-import type {GetEntriesEntryResponse} from '../../us/types';
-import type {createDashResultSchema, updateDashResultSchema} from '../schemas/dash';
+import type {WizardVisualizationId} from '../../../../constants';
+import type {ChartsStats, DashStats, WorkbookId} from '../../../../types';
+import type {GetEntriesEntryResponse} from '../../../us/types';
+import type {createDashV1ResultSchema} from '../../schemas/dash/create-dashboard-v1';
+import type {dashSchemaV1} from '../../schemas/dash/dash-v1';
+import type {deleteDashResultSchema} from '../../schemas/dash/delete-dashboard';
+import type {getDashV1ResultSchema} from '../../schemas/dash/get-dashboard-v1';
+import type {updateDashV1ResultSchema} from '../../schemas/dash/update-dashboard-v1';
 
 export type CollectDashStatsResponse = {
     status: string;
@@ -55,6 +59,12 @@ export type GetWidgetsDatasetsFieldsArgs = {
     workbookId: WorkbookId;
 };
 
-export type UpdateDashResponse = z.infer<typeof updateDashResultSchema>;
+export type UpdateDashV1Result = z.infer<typeof updateDashV1ResultSchema>;
 
-export type CreateDashResponse = z.infer<typeof createDashResultSchema>;
+export type CreateDashV1Result = z.infer<typeof createDashV1ResultSchema>;
+
+export type DeleteDashResult = z.infer<typeof deleteDashResultSchema>;
+
+export type GetDashV1Result = z.infer<typeof getDashV1ResultSchema>;
+
+export type DashV1 = z.infer<typeof dashSchemaV1>;

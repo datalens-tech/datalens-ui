@@ -3,13 +3,13 @@ import type {IncomingHttpHeaders} from 'http';
 import type {ContextApiWithRoot} from '@gravity-ui/gateway/build/models/common';
 import type {AppContext, AppContextParams} from '@gravity-ui/nodekit';
 
-import type {schema} from '../..';
-import {registry} from '../../../../server/registry';
-import type {DatalensGatewaySchemas} from '../../../../server/types/gateway';
-import type {WizardVisualizationId} from '../../../constants';
-import type {DatasetField, WorkbookId} from '../../../types';
-import type {GetDataSetFieldsByIdResponse} from '../../bi/types';
-import type {GetEntryResponse} from '../../us/types';
+import type {schema} from '../../..';
+import {registry} from '../../../../../server/registry';
+import type {DatalensGatewaySchemas} from '../../../../../server/types/gateway';
+import type {WizardVisualizationId} from '../../../../constants';
+import type {DatasetField, WorkbookId} from '../../../../types';
+import type {GetDataSetFieldsByIdResponse} from '../../../bi/types';
+import type {GetEntryResponse} from '../../../us/types';
 
 export type DatasetDictResponse = {datasetId: string; data: GetEntryResponse | null};
 

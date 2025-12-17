@@ -4,7 +4,6 @@ import {stringify} from 'querystring';
 import type {AppContext} from '@gravity-ui/nodekit';
 import pick from 'lodash/pick';
 
-import {AUDIT_MODE_HEADER, AuditModeHeaderValue} from '../../../shared';
 import type {GetEntryByKeyResponse, GetEntryMetaResponse} from '../../../shared/schema';
 import {filterUrlFragment} from '../../../shared/schema/utils';
 import type {
@@ -49,14 +48,9 @@ class US {
         ctx: AppContext,
     ): Promise<Entry> {
         try {
-            const url =
-                headers[AUDIT_MODE_HEADER] === AuditModeHeaderValue.True
-                    ? `${ctx.config.endpoints.api.us}/audit/v1/entries/${filterUrlFragment(entryId)}`
-                    : `${ctx.config.endpoints.api.us}/v1/entries/${filterUrlFragment(entryId)}`;
-
             const {data} = await getAxios(ctx.config)({
                 method: 'GET',
-                url,
+                url: `${ctx.config.endpoints.api.us}/v1/entries/${filterUrlFragment(entryId)}`,
                 headers,
                 params,
                 'axios-retry': {retries: 1},
