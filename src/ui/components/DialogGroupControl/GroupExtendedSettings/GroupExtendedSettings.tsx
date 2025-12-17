@@ -246,26 +246,6 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
         [dispatch, selectorsGroup],
     );
 
-    const handleCurrentTabVisibilityProblem = React.useCallback(() => {
-        const validationError = dialogI18n('validation_need-current-tab-impact');
-        dispatch(
-            updateControlsValidation({
-                groupValidation: {currentTabVisibility: validationError},
-            }),
-        );
-
-        const updatedGroup = selectorsGroup.group.map((item) => ({
-            ...item,
-            validation: {...item.validation, currentTabVisibility: validationError},
-        }));
-        dispatch(
-            updateSelectorsGroup({
-                ...selectorsGroup,
-                group: updatedGroup,
-            }),
-        );
-    }, [dispatch, selectorsGroup]);
-
     const showAutoHeight =
         !enableAutoheightDefault &&
         (isMultipleSelectors ||
@@ -369,9 +349,9 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         isGroupSettings={true}
                         groupImpactType={selectorsGroup.impactType}
                         groupImpactTabsIds={selectorsGroup.impactTabsIds}
-                        onRaiseTabVisibilityProblem={handleCurrentTabVisibilityProblem}
                         selectorWidth={SELECTOR_WIDTH}
                         className={b('row')}
+                        hasMultipleSelectors={isMultipleSelectors}
                     />
                 )}
             </FormSection>

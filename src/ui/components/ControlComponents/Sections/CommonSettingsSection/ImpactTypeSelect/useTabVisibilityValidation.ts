@@ -17,38 +17,32 @@ const i18n = (key: string) => {
 };
 
 interface UseTabVisibilityValidationParams {
-    isGroupControl: boolean;
+    hasMultipleSelectors?: boolean;
     isGroupSettings?: boolean;
     currentTabId: string;
     impactTabsIds: string[];
     selectorsGroup: SelectorsGroupDialogState;
     selectorDialog: SelectorDialogState;
-    onRaiseTabVisibilityProblem?: () => void;
 }
 
 export const useTabVisibilityValidation = ({
-    isGroupControl,
+    hasMultipleSelectors,
     isGroupSettings,
     currentTabId,
     impactTabsIds,
     selectorsGroup,
     selectorDialog,
-    onRaiseTabVisibilityProblem,
 }: UseTabVisibilityValidationParams) => {
     const dispatch = useDispatch();
 
     const validateTabVisibility = useCallback(
         (value: string[]) => {
-            if (
-                isGroupControl &&
-                impactTabsIds.includes(currentTabId) &&
-                !value.includes(currentTabId)
-            ) {
+            if (impactTabsIds.includes(currentTabId) && !value.includes(currentTabId)) {
                 let itemData: IsWidgetVisibleOnTabArgs['itemData'];
 
-                if (isGroupControl && isGroupSettings) {
+                if (hasMultipleSelectors && isGroupSettings) {
                     itemData = {...selectorsGroup, impactTabsIds: value};
-                } else if (isGroupControl) {
+                } else if (hasMultipleSelectors) {
                     itemData = {
                         ...selectorsGroup,
                         group: selectorsGroup.group.map((item) => {
@@ -70,17 +64,15 @@ export const useTabVisibilityValidation = ({
                         itemData,
                     })
                 ) {
-                    if (onRaiseTabVisibilityProblem) {
-                        onRaiseTabVisibilityProblem?.();
-                        return;
-                    }
-
                     const validationError = i18n('validation_need-current-tab-impact');
                     dispatch(
                         updateControlsValidation({
                             groupValidation:
-                                isGroupControl &&
-                                !selectorsGroup.impactTabsIds?.includes(currentTabId)
+                                hasMultipleSelectors &&
+                                // check selectorsGroup.impactTabsIds in case all selectors in the group have a setting that differs from the group
+                                // in this case, the group may have the correct impactTabsIds and it does not need to be highlighted.
+                                (!selectorsGroup.impactTabsIds?.includes(currentTabId) ||
+                                    isGroupSettings)
                                     ? {currentTabVisibility: validationError}
                                     : undefined,
                             itemsValidation: {currentTabVisibility: validationError},
@@ -90,13 +82,12 @@ export const useTabVisibilityValidation = ({
             }
         },
         [
-            isGroupControl,
+            hasMultipleSelectors,
             impactTabsIds,
             currentTabId,
             isGroupSettings,
             selectorsGroup,
             selectorDialog,
-            onRaiseTabVisibilityProblem,
             dispatch,
         ],
     );

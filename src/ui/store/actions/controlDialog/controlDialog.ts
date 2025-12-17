@@ -280,25 +280,28 @@ export const applyGroupControlDialog = ({
             selectorsGroup: validatedSelectorsGroup,
         });
 
-        if (firstInvalidIndex !== null || !isEmpty(validatedSelectorsGroup.validation)) {
-            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
-        }
-
         if (firstInvalidIndex !== null) {
             const activeSelectorValidation =
                 validatedSelectorsGroup.group[activeSelectorIndex].validation;
 
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.SELECTORS));
             if (!isEmpty(activeSelectorValidation)) {
                 dispatch(
                     setSelectorDialogItem({
                         validation: activeSelectorValidation,
                     }),
                 );
-                dispatch(setActiveTab(SELECTOR_DIALOG_TABS.SELECTORS));
+
                 return;
             }
             dispatch(setActiveSelectorIndex({activeSelectorIndex: firstInvalidIndex}));
-            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.SELECTORS));
+            return;
+        }
+
+        if (!isEmpty(validatedSelectorsGroup.validation)) {
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.GROUP));
             return;
         }
 

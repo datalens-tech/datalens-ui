@@ -44,7 +44,7 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Mode} from '../../modules/constants';
 import type {CopiedConfigData} from '../../modules/helpers';
-import {getLayoutMap, getLayoutParentId, getPastedWidgetData} from '../../modules/helpers';
+import {getLayoutMap, getLayoutParentId} from '../../modules/helpers';
 import {setCurrentTabData, setErrorMode} from '../../store/actions/dashTyped';
 import {
     selectCurrentTab,
@@ -100,7 +100,6 @@ type DashBodyState = {
     fixedHeaderCollapsed: Record<string, boolean>;
     dashEl: HTMLDivElement | null;
     isGlobalDragging: boolean;
-    hasCopyInBuffer: CopiedConfigData | null;
     loaded: boolean;
     prevMeta: {tabId: string | null; entryId: string | null};
     loadedItemsMap: Map<string, boolean>;
@@ -206,7 +205,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             fixedHeaderCollapsed: {},
             dashEl: null,
             isGlobalDragging: false,
-            hasCopyInBuffer: null,
             prevMeta: {tabId: null, entryId: null},
             loaded: false,
             loadedItemsMap: new Map<string, boolean>(),
@@ -236,14 +234,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     }
 
     componentDidMount() {
-        // if localStorage already have a dash item, we need to set it to state
-        this.storageHandler();
-
         if (this.props.location.hash && !this.props.disableHashNavigation) {
             this.setState({delayedScrollElement: this.props.location.hash.replace('#', '')});
         }
 
-        window.addEventListener('storage', this.storageHandler);
         window.addEventListener('wheel', this.interruptAutoScroll);
         window.addEventListener('touchmove', this.interruptAutoScroll);
 
@@ -260,7 +254,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('storage', this.storageHandler);
         window.removeEventListener('wheel', this.interruptAutoScroll);
         window.removeEventListener('touchmove', this.interruptAutoScroll);
     }
@@ -272,7 +265,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 ref={this._dashBodyRef}
             >
                 <Content
-                    copiedData={this.state.hasCopyInBuffer}
                     dashEntryKey={this.props.entry?.key}
                     disableHashNavigation={this.props.disableHashNavigation}
                     hideErrorDetails={this.props.hideErrorDetails}
@@ -673,10 +665,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         );
 
         return <FixedContainerWrapperWithContext content={content} />;
-    };
-
-    storageHandler = () => {
-        this.setState({hasCopyInBuffer: getPastedWidgetData()});
     };
 
     interruptAutoScroll = (event: Event) => {
