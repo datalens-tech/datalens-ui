@@ -97,20 +97,16 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
 
 type GroupControlSidebarProps = {
     handleCopyItem: (itemIndex: number) => void;
-    defaultTabIndex: number;
-    setDefaultTabIndex: React.Dispatch<React.SetStateAction<number>>;
 };
 
-export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({
-    handleCopyItem,
-    defaultTabIndex,
-    setDefaultTabIndex,
-}) => {
+export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleCopyItem}) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
     const currentTabId = useSelector(selectCurrentTabId);
 
     const dispatch = useDispatch();
+
+    const [defaultTabIndex, setDefaultTabIndex] = React.useState(selectorsGroup.group.length + 1);
 
     const updateSelectorsList = React.useCallback(
         ({items, selectedItemIndex, action}: UpdateState<SelectorDialogState>) => {
@@ -141,7 +137,7 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({
     const getDefaultTabText = React.useCallback(() => {
         setDefaultTabIndex((currentTabIndex) => currentTabIndex + 1);
         return i18n('label_default-tab', {index: defaultTabIndex});
-    }, [defaultTabIndex, setDefaultTabIndex]);
+    }, [defaultTabIndex]);
 
     const handleUpdateItem = React.useCallback(
         (title: string) => {
