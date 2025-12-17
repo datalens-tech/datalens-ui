@@ -7,12 +7,9 @@ import {ZodError} from 'zod';
 
 import {ServerError} from '../../../shared/constants/error';
 import {
-    PUBLIC_API_LATEST_VERSION,
     PUBLIC_API_VERSION_HEADER,
     PUBLIC_API_VERSION_HEADER_LATEST_VALUE,
 } from '../../components/public-api/constants';
-import type {PublicApiVersion} from '../../components/public-api/types';
-import {isPublicApiVersion} from '../../components/public-api/utils';
 import {isGatewayError} from '../../utils/gateway';
 
 import {PUBLIC_API_ERRORS, PublicApiError} from './constants';
@@ -129,16 +126,26 @@ export const validateRequestBody = async (schema: z.ZodType, data: unknown): Pro
     }
 };
 
-export const parseRequestApiVersion = (req: Request): PublicApiVersion => {
+export const parseRequestApiVersion = ({
+    req,
+    versions,
+    latestVersion,
+}: {
+    req: Request;
+    versions: number[];
+    latestVersion: number;
+}): number => {
     const versionHeader = req.headers[PUBLIC_API_VERSION_HEADER];
 
     if (versionHeader) {
-        if (isPublicApiVersion(versionHeader)) {
-            return versionHeader;
+        const parsedVersion = Number(versionHeader);
+
+        if (versions.includes(parsedVersion)) {
+            return parsedVersion;
         }
 
         if (versionHeader === PUBLIC_API_VERSION_HEADER_LATEST_VALUE) {
-            return PUBLIC_API_LATEST_VERSION;
+            return latestVersion;
         }
     }
 
