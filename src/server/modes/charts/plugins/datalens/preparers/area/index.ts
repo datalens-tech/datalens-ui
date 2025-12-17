@@ -3,6 +3,7 @@ import type {
     AreaSeriesData,
     ChartData,
     ChartSeries,
+    ChartYAxis,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
@@ -201,13 +202,18 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
             const baseConfig = getYAxisBaseConfig({
                 placeholder: yPlaceholder,
             });
+            let axisTitle: ChartYAxis['title'] | undefined;
+            if (isSplitEnabled) {
+                axisTitle = {text: d.title, rotation: 0, maxWidth: '25%'};
+            }
+
             return merge(baseConfig, {
                 lineColor: 'transparent',
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
                 plotIndex: d.index,
-                title: isSplitEnabled ? {text: d.title} : undefined,
+                title: axisTitle,
             });
         }),
         legend,

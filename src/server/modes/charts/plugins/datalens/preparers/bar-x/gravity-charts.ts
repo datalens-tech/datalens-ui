@@ -3,6 +3,7 @@ import type {
     BarXSeriesData,
     ChartData,
     ChartSeries,
+    ChartYAxis,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
@@ -268,12 +269,17 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 placeholder: yPlaceholder,
             });
 
+            let axisTitle: ChartYAxis['title'] | undefined;
+            if (isSplitEnabled) {
+                axisTitle = {text: d.title, rotation: 0, maxWidth: '25%'};
+            }
+
             return merge(axisBaseConfig, {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
                 plotIndex: d.index,
-                title: isSplitEnabled ? {text: d.title} : undefined,
+                title: axisTitle,
             });
         }),
         split: {

@@ -236,10 +236,14 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 placeholder,
             });
             const shouldUseSegmentTitle = yAxisItems.length < 2 || !d.isOpposite;
+            let axisTitle: ChartYAxis['title'] | undefined;
+            if (shouldUseSegmentTitle) {
+                axisTitle = {text: d.title, rotation: 0, maxWidth: '25%'};
+            }
 
             acc.push(
                 merge(axisBaseConfig, {
-                    title: shouldUseSegmentTitle ? {text: d.title} : null,
+                    title: axisTitle,
                     plotIndex: d.plotIndex,
                     labels: {
                         numberFormat: labelNumberFormat ?? undefined,
