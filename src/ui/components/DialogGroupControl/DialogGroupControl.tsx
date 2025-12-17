@@ -12,7 +12,11 @@ import {
     setActiveTab,
 } from 'ui/store/actions/controlDialog/controlDialog';
 import {SELECTOR_DIALOG_TABS} from 'ui/store/constants/controlDialog';
-import {selectControlDialogActiveTab, selectSelectorDialog} from 'ui/store/selectors/controlDialog';
+import {
+    selectControlDialogActiveTab,
+    selectSelectorDialog,
+    selectSelectorsGroup,
+} from 'ui/store/selectors/controlDialog';
 import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
 
 import {GroupControlBody} from './GroupControlBody/GroupControlBody';
@@ -63,8 +67,10 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
     enableGlobalSelectors,
 }) => {
     const {id, draftId} = useSelector(selectSelectorDialog);
+    const selectorsGroup = useSelector(selectSelectorsGroup);
 
     const [showErrors, setShowErrors] = React.useState(false);
+    const [defaultTabIndex, setDefaultTabIndex] = React.useState(selectorsGroup.group.length + 1);
     const [groupTabErrorsIndexes, setGroupTabErrorsIndexes] = React.useState<number[]>([]);
 
     const dispatch = useDispatch();
@@ -123,7 +129,11 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
                     </TabList>
                     {activeTab === SELECTOR_DIALOG_TABS.SELECTORS && (
                         <div className={b('tab-selectors')}>
-                            <GroupControlSidebar handleCopyItem={handleCopyItem} />
+                            <GroupControlSidebar
+                                handleCopyItem={handleCopyItem}
+                                defaultTabIndex={defaultTabIndex}
+                                setDefaultTabIndex={setDefaultTabIndex}
+                            />
                             <Divider orientation="vertical" className={b('divider')} />
                             <GroupControlBody
                                 key={draftId || id}
