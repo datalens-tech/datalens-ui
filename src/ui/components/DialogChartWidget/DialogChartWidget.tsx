@@ -828,7 +828,6 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                 <React.Fragment>
                     <TabMenu
                         className={b('sidebar')}
-                        view="new"
                         items={state.data.tabs}
                         selectedItemIndex={state.tabIndex}
                         onUpdate={updateTabMenu}

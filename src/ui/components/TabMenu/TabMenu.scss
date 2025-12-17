@@ -8,34 +8,27 @@ $class: '.tab-menu';
     --_--scroll-compensation: var(--dl-tab-menu-scroll-compensation, 0);
     --_--tab-items-width: var(--dl-tab-menu-items-width);
 
-    --_--tab-button-outlined-padding: var(--g-spacing-2);
-    --_--tab-button-add-height: calc(var(--_--tab-button-outlined-padding) * 2 + 28px);
+    --_--tab-button-outlined-padding: 0;
+    --_--tab-button-add-height: 28px;
 
-    &_view_new {
-        --_--tab-button-outlined-padding: 0;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    row-gap: var(--g-spacing-1);
+    margin-inline-end: calc(var(--_--scroll-compensation) * -1);
 
-        display: grid;
-        grid-template-rows: 1fr auto;
-        row-gap: var(--g-spacing-1);
-        margin-inline-end: calc(var(--_--scroll-compensation) * -1);
-
-        #{$class}__action-button {
-            justify-content: flex-start;
-        }
+    &__action-button {
+        justify-content: flex-start;
     }
 
     &__list-item {
         padding: 0 var(--g-spacing-4);
+        border-radius: var(--g-border-radius-m);
+        margin-block-end: var(--g-spacing-1);
+        width: var(--_--tab-items-width);
 
-        &_view_new {
-            border-radius: var(--g-border-radius-m);
-            margin-block-end: var(--g-spacing-1);
-            width: var(--_--tab-items-width);
-
-            .g-list__item-sort-icon {
-                margin-inline-start: 2px;
-                margin-inline-end: var(--g-spacing-2);
-            }
+        .g-list__item-sort-icon {
+            margin-inline-start: 2px;
+            margin-inline-end: var(--g-spacing-2);
         }
     }
 
@@ -43,14 +36,10 @@ $class: '.tab-menu';
         display: flex;
         align-items: center;
         border-radius: 4px;
-        height: 40px;
+        height: 36px;
         width: 100%;
         cursor: pointer;
         justify-content: space-between;
-
-        &_view_new {
-            height: 36px;
-        }
     }
 
     &__item-star {
@@ -72,7 +61,7 @@ $class: '.tab-menu';
         white-space: nowrap;
         max-width: 160px;
 
-        #{$class}__item_view_new & {
+        #{$class}__item & {
             max-width: 176px;
         }
     }
@@ -84,22 +73,13 @@ $class: '.tab-menu';
     }
 
     &__list {
-        height: calc(100% - var(--_--tab-button-add-height));
         overflow-y: auto;
-
-        #{$class}_view_new & {
-            height: unset;
-            padding-inline-end: var(--_--scroll-compensation);
-        }
+        padding-inline-end: var(--_--scroll-compensation);
     }
 
     &__buttons-row {
         display: flex;
-        padding: var(--_--tab-button-outlined-padding) var(--g-spacing-4);
+        padding-inline: 0 var(--_--scroll-compensation);
         gap: var(--g-spacing-2);
-
-        #{$class}_view_new & {
-            padding-inline: 0 var(--_--scroll-compensation);
-        }
     }
 }

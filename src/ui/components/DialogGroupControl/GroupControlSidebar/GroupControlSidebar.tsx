@@ -181,7 +181,6 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
 
     return (
         <TabMenu
-            view="new"
             className={b('selectors-list')}
             items={selectorsGroup.group}
             selectedItemIndex={activeSelectorIndex}
