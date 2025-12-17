@@ -62,6 +62,10 @@
         height: calc(100% - 62px);
     }
 
+    &__tab-group {
+        overflow-y: auto;
+    }
+
     &__selector-settings {
         overflow-y: auto;
         overflow-x: hidden;

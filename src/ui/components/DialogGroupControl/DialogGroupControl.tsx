@@ -135,15 +135,17 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
                         </div>
                     )}
                     {activeTab === SELECTOR_DIALOG_TABS.GROUP && (
-                        <GroupExtendedSettings
-                            selectorsGroupTitlePlaceholder={selectorsGroupTitlePlaceholder}
-                            enableAutoheightDefault={enableAutoheightDefault}
-                            showSelectorsGroupTitle={showSelectorsGroupTitle}
-                            enableGlobalSelectors={enableGlobalSelectors}
-                            showErrors={showErrors}
-                            errorsIndexes={groupTabErrorsIndexes}
-                            updateErrorsIndexes={setGroupTabErrorsIndexes}
-                        />
+                        <div className={b('tab-group')}>
+                            <GroupExtendedSettings
+                                selectorsGroupTitlePlaceholder={selectorsGroupTitlePlaceholder}
+                                enableAutoheightDefault={enableAutoheightDefault}
+                                showSelectorsGroupTitle={showSelectorsGroupTitle}
+                                enableGlobalSelectors={enableGlobalSelectors}
+                                showErrors={showErrors}
+                                errorsIndexes={groupTabErrorsIndexes}
+                                updateErrorsIndexes={setGroupTabErrorsIndexes}
+                            />
+                        </div>
                     )}
                 </TabProvider>
             </Dialog.Body>
