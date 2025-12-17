@@ -53,6 +53,4 @@ export type PublicApiConfig<TSchema extends SchemasByScope = DatalensGatewaySche
     securityTypes: string[];
     biOpenapiSchemas?: ComponentsObject['schemas'];
     getAuthArgs?: (req: Request, res: Response) => Record<string, unknown>;
-    versions?: number[];
-    latestVersion?: number;
 };
