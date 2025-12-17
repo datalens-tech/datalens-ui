@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import type {SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption, SelectProps} from '@gravity-ui/uikit';
 import {Flex, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -53,6 +53,8 @@ export type ImpactTypeSelectProps = {
     hasMultipleSelectors?: boolean;
     isGroupSettings?: boolean;
     onRaiseTabVisibilityProblem?: () => void;
+    selectorWidth?: SelectProps['width'];
+    className?: string;
 };
 
 export const ImpactTypeSelect = ({
@@ -61,6 +63,8 @@ export const ImpactTypeSelect = ({
     hasMultipleSelectors,
     isGroupSettings,
     onRaiseTabVisibilityProblem,
+    selectorWidth = 'max',
+    className,
 }: ImpactTypeSelectProps) => {
     const dispatch = useDispatch();
     const selectorDialog = useSelector(selectSelectorDialog);
@@ -294,13 +298,13 @@ export const ImpactTypeSelect = ({
         : validation.currentTabVisibility || validation.impactTabsIds;
 
     return (
-        <FormRow label={i18n('label_tabs-scope')}>
+        <FormRow label={i18n('label_tabs-scope')} className={className}>
             <Flex direction="column" gap={2}>
                 <FieldWrapper error={impactTypeValidation}>
                     <Select
                         value={[currentImpactType]}
                         onUpdate={handleImpactTypeChange}
-                        width="max"
+                        width={selectorWidth}
                         options={tabsScopeOptions}
                         renderOption={renderOptions}
                         renderSelectedOption={renderOptions}
@@ -313,7 +317,7 @@ export const ImpactTypeSelect = ({
                         <Select
                             value={impactTabsIds}
                             onUpdate={handleImpactTabsIdsChange}
-                            width="max"
+                            width={selectorWidth}
                             multiple
                             options={tabsOptions}
                             placeholder={i18n('label_selected-tabs-placeholder')}

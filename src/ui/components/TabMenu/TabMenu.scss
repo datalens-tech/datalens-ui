@@ -33,7 +33,8 @@ $class: '.tab-menu';
             width: var(--_--tab-items-width);
 
             .g-list__item-sort-icon {
-                margin-inline: 2px;
+                margin-inline-start: 2px;
+                margin-inline-end: var(--g-spacing-2);
             }
         }
     }

@@ -7,7 +7,9 @@ import type {PublicApiVersionActions} from '../types';
 
 type OverrideActions<T extends BaseSchema> = {
     [K in keyof T]: Omit<T[K], 'actions'> & {
-        actions: Record<string, AnyApiServiceActionConfig>;
+        actions: {
+            [A in keyof T[K]['actions']]: AnyApiServiceActionConfig;
+        };
     };
 };
 
@@ -225,6 +227,24 @@ export const getPublicApiActionsV0 = <
                 tags: [ApiTag.QL],
             },
         },
+        updateQLChart: {
+            resolve: (api) => api.mix.__updateQLChart__,
+            openApi: {
+                summary: 'Update QL chart',
+                tags: [ApiTag.QL],
+                experimental: true,
+            },
+            rawAction: true,
+        },
+        createQLChart: {
+            resolve: (api) => api.mix.__createQLChart__,
+            openApi: {
+                summary: 'Create QL chart',
+                tags: [ApiTag.QL],
+                experimental: true,
+            },
+            rawAction: true,
+        },
 
         // Wizard
         getWizardChart: {
@@ -241,6 +261,24 @@ export const getPublicApiActionsV0 = <
                 summary: 'Delete wizard chart',
                 tags: [ApiTag.Wizard],
             },
+        },
+        updateWizardChart: {
+            resolve: (api) => api.mix.__updateWizardChart__,
+            openApi: {
+                summary: 'Update wizard chart',
+                tags: [ApiTag.Wizard],
+                experimental: true,
+            },
+            rawAction: true,
+        },
+        createWizardChart: {
+            resolve: (api) => api.mix.__createWizardChart__,
+            openApi: {
+                summary: 'Create wizard chart',
+                tags: [ApiTag.Wizard],
+                experimental: true,
+            },
+            rawAction: true,
         },
 
         // Workbook

@@ -61,13 +61,12 @@ export const DialogControlParamsQa = {
 };
 
 export const DialogGroupControlQa = {
-    autoHeightCheckbox: 'autoheight-checkbox',
-    applyButtonCheckbox: 'apply-button-checkbox',
-    resetButtonCheckbox: 'reset-button-checkbox',
+    autoHeightSwitch: 'autoheight-switch',
+    applyButtonSwitch: 'apply-button-switch',
+    resetButtonSwitch: 'reset-button-switch',
     updateControlOnChangeCheckbox: 'update-controls-button-checkbox',
-    extendedSettingsButton: 'extended-settings-button',
+    groupSettingsTab: 'group-settings-tab',
     placementControlList: 'selectors-placement-control-list',
-    extendedSettingsApplyButton: 'selectors-extended-settings-apply-button',
     controlMenu: 'control-menu',
     removeControlButton: 'remove-control-button',
     copyControlButton: 'copy-control-button',

@@ -228,3 +228,6 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
 
     return inputOperations;
 };
+
+export const selectControlDialogActiveTab = (state: DatalensGlobalState) =>
+    selectControlDialogState(state).activeTab;
