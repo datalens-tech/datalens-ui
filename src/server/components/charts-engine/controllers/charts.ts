@@ -162,7 +162,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 return;
             }
 
-            await USProvider.create(ctx, createParams)
+            USProvider.create(ctx, createParams)
                 .then((result) => {
                     res.send({
                         ...result,
@@ -232,7 +232,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 updateParams.skipSyncLinks = true;
             }
 
-            await USProvider.update(ctx, updateParams)
+            USProvider.update(ctx, updateParams)
                 .then((result) => {
                     res.send({
                         ...result,

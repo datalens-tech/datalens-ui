@@ -2,6 +2,7 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import z from 'zod';
 
 import type {ChartsEngine} from '../../../../../server/components/charts-engine';
+import {keyOrWorkbookIdNameSchema} from '../../../../zod-schemas/entry';
 import {createTypedAction} from '../../../gateway-utils';
 
 const paramsSchema = z
@@ -13,33 +14,8 @@ const paramsSchema = z
             })
             .optional(),
         data: z.looseObject({}),
-        key: z.string().optional(),
-        workbookId: z.string().optional(),
-        name: z.string().optional(),
     })
-    .refine(
-        (data) => {
-            const {key, workbookId, name} = data;
-
-            const isKeyProvided = typeof key !== 'undefined';
-            const isWorkbookIdProvided = typeof workbookId !== 'undefined';
-            const isNameProvided = typeof name !== 'undefined';
-
-            if (isKeyProvided && !isWorkbookIdProvided && !isNameProvided) {
-                return true;
-            }
-
-            if (!isKeyProvided && isWorkbookIdProvided && isNameProvided) {
-                return true;
-            }
-
-            return false;
-        },
-        {
-            message:
-                "For folder entries provide only 'key', for workbook entries provide only 'workbookId' and 'name' together.",
-        },
-    );
+    .and(keyOrWorkbookIdNameSchema);
 
 export const __createWizardChart__ = createTypedAction(
     {
