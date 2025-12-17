@@ -35,6 +35,8 @@ const b = block('group-extended-settings');
 
 const i18n = I18n.keyset('dash.extended-settings-dialog.edit');
 
+const SELECTOR_WIDTH = 336;
+
 // const dialogI18n = I18n.keyset('dash.control-dialog.edit');
 
 // TODO (global selectors): Add translations and delete "label_group-parameters", "label_title" keys
@@ -284,6 +286,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                             <Switch
                                 checked={selectorsGroup.showGroupName}
                                 onUpdate={handleChangeShowGroupName}
+                                className={b('switch')}
                             />
                             <TextInput
                                 disabled={!selectorsGroup.showGroupName}
@@ -309,6 +312,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         checked={selectorsGroup.buttonApply}
                         onUpdate={handleChangeButtonApply}
                         qa={DialogGroupControlQa.applyButtonSwitch}
+                        className={b('switch')}
                     />
                 </FormRow>
                 <FormRow
@@ -326,6 +330,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         checked={selectorsGroup.buttonReset}
                         onUpdate={handleChangeButtonReset}
                         qa={DialogGroupControlQa.resetButtonSwitch}
+                        className={b('switch')}
                     />
                 </FormRow>
                 {showAutoHeight && (
@@ -334,6 +339,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                             checked={selectorsGroup.autoHeight}
                             onUpdate={handleChangeAutoHeight}
                             qa={DialogGroupControlQa.autoHeightSwitch}
+                            className={b('switch')}
                         />
                     </FormRow>
                 )}
@@ -353,6 +359,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                             checked={selectorsGroup.updateControlsOnChange}
                             onUpdate={handleChangeUpdateControls}
                             qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
+                            className={b('switch')}
                         />
                     </FormRow>
                 )}
@@ -363,6 +370,8 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         groupImpactType={selectorsGroup.impactType}
                         groupImpactTabsIds={selectorsGroup.impactTabsIds}
                         onRaiseTabVisibilityProblem={handleCurrentTabVisibilityProblem}
+                        selectorWidth={SELECTOR_WIDTH}
+                        className={b('row')}
                     />
                 )}
             </FormSection>
