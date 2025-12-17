@@ -285,7 +285,7 @@ export const ImpactTypeSelect = ({
         return null;
     }
 
-    const showTabsSelector = currentImpactType === IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS || true;
+    const showTabsSelector = currentImpactType === IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS;
 
     const impactTypeValidation = getImpactTypeValidation({
         impactType: currentImpactType,
