@@ -54,6 +54,7 @@ type SourcesTableProps = {
     dragDisabled?: boolean;
     dropDisabled?: boolean;
     allowAddSource?: boolean;
+    readonly: boolean;
 };
 
 const b = block('select-sources-prototypes');
@@ -123,6 +124,7 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
     onAdd,
     onDelete,
     onRetry,
+    readonly,
 }) => {
     const [search, setSearch] = React.useState('');
     const searchInputRef = React.useRef<HTMLInputElement>(null);
@@ -257,8 +259,9 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
                         loading={serverPagination && !sourcesPagination.isFinished && !sourcesError}
                         renderItem={(source) => (
                             <SourceWithDragging
-                                dragDisabled={dragDisabled}
-                                dropDisabled={dropDisabled}
+                                readonly={readonly}
+                                dragDisabled={dragDisabled || readonly}
+                                dropDisabled={dropDisabled || readonly}
                                 avatar={source}
                                 onClickEditBtn={onEdit}
                                 onDeleteSource={onDelete}

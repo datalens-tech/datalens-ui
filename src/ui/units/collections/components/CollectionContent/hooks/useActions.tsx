@@ -368,13 +368,6 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
         (item: SharedEntryFieldsWithPermissions): (DropdownMenuItem[] | DropdownMenuItem)[] => {
             const actions: (DropdownMenuItem[] | DropdownMenuItem)[] = [];
 
-            if (item.permissions.update) {
-                actions.push({
-                    text: <DropdownAction icon={PencilToLine} text={i18n('action_edit')} />,
-                    action: () => {},
-                });
-            }
-
             const otherActions: DropdownMenuItem[] = [];
 
             if (item.permissions.delete) {

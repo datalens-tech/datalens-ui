@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import {DashTabItemType, TitlePlacementOption} from 'shared';
 import type {
     DashTabItem,
@@ -13,11 +14,14 @@ import type {
     SelectorsGroupDialogState,
     SetSelectorDialogItemArgs,
     ItemDataSource,
+    SelectorsGroupValidation,
+    SelectorDialogValidation,
 } from '../../typings/controlDialog';
 import type {AppDispatch} from '../..';
 import {
     getControlDefaultsForField,
     getControlValidation,
+    getGroupControlValidation,
     getItemDataSource,
 } from '../../utils/controlDialog';
 import isEmpty from 'lodash/isEmpty';
@@ -55,6 +59,8 @@ import {
     selectControlDialogState,
 } from '../../selectors/controlDialog';
 import {getValidScopeFields} from './helpers';
+import {selectTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {SELECTOR_DIALOG_TABS} from 'ui/store/constants/controlDialog';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
@@ -181,6 +187,39 @@ export const setLastUsedConnectionId = (connectionId: string): SetLastUsedConnec
     payload: connectionId,
 });
 
+export const UPDATE_CONTROLS_VALIDATION = Symbol('controlDialog/UPDATE_CONTROLS_VALIDATION');
+
+export type UpdateControlsValidationAction = {
+    type: typeof UPDATE_CONTROLS_VALIDATION;
+    payload: {
+        groupValidation?: SelectorsGroupValidation;
+        itemsValidation?: SelectorDialogValidation;
+    };
+};
+
+export const updateControlsValidation = (
+    payload: UpdateControlsValidationAction['payload'],
+): UpdateControlsValidationAction => {
+    return {
+        type: UPDATE_CONTROLS_VALIDATION,
+        payload,
+    };
+};
+
+export const SET_ACTIVE_TAB = Symbol('controlDialog/SET_ACTIVE_TAB');
+
+export type SetActiveTabAction = {
+    type: typeof SET_ACTIVE_TAB;
+    payload: string;
+};
+
+export const setActiveTab = (payload: SetActiveTabAction['payload']): SetActiveTabAction => {
+    return {
+        type: SET_ACTIVE_TAB,
+        payload,
+    };
+};
+
 const isSelectorWithContext = (
     selector: SelectorDialogState,
 ): selector is PastedSelectorDialogState => {
@@ -190,9 +229,11 @@ const isSelectorWithContext = (
 export const applyGroupControlDialog = ({
     setItemData,
     closeDialog,
+    groupTabError,
 }: {
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
+    groupTabError: boolean;
 }) => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
@@ -222,10 +263,11 @@ export const applyGroupControlDialog = ({
 
         // check validation for every control
         for (let i = 0; i < validatedSelectorsGroup.group.length; i += 1) {
-            const validation = getControlValidation(
-                validatedSelectorsGroup.group[i],
+            const validation = getControlValidation({
+                selectorDialog: validatedSelectorsGroup.group[i],
                 groupFieldNames,
-            );
+                selectorsGroup: validatedSelectorsGroup,
+            });
 
             if (!isEmpty(validation) && firstInvalidIndex === null) {
                 firstInvalidIndex = i;
@@ -234,20 +276,37 @@ export const applyGroupControlDialog = ({
             validatedSelectorsGroup.group[i].validation = validation;
         }
 
+        validatedSelectorsGroup.validation = getGroupControlValidation({
+            selectorsGroup: validatedSelectorsGroup,
+        });
+
         if (firstInvalidIndex !== null) {
             const activeSelectorValidation =
                 validatedSelectorsGroup.group[activeSelectorIndex].validation;
-            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
 
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.SELECTORS));
             if (!isEmpty(activeSelectorValidation)) {
                 dispatch(
                     setSelectorDialogItem({
                         validation: activeSelectorValidation,
                     }),
                 );
+
                 return;
             }
             dispatch(setActiveSelectorIndex({activeSelectorIndex: firstInvalidIndex}));
+            return;
+        }
+
+        if (!isEmpty(validatedSelectorsGroup.validation)) {
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.GROUP));
+            return;
+        }
+
+        if (groupTabError) {
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.GROUP));
             return;
         }
 
@@ -289,10 +348,12 @@ export const applyGroupControlDialog = ({
             }
         });
 
+        const tabId = selectTabId(state);
+
         const {impactType, impactTabsIds} = getValidScopeFields({
             impactType: selectorsGroup.impactType,
             impactTabsIds: selectorsGroup.impactTabsIds,
-            tabId: state.dash.tabId,
+            tabId,
             isGroupSetting: true,
             isSingleControl,
         });
@@ -329,7 +390,7 @@ export const applyGroupControlDialog = ({
                     ...getValidScopeFields({
                         impactType: selector.impactType,
                         impactTabsIds: selector.impactTabsIds,
-                        tabId: state.dash.tabId,
+                        tabId,
                         isSingleControl,
                     }),
                 };
@@ -361,7 +422,10 @@ export const copyControlToStorage = (controlIndex: number) => {
             namespace,
             currentTabId: tabId,
         } = selectOpenedItemMeta(state);
-        const validation = getControlValidation(selectorsGroup.group[controlIndex]);
+        const validation = getControlValidation({
+            selectorDialog: selectorsGroup.group[controlIndex],
+            selectorsGroup,
+        });
 
         if (!scope) {
             return;
@@ -446,7 +510,7 @@ export const applyExternalControlDialog = ({
         const selectorDialog = selectSelectorDialog(state);
         const {title, sourceType, autoHeight, impactType, impactTabsIds} = selectorDialog;
 
-        const validation = getControlValidation(selectorDialog);
+        const validation = getControlValidation({selectorDialog});
 
         if (!isEmpty(validation)) {
             dispatch(
@@ -462,6 +526,8 @@ export const applyExternalControlDialog = ({
 
         const dataSource = getItemDataSource(selectorDialog);
 
+        const tabId = selectTabId(state);
+
         const data: SetItemDataExternalControl = {
             title,
             sourceType,
@@ -470,7 +536,7 @@ export const applyExternalControlDialog = ({
             ...getValidScopeFields({
                 impactType,
                 impactTabsIds,
-                tabId: state.dash.tabId,
+                tabId,
                 isGroupSetting: true,
                 isSingleControl: true,
             }),

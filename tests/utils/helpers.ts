@@ -1,6 +1,7 @@
 import {Page} from '@playwright/test';
 
 import {slct, waitForCondition} from './index';
+import {COMMON_CHARTKIT_SELECTORS} from '../page-objects/constants/chartkit';
 
 export const getStylesFromString = (string = '') => {
     return string
@@ -76,7 +77,7 @@ export async function waitForValidSearchParams({
 export const hoverTooltip = async (page: Page, chartId: string) => {
     const plot = page
         .locator(slct(`chartkit-body-entry-${chartId}`))
-        .locator('.chartkit-graph, .gcharts-chart');
+        .locator(COMMON_CHARTKIT_SELECTORS.chart);
     await plot.waitFor({state: 'visible'});
 
     const plotBox = await plot.boundingBox();

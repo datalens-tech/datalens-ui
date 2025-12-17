@@ -6,4 +6,5 @@ export type SharedEntry = {
     entryId: string;
     fullPermissions?: SharedEntryPermissions;
     permissions?: Partial<Permissions & SharedEntryPermissions>;
+    isDelegated?: boolean;
 };

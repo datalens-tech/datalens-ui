@@ -63,6 +63,7 @@ type OwnProps = {
     expandablePanelDescription?: string;
     getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
     filterEntryContextMenuItems?: FilterEntryContextMenuItems;
+    lastCrumbAdditionalContent?: React.ReactNode;
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -165,6 +166,7 @@ class ActionPanel extends React.Component<Props, State> {
             expandablePanelDescription,
             getRevisionRowExtendedProps,
             filterEntryContextMenuItems,
+            lastCrumbAdditionalContent,
         } = this.props;
 
         const style: React.CSSProperties = {left: sidebarSize, ...externalStyle};
@@ -187,6 +189,7 @@ class ActionPanel extends React.Component<Props, State> {
                         {entry && (
                             <EntryPanel
                                 entry={entry}
+                                lastCrumbAdditionalContent={lastCrumbAdditionalContent}
                                 additionalEntryItems={additionalEntryItems}
                                 enablePublish={this.getEnablePublish()}
                                 filterEntryContextMenuItems={filterEntryContextMenuItems}

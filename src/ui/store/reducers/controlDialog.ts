@@ -10,6 +10,7 @@ import type {
     DialogEditItemFeaturesProp,
     SelectorDialogState,
     SelectorsGroupDialogState,
+    SelectorsGroupValidation,
 } from '../typings/controlDialog';
 import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
@@ -23,6 +24,8 @@ import {
     UPDATE_SELECTORS_GROUP,
     SET_LAST_USED_DATASET_ID,
     SET_LAST_USED_CONNECTION_ID,
+    UPDATE_CONTROLS_VALIDATION,
+    SET_ACTIVE_TAB,
 } from '../actions/controlDialog/controlDialog';
 import type {
     SetLastUsedDatasetIdAction,
@@ -33,11 +36,13 @@ import type {
     SetActiveSelectorIndexAction,
     UpdateSelectorsGroupAction,
     AddSelectorToGroupAction,
+    UpdateControlsValidationAction,
+    SetActiveTabAction,
 } from '../actions/controlDialog/controlDialog';
 import {getActualUniqueFieldNameValidation, getInitialDefaultValue} from '../utils/controlDialog';
 import {I18n} from 'i18n';
 import {ELEMENT_TYPE} from '../constants/controlDialog';
-import type {RealTheme} from '@gravity-ui/uikit';
+import {type RealTheme} from '@gravity-ui/uikit';
 
 const i18n = I18n.keyset('dash.store.view');
 
@@ -50,6 +55,7 @@ export type ControlDialogStateItemMeta = {
 };
 export interface ControlDialogState {
     activeSelectorIndex: number;
+    activeTab: string | null;
     selectorsGroup: SelectorsGroupDialogState;
     selectorDialog: SelectorDialogState;
     openedDialog: DashTabItemType | null;
@@ -108,6 +114,7 @@ export function getGroupSelectorDialogInitialState(): SelectorsGroupDialogState 
         impactType: undefined,
         impactTabsIds: undefined,
         group: [],
+        validation: {},
     };
 }
 
@@ -179,6 +186,7 @@ export function getSelectorDialogFromData(
 export function getSelectorGroupDialogFromData(data: DashTabItemGroupControlData) {
     return {
         updateControlsOnChange: false,
+        validation: {},
         ...data,
         group: data.group.map((item) => getSelectorDialogFromData(item)),
     };
@@ -186,6 +194,7 @@ export function getSelectorGroupDialogFromData(data: DashTabItemGroupControlData
 
 const getInitialState = (): ControlDialogState => ({
     activeSelectorIndex: 0,
+    activeTab: null,
     selectorsGroup: getGroupSelectorDialogInitialState(),
     selectorDialog: getSelectorDialogInitialState(),
     openedDialog: null,
@@ -207,9 +216,14 @@ export function controlDialog(
         | UpdateSelectorsGroupAction
         | AddSelectorToGroupAction
         | SetLastUsedDatasetIdAction
-        | SetLastUsedConnectionIdAction,
+        | SetLastUsedConnectionIdAction
+        | UpdateControlsValidationAction
+        | SetActiveTabAction,
 ): ControlDialogState {
     const {type} = action;
+
+    const currentTabId = state?.openedItemMeta?.currentTabId;
+
     switch (type) {
         case INIT_DIALOG: {
             const payload = action.payload;
@@ -353,12 +367,20 @@ export function controlDialog(
                     selectorDialog.defaultValue === payload.defaultValue
                         ? selectorDialog.validation.defaultValue
                         : undefined,
+                impactType:
+                    selectorDialog.impactType === payload.impactType
+                        ? selectorDialog.validation.impactType
+                        : undefined,
+                impactTabsIds:
+                    selectorDialog.impactTabsIds === payload.impactTabsIds
+                        ? selectorDialog.validation.impactTabsIds
+                        : undefined,
             };
 
             const newSelectorState = {
                 ...state.selectorDialog,
                 defaultValue,
-                validation,
+                validation: {...state.selectorDialog.validation, ...validation},
                 required,
                 ...payload,
             };
@@ -390,32 +412,64 @@ export function controlDialog(
             );
             const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {};
 
+            // if current length is 1, the added selector will be the second
+            const isBecomeGroup = state.selectorsGroup.group.length === 1;
+
             let autoHeight: boolean;
             if (enableAutoheightDefault) {
                 autoHeight = true;
             } else {
-                // if current length is 1, the added selector will be the second so we enable autoHeight
-                autoHeight =
-                    state.selectorsGroup.group.length === 1
-                        ? true
-                        : state.selectorsGroup.autoHeight;
+                // we enable autoHeight for multiple selectors
+                autoHeight = isBecomeGroup ? true : state.selectorsGroup.autoHeight;
+            }
+
+            const fallbackImpactTabsIds = currentTabId ? [currentTabId] : undefined;
+
+            let updatedGroup = [...state.selectorsGroup.group];
+
+            // reset the validation when the number of selectors changes
+            if (
+                state.selectorsGroup.validation.currentTabVisibility ||
+                state.selectorDialog.validation.currentTabVisibility
+            ) {
+                updatedGroup = state.selectorsGroup.group.map((selector) => {
+                    return {
+                        ...selector,
+                        validation: {...selector.validation, currentTabVisibility: undefined},
+                    };
+                });
             }
 
             return {
                 ...state,
                 selectorsGroup: {
                     ...state.selectorsGroup,
-                    group: [...state.selectorsGroup.group, {...newSelector, title: payload.title}],
+                    group: updatedGroup.concat([{...newSelector, title: payload.title}]),
                     autoHeight,
+                    // The settings of the first selector are applied to the group
+                    impactType: isBecomeGroup
+                        ? state.selectorsGroup.group[0].impactType ?? 'currentTab'
+                        : state.selectorsGroup.impactType,
+                    impactTabsIds: isBecomeGroup
+                        ? state.selectorsGroup.group[0].impactTabsIds ?? fallbackImpactTabsIds
+                        : state.selectorsGroup.impactTabsIds,
+                    validation: {
+                        ...state.selectorsGroup.validation,
+                        currentTabVisibility: undefined,
+                    },
                 },
             };
         }
 
         case UPDATE_SELECTORS_GROUP: {
-            const {selectorsGroup} = state;
-            const {group, autoHeight} = action.payload;
+            const {selectorsGroup, selectorDialog} = state;
+            const {group, autoHeight, impactTabsIds} = action.payload;
 
             const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {};
+
+            const isSingleSelectorLeft =
+                selectorsGroup.group.length > 1 && selectorsGroup.group.length === 1;
+            const hasLengthChanged = selectorsGroup.group.length !== group.length;
 
             let updatedAutoHeight;
             if (enableAutoheightDefault) {
@@ -426,6 +480,25 @@ export function controlDialog(
                     selectorsGroup.group.length === 1 && group.length > 1 ? true : autoHeight;
             }
 
+            const validation: SelectorDialogState['validation'] = {
+                impactType: isSingleSelectorLeft ? undefined : selectorDialog.validation.impactType,
+                // reset the validation when the number of selectors changes
+                currentTabVisibility: hasLengthChanged
+                    ? undefined
+                    : selectorDialog.validation.currentTabVisibility,
+            };
+
+            const groupValidation: SelectorsGroupValidation = {
+                impactTabsIds:
+                    impactTabsIds?.length === 0
+                        ? selectorsGroup.validation.impactTabsIds ??
+                          action.payload.validation.impactTabsIds
+                        : undefined,
+                currentTabVisibility: hasLengthChanged
+                    ? undefined
+                    : selectorsGroup.validation.currentTabVisibility,
+            };
+
             return {
                 ...state,
                 selectorsGroup: {
@@ -433,6 +506,11 @@ export function controlDialog(
                     ...action.payload,
 
                     autoHeight: updatedAutoHeight,
+                    validation: {...selectorsGroup.validation, ...groupValidation},
+                },
+                selectorDialog: {
+                    ...state.selectorDialog,
+                    validation: {...state.selectorDialog.validation, ...validation},
                 },
             };
         }
@@ -473,6 +551,53 @@ export function controlDialog(
             return {
                 ...state,
                 lastUsedConnectionId: action.payload,
+            };
+
+        case UPDATE_CONTROLS_VALIDATION: {
+            const {groupValidation, itemsValidation} = action.payload;
+            const {selectorsGroup, selectorDialog, openedDialog} = state;
+
+            const isGroupControl = openedDialog === DashTabItemType.GroupControl;
+
+            const updatedSelectorDialog = {
+                ...selectorDialog,
+                validation: {
+                    ...selectorDialog.validation,
+                    ...(itemsValidation || {}),
+                },
+            };
+
+            if (isGroupControl) {
+                return {
+                    ...state,
+                    selectorsGroup: {
+                        ...selectorsGroup,
+                        validation: {
+                            ...selectorsGroup.validation,
+                            ...(groupValidation || {}),
+                        },
+                        group: selectorsGroup.group.map((item) => ({
+                            ...item,
+                            validation: {
+                                ...item.validation,
+                                ...(itemsValidation || {}),
+                            },
+                        })),
+                    },
+                    selectorDialog: updatedSelectorDialog,
+                };
+            } else {
+                return {
+                    ...state,
+                    selectorDialog: updatedSelectorDialog,
+                };
+            }
+        }
+
+        case SET_ACTIVE_TAB:
+            return {
+                ...state,
+                activeTab: action.payload,
             };
 
         default:

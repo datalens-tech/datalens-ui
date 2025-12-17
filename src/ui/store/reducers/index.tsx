@@ -10,6 +10,7 @@ import {migrationToWorkbook} from 'ui/store/reducers/migrationToWorkbook';
 import {copyEntriesToWorkbook} from 'ui/store/reducers/copyEntriesToWorkbook';
 import {editHistory} from 'ui/store/reducers/editHistory';
 import {controlDialog} from 'ui/store/reducers/controlDialog';
+import {localStorageFallback} from 'store/reducers/localStorageFallback';
 
 export default {
     user,
@@ -24,4 +25,5 @@ export default {
     migrationToWorkbook,
     copyEntriesToWorkbook,
     editHistory,
+    localStorageFallback,
 };

@@ -4,7 +4,7 @@ import {get} from 'lodash';
 import type {RouteComponentProps} from 'react-router-dom';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {ConnectorType, Feature} from 'shared';
-import {ConnectorAlias} from 'ui/constants';
+import {ConnectorAlias, URL_QUERY} from 'ui/constants';
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -66,7 +66,11 @@ const MetaConnector = (props: {connector?: ConnectorItem}) => {
     return null;
 };
 
-const Connector = (props: {type: ConnectorType} | {connector: ConnectorItem}) => {
+type ConnectorProps = {
+    readonly: boolean;
+} & ({type: ConnectorType} | {connector: ConnectorItem});
+
+const Connector = (props: ConnectorProps) => {
     const type = 'connector' in props ? props.connector.conn_type : props.type;
 
     if ('connector' in props && type === ConnectorType.__Meta__) {
@@ -82,7 +86,7 @@ const Connector = (props: {type: ConnectorType} | {connector: ConnectorItem}) =>
             return <Yadocs />;
     }
 
-    return <ConnectorForm type={type} />;
+    return <ConnectorForm readonly={props.readonly} type={type} />;
 };
 
 type Routes = 'newList' | 'newType' | 'exist';
@@ -154,7 +158,7 @@ export const Router = ({flattenConnectors, groupedConnectors, connectionData}: R
                                     const collectionId = get(props.match.params, 'collectionId');
 
                                     if (connector) {
-                                        return <Connector connector={connector} />;
+                                        return <Connector readonly={false} connector={connector} />;
                                     }
 
                                     return (
@@ -171,6 +175,9 @@ export const Router = ({flattenConnectors, groupedConnectors, connectionData}: R
                         const connectionId = get(props.match.params, 'connectionId');
                         const workbookId = get(props.match.params, 'workbookId');
                         const collectionId = get(props.match.params, 'collectionId');
+                        const bindedWorkbookId = new URLSearchParams(props.location.search).get(
+                            URL_QUERY.BINDED_WOKRBOOK,
+                        );
                         const type = connectionData?.[FieldKey.DbType] as ConnectorType;
                         const {extractEntryId} = registry.common.functions.getAll();
 
@@ -179,8 +186,7 @@ export const Router = ({flattenConnectors, groupedConnectors, connectionData}: R
                         if (!extractedId) {
                             return <Redirect to={getDefaultPath({workbookId, collectionId})} />;
                         }
-
-                        return <Connector type={type} />;
+                        return <Connector readonly={Boolean(bindedWorkbookId)} type={type} />;
                     }}
                 />
             </Switch>

@@ -71,11 +71,11 @@
     "@diplodoc/transform": "^4.60.2",
     "@gravity-ui/app-layout": "^2.1.0",
     "@gravity-ui/browserslist-config": "^4.3.0",
-    "@gravity-ui/chartkit": "^7.24.2",
+    "@gravity-ui/chartkit": "^7.29.3",
     "@gravity-ui/dashkit": "^9.2.0",
     "@gravity-ui/date-utils": "^2.5.6",
     "@gravity-ui/expresskit": "^2.4.0",
-    "@gravity-ui/gateway": "^4.8.0",
+    "@gravity-ui/gateway": "^4.10.4",
     "@gravity-ui/i18n": "^1.7.0",
     "@gravity-ui/nodekit": "^2.4.1",
     "@node-rs/crc32": "^1.7.2",
@@ -254,8 +254,8 @@
     "@gravity-ui/uikit": {
       "react-virtualized-auto-sizer": "1.0.24"
     },
-    "@gravity-ui/app-builder": {
-      "@rspack/core": "1.4.2"
+    "@gravity-ui/gateway": {
+      "@grpc/grpc-js": "^1.13.2"
     }
   },
   "deploy": {

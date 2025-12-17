@@ -4,22 +4,26 @@ import {Ellipsis, Plus} from '@gravity-ui/icons';
 import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import type {ConnectorType, DatasetOptions, DatasetSource} from 'shared';
 import {CollectionItemEntities, DatasetSourcesLeftPanelQA, EntryScope, PLACE} from 'shared';
 import type {BaseSource, GetEntryResponse, SharedEntryFields} from 'shared/schema';
 import {NavigationMinimal, type SDK} from 'ui';
 import {ConnectorIcon} from 'ui/components/ConnectorIcon/ConnectorIcon';
 import {DIALOG_SELECT_SHARED_ENTRY} from 'ui/components/DialogSelectSharedEntry/DialogSelectSharedEntry';
-import {DIALOG_SHARED_ENTRY_PERMISSIONS} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
+import {SharedEntryIcon} from 'ui/components/SharedEntryIcon/SharedEntryIcon';
+import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {registry} from 'ui/registry';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import Utils, {getConnectorIconData} from 'ui/utils';
 
-import {setSharedDatasetDelegation} from '../../store/actions/creators';
-import type {SelectedConnections, SortedSourcePrototypes} from '../../store/selectors';
+import {
+    type SelectedConnections,
+    type SortedSourcePrototypes,
+    selectedConnectionDelegationStatusSelector,
+} from '../../store/selectors';
 import type {ConnectionEntry, DatasetError, FreeformSource} from '../../store/types';
 
 import {SourcesTable} from './SourcesTable';
@@ -80,7 +84,9 @@ type DeleteSourceHandle = (props: {id: string}) => void;
 type EditSourceHandle = (source: DatasetSource) => void;
 type ClickConnectionHandle = (connectionId: string) => Promise<BaseSource[]>;
 type SelectConnectionHandle = (props: Partial<GetEntryResponse>) => void;
-type OnSharedDatasetCreationHandle = (onApply: (entry: SharedEntryFields) => void) => void;
+type OnSharedDatasetCreationHandle = (
+    onApply: (entry: Partial<SharedEntryFields>) => Promise<void> | void,
+) => void;
 
 type ConnectionMenuProps = {
     sdk: SDK;
@@ -95,6 +101,7 @@ type ConnectionMenuProps = {
     workbookId?: string;
     collectionId?: string;
     onSharedDatasetCreationHandle: OnSharedDatasetCreationHandle;
+    readonly: boolean;
 };
 
 function ConnectionMenu(props: ConnectionMenuProps) {
@@ -111,6 +118,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
         workbookId,
         collectionId,
         onSharedDatasetCreationHandle,
+        readonly,
     } = props;
     const menuControlBtnRef = React.useRef(null);
     const [isNavVisible, setNavVisibility] = useState(false);
@@ -166,6 +174,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                     },
                     {
                         text: i18n('label_menu-popup-replace-connection'),
+                        disabled: readonly,
                         action: (e) => {
                             e.stopPropagation();
                             onReplaceConnectionClick();
@@ -230,6 +239,8 @@ type ConnectionsListProps = {
     onClickReplaceConnectionMenuItem: ReplaceConnectionHandle;
     clickableTypes?: ConnectorType[];
     onSharedDatasetCreationHandle: OnSharedDatasetCreationHandle;
+    isLoading: boolean;
+    readonly: boolean;
 };
 
 function ConnectionsList(props: ConnectionsListProps) {
@@ -245,56 +256,75 @@ function ConnectionsList(props: ConnectionsListProps) {
         workbookId,
         collectionId,
         onSharedDatasetCreationHandle,
+        isLoading,
+        readonly,
     } = props;
+    const connectionDelegation = useSelector(selectedConnectionDelegationStatusSelector);
 
     return (
         <>
-            {connections.map((connection) => {
-                const {id, entryId, deleted, deleteEnabled} = connection;
+            {isLoading ? (
+                <SmartLoader size="s" />
+            ) : (
+                connections.map((connection) => {
+                    const {id, entryId, deleted, deleteEnabled} = connection;
+                    const isSharedConnection = connection.collectionId;
+                    const isShowSharedEntryIcon =
+                        isSharedConnection && connectionDelegation !== null;
 
-                const existedConnectionId = id || entryId;
-                const active = existedConnectionId === connectionId;
-                const connectionName = getConnectionName(connection);
+                    const existedConnectionId = id || entryId;
+                    const active = existedConnectionId === connectionId;
+                    const connectionName = getConnectionName(connection);
 
-                return (
-                    // 'connection-wrap' is needed in order for clicks within navigation
-                    // did not trigger the click event on the 'connection' element
-                    <div key={existedConnectionId} className={b('connection-wrap')}>
-                        <div
-                            className={b('connection', {active})}
-                            onClick={() => onClickConnection(existedConnectionId)}
-                        >
-                            <ConnectorIcon
-                                className={b('icon-connection')}
-                                data={getConnectorIconData(getConnectionType(connection))}
-                                height={24}
-                                width={24}
-                            />
-                            <span
-                                className={b('connection-title', {deleted})}
-                                title={connectionName}
-                                data-qa="select-sources-prototypes-connection-title"
+                    return (
+                        // 'connection-wrap' is needed in order for clicks within navigation
+                        // did not trigger the click event on the 'connection' element
+                        <div key={existedConnectionId} className={b('connection-wrap')}>
+                            <div
+                                className={b('connection', {active})}
+                                onClick={() => onClickConnection(existedConnectionId)}
                             >
-                                {connectionName}
-                            </span>
+                                <ConnectorIcon
+                                    className={b('icon-connection')}
+                                    data={getConnectorIconData(getConnectionType(connection))}
+                                    height={24}
+                                    width={24}
+                                />
+                                <div className={b('connection-title-container', {deleted})}>
+                                    <span
+                                        className={b('connection-title', {deleted})}
+                                        title={connectionName}
+                                        data-qa="select-sources-prototypes-connection-title"
+                                    >
+                                        {connectionName}
+                                    </span>
+                                    {isShowSharedEntryIcon && (
+                                        <SharedEntryIcon
+                                            className={b('connection-shared-icon')}
+                                            isDelegated={connectionDelegation}
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                            <ConnectionMenu
+                                readonly={readonly}
+                                sdk={sdk}
+                                connectionId={existedConnectionId}
+                                openEnabled={!deleted}
+                                deleteEnabled={deleteEnabled}
+                                onClickDeleteConnection={onClickConnectionDeleteButton}
+                                onClickOpenConnection={openConnection}
+                                onClickReplaceConnectionMenuItem={onClickReplaceConnectionMenuItem}
+                                clickableTypes={clickableTypes}
+                                inactiveEntryIds={getInactiveEntryIds(connections)}
+                                workbookId={workbookId}
+                                collectionId={collectionId}
+                                onSharedDatasetCreationHandle={onSharedDatasetCreationHandle}
+                            />
                         </div>
-                        <ConnectionMenu
-                            sdk={sdk}
-                            connectionId={existedConnectionId}
-                            openEnabled={!deleted}
-                            deleteEnabled={deleteEnabled}
-                            onClickDeleteConnection={onClickConnectionDeleteButton}
-                            onClickOpenConnection={openConnection}
-                            onClickReplaceConnectionMenuItem={onClickReplaceConnectionMenuItem}
-                            clickableTypes={clickableTypes}
-                            inactiveEntryIds={getInactiveEntryIds(connections)}
-                            workbookId={workbookId}
-                            collectionId={collectionId}
-                            onSharedDatasetCreationHandle={onSharedDatasetCreationHandle}
-                        />
-                    </div>
-                );
-            })}
+                    );
+                })
+            )}
         </>
     );
 }
@@ -311,6 +341,8 @@ type SelectConnectionsProps = {
     workbookId?: string;
     collectionId?: string;
     options: Partial<DatasetOptions>;
+    isLoadingConnectionInfo: boolean;
+    readonly: boolean;
 };
 
 function SelectConnections(props: SelectConnectionsProps) {
@@ -326,6 +358,8 @@ function SelectConnections(props: SelectConnectionsProps) {
         workbookId,
         options,
         collectionId,
+        isLoadingConnectionInfo,
+        readonly,
     } = props;
     const dispatch = useDispatch();
     const [isNavVisible, setNavVisibility] = useState(false);
@@ -351,33 +385,16 @@ function SelectConnections(props: SelectConnectionsProps) {
                             ),
                             getIsInactiveEntity: (entry) =>
                                 entry.entity === CollectionItemEntities.ENTRY &&
-                                entry.scope === 'dataset',
-                            onSelectEntry: (connection) => {
-                                if (connection.entity === CollectionItemEntities.ENTRY) {
-                                    dispatch(
-                                        openDialog({
-                                            id: DIALOG_SHARED_ENTRY_PERMISSIONS,
-                                            props: {
-                                                open: true,
-                                                onClose: () => dispatch(closeDialog()),
-                                                entry: connection,
-                                                onApply: (delegate) => {
-                                                    dispatch(setSharedDatasetDelegation(delegate));
-                                                    onApply(connection);
-                                                    dispatch(closeDialog());
-                                                    dispatch(closeDialog());
-                                                },
-                                            },
-                                        }),
-                                    );
-                                }
+                                (entry.scope === 'dataset' || entry.entryId === connectionId),
+                            onSelectEntry: async (connection) => {
+                                await onApply(connection);
                             },
                         },
                     }),
                 );
             }
         },
-        [collectionId, dispatch],
+        [collectionId, dispatch, connectionId],
     );
 
     const onAddConnectionClick = React.useCallback(() => {
@@ -399,6 +416,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                 <span>{i18n('label_sources')}</span>
             </div>
             <ConnectionsList
+                readonly={readonly}
                 sdk={sdk}
                 connectionId={connectionId}
                 connections={connections}
@@ -410,6 +428,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                 workbookId={workbookId}
                 collectionId={collectionId}
                 onSharedDatasetCreationHandle={onSharedDatasetCreationHandle}
+                isLoading={isLoadingConnectionInfo}
             />
             {isVisibleAddConnectionButton && (
                 <div className={b('bottom-section')}>
@@ -485,6 +504,8 @@ type SelectSourcePrototypesProps = SelectConnectionsProps & {
     workbookId?: string;
     collectionId?: string;
     options: Partial<DatasetOptions>;
+    isLoadingConnectionInfo: boolean;
+    readonly: boolean;
 };
 
 function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
@@ -510,6 +531,8 @@ function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
         workbookId,
         collectionId,
         options,
+        isLoadingConnectionInfo,
+        readonly,
     } = props;
 
     const connectionId = id || entryId;
@@ -519,6 +542,7 @@ function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
     return (
         <div className={b()}>
             <SelectConnections
+                isLoadingConnectionInfo={isLoadingConnectionInfo}
                 sdk={sdk}
                 connections={connections}
                 connectionId={connectionId}
@@ -530,8 +554,10 @@ function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
                 workbookId={workbookId}
                 collectionId={collectionId}
                 options={options}
+                readonly={readonly}
             />
             <SourcesTable
+                readonly={readonly}
                 error={error}
                 sources={sourcePrototypes}
                 loading={isSourcesLoading}

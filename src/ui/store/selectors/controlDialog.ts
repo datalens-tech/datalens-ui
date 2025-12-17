@@ -75,6 +75,9 @@ export const selectSelectorRequired = (state: DatalensGlobalState) =>
 export const selectSelectorValidation = (state: DatalensGlobalState) =>
     selectControlDialogState(state).selectorDialog.validation;
 
+export const selectSelectorsGroupValidation = (state: DatalensGlobalState) =>
+    selectControlDialogState(state).selectorsGroup.validation;
+
 export const getDatasetField = (state: DatalensGlobalState) => {
     const {dataset, datasetFieldId} = selectControlDialogState(state).selectorDialog;
     return (dataset?.dataset?.result_schema || dataset?.result_schema || [])?.find(
@@ -225,3 +228,6 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
 
     return inputOperations;
 };
+
+export const selectControlDialogActiveTab = (state: DatalensGlobalState) =>
+    selectControlDialogState(state).activeTab;
