@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import {DashTabItemType, TitlePlacementOption} from 'shared';
 import type {
     DashTabItem,
@@ -59,6 +60,7 @@ import {
 } from '../../selectors/controlDialog';
 import {getValidScopeFields} from './helpers';
 import {selectTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {SELECTOR_DIALOG_TABS} from 'ui/store/constants/controlDialog';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
@@ -204,6 +206,20 @@ export const updateControlsValidation = (
     };
 };
 
+export const SET_ACTIVE_TAB = Symbol('controlDialog/SET_ACTIVE_TAB');
+
+export type SetActiveTabAction = {
+    type: typeof SET_ACTIVE_TAB;
+    payload: string;
+};
+
+export const setActiveTab = (payload: SetActiveTabAction['payload']): SetActiveTabAction => {
+    return {
+        type: SET_ACTIVE_TAB,
+        payload,
+    };
+};
+
 const isSelectorWithContext = (
     selector: SelectorDialogState,
 ): selector is PastedSelectorDialogState => {
@@ -213,9 +229,11 @@ const isSelectorWithContext = (
 export const applyGroupControlDialog = ({
     setItemData,
     closeDialog,
+    groupTabError,
 }: {
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
+    groupTabError: boolean;
 }) => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
@@ -262,23 +280,33 @@ export const applyGroupControlDialog = ({
             selectorsGroup: validatedSelectorsGroup,
         });
 
-        if (firstInvalidIndex !== null || !isEmpty(validatedSelectorsGroup.validation)) {
-            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
-        }
-
         if (firstInvalidIndex !== null) {
             const activeSelectorValidation =
                 validatedSelectorsGroup.group[activeSelectorIndex].validation;
 
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.SELECTORS));
             if (!isEmpty(activeSelectorValidation)) {
                 dispatch(
                     setSelectorDialogItem({
                         validation: activeSelectorValidation,
                     }),
                 );
+
                 return;
             }
             dispatch(setActiveSelectorIndex({activeSelectorIndex: firstInvalidIndex}));
+            return;
+        }
+
+        if (!isEmpty(validatedSelectorsGroup.validation)) {
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.GROUP));
+            return;
+        }
+
+        if (groupTabError) {
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.GROUP));
             return;
         }
 

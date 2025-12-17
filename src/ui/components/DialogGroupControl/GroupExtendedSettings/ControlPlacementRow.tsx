@@ -3,14 +3,13 @@ import React from 'react';
 import {SegmentedRadioGroup as RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {CONTROLS_PLACEMENT_MODE} from 'shared';
 import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 import {EMPTY_VALUE} from 'ui/units/dash/modules/constants';
 
-import {CONTROLS_PLACEMENT_MODE} from '../../../constants/dialogs';
+import './GroupExtendedSettings.scss';
 
-import '../DialogExtendedSettings.scss';
-
-const b = block('extended-settings-dialog');
+const b = block('group-extended-settings');
 
 const i18n = I18n.keyset('dash.extended-settings-dialog.edit');
 

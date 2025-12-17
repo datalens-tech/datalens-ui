@@ -27,18 +27,28 @@ import '../DialogGroupControl.scss';
 export const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
+// TODO (global selectors): Add translations and delete "button_extended-settings", "label_data", "label_selector-settings" keys
+const mockI18n = (key: string) => {
+    const values: Record<string, string> = {
+        label_general: 'Общее',
+    };
+
+    return values[key];
+};
+
 export const GroupControlBody: React.FC<{
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
     enableGlobalSelectors?: boolean;
+    className?: string;
 }> = (props) => {
     const elementType = useSelector(selectSelectorControlType);
 
     const isTypeNotCheckbox = elementType !== ELEMENT_TYPE.CHECKBOX;
 
     return (
-        <React.Fragment>
-            <FormSection title={i18n('label_data')}>
+        <div className={props.className}>
+            <FormSection title={mockI18n('label_general')}>
                 <FormRow label={i18n('label_source')} className={b('row')}>
                     <SelectorTypeSelect showExternalType={false} mode="select" />
                 </FormRow>
@@ -68,6 +78,6 @@ export const GroupControlBody: React.FC<{
                 )}
                 <HintRow className={b('row')} />
             </FormSection>
-        </React.Fragment>
+        </div>
     );
 };

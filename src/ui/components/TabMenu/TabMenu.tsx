@@ -24,7 +24,6 @@ const b = block('tab-menu');
 const ADD_BUTTON_DEFAULT_SIZE = 16;
 
 export const TabMenu = <T extends unknown>({
-    view,
     canPasteItems,
     enableActionMenu,
     items,
@@ -265,8 +264,8 @@ export const TabMenu = <T extends unknown>({
                     className={b('action-button')}
                     onClick={onAction({action: TabActionType.Add})}
                     qa={TabMenuQA.Add}
-                    view={view === 'new' ? 'flat-secondary' : 'outlined'}
-                    size={view === 'new' ? 'l' : 'm'}
+                    view="flat-secondary"
+                    size="l"
                     width="max"
                 >
                     <Icon
@@ -278,10 +277,11 @@ export const TabMenu = <T extends unknown>({
                 </Button>
                 {pasteConfig && (
                     <Button
-                        view="outlined"
                         className={b('action-button')}
                         onClick={onAction({action: TabActionType.Paste})}
                         qa={TabMenuQA.Paste}
+                        view="flat-secondary"
+                        size="l"
                         width="max"
                     >
                         <Icon
@@ -296,7 +296,7 @@ export const TabMenu = <T extends unknown>({
                 )}
             </div>
         );
-    }, [pasteConfig, addButtonText, onAction, view, tabIconMixin, pasteButtonText]);
+    }, [pasteConfig, addButtonText, onAction, tabIconMixin, pasteButtonText]);
 
     const renderListWithMenu = React.useCallback(
         (
@@ -313,9 +313,9 @@ export const TabMenu = <T extends unknown>({
                         virtualized: false,
                         deactivateOnLeave: true,
                         selectedItemIndex,
-                        className: b('list', {view}),
+                        className: b('list'),
                         onSortEnd: ({oldIndex, newIndex}) => moveItem(oldIndex, newIndex),
-                        itemClassName: b('list-item', {view}),
+                        itemClassName: b('list-item'),
                     }}
                     onRemove={onRemove}
                     onAction={onAction}
@@ -327,14 +327,14 @@ export const TabMenu = <T extends unknown>({
                 />
             );
         },
-        [view, moveItem, onRemove, onAction, onDuplicate, onCopyItem, renderWrapper],
+        [moveItem, onRemove, onAction, onDuplicate, onCopyItem, renderWrapper],
     );
 
     const renderStarListItem = React.useCallback(
         ({title, isDefault}: TabMenuItemData<T>, _: boolean, itemIndex: number) => {
             return (
                 <div
-                    className={b('item', {view})}
+                    className={b('item')}
                     onClick={onAction({
                         action: TabActionType.ChangeChosen,
                         index: itemIndex,
@@ -365,7 +365,7 @@ export const TabMenu = <T extends unknown>({
                 </div>
             );
         },
-        [view, onAction],
+        [onAction],
     );
 
     const renderListWithRemove = React.useCallback(
@@ -381,7 +381,7 @@ export const TabMenu = <T extends unknown>({
                         className: b('list'),
                         onSortEnd: ({oldIndex, newIndex}) => moveItem(oldIndex, newIndex),
                         renderItem: renderStarListItem,
-                        itemClassName: b('list-item', {view}),
+                        itemClassName: b('list-item'),
                     }}
                     onRemove={onRemove}
                     iconOnHover={true}
@@ -389,11 +389,11 @@ export const TabMenu = <T extends unknown>({
                 />
             );
         },
-        [moveItem, renderStarListItem, view, onRemove],
+        [moveItem, renderStarListItem, onRemove],
     );
 
     return (
-        <div className={b({view}, className)}>
+        <div className={b(null, className)}>
             {enableActionMenu
                 ? renderListWithMenu(items, selectedItemIndex, onUpdateItem)
                 : renderListWithRemove(items, selectedItemIndex)}

@@ -50,6 +50,8 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'salesSum');
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y2, 'orderCount');
 
+            // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+            await page.mouse.move(-1, -1);
             await expect(chart).toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });
@@ -69,6 +71,8 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'orderMonth');
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y2, 'orderCount');
 
+            // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+            await page.mouse.move(-1, -1);
             await expect(chart).toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });

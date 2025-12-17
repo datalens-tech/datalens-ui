@@ -25,6 +25,7 @@ import {
     SET_LAST_USED_DATASET_ID,
     SET_LAST_USED_CONNECTION_ID,
     UPDATE_CONTROLS_VALIDATION,
+    SET_ACTIVE_TAB,
 } from '../actions/controlDialog/controlDialog';
 import type {
     SetLastUsedDatasetIdAction,
@@ -36,6 +37,7 @@ import type {
     UpdateSelectorsGroupAction,
     AddSelectorToGroupAction,
     UpdateControlsValidationAction,
+    SetActiveTabAction,
 } from '../actions/controlDialog/controlDialog';
 import {getActualUniqueFieldNameValidation, getInitialDefaultValue} from '../utils/controlDialog';
 import {I18n} from 'i18n';
@@ -53,6 +55,7 @@ export type ControlDialogStateItemMeta = {
 };
 export interface ControlDialogState {
     activeSelectorIndex: number;
+    activeTab: string | null;
     selectorsGroup: SelectorsGroupDialogState;
     selectorDialog: SelectorDialogState;
     openedDialog: DashTabItemType | null;
@@ -191,6 +194,7 @@ export function getSelectorGroupDialogFromData(data: DashTabItemGroupControlData
 
 const getInitialState = (): ControlDialogState => ({
     activeSelectorIndex: 0,
+    activeTab: null,
     selectorsGroup: getGroupSelectorDialogInitialState(),
     selectorDialog: getSelectorDialogInitialState(),
     openedDialog: null,
@@ -213,7 +217,8 @@ export function controlDialog(
         | AddSelectorToGroupAction
         | SetLastUsedDatasetIdAction
         | SetLastUsedConnectionIdAction
-        | UpdateControlsValidationAction,
+        | UpdateControlsValidationAction
+        | SetActiveTabAction,
 ): ControlDialogState {
     const {type} = action;
 
@@ -420,11 +425,26 @@ export function controlDialog(
 
             const fallbackImpactTabsIds = currentTabId ? [currentTabId] : undefined;
 
+            let updatedGroup = [...state.selectorsGroup.group];
+
+            // reset the validation when the number of selectors changes
+            if (
+                state.selectorsGroup.validation.currentTabVisibility ||
+                state.selectorDialog.validation.currentTabVisibility
+            ) {
+                updatedGroup = state.selectorsGroup.group.map((selector) => {
+                    return {
+                        ...selector,
+                        validation: {...selector.validation, currentTabVisibility: undefined},
+                    };
+                });
+            }
+
             return {
                 ...state,
                 selectorsGroup: {
                     ...state.selectorsGroup,
-                    group: [...state.selectorsGroup.group, {...newSelector, title: payload.title}],
+                    group: updatedGroup.concat([{...newSelector, title: payload.title}]),
                     autoHeight,
                     // The settings of the first selector are applied to the group
                     impactType: isBecomeGroup
@@ -433,6 +453,10 @@ export function controlDialog(
                     impactTabsIds: isBecomeGroup
                         ? state.selectorsGroup.group[0].impactTabsIds ?? fallbackImpactTabsIds
                         : state.selectorsGroup.impactTabsIds,
+                    validation: {
+                        ...state.selectorsGroup.validation,
+                        currentTabVisibility: undefined,
+                    },
                 },
             };
         }
@@ -445,6 +469,7 @@ export function controlDialog(
 
             const isSingleSelectorLeft =
                 selectorsGroup.group.length > 1 && selectorsGroup.group.length === 1;
+            const hasLengthChanged = selectorsGroup.group.length !== group.length;
 
             let updatedAutoHeight;
             if (enableAutoheightDefault) {
@@ -457,13 +482,21 @@ export function controlDialog(
 
             const validation: SelectorDialogState['validation'] = {
                 impactType: isSingleSelectorLeft ? undefined : selectorDialog.validation.impactType,
+                // reset the validation when the number of selectors changes
+                currentTabVisibility: hasLengthChanged
+                    ? undefined
+                    : selectorDialog.validation.currentTabVisibility,
             };
 
             const groupValidation: SelectorsGroupValidation = {
                 impactTabsIds:
-                    selectorsGroup.impactTabsIds === impactTabsIds
-                        ? selectorsGroup.validation.impactTabsIds
+                    impactTabsIds?.length === 0
+                        ? selectorsGroup.validation.impactTabsIds ??
+                          action.payload.validation.impactTabsIds
                         : undefined,
+                currentTabVisibility: hasLengthChanged
+                    ? undefined
+                    : selectorsGroup.validation.currentTabVisibility,
             };
 
             return {
@@ -560,6 +593,12 @@ export function controlDialog(
                 };
             }
         }
+
+        case SET_ACTIVE_TAB:
+            return {
+                ...state,
+                activeTab: action.payload,
+            };
 
         default:
             return state;
