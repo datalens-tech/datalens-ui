@@ -23,7 +23,6 @@ interface UseTabVisibilityValidationParams {
     impactTabsIds: string[];
     selectorsGroup: SelectorsGroupDialogState;
     selectorDialog: SelectorDialogState;
-    onRaiseTabVisibilityProblem?: () => void;
 }
 
 export const useTabVisibilityValidation = ({
@@ -33,7 +32,6 @@ export const useTabVisibilityValidation = ({
     impactTabsIds,
     selectorsGroup,
     selectorDialog,
-    onRaiseTabVisibilityProblem,
 }: UseTabVisibilityValidationParams) => {
     const dispatch = useDispatch();
 
@@ -70,17 +68,15 @@ export const useTabVisibilityValidation = ({
                         itemData,
                     })
                 ) {
-                    if (onRaiseTabVisibilityProblem) {
-                        onRaiseTabVisibilityProblem?.();
-                        return;
-                    }
-
                     const validationError = i18n('validation_need-current-tab-impact');
                     dispatch(
                         updateControlsValidation({
                             groupValidation:
                                 isGroupControl &&
-                                !selectorsGroup.impactTabsIds?.includes(currentTabId)
+                                // check selectorsGroup.impactTabsIds in case all selectors in the group have a setting that differs from the group
+                                // in this case, the group may have the correct impactTabsIds and it does not need to be highlighted.
+                                (!selectorsGroup.impactTabsIds?.includes(currentTabId) ||
+                                    isGroupSettings)
                                     ? {currentTabVisibility: validationError}
                                     : undefined,
                             itemsValidation: {currentTabVisibility: validationError},
@@ -96,7 +92,6 @@ export const useTabVisibilityValidation = ({
             isGroupSettings,
             selectorsGroup,
             selectorDialog,
-            onRaiseTabVisibilityProblem,
             dispatch,
         ],
     );

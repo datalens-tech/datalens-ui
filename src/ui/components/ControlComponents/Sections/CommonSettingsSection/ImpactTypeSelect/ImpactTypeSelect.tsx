@@ -52,7 +52,6 @@ export type ImpactTypeSelectProps = {
     groupImpactTabsIds?: ImpactTabsIds;
     hasMultipleSelectors?: boolean;
     isGroupSettings?: boolean;
-    onRaiseTabVisibilityProblem?: () => void;
     selectorWidth?: SelectProps['width'];
     className?: string;
 };
@@ -62,7 +61,6 @@ export const ImpactTypeSelect = ({
     groupImpactTabsIds,
     hasMultipleSelectors,
     isGroupSettings,
-    onRaiseTabVisibilityProblem,
     selectorWidth = 'max',
     className,
 }: ImpactTypeSelectProps) => {
@@ -94,7 +92,6 @@ export const ImpactTypeSelect = ({
         impactTabsIds,
         selectorsGroup,
         selectorDialog,
-        onRaiseTabVisibilityProblem,
     });
 
     const tabsOptions = React.useMemo(() => {
@@ -222,11 +219,9 @@ export const ImpactTypeSelect = ({
                         groupValidation: {
                             currentTabVisibility: undefined,
                         },
-                        itemsValidation: isGroupSettings
-                            ? undefined
-                            : {
-                                  currentTabVisibility: undefined,
-                              },
+                        itemsValidation: {
+                            currentTabVisibility: undefined,
+                        },
                     }),
                 );
             }
@@ -235,7 +230,6 @@ export const ImpactTypeSelect = ({
             currentTabId,
             dispatch,
             isGroupControl,
-            isGroupSettings,
             selectorDialog.validation.currentTabVisibility,
             selectorsGroup.validation.currentTabVisibility,
         ],

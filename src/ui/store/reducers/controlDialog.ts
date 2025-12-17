@@ -466,8 +466,9 @@ export function controlDialog(
 
             const groupValidation: SelectorsGroupValidation = {
                 impactTabsIds:
-                    selectorsGroup.impactTabsIds === impactTabsIds
-                        ? selectorsGroup.validation.impactTabsIds
+                    impactTabsIds?.length === 0
+                        ? selectorsGroup.validation.impactTabsIds ??
+                          action.payload.validation.impactTabsIds
                         : undefined,
             };
 
