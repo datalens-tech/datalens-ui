@@ -23,7 +23,7 @@ export const PUBLIC_API_URL = '/rpc/:action';
 export const PUBLIC_API_ROUTE = `${PUBLIC_API_HTTP_METHOD} ${PUBLIC_API_URL}`;
 
 export const PUBLIC_API_VERSION = {
-    v0: 0,
+    v1: 1,
 } as const satisfies Record<string, number>;
 
 export const PUBLIC_API_LATEST_VERSION = Math.max(...Object.values(PUBLIC_API_VERSION)) as ValueOf<
