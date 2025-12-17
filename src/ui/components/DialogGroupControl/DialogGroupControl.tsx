@@ -106,6 +106,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
             open={dialogIsVisible}
             onClose={handleClose}
             qa={ControlQA.dialogControl}
+            disableHeightTransition={true}
         >
             <Dialog.Header caption={mockI18n('label_selector-group')} />
             <Dialog.Body className={b('body')}>
