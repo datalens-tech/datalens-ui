@@ -69,6 +69,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         colors,
         colorsConfig,
         visualizationId,
+        segments: split,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
@@ -251,6 +252,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
     const segmentsMap = getSegmentMap(args);
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
     const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
+    const isSplitWithHtmlValues = isHtmlField(split?.[0]);
 
     const axisLabelNumberFormat = yPlaceholder
         ? getAxisFormatting({
@@ -269,9 +271,20 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 placeholder: yPlaceholder,
             });
 
-            let axisTitle: ChartYAxis['title'] | undefined;
+            let axisTitle: ChartYAxis['title'] | null = null;
             if (isSplitEnabled) {
-                axisTitle = {text: d.title, rotation: 0, maxWidth: '25%'};
+                let titleText: string = d.title;
+                if (isSplitWithHtmlValues) {
+                    // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+                    titleText = wrapHtml(d.title);
+                }
+
+                axisTitle = {
+                    text: titleText,
+                    rotation: 0,
+                    maxWidth: '25%',
+                    html: isSplitWithHtmlValues,
+                };
             }
 
             return merge(axisBaseConfig, {
