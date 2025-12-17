@@ -129,7 +129,9 @@ export class ChartPage extends BasePage {
                 .locator('input');
             await searchInput.fill(filter);
         }
-        const folderRow = this.page.locator(`${slct(DlNavigationQA.Row)} >> text=${folderName}`);
+        const folderRow = await this.page.waitForSelector(
+            `${slct(DlNavigationQA.Row)} >> text=${folderName}`,
+        );
         await folderRow.click();
 
         const navigationDoneBtn = await this.page.waitForSelector(
