@@ -13,8 +13,12 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
     const installationText = `Installation – <b>${config.appInstallation}</b>`;
     const envText = `Env – <b>${config.appEnv}</b>`;
 
-    const {baseConfig, securitySchemes, biOpenapiSchemas, latestVersion} =
-        registry.getPublicApiConfig();
+    const {
+        baseConfig,
+        securitySchemes,
+        biOpenapiSchemas,
+        latestVersion = 0,
+    } = registry.getPublicApiConfig();
 
     setImmediate(() => {
         const versionToDocument = Object.entries(baseConfig).reduce<
