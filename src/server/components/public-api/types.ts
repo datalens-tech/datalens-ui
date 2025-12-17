@@ -25,6 +25,7 @@ export type PublicApiAction<TSchema extends SchemasByScope, TFeature> = {
     ) => (params: any) => Promise<any>;
     openApi: PublicApiActionOpenApi;
     features?: TFeature[];
+    rawAction?: boolean;
 };
 
 export type PublicApiVersionActions<TSchema extends SchemasByScope, TFeature> = Record<
