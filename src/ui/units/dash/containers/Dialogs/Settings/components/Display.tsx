@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
 import {DASH_MARGIN_STEP, MAX_DASH_MARGIN, MIN_DASH_MARGIN} from 'ui/components/DashKit/constants';
+import {WidgetRoundingsInput} from 'ui/components/WidgetRoundingsInput/WidgetRoundingsInput';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';
@@ -20,6 +21,8 @@ const i18n = I18n.keyset('dash.settings-dialog.edit');
 type DisplayProps = {
     margins: [number, number];
     onChangeMargins: (newMargins: number | [number, number]) => void;
+    borderRadius: number | undefined;
+    onChangeBorderRadius: (newBorderRadius: number | undefined) => void;
     hideTabsValue: boolean;
     onChangeHideTabs: () => void;
     hideDashTitleValue: boolean;
@@ -31,6 +34,8 @@ type DisplayProps = {
 export const Display = ({
     margins,
     onChangeMargins,
+    borderRadius,
+    onChangeBorderRadius,
     hideTabsValue,
     onChangeHideTabs,
     hideDashTitleValue,
@@ -38,6 +43,7 @@ export const Display = ({
     expandTOCValue,
     onChangeExpandTOC,
 }: DisplayProps) => {
+    const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
     return (
         <SectionWrapper
             title={i18n('label_display')}
@@ -72,6 +78,16 @@ export const Display = ({
                     className={b('box')}
                 />
             </Row>
+            {isNewDashSettingsEnabled && (
+                <Row>
+                    <Title text={i18n('label_border-radius')} />
+                    <WidgetRoundingsInput
+                        value={borderRadius}
+                        onUpdate={onChangeBorderRadius}
+                        className={b('border-radius-input')}
+                    />
+                </Row>
+            )}
             {isEnabledFeature(Feature.EnableCustomDashMargins) && (
                 <Row>
                     <div>
