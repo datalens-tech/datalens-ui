@@ -229,11 +229,13 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
 
 export const getAdditionalProps = <T extends ChartKitType>({
     type,
+    loadedData,
     splitTooltip,
 }: {
     type: T;
+    loadedData?: LoadedWidgetData;
     splitTooltip?: boolean;
-}) => {
+}): Partial<ChartKitProps<ChartKitType>> | undefined => {
     switch (type) {
         case 'highcharts': {
             return {
@@ -241,8 +243,20 @@ export const getAdditionalProps = <T extends ChartKitType>({
             } as Partial<ChartKitProps<ChartKitType>>;
         }
         case 'gravity-charts': {
+            const withoutLineLimit =
+                loadedData?.config &&
+                'withoutLineLimit' in loadedData.config &&
+                loadedData.config.withoutLineLimit;
+            const seriesCountLimit =
+                loadedData?.config &&
+                'linesLimit' in loadedData.config &&
+                loadedData.config.linesLimit;
+
             return {
                 tooltip: {splitted: splitTooltip},
+                validation: {
+                    seriesCountLimit: withoutLineLimit ? undefined : seriesCountLimit,
+                },
             } as Partial<ChartKitProps<ChartKitType>>;
         }
         default: {

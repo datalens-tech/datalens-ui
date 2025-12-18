@@ -2,7 +2,7 @@ import type {SchemasByScope} from '@gravity-ui/gateway';
 import type {NodeKit} from '@gravity-ui/nodekit';
 
 import {isEnabledServerFeature} from '../../../../shared';
-import type {PublicApiBaseConfig, PublicApiVersion} from '../types';
+import type {PublicApiBaseConfig} from '../types';
 
 export const preparePublicApiBaseConfig = <TSchema extends SchemasByScope, TFeature extends string>(
     nodekit: NodeKit,
@@ -11,7 +11,7 @@ export const preparePublicApiBaseConfig = <TSchema extends SchemasByScope, TFeat
     const result = {} as PublicApiBaseConfig<TSchema, TFeature>;
 
     for (const [versionKey, versionConfig] of Object.entries(config)) {
-        const version = versionKey as `${PublicApiVersion}`;
+        const version = versionKey;
         const {actions, openApi} = versionConfig;
 
         const filteredActions = Object.fromEntries(

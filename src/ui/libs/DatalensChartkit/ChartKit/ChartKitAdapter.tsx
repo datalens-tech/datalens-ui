@@ -59,7 +59,11 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
                 extra: {holidays: chartkitHolidays},
             });
 
-            const additionalProps = getAdditionalProps({type: chartkitType, splitTooltip});
+            const additionalProps = getAdditionalProps({
+                type: chartkitType,
+                splitTooltip,
+                loadedData,
+            });
 
             return {
                 type: chartkitType,
