@@ -63,19 +63,19 @@ export const TabMenu = <T extends unknown>({
     }, [canPasteItems, workbookId]);
 
     const getTabText = React.useCallback(
-        (index = items.length) => {
+        (index) => {
             return (
                 defaultTabText?.() ||
                 i18n('dash.widget-dialog.edit', 'value_title-default', {index: index + 1})
             );
         },
-        [defaultTabText, items.length],
+        [defaultTabText],
     );
 
     const addItem = React.useCallback(() => {
-        const newItem = {title: getTabText()} as TabMenuItemData<T>;
-        const updatedItems = [...items, newItem];
         const len = items.length;
+        const newItem = {title: getTabText(len)} as TabMenuItemData<T>;
+        const updatedItems = [...items, newItem];
 
         return {
             items: updatedItems,

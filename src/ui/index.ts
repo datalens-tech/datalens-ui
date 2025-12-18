@@ -6,7 +6,7 @@ import type {LandingState} from 'store/reducers/landing';
 import type {AsideHeaderState} from 'store/typings/asideHeader';
 import type {EntryGlobalState} from 'store/typings/entryContent';
 import type {UserState} from 'store/typings/user';
-import type {ControlDialogState} from 'ui/store/reducers/controlDialog';
+import type {ControlDialogState} from 'ui/store/reducers/controlDialog/controlDialog';
 import type {CopyEntriesToWorkbookState} from 'ui/store/reducers/copyEntriesToWorkbook';
 import type {EditHistoryState} from 'ui/store/reducers/editHistory';
 import type {LocalStorageFallbackState} from 'ui/store/reducers/localStorageFallback';
