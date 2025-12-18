@@ -12,7 +12,11 @@
         color: var(--g-color-text-hint);
     }
 
-    &__color-input {
+    &:not(&_width_max) &__color-input {
         flex: 0 1 200px;
+    }
+
+    &_width_max {
+        width: 100%;
     }
 }
