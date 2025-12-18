@@ -22,6 +22,8 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {FormSection} from '../../FormSection/FormSection';
 
+import {SimilarSelectorsBlock} from './SimilarSelectorsBlock/SimilarSelectorsBlock';
+
 import '../DialogGroupControl.scss';
 
 export const b = block('group-control-dialog');
@@ -50,6 +52,7 @@ export const GroupControlBody: React.FC<{
                     enableGlobalSelectors={props.enableGlobalSelectors}
                 />
             </FormSection>
+            <SimilarSelectorsBlock />
             <FormSection title={i18n('label_filtration')}>
                 <InputTypeSelector className={b('row')} />
                 {!isEnabledFeature(Feature.ConnectionBasedControl) && (

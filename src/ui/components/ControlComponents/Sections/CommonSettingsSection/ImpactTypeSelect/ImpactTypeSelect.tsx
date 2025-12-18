@@ -1,8 +1,9 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
+import {Magnifier} from '@gravity-ui/icons';
 import type {SelectOption, SelectProps} from '@gravity-ui/uikit';
-import {Flex, Select} from '@gravity-ui/uikit';
+import {ActionTooltip, Button, Flex, Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -10,12 +11,15 @@ import {DashTabItemType, Feature} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
+import {DL} from 'ui/constants/common';
 import {
+    setNeedSimilarSelectorsCheck,
     setSelectorDialogItem,
     updateControlsValidation,
     updateSelectorsGroup,
 } from 'ui/store/actions/controlDialog/controlDialog';
 import {
+    selectNeedSimilarSelectorsCheck,
     selectOpenedDialogType,
     selectSelectorDialog,
     selectSelectorValidation,
@@ -33,10 +37,10 @@ import {CurrentTabOption} from './CurrentTabOption/CurrentTabOption';
 import {SelectedTabsOption} from './SelectedTabsOption/SelectedTabsOption';
 import {IMPACT_TYPE_OPTION_VALUE, LABEL_BY_SCOPE_MAP} from './constants';
 import {
+    getCurrentImpactTabsIds,
     getIconByImpactType,
     getImpactTypeByValue,
     getImpactTypeValidation,
-    getInitialImpactTabsIds,
 } from './helpers';
 import {useTabVisibilityValidation} from './useTabVisibilityValidation';
 
@@ -45,6 +49,21 @@ import './ImpactTypeSelect.scss';
 const b = block('impact-type-select');
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
+
+// Mock i18n keys based on DL.USER_LANG
+const mockI18n = {
+    ru: {
+        hint_find_similiar_selectors: 'Найти селекторы с таким же полем или параметром',
+    },
+    en: {
+        hint_find_similiar_selectors: 'Find selectors with the same field or parameter',
+    },
+};
+
+const getMockText = (key: keyof typeof mockI18n.en): string => {
+    const lang = (DL.USER_LANG || 'ru') as 'ru' | 'en';
+    return mockI18n[lang]?.[key] || mockI18n.en[key];
+};
 
 const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
@@ -75,25 +94,9 @@ export const ImpactTypeSelect = ({
     const openedDialogType = useSelector(selectOpenedDialogType);
     const validation = useSelector(selectSelectorValidation);
     const groupValidation = useSelector(selectSelectorsGroupValidation);
+    const needSimilarSelectorsCheck = useSelector(selectNeedSimilarSelectorsCheck);
 
     const isGroupControl = openedDialogType === DashTabItemType.GroupControl;
-
-    const [impactTabsIds, setImpactTabsIds] = React.useState<string[]>(
-        getInitialImpactTabsIds({
-            isGroupSettings,
-            groupImpactTabsIds,
-            selectorImpactTabsIds: selectorDialog.impactTabsIds,
-        }),
-    );
-
-    const {validateTabVisibility} = useTabVisibilityValidation({
-        hasMultipleSelectors,
-        isGroupSettings,
-        currentTabId,
-        impactTabsIds,
-        selectorsGroup,
-        selectorDialog,
-    });
 
     const tabsOptions = React.useMemo(() => {
         return tabs.map((tab) => ({
@@ -102,9 +105,23 @@ export const ImpactTypeSelect = ({
         }));
     }, [tabs]);
 
+    const currentImpactTabsIds = getCurrentImpactTabsIds({
+        selectorImpactTabsIds: isGroupSettings ? groupImpactTabsIds : selectorDialog.impactTabsIds,
+        currentTabId,
+    });
+
     const currentImpactType = getImpactTypeByValue({
         selectorImpactType: isGroupSettings ? groupImpactType : selectorDialog.impactType,
         hasMultipleSelectors,
+    });
+
+    const {validateTabVisibility} = useTabVisibilityValidation({
+        hasMultipleSelectors,
+        isGroupSettings,
+        currentTabId,
+        impactTabsIds: currentImpactTabsIds,
+        selectorsGroup,
+        selectorDialog,
     });
 
     // Create options based on whether there are multiple selectors
@@ -132,7 +149,7 @@ export const ImpactTypeSelect = ({
                         tabs={tabs}
                         currentImpactType={currentImpactType}
                         currentTabTitle={currentTab?.title}
-                        impactTabsIds={impactTabsIds}
+                        impactTabsIds={currentImpactTabsIds}
                     />
                 ),
             },
@@ -176,13 +193,13 @@ export const ImpactTypeSelect = ({
 
         return baseOptions;
     }, [
-        tabs,
-        currentImpactType,
-        currentTab?.title,
-        impactTabsIds,
         hasMultipleSelectors,
         isGroupSettings,
         isGroupControl,
+        tabs,
+        currentImpactType,
+        currentTab?.title,
+        currentImpactTabsIds,
         selectorsGroup.impactType,
         groupImpactType,
     ]);
@@ -248,14 +265,12 @@ export const ImpactTypeSelect = ({
             let newImpactTabsIds = null;
             if (impactTypeValue === IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS) {
                 // When switching to selected tabs, ensure current tab is included
-                newImpactTabsIds = impactTabsIds.includes(currentTabId)
-                    ? impactTabsIds
-                    : [...impactTabsIds, currentTabId];
-                setImpactTabsIds(newImpactTabsIds);
+                newImpactTabsIds = currentImpactTabsIds.includes(currentTabId)
+                    ? currentImpactTabsIds
+                    : [...currentImpactTabsIds, currentTabId];
             } else if (impactTypeValue === IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB) {
                 // When switching to current tab, set impactTabsIds to current tab
                 newImpactTabsIds = [currentTabId];
-                setImpactTabsIds(newImpactTabsIds);
             }
 
             updateSelectorsState(impactTypeValue, newImpactTabsIds);
@@ -264,12 +279,11 @@ export const ImpactTypeSelect = ({
                 updatedImpactTabsIds: newImpactTabsIds,
             });
         },
-        [currentTabId, impactTabsIds, onChangeImpact, updateSelectorsState],
+        [currentImpactTabsIds, currentTabId, onChangeImpact, updateSelectorsState],
     );
 
     const handleImpactTabsIdsChange = React.useCallback(
         (value: string[]) => {
-            setImpactTabsIds(value);
             updateSelectorsState(IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS, value);
 
             validateTabVisibility(value);
@@ -280,6 +294,10 @@ export const ImpactTypeSelect = ({
         },
         [onChangeImpact, updateSelectorsState, validateTabVisibility],
     );
+
+    const handleFindSimilaeSelectorsClick = React.useCallback(() => {
+        dispatch(setNeedSimilarSelectorsCheck(!needSimilarSelectorsCheck));
+    }, [dispatch, needSimilarSelectorsCheck]);
 
     if (!currentTabId || !isEnabledFeature(Feature.EnableGlobalSelectors)) {
         return null;
@@ -297,10 +315,13 @@ export const ImpactTypeSelect = ({
         ? groupValidation.currentTabVisibility || groupValidation.impactTabsIds
         : validation.currentTabVisibility || validation.impactTabsIds;
 
+    const showSearchButton =
+        !isGroupSettings && (selectorDialog.fieldName || selectorDialog.datasetFieldId);
+
     return (
         <FormRow label={i18n('label_tabs-scope')} className={className}>
             <Flex direction="column" gap={2}>
-                <FieldWrapper error={impactTypeValidation}>
+                <FieldWrapper error={impactTypeValidation} className={b('impact-type-container')}>
                     <Select
                         value={[currentImpactType]}
                         onUpdate={handleImpactTypeChange}
@@ -310,12 +331,19 @@ export const ImpactTypeSelect = ({
                         renderSelectedOption={renderOptions}
                         validationState={impactTypeValidation ? 'invalid' : undefined}
                     />
+                    {showSearchButton && (
+                        <ActionTooltip title={getMockText('hint_find_similiar_selectors')}>
+                            <Button onClick={handleFindSimilaeSelectorsClick} view="outlined">
+                                <Icon data={Magnifier} size={16} />
+                            </Button>
+                        </ActionTooltip>
+                    )}
                 </FieldWrapper>
 
                 {showTabsSelector && (
                     <FieldWrapper error={impactTabsIdsValidation}>
                         <Select
-                            value={impactTabsIds}
+                            value={currentImpactTabsIds}
                             onUpdate={handleImpactTabsIdsChange}
                             width={selectorWidth}
                             multiple

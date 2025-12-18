@@ -1,10 +1,12 @@
 import type {
+    DashTab,
     DashTabItem,
     DashTabItemControlData,
     DashTabItemGroupControlData,
     EntryScope,
     StringParams,
 } from 'shared';
+import type {TabsHashStates} from 'ui/units/dash/store/actions/dashTyped';
 import {DashTabItemControlSourceType, DashTabItemType, TitlePlacements} from 'shared';
 import type {
     DialogEditItemFeaturesProp,
@@ -25,7 +27,11 @@ import {
     SET_LAST_USED_CONNECTION_ID,
     UPDATE_CONTROLS_VALIDATION,
     SET_ACTIVE_TAB,
+    SET_NEED_SIMILAR_SELECTORS_CHECK,
+    INIT_DASH_CHANGES_BUFFER,
+    UPDATE_DASH_CHANGES_BUFFER,
 } from '../../actions/controlDialog/controlDialog';
+
 import type {
     SetLastUsedDatasetIdAction,
     SetLastUsedConnectionIdAction,
@@ -37,6 +43,9 @@ import type {
     AddSelectorToGroupAction,
     UpdateControlsValidationAction,
     SetActiveTabAction,
+    SetNeedSimilarSelectorsCheckAction,
+    InitDashChangesBufferAction,
+    UpdateDashChangesBufferAction,
 } from '../../actions/controlDialog/controlDialog';
 import {
     getActualUniqueFieldNameValidation,
@@ -47,6 +56,7 @@ import {
     getSelectorsGroupValidation,
     getUpdatedAutoHeight,
 } from './helpers';
+
 import {I18n} from 'i18n';
 import {ELEMENT_TYPE} from '../../constants/controlDialog';
 import {type RealTheme} from '@gravity-ui/uikit';
@@ -60,6 +70,11 @@ export type ControlDialogStateItemMeta = {
     workbookId: string | null;
     namespace: string | null;
 };
+export interface DashChangesBuffer {
+    tabs: DashTab[];
+    hashStates: TabsHashStates;
+}
+
 export interface ControlDialogState {
     activeSelectorIndex: number;
     activeTab: string | null;
@@ -76,6 +91,8 @@ export interface ControlDialogState {
 
     lastUsedDatasetId?: string;
     lastUsedConnectionId?: string;
+    needSimilarSelectorsCheck: boolean;
+    dashChangesBuffer: DashChangesBuffer | null;
 }
 
 export function getSelectorDialogInitialState(
@@ -210,6 +227,8 @@ const getInitialState = (): ControlDialogState => ({
     openedItemMeta: null,
     titlePlaceholder: null,
     features: {},
+    needSimilarSelectorsCheck: false,
+    dashChangesBuffer: null,
 });
 
 // eslint-disable-next-line complexity
@@ -225,7 +244,10 @@ export function controlDialog(
         | SetLastUsedDatasetIdAction
         | SetLastUsedConnectionIdAction
         | UpdateControlsValidationAction
-        | SetActiveTabAction,
+        | SetActiveTabAction
+        | SetNeedSimilarSelectorsCheckAction
+        | InitDashChangesBufferAction
+        | UpdateDashChangesBufferAction,
 ): ControlDialogState {
     const {type} = action;
 
@@ -567,6 +589,7 @@ export function controlDialog(
                         ),
                     },
                 },
+                needSimilarSelectorsCheck: false,
             };
         }
 
@@ -631,6 +654,33 @@ export function controlDialog(
             return {
                 ...state,
                 activeTab: action.payload,
+            };
+
+        case SET_NEED_SIMILAR_SELECTORS_CHECK:
+            return {
+                ...state,
+                needSimilarSelectorsCheck: action.payload,
+            };
+
+        case INIT_DASH_CHANGES_BUFFER:
+            return {
+                ...state,
+                dashChangesBuffer: {
+                    tabs: action.payload.tabs,
+                    hashStates: action.payload.hashStates,
+                },
+            };
+
+        case UPDATE_DASH_CHANGES_BUFFER:
+            return {
+                ...state,
+                dashChangesBuffer: state.dashChangesBuffer
+                    ? {
+                          tabs: action.payload.tabs ?? state.dashChangesBuffer.tabs,
+                          hashStates:
+                              action.payload.hashStates ?? state.dashChangesBuffer.hashStates,
+                      }
+                    : null,
             };
 
         default:
