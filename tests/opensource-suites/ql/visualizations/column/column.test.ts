@@ -55,6 +55,8 @@ datalensTest.describe('QL', () => {
                 await qlPage.placeholderDialog.apply();
 
                 await expect(previewLoader).not.toBeVisible();
+                // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+                await page.mouse.move(-1, -1);
                 await expect(await chart.screenshot()).toMatchSnapshot(`${testInfo.title}.png`);
 
                 await qlPage.clearScript();
@@ -83,6 +85,8 @@ datalensTest.describe('QL', () => {
 
                 await qlPage.placeholderDialog.close();
 
+                // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+                await page.mouse.move(-1, -1);
                 // X axis should stay discrete after changing the query
                 await expect(await chart.screenshot()).toMatchSnapshot(`${testInfo.title}.png`);
             },
