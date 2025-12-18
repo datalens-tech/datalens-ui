@@ -1,0 +1,12 @@
+.group-control-sidebar-tab-item-wrapper {
+    display: flex;
+    align-items: center;
+
+    &_secondary {
+        color: var(--g-color-text-secondary);
+    }
+
+    &__global-icon {
+        margin: 0 var(--g-spacing-2) 0 var(--g-spacing-1);
+    }
+}

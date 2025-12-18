@@ -31,8 +31,8 @@ import {
 } from 'ui/units/dash/store/actions/helpers';
 import {showToast} from '../toaster';
 import {I18n} from 'i18n';
-import type {ControlDialogStateItemMeta} from '../../reducers/controlDialog';
-import {getGroupSelectorDialogInitialState} from '../../reducers/controlDialog';
+import type {ControlDialogStateItemMeta} from '../../reducers/controlDialog/controlDialog';
+import {getGroupSelectorDialogInitialState} from '../../reducers/controlDialog/controlDialog';
 import {DEFAULT_CONTROL_LAYOUT} from 'ui/components/DashKit/constants';
 import {COPIED_WIDGET_STORAGE_KEY} from 'ui/constants';
 import type {ConfigItemGroup} from '@gravity-ui/dashkit/helpers';

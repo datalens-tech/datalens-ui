@@ -17,14 +17,15 @@ import {
 import {
     getSelectorDialogFromData,
     getSelectorGroupDialogFromData,
-} from 'ui/store/reducers/controlDialog';
+} from 'ui/store/reducers/controlDialog/controlDialog';
 import {selectActiveSelectorIndex, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
-import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
-import {GlobalSelectorIcon} from 'ui/units/dash/components/GlobalSelectorIcon/GlobalSelectorIcon';
+import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {selectCurrentTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {isGroupItemVisibleOnTab} from 'ui/units/dash/utils/selectors';
+
+import {TabItemWrapper} from './TabItemWrapper/TabItemWrapper';
 
 import '../DialogGroupControl.scss';
 
@@ -38,14 +39,6 @@ const mockI18n = (key: string) => {
     };
 
     return values[key];
-};
-
-const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
-    buttonApply: false,
-    buttonReset: false,
-    autoHeight: false,
-    impactType: undefined,
-    impactTabsIds: undefined,
 };
 
 const canPasteItems = (pasteConfig: CopiedConfigData | null, workbookId?: string | null) => {
@@ -122,7 +115,6 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
                     updateSelectorsGroup({
                         ...selectorsGroup,
                         group: items,
-                        ...(items.length === 1 ? SINGLE_SELECTOR_SETTINGS : {}),
                     }),
                 );
             }
@@ -166,14 +158,9 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
                     : item.impactType;
 
             return (
-                <div className={b('item-wrapper', {secondary: !isVisible})}>
-                    <GlobalSelectorIcon
-                        withHint
-                        impactType={impactType}
-                        className={b('global-icon')}
-                    />
+                <TabItemWrapper isVisible={isVisible} impactType={impactType}>
                     {children}
-                </div>
+                </TabItemWrapper>
             );
         },
         [currentTabId, selectorsGroup.impactType, selectorsGroup.impactTabsIds],
