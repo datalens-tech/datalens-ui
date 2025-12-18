@@ -30,6 +30,7 @@ import {
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {CurrentTabOption} from './CurrentTabOption/CurrentTabOption';
+import {SelectedTabsOption} from './SelectedTabsOption/SelectedTabsOption';
 import {IMPACT_TYPE_OPTION_VALUE, LABEL_BY_SCOPE_MAP} from './constants';
 import {
     getIconByImpactType,
@@ -109,9 +110,21 @@ export const ImpactTypeSelect = ({
     // Create options based on whether there are multiple selectors
     // GroupItem impact value is disabled if it does not narrow down or does not match the group setting
     const tabsScopeOptions: SelectOption<{icon?: JSX.Element}>[] = React.useMemo(() => {
+        const allTabsOption = {
+            value: IMPACT_TYPE_OPTION_VALUE.ALL_TABS,
+            content: LABEL_BY_SCOPE_MAP[IMPACT_TYPE_OPTION_VALUE.ALL_TABS],
+            data: {icon: getIconByImpactType(IMPACT_TYPE_OPTION_VALUE.ALL_TABS)},
+        };
+
         const needDisableIncorrectOptions =
             hasMultipleSelectors && !isGroupSettings && isGroupControl;
-        const baseOptions = [
+
+        const isSelectedTabsDisabled =
+            needDisableIncorrectOptions &&
+            selectorsGroup.impactType !== 'selectedTabs' &&
+            selectorsGroup.impactType !== 'allTabs';
+
+        const baseOptions: SelectOption<{icon?: JSX.Element}>[] = [
             {
                 value: IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB,
                 content: (
@@ -124,23 +137,18 @@ export const ImpactTypeSelect = ({
                 ),
             },
             {
-                value: IMPACT_TYPE_OPTION_VALUE.ALL_TABS,
-                content: LABEL_BY_SCOPE_MAP[IMPACT_TYPE_OPTION_VALUE.ALL_TABS],
-                data: {icon: getIconByImpactType(IMPACT_TYPE_OPTION_VALUE.ALL_TABS)},
-                disabled: needDisableIncorrectOptions && selectorsGroup.impactType !== 'allTabs',
-            },
-            {
                 value: IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS,
-                content: LABEL_BY_SCOPE_MAP[IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS],
+                content: <SelectedTabsOption isSelectedTabsDisabled={isSelectedTabsDisabled} />,
                 data: {
                     icon: getIconByImpactType(IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS),
                 },
-                disabled:
-                    needDisableIncorrectOptions &&
-                    selectorsGroup.impactType !== 'selectedTabs' &&
-                    selectorsGroup.impactType !== 'allTabs',
+                disabled: isSelectedTabsDisabled,
             },
         ];
+
+        if (!hasMultipleSelectors || isGroupSettings) {
+            baseOptions.push(allTabsOption);
+        }
 
         if (hasMultipleSelectors && !isGroupSettings) {
             const groupImpactTypeItem = getImpactTypeByValue({
