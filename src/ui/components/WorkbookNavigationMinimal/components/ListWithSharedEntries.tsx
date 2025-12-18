@@ -2,9 +2,9 @@ import React from 'react';
 
 import {List, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import type {EntryScope} from 'shared';
 import {WorkbookNavigationMinimalQa} from 'shared';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import {PopupClassName} from '../constants';
 import type {Item, SharedItem} from '../types';
@@ -17,6 +17,7 @@ type ListWithSharedEntriesProps = {
     scope: EntryScope.Connection | EntryScope.Dataset;
 };
 
+const i18n = I18n.keyset('component.workbook.navigation.view');
 const b = block(PopupClassName);
 
 export const ListWithSharedEntries = ({
@@ -32,8 +33,8 @@ export const ListWithSharedEntries = ({
             {items && !!items.length && (
                 <div className={b('items-box')}>
                     <Text className={b('list-title')} variant="subheader-1">
-                        {getSharedEntryMockText('workbook-navigation-title', {
-                            entry: getSharedEntryMockText(`entries-list-title-${scope}`),
+                        {i18n('workbook-list-title', {
+                            entry: i18n(`entries-list-title-${scope}`),
                         })}
                     </Text>
                     <List
@@ -50,8 +51,8 @@ export const ListWithSharedEntries = ({
             {!!sharedItems.length && (
                 <div className={b('items-box')}>
                     <Text className={b('list-title')} variant="subheader-1">
-                        {getSharedEntryMockText('workbook-navigation-shared-title', {
-                            entry: getSharedEntryMockText(`entries-list-title-${scope}`),
+                        {i18n('shared-list-title', {
+                            entry: i18n(`entries-list-title-${scope}`),
                         })}
                     </Text>
                     <List

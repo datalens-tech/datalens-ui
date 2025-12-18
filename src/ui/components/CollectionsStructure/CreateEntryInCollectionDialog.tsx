@@ -2,7 +2,6 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useHistory} from 'react-router-dom';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import DialogManager from '../DialogManager/DialogManager';
 
@@ -62,7 +61,7 @@ export const CreateEntryInCollectionDialog: React.FC<CreateEntryInCollectionDial
             open={true}
             type={ResourceType.Collection}
             initialCollectionId={initialCollectionId}
-            caption={`${getSharedEntryMockText('collection-structure-dialog-caption')} ${i18n(`label_${entryType}`)}`}
+            caption={`${i18n('create-entry-dialog-title')} ${i18n(`label_${entryType}`)}`}
             operationDeniedMessage={i18n('label_create-denied-title')}
             textButtonApply={i18n('action_create')}
             workbookSelectionMode={false}

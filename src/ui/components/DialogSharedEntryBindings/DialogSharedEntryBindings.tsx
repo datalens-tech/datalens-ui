@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Dialog, Divider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
+import {I18n} from 'i18n';
 
 import DialogManager from '../DialogManager/DialogManager';
 import {EntitiesList} from '../EntitiesList/EntitiesList';
@@ -34,6 +34,7 @@ export interface OpenDialogSharedEntryBindingArgs {
     props: DialogSharedEntryBindingsProps;
 }
 
+const i18n = I18n.keyset('component.dialog-shared-entry-bindings.view');
 const b = block(DialogClassName);
 
 export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps> = ({
@@ -71,7 +72,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
             <Dialog.Body className={b('body')}>
                 <EntitiesList
                     entities={[entry]}
-                    title={getSharedEntryMockText('label-current-entry')}
+                    title={i18n('label-current-entry')}
                     className={b('current-row')}
                 />
                 {(isLoading || isLoadingDelete) && !isSearchLoading ? (

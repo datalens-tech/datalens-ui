@@ -16,7 +16,6 @@ import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {registry} from 'ui/registry';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import Utils, {getConnectorIconData} from 'ui/utils';
 
 import {
@@ -34,6 +33,7 @@ import './SelectSourcePrototypes.scss';
 
 const b = block('select-sources-prototypes');
 const i18n = I18n.keyset('dataset.sources-tab.modify');
+const i18nSharedEntry = I18n.keyset('shared-entry');
 
 function getConnectionType(connection: Partial<SelectedConnections[number]> = {}) {
     const {db_type: dbType, type} = connection;
@@ -380,7 +380,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                             open: true,
                             onClose: () => dispatch(closeDialog()),
                             collectionId,
-                            dialogTitle: getSharedEntryMockText(
+                            dialogTitle: i18nSharedEntry(
                                 'title-select-shared-entry-dialog-connection',
                             ),
                             getIsInactiveEntity: (entry) =>

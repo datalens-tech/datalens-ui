@@ -29,7 +29,6 @@ import {
     openDialogSaveDraftChartAsActualConfirm,
 } from 'ui/store/actions/dialog';
 import {initEditHistoryUnit} from 'ui/store/actions/editHistory';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {
     addAvatar,
     addSource,
@@ -120,6 +119,7 @@ const i18n = I18n.keyset('dataset.dataset-editor.modify');
 const i18nError = I18n.keyset('component.view-error.view');
 const i18nActionPanel = I18n.keyset('component.action-panel.view');
 const i18nDialogRevisions = I18n.keyset('component.dialog-revisions.view');
+const i18nSharedEntry = I18n.keyset('shared-entry');
 const RIGHT_PREVIEW_PANEL_MIN_SIZE = 500;
 const BOTTOM_PREVIEW_PANEL_MIN_SIZE = 48;
 const BOTTOM_PREVIEW_PANEL_DEFAULT_SIZE = 200;
@@ -574,7 +574,7 @@ class Dataset extends React.Component<Props, State> {
                         this.props.history.push(location.pathname);
                     }}
                 >
-                    {getSharedEntryMockText('workbook-shared-entry-original-link')}
+                    {i18nSharedEntry('workbook-shared-entry-original-link')}
                 </Button>,
             );
         }
