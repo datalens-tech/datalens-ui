@@ -8,6 +8,7 @@
   "label_data": "Data",
   "label_default-tab": "Selector {{index}}",
   "label_filtration": "Filtration",
+  "label_no-display-on-current-tab": "Not displayed on the current tab",
   "label_representation": "Representation",
   "label_selector-settings": "Selector settings",
   "label_selectors-list": "Selectors",
