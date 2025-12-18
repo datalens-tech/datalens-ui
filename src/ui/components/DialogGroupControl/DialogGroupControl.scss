@@ -1,5 +1,6 @@
 .group-control-dialog {
     $sidebarWidth: 260px;
+    $tabListHeight: 62px;
 
     height: min(728px, 90vh);
     min-height: 400px;
@@ -59,7 +60,12 @@
     &__tab-selectors {
         display: grid;
         grid-template-columns: $sidebarWidth 33px 1fr;
-        height: calc(100% - 62px);
+        height: calc(100% - $tabListHeight);
+    }
+
+    &__tab-group {
+        overflow-y: auto;
+        height: calc(100% - $tabListHeight);
     }
 
     &__selector-settings {
