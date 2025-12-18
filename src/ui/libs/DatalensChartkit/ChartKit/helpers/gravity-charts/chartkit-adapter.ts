@@ -5,6 +5,7 @@ import get from 'lodash/get';
 import merge from 'lodash/merge';
 import set from 'lodash/set';
 import type {ExtendedChartData} from 'shared/types/chartkit';
+import type {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
 
 import type {GraphWidget} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
@@ -13,14 +14,13 @@ import {getNormalizedClickActions} from '../utils';
 
 import {convertChartCommentsToPlotBandsAndLines, shouldUseCommentsOnYAxis} from './comments';
 import {handleClick} from './event-handlers';
+import {convertHolidaysToPlotBands} from './holidays';
 import {
     getCustomShapeRenderer,
     isPointSelected,
     setPointSelectState,
     setSeriesSelectState,
 } from './utils';
-import {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
-import {convertHolidaysToPlotBands} from './holidays';
 
 export function getGravityChartsChartKitData(args: {
     loadedData: ChartKitAdapterProps['loadedData'];
@@ -127,7 +127,11 @@ export function getGravityChartsChartKitData(args: {
         set(result, 'yAxis[0].plotBands', [...(result.yAxis?.[0]?.plotBands ?? []), ...plotBands]);
         set(result, 'yAxis[0].plotLines', [...(result.yAxis?.[0]?.plotLines ?? []), ...plotLines]);
     } else {
-        set(result, 'xAxis.plotBands', [...(result.xAxis?.plotBands ?? []), ...holidaysPlotBands, ...plotBands]);
+        set(result, 'xAxis.plotBands', [
+            ...(result.xAxis?.plotBands ?? []),
+            ...holidaysPlotBands,
+            ...plotBands,
+        ]);
         set(result, 'xAxis.plotLines', [...(result.xAxis?.plotLines ?? []), ...plotLines]);
     }
 
