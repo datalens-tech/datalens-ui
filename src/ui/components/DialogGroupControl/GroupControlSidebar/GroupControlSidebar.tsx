@@ -31,15 +31,6 @@ import '../DialogGroupControl.scss';
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
-// TODO (global selectors): Add translations
-const mockI18n = (key: string) => {
-    const values: Record<string, string> = {
-        'button_add-selector': 'Добавить',
-    };
-
-    return values[key];
-};
-
 const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
     buttonApply: false,
     buttonReset: false,
@@ -185,7 +176,7 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
             items={selectorsGroup.group}
             selectedItemIndex={activeSelectorIndex}
             onUpdate={updateSelectorsList}
-            addButtonText={mockI18n('button_add-selector')}
+            addButtonText={i18n('button_add-selector')}
             pasteButtonText={i18n('button_paste-selector')}
             defaultTabText={getDefaultTabText}
             enableActionMenu={true}
