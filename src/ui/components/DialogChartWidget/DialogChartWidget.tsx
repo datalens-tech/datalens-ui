@@ -185,6 +185,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
         enableCustomBgColorSelector = false,
         enableSeparateThemeColorSelector = true,
         enableFilteringSetting = true,
+        theme,
         openedItemData = DEFAULT_OPENED_ITEM_DATA,
         dialogIsVisible,
         widgetsCurrentTab,
@@ -797,11 +798,15 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                                 }
                             >
                                 <PaletteBackground
+                                    theme={theme}
                                     oldColor={oldBackgroundColor}
                                     onSelectOldColor={setOldBackgroundColor}
                                     color={backgroundColorSettings}
                                     onSelect={setBackgroundColorSettings}
                                     enableCustomBgColorSelector={enableCustomBgColorSelector}
+                                    enableSeparateThemeColorSelector={
+                                        enableSeparateThemeColorSelector
+                                    }
                                 />
                             </FormRow>
                         )}
