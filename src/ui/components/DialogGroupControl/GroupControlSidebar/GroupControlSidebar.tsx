@@ -97,9 +97,7 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
 
     const dispatch = useDispatch();
 
-    const initialTabIndex =
-        selectorsGroup.group?.[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
-    const [defaultTabIndex, setDefaultTabIndex] = React.useState(initialTabIndex);
+    const [defaultTabIndex, setDefaultTabIndex] = React.useState(selectorsGroup.group.length + 1);
 
     const updateSelectorsList = React.useCallback(
         ({items, selectedItemIndex, action}: UpdateState<SelectorDialogState>) => {
