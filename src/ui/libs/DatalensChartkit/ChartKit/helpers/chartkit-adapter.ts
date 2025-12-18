@@ -1,6 +1,7 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import type {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature, isMarkupItem} from '../../../../../shared';
@@ -16,7 +17,6 @@ import {
 } from './apply-hc-handlers';
 import {getGravityChartsChartKitData} from './gravity-charts/chartkit-adapter';
 import {extractHcTypeFromData, getNormalizedClickActions} from './utils';
-import {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
 
 export const extractWidgetType = (data?: LoadedWidgetData) => {
     return data && 'type' in data && data.type;
