@@ -9,7 +9,7 @@ import {collectionsStructure} from 'store/reducers/collectionsStructure';
 import {migrationToWorkbook} from 'ui/store/reducers/migrationToWorkbook';
 import {copyEntriesToWorkbook} from 'ui/store/reducers/copyEntriesToWorkbook';
 import {editHistory} from 'ui/store/reducers/editHistory';
-import {controlDialog} from 'ui/store/reducers/controlDialog';
+import {controlDialog} from 'ui/store/reducers/controlDialog/controlDialog';
 import {localStorageFallback} from 'store/reducers/localStorageFallback';
 
 export default {

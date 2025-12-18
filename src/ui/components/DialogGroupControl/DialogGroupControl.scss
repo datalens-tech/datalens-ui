@@ -35,19 +35,6 @@
         }
     }
 
-    &__global-icon {
-        margin: 0 8px 0 4px;
-    }
-
-    &__item-wrapper {
-        display: flex;
-        align-items: center;
-
-        &_secondary {
-            color: var(--g-color-text-secondary);
-        }
-    }
-
     &__tab-list {
         position: sticky;
         background-color: var(--g-color-base-background);
