@@ -68,6 +68,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
                     loadedData,
                     onChange,
                     runActivity,
+                    chartkitHolidays,
                 }),
                 lang,
                 splitTooltip,

@@ -16,6 +16,7 @@ import {
 } from './apply-hc-handlers';
 import {getGravityChartsChartKitData} from './gravity-charts/chartkit-adapter';
 import {extractHcTypeFromData, getNormalizedClickActions} from './utils';
+import {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
 
 export const extractWidgetType = (data?: LoadedWidgetData) => {
     return data && 'type' in data && data.type;
@@ -114,11 +115,13 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
     loadedData,
     onChange,
     runActivity,
+    chartkitHolidays,
 }: {
     type: T;
     loadedData: ChartKitAdapterProps['loadedData'];
     onChange?: ChartKitAdapterProps['onChange'];
     runActivity?: ChartKitAdapterProps['runActivity'];
+    chartkitHolidays: ChartKitHolidays | undefined;
 }) => {
     switch (type) {
         case 'indicator': {
@@ -215,6 +218,7 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
                 loadedData: data,
                 onChange,
                 runActivity,
+                chartkitHolidays,
             });
         }
         default: {
