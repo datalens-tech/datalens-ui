@@ -22,10 +22,25 @@ export const SET_HIERARCHIES = Symbol('wizard/dataset/SET_HIERARCHIES');
 export const SET_DATASETS = Symbol('wizard/dataset/SET_DATASETS');
 export const SET_ORIGINAL_DATASETS = Symbol('wizard/dataset/SET_ORIGINAL_DATASETS');
 export const SET_DATASET_API_ERRORS = Symbol('wizard/dataset/SET_DATASET_API_ERRORS');
+export const SET_DATASET_DELEGATION = Symbol('wizard/dataset/SET_DATASET_DELEGATION');
 
 interface SetDatasetsAction {
     type: typeof SET_DATASETS;
     datasets: Dataset[];
+}
+
+interface SetDatasetDelegationAction {
+    type: typeof SET_DATASET_DELEGATION;
+    payload: {datasetId: string; delegation: boolean};
+}
+
+export function setDatasetDelegation(
+    payload: SetDatasetDelegationAction['payload'],
+): SetDatasetDelegationAction {
+    return {
+        type: SET_DATASET_DELEGATION,
+        payload,
+    };
 }
 
 export function setDatasets({datasets}: {datasets: Dataset[]}): SetDatasetsAction {
@@ -236,6 +251,7 @@ export type DatasetAction =
     | SetHierarchiesAction
     | SetLinksAction
     | SetDatasetAction
+    | SetDatasetDelegationAction
     | SetDatasetLoadingAction
     | SetDatasetsAction
     | SetDatasetSchemaAction

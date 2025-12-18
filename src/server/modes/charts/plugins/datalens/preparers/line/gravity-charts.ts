@@ -19,6 +19,7 @@ import type {
 import {
     AxisMode,
     PlaceholderId,
+    getIsNavigatorEnabled,
     getXAxisMode,
     isDateField,
     isHtmlField,
@@ -26,9 +27,11 @@ import {
     isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
+import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slider';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
@@ -58,6 +61,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         idToDataType,
         colors,
         shapes,
+        segments: split,
         visualizationId,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
@@ -122,8 +126,16 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
 
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
+    const inNavigatorEnabled = getIsNavigatorEnabled(shared);
 
     const seriesData: ExtendedLineSeries[] = preparedData.graphs.map<LineSeries>((graph: any) => {
+        const rangeSlider = inNavigatorEnabled
+            ? getSeriesRangeSliderConfig({
+                  extraSettings: shared.extraSettings,
+                  seriesName: graph.title,
+              })
+            : undefined;
+
         return {
             name: graph.title,
             type: 'line',
@@ -164,6 +176,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 symbol: {
                     width: 36,
                 },
+                groupId: graph.id,
             },
             dashStyle: graph.dashStyle,
             yAxis: graph.yAxis,
@@ -173,19 +186,28 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 colorValue: graph.colorValue,
                 shapeValue: graph.shapeValue,
             },
+            rangeSlider,
         };
     });
 
-    let legend: ChartData['legend'];
-    if (seriesData.length <= 1) {
-        legend = {enabled: false};
+    const shouldUseHtmlForLegend = [colorItem, shapeItem].some(isHtmlField);
+    const legend: ChartData['legend'] = {html: shouldUseHtmlForLegend};
+    const nonEmptyLegendGroups = Array.from(
+        new Set(seriesData.map((s) => s.legend?.groupId).filter(Boolean)),
+    );
+    if (seriesData.length <= 1 || nonEmptyLegendGroups.length <= 1) {
+        legend.enabled = false;
     }
 
     let xAxis: ChartData['xAxis'] = {};
     if (isCategoriesXAxis) {
         xAxis = {
             type: 'category',
-            categories: xCategories?.map(String),
+            // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+            categories: xCategories,
+            labels: {
+                html: isHtmlField(xField) || isMarkdownField(xField) || isMarkupField(xField),
+            },
         };
     } else {
         if (isDateField(xField)) {
@@ -200,6 +222,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const segmentsMap = getSegmentMap(args);
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
     const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
+    const isSplitWithHtmlValues = isHtmlField(split?.[0]);
 
     let yAxis: ChartYAxis[] = [];
     if (isSplitEnabled) {
@@ -215,11 +238,25 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
             const axisBaseConfig = getYAxisBaseConfig({
                 placeholder,
             });
-            const shouldUseSegmentTitle = yAxisItems.length < 2 || !d.isOpposite;
+            const shouldUseSegmentTitle = yAxisItems.length === 1 || !d.isOpposite;
+            let axisTitle: ChartYAxis['title'] | null = null;
+            if (shouldUseSegmentTitle) {
+                let titleText: string = d.title;
+                if (isSplitWithHtmlValues) {
+                    // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+                    titleText = wrapHtml(d.title);
+                }
+                axisTitle = {
+                    text: titleText,
+                    rotation: 0,
+                    maxWidth: '25%',
+                    html: isSplitWithHtmlValues,
+                };
+            }
 
             acc.push(
                 merge(axisBaseConfig, {
-                    title: shouldUseSegmentTitle ? {text: d.title} : null,
+                    title: axisTitle,
                     plotIndex: d.plotIndex,
                     labels: {
                         numberFormat: labelNumberFormat ?? undefined,

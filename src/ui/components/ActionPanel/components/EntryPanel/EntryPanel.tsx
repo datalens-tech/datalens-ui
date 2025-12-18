@@ -10,12 +10,13 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import {ActionPanelQA, EntryScope} from 'shared';
+import {ActionPanelQA, EntryScope, Feature} from 'shared';
 import type {DatalensGlobalState, EntryDialogues} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
 import type {BreadcrumbsItem} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {
     addCollectionBreadcrumbs,
     addWorkbookInfo,
@@ -52,6 +53,7 @@ type OwnProps = {
     onCloseNavigation?: () => void;
     enablePublish?: boolean;
     filterEntryContextMenuItems?: FilterEntryContextMenuItems;
+    lastCrumbAdditionalContent?: React.ReactNode;
 };
 
 type Props = OwnProps & DispatchProps & StateProps & RouteComponentProps;
@@ -75,7 +77,9 @@ class EntryPanel extends React.Component<Props, State> {
         if (entryState) {
             if (
                 entryProps &&
-                (entryState.entryId !== entryProps.entryId || entryState.key !== entryProps.key)
+                (entryState.entryId !== entryProps.entryId ||
+                    entryState.key !== entryProps.key ||
+                    entryState.collectionId !== entryProps.collectionId)
             ) {
                 return {
                     entry: {
@@ -134,7 +138,7 @@ class EntryPanel extends React.Component<Props, State> {
     }
 
     render() {
-        const {children, workbookName, entityBreadcrumbs} = this.props;
+        const {children, workbookName, entityBreadcrumbs, lastCrumbAdditionalContent} = this.props;
         const {EntryBreadcrumbs} = registry.common.components.getAll();
 
         return (
@@ -147,6 +151,7 @@ class EntryPanel extends React.Component<Props, State> {
                     entityBreadcrumbs={entityBreadcrumbs}
                     endContent={
                         <React.Fragment>
+                            {lastCrumbAdditionalContent}
                             {this.renderControls()}
                             <div className={b()}>{children}</div>
                         </React.Fragment>
@@ -287,7 +292,9 @@ class EntryPanel extends React.Component<Props, State> {
 
         const items = [...additionalEntryItems];
 
-        if (isAdmin && enablePublish && !disabled) {
+        const isNewAccessDialogEnabled = isEnabledFeature(Feature.EnableNewAccessDialog);
+
+        if (isAdmin && enablePublish && !disabled && !isNewAccessDialogEnabled) {
             items.push({
                 icon: (
                     <Icon

@@ -17,7 +17,12 @@ import history from '../../../../utils/history';
 import {FieldKey, InnerFieldKey} from '../../constants';
 import {getIsRevisionsSupported} from '../../utils';
 import {connectionIdSelector, newConnectionSelector} from '../selectors';
-import type {ConnectionsReduxDispatch, ConnectionsReduxState, GetState} from '../typings';
+import type {
+    ConnectionEntry,
+    ConnectionsReduxDispatch,
+    ConnectionsReduxState,
+    GetState,
+} from '../typings';
 import {
     getConnectorItemFromFlattenList,
     getDataForParamsChecking,
@@ -107,18 +112,20 @@ export function setPageData({
     workbookId,
     collectionId,
     rev_id,
+    bindedWorkbookId,
 }: {
     entryId?: string | null;
     workbookId?: string;
     collectionId?: string;
     rev_id?: string;
+    bindedWorkbookId?: string | null;
 }) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         dispatch(setPageLoading({pageLoading: true}));
         const groupedConnectors = await api.fetchConnectors();
         const flattenConnectors = getFlattenConnectors(groupedConnectors);
         const {checkData, form, validationErrors} = getState().connections;
-        let entry: GetEntryResponse | undefined;
+        let entry: ConnectionEntry | undefined;
         let entryError: DataLensApiError | undefined;
         let connectionData: ConnectionData | undefined;
         let connectionError: DataLensApiError | undefined;
@@ -130,6 +137,23 @@ export function setPageData({
                 flattenConnectors,
                 rev_id,
             }));
+        }
+
+        if (entry?.collectionId && bindedWorkbookId) {
+            const {delegation, error: delegationError} = await api.fetchSharedEntryDelegation(
+                entry.entryId,
+                bindedWorkbookId,
+            );
+            if (delegationError) {
+                dispatch(
+                    showToast({
+                        title: delegationError.message,
+                        error: delegationError,
+                    }),
+                );
+            } else {
+                entry.isDelegated = delegation?.isDelegated;
+            }
         }
 
         if (!entry) {

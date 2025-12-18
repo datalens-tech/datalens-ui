@@ -56,8 +56,9 @@ const Row = <T extends WorkbookEntry>({
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
     const {getLoginById} = registry.common.functions.getAll();
     const dispatch: AppDispatch = useDispatch();
+    const isSharedEntry = Boolean(item.collectionId);
 
-    const url = getWorkbookEntryUrl(item, workbook);
+    const url = getWorkbookEntryUrl(item, workbook, isSharedEntry);
 
     const LoginById = getLoginById();
 

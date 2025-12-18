@@ -69,6 +69,8 @@ export const mockSharedEntriesTexts = {
     'collection-structure-dialog-caption': 'Выберите коллекцию для создания',
     'shared-bindings-list-title': 'Привязанные объекты',
     'shared-bindings-list-empty': 'Биндинги отсутствуют',
+    'shared-object-related-entities-list-empty': 'Связанные объекты в воркбуке отсутствуют',
+    'shared-object-related-entities-dialog-title': 'Связанные объекты в воркбуке',
     'shared-bindings-list-action-unbind': 'Отвязать',
     'shared-bindings-list-action-change-permissions': 'Поменять права',
     'entity-row-relation-tooltip-text': 'Перейти к связанным объектам в воркбуке',
@@ -109,4 +111,23 @@ export const mockSharedEntriesTexts = {
     'workbook-navigation-shared-title': 'Привязанные {{entry}}',
     'iam-dialog-role-limitedEntryBindingCreator': 'Делегация прав',
     'iam-dialog-role-entryBindingCreator': 'Без делегации прав',
+    'add-shared-connection-from-link-info-message':
+        'Подключение и воркбук должны находиться в одной организации и у вас должны быть права на привязку выбранного подключения. Подробнее в ',
+    'add-shared-connection-from-link-dialog-title': 'Укажите ссылку на подключение',
+    'add-shared-connection-from-link-dialog-input-label': 'Ссылка:',
+    'add-shared-connection-from-link-dialog-apply': 'Далее',
+    'add-shared-connection-from-link-dialog-error': 'Некорректная ссылка',
+    'add-shared-connection-from-link-dialog-required': 'Введите ссылку',
+    'add-shared-connection-from-link-dialog-entry-error': 'Невалидная сущность',
+    'workbook-shared-entry-original-link': 'Открыть оригинал',
+    'dataset-filters-readonly-alert-title': 'Фильтры отсутствуют',
+    'dataset-parameters-readonly-alert-title': 'Параметры отсутствуют',
+    'dataset-empty-filters-readonly-alert-message':
+        'Для добавления фильтров перейдите к оригиналу датасета',
+    'dataset-empty-parameters-readonly-alert-message':
+        'Для добавления параметров перейдите к оригиналу датасета',
+    'dataset-filters-readonly-alert-message':
+        'Для редактирования и добавления фильтров перейдите к оригиналу датасета',
+    'dataset-parameters-readonly-alert-message':
+        'Для редактирования и добавления параметров перейдите к оригиналу датасета',
 };

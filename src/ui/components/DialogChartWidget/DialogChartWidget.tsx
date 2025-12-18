@@ -45,6 +45,7 @@ import type {UpdateState} from 'ui/components/TabMenu/types';
 import {TabActionType} from 'ui/components/TabMenu/types';
 import {DL, URL_OPTIONS} from 'ui/constants/common';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import type {ValuesType} from 'utility-types';
 
 import {registry} from '../../registry';
 import NavigationInput from '../../units/dash/components/NavigationInput/NavigationInput';
@@ -60,6 +61,7 @@ import {PaletteBackground} from '../../units/dash/containers/Dialogs/components/
 import {isEntryTypeWithFiltering} from '../../units/dash/containers/Dialogs/utils';
 import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../units/dash/modules/constants';
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
 
 import './DialogChartWidget.scss';
 
@@ -95,6 +97,7 @@ export interface DialogChartWidgetFeatureProps {
     enableAutoheight?: boolean;
     enableBackgroundColor?: boolean;
     enableCustomBgColorSelector?: boolean;
+    enableSeparateThemeColorSelector?: boolean;
     enableFilteringSetting?: boolean;
 }
 export interface DialogChartWidgetProps extends DialogChartWidgetFeatureProps {
@@ -132,6 +135,7 @@ type DialogChartWidgetState = {
 
     legacyChanged: number;
     visualizationType?: WizardVisualizationId;
+    activeTab: ValuesType<typeof TAB_TYPE>;
 };
 
 const INPUT_FILTERING_ID = 'chartFilteringField';
@@ -141,8 +145,17 @@ const INPUT_DESCRIPTION_ID = 'chartDescriptionField';
 const INPUT_AUTOHEIGHT_ID = 'chartAutoheightField';
 const INPUT_HINT_ID = 'chartHintField';
 
+const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableCommonChartDashSettings);
+
 const DEFAULT_OPENED_ITEM_DATA: DashTabItemWidget['data'] = {
     hideTitle: false,
+    ...(isDashColorPickersByThemeEnabled
+        ? {
+              backgroundSettings: {
+                  color: undefined,
+              },
+          }
+        : {}),
     tabs: [
         {
             get title() {
@@ -150,9 +163,13 @@ const DEFAULT_OPENED_ITEM_DATA: DashTabItemWidget['data'] = {
             },
             isDefault: true,
             description: '',
-            background: {
-                color: CustomPaletteBgColors.NONE,
-            },
+            ...(isDashColorPickersByThemeEnabled
+                ? {}
+                : {
+                      background: {
+                          color: CustomPaletteBgColors.NONE,
+                      },
+                  }),
             enableHint: false,
             hint: '',
             enableDescription: false,
@@ -161,22 +178,25 @@ const DEFAULT_OPENED_ITEM_DATA: DashTabItemWidget['data'] = {
 } as DashTabItemWidget['data'];
 
 // TODO: put in defaultPath navigation key from entry
-function DialogChartWidget({
-    enableAutoheight = true,
-    enableBackgroundColor = false,
-    enableCustomBgColorSelector = false,
-    enableFilteringSetting = true,
-    openedItemData = DEFAULT_OPENED_ITEM_DATA,
-    dialogIsVisible,
-    widgetsCurrentTab,
-    withoutSidebar,
-    changeNavigationPath,
-    workbookId,
-    navigationPath,
-    closeDialog,
-    setItemData,
-    openedItemId,
-}: DialogChartWidgetProps) {
+function DialogChartWidget(props: DialogChartWidgetProps) {
+    const {
+        enableAutoheight = true,
+        enableBackgroundColor = false,
+        enableCustomBgColorSelector = false,
+        enableSeparateThemeColorSelector = true,
+        enableFilteringSetting = true,
+        theme,
+        openedItemData = DEFAULT_OPENED_ITEM_DATA,
+        dialogIsVisible,
+        widgetsCurrentTab,
+        withoutSidebar,
+        changeNavigationPath,
+        workbookId,
+        navigationPath,
+        closeDialog,
+        setItemData,
+        openedItemId,
+    } = props;
     const [state, setState] = React.useState<DialogChartWidgetState>({
         hideTitle: true,
         prevVisible: false,
@@ -186,6 +206,27 @@ function DialogChartWidget({
         isManualTitle: false,
         tabParams: {},
         legacyChanged: 0,
+        activeTab: TAB_TYPE.TABS,
+    });
+
+    const couldChangeOldBg = enableCustomBgColorSelector;
+
+    const {
+        oldBackgroundColor,
+        backgroundColorSettings,
+        setOldBackgroundColor,
+        setBackgroundColorSettings,
+        resultedBackgroundSettings,
+    } = useBackgroundColorSettings({
+        background: couldChangeOldBg
+            ? openedItemData.tabs[0]?.background
+            : {color: CustomPaletteBgColors.LIKE_CHART},
+        backgroundSettings: openedItemData.backgroundSettings,
+        defaultOldColor: couldChangeOldBg
+            ? CustomPaletteBgColors.NONE
+            : CustomPaletteBgColors.LIKE_CHART,
+        enableSeparateThemeColorSelector,
+        isNewWidget: !props.openedItemData,
     });
     const [prevDialogIsVisible, setPrevDialogIsVisible] = React.useState<boolean | undefined>();
 
@@ -239,7 +280,7 @@ function DialogChartWidget({
     );
 
     const onApply = React.useCallback(
-        (argState: DialogChartWidgetState) => {
+        (argState: DialogChartWidgetState, resultedBg: typeof resultedBackgroundSettings) => {
             const isValidateParamTitle = isEnabledFeature(
                 Feature.DashBoardWidgetParamsStrictValidation,
             );
@@ -254,6 +295,10 @@ function DialogChartWidget({
 
             if (tabWithoutChartIdIndex === -1) {
                 const newData = {
+                    ...(resultedBg?.backgroundSettings
+                        ? {backgroundSettings: resultedBg.backgroundSettings}
+                        : {}),
+
                     hideTitle: tabs.length === 1 && hideTitle,
                     tabs: tabs.map(({title, params, ...rest}, index) => {
                         let resultTabParams =
@@ -278,6 +323,7 @@ function DialogChartWidget({
                                 }),
                             params: resultTabParams,
                             ...rest,
+                            ...(resultedBg?.background ? {background: resultedBg.background} : {}),
                         };
                         return tab;
                     }),
@@ -404,23 +450,6 @@ function DialogChartWidget({
         },
         [handleUpdateField],
     );
-
-    const handleBackgroundColorSelected = React.useCallback((color: string) => {
-        setState((prevState) => ({
-            ...prevState,
-            data: update(prevState.data, {
-                tabs: {
-                    [prevState.tabIndex]: {
-                        background: {
-                            $set: {
-                                color: color,
-                            },
-                        },
-                    },
-                },
-            }),
-        }));
-    }, []);
 
     const isEnabledFilteringOnCurrentTab = Boolean(
         state.data.tabs[state.tabIndex].enableActionParams,
@@ -587,16 +616,8 @@ function DialogChartWidget({
             </HelpMark>
         );
 
-        const {
-            title,
-            chartId,
-            description,
-            autoHeight,
-            background,
-            hint,
-            enableHint,
-            enableDescription,
-        } = data.tabs[tabIndex];
+        const {title, chartId, description, autoHeight, hint, enableHint, enableDescription} =
+            data.tabs[tabIndex];
 
         const hasDesc =
             enableDescription === undefined ? Boolean(description) : Boolean(enableDescription);
@@ -777,9 +798,15 @@ function DialogChartWidget({
                                 }
                             >
                                 <PaletteBackground
-                                    color={background?.color}
-                                    onSelect={handleBackgroundColorSelected}
+                                    theme={theme}
+                                    oldColor={oldBackgroundColor}
+                                    onSelectOldColor={setOldBackgroundColor}
+                                    color={backgroundColorSettings}
+                                    onSelect={setBackgroundColorSettings}
                                     enableCustomBgColorSelector={enableCustomBgColorSelector}
+                                    enableSeparateThemeColorSelector={
+                                        enableSeparateThemeColorSelector
+                                    }
                                 />
                             </FormRow>
                         )}
@@ -806,7 +833,6 @@ function DialogChartWidget({
                 <React.Fragment>
                     <TabMenu
                         className={b('sidebar')}
-                        view="new"
                         items={state.data.tabs}
                         selectedItemIndex={state.tabIndex}
                         onUpdate={updateTabMenu}
@@ -855,7 +881,7 @@ function DialogChartWidget({
             </Dialog.Body>
             <Dialog.Footer
                 onClickButtonCancel={closeDialog}
-                onClickButtonApply={() => onApply(state)}
+                onClickButtonApply={() => onApply(state, resultedBackgroundSettings)}
                 textButtonApply={
                     isEdit
                         ? i18n('dash.widget-dialog.edit', 'button_save')

@@ -5,6 +5,7 @@ import {openTestPage} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {WizardVisualizationId} from '../../../../../src/shared';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
+import {COMMON_CHARTKIT_SELECTORS} from '../../../../page-objects/constants/chartkit';
 
 datalensTest.describe('QL', () => {
     datalensTest.describe('Pie chart', () => {
@@ -20,7 +21,7 @@ datalensTest.describe('QL', () => {
         datalensTest('"Column names" in Labels section @screenshot', async ({page}) => {
             const qlPage = new QLPage({page});
             const previewLoader = page.locator('.grid-loader');
-            const chart = page.locator('.chartkit-graph,.gcharts-chart');
+            const chart = page.locator(COMMON_CHARTKIT_SELECTORS.chart);
 
             await qlPage.sectionVisualization.addFieldByClick(PlaceholderName.Labels, 'city');
             await expect(previewLoader).not.toBeVisible();

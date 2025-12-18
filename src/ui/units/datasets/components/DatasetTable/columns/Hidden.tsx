@@ -15,9 +15,13 @@ const i18n = I18n.keyset('dataset.dataset-editor.modify');
 
 type GetHiddenColumnArgs = {
     onUpdate: (row: DatasetField) => void;
+    readonly: boolean;
 };
 
-export const getHiddenColumn = ({onUpdate}: GetHiddenColumnArgs): Column<DatasetField> => ({
+export const getHiddenColumn = ({
+    onUpdate,
+    readonly,
+}: GetHiddenColumnArgs): Column<DatasetField> => ({
     name: 'hidden',
     className: b('column'),
     align: DataTable.CENTER,
@@ -33,7 +37,7 @@ export const getHiddenColumn = ({onUpdate}: GetHiddenColumnArgs): Column<Dataset
                 className={b('btn-hidden')}
                 view="flat"
                 title={value ? i18n('button_display-field') : i18n('button_hide-field')}
-                disabled={unsupported}
+                disabled={unsupported || readonly}
                 onClick={() => onUpdate(row)}
             >
                 <Icon

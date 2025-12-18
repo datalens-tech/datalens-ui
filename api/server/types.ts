@@ -12,3 +12,5 @@ export type {Plugin, SourceConfig} from '../../src/server/components/charts-engi
 export type {Graph} from '../../src/server/components/charts-engine/components/processor/comments-fetcher';
 export type {ResolvedConfig} from '../../src/server/components/charts-engine/components/storage/types';
 export type {PublicApiVersionConfig} from '../../src/server/components/public-api/types';
+
+export type {AnyApiServiceActionConfig} from '../../src/server/types/gateway';

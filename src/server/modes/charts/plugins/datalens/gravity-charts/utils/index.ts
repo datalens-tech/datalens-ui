@@ -8,6 +8,8 @@ import type {
 } from '../../../../../../../shared';
 import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../../utils/axis-helpers';
 
+import {getRangeSliderConfig} from './range-slider';
+
 export function getChartTitle(settings?: ServerCommonSharedExtraSettings): ChartTitle | undefined {
     if (settings?.titleMode !== 'hide' && settings?.title) {
         return {
@@ -171,6 +173,7 @@ export function getBaseChartConfig(args: {
                 lineColor: 'var(--g-color-line-generic)',
                 min: xMin,
                 max: xMax,
+                rangeSlider: getRangeSliderConfig({extraSettings, visualization}),
             },
             yAxis: [getYAxisBaseConfig({placeholder: yPlaceholder})],
         };

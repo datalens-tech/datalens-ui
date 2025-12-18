@@ -9,6 +9,7 @@ import type {
     ApplySourceSettingsArgs,
     DownloadPresignedUrlArgs,
     DownloadPresignedUrlResponse,
+    EntityBindingsResponse,
     FormSchema,
     GetConnectorSchemaArgs,
     GetConnectorsResponse,
@@ -51,6 +52,25 @@ const fetchEntry = async (
     } catch (error) {
         logger.logError('Redux actions (conn): fetchEntry failed', error);
         return {entry: undefined, error};
+    }
+};
+
+const fetchSharedEntryDelegation = async (
+    entryId: string,
+    workbookId: string,
+): Promise<{
+    delegation?: EntityBindingsResponse;
+    error?: DataLensApiError;
+}> => {
+    try {
+        const delegation = await getSdk().sdk.us.getSharedEntryDelegation({
+            sourceId: entryId,
+            targetId: workbookId,
+        });
+        return {delegation};
+    } catch (error) {
+        logger.logError('Redux actions (conn): fetchSharedEntryDelegation failed', error);
+        return {delegation: undefined, error};
     }
 };
 
@@ -470,4 +490,5 @@ export const api = {
     getPresignedUrl,
     uploadFileToS3,
     downloadPresignedUrl,
+    fetchSharedEntryDelegation,
 };
