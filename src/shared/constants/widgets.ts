@@ -11,12 +11,6 @@ export const TRANSPARENT_COLOR_HEX = '#00000000';
 export const LIKE_CHART_COLOR_TOKEN = 'var(--g-color-base-float)';
 export const BASE_GREY_BACKGROUND_COLOR = 'var(--g-color-base-generic)';
 
-export type CustomPaletteBgColor = ValueOf<typeof CustomPaletteBgColors>;
-
-export function isCustomPaletteBgColor(color: string): color is CustomPaletteBgColor {
-    return Object.values(CustomPaletteBgColors).includes(color as CustomPaletteBgColor);
-}
-
 export const WIDGET_BG_HEAVY_COLORS_PRESET = [
     'var(--g-color-base-info-heavy)',
     'var(--g-color-base-positive-heavy)',
@@ -107,4 +101,11 @@ export function getDefaultDashWidgetBgColorByType(type: DashTabItemType) {
     return type === DashTabItemType.Widget
         ? CustomPaletteBgColors.LIKE_CHART
         : CustomPaletteBgColors.NONE;
+}
+
+export function getColorSettingsWithValue(
+    color: string | undefined,
+    enableSeparateThemeColorSelector: boolean,
+) {
+    return enableSeparateThemeColorSelector ? {light: color, dark: color} : color;
 }

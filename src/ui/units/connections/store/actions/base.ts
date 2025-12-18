@@ -16,6 +16,7 @@ import type {
     SetConectorData,
     SetConnectionKey,
     SetEntry,
+    SetEntryDelegation,
     SetFileColumnFilter,
     SetFileReplaceSources,
     SetFileSelectedItemId,
@@ -81,9 +82,14 @@ export const SET_YADOCS_SELECTED_ITEM_ID = Symbol('connections/SET_YADOCS_SELECT
 export const SET_YADOCS_ITEMS = Symbol('connections/SET_YADOCS_ITEMS');
 export const SET_YADOCS_ACTIVE_DIALOG = Symbol('connections/SET_YADOCS_ACTIVE_DIALOG');
 export const SET_YADOCS_COLUMN_FILTER = Symbol('connections/SET_YADOCS_COLUMN_FILTER');
+export const SET_ENTRY_DELEGATION = Symbol('connections/SET_ENTRY_DELEGATION');
 
 export function setEntry(payload: SetEntry['payload']): SetEntry {
     return {type: SET_ENTRY, payload};
+}
+
+export function setEntryDelegation(payload: SetEntryDelegation['payload']): SetEntryDelegation {
+    return {type: SET_ENTRY_DELEGATION, payload};
 }
 
 export function setConnectionKey(key: SetConnectionKey['payload']): SetConnectionKey {

@@ -105,7 +105,7 @@ datalensTest.describe('Dashboards - Widget loading', () => {
 
             // check that the widget content is not loaded
             await waitForCondition(async () => {
-                const elems = await page.$$(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+                const elems = await page.$$(COMMON_CHARTKIT_SELECTORS.chart);
                 return elems.length === 0;
             });
 
@@ -119,7 +119,7 @@ datalensTest.describe('Dashboards - Widget loading', () => {
             await initPromise;
 
             // check that the widget content has appeared
-            await page.waitForSelector(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+            await page.waitForSelector(COMMON_CHARTKIT_SELECTORS.chart);
         },
     );
     datalensTest(
@@ -143,7 +143,7 @@ datalensTest.describe('Dashboards - Widget loading', () => {
 
             // check that the widget content is not loaded
             await waitForCondition(async () => {
-                const elems = await page.$$(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+                const elems = await page.$$(COMMON_CHARTKIT_SELECTORS.chart);
                 return elems.length === 0;
             });
 
@@ -162,7 +162,7 @@ datalensTest.describe('Dashboards - Widget loading', () => {
             await page.click(slct(DashCommonQa.RelationsCancelBtn));
 
             // check that the widget content has appeared
-            await page.waitForSelector(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+            await page.waitForSelector(COMMON_CHARTKIT_SELECTORS.chart);
 
             await dashboardPage.deleteDashFromEditMode();
         },
@@ -179,7 +179,7 @@ datalensTest.describe('Dashboards - Widget loading', () => {
 
         // check that there is no widget content with a graph
         await waitForCondition(async () => {
-            const elems = await page.$$(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+            const elems = await page.$$(COMMON_CHARTKIT_SELECTORS.chart);
             return elems.length === 0;
         });
 
@@ -192,6 +192,6 @@ datalensTest.describe('Dashboards - Widget loading', () => {
         await initPromise;
 
         // check that the widget content has appeared
-        await page.waitForSelector(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+        await page.waitForSelector(COMMON_CHARTKIT_SELECTORS.chart);
     });
 });

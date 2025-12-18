@@ -417,6 +417,11 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                         denormalizedParams[URL_OPTIONS.HIDE_COMMENTS] !== '0'),
                 hideHolidays: denormalizedParams[URL_OPTIONS.HIDE_HOLIDAYS] === '1',
             };
+            const withoutLineLimit = denormalizedParams[URL_OPTIONS.WITHOUT_LINE_LIMIT];
+
+            if (withoutLineLimit !== undefined) {
+                newConfig.withoutLineLimit = Boolean(withoutLineLimit);
+            }
 
             return {
                 ...processed,

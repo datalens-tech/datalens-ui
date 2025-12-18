@@ -1,6 +1,12 @@
 import type z from 'zod';
 
-import type {CollectionItemEntities, EntryScope, WorkbookId} from '../../..';
+import type {
+    CollectionItemEntities,
+    EntryAnnotationArgs,
+    EntryScope,
+    EntryUpdateMode,
+    WorkbookId,
+} from '../../..';
 import type {Permissions} from '../../../types';
 import type {
     getEntriesEntryResponseSchema,
@@ -16,6 +22,7 @@ import type {EntriesCommonArgs} from './common';
 import type {
     EntryFieldData,
     EntryFieldLinks,
+    EntryFieldMeta,
     EntryFields,
     EntryMetaFields,
     EntryNavigationFields,
@@ -269,6 +276,40 @@ export interface GetEntriesAnnotationArgs {
     type?: string;
 }
 
+export interface CreateEntryResponse extends EntryFields {
+    links: EntryFieldLinks;
+}
+
+export interface CreateEntryArgs {
+    scope: EntryScope;
+    type: string;
+    data: EntryFieldData;
+    key?: string;
+    meta?: EntryFieldMeta;
+    workbookId?: string;
+    name?: string;
+    mode?: EntryUpdateMode;
+    links?: EntryFieldLinks;
+    description?: string;
+    annotation?: EntryAnnotationArgs;
+}
+
+export interface UpdateEntryResponse extends EntryFields {
+    links?: EntryFieldLinks;
+}
+
+export interface UpdateEntryArgs {
+    entryId: string;
+    mode: EntryUpdateMode;
+    data: EntryFieldData;
+    revId?: string;
+    meta?: EntryFieldMeta;
+    links?: EntryFieldLinks;
+    description?: string;
+    annotation?: EntryAnnotationArgs;
+    skipSyncLinks?: boolean;
+}
+
 export interface EntityBindingsResponse {
     sourceId: string;
     targetId: string;
@@ -288,6 +329,7 @@ export type GetSharedEntryBindingsArgs = {
     filterString?: string;
     page?: number;
     pageSize?: number;
+    includePermissionsInfo?: boolean;
 };
 
 export type SharedEntry = {

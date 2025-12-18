@@ -1,11 +1,23 @@
+import type {BaseSchema} from '@gravity-ui/gateway';
+
 import {Feature} from '../../../../shared';
-import type {DatalensGatewaySchemas} from '../../../types/gateway';
+import type {AnyApiServiceActionConfig, DatalensGatewaySchemas} from '../../../types/gateway';
 import {ApiTag} from '../constants';
 import type {PublicApiVersionActions} from '../types';
 
+type OverrideActions<T extends BaseSchema> = {
+    [K in keyof T]: Omit<T[K], 'actions'> & {
+        actions: {
+            [A in keyof T[K]['actions']]: AnyApiServiceActionConfig;
+        };
+    };
+};
+
 export const getPublicApiActionsV0 = <
-    TSchema extends {root: Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix' | 'us'>},
->(): PublicApiVersionActions<TSchema, Feature> => {
+    TSchema extends {
+        root: OverrideActions<Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix' | 'us'>>;
+    },
+>() => {
     return {
         // Collection
         createCollection: {
@@ -113,7 +125,7 @@ export const getPublicApiActionsV0 = <
 
         // Dashboard
         getDashboard: {
-            resolve: (api) => api.mix.__getDashboard__,
+            resolve: (api) => api.mix.getDashboardV1,
             openApi: {
                 summary: 'Get dashboard',
                 tags: [ApiTag.Dashboard],
@@ -121,7 +133,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         createDashboard: {
-            resolve: (api) => api.mix.__createDashboard__,
+            resolve: (api) => api.mix.createDashboardV1,
             openApi: {
                 summary: 'Create dashboard',
                 tags: [ApiTag.Dashboard],
@@ -129,7 +141,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         updateDashboard: {
-            resolve: (api) => api.mix.__updateDashboard__,
+            resolve: (api) => api.mix.updateDashboardV1,
             openApi: {
                 summary: 'Update dashboard',
                 tags: [ApiTag.Dashboard],
@@ -137,7 +149,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteDashboard: {
-            resolve: (api) => api.mix._deleteDashboard,
+            resolve: (api) => api.mix.deleteDashboard,
             openApi: {
                 summary: 'Delete dashboard',
                 tags: [ApiTag.Dashboard],
@@ -209,11 +221,29 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteQLChart: {
-            resolve: (api) => api.mix._deleteQLChart,
+            resolve: (api) => api.mix.deleteQLChart,
             openApi: {
                 summary: 'Delete QL chart',
                 tags: [ApiTag.QL],
             },
+        },
+        updateQLChart: {
+            resolve: (api) => api.mix.__updateQLChart__,
+            openApi: {
+                summary: 'Update QL chart',
+                tags: [ApiTag.QL],
+                experimental: true,
+            },
+            rawAction: true,
+        },
+        createQLChart: {
+            resolve: (api) => api.mix.__createQLChart__,
+            openApi: {
+                summary: 'Create QL chart',
+                tags: [ApiTag.QL],
+                experimental: true,
+            },
+            rawAction: true,
         },
 
         // Wizard
@@ -226,11 +256,29 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteWizardChart: {
-            resolve: (api) => api.mix._deleteWizardChart,
+            resolve: (api) => api.mix.deleteWizardChart,
             openApi: {
                 summary: 'Delete wizard chart',
                 tags: [ApiTag.Wizard],
             },
+        },
+        updateWizardChart: {
+            resolve: (api) => api.mix.__updateWizardChart__,
+            openApi: {
+                summary: 'Update wizard chart',
+                tags: [ApiTag.Wizard],
+                experimental: true,
+            },
+            rawAction: true,
+        },
+        createWizardChart: {
+            resolve: (api) => api.mix.__createWizardChart__,
+            openApi: {
+                summary: 'Create wizard chart',
+                tags: [ApiTag.Wizard],
+                experimental: true,
+            },
+            rawAction: true,
         },
 
         // Workbook
@@ -298,5 +346,5 @@ export const getPublicApiActionsV0 = <
             },
             features: [Feature.CollectionsEnabled],
         },
-    };
+    } satisfies PublicApiVersionActions<TSchema, Feature>;
 };

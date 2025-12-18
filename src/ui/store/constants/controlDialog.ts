@@ -64,3 +64,8 @@ export enum CheckboxControlValue {
     TRUE = 'true',
     FALSE = 'false',
 }
+
+export const SELECTOR_DIALOG_TABS = {
+    SELECTORS: 'selectors',
+    GROUP: 'group-settings',
+} as const;

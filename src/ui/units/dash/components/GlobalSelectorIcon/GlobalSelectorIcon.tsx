@@ -3,6 +3,7 @@ import React from 'react';
 import {Globe, LayoutTabs} from '@gravity-ui/icons';
 import {ActionTooltip, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import type {ImpactType} from 'shared/types/dash';
 
 import './GlobalSelectorIcon.scss';
@@ -16,17 +17,7 @@ type GlobalSelectorIconType = {
     className?: string;
 };
 
-// const i18n = I18n.keyset('dash.control-dialog.edit');
-
-// TODO (global selectors): Add translations
-const i18n = (key: string) => {
-    const values: Record<string, string> = {
-        'value_all-tabs': 'На всех вкладках',
-        'value_selected-tabs': 'Выбранные вкладки',
-    };
-
-    return values[key];
-};
+const i18n = I18n.keyset('dash.control-dialog.edit');
 
 export const GlobalSelectorIcon = ({
     size = 16,

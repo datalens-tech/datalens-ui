@@ -31,6 +31,8 @@ type DatasetTabSectionWrapperProps = {
     checkIsRowValid?: (item: DatasetField) => boolean;
     isListLoading?: boolean;
     qa?: string;
+    readonly: boolean;
+    readonlyNotice?: React.ReactNode;
 };
 
 export const DatasetTabSection: React.FC<DatasetTabSectionWrapperProps> = (
@@ -47,6 +49,8 @@ export const DatasetTabSection: React.FC<DatasetTabSectionWrapperProps> = (
         controlSettings,
         isListLoading,
         qa,
+        readonly,
+        readonlyNotice,
     } = props;
 
     return (
@@ -65,10 +69,12 @@ export const DatasetTabSection: React.FC<DatasetTabSectionWrapperProps> = (
                         />
                     </div>
                     <div className={b('list')}>
+                        {readonly && readonlyNotice}
                         {isListLoading ? (
                             <Loader className={b('loader')} />
                         ) : (
                             <DatasetTabFieldList
+                                readonly={readonly}
                                 onItemClick={props.onItemClick}
                                 fields={fields}
                                 headerColumns={headerColumns}
@@ -79,14 +85,16 @@ export const DatasetTabSection: React.FC<DatasetTabSectionWrapperProps> = (
                             />
                         )}
                     </div>
-                    <Button
-                        className={b('add-button')}
-                        disabled={isListUpdating}
-                        onClick={props.onOpenDialogClick}
-                        qa={DatasetTabSectionQA.AddButton}
-                    >
-                        {openDialogButtonText}
-                    </Button>
+                    {!readonly && (
+                        <Button
+                            className={b('add-button')}
+                            disabled={isListUpdating}
+                            onClick={props.onOpenDialogClick}
+                            qa={DatasetTabSectionQA.AddButton}
+                        >
+                            {openDialogButtonText}
+                        </Button>
+                    )}
                 </div>
             </div>
         </div>

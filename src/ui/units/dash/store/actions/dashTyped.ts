@@ -4,12 +4,14 @@ import type {
     AddConfigItem,
     AddNewItemOptions,
     Config,
+    ConfigItemData,
     DashKit,
     ItemsStateAndParams,
     PluginTextProps,
     PluginTitleProps,
     StateAndParamsMetaData,
 } from '@gravity-ui/dashkit';
+import type {ThemeType} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import {URL_QUERY, sdk} from 'index';
@@ -25,11 +27,10 @@ import type {
     DashTabItemControlBaseData,
     DashTabItemGroupControlBaseData,
     DashTabItemImage,
-    DashTabItemType,
     DashTabItemWidget,
     RecursivePartial,
 } from 'shared';
-import {EntryScope, EntryUpdateMode, Feature} from 'shared';
+import {DashTabItemType, EntryScope, EntryUpdateMode, Feature} from 'shared';
 import type {AppDispatch} from 'ui/store';
 import {
     addEditHistoryPoint,
@@ -54,6 +55,8 @@ import {LOCK_DURATION, Mode} from '../../modules/constants';
 import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
+import type {IsWidgetVisibleOnTabArgs} from '../../utils/selectors';
+import {isItemGlobal, isWidgetVisibleOnTab} from '../../utils/selectors';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
 import {
@@ -64,10 +67,13 @@ import {
     selectEntryId,
 } from '../selectors/dashTypedSelectors';
 import type {DashState, UpdateTabsWithGlobalStateArgs} from '../typings/dash';
-import {isItemGlobal} from '../utils';
 
 import {save} from './base/actions';
-import {migrateDataSettings, processTabForGlobalUpdate} from './helpers';
+import {
+    getPreparedCopiedSelectorData,
+    migrateDataSettings,
+    processTabForGlobalUpdate,
+} from './helpers';
 
 import type {DashDispatch} from './index';
 
@@ -1051,19 +1057,72 @@ export const updateAllDashSettings = (data: {
     };
 };
 
-export const setCopiedItemData = (payload: {
+type SetCopiedItemDataPayload = {
     item: AddConfigItem;
     context?: CopiedConfigContext;
     options: AddNewItemOptions;
-}) => {
-    return (dispatch: DashDispatch) => {
-        batch(() => {
-            dispatch({
-                type: actionTypes.SET_COPIED_ITEM_DATA as any, // TODO move to TS,
-                payload,
+    dashVisualSettings?: {
+        themeType?: ThemeType;
+    };
+};
+
+export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
+    return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        const {
+            tabId,
+            entry: {entryId},
+        } = getState().dash;
+
+        const isSelectorItem =
+            payload.item.type === DashTabItemType.Control ||
+            payload.item.type === DashTabItemType.GroupControl;
+
+        const dispatchEvents = (result: SetCopiedItemDataPayload) => {
+            batch(() => {
+                dispatch({
+                    type: actionTypes.SET_COPIED_ITEM_DATA as any, // TODO move to TS,
+                    payload: result,
+                });
+                dispatch(addDashEditHistoryPoint());
             });
-            dispatch(addDashEditHistoryPoint());
-        });
+        };
+
+        if (tabId && isSelectorItem && isEnabledFeature(Feature.EnableGlobalSelectors)) {
+            const selectorData = payload.item.data as IsWidgetVisibleOnTabArgs['itemData'];
+
+            const isWidgetVisible = isWidgetVisibleOnTab({
+                itemData: selectorData,
+                tabId,
+            });
+
+            if (isWidgetVisible) {
+                dispatchEvents(payload);
+                return;
+            }
+
+            const hasEntryChanged = payload.context?.targetEntryId !== entryId;
+            const hasTabChanged = payload.context?.targetDashTabId !== tabId;
+
+            const updatedData = getPreparedCopiedSelectorData({
+                selectorData,
+                hasEntryChanged,
+                hasTabChanged,
+                isWidgetVisible,
+                tabId,
+                dispatch,
+            });
+
+            if (updatedData) {
+                dispatchEvents({
+                    ...payload,
+                    item: {...payload.item, data: updatedData as ConfigItemData},
+                });
+            }
+
+            return;
+        }
+
+        dispatchEvents(payload);
     };
 };
 
@@ -1137,7 +1196,7 @@ export function updateDeprecatedDashConfig() {
 export const REMOVE_GLOBAL_ITEMS = Symbol('dash/REMOVE_GLOBAL_ITEMS');
 export type RemoveGlobalItemsAction = {
     type: typeof REMOVE_GLOBAL_ITEMS;
-    payload: {items: DashTabItem[]};
+    payload: {itemId: string};
 };
 export const removeGlobalItems = (
     payload: RemoveGlobalItemsAction['payload'],

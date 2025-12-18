@@ -115,7 +115,8 @@ class SectionPreview extends Component<Props> {
     ) => {
         const widgetData =
             (result as ChartKitWrapperLoadSuccess).data?.widgetData ||
-            (result as ChartKitLoadSuccess<unknown>).data?.widget;
+            (result as ChartKitLoadSuccess<unknown>).data?.widget ||
+            (result as ChartKitLoadSuccess<unknown>).data?.loadedData;
 
         this.props.setHighchartsWidget({
             // TODO: probably highchartsWidget should be renamed to something like widgetData,

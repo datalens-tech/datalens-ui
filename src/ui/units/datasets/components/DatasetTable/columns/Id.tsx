@@ -16,10 +16,11 @@ type GetIdColumnArgs = {
     width: string;
     setActiveRow: ColumnItem['setActiveRow'];
     onUpdate: (row: DatasetField, value: string) => void;
+    readonly: boolean;
 };
 
 export const getIdColumn = (args: GetIdColumnArgs) => {
-    const {width, setActiveRow, onUpdate} = args;
+    const {width, setActiveRow, onUpdate, readonly} = args;
 
     const getUpdateHandler = (row: DatasetField) => {
         return (nextGuid: string) => onUpdate(row, nextGuid);
@@ -42,6 +43,7 @@ export const getIdColumn = (args: GetIdColumnArgs) => {
                     index={index}
                     setActiveRow={setActiveRow}
                     onUpdate={getUpdateHandler(row)}
+                    disabled={readonly}
                 />
             );
         },
