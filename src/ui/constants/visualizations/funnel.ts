@@ -1,5 +1,5 @@
 import {SquareHashtag} from '@gravity-ui/icons';
-import type {GraphShared} from 'shared';
+import type {Field, GraphShared} from 'shared';
 import {WizardVisualizationId} from 'shared';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
@@ -10,7 +10,11 @@ export const FUNNEL_VISUALIZATION: GraphShared['visualization'] = {
     type: 'funnel',
     name: 'label_visualization-funnel',
     iconProps: {id: 'visFunnel', width: '24'},
-    allowColors: false,
+    allowColors: true,
+    checkAllowedDesignItems: ({item}) => ITEM_TYPES.MEASURES_AND_PSEUDO.has(item.type),
+    allowLabels: true,
+    checkAllowedLabels: (item: Field) => ITEM_TYPES.MEASURES_AND_PSEUDO.has(item.type),
+    allowFilters: true,
     placeholders: [
         {
             allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,

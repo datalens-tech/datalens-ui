@@ -3,6 +3,10 @@ import {getFormatOptions, isDateField, isNumberField} from '../../../../../../..
 import {chartKitFormatNumberWrapper, formatDate} from '../../utils/misc-helpers';
 
 export function getFormattedValue(field: ServerField, value: unknown) {
+    if (value === null) {
+        return null;
+    }
+
     if (isDateField(field)) {
         return formatDate({
             valueType: field.data_type,
