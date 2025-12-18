@@ -32,15 +32,6 @@ import '../DialogGroupControl.scss';
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
-// TODO (global selectors): Add translations
-const mockI18n = (key: string) => {
-    const values: Record<string, string> = {
-        'button_add-selector': 'Добавить',
-    };
-
-    return values[key];
-};
-
 const canPasteItems = (pasteConfig: CopiedConfigData | null, workbookId?: string | null) => {
     if (
         pasteConfig &&
@@ -99,9 +90,7 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
 
     const dispatch = useDispatch();
 
-    const initialTabIndex =
-        selectorsGroup.group?.[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
-    const [defaultTabIndex, setDefaultTabIndex] = React.useState(initialTabIndex);
+    const [defaultTabIndex, setDefaultTabIndex] = React.useState(selectorsGroup.group.length + 1);
 
     const updateSelectorsList = React.useCallback(
         ({items, selectedItemIndex, action}: UpdateState<SelectorDialogState>) => {
@@ -172,7 +161,7 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
             items={selectorsGroup.group}
             selectedItemIndex={activeSelectorIndex}
             onUpdate={updateSelectorsList}
-            addButtonText={mockI18n('button_add-selector')}
+            addButtonText={i18n('button_add-selector')}
             pasteButtonText={i18n('button_paste-selector')}
             defaultTabText={getDefaultTabText}
             enableActionMenu={true}

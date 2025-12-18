@@ -19,7 +19,7 @@ export const TabItemWrapper: React.FC<{isVisible: boolean; impactType?: ImpactTy
 }) => {
     return (
         <div className={b({secondary: !isVisible})}>
-            <GlobalSelectorIcon withHint impactType={impactType} className={b('global-icon')} />{' '}
+            <GlobalSelectorIcon withHint impactType={impactType} className={b('global-icon')} />
             {isVisible ? (
                 children
             ) : (

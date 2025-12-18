@@ -110,15 +110,14 @@ export const ImpactTypeSelect = ({
     // Create options based on whether there are multiple selectors
     // GroupItem impact value is disabled if it does not narrow down or does not match the group setting
     const tabsScopeOptions: SelectOption<{icon?: JSX.Element}>[] = React.useMemo(() => {
-        const needDisableIncorrectOptions =
-            hasMultipleSelectors && !isGroupSettings && isGroupControl;
-
         const allTabsOption = {
             value: IMPACT_TYPE_OPTION_VALUE.ALL_TABS,
             content: LABEL_BY_SCOPE_MAP[IMPACT_TYPE_OPTION_VALUE.ALL_TABS],
             data: {icon: getIconByImpactType(IMPACT_TYPE_OPTION_VALUE.ALL_TABS)},
-            // disabled: needDisableIncorrectOptions && selectorsGroup.impactType !== 'allTabs',
         };
+
+        const needDisableIncorrectOptions =
+            hasMultipleSelectors && !isGroupSettings && isGroupControl;
 
         const isSelectedTabsDisabled =
             needDisableIncorrectOptions &&
