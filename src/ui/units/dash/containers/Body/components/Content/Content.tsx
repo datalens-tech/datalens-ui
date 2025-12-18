@@ -37,6 +37,8 @@ import TableOfContent from '../../../TableOfContent/TableOfContent';
 import {Tabs} from '../../../Tabs/Tabs';
 import {DashkitWrapper} from '../DashkitWrapper/DashkitWrapper';
 
+import {useCopiedData} from './hooks/useCopiedData';
+
 const b = block('dash-body');
 
 const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHeader);
@@ -63,7 +65,6 @@ type DashKitWrapperProps = {
 };
 
 type Props = {
-    copiedData: CopiedConfigData | null;
     dashEntryKey?: string;
     disableHashNavigation?: boolean;
     hideErrorDetails?: boolean;
@@ -84,7 +85,6 @@ type Props = {
     DashKitWrapperProps;
 
 const Content = ({
-    copiedData,
     dashEntryKey,
     disableHashNavigation,
     hideErrorDetails,
@@ -126,6 +126,8 @@ const Content = ({
     const showTableOfContent = useSelector(selectShowTableOfContent);
     const tabs = useSelector(selectTabs);
     const userSettings = useSelector(selectUserSettings);
+
+    const {copiedData, setCopiedDataToStore} = useCopiedData();
 
     const handleOpenDialog = React.useCallback<(...args: Parameters<typeof openDialog>) => void>(
         (dialogType, dragOperationProps) => {
@@ -213,6 +215,7 @@ const Content = ({
                                 onItemRender,
                                 onWidgetMountChange,
                                 onPasteItem: restProps.onPasteItem,
+                                setCopiedDataToStore,
                             }}
                         />
 

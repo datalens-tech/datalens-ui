@@ -9,6 +9,7 @@ import type {UserState} from 'store/typings/user';
 import type {ControlDialogState} from 'ui/store/reducers/controlDialog';
 import type {CopyEntriesToWorkbookState} from 'ui/store/reducers/copyEntriesToWorkbook';
 import type {EditHistoryState} from 'ui/store/reducers/editHistory';
+import type {LocalStorageFallbackState} from 'ui/store/reducers/localStorageFallback';
 import type {MigrationToWorkbookState} from 'ui/store/reducers/migrationToWorkbook';
 import type {AuthState} from 'units/auth/store/reducers';
 import type {CollectionsState} from 'units/collections/store/reducers';
@@ -75,4 +76,5 @@ export type DatalensGlobalState = {
     iamAccessDialog: IamAccessDialogState;
     auth: AuthState;
     serviceSettings: ServiceSettingsState;
+    localStorageFallback: LocalStorageFallbackState;
 };

@@ -6,6 +6,7 @@ import type {
     DashKitGroup,
     DashKitProps,
     ItemDropProps,
+    PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -84,6 +85,7 @@ type DashkitWrapperProps = {
     onItemRender: (item: ConfigItem) => void;
     onWidgetMountChange: (isMounted: boolean, id: string, domElement: HTMLElement) => void;
     onPasteItem?: (data: CopiedConfigData, newLayout?: ConfigLayout[]) => void;
+    setCopiedDataToStore: (data: CopiedConfigData) => void;
 };
 
 export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
@@ -111,6 +113,7 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
         onItemRender,
         onWidgetMountChange,
         onPasteItem,
+        setCopiedDataToStore,
     } = props;
 
     const dispatch = useDispatch();
@@ -167,7 +170,9 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
     );
 
     const onItemCopy = React.useCallback(
-        (error: null | Error) => {
+        (error: null | Error, data?: PreparedCopyItemOptions) => {
+            setCopiedDataToStore(data as unknown as CopiedConfigData);
+
             if (error === null) {
                 dispatch(
                     showToast({
@@ -178,7 +183,7 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
                 );
             }
         },
-        [dispatch],
+        [dispatch, setCopiedDataToStore],
     );
 
     const onItemEdit = React.useCallback(
