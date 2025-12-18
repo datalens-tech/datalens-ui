@@ -128,10 +128,14 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
         }
 
         if (isNodeResponse(loaded)) {
+            const isWizardOrQl = result.isNewWizard || result.isQL;
             const parsedConfig = JSON.parse(loaded.config);
             const enableJsAndHtml = get(parsedConfig, 'enableJsAndHtml', true);
 
-            const jsonParse = noJsonFn || enableJsAndHtml === false ? JSON.parse : JSONfn.parse;
+            let jsonParse = JSON.parse;
+            if (!isWizardOrQl && !noJsonFn && enableJsAndHtml) {
+                jsonParse = JSONfn.parse;
+            }
 
             result.data = loaded.data;
             result.config = jsonParse(loaded.config);
@@ -173,7 +177,6 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            const isWizardOrQl = result.isNewWizard || result.isQL;
             const shouldProcessHtmlFields =
                 isPotentiallyUnsafeChart(loadedType) || result.config?.useHtml;
             if (shouldProcessHtmlFields) {

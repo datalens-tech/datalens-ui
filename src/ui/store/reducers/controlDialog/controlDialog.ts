@@ -10,8 +10,7 @@ import type {
     DialogEditItemFeaturesProp,
     SelectorDialogState,
     SelectorsGroupDialogState,
-    SelectorsGroupValidation,
-} from '../typings/controlDialog';
+} from '../../typings/controlDialog';
 import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
 import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
@@ -25,7 +24,8 @@ import {
     SET_LAST_USED_DATASET_ID,
     SET_LAST_USED_CONNECTION_ID,
     UPDATE_CONTROLS_VALIDATION,
-} from '../actions/controlDialog/controlDialog';
+    SET_ACTIVE_TAB,
+} from '../../actions/controlDialog/controlDialog';
 import type {
     SetLastUsedDatasetIdAction,
     SetLastUsedConnectionIdAction,
@@ -36,10 +36,19 @@ import type {
     UpdateSelectorsGroupAction,
     AddSelectorToGroupAction,
     UpdateControlsValidationAction,
-} from '../actions/controlDialog/controlDialog';
-import {getActualUniqueFieldNameValidation, getInitialDefaultValue} from '../utils/controlDialog';
+    SetActiveTabAction,
+} from '../../actions/controlDialog/controlDialog';
+import {
+    getActualUniqueFieldNameValidation,
+    getInitialDefaultValue,
+} from '../../utils/controlDialog';
+import {
+    getSelectorDialogValidation,
+    getSelectorsGroupValidation,
+    getUpdatedAutoHeight,
+} from './helpers';
 import {I18n} from 'i18n';
-import {ELEMENT_TYPE} from '../constants/controlDialog';
+import {ELEMENT_TYPE} from '../../constants/controlDialog';
 import {type RealTheme} from '@gravity-ui/uikit';
 
 const i18n = I18n.keyset('dash.store.view');
@@ -53,6 +62,7 @@ export type ControlDialogStateItemMeta = {
 };
 export interface ControlDialogState {
     activeSelectorIndex: number;
+    activeTab: string | null;
     selectorsGroup: SelectorsGroupDialogState;
     selectorDialog: SelectorDialogState;
     openedDialog: DashTabItemType | null;
@@ -191,6 +201,7 @@ export function getSelectorGroupDialogFromData(data: DashTabItemGroupControlData
 
 const getInitialState = (): ControlDialogState => ({
     activeSelectorIndex: 0,
+    activeTab: null,
     selectorsGroup: getGroupSelectorDialogInitialState(),
     selectorDialog: getSelectorDialogInitialState(),
     openedDialog: null,
@@ -213,7 +224,8 @@ export function controlDialog(
         | AddSelectorToGroupAction
         | SetLastUsedDatasetIdAction
         | SetLastUsedConnectionIdAction
-        | UpdateControlsValidationAction,
+        | UpdateControlsValidationAction
+        | SetActiveTabAction,
 ): ControlDialogState {
     const {type} = action;
 
@@ -420,19 +432,51 @@ export function controlDialog(
 
             const fallbackImpactTabsIds = currentTabId ? [currentTabId] : undefined;
 
+            let updatedGroup = [...state.selectorsGroup.group];
+            let groupImpactType = state.selectorsGroup.impactType;
+            let groupImpactTabsIds = state.selectorsGroup.impactTabsIds;
+
+            // reset the validation when the number of selectors changes
+            if (
+                state.selectorsGroup.validation.currentTabVisibility ||
+                state.selectorDialog.validation.currentTabVisibility
+            ) {
+                updatedGroup = state.selectorsGroup.group.map((selector) => {
+                    return {
+                        ...selector,
+                        validation: {...selector.validation, currentTabVisibility: undefined},
+                    };
+                });
+            }
+
+            // set the default value for the former single selector
+            if (isBecomeGroup) {
+                const hasSelectorCorrectGroupType =
+                    updatedGroup[0].impactType && updatedGroup[0].impactType !== 'asGroup';
+
+                groupImpactType = hasSelectorCorrectGroupType
+                    ? updatedGroup[0].impactType
+                    : 'currentTab';
+                groupImpactTabsIds = hasSelectorCorrectGroupType
+                    ? updatedGroup[0].impactTabsIds
+                    : fallbackImpactTabsIds;
+                updatedGroup[0].impactType = 'asGroup';
+                updatedGroup[0].impactTabsIds = null;
+            }
+
             return {
                 ...state,
                 selectorsGroup: {
                     ...state.selectorsGroup,
-                    group: [...state.selectorsGroup.group, {...newSelector, title: payload.title}],
+                    group: updatedGroup.concat([{...newSelector, title: payload.title}]),
                     autoHeight,
                     // The settings of the first selector are applied to the group
-                    impactType: isBecomeGroup
-                        ? state.selectorsGroup.group[0].impactType ?? 'currentTab'
-                        : state.selectorsGroup.impactType,
-                    impactTabsIds: isBecomeGroup
-                        ? state.selectorsGroup.group[0].impactTabsIds ?? fallbackImpactTabsIds
-                        : state.selectorsGroup.impactTabsIds,
+                    impactType: groupImpactType,
+                    impactTabsIds: groupImpactTabsIds,
+                    validation: {
+                        ...state.selectorsGroup.validation,
+                        currentTabVisibility: undefined,
+                    },
                 },
             };
         }
@@ -445,40 +489,62 @@ export function controlDialog(
 
             const isSingleSelectorLeft =
                 selectorsGroup.group.length > 1 && selectorsGroup.group.length === 1;
+            const hasLengthChanged = selectorsGroup.group.length !== group.length;
 
-            let updatedAutoHeight;
-            if (enableAutoheightDefault) {
-                updatedAutoHeight = true;
-            } else {
-                // if the number of selectors has increased from 1 to several, we enable autoHeight
-                updatedAutoHeight =
-                    selectorsGroup.group.length === 1 && group.length > 1 ? true : autoHeight;
+            const singleSelectorsGroupSettings: Partial<SelectorsGroupDialogState> = {
+                buttonApply: false,
+                buttonReset: false,
+                impactType: undefined,
+                impactTabsIds: undefined,
+            };
+
+            const updatedAutoHeight = getUpdatedAutoHeight({
+                enableAutoheightDefault,
+                hasLengthChanged,
+                isSingleSelectorLeft,
+                autoHeight,
+            });
+
+            const validation = getSelectorDialogValidation({
+                selectorDialog,
+                isSingleSelectorLeft,
+                hasLengthChanged,
+            });
+
+            const groupValidation = getSelectorsGroupValidation({
+                selectorsGroup,
+                impactTabsIds,
+                hasLengthChanged,
+                payloadValidation: action.payload.validation,
+            });
+
+            const selectorDialogUpdatedState = {
+                ...state.selectorDialog,
+                validation: {...state.selectorDialog.validation, ...validation},
+                ...(isSingleSelectorLeft
+                    ? {
+                          impactTabsIds: selectorsGroup.impactTabsIds,
+                          impactType: selectorsGroup.impactType,
+                      }
+                    : {}),
+            };
+            const selectorsGroupUpdatedState = {
+                ...selectorsGroup,
+                ...action.payload,
+                ...(isSingleSelectorLeft ? {singleSelectorsGroupSettings} : {}),
+                autoHeight: updatedAutoHeight,
+                validation: {...selectorsGroup.validation, ...groupValidation},
+            };
+
+            if (isSingleSelectorLeft) {
+                selectorsGroupUpdatedState.group[0].impactType = selectorsGroup.impactType;
+                selectorsGroupUpdatedState.group[0].impactTabsIds = selectorsGroup.impactTabsIds;
             }
-
-            const validation: SelectorDialogState['validation'] = {
-                impactType: isSingleSelectorLeft ? undefined : selectorDialog.validation.impactType,
-            };
-
-            const groupValidation: SelectorsGroupValidation = {
-                impactTabsIds:
-                    selectorsGroup.impactTabsIds === impactTabsIds
-                        ? selectorsGroup.validation.impactTabsIds
-                        : undefined,
-            };
 
             return {
                 ...state,
-                selectorsGroup: {
-                    ...selectorsGroup,
-                    ...action.payload,
-
-                    autoHeight: updatedAutoHeight,
-                    validation: {...selectorsGroup.validation, ...groupValidation},
-                },
-                selectorDialog: {
-                    ...state.selectorDialog,
-                    validation: {...state.selectorDialog.validation, ...validation},
-                },
+                selectorsGroup: selectorsGroupUpdatedState,
+                selectorDialog: selectorDialogUpdatedState,
             };
         }
 
@@ -560,6 +626,12 @@ export function controlDialog(
                 };
             }
         }
+
+        case SET_ACTIVE_TAB:
+            return {
+                ...state,
+                activeTab: action.payload,
+            };
 
         default:
             return state;

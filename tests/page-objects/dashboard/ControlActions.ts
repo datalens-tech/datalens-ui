@@ -161,16 +161,12 @@ class ControlActions {
         }
 
         if (options && options.buttonApply) {
-            await this.page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
-            await this.page
-                .locator(`${slct(DialogGroupControlQa.applyButtonCheckbox)} input`)
-                .setChecked(true);
+            await this.page.locator(slct(DialogGroupControlQa.groupSettingsTab)).click();
+            await this.page.locator(slct(DialogGroupControlQa.applyButtonSwitch)).click();
 
             await this.page
                 .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)
                 .setChecked(Boolean(options?.updateControlOnChange));
-
-            await this.page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
         }
 
         // adding a selector to the dashboard

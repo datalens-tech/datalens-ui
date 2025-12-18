@@ -300,17 +300,19 @@ export const getNewGlobalParamsAndQueueItems = (
 };
 
 const findUpdatedGlobalItems = (
-    newTabHashState: ItemsStateAndParams,
+    existingTabHashState: ItemsStateAndParams,
     globalParams: ItemsStateAndParamsBase,
 ) => {
     const updatedGlobalItems = new Set<string>();
-    const updatedParams = {...newTabHashState} as ItemsStateAndParamsBase;
+    const updatedParams = {...existingTabHashState} as ItemsStateAndParamsBase;
 
     // Check for parameter changes
     for (const [widgetId, widgetParams] of Object.entries(globalParams)) {
-        const currentItemParams = (newTabHashState as ItemsStateAndParamsBase)[widgetId]?.params;
+        const currentItemParams = (existingTabHashState as ItemsStateAndParamsBase)[widgetId]
+            ?.params;
         const itemParams = widgetParams.params;
 
+        // the existing parameters have changed
         if (currentItemParams && itemParams) {
             for (const [recordId, recordValue] of Object.entries(itemParams) as [
                 string,
@@ -341,25 +343,29 @@ const findUpdatedGlobalItems = (
                     };
                 }
             }
+            continue;
         }
+
+        // new parameters have been added
+        updatedParams[widgetId] = widgetParams;
     }
 
     return {updatedGlobalItems, updatedParams};
 };
 
 export const updateExistingStateWithGlobalSelector = (
-    newTabHashState: ItemsStateAndParams,
+    existingTabHashState: ItemsStateAndParams,
     globalParams: ItemsStateAndParamsBase,
     globalQueue: QueueItem[],
     previousMeta: StateAndParamsMetaData,
 ): ItemsStateAndParams => {
     const currentQueue =
-        newTabHashState.__meta__ && 'queue' in newTabHashState.__meta__
-            ? newTabHashState.__meta__.queue
+        existingTabHashState.__meta__ && 'queue' in existingTabHashState.__meta__
+            ? existingTabHashState.__meta__.queue
             : [];
 
     const {updatedGlobalItems, updatedParams} = findUpdatedGlobalItems(
-        newTabHashState,
+        existingTabHashState,
         globalParams,
     );
 

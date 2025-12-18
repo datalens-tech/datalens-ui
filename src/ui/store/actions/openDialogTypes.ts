@@ -43,7 +43,6 @@ import type {OpenDialogQLParameterArgs} from '../../components/DialogQLParameter
 import type {OpenDialogSelectMigrationToWorkbookArgs} from '../../components/SelectMigrationToWorkbookDialog/SelectMigrationToWorkbookDialog';
 import type {OpenDialogMigrateToWorkbookArgs} from '../../components/MigrateToWorkbookDialog/MigrateToWorkbookDialog';
 import type {OpenDialogLabelSettingsArgs} from '../../units/wizard/components/Dialogs/DialogLabelSettings/DialogLabelSettings';
-import type {OpenDialogExtendedSettingsArgs} from '../../components/DialogExtendedSettings/DialogExtendedSettings';
 import type {OpenDialogCopyEntriesToWorkbookArgs} from '../../components/CopyEntriesToWorkbookDialog/CopyEntriesToWorkbookDialog';
 import type {OpenDialogConnAddYadocArgs} from '../../units/connections/components/custom-forms/Yadocs/components/DialogAddDocument/DialogAddDocument';
 import type {OpenDialogEditQueryArgs} from '../../units/dash/containers/Dialogs/DialogEditQuery/DialogEditQuery';
@@ -102,7 +101,6 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogMoveCollectionArgs
     | OpenDialogMoveWorkbookArgs
     | OpenDialogCopyWorkbookArgs
-    | OpenDialogExtendedSettingsArgs
     | OpenDialogLabelSettingsArgs
     | OpenDialogEditWorkbookArgs
     | OpenDialogEditCollectionArgs
