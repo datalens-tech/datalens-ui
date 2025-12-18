@@ -1,7 +1,7 @@
 {
   "button_add-selector": "Добавить",
   "button_cancel": "Отменить",
-  "button_join-all": "Объединить все",
+  "button_join-all": "Объединить всё",
   "button_join-selectors": "Объединить",
   "button_paste-selector": "Вставить",
   "button_save": "Сохранить",
@@ -9,7 +9,7 @@
   "label_copy-invalid-control": "Не удалось скопировать селектор: некоторые его поля заполнены некорректно",
   "label_default-tab": "Селектор {{index}}",
   "label_filtration": "Фильтрация",
-  "label_find-no-similiar-selectors": "Нет похожих селекторов. У селекторов должны быть такие же поле или параметр",
+  "label_find-no-similiar-selectors": "Нет похожих селекторов. У селекторов должны быть такие же поле или параметр.",
   "label_finding-similiar-selectors-progress": "Поиск похожих селекторов",
   "label_general": "Общее",
   "label_group-settings": "Настройки группы",
