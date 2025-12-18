@@ -68,6 +68,7 @@ const FormRowComponent: React.FC<FormRowComponentProps> = (props) => {
     ) {
         const {PreparedRowItem} = registry.connections.components.getAll();
 
+        // CHARTS-12296
         return (
             <RowContainer>
                 <PreparedRowItem {...props} disabled={readonly || queryReadonly} />
