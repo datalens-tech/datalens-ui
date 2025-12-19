@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Breadcrumbs, Flex} from '@gravity-ui/uikit';
+import {Breadcrumbs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n as i18nGlobal} from 'i18n';
 import {useSelector} from 'react-redux';
@@ -48,9 +48,9 @@ const UserProfilePage = () => {
                     </Breadcrumbs>
                 }
             />
-            <Flex justifyContent="center" className={b('content')}>
+            <div className={b('content')}>
                 <UserProfile userId={userId} />
-            </Flex>
+            </div>
         </main>
     );
 };

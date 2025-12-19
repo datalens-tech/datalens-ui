@@ -4,6 +4,7 @@ import {Breadcrumbs, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ActionPanel} from 'ui/components/ActionPanel';
+import {BreadcrumbsItemLink} from 'ui/components/BreadcrumbsItemLink/BreadcrumbsItemLink';
 import {DL} from 'ui/constants';
 
 import {CreateUserForm} from '../../components/CreateUserForm/CreateUserForm';
@@ -25,16 +26,16 @@ const CreateProfilePage = () => {
         <main className={b()}>
             <ActionPanel
                 leftItems={
-                    <Breadcrumbs className={b('breadcrumbs')}>
-                        <Breadcrumbs.Item href="/settings">
+                    <Breadcrumbs className={b('breadcrumbs')} itemComponent={BreadcrumbsItemLink}>
+                        <BreadcrumbsItemLink to="/settings">
                             {i18nMain('label_header')}
-                        </Breadcrumbs.Item>
-                        <Breadcrumbs.Item href="/settings/users">
+                        </BreadcrumbsItemLink>
+                        <BreadcrumbsItemLink to="/settings/users">
                             {i18nMain('section_users')}
-                        </Breadcrumbs.Item>
-                        <Breadcrumbs.Item disabled={true} className={b('breadcrumbs-item')}>
+                        </BreadcrumbsItemLink>
+                        <BreadcrumbsItemLink disabled={true} className={b('breadcrumbs-item')}>
                             {i18n('title_create-user')}
-                        </Breadcrumbs.Item>
+                        </BreadcrumbsItemLink>
                     </Breadcrumbs>
                 }
             />

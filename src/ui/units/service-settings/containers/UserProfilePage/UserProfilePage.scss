@@ -1,10 +1,16 @@
+@import '../../../../styles/variables.scss';
+@import '../../styles/variables.scss';
+
 .dl-user-profile-page {
     min-height: 100vh;
     display: grid;
     grid-template-rows: auto 1fr;
 
     &__content {
-        padding: var(--g-spacing-5);
+        width: 100%;
+        max-width: $pageMaxWidth;
+        padding: $settingsPagePadding;
+        margin: 0 auto;
     }
 
     &__breadcrumbs {

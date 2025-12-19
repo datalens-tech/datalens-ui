@@ -4,8 +4,10 @@ import {Loader, Tab, TabList, TabProvider, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Redirect, Route, Switch, useHistory, useParams} from 'react-router-dom';
+import {Feature} from 'shared';
 import {PageTitle} from 'ui/components/PageTitle';
 import {DL} from 'ui/constants';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import './MainPage.scss';
 
@@ -46,11 +48,25 @@ const MainPage = ({
 
     if (!DL.AUTH_ENABLED || !DL.IS_NATIVE_AUTH_ADMIN) {
         return (
-            <div className={b()}>
-                <Text as={'h3' as const} variant="subheader-3" className={b('header')}>
+            <div className={b({new: isEnabledFeature(Feature.EnableNewServiceSettings)})}>
+                <Text
+                    as={isEnabledFeature(Feature.EnableNewServiceSettings) ? 'h2' : 'h3'}
+                    variant={
+                        isEnabledFeature(Feature.EnableNewServiceSettings)
+                            ? 'header-2'
+                            : 'subheader-3'
+                    }
+                    className={b('header', {
+                        new: isEnabledFeature(Feature.EnableNewServiceSettings),
+                    })}
+                >
                     {i18n('label_header')}
                 </Text>
-                <main className={b('section')}>
+                <main
+                    className={b('section', {
+                        new: isEnabledFeature(Feature.EnableNewServiceSettings),
+                    })}
+                >
                     <GeneralSettings
                         customSettings={customGeneralSettings}
                         disablePalettesEdit={disablePalettesEdit}
@@ -80,12 +96,21 @@ const MainPage = ({
     ];
 
     return (
-        <div className={b()}>
+        <div className={b({new: isEnabledFeature(Feature.EnableNewServiceSettings)})}>
             <PageTitle title={i18n('label_header')} />
-            <Text as={'h3' as const} variant="subheader-3" className={b('header')}>
+            <Text
+                as={isEnabledFeature(Feature.EnableNewServiceSettings) ? 'h2' : 'h3'}
+                variant={
+                    isEnabledFeature(Feature.EnableNewServiceSettings) ? 'header-2' : 'subheader-3'
+                }
+                className={b('header', {new: isEnabledFeature(Feature.EnableNewServiceSettings)})}
+            >
                 {i18n('label_header')}
             </Text>
-            <div role="tablist" className={b('tabs')}>
+            <div
+                role="tablist"
+                className={b('tabs', {new: isEnabledFeature(Feature.EnableNewServiceSettings)})}
+            >
                 <TabProvider value={activeTab} onUpdate={handleSelectTab}>
                     <TabList size="m">
                         {[...tabs, ...customTabItems].map((item) => (
