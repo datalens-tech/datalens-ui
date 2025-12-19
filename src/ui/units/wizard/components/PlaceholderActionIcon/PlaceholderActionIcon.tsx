@@ -20,17 +20,20 @@ interface PlaceholderActionIconProps {
 
 const b = block('placeholder-action-icon');
 
-const PlaceholderActionIcon: React.FC<PlaceholderActionIconProps> = ({
-    icon: iconData,
-    iconSize,
-    onClick,
-    className,
-    disabledText,
-    hoverText,
-    qa,
-    hidden,
-    isFirstElementInRow,
-}) => {
+const render: React.ForwardRefRenderFunction<HTMLDivElement, PlaceholderActionIconProps> = (
+    {
+        icon: iconData,
+        iconSize,
+        onClick,
+        className,
+        disabledText,
+        hoverText,
+        qa,
+        hidden,
+        isFirstElementInRow,
+    },
+    ref,
+) => {
     if (hidden) {
         return null;
     }
@@ -53,8 +56,12 @@ const PlaceholderActionIcon: React.FC<PlaceholderActionIconProps> = ({
             {content}
         </Popover>
     ) : (
-        <div className={b({first: isFirstElementInRow}, className)}>{content}</div>
+        <div ref={ref} className={b({first: isFirstElementInRow}, className)}>
+            {content}
+        </div>
     );
 };
 
-export default PlaceholderActionIcon;
+export default Object.assign(React.forwardRef(render), {
+    displayName: 'PlaceholderActionIcon',
+});
