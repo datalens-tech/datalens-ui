@@ -141,6 +141,12 @@ export interface MoveEntryArgs {
     name?: string;
 }
 
+export interface MoveSharedEntryArgs {
+    entryId: string;
+    collectionId: string;
+    name?: string;
+}
+
 export interface CopyEntry extends EntryFields {
     links: EntryFieldLinks;
     oldEntryId: string;

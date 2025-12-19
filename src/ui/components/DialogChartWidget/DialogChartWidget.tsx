@@ -33,6 +33,7 @@ import {
     CustomPaletteBgColors,
     DashCommonQa,
     DialogDashWidgetQA,
+    DialogWidget,
     EntryScope,
     Feature,
     ParamsSettingsQA,
@@ -852,6 +853,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
             className={b()}
             disableEscapeKeyDown
             disableHeightTransition
+            qa={DialogWidget.ChartWidget}
         >
             <Dialog.Header caption={i18n('dash.widget-dialog.edit', 'label_widget')} />
             <Dialog.Body className={b('body')}>
