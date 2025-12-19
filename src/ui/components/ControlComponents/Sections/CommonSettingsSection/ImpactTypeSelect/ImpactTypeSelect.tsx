@@ -113,6 +113,7 @@ export const ImpactTypeSelect = ({
     const currentImpactType = getImpactTypeByValue({
         selectorImpactType: isGroupSettings ? groupImpactType : selectorDialog.impactType,
         hasMultipleSelectors,
+        isGroupSettings,
     });
 
     const {validateTabVisibility} = useTabVisibilityValidation({

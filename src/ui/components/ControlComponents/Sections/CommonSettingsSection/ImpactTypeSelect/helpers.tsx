@@ -9,9 +9,11 @@ import {IMPACT_TYPE_OPTION_VALUE} from './constants';
 export const getImpactTypeByValue = ({
     selectorImpactType,
     hasMultipleSelectors,
+    isGroupSettings,
 }: {
     selectorImpactType?: ImpactType;
     hasMultipleSelectors?: boolean;
+    isGroupSettings?: boolean;
 }) => {
     switch (selectorImpactType) {
         case IMPACT_TYPE_OPTION_VALUE.ALL_TABS:
@@ -19,7 +21,7 @@ export const getImpactTypeByValue = ({
         case IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB:
             return selectorImpactType;
         default:
-            return hasMultipleSelectors
+            return hasMultipleSelectors && !isGroupSettings
                 ? IMPACT_TYPE_OPTION_VALUE.AS_GROUP
                 : IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB;
     }
