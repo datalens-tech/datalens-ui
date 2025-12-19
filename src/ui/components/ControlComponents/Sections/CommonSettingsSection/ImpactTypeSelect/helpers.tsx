@@ -27,6 +27,19 @@ export const getImpactTypeByValue = ({
     }
 };
 
+export const getCurrentImpactTabsIds = ({
+    selectorImpactTabsIds,
+    currentTabId,
+}: {
+    selectorImpactTabsIds?: ImpactTabsIds;
+    currentTabId?: string;
+}) => {
+    if (selectorImpactTabsIds) {
+        return selectorImpactTabsIds;
+    }
+    return currentTabId ? [currentTabId] : [];
+};
+
 export const getIconByImpactType = (impactType: ImpactType | string) => {
     switch (impactType) {
         case 'allTabs':
@@ -35,22 +48,6 @@ export const getIconByImpactType = (impactType: ImpactType | string) => {
         default:
             return undefined;
     }
-};
-
-export const getInitialImpactTabsIds = ({
-    isGroupSettings,
-    groupImpactTabsIds,
-    selectorImpactTabsIds,
-}: {
-    isGroupSettings?: boolean;
-    groupImpactTabsIds?: ImpactTabsIds;
-    selectorImpactTabsIds?: ImpactTabsIds;
-}) => {
-    if (isGroupSettings) {
-        return groupImpactTabsIds || [];
-    }
-
-    return selectorImpactTabsIds || [];
 };
 
 export const getImpactTypeValidation = ({
