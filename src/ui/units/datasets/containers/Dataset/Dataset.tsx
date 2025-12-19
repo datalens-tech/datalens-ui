@@ -732,6 +732,7 @@ class Dataset extends React.Component<Props, State> {
         return (
             <React.Fragment>
                 <ActionPanel
+                    className={b('action-panel', {readonly: this.getIsWorkbookSharedDataset()})}
                     entry={this.getEntry()}
                     rightItems={this.getRightItems()}
                     lastCrumbAdditionalContent={this.getLastCrumbAdditionalContent()}

@@ -71,10 +71,15 @@ function shouldShowSafeChartInfo(params: StringParams) {
 }
 
 /* eslint-disable complexity */
-async function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyWidget>(
-    loaded: T,
-    noJsonFn?: boolean,
-): Promise<R & ChartsData> {
+async function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyWidget>({
+    loaded,
+    noJsonFn,
+    widgetElement,
+}: {
+    loaded: T;
+    noJsonFn?: boolean;
+    widgetElement?: Element;
+}): Promise<R & ChartsData> {
     const {
         type: loadedType,
         params,
@@ -170,6 +175,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     entryType: loadedType,
                     sandbox: uiSandbox,
                     options: uiSandboxOptions,
+                    widgetElement,
                 };
                 await unwrapPossibleFunctions({...unwrapFnArgs, target: result.config});
                 await unwrapPossibleFunctions({...unwrapFnArgs, target: result.libraryConfig});

@@ -275,6 +275,7 @@ const PageComponent = (props: PageProps) => {
             <div className={b()}>
                 {entry && (
                     <ActionPanel
+                        className={b('action-panel', {readonly: Boolean(isWorkbookSharedEntry)})}
                         entry={entry}
                         lastCrumbAdditionalContent={lastCrumbAdditionalContent}
                         centerItems={actionPanelCenterItems}

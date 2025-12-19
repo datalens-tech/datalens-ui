@@ -1204,3 +1204,27 @@ export const removeGlobalItems = (
     type: REMOVE_GLOBAL_ITEMS,
     payload,
 });
+
+export const UPDATE_CONNECTIONS_UPDATERS = Symbol('dash/UPDATE_CONNECTIONS_UPDATERS');
+export type UpdateConnectionsUpdatersAction = {
+    type: typeof UPDATE_CONNECTIONS_UPDATERS;
+    payload: {
+        tabId: string;
+        joinedSelectorId: string;
+        targetSelectorParamId: string;
+    };
+};
+export const updateConnectionsUpdaters = (
+    payload: UpdateConnectionsUpdatersAction['payload'],
+): UpdateConnectionsUpdatersAction => ({
+    type: UPDATE_CONNECTIONS_UPDATERS,
+    payload,
+});
+
+export const RESET_CONNECTIONS_UPDATERS = Symbol('dash/RESET_CONNECTIONS_UPDATERS');
+export type ResetConnectionsUpdatersAction = {
+    type: typeof RESET_CONNECTIONS_UPDATERS;
+};
+export const resetConnectionsUpdaters = (): ResetConnectionsUpdatersAction => ({
+    type: RESET_CONNECTIONS_UPDATERS,
+});

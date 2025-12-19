@@ -1,3 +1,5 @@
+import groupBy from 'lodash/groupBy';
+
 import type {
     ApiV2Filter,
     ApiV2Parameter,
@@ -126,7 +128,19 @@ export const getParametersApiV2RequestSection = ({
     parameters: (Field | DatasetField)[];
     dashboardParameters: (Field | DatasetField)[];
 }) => {
-    const dashboardParametersGuids = dashboardParameters.reduce(
+    const groupedDashParams = groupBy(dashboardParameters, (p) => p.guid);
+    const dashParams = Object.values(groupedDashParams).map((items) => {
+        if (items.length > 1) {
+            return {
+                ...items[0],
+                default_value: items.map((item) => item.default_value).join(','),
+            };
+        }
+
+        return items[0];
+    });
+
+    const dashboardParametersGuids = dashParams.reduce(
         (acc, parameter) => ({...acc, [parameter.guid]: true}),
         {} as Record<string, boolean>,
     );
@@ -134,7 +148,7 @@ export const getParametersApiV2RequestSection = ({
         (parameter) => !dashboardParametersGuids[parameter.guid],
     );
 
-    const requestParameters = [...filteredParameters, ...dashboardParameters];
+    const requestParameters = [...filteredParameters, ...dashParams];
 
     return requestParameters.reduce((apiV2Parametes, parameter) => {
         return [...apiV2Parametes, mapParameterToApiV2ParametersFormat(parameter)];

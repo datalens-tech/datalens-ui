@@ -58,12 +58,11 @@ const MIN_AVAILABLE_TOP_OFFSET = -5;
 const titlePlugin: PluginTitle = {
     ...pluginTitle,
     setSettings(settings: PluginTitleObjectSettings) {
-        const {hideAnchor, hideHint, globalBackground, globalBackgroundSettings} = settings;
+        const {hideAnchor, hideHint, globalWidgetSettings} = settings;
 
         titlePlugin.hideAnchor = hideAnchor;
         titlePlugin.hideHint = hideHint;
-        titlePlugin.globalBackground = globalBackground;
-        titlePlugin.globalBackgroundSettings = globalBackgroundSettings;
+        titlePlugin.globalWidgetSettings = globalWidgetSettings;
         return titlePlugin;
     },
     renderer: function PluginTitleRenderer(
@@ -134,10 +133,12 @@ const titlePlugin: PluginTitle = {
         const withAbsoluteHint = showHint && !isInlineExtraElements;
 
         const {style, hasBgColor} = usePreparedWrapSettings({
-            widgetBackground: data.background,
-            widgetBackgroundSettings: data.backgroundSettings,
-            globalBackground: titlePlugin.globalBackground,
-            globalBackgroundSettings: titlePlugin.globalBackgroundSettings,
+            ownWidgetSettings: {
+                background: data.background,
+                backgroundSettings: data.backgroundSettings,
+                borderRadius: data.borderRadius,
+            },
+            globalWidgetSettings: titlePlugin.globalWidgetSettings ?? {},
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 

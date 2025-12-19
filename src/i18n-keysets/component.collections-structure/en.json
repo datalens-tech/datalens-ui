@@ -13,7 +13,6 @@
   "action_stay": "Remain",
   "button_choose-file": "Select a file",
   "button_deploy": "Deploy",
-  "create-entry-dialog-title": "Выберите коллекцию для создания",
   "label_collection-already-exists-error": "A collection with that name already exists",
   "label_connection": "connection",
   "label_copy": "Copy to",

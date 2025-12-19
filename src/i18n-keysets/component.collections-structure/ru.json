@@ -13,7 +13,6 @@
   "action_stay": "Остаться",
   "button_choose-file": "Выбрать файл",
   "button_deploy": "Развернуть",
-  "create-entry-dialog-title": "Выберите коллекцию для создания",
   "label_collection-already-exists-error": "Коллекция с таким названием уже существует",
   "label_connection": "подключения",
   "label_copy": "Куда копировать",
