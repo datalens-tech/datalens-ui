@@ -59,7 +59,8 @@ export const getConfiguredDashKit = (
         disableTitleHints?: boolean;
         scope?: string;
         globalWidgetSettings?: CommonGlobalWidgetSettings;
-    },
+        // TODO: Remove later
+    } & CommonGlobalWidgetSettings,
     shouldReconfigure?: boolean,
 ) => {
     if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured || shouldReconfigure) {
