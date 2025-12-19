@@ -1,4 +1,5 @@
 import _isEqual from 'lodash/isEqual';
+import {drawPreview} from 'ui/units/ql/store/actions/ql';
 
 import type {
     ColorsConfig,
@@ -176,6 +177,8 @@ export function openDialogMetric({extraSettings}: OpenDialogMetricArguments) {
                         dispatch(setExtraSettings({...extraSettings, ...metricSettins}));
 
                         dispatch(updatePreviewAndClientChartsConfig({}));
+
+                        dispatch(drawPreview({withoutTable: true}));
                     },
                 },
             }),
