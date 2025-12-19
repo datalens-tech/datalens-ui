@@ -103,6 +103,8 @@ export enum Feature {
     EnableDashColorPickersByTheme = 'EnableDashColorPickersByTheme',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
+    /** Funnel chart visualization */
+    FunnelChart = 'FunnelChart',
 }
 
 export type FeatureConfig = Record<string, boolean>;

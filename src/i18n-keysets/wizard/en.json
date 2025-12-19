@@ -302,6 +302,7 @@
   "label_visualization-combined-chart": "Combined chart",
   "label_visualization-donut": "Donut chart",
   "label_visualization-flat-table": "Table",
+  "label_visualization-funnel": "Funnel chart",
   "label_visualization-geolayer": "Map",
   "label_visualization-geopoint": "Points",
   "label_visualization-geopoint-with-cluster": "Points with cluster",
