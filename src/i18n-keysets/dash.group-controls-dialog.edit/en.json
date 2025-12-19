@@ -9,7 +9,7 @@
   "label_copy-invalid-control": "Failed to copy selector: some fields did not pass validation",
   "label_default-tab": "Selector {{index}}",
   "label_filtration": "Filtration",
-  "label_find-no-similiar-selectors": "No similar selectors. Selectors must have the same field or parameter",
+  "label_find-no-similiar-selectors": "No similar selectors found. Selectors must have the same field or parameter.",
   "label_finding-similiar-selectors-progress": "Finding similar selectors",
   "label_general": "General",
   "label_group-settings": "Group settings",
