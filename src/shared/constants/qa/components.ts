@@ -199,3 +199,7 @@ export enum DatalensHeaderQa {
     DesktopContainer = 'datalens-header-desktop-container',
     MobileContainer = 'datalens-header-mobile-container',
 }
+
+export enum DialogWidget {
+    ChartWidget = 'dialog-chart-widget',
+}
