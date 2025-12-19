@@ -316,15 +316,7 @@ export const entriesActions = {
     moveSharedEntry: createAction<MoveEntryResponse, MoveSharedEntryArgs>({
         method: 'POST',
         path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${filterUrlFragment(entryId)}/move`,
-        params: (args, headers) => {
-            const body: Omit<MoveSharedEntryArgs, 'entryId'> = {
-                collectionId: args.collectionId,
-            };
-            if (args.name) {
-                body.name = args.name;
-            }
-            return {body, headers};
-        },
+        params: ({collectionId, name}, headers) => ({headers, body: {collectionId, name}}),
         timeout: TIMEOUT_60_SEC,
     }),
 };

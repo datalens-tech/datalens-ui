@@ -32,7 +32,7 @@ export const EditSharedEntryDialog: React.FC<Props> = ({
     open,
     title,
     onClose,
-    onApply: originalApply,
+    onApply: propsOnApply,
 }) => {
     const dispatch: AppDispatch = useDispatch();
     const [isLoading, setIsLoading] = React.useState(false);
@@ -45,7 +45,7 @@ export const EditSharedEntryDialog: React.FC<Props> = ({
                 name,
             });
             setIsLoading(false);
-            originalApply?.();
+            propsOnApply?.();
         } catch (error) {
             setIsLoading(false);
             dispatch(
