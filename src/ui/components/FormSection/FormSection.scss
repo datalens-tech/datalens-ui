@@ -5,6 +5,9 @@
 
     &__title {
         display: block;
+    }
+
+    &__title-wrapper {
         margin-block-end: var(--g-spacing-4);
     }
 }

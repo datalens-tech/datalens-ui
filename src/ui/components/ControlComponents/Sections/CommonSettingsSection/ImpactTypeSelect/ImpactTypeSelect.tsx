@@ -11,7 +11,6 @@ import {DashTabItemType, Feature} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
-import {DL} from 'ui/constants/common';
 import {
     setNeedSimilarSelectorsCheck,
     setSelectorDialogItem,
@@ -49,21 +48,7 @@ import './ImpactTypeSelect.scss';
 const b = block('impact-type-select');
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
-
-// Mock i18n keys based on DL.USER_LANG
-const mockI18n = {
-    ru: {
-        hint_find_similiar_selectors: 'Найти селекторы с таким же полем или параметром',
-    },
-    en: {
-        hint_find_similiar_selectors: 'Find selectors with the same field or parameter',
-    },
-};
-
-const getMockText = (key: keyof typeof mockI18n.en): string => {
-    const lang = (DL.USER_LANG || 'ru') as 'ru' | 'en';
-    return mockI18n[lang]?.[key] || mockI18n.en[key];
-};
+const groupI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
 const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
@@ -296,7 +281,7 @@ export const ImpactTypeSelect = ({
         [onChangeImpact, updateSelectorsState, validateTabVisibility],
     );
 
-    const handleFindSimilaeSelectorsClick = React.useCallback(() => {
+    const handleFindSimilarSelectorsClick = React.useCallback(() => {
         dispatch(setNeedSimilarSelectorsCheck(!needSimilarSelectorsCheck));
     }, [dispatch, needSimilarSelectorsCheck]);
 
@@ -333,8 +318,8 @@ export const ImpactTypeSelect = ({
                         validationState={impactTypeValidation ? 'invalid' : undefined}
                     />
                     {showSearchButton && (
-                        <ActionTooltip title={getMockText('hint_find_similiar_selectors')}>
-                            <Button onClick={handleFindSimilaeSelectorsClick} view="outlined">
+                        <ActionTooltip title={groupI18n('hint_find-similiar-selectors')}>
+                            <Button onClick={handleFindSimilarSelectorsClick} view="outlined">
                                 <Icon data={Magnifier} size={16} />
                             </Button>
                         </ActionTooltip>

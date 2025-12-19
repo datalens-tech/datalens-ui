@@ -23,7 +23,7 @@ import {updateConnectionsUpdaters} from 'ui/units/dash/store/actions/dashTyped';
 import type {TabsHashStates} from 'ui/units/dash/store/actions/dashTyped';
 import {selectDashData} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
-type JoinSelectorParams = {
+export type SimilarSelector = {
     id: string;
     title: string;
     tabTitle: string;
@@ -35,13 +35,19 @@ type JoinSelectorParams = {
 /**
  * Expands impactType/impactTabsIds to include the target tab if needed
  */
-const expandImpactSettings = (
-    targetTabId: string,
-    currentTabId: string | null,
-    selectorDialog: SelectorDialogState,
-    selectorsGroup: SelectorsGroupDialogState,
-    dispatch: ReturnType<typeof useDispatch>,
-) => {
+const expandImpactSettings = ({
+    targetTabId,
+    currentTabId,
+    selectorDialog,
+    selectorsGroup,
+    dispatch,
+}: {
+    targetTabId: string;
+    currentTabId: string | null;
+    selectorDialog: SelectorDialogState;
+    selectorsGroup: SelectorsGroupDialogState;
+    dispatch: ReturnType<typeof useDispatch>;
+}) => {
     if (!currentTabId) {
         return;
     }
@@ -117,7 +123,7 @@ export const useSimilarSelectorsActions = () => {
     }, [dashChangesBuffer, dashData.tabs, hashStates, dispatch]);
 
     const joinSelector = useCallback(
-        (selector: JoinSelectorParams) => {
+        (selector: SimilarSelector) => {
             if (!dashChangesBuffer) {
                 return;
             }
@@ -125,7 +131,13 @@ export const useSimilarSelectorsActions = () => {
             const {tabId, id} = selector;
 
             // Expand impactType/impactTabsIds to include target tab if needed
-            expandImpactSettings(tabId, currentTabId, selectorDialog, selectorsGroup, dispatch);
+            expandImpactSettings({
+                targetTabId: tabId,
+                currentTabId,
+                selectorDialog,
+                selectorsGroup,
+                dispatch,
+            });
 
             const tabIndex = dashChangesBuffer.tabs.findIndex((tabItem) => tabItem.id === tabId);
 
@@ -228,14 +240,7 @@ export const useSimilarSelectorsActions = () => {
             return [];
         }
 
-        const similarSelectors: Array<{
-            id: string;
-            title: string;
-            tabTitle: string;
-            tabId: string;
-            widgetId: string;
-            joined: boolean;
-        }> = [];
+        const similarSelectors: Array<SimilarSelector> = [];
 
         for (const tab of dashChangesBuffer.tabs) {
             if (tab.id === currentTabId) {
@@ -280,7 +285,6 @@ export const useSimilarSelectorsActions = () => {
                             widgetId: item.id,
                             joined: false,
                         });
-                        continue;
                     }
                 }
             }

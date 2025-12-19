@@ -17,7 +17,7 @@ interface FormSectionProps {
 export function FormSection({title, children, className, showLoader}: FormSectionProps) {
     return (
         <div className={b(null, className)}>
-            <Flex gap={4} alignItems="center">
+            <Flex gap={4} className={b('title-wrapper')} alignItems="center">
                 <Text className={b('title')} variant="subheader-2">
                     {title}
                 </Text>

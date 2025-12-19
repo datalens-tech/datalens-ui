@@ -509,8 +509,7 @@ export function controlDialog(
 
             const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {};
 
-            const isSingleSelectorLeft =
-                selectorsGroup.group.length > 1 && selectorsGroup.group.length === 1;
+            const isSingleSelectorLeft = selectorsGroup.group.length > 1 && group.length === 1;
             const hasLengthChanged = selectorsGroup.group.length !== group.length;
 
             const singleSelectorsGroupSettings: Partial<SelectorsGroupDialogState> = {
@@ -543,13 +542,14 @@ export function controlDialog(
             const selectorDialogUpdatedState = {
                 ...state.selectorDialog,
                 validation: {...state.selectorDialog.validation, ...validation},
-                ...(isSingleSelectorLeft
+                ...(isSingleSelectorLeft && group[0].impactType === 'asGroup'
                     ? {
                           impactTabsIds: selectorsGroup.impactTabsIds,
                           impactType: selectorsGroup.impactType,
                       }
                     : {}),
             };
+
             const selectorsGroupUpdatedState = {
                 ...selectorsGroup,
                 ...action.payload,
@@ -558,7 +558,7 @@ export function controlDialog(
                 validation: {...selectorsGroup.validation, ...groupValidation},
             };
 
-            if (isSingleSelectorLeft) {
+            if (isSingleSelectorLeft && group[0].impactType === 'asGroup') {
                 selectorsGroupUpdatedState.group[0].impactType = selectorsGroup.impactType;
                 selectorsGroupUpdatedState.group[0].impactTabsIds = selectorsGroup.impactTabsIds;
             }
