@@ -40,6 +40,7 @@ import type {
     GetSharedEntryWorkbookRelationsResponse,
     MoveEntryArgs,
     MoveEntryResponse,
+    MoveSharedEntryArgs,
     RenameEntryArgs,
     RenameEntryResponse,
     SwitchPublicationStatusArgs,
@@ -311,5 +312,11 @@ export const entriesActions = {
             },
             headers,
         }),
+    }),
+    moveSharedEntry: createAction<MoveEntryResponse, MoveSharedEntryArgs>({
+        method: 'POST',
+        path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${filterUrlFragment(entryId)}/move`,
+        params: ({collectionId, name}, headers) => ({headers, body: {collectionId, name}}),
+        timeout: TIMEOUT_60_SEC,
     }),
 };

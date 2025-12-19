@@ -88,6 +88,11 @@ export const MOVE_WORKBOOK_LOADING = Symbol('collectionsStructure/MOVE_WORKBOOK_
 export const MOVE_WORKBOOK_SUCCESS = Symbol('collectionsStructure/MOVE_WORKBOOK_SUCCESS');
 export const MOVE_WORKBOOK_FAILED = Symbol('collectionsStructure/MOVE_WORKBOOK_FAILED');
 
+// Moving a shared entry
+export const MOVE_SHARED_ENTRY_LOADING = Symbol('collectionsStructure/MOVE_SHARED_ENTRY_LOADING');
+export const MOVE_SHARED_ENTRY_SUCCESS = Symbol('collectionsStructure/MOVE_SHARED_ENTRY_SUCCESS');
+export const MOVE_SHARED_ENTRY_FAILED = Symbol('collectionsStructure/MOVE_SHARED_ENTRY_FAILED');
+
 // Copying a workbook
 export const COPY_WORKBOOK_LOADING = Symbol('collectionsStructure/COPY_WORKBOOK_LOADING');
 export const COPY_WORKBOOK_SUCCESS = Symbol('collectionsStructure/COPY_WORKBOOK_SUCCESS');

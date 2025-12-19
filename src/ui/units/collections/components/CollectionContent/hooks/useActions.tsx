@@ -24,8 +24,10 @@ import {
     DIALOG_DELETE_COLLECTION,
     DIALOG_DELETE_WORKBOOK,
     DIALOG_EDIT_COLLECTION,
+    DIALOG_EDIT_SHARED_ENTRY,
     DIALOG_EDIT_WORKBOOK,
     DIALOG_MOVE_COLLECTION,
+    DIALOG_MOVE_SHARED_ENTRY,
     DIALOG_MOVE_WORKBOOK,
 } from '../../../../../components/CollectionsStructure';
 import {DropdownAction} from '../../../../../components/DropdownAction/DropdownAction';
@@ -368,6 +370,76 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
         (item: SharedEntryFieldsWithPermissions): (DropdownMenuItem[] | DropdownMenuItem)[] => {
             const actions: (DropdownMenuItem[] | DropdownMenuItem)[] = [];
 
+            if (item.permissions.update) {
+                actions.push({
+                    text: <DropdownAction icon={PencilToLine} text={i18n('action_edit')} />,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_EDIT_SHARED_ENTRY,
+                                props: {
+                                    open: true,
+                                    entryId: item.entryId,
+                                    title: item.title,
+                                    onApply: () => {
+                                        fetchStructureItems();
+                                    },
+                                    onClose: () => {
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
+                });
+            }
+
+            if (item.permissions.move) {
+                actions.push({
+                    text: <DropdownAction icon={ArrowRight} text={i18n('action_move')} />,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_MOVE_SHARED_ENTRY,
+                                props: {
+                                    open: true,
+                                    entryId: item.entryId,
+                                    entryTitle: item.title,
+                                    initialParentId: item.collectionId,
+                                    onApply: fetchStructureItems,
+                                    onClose: onCloseMoveDialog,
+                                },
+                            }),
+                        );
+                    },
+                });
+            }
+
+            if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
+                actions.push({
+                    text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_IAM_ACCESS,
+                                props: {
+                                    open: true,
+                                    resourceId: item.entryId,
+                                    resourceType: ResourceType.SharedEntry,
+                                    resourceTitle: item.title,
+                                    parentId: item.collectionId,
+                                    resourceScope: item.scope,
+                                    canUpdate: item.permissions.updateAccessBindings,
+                                    onClose: () => {
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
+                });
+            }
+
             const otherActions: DropdownMenuItem[] = [];
 
             if (item.permissions.delete) {
@@ -400,7 +472,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
 
             return actions;
         },
-        [],
+        [fetchStructureItems, onCloseMoveDialog, dispatch, collectionsAccessEnabled],
     );
 
     const getItemActions = React.useCallback(
