@@ -50,7 +50,6 @@ import type {OpenDialogDeleteCollectionArgs} from '../../components/CollectionsS
 import type {OpenDialogDeleteCollectionsWorkbooksArgs} from '../../components/CollectionsStructure/DeleteCollectionsWorkbooksDialog';
 import type {OpenDialogDeleteWorkbookArgs} from '../../components/CollectionsStructure/DeleteWorkbookDialog';
 import type {OpenDialogCreateEntryInWorkbookArgs} from '../../components/CollectionsStructure/CreateEntryInWorkbookDialog';
-import type {OpenDialogCreateEntryInCollectionArgs} from '../../components/CollectionsStructure/CreateEntryInCollectionDialog';
 import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
 import type {OpenDialogTooltipSettingsArgs} from '../../units/wizard/components/Dialogs/DialogTooltipSettings/DialogTooltipSettings';
 import type {OpenDialogChangeDatasetFieldsArgs} from '../../units/datasets/components/DatasetTable/components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
@@ -64,6 +63,8 @@ import type {OpenDialogSharedEntryUnbindArgs} from 'ui/components/DialogSharedEn
 import type {OpenDialogSharedEntryPermissionsArgs} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import type {OpenDialogSelectSharedEntryArgs} from 'ui/components/DialogSelectSharedEntry/DialogSelectSharedEntry';
 import type {OpenDialogAddSharedEntryFromLinkArgs} from 'ui/components/DialogAddSharedEntryFromLink/DialogAddSharedEntryFromLink';
+import type {OpenDialogMoveSharedEntryArgs} from 'ui/components/CollectionsStructure/MoveSharedEntryDialog';
+import type {OpenDialogEditSharedEntryArgs} from 'ui/components/CollectionsStructure/EditSharedEntryDialog';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogReleaseVersionArgs
@@ -99,6 +100,8 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogConnS3Sources
     | OpenDialogMoveCollectionsWorkbooksArgs
     | OpenDialogMoveCollectionArgs
+    | OpenDialogMoveSharedEntryArgs
+    | OpenDialogEditSharedEntryArgs
     | OpenDialogMoveWorkbookArgs
     | OpenDialogCopyWorkbookArgs
     | OpenDialogLabelSettingsArgs
@@ -117,7 +120,6 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogDeleteWorkbookArgs
     | OpenDialogIamAccessArgs
     | OpenDialogCreateEntryInWorkbookArgs
-    | OpenDialogCreateEntryInCollectionArgs
     | OpenDialogTooltipSettingsArgs
     | OpenDialogChangeDatasetFieldsArgs
     | OpenDialogCollectionNoCreatePermissionArgs

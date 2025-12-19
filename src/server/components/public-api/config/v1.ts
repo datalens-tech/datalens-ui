@@ -13,7 +13,7 @@ type OverrideActions<T extends BaseSchema> = {
     };
 };
 
-export const getPublicApiActionsV0 = <
+export const getPublicApiActionsV1 = <
     TSchema extends {
         root: OverrideActions<Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix' | 'us'>>;
     },

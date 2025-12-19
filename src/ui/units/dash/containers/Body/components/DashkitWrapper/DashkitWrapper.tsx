@@ -10,8 +10,9 @@ import type {
 } from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import isEqual from 'lodash/isEqual';
 import {useDispatch, useSelector} from 'react-redux';
-import type {DashTab, DashTabLayout} from 'shared';
+import type {DashSettings, DashTab, DashTabLayout} from 'shared';
 import {FOCUSED_WIDGET_PARAM_NAME, Feature} from 'shared';
 import {showToast} from 'ui/store/actions/toaster';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -126,6 +127,13 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
     const hasTableOfContent = useSelector(selectHasTableOfContent);
     const canEdit = useSelector(selectCanEdit);
     const tabs = useSelector(selectTabs);
+
+    const [prevSettings, setPrevSettings] = React.useState<DashSettings | undefined>(settings);
+    let shouldReconfigureDashkit = false;
+    if (!isEqual(settings, prevSettings)) {
+        setPrevSettings(settings);
+        shouldReconfigureDashkit = true;
+    }
 
     const [fixedHeaderControlsEl, setFixedHeaderControlsEl] = React.useState<HTMLDivElement | null>(
         null,
@@ -249,11 +257,18 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
 
     const isEmptyTab = !tabDataConfig?.items.length && !tabDataConfig?.globalItems?.length;
 
-    const DashKit = getConfiguredDashKit(undefined, {
-        disableHashNavigation,
-        scope: 'dash',
-        backgroundSettings: settings.backgroundSettings,
-    });
+    const DashKit = getConfiguredDashKit(
+        undefined,
+        {
+            disableHashNavigation,
+            scope: 'dash',
+            globalWidgetSettings: {
+                borderRadius: settings.borderRadius,
+                backgroundSettings: settings.backgroundSettings,
+            },
+        },
+        shouldReconfigureDashkit,
+    );
 
     const fixedHeaderHasNoVisibleContent =
         !hasFixedHeaderControlsElements &&

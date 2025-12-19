@@ -58,7 +58,7 @@ export function computeColorFromToken(externalToken?: string, theme?: RealTheme)
 export function getWidgetColorSettings(args: {
     colorSettings?: ColorSettings;
     oldColor?: string;
-    defaultOldColor: string;
+    defaultOldColor: string | undefined;
     enableMultiThemeColors: boolean;
 }): ColorSettings | undefined {
     const {colorSettings, oldColor, defaultOldColor, enableMultiThemeColors = true} = args;
@@ -72,6 +72,9 @@ export function getWidgetColorSettings(args: {
 
     if (oldColor) {
         return getColorSettingsWithValue(computeColorFromToken(oldColor), enableMultiThemeColors);
+    }
+    if (!defaultOldColor) {
+        return undefined;
     }
     return getColorSettingsWithValue(
         computeColorFromToken(defaultOldColor),

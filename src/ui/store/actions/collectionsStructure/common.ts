@@ -37,6 +37,9 @@ import {
     MOVE_WORKBOOK_LOADING,
     MOVE_WORKBOOK_SUCCESS,
     MOVE_WORKBOOK_FAILED,
+    MOVE_SHARED_ENTRY_LOADING,
+    MOVE_SHARED_ENTRY_SUCCESS,
+    MOVE_SHARED_ENTRY_FAILED,
     COPY_WORKBOOK_LOADING,
     COPY_WORKBOOK_SUCCESS,
     COPY_WORKBOOK_FAILED,
@@ -70,6 +73,7 @@ import type {
     MoveCollectionsResponse,
     MoveWorkbooksResponse,
     MoveWorkbookResponse,
+    MoveEntryResponse,
     CollectionWithPermissions,
     CopyWorkbookResponse,
     CreateWorkbookResponse,
@@ -876,6 +880,71 @@ export const moveWorkbook = ({
 
                 dispatch({
                     type: MOVE_WORKBOOK_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
+type MoveSharedEntryLoadingAction = {
+    type: typeof MOVE_SHARED_ENTRY_LOADING;
+};
+type MoveSharedEntrySuccessAction = {
+    type: typeof MOVE_SHARED_ENTRY_SUCCESS;
+    data: MoveEntryResponse;
+};
+type MoveSharedEntryFailedAction = {
+    type: typeof MOVE_SHARED_ENTRY_FAILED;
+    error: Error | null;
+};
+export type MoveSharedEntryAction =
+    | MoveSharedEntryLoadingAction
+    | MoveSharedEntrySuccessAction
+    | MoveSharedEntryFailedAction;
+
+export const moveSharedEntry = ({
+    entryId,
+    collectionId,
+    name,
+}: {
+    entryId: string;
+    collectionId: string;
+    name?: string;
+}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: MOVE_SHARED_ENTRY_LOADING,
+        });
+        return getSdk()
+            .sdk.us.moveSharedEntry({
+                entryId,
+                collectionId: collectionId,
+                name,
+            })
+            .then((data) => {
+                dispatch({
+                    type: MOVE_SHARED_ENTRY_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().sdk.isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/moveSharedEntry failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: MOVE_SHARED_ENTRY_FAILED,
                     error: isCanceled ? null : error,
                 });
 

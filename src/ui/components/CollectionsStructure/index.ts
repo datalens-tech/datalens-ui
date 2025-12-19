@@ -1,4 +1,6 @@
 export {MoveCollectionDialog, DIALOG_MOVE_COLLECTION} from './MoveCollectionDialog';
+export {MoveSharedEntryDialog, DIALOG_MOVE_SHARED_ENTRY} from './MoveSharedEntryDialog';
+export {EditSharedEntryDialog, DIALOG_EDIT_SHARED_ENTRY} from './EditSharedEntryDialog';
 export {MoveWorkbookDialog, DIALOG_MOVE_WORKBOOK} from './MoveWorkbookDialog';
 export {
     MoveCollectionsWorkbooksDialog,
@@ -31,7 +33,3 @@ export {
     CreateEntryInWorkbookDialog,
     DIALOG_CREATE_ENTRY_IN_WORKBOOK,
 } from './CreateEntryInWorkbookDialog';
-export {
-    CreateEntryInCollectionDialog,
-    DIALOG_CREATE_ENTRY_IN_COLLECTION,
-} from './CreateEntryInCollectionDialog';

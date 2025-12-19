@@ -9,6 +9,7 @@
   "label_access-description": "Сообщение при ошибке доступа",
   "label_autoupdate": "Автообновление",
   "label_autoupdate-interval": "Интервал",
+  "label_border-radius": "Скругление",
   "label_dependent-selectors": "Зависимые селекторы",
   "label_display": "Внешний вид",
   "label_display-info": "Выберите элементы, которые должны отображаться на дашборде",
