@@ -435,6 +435,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                     requestCancellationRef.current[requestId]?.requestCancellation ||
                     dataProvider.getRequestCancellation(),
                 ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
+                widgetElement: rootNodeRef.current ?? undefined,
             });
 
             const isCanceled = requestCancellationRef.current?.[requestId]?.status === 'canceled';
