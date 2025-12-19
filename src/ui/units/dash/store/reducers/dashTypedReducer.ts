@@ -25,6 +25,7 @@ import {
 import {
     CHANGE_NAVIGATION_PATH,
     REMOVE_GLOBAL_ITEMS,
+    RESET_CONNECTIONS_UPDATERS,
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
     SET_DASH_DESCRIPTION,
@@ -47,11 +48,19 @@ import {
     SET_TAB_HASH_STATE,
     SET_WIDGET_CURRENT_TAB,
     TOGGLE_TABLE_OF_CONTENT,
+    UPDATE_CONNECTIONS_UPDATERS,
     UPDATE_TABS_WITH_GLOBAL_STATE,
 } from '../actions/dashTyped';
 import type {DashAction} from '../actions/index';
 
 import {TAB_PROPERTIES} from './dashHelpers';
+
+export interface ConnectionsUpdaters {
+    [tabId: string]: {
+        joinedSelectorId: string;
+        targetSelectorParamId: string;
+    }[];
+}
 
 // TODO (global selectors): Remove moved type after up version
 export type DashState = {
@@ -83,6 +92,7 @@ export type DashState = {
     widgetsCurrentTab: {[key: string]: string};
     dragOperationProps: DashDragOptions | null;
     openInfoOnLoad?: boolean;
+    connectionsUpdaters: ConnectionsUpdaters;
 };
 
 // eslint-disable-next-line complexity
@@ -407,6 +417,30 @@ export function dashTypedReducer(
                     ...state.hashStates,
                     ...action.payload.hashStates,
                 },
+            };
+        }
+
+        case UPDATE_CONNECTIONS_UPDATERS: {
+            const existingUpdaters = state.connectionsUpdaters?.[action.payload.tabId] || [];
+            return {
+                ...state,
+                connectionsUpdaters: {
+                    ...state.connectionsUpdaters,
+                    [action.payload.tabId]: [
+                        ...existingUpdaters,
+                        {
+                            joinedSelectorId: action.payload.joinedSelectorId,
+                            targetSelectorParamId: action.payload.targetSelectorParamId,
+                        },
+                    ],
+                },
+            };
+        }
+
+        case RESET_CONNECTIONS_UPDATERS: {
+            return {
+                ...state,
+                connectionsUpdaters: {},
             };
         }
 
