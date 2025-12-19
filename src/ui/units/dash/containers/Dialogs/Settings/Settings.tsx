@@ -4,10 +4,15 @@ import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import ChartKit from 'libs/DatalensChartkit';
 import {batch, useDispatch, useSelector} from 'react-redux';
+import {Feature} from 'shared';
 import {DashboardDialogSettingsQa} from 'shared/constants/qa/dash';
-import {DEFAULT_DASH_MARGINS} from 'ui/components/DashKit/constants';
+import {
+    DEFAULT_DASH_MARGINS,
+    OLD_DEFAULT_WIDGET_BORDER_RADIUS,
+} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
 import {openDialog} from 'ui/store/actions/dialog';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {DatalensGlobalState} from '../../../../..';
 import {i18n} from '../../../../../../i18n';
@@ -22,6 +27,7 @@ import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
     selectDashAccessDescription,
     selectDashSupportDescription,
+    selectEntryId,
     selectIsDialogVisible,
     selectSettings,
 } from '../../../store/selectors/dashTypedSelectors';
@@ -38,6 +44,7 @@ const b = block('dialog-settings');
 const Settings = () => {
     const dispatch = useDispatch();
 
+    const isNew = !useSelector(selectEntryId);
     const settings = useSelector(selectSettings);
     const visible = useSelector((state: DatalensGlobalState) =>
         selectIsDialogVisible(state, DIALOG_TYPE.SETTINGS),
@@ -73,6 +80,12 @@ const Settings = () => {
     const [accessDescription, setAccessDesc] = React.useState(accessDesc);
     const [supportDescription, setSupportDesc] = React.useState(supportDesc);
     const [margins, setMargins] = React.useState(settings.margins || DEFAULT_DASH_MARGINS);
+    const [borderRadius, setBorderRadius] = React.useState(
+        settings.borderRadius ??
+            (!isNew && isEnabledFeature(Feature.EnableNewDashSettings)
+                ? OLD_DEFAULT_WIDGET_BORDER_RADIUS
+                : undefined),
+    );
     const [otherSettinsState, setOtherSettingsState] = React.useState<Partial<DashSettings>>({});
 
     const entryDialoguesRef = React.useRef<EntryDialogues>(null);
@@ -122,6 +135,7 @@ const Settings = () => {
         ) {
             const newSettings = {
                 ...settings,
+                borderRadius,
                 autoupdateInterval:
                     (typeof autoupdateInterval === 'string'
                         ? parseInt(autoupdateInterval)
@@ -256,6 +270,8 @@ const Settings = () => {
                     onChangeHideDashTitle={() => setHideTitle(!hideDashTitle)}
                     expandTOCValue={expandTOC}
                     onChangeExpandTOC={() => setExpandTOC(!expandTOC)}
+                    borderRadius={borderRadius}
+                    onChangeBorderRadius={setBorderRadius}
                 />
                 <OtherSettings
                     showDependentSelectors={showDependentSelectors}
