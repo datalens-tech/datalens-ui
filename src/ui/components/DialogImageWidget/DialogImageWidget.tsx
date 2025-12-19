@@ -4,9 +4,10 @@ import {FormRow} from '@gravity-ui/components';
 import type {RealTheme} from '@gravity-ui/uikit';
 import {Checkbox, Dialog, Flex, HelpMark, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {i18n} from 'i18n';
+import {I18n, i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
+import omit from 'lodash/omit';
 import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA, Feature} from 'shared';
 import type {DashTabItemImage, EntryScope, RecursivePartial} from 'shared';
 import {registry} from 'ui/registry';
@@ -15,9 +16,11 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {PaletteBackground} from '../..//units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
+import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 
 import './DialogImageWidget.scss';
 
+const i18nCommon = I18n.keyset('dash.dashkit-plugin-common.view');
 const b = block('dialog-image');
 const INPUT_SRC_ID = 'dialog-image-input-src';
 const INPUT_ALT_ID = 'dialog-image-input-alt';
@@ -44,6 +47,7 @@ const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
 
 export type DialogImageWidgetFeatureProps = {
     enableSeparateThemeColorSelector?: boolean;
+    enableBorderRadiusSelector?: boolean;
 };
 
 type Props = {
@@ -76,9 +80,12 @@ export function DialogImageWidget(props: Props) {
         scope,
         theme,
         enableSeparateThemeColorSelector = true,
+        enableBorderRadiusSelector = false,
     } = props;
     const isNewWidget = !props.openedItemData;
-    const [data, setData] = React.useState(openedItemData);
+    const [data, setData] = React.useState(
+        omit(openedItemData, 'background', 'backgroundSettings'),
+    );
     const [validationErrors, setValidationErrors] = React.useState<Record<string, string>>({});
     const {DialogImageWidgetLinkHint} = registry.common.components.getAll();
     const updateData = (updates: RecursivePartial<DashTabItemImage['data']>) => {
@@ -182,10 +189,7 @@ export function DialogImageWidget(props: Props) {
                         onUpdate={(preserveAspectRatio) => updateData({preserveAspectRatio})}
                     />
                 </FormRow>
-                <FormRow
-                    className={b('row')}
-                    label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
-                >
+                <FormRow className={b('row')} label={i18nCommon('label_background-checkbox')}>
                     <PaletteBackground
                         color={backgroundColorSettings}
                         oldColor={oldBackgroundColor}
@@ -196,6 +200,14 @@ export function DialogImageWidget(props: Props) {
                         enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
+                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                    <FormRow className={b('row')} label={i18nCommon('label_border-radius')}>
+                        <WidgetRoundingsInput
+                            value={data.borderRadius}
+                            onUpdate={(borderRadius) => updateData({borderRadius})}
+                        />
+                    </FormRow>
+                )}
             </Dialog.Body>
             <Dialog.Footer
                 onClickButtonApply={handleApply}

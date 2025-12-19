@@ -4,13 +4,8 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import type {ApiWithRoot, SchemasByScope} from '@gravity-ui/gateway';
 import type z from 'zod';
 
-import type {ValueOf} from '../../../shared';
 import type {DatalensGatewaySchemas} from '../../types/gateway';
 import type {SecuritySchemeObject} from '../api-docs';
-
-import type {PUBLIC_API_VERSION} from './constants';
-
-export type PublicApiVersion = ValueOf<typeof PUBLIC_API_VERSION>;
 
 export type PublicApiActionOpenApi = {
     summary: string;
@@ -48,7 +43,7 @@ export type PublicApiVersionConfig<
 export type PublicApiBaseConfig<
     TSchema extends SchemasByScope = DatalensGatewaySchemas,
     TFeature extends string = string,
-> = Record<`${PublicApiVersion}`, PublicApiVersionConfig<TSchema, TFeature>>;
+> = Record<string, PublicApiVersionConfig<TSchema, TFeature>>;
 
 export type PublicApiSecuritySchemes = Record<string, SecuritySchemeObject>;
 

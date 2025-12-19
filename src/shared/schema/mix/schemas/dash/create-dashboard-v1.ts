@@ -10,7 +10,7 @@ const createDashData = dataSchema.omit({schemeVersion: true});
 
 export const createDashV1ArgsSchema = z.strictObject({
     entry: z
-        .strictObject({
+        .object({
             data: createDashData,
             meta: z.record(z.string(), z.string()).nullable(),
             annotation: z

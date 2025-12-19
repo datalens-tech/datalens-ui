@@ -15,6 +15,7 @@ import {parseRequestApiVersion, prepareError, validateRequestBody} from './utils
 export const createPublicApiController = (chartsEngine?: ChartsEngine) => {
     const {gatewayApi} = registry.getGatewayApi<SchemasByScope>();
     const {baseConfig, getAuthArgs} = registry.getPublicApiConfig();
+
     const schemasByScope = registry.getGatewaySchemasByScope();
 
     const actionToPathMap = new Map<Function, {serviceName: string; actionName: string}>();
@@ -52,11 +53,18 @@ export const createPublicApiController = (chartsEngine?: ChartsEngine) => {
         });
     });
 
+    const apiVersions = Object.keys(baseConfig).map(Number);
+    const latestApiVersion = Math.max(...apiVersions);
+
     return async function publicApiController(req: Request, res: Response) {
         try {
             const {action: actionName} = req.params;
 
-            const version = parseRequestApiVersion(req);
+            const version = parseRequestApiVersion({
+                req,
+                versions: apiVersions,
+                latestVersion: latestApiVersion,
+            });
 
             if (!actionName || !baseConfig[version].actions[actionName]) {
                 throw new PublicApiError(`Endpoint ${req.path} does not exist`, {

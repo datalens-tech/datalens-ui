@@ -26,7 +26,10 @@ export {
     PUBLIC_API_VERSION,
     PUBLIC_API_VERSION_HEADER,
 } from '../../src/server/components/public-api';
-export {getPublicApiActionsV0} from '../../src/server/components/public-api/config';
+export {
+    getPublicApiActionsV1,
+    getPublicApiActionsV1 as getPublicApiActionsV0,
+} from '../../src/server/components/public-api/config';
 export type {
     PublicApiBaseConfig,
     PublicApiConfig,

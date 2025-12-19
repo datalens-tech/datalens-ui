@@ -31,6 +31,7 @@ import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
+import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
 import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout} from '../../utils';
@@ -54,6 +55,7 @@ const GROUP_CONTROL_LOADING_EMULATION_TIMEOUT = 100;
 
 type OwnProps = ControlSettings &
     ContextProps &
+    Omit<CommonPluginProps, 'background' | 'backgroundSettings'> &
     PluginWidgetProps<Record<string, StringParams>> & {
         settings: SettingsProps & {
             dependentSelectors?: boolean;
@@ -63,6 +65,7 @@ type OwnProps = ControlSettings &
 type PluginGroupControlProps = OwnProps;
 
 type PluginGroupControl = Plugin<PluginGroupControlProps, Record<string, StringParams>> & {
+    globalWidgetSettings?: CommonPluginSettings['globalWidgetSettings'];
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: ControlSettings['getDistincts'];
 };
@@ -73,7 +76,13 @@ const LOCAL_META_VERSION = 2;
 
 const GroupControlWrapper = React.forwardRef<
     HTMLDivElement,
-    {id: string; autoHeight: boolean; children: React.ReactNode; pulsate?: boolean}
+    {
+        id: string;
+        autoHeight: boolean;
+        children: React.ReactNode;
+        pulsate?: boolean;
+        style?: React.CSSProperties;
+    }
 >(function GroupControlWrapper(props, nodeRef) {
     useWidgetContext({id: props.id, elementRef: nodeRef as React.RefObject<HTMLElement>});
 
@@ -81,6 +90,7 @@ const GroupControlWrapper = React.forwardRef<
         <div
             ref={nodeRef}
             className={b({mobile: DL.IS_MOBILE, static: !props.autoHeight, pulsate: props.pulsate})}
+            style={props.style}
         >
             {props.children}
         </div>
@@ -259,12 +269,18 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.state.quickActionLoader ||
             this.state.localUpdateLoader;
 
+        const {borderRadius, globalWidgetSettings} = this.props;
+        const resultedBorderRadius = borderRadius ?? globalWidgetSettings?.borderRadius;
+
+        const style = resultedBorderRadius ? {borderRadius: resultedBorderRadius} : undefined;
+
         return (
             <GroupControlWrapper
                 ref={this.rootNode}
                 id={this.props.id}
                 autoHeight={(this.props.data.autoHeight as boolean) ?? false}
                 pulsate={isLoading}
+                style={style}
             >
                 <div
                     className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}
@@ -961,7 +977,7 @@ const plugin: PluginGroupControl = {
 
         // TODO: remove this. use basic ChartKit abilities
         plugin.getDistincts = getDistincts;
-
+        plugin.globalWidgetSettings = settings.globalWidgetSettings;
         return plugin;
     },
     renderer(props, forwardedRef) {
@@ -973,6 +989,7 @@ const plugin: PluginGroupControl = {
                 getDistincts={plugin.getDistincts}
                 workbookId={workbookId}
                 ref={forwardedRef}
+                globalWidgetSettings={plugin.globalWidgetSettings}
             />
         );
     },

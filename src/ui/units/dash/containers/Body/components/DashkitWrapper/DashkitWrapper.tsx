@@ -6,11 +6,13 @@ import type {
     DashKitGroup,
     DashKitProps,
     ItemDropProps,
+    PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import isEqual from 'lodash/isEqual';
 import {useDispatch, useSelector} from 'react-redux';
-import type {DashTab, DashTabLayout} from 'shared';
+import type {DashSettings, DashTab, DashTabLayout} from 'shared';
 import {FOCUSED_WIDGET_PARAM_NAME, Feature} from 'shared';
 import {showToast} from 'ui/store/actions/toaster';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -84,6 +86,7 @@ type DashkitWrapperProps = {
     onItemRender: (item: ConfigItem) => void;
     onWidgetMountChange: (isMounted: boolean, id: string, domElement: HTMLElement) => void;
     onPasteItem?: (data: CopiedConfigData, newLayout?: ConfigLayout[]) => void;
+    setCopiedDataToStore: (data: CopiedConfigData) => void;
 };
 
 export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
@@ -111,6 +114,7 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
         onItemRender,
         onWidgetMountChange,
         onPasteItem,
+        setCopiedDataToStore,
     } = props;
 
     const dispatch = useDispatch();
@@ -123,6 +127,13 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
     const hasTableOfContent = useSelector(selectHasTableOfContent);
     const canEdit = useSelector(selectCanEdit);
     const tabs = useSelector(selectTabs);
+
+    const [prevSettings, setPrevSettings] = React.useState<DashSettings | undefined>(settings);
+    let shouldReconfigureDashkit = false;
+    if (!isEqual(settings, prevSettings)) {
+        setPrevSettings(settings);
+        shouldReconfigureDashkit = true;
+    }
 
     const [fixedHeaderControlsEl, setFixedHeaderControlsEl] = React.useState<HTMLDivElement | null>(
         null,
@@ -167,7 +178,9 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
     );
 
     const onItemCopy = React.useCallback(
-        (error: null | Error) => {
+        (error: null | Error, data?: PreparedCopyItemOptions) => {
+            setCopiedDataToStore(data as unknown as CopiedConfigData);
+
             if (error === null) {
                 dispatch(
                     showToast({
@@ -178,7 +191,7 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
                 );
             }
         },
-        [dispatch],
+        [dispatch, setCopiedDataToStore],
     );
 
     const onItemEdit = React.useCallback(
@@ -244,11 +257,18 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
 
     const isEmptyTab = !tabDataConfig?.items.length && !tabDataConfig?.globalItems?.length;
 
-    const DashKit = getConfiguredDashKit(undefined, {
-        disableHashNavigation,
-        scope: 'dash',
-        backgroundSettings: settings.backgroundSettings,
-    });
+    const DashKit = getConfiguredDashKit(
+        undefined,
+        {
+            disableHashNavigation,
+            scope: 'dash',
+            globalWidgetSettings: {
+                borderRadius: settings.borderRadius,
+                backgroundSettings: settings.backgroundSettings,
+            },
+        },
+        shouldReconfigureDashkit,
+    );
 
     const fixedHeaderHasNoVisibleContent =
         !hasFixedHeaderControlsElements &&

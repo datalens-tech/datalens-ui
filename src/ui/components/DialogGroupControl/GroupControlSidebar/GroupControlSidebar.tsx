@@ -17,36 +17,20 @@ import {
 import {
     getSelectorDialogFromData,
     getSelectorGroupDialogFromData,
-} from 'ui/store/reducers/controlDialog';
+} from 'ui/store/reducers/controlDialog/controlDialog';
 import {selectActiveSelectorIndex, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
-import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
-import {GlobalSelectorIcon} from 'ui/units/dash/components/GlobalSelectorIcon/GlobalSelectorIcon';
+import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {selectCurrentTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {isGroupItemVisibleOnTab} from 'ui/units/dash/utils/selectors';
 
+import {TabItemWrapper} from './TabItemWrapper/TabItemWrapper';
+
 import '../DialogGroupControl.scss';
 
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
-
-// TODO (global selectors): Add translations
-const mockI18n = (key: string) => {
-    const values: Record<string, string> = {
-        'button_add-selector': 'Добавить',
-    };
-
-    return values[key];
-};
-
-const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
-    buttonApply: false,
-    buttonReset: false,
-    autoHeight: false,
-    impactType: undefined,
-    impactTabsIds: undefined,
-};
 
 const canPasteItems = (pasteConfig: CopiedConfigData | null, workbookId?: string | null) => {
     if (
@@ -106,9 +90,7 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
 
     const dispatch = useDispatch();
 
-    const initialTabIndex =
-        selectorsGroup.group?.[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
-    const [defaultTabIndex, setDefaultTabIndex] = React.useState(initialTabIndex);
+    const [defaultTabIndex, setDefaultTabIndex] = React.useState(selectorsGroup.group.length + 1);
 
     const updateSelectorsList = React.useCallback(
         ({items, selectedItemIndex, action}: UpdateState<SelectorDialogState>) => {
@@ -122,7 +104,6 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
                     updateSelectorsGroup({
                         ...selectorsGroup,
                         group: items,
-                        ...(items.length === 1 ? SINGLE_SELECTOR_SETTINGS : {}),
                     }),
                 );
             }
@@ -166,14 +147,9 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
                     : item.impactType;
 
             return (
-                <div className={b('item-wrapper', {secondary: !isVisible})}>
-                    <GlobalSelectorIcon
-                        withHint
-                        impactType={impactType}
-                        className={b('global-icon')}
-                    />
+                <TabItemWrapper isVisible={isVisible} impactType={impactType}>
                     {children}
-                </div>
+                </TabItemWrapper>
             );
         },
         [currentTabId, selectorsGroup.impactType, selectorsGroup.impactTabsIds],
@@ -185,7 +161,7 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
             items={selectorsGroup.group}
             selectedItemIndex={activeSelectorIndex}
             onUpdate={updateSelectorsList}
-            addButtonText={mockI18n('button_add-selector')}
+            addButtonText={i18n('button_add-selector')}
             pasteButtonText={i18n('button_paste-selector')}
             defaultTabText={getDefaultTabText}
             enableActionMenu={true}

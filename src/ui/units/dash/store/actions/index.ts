@@ -14,6 +14,7 @@ import type {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
 import type {
     ChangeNavigationPathAction,
     RemoveGlobalItemsAction,
+    ResetConnectionsUpdatersAction,
     SetAccessDescriptionAction,
     SetDashKeyAction,
     SetDashKitRefAction,
@@ -38,6 +39,7 @@ import type {
     SetViewModeAction,
     SetWidgetCurrentTabAction,
     ToggleTableOfContentAction,
+    UpdateConnectionsUpdatersAction,
     UpdateTabsWithGlobalStateAction,
 } from './dashTyped';
 import type {CloseDialogAction, OpenDialogAction, OpenItemDialogAction} from './dialogs/actions';
@@ -80,6 +82,8 @@ export type DashAction<T = unknown> =
     | SetHistoryStateAction
     | EditHistoryAction
     | RemoveGlobalItemsAction
-    | UpdateTabsWithGlobalStateAction;
+    | UpdateTabsWithGlobalStateAction
+    | UpdateConnectionsUpdatersAction
+    | ResetConnectionsUpdatersAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

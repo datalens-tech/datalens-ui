@@ -38,6 +38,9 @@ export const selectMoveCollection = (state: DatalensGlobalState) =>
 export const selectMoveWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.moveWorkbook;
 
+export const selectMoveSharedEntry = (state: DatalensGlobalState) =>
+    state.collectionsStructure.moveSharedEntry;
+
 export const selectCopyWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.copyWorkbook;
 
@@ -212,10 +215,11 @@ export const selectCreateWorkbookIsLoading = createSelector(
     (createWorkbook) => createWorkbook.isLoading,
 );
 
-// Status of the request to move the collection / workbook
+// Status of the request to move the collection / workbook / shared entry
 export const selectMoveIsLoading = createSelector(
-    [selectMoveCollection, selectMoveWorkbook],
-    (moveCollection, moveWorkbook) => moveCollection.isLoading || moveWorkbook.isLoading,
+    [selectMoveCollection, selectMoveWorkbook, selectMoveSharedEntry],
+    (moveCollection, moveWorkbook, moveSharedEntry) =>
+        moveCollection.isLoading || moveWorkbook.isLoading || moveSharedEntry.isLoading,
 );
 
 // Status of the workbook copy request

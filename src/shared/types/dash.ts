@@ -94,6 +94,7 @@ export type DashSettings = {
     margins?: [number, number];
     enableAssistant?: boolean;
     backgroundSettings?: BackgroundSettings;
+    borderRadius?: number;
 };
 
 export interface DashData {
@@ -110,16 +111,16 @@ export interface DashData {
 
 export type DashDragOptions = ItemDropProps;
 
+type OptionalDashDataSettings = Pick<
+    DashSettings,
+    'margins' | 'enableAssistant' | 'backgroundSettings' | 'borderRadius'
+>;
+
 // config with strict requirements of settings for new dash
 // schemeVersion comes from server
 export type FakeDashData = Omit<DashData, 'schemeVersion'> & {
-    settings: Required<
-        Omit<
-            DashSettings,
-            'margins' | 'enableAssistant' | 'signedGlobalParams' | 'backgroundSettings'
-        >
-    > &
-        Pick<DashSettings, 'margins' | 'enableAssistant' | 'backgroundSettings'>;
+    settings: Required<Omit<DashSettings, 'signedGlobalParams' | keyof OptionalDashDataSettings>> &
+        OptionalDashDataSettings;
 };
 
 export interface DashTabSettings {
@@ -171,6 +172,7 @@ export interface DashTabItemBase {
 export type DashTabItemBaseData = {
     background?: OldBackgroundSettings;
     backgroundSettings?: BackgroundSettings;
+    borderRadius?: number;
 };
 
 export interface DashTabItemText extends DashTabItemBase {
@@ -203,10 +205,9 @@ export interface DashTabItemTitle extends DashTabItemBase {
 
 export interface DashTabItemWidget extends DashTabItemBase {
     type: DashTabItemType.Widget;
-    data: {
+    data: Omit<DashTabItemBaseData, 'background'> & {
         hideTitle: boolean;
         tabs: DashTabItemWidgetTab[];
-        backgroundSettings?: BackgroundSettings;
     };
 }
 

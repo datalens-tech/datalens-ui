@@ -17,24 +17,20 @@ import {RequiredValueCheckbox} from 'ui/components/ControlComponents/Sections/Va
 import {ValueSelector} from 'ui/components/ControlComponents/Sections/ValueSelector/ValueSelector';
 import {SelectorTypeSelect} from 'ui/components/ControlComponents/SelectorTypeSelect/SelectorTypeSelect';
 import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
-import {selectSelectorControlType} from 'ui/store/selectors/controlDialog';
+import {
+    selectNeedSimilarSelectorsCheck,
+    selectSelectorControlType,
+} from 'ui/store/selectors/controlDialog';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {FormSection} from '../../FormSection/FormSection';
+
+import {SimilarSelectorsBlock} from './SimilarSelectorsBlock/SimilarSelectorsBlock';
 
 import '../DialogGroupControl.scss';
 
 export const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
-
-// TODO (global selectors): Add translations and delete "button_extended-settings", "label_data", "label_selector-settings" keys
-const mockI18n = (key: string) => {
-    const values: Record<string, string> = {
-        label_general: 'Общее',
-    };
-
-    return values[key];
-};
 
 export const GroupControlBody: React.FC<{
     navigationPath: string | null;
@@ -43,12 +39,13 @@ export const GroupControlBody: React.FC<{
     className?: string;
 }> = (props) => {
     const elementType = useSelector(selectSelectorControlType);
+    const needSimilarSelectorsCheck = useSelector(selectNeedSimilarSelectorsCheck);
 
     const isTypeNotCheckbox = elementType !== ELEMENT_TYPE.CHECKBOX;
 
     return (
         <div className={props.className}>
-            <FormSection title={mockI18n('label_general')}>
+            <FormSection title={i18n('label_general')}>
                 <FormRow label={i18n('label_source')} className={b('row')}>
                     <SelectorTypeSelect showExternalType={false} mode="select" />
                 </FormRow>
@@ -59,6 +56,7 @@ export const GroupControlBody: React.FC<{
                     enableGlobalSelectors={props.enableGlobalSelectors}
                 />
             </FormSection>
+            {needSimilarSelectorsCheck && <SimilarSelectorsBlock />}
             <FormSection title={i18n('label_filtration')}>
                 <InputTypeSelector className={b('row')} />
                 {!isEnabledFeature(Feature.ConnectionBasedControl) && (

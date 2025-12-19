@@ -27,6 +27,7 @@ import {
     isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
@@ -60,6 +61,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         idToDataType,
         colors,
         shapes,
+        segments: split,
         visualizationId,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
@@ -220,6 +222,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const segmentsMap = getSegmentMap(args);
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
     const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
+    const isSplitWithHtmlValues = isHtmlField(split?.[0]);
 
     let yAxis: ChartYAxis[] = [];
     if (isSplitEnabled) {
@@ -235,11 +238,25 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
             const axisBaseConfig = getYAxisBaseConfig({
                 placeholder,
             });
-            const shouldUseSegmentTitle = yAxisItems.length < 2 || !d.isOpposite;
+            const shouldUseSegmentTitle = yAxisItems.length === 1 || !d.isOpposite;
+            let axisTitle: ChartYAxis['title'] | null = null;
+            if (shouldUseSegmentTitle) {
+                let titleText: string = d.title;
+                if (isSplitWithHtmlValues) {
+                    // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+                    titleText = wrapHtml(d.title);
+                }
+                axisTitle = {
+                    text: titleText,
+                    rotation: 0,
+                    maxWidth: '25%',
+                    html: isSplitWithHtmlValues,
+                };
+            }
 
             acc.push(
                 merge(axisBaseConfig, {
-                    title: shouldUseSegmentTitle ? {text: d.title} : null,
+                    title: axisTitle,
                     plotIndex: d.plotIndex,
                     labels: {
                         numberFormat: labelNumberFormat ?? undefined,
