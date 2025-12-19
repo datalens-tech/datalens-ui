@@ -1,4 +1,7 @@
 {
+  "empty-filters-readonly-alert-message": "",
+  "filters-readonly-alert-message": "",
+  "filters-readonly-alert-title": "",
   "label_filter-list-field-th": "Field",
   "label_filter-list-value-th": "Value",
   "label_obligatory-filter-add": "Add",
