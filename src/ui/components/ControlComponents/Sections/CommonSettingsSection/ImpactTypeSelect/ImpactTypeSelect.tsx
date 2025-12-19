@@ -105,6 +105,7 @@ export const ImpactTypeSelect = ({
     const currentImpactType = getImpactTypeByValue({
         selectorImpactType: isGroupSettings ? groupImpactType : selectorDialog.impactType,
         hasMultipleSelectors,
+        isGroupSettings,
     });
 
     // Create options based on whether there are multiple selectors
