@@ -30,6 +30,7 @@ import {
     selectTabId,
     selectTabs,
 } from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {isItemGlobal} from 'ui/units/dash/utils/selectors';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {CurrentTabOption} from './CurrentTabOption/CurrentTabOption';
@@ -90,6 +91,42 @@ export const ImpactTypeSelect = ({
         }));
     }, [tabs]);
 
+    const isGlobal = React.useMemo(() => {
+        if (
+            !openedDialogType ||
+            (openedDialogType !== DashTabItemType.GroupControl &&
+                openedDialogType !== DashTabItemType.Control)
+        ) {
+            return false;
+        }
+
+        if (openedDialogType === DashTabItemType.GroupControl) {
+            return isItemGlobal({
+                type: DashTabItemType.GroupControl,
+                data: {
+                    impactType: selectorsGroup.impactType,
+                    impactTabsIds: selectorsGroup.impactTabsIds,
+                    group: selectorsGroup.group,
+                },
+            });
+        }
+
+        return isItemGlobal({
+            type: DashTabItemType.Control,
+            data: {
+                impactType: selectorDialog.impactType,
+                impactTabsIds: selectorDialog.impactTabsIds,
+            },
+        });
+    }, [
+        openedDialogType,
+        selectorDialog.impactTabsIds,
+        selectorDialog.impactType,
+        selectorsGroup.group,
+        selectorsGroup.impactTabsIds,
+        selectorsGroup.impactType,
+    ]);
+
     const currentImpactTabsIds = getCurrentImpactTabsIds({
         selectorImpactTabsIds: isGroupSettings ? groupImpactTabsIds : selectorDialog.impactTabsIds,
         currentTabId,
@@ -136,6 +173,7 @@ export const ImpactTypeSelect = ({
                         currentImpactType={currentImpactType}
                         currentTabTitle={currentTab?.title}
                         impactTabsIds={currentImpactTabsIds}
+                        isGlobal={isGlobal}
                     />
                 ),
             },
