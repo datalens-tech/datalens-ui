@@ -51,7 +51,7 @@ export const isGroupItemVisibleOnTab = ({
     groupImpactType,
     groupImpactTabsIds,
     isVisibleByMainSetting,
-    isGlobal,
+    isGlobal = true,
 }: {
     item: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds};
     tabId: string | null;
