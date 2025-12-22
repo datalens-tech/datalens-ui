@@ -52,6 +52,7 @@ export default {
         limit: '21mb',
     },
     usMasterToken: process.env.US_MASTER_TOKEN || 'fake-us-master-token',
+    usDynamicMasterTokenPrivateKey: getEnvCert(process.env.US_DYNAMIC_MASTER_TOKEN_PRIVATE_KEY),
 
     // CHARTS MODE
 

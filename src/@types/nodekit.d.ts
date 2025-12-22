@@ -15,6 +15,7 @@ export interface SharedAppConfig {
     metrika: MetrikaCounter;
 
     usMasterToken?: string;
+    usDynamicMasterTokenPrivateKey?: string;
 
     regionalEnvConfig?: {allowLanguages?: string[]; defaultLang?: string; langRegion?: string};
 
@@ -148,6 +149,8 @@ export interface SharedAppContextParams {
     tenantId?: string;
 
     user?: CtxUser;
+
+    usDynamicMasterToken?: string;
 
     isEnabledServerFeature: (feature: string) => boolean;
 }

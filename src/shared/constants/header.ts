@@ -30,6 +30,7 @@ export const REQUEST_ID_HEADER = 'x-request-id';
 export const TRACE_ID_HEADER = 'x-trace-id';
 export const SERVER_TRACE_ID_HEADER = 'x-server-trace-id';
 export const US_MASTER_TOKEN_HEADER = 'x-us-master-token';
+export const US_DYNAMIC_MASTER_TOKEN_HEADER = 'x-us-dynamic-master-token';
 export const DL_CONTEXT_HEADER = 'x-dl-context';
 export const FORWARDED_FOR_HEADER = 'x-forwarded-for';
 export const ACCEPT_LANGUAGE_HEADER = 'accept-language';
