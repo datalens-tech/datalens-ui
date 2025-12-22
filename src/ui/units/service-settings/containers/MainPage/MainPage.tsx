@@ -19,6 +19,23 @@ const GeneralSettings = React.lazy(
 );
 const UsersList = React.lazy(() => import('../../components/UsersList/UsersList'));
 
+const tabs = isEnabledFeature(Feature.EnableNewServiceSettings)
+    ? [
+          {id: 'users', title: i18n('section_users')},
+          {
+              id: 'appearance',
+              // TODO:  title: i18n('section_appearance'),
+              title: 'Оформление',
+          },
+      ]
+    : [
+          {
+              id: 'general',
+              title: i18n('section_general'),
+          },
+          {id: 'users', title: i18n('section_users')},
+      ];
+
 export type MainPageProps = {
     customGeneralSettings?: React.ReactNode;
     disablePalettesEdit?: boolean;
@@ -37,6 +54,7 @@ const MainPage = ({
 }: MainPageProps) => {
     const history = useHistory();
     const {tab} = useParams<{tab: string}>();
+    const newServiceSettingsEnabled = isEnabledFeature(Feature.EnableNewServiceSettings);
 
     const [activeTab, setActiveTab] = React.useState('palettes');
 
@@ -48,23 +66,19 @@ const MainPage = ({
 
     if (!DL.AUTH_ENABLED || !DL.IS_NATIVE_AUTH_ADMIN) {
         return (
-            <div className={b({new: isEnabledFeature(Feature.EnableNewServiceSettings)})}>
+            <div className={b({new: newServiceSettingsEnabled})}>
                 <Text
-                    as={isEnabledFeature(Feature.EnableNewServiceSettings) ? 'h2' : 'h3'}
-                    variant={
-                        isEnabledFeature(Feature.EnableNewServiceSettings)
-                            ? 'header-2'
-                            : 'subheader-3'
-                    }
+                    as={newServiceSettingsEnabled ? 'h2' : 'h3'}
+                    variant={newServiceSettingsEnabled ? 'header-2' : 'subheader-3'}
                     className={b('header', {
-                        new: isEnabledFeature(Feature.EnableNewServiceSettings),
+                        new: newServiceSettingsEnabled,
                     })}
                 >
                     {i18n('label_header')}
                 </Text>
                 <main
                     className={b('section', {
-                        new: isEnabledFeature(Feature.EnableNewServiceSettings),
+                        new: newServiceSettingsEnabled,
                     })}
                 >
                     <GeneralSettings
@@ -87,30 +101,17 @@ const MainPage = ({
         history.push(`/settings/${tabId}`);
     };
 
-    const tabs = [
-        {
-            id: 'general',
-            title: i18n('section_general'),
-        },
-        {id: 'users', title: i18n('section_users')},
-    ];
-
     return (
-        <div className={b({new: isEnabledFeature(Feature.EnableNewServiceSettings)})}>
+        <div className={b({new: newServiceSettingsEnabled})}>
             <PageTitle title={i18n('label_header')} />
             <Text
-                as={isEnabledFeature(Feature.EnableNewServiceSettings) ? 'h2' : 'h3'}
-                variant={
-                    isEnabledFeature(Feature.EnableNewServiceSettings) ? 'header-2' : 'subheader-3'
-                }
+                as={newServiceSettingsEnabled ? 'h2' : 'h3'}
+                variant={newServiceSettingsEnabled ? 'header-2' : 'subheader-3'}
                 className={b('header', {new: isEnabledFeature(Feature.EnableNewServiceSettings)})}
             >
                 {i18n('label_header')}
             </Text>
-            <div
-                role="tablist"
-                className={b('tabs', {new: isEnabledFeature(Feature.EnableNewServiceSettings)})}
-            >
+            <div role="tablist" className={b('tabs', {new: newServiceSettingsEnabled})}>
                 <TabProvider value={activeTab} onUpdate={handleSelectTab}>
                     <TabList size="m">
                         {[...tabs, ...customTabItems].map((item) => (
@@ -124,17 +125,19 @@ const MainPage = ({
             <main className={b('tabs-content')}>
                 <React.Suspense fallback={<Loader size="m" className={b('loader')} />}>
                     <Switch>
-                        <Route
-                            exact
-                            path={'/settings/general'}
-                            render={(routeProps) => (
-                                <GeneralSettings
-                                    customSettings={customGeneralSettings}
-                                    disablePalettesEdit={disablePalettesEdit}
-                                    {...routeProps}
-                                />
-                            )}
-                        />
+                        {!newServiceSettingsEnabled && (
+                            <Route
+                                exact
+                                path={'/settings/general'}
+                                render={(routeProps) => (
+                                    <GeneralSettings
+                                        customSettings={customGeneralSettings}
+                                        disablePalettesEdit={disablePalettesEdit}
+                                        {...routeProps}
+                                    />
+                                )}
+                            />
+                        )}
                         <Route exact path={'/settings/users'} component={UsersList} />
                         {customTabRoutes}
                         <Redirect to="/settings/general" />
