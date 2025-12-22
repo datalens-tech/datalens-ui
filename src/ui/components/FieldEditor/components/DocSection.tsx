@@ -4,6 +4,7 @@ import {List, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import SplitPane from 'react-split-pane';
 import {DocSectionQa} from 'shared';
+import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import type {
     DataLensFunctionsDocGroupTocItem,
     DocsTocItemLastLevel,
@@ -49,6 +50,17 @@ type UpdateEvent = 'init' | 'click' | 'filter';
 const b = block('dl-field-editor');
 const i18n = I18n.keyset('component.dl-field-editor.view');
 const ITEM_HEIGHT = 28;
+
+const EmptyState: React.FC = () => {
+    return (
+        <PlaceholderIllustration
+            size={'m'}
+            direction={'column'}
+            name={'emptyDirectory'}
+            title={i18n('label_doc-formula-is-empty')}
+        />
+    );
+};
 
 class DocSection extends React.Component<DocSectionProps, DocSectionState> {
     ref: React.RefObject<HTMLDivElement>;
@@ -129,18 +141,24 @@ class DocSection extends React.Component<DocSectionProps, DocSectionState> {
                                 </div>
                             ) : (
                                 <React.Fragment>
-                                    <div
-                                        className={b('doc-item-title')}
-                                        data-qa={DocSectionQa.Title}
-                                    >
-                                        {selectedItem?.name}
-                                    </div>
-                                    <YfmWrapper
-                                        className={b('doc-item')}
-                                        setByInnerHtml={true}
-                                        content={functionDoc?.html || ''}
-                                        noMagicLinks={true}
-                                    />
+                                    {selectedItem ? (
+                                        <React.Fragment>
+                                            <div
+                                                className={b('doc-item-title')}
+                                                data-qa={DocSectionQa.Title}
+                                            >
+                                                {selectedItem?.name}
+                                            </div>
+                                            <YfmWrapper
+                                                className={b('doc-item')}
+                                                setByInnerHtml={true}
+                                                content={functionDoc?.html || ''}
+                                                noMagicLinks={true}
+                                            />
+                                        </React.Fragment>
+                                    ) : (
+                                        <EmptyState />
+                                    )}
                                 </React.Fragment>
                             )}
                         </div>
