@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {List, Loader} from '@gravity-ui/uikit';
+import {Link, List, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import SplitPane from 'react-split-pane';
 import {DocSectionQa} from 'shared';
@@ -9,6 +9,7 @@ import type {
     DataLensFunctionsDocGroupTocItem,
     DocsTocItemLastLevel,
 } from 'ui/registry/units/common/types/functions/getFunctionsDocumentation';
+import {formDocsEndpointDL} from 'ui/utils/docs';
 
 import {I18n} from '../../../../i18n';
 import {DL, SPLIT_PANE_RESIZER_CLASSNAME} from '../../../constants';
@@ -52,12 +53,31 @@ const i18n = I18n.keyset('component.dl-field-editor.view');
 const ITEM_HEIGHT = 28;
 
 const EmptyState: React.FC = () => {
+    const isExternalLink = DL.ENDPOINTS.public;
+
+    const docsUrl = formDocsEndpointDL('/concepts/calculations/formula-syntax');
+
     return (
         <PlaceholderIllustration
-            size={'m'}
-            direction={'column'}
-            name={'emptyDirectory'}
+            className={b('empty-state')}
+            name={'template'}
             title={i18n('label_doc-formula-is-empty')}
+            description={
+                <div>
+                    <div>
+                        <Link target="_blank" href={docsUrl}>
+                            {i18n('label_doc-formula-is-empty-description-syntax-link')}
+                        </Link>
+                    </div>
+                    {isExternalLink && (
+                        <div>
+                            <Link target="_blank" href={`${isExternalLink}/9fms9uae7ip02?tab=87P`}>
+                                {i18n('label_doc-formula-is-empty-description-examples-link')}
+                            </Link>
+                        </div>
+                    )}
+                </div>
+            }
         />
     );
 };

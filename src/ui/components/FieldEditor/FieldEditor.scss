@@ -251,7 +251,8 @@
         }
     }
 
-    &__doc-loader {
+    &__doc-loader,
+    &__empty-state {
         height: 100%;
         width: 100%;
         display: flex;
