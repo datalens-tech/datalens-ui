@@ -28,13 +28,13 @@ export enum SaveChartControlsQa {
 }
 
 export enum DialogParameterQA {
-    Apply = 'dialog_parameter-apply-btn',
-    Cancel = 'dialog_parameter-cancel-btn',
-    Reset = 'dialog_parameter-reset-btn',
-    DefaultValueInput = 'dialog_parameter-default-value-input',
-    DefaultValueRadioGroup = 'dialog_parameter-default-value-radio-group',
-    NameInput = 'dialog_parameter-name-input',
-    TypeSelector = 'dialog_parameter-type_selector',
+    Apply = 'dialog-parameter-apply-btn',
+    Cancel = 'dialog-parameter-cancel-btn',
+    Reset = 'dialog-parameter-reset-btn',
+    DefaultValueInput = 'dialog-parameter-default-value-input',
+    DefaultValueRadioGroup = 'dialog-parameter-default-value-radio-group',
+    NameInput = 'dialog-parameter-name-input',
+    TypeSelector = 'dialog-parameter-type_selector',
     Dialog = 'dialog-parameter',
 }
 
@@ -127,9 +127,9 @@ export enum DialogDraftWarningQA {
 }
 
 export enum DialogDashWidgetItemQA {
-    Text = 'dialog_widget-text',
-    Title = 'dialog_widget-title',
-    Image = 'dialog_widget-image',
+    Text = 'dialog-widget-text',
+    Title = 'dialog-widget-title',
+    Image = 'dialog-widget-image',
 }
 
 export enum DialogDashTitleQA {
@@ -137,8 +137,9 @@ export enum DialogDashTitleQA {
 }
 
 export enum DialogDashWidgetQA {
-    Apply = 'dialog_widget-apply-btn',
-    Cancel = 'dialog_widget-cancel-btn',
+    Apply = 'dialog-widget-apply-btn',
+    Cancel = 'dialog-widget-cancel-btn',
+    DialogChartWidget = 'dialog-widget-chart-widget',
 }
 
 export const enum DialogFieldEditorQA {
@@ -198,8 +199,4 @@ export enum DatalensTabs {
 export enum DatalensHeaderQa {
     DesktopContainer = 'datalens-header-desktop-container',
     MobileContainer = 'datalens-header-mobile-container',
-}
-
-export enum DialogWidget {
-    ChartWidget = 'dialog-chart-widget',
 }
