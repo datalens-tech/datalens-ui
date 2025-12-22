@@ -260,6 +260,12 @@
         align-items: center;
     }
 
+    &__empty-state {
+        padding-top: 0;
+        padding-bottom: 0;
+        overflow: clip;
+    }
+
     /* TODO: remove styles, when it is possible to customize styles on List.Input [DATAUI-360] */
     & .g-list__filter {
         margin: 16px 16px 10px 32px;
