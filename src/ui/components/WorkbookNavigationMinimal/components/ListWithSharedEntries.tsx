@@ -52,7 +52,7 @@ export const ListWithSharedEntries = ({
                 <div className={b('items-box')}>
                     <Text className={b('list-title')} variant="subheader-1">
                         {i18n('shared-list-title', {
-                            entry: i18n(`entries-list-title-${scope}`),
+                            entry: i18n(`entries-list-title-${scope}`).toLocaleLowerCase(),
                         })}
                     </Text>
                     <List
