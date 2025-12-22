@@ -116,7 +116,7 @@ class DashSchemeConverter {
         return data;
     }
 
-    static async upTo3(data: any) {
+    static upTo3(data: any) {
         const {salt, pages, counter, schemeVersion} = data;
 
         if (schemeVersion >= 3) {
@@ -129,74 +129,63 @@ class DashSchemeConverter {
 
         const {id: pageId, tabs} = page;
 
-        const convertedTabs = await Promise.all(
-            tabs.map(async (tab: any) => {
-                const {id: tabId, items, title, layout, ignores = []} = tab;
-                return {
-                    id: tabId,
-                    items: await Promise.all(
-                        items.map(
-                            async ({
-                                id,
-                                data: itemData,
-                                tabs,
-                                type,
-                                defaults,
-                                namespace = 'default',
-                            }: any) => {
-                                const data = itemData || tabs;
-                                if (type === DashTabItemType.Control && !defaults) {
-                                    const defaultValue = data.control.defaultValue || '';
+        const convertedTabs = tabs.map((tab: any) => {
+            const {id: tabId, items, title, layout, ignores = []} = tab;
+            return {
+                id: tabId,
+                items: items.map(
+                    ({id, data: itemData, tabs, type, defaults, namespace = 'default'}: any) => {
+                        const data = itemData || tabs;
+                        if (type === DashTabItemType.Control && !defaults) {
+                            const defaultValue = data.control.defaultValue || '';
 
-                                    if (data.dataset) {
-                                        const {id: datasetId, fieldName} = data.dataset;
+                            if (data.dataset) {
+                                const {id: datasetId, fieldName} = data.dataset;
 
-                                        try {
-                                            const {fields} = savedResponses[datasetId];
-                                            //     || await sdk.bi.getDataSetFieldsById({dataSetId: datasetId});
-                                            savedResponses[datasetId] = {fields};
+                                try {
+                                    const {fields} = savedResponses[datasetId];
 
-                                            const field = fields.find(
-                                                ({title}: any) => title === fieldName,
-                                            );
+                                    savedResponses[datasetId] = {fields};
 
-                                            if (field) {
-                                                data.dataset.fieldId = field.guid;
-                                                delete data.dataset.fieldName;
-                                                delete data.dataset.name;
-                                                defaults = {[field.guid]: defaultValue};
-                                            } else {
-                                                defaults = {[fieldName]: defaultValue};
-                                            }
-                                        } catch (error) {
-                                            console.error('DATASET_FIELDS', id, error);
-                                            defaults = {[fieldName]: defaultValue};
-                                        }
+                                    const field = fields.find(
+                                        ({title}: any) => title === fieldName,
+                                    );
+
+                                    if (field) {
+                                        data.dataset.fieldId = field.guid;
+                                        delete data.dataset.fieldName;
+                                        delete data.dataset.name;
+                                        defaults = {[field.guid]: defaultValue};
                                     } else {
-                                        const connection = tab.connections.find(
-                                            ({fromId}: any) => fromId === id,
-                                        );
-
-                                        if (connection) {
-                                            data.control.fieldName = connection.param;
-                                            defaults = {[connection.param]: defaultValue};
-                                        } else {
-                                            defaults = {};
-                                        }
+                                        defaults = {[fieldName]: defaultValue};
                                     }
-                                } else if (!defaults) {
+                                } catch (error) {
+                                    console.error('DATASET_FIELDS', id, error);
+                                    defaults = {[fieldName]: defaultValue};
+                                }
+                            } else {
+                                const connection = tab.connections.find(
+                                    ({fromId}: any) => fromId === id,
+                                );
+
+                                if (connection) {
+                                    data.control.fieldName = connection.param;
+                                    defaults = {[connection.param]: defaultValue};
+                                } else {
                                     defaults = {};
                                 }
-                                return {id, data, type, defaults, namespace};
-                            },
-                        ),
-                    ),
-                    title,
-                    layout,
-                    ignores,
-                };
-            }),
-        );
+                            }
+                        } else if (!defaults) {
+                            defaults = {};
+                        }
+                        return {id, data, type, defaults, namespace};
+                    },
+                ),
+                title,
+                layout,
+                ignores,
+            };
+        });
 
         return {
             salt,
@@ -207,8 +196,8 @@ class DashSchemeConverter {
     }
 
     // adding the aliases field for each tab
-    static async upTo4(originalData: any) {
-        const data = await DashSchemeConverter.upTo3(originalData);
+    static upTo4(originalData: any) {
+        const data = DashSchemeConverter.upTo3(originalData);
 
         const {salt, pages, schemeVersion, counter} = data;
 
@@ -231,8 +220,8 @@ class DashSchemeConverter {
     }
 
     // ignors for the WIDGET-elements is translated into ignors for tabs WIDGET-elements
-    static async upTo6(originalData: any) {
-        const data = await DashSchemeConverter.upTo4(originalData);
+    static upTo6(originalData: any) {
+        const data = DashSchemeConverter.upTo4(originalData);
 
         const {salt, pages, counter, schemeVersion} = data;
 
@@ -266,8 +255,8 @@ class DashSchemeConverter {
         };
     }
 
-    static async upTo7(originalData: any): Promise<DashData> {
-        const data = await DashSchemeConverter.upTo6(originalData);
+    static upTo7(originalData: any): DashData {
+        const data = DashSchemeConverter.upTo6(originalData);
 
         const {salt, pages, counter, schemeVersion, settings = {}} = data;
 
@@ -388,8 +377,8 @@ class DashSchemeConverter {
         return result;
     }
 
-    static async upTo8(originalData: any): Promise<DashData> {
-        const data = await DashSchemeConverter.upTo7(originalData);
+    static upTo8(originalData: any): DashData {
+        const data = DashSchemeConverter.upTo7(originalData);
         const {schemeVersion} = data;
 
         if (schemeVersion >= 8) {

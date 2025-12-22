@@ -5,11 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 
 import {objectKeys} from '../../../../shared';
 import {registry} from '../../../registry';
-import {
-    OPEN_API_VERSION_HEADER_COMPONENT_NAME,
-    PUBLIC_API_LATEST_VERSION,
-    PUBLIC_API_VERSION_HEADER,
-} from '../constants';
+import {OPEN_API_VERSION_HEADER_COMPONENT_NAME, PUBLIC_API_VERSION_HEADER} from '../constants';
 
 export const initPublicApiSwagger = (app: ExpressKit) => {
     const {config} = app;
@@ -18,6 +14,8 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
     const envText = `Env – <b>${config.appEnv}</b>`;
 
     const {baseConfig, securitySchemes, biOpenapiSchemas} = registry.getPublicApiConfig();
+
+    const latestVersion = Math.max(...Object.keys(baseConfig).map(Number));
 
     setImmediate(() => {
         const versionToDocument = Object.entries(baseConfig).reduce<
@@ -76,7 +74,7 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                 ...biOpenapiSchemas,
             };
             const versionPath = `/${version}/`;
-            const isLatest = version === PUBLIC_API_LATEST_VERSION;
+            const isLatest = version === latestVersion;
 
             const addSwaggerRoutes = (basePath: string) => {
                 const jsonPath = `${basePath}json/`;

@@ -25,22 +25,24 @@ export const HtmlCell = (props: HtmlCellProps) => {
     const initialValue = shouldParseValue ? null : content;
     const [htmlContent, setHtmlContent] = React.useState<CellContent | null>(initialValue);
 
-    const parseHtmlValue = async () => {
+    const parseHtmlValue = React.useCallback(async () => {
         const parseHtml = await getParseHtmlFn();
         setHtmlContent(parseHtml(String(content)) as CellContent);
-    };
+    }, [content]);
 
     React.useEffect(() => {
         if (onRender) {
             onRender();
         }
-    }, [htmlContent]);
+    }, [htmlContent, onRender]);
 
     React.useEffect(() => {
-        if (shouldParseValue) {
+        if (typeof content === 'string') {
             parseHtmlValue();
+        } else {
+            setHtmlContent(content);
         }
-    }, [content, shouldParseValue]);
+    }, [content, parseHtmlValue]);
 
     if (shouldParseValue && !htmlContent) {
         return <Loader size="s" />;

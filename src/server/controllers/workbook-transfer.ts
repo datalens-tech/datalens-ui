@@ -126,7 +126,7 @@ export const prepareExportData = async (req: Request, res: Response) => {
                 ]);
             }
 
-            const {dash, notifications} = await prepareDashExportData(
+            const {dash, notifications} = prepareDashExportData(
                 Dash.migrateDescription(entry as unknown as DashEntry),
                 idMapping,
             );
@@ -270,7 +270,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
             return createImportResponseData(notifications, responseData.entryId);
         }
         case EntryScope.Dash: {
-            const {dash, notifications} = await prepareDashImportData(entryData.dash, idMapping);
+            const {dash, notifications} = prepareDashImportData(entryData.dash, idMapping);
 
             if (!dash) {
                 return createImportResponseData(notifications);

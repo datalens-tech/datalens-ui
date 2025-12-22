@@ -9,13 +9,14 @@ import {
     WIDGET_BG_COLORS_PRESET,
     WIDGET_BG_HEAVY_COLORS_PRESET,
 } from 'shared/constants/widgets';
+import type {ColorPickerInputProps} from 'ui/components/ColorPickerInput/ColorPickerInput';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {computeColorFromToken} from 'ui/utils/widgetColors';
 
 import {ColorInputsGroup} from '../ColorInputsGroup/ColorInputsGroup';
 import {ColorPicker} from '../ColorPicker/ColorPicker';
 
-type PaletteBackgroundProps = {
+type PaletteBackgroundProps = Pick<ColorPickerInputProps, 'placeholder'> & {
     color: ColorSettings | undefined;
     oldColor: string | undefined;
     onSelect: (color: ColorSettings | undefined) => void;
@@ -24,6 +25,7 @@ type PaletteBackgroundProps = {
     theme?: RealTheme;
     enableSeparateThemeColorSelector?: boolean;
     direction?: FlexProps['direction'];
+    width?: 'max';
 };
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
 
@@ -50,6 +52,8 @@ export const PaletteBackground = ({
     theme,
     enableSeparateThemeColorSelector = true,
     direction = 'row',
+    placeholder,
+    width,
 }: PaletteBackgroundProps) => {
     const mainPresetOptions = [
         CustomPaletteBgColors.NONE,
@@ -69,12 +73,14 @@ export const PaletteBackground = ({
         return (
             <ColorInputsGroup
                 theme={theme}
+                placeholder={placeholder}
                 value={color ?? computeColorFromToken(oldColor)}
                 onUpdate={onSelect}
                 isSingleColorSelector={!enableSeparateThemeColorSelector}
                 direction={direction}
                 mainPresetOptions={MAIN_PRESET_OPTIONS}
                 paletteOptions={PALETTE_OPTIONS}
+                width={width}
             />
         );
     }

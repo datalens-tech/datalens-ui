@@ -6,7 +6,7 @@ import {registry} from 'ui/registry';
 import {DL} from '../../constants';
 import MarkdownProvider from '../../modules/markdownProvider';
 
-import {DEFAULT_DASH_MARGINS} from './constants';
+import {DEFAULT_DASH_MARGINS, OLD_DEFAULT_WIDGET_BORDER_RADIUS} from './constants';
 import {DashkitWrapper, getDashKitMenu} from './helpers';
 import pluginControl from './plugins/Control/Control';
 import pluginGroupControl from './plugins/GroupControl/GroupControl';
@@ -35,15 +35,21 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
     });
 };
 
+export interface CommonGlobalWidgetSettings {
+    background?: OldBackgroundSettings;
+    backgroundSettings?: BackgroundSettings;
+    borderRadius?: number;
+}
+
 export interface CommonPluginSettings {
     scope?: string;
-    globalBackground?: OldBackgroundSettings;
-    globalBackgroundSettings?: BackgroundSettings;
+    globalWidgetSettings?: CommonGlobalWidgetSettings;
 }
 
 export interface CommonPluginProps {
     background?: OldBackgroundSettings;
     backgroundSettings?: BackgroundSettings;
+    borderRadius?: number;
 }
 
 export const getConfiguredDashKit = (
@@ -52,15 +58,19 @@ export const getConfiguredDashKit = (
         disableHashNavigation?: boolean;
         disableTitleHints?: boolean;
         scope?: string;
-        background?: OldBackgroundSettings;
-        backgroundSettings?: BackgroundSettings;
+        globalWidgetSettings?: CommonGlobalWidgetSettings;
     },
+    shouldReconfigure?: boolean,
 ) => {
-    if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
+    if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured || shouldReconfigure) {
         const commonSettings: CommonPluginSettings = {
             scope: options?.scope,
-            globalBackground: options?.background,
-            globalBackgroundSettings: options?.backgroundSettings,
+            globalWidgetSettings: {
+                background: options?.globalWidgetSettings?.background,
+                backgroundSettings: options?.globalWidgetSettings?.backgroundSettings,
+                borderRadius:
+                    options?.globalWidgetSettings?.borderRadius ?? OLD_DEFAULT_WIDGET_BORDER_RADIUS,
+            },
         };
         const titleSettings = {
             ...commonSettings,

@@ -20,7 +20,10 @@ import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting} from '../helpers/axis';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
-import {mapToGravityChartValueFormat} from '../utils';
+import {
+    mapChartkitFormatSettingsToGravityChartValueFormat,
+    mapToGravityChartValueFormat,
+} from '../utils';
 
 import {prepareBarYData} from './prepare-bar-y-data';
 
@@ -125,10 +128,9 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             },
             tooltip: graph.tooltip?.chartKitFormatting
                 ? {
-                      valueFormat: {
-                          type: 'number',
-                          precision: graph.tooltip.chartKitPrecision,
-                      },
+                      valueFormat: mapChartkitFormatSettingsToGravityChartValueFormat({
+                          chartkitFormatSettings: graph.tooltip,
+                      }),
                   }
                 : undefined,
             custom: {

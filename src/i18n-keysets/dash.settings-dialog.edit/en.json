@@ -9,6 +9,7 @@
   "label_access-description": "Access error message",
   "label_autoupdate": "Auto update",
   "label_autoupdate-interval": "Interval",
+  "label_border-radius": "Rounding",
   "label_dependent-selectors": "Dependent selectors",
   "label_display": "Appearance",
   "label_display-info": "Select elements to display on the dashboard",

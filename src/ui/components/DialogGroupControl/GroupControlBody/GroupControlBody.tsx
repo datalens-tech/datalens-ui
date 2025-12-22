@@ -17,10 +17,15 @@ import {RequiredValueCheckbox} from 'ui/components/ControlComponents/Sections/Va
 import {ValueSelector} from 'ui/components/ControlComponents/Sections/ValueSelector/ValueSelector';
 import {SelectorTypeSelect} from 'ui/components/ControlComponents/SelectorTypeSelect/SelectorTypeSelect';
 import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
-import {selectSelectorControlType} from 'ui/store/selectors/controlDialog';
+import {
+    selectNeedSimilarSelectorsCheck,
+    selectSelectorControlType,
+} from 'ui/store/selectors/controlDialog';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {FormSection} from '../../FormSection/FormSection';
+
+import {SimilarSelectorsBlock} from './SimilarSelectorsBlock/SimilarSelectorsBlock';
 
 import '../DialogGroupControl.scss';
 
@@ -31,14 +36,16 @@ export const GroupControlBody: React.FC<{
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
     enableGlobalSelectors?: boolean;
+    className?: string;
 }> = (props) => {
     const elementType = useSelector(selectSelectorControlType);
+    const needSimilarSelectorsCheck = useSelector(selectNeedSimilarSelectorsCheck);
 
     const isTypeNotCheckbox = elementType !== ELEMENT_TYPE.CHECKBOX;
 
     return (
-        <React.Fragment>
-            <FormSection title={i18n('label_data')}>
+        <div className={props.className}>
+            <FormSection title={i18n('label_general')}>
                 <FormRow label={i18n('label_source')} className={b('row')}>
                     <SelectorTypeSelect showExternalType={false} mode="select" />
                 </FormRow>
@@ -49,6 +56,7 @@ export const GroupControlBody: React.FC<{
                     enableGlobalSelectors={props.enableGlobalSelectors}
                 />
             </FormSection>
+            {needSimilarSelectorsCheck && <SimilarSelectorsBlock />}
             <FormSection title={i18n('label_filtration')}>
                 <InputTypeSelector className={b('row')} />
                 {!isEnabledFeature(Feature.ConnectionBasedControl) && (
@@ -68,6 +76,6 @@ export const GroupControlBody: React.FC<{
                 )}
                 <HintRow className={b('row')} />
             </FormSection>
-        </React.Fragment>
+        </div>
     );
 };

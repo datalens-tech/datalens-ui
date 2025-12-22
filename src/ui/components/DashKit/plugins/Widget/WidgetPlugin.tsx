@@ -28,8 +28,7 @@ const widgetPlugin: PluginWidget = {
     defaultLayout: {w: 12, h: 12},
     setSettings: (settings: PluginWidgetObjectSettings) => {
         widgetPlugin.scope = settings.scope;
-        widgetPlugin.globalBackground = settings.globalBackground;
-        widgetPlugin.globalBackgroundSettings = settings.globalBackgroundSettings;
+        widgetPlugin.globalWidgetSettings = settings.globalWidgetSettings;
         return widgetPlugin;
     },
     renderer: function Wrapper(
@@ -52,10 +51,12 @@ const widgetPlugin: PluginWidget = {
         }
 
         const {style} = usePreparedWrapSettings({
-            widgetBackground: oldWidgetBg,
-            globalBackground: widgetPlugin.globalBackground,
-            widgetBackgroundSettings: props.backgroundSettings,
-            globalBackgroundSettings: widgetPlugin.globalBackgroundSettings,
+            ownWidgetSettings: {
+                background: oldWidgetBg,
+                backgroundSettings: props.backgroundSettings,
+                borderRadius: props.borderRadius,
+            },
+            globalWidgetSettings: widgetPlugin.globalWidgetSettings ?? {},
             defaultOldColor:
                 widgetPlugin.scope === 'dash'
                     ? CustomPaletteBgColors.LIKE_CHART

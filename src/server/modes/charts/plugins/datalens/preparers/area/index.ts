@@ -3,6 +3,7 @@ import type {
     AreaSeriesData,
     ChartData,
     ChartSeries,
+    ChartYAxis,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
@@ -54,6 +55,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         shared,
         idToDataType,
         colors,
+        segments: split,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
@@ -83,6 +85,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
     const segmentsMap = getSegmentMap(args);
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
     const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
+    const isSplitWithHtmlValues = isHtmlField(split?.[0]);
 
     const preparedData = prepareLineData(args);
     const xCategories = preparedData.categories;
@@ -201,13 +204,29 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
             const baseConfig = getYAxisBaseConfig({
                 placeholder: yPlaceholder,
             });
+            let axisTitle: ChartYAxis['title'] | null = null;
+            if (isSplitEnabled) {
+                let titleText: string = d.title;
+                if (isSplitWithHtmlValues) {
+                    // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+                    titleText = wrapHtml(d.title);
+                }
+
+                axisTitle = {
+                    text: titleText,
+                    rotation: 0,
+                    maxWidth: '25%',
+                    html: isSplitWithHtmlValues,
+                };
+            }
+
             return merge(baseConfig, {
                 lineColor: 'transparent',
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
                 plotIndex: d.index,
-                title: isSplitEnabled ? {text: d.title} : undefined,
+                title: axisTitle,
             });
         }),
         legend,

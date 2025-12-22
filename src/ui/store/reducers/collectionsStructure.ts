@@ -35,6 +35,9 @@ import {
     MOVE_WORKBOOKS_LOADING,
     MOVE_WORKBOOKS_SUCCESS,
     MOVE_WORKBOOKS_FAILED,
+    MOVE_SHARED_ENTRY_LOADING,
+    MOVE_SHARED_ENTRY_SUCCESS,
+    MOVE_SHARED_ENTRY_FAILED,
     COPY_WORKBOOK_LOADING,
     COPY_WORKBOOK_SUCCESS,
     COPY_WORKBOOK_FAILED,
@@ -89,6 +92,7 @@ import type {
     MoveCollectionsResponse,
     MoveWorkbookResponse,
     MoveWorkbooksResponse,
+    MoveEntryResponse,
     CopyWorkbookResponse,
     CreateWorkbookResponse,
     UpdateWorkbookResponse,
@@ -160,6 +164,11 @@ export type CollectionsStructureState = {
     moveWorkbooks: {
         isLoading: boolean;
         data: MoveWorkbooksResponse | null;
+        error: Error | null;
+    };
+    moveSharedEntry: {
+        isLoading: boolean;
+        data: MoveEntryResponse | null;
         error: Error | null;
     };
     copyWorkbook: {
@@ -279,6 +288,11 @@ const initialState: CollectionsStructureState = {
         error: null,
     },
     moveWorkbooks: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    moveSharedEntry: {
         isLoading: false,
         data: null,
         error: null,
@@ -732,6 +746,38 @@ export const collectionsStructure = (
                 ...state,
                 moveWorkbooks: {
                     ...state.moveWorkbooks,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        // Moving a shared entry
+        case MOVE_SHARED_ENTRY_LOADING: {
+            return {
+                ...state,
+                moveSharedEntry: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case MOVE_SHARED_ENTRY_SUCCESS: {
+            return {
+                ...state,
+                moveSharedEntry: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case MOVE_SHARED_ENTRY_FAILED: {
+            return {
+                ...state,
+                moveSharedEntry: {
+                    ...state.moveSharedEntry,
                     isLoading: false,
                     error: action.error,
                 },

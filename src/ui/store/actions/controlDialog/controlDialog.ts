@@ -1,11 +1,14 @@
+/* eslint-disable complexity */
 import {DashTabItemType, TitlePlacementOption} from 'shared';
 import type {
+    DashTab,
     DashTabItem,
     DashTabItemControlData,
     DashTabItemControlExternal,
     DashTabItemGroupControl,
     StringParams,
 } from 'shared';
+import type {PreparedCopyItemOptions} from '@gravity-ui/dashkit';
 import type {
     PastedSelectorDialogState,
     DialogEditItemFeaturesProp,
@@ -30,20 +33,20 @@ import {
 } from 'ui/units/dash/store/actions/helpers';
 import {showToast} from '../toaster';
 import {I18n} from 'i18n';
-import type {ControlDialogStateItemMeta} from '../../reducers/controlDialog';
-import {getGroupSelectorDialogInitialState} from '../../reducers/controlDialog';
+import type {ControlDialogStateItemMeta} from '../../reducers/controlDialog/controlDialog';
+import {getGroupSelectorDialogInitialState} from '../../reducers/controlDialog/controlDialog';
 import {DEFAULT_CONTROL_LAYOUT} from 'ui/components/DashKit/constants';
 import {COPIED_WIDGET_STORAGE_KEY} from 'ui/constants';
 import type {ConfigItemGroup} from '@gravity-ui/dashkit/helpers';
 import {DEFAULT_NAMESPACE} from '@gravity-ui/dashkit/helpers';
 import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
-import type {PreparedCopyItemOptions} from '@gravity-ui/dashkit';
 import type {RealTheme} from '@gravity-ui/uikit';
 import {getPreparedCopyItemOptions, type CopiedConfigContext} from 'ui/units/dash/modules/helpers';
 import type {
     SetItemDataArgs,
     SetItemDataExternalControl,
     SetItemDataGroupControl,
+    TabsHashStates,
 } from 'ui/units/dash/store/actions/dashTyped';
 import type {DatalensGlobalState} from 'ui/index';
 import {
@@ -56,9 +59,12 @@ import {
     selectSelectorsGroup,
     selectControlDialogFeatureByType,
     selectControlDialogState,
+    selectDashChangesBuffer,
 } from '../../selectors/controlDialog';
 import {getValidScopeFields} from './helpers';
 import {selectTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {SELECTOR_DIALOG_TABS} from 'ui/store/constants/controlDialog';
+import {setTabs, SET_STATE, resetConnectionsUpdaters} from 'ui/units/dash/store/actions/dashTyped';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
@@ -91,9 +97,10 @@ export type ResetDialogAction = {
     type: typeof RESET_DIALOG;
 };
 
-export const resetControlDialog = (): ResetDialogAction => {
-    return {
-        type: RESET_DIALOG,
+export const resetControlDialog = () => {
+    return (dispatch: AppDispatch) => {
+        dispatch(resetConnectionsUpdaters());
+        dispatch({type: RESET_DIALOG});
     };
 };
 
@@ -204,6 +211,20 @@ export const updateControlsValidation = (
     };
 };
 
+export const SET_ACTIVE_TAB = Symbol('controlDialog/SET_ACTIVE_TAB');
+
+export type SetActiveTabAction = {
+    type: typeof SET_ACTIVE_TAB;
+    payload: string;
+};
+
+export const setActiveTab = (payload: SetActiveTabAction['payload']): SetActiveTabAction => {
+    return {
+        type: SET_ACTIVE_TAB,
+        payload,
+    };
+};
+
 const isSelectorWithContext = (
     selector: SelectorDialogState,
 ): selector is PastedSelectorDialogState => {
@@ -213,9 +234,11 @@ const isSelectorWithContext = (
 export const applyGroupControlDialog = ({
     setItemData,
     closeDialog,
+    groupTabError,
 }: {
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
+    groupTabError: boolean;
 }) => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
@@ -262,24 +285,54 @@ export const applyGroupControlDialog = ({
             selectorsGroup: validatedSelectorsGroup,
         });
 
-        if (firstInvalidIndex !== null || !isEmpty(validatedSelectorsGroup.validation)) {
-            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
-        }
-
         if (firstInvalidIndex !== null) {
             const activeSelectorValidation =
                 validatedSelectorsGroup.group[activeSelectorIndex].validation;
 
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.SELECTORS));
             if (!isEmpty(activeSelectorValidation)) {
                 dispatch(
                     setSelectorDialogItem({
                         validation: activeSelectorValidation,
                     }),
                 );
+
                 return;
             }
             dispatch(setActiveSelectorIndex({activeSelectorIndex: firstInvalidIndex}));
             return;
+        }
+
+        if (!isEmpty(validatedSelectorsGroup.validation)) {
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.GROUP));
+            return;
+        }
+
+        if (groupTabError) {
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.GROUP));
+            return;
+        }
+
+        // Apply dashChangesBuffer if it exists
+        const dashChangesBuffer = selectDashChangesBuffer(state);
+        if (dashChangesBuffer) {
+            // Apply tabs changes
+            dispatch(setTabs(dashChangesBuffer.tabs));
+
+            // Apply hashStates changes
+            if (dashChangesBuffer.hashStates) {
+                dispatch({
+                    type: SET_STATE,
+                    payload: {
+                        hashStates: dashChangesBuffer.hashStates,
+                    },
+                });
+            }
+
+            // Reset buffer
+            dispatch(updateDashChangesBuffer({tabs: undefined, hashStates: undefined}));
         }
 
         const {enableAutoheightDefault} = features;
@@ -378,6 +431,7 @@ export const applyGroupControlDialog = ({
         );
 
         setItemData(itemData);
+
         closeDialog();
     };
 };
@@ -528,5 +582,61 @@ export const closeExternalControlDialog = ({closeDialog}: {closeDialog: () => vo
         const beforeCloseDialogItem = getBeforeCloseDialogItemAction();
         dispatch(beforeCloseDialogItem());
         closeDialog();
+    };
+};
+
+export const SET_NEED_SIMILAR_SELECTORS_CHECK = Symbol(
+    'controlDialog/SET_NEED_SIMILAR_SELECTORS_CHECK',
+);
+
+export type SetNeedSimilarSelectorsCheckAction = {
+    type: typeof SET_NEED_SIMILAR_SELECTORS_CHECK;
+    payload: boolean;
+};
+
+export const setNeedSimilarSelectorsCheck = (
+    payload: SetNeedSimilarSelectorsCheckAction['payload'],
+): SetNeedSimilarSelectorsCheckAction => {
+    return {
+        type: SET_NEED_SIMILAR_SELECTORS_CHECK,
+        payload,
+    };
+};
+
+export const INIT_DASH_CHANGES_BUFFER = Symbol('controlDialog/INIT_DASH_CHANGES_BUFFER');
+
+export type InitDashChangesBufferAction = {
+    type: typeof INIT_DASH_CHANGES_BUFFER;
+    payload: {
+        tabs: DashTab[];
+        hashStates: TabsHashStates;
+    };
+};
+
+export const initDashChangesBuffer = (
+    payload: InitDashChangesBufferAction['payload'],
+): InitDashChangesBufferAction => {
+    return {
+        type: INIT_DASH_CHANGES_BUFFER,
+        payload,
+    };
+};
+
+export const UPDATE_DASH_CHANGES_BUFFER = Symbol('controlDialog/UPDATE_DASH_CHANGES_BUFFER');
+
+export type UpdateDashChangesBufferAction = {
+    type: typeof UPDATE_DASH_CHANGES_BUFFER;
+    payload: {
+        tabs?: DashTab[];
+        hashStates?: TabsHashStates;
+    };
+};
+
+export const updateDashChangesBuffer = (
+    payload: UpdateDashChangesBufferAction['payload'],
+): UpdateDashChangesBufferAction => {
+    return {
+        type: UPDATE_DASH_CHANGES_BUFFER,
+        payload,
     };
 };
