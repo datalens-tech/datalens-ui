@@ -26,6 +26,7 @@ import {
 import {
     isGlobalWidgetVisibleByMainSetting,
     isGroupItemVisibleOnTab,
+    isItemGlobal,
 } from 'ui/units/dash/utils/selectors';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -331,7 +332,15 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const controlData = this.propsControlData;
         const currentTabId = this.props.context.currentTabId;
 
-        if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !currentTabId) {
+        if (
+            !isEnabledFeature(Feature.EnableGlobalSelectors) ||
+            !currentTabId ||
+            !isItemGlobal({
+                data: controlData,
+                type: DashTabItemType.GroupControl,
+                id: this.props.id,
+            })
+        ) {
             return controlData.group;
         }
 
