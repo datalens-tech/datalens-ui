@@ -42,7 +42,7 @@ export type TabItem = {
 };
 
 export type MainPageProps = {
-    // TODO: fully replace with customAppearanceSettings
+    // TODO: remove with EnableNewServiceSettings
     customGeneralSettings?: React.ReactNode;
     customAppearanceSettings?: React.ReactNode;
     disablePalettesEdit?: boolean;
@@ -92,7 +92,11 @@ const MainPage = ({
                     })}
                 >
                     <AppearanceSettings
-                        customSettings={customAppearanceSettings ?? customGeneralSettings}
+                        customSettings={
+                            newServiceSettingsEnabled
+                                ? customAppearanceSettings
+                                : customGeneralSettings
+                        }
                         disablePalettesEdit={disablePalettesEdit}
                     />
                 </main>
