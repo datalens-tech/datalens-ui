@@ -8,17 +8,18 @@ import {DL} from 'ui/constants';
 
 import {SectionGroup} from '../SectionGroup/SectionGroup';
 
-import './GeneralSettings.scss';
+import './AppearanceSettings.scss';
 
-const b = block('service-settings-general');
+const b = block('service-settings-appearance');
 const i18n = I18n.keyset('service-settings.main.view');
 
-type GeneralSettingsProps = {
+type AppearanceSettingsProps = {
+    // TODO: remove with EnableNewServiceSettings
     customSettings?: React.ReactNode;
     disablePalettesEdit?: boolean;
 };
 
-const GeneralSettings = ({customSettings, disablePalettesEdit}: GeneralSettingsProps) => {
+const AppearanceSettings = ({customSettings, disablePalettesEdit}: AppearanceSettingsProps) => {
     const isTabContent = DL.AUTH_ENABLED && DL.IS_NATIVE_AUTH_ADMIN;
 
     return (
@@ -36,4 +37,4 @@ const GeneralSettings = ({customSettings, disablePalettesEdit}: GeneralSettingsP
     );
 };
 
-export default GeneralSettings;
+export default AppearanceSettings;
