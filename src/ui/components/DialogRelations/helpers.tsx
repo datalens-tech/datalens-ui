@@ -7,7 +7,6 @@ import block from 'bem-cn-lite';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 
-import type {DashTabItem} from '../../../shared';
 import {DashTabItemType} from '../../../shared';
 import {VISUALIZATIONS_BY_ID} from '../../constants/visualizations';
 import {IconById} from '../IconById/IconById';
@@ -375,61 +374,78 @@ export const getPairedRelationType = (type: RelationType): RelationType => {
 
 export const getWidgetsOptions = (
     widgetsIconMap: Record<string, JSX.Element | null>,
-    widgets?: DashTabItem[],
+    dashWidgetsMeta?: Omit<DashkitMetaDataItem, 'relations'>[] | null,
     showDebugInfo?: boolean,
 ) => {
-    const options: SelectOption<{
-        widgetId?: string;
+    type OptionType = SelectOption<{
+        widgetId: string;
         isItem?: boolean;
         icon: JSX.Element | null;
-    }>[] = [];
+        title: string;
+    }>;
 
-    if (!widgets) {
-        return options;
+    if (!dashWidgetsMeta) {
+        return [];
     }
 
-    for (let i = 0; i < widgets?.length; i++) {
-        const widgetItem = widgets[i];
+    const controlOptionsMap: Record<string, OptionType[]> = {};
+    const chartOptionsMap: Record<string, OptionType[]> = {};
 
-        switch (widgetItem.type) {
-            case DashTabItemType.GroupControl:
-                widgetItem.data.group.forEach((item) => {
-                    options.push({
-                        value: item.id,
-                        content: showDebugInfo
-                            ? `(${widgetItem.id} ${item.id}) ${item.title}`
-                            : item.title,
-                        data: {
-                            widgetId: widgetItem.id,
-                            isItem: true,
-                            icon: widgetsIconMap[widgetItem.id],
-                        },
-                    });
-                });
-                break;
-            case DashTabItemType.Widget:
-                widgetItem.data.tabs.forEach((item) => {
-                    options.push({
-                        value: item.id,
-                        content: showDebugInfo
-                            ? `(${widgetItem.id} ${item.id}) ${item.title}`
-                            : item.title,
-                        data: {
-                            widgetId: widgetItem.id,
-                            icon: widgetsIconMap[item.id],
-                        },
-                    });
-                });
-                break;
-            case DashTabItemType.Control:
-                options.push({
-                    value: widgetItem.id,
-                    content: showDebugInfo
-                        ? `(${widgetItem.id}) ${widgetItem.data.title}`
-                        : widgetItem.data.title,
-                    data: {icon: widgetsIconMap[widgetItem.id]},
-                });
-                break;
+    for (let i = 0; i < dashWidgetsMeta.length; i++) {
+        const widgetItem = dashWidgetsMeta[i];
+
+        if (widgetItem.type === 'control') {
+            const debugInfo = widgetItem.itemId
+                ? `(${widgetItem.widgetId} ${widgetItem.itemId})`
+                : `(${widgetItem.widgetId})`;
+
+            const option: OptionType = {
+                value: widgetItem.itemId ?? widgetItem.widgetId,
+                content: showDebugInfo ? `${debugInfo} ${widgetItem.title}` : widgetItem.title,
+                data: {
+                    icon: widgetsIconMap[widgetItem.widgetId],
+                    widgetId: widgetItem.widgetId,
+                    isItem: Boolean(widgetItem.itemId),
+                    title: widgetItem.title,
+                },
+            };
+
+            if (!controlOptionsMap[widgetItem.widgetId]) {
+                controlOptionsMap[widgetItem.widgetId] = [];
+            }
+            controlOptionsMap[widgetItem.widgetId].push(option);
+        } else {
+            const option: OptionType = {
+                value: widgetItem.widgetId,
+                content: showDebugInfo
+                    ? `(${widgetItem.layoutId} ${widgetItem.widgetId}) ${widgetItem.title}`
+                    : widgetItem.title,
+                data: {
+                    widgetId: widgetItem.layoutId,
+                    icon: widgetsIconMap[widgetItem.widgetId],
+                    title: widgetItem.title,
+                },
+            };
+
+            if (!chartOptionsMap[widgetItem.layoutId]) {
+                chartOptionsMap[widgetItem.layoutId] = [];
+            }
+            chartOptionsMap[widgetItem.layoutId].push(option);
+        }
+    }
+
+    const options: OptionType[] = [];
+
+    // Flatten grouped options while preserving order
+    for (const groupKey in controlOptionsMap) {
+        if (controlOptionsMap[groupKey]) {
+            options.push(...controlOptionsMap[groupKey]);
+        }
+    }
+
+    for (const groupKey in chartOptionsMap) {
+        if (chartOptionsMap[groupKey]) {
+            options.push(...chartOptionsMap[groupKey]);
         }
     }
 
