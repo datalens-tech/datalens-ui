@@ -65,6 +65,7 @@ import {getValidScopeFields} from './helpers';
 import {selectTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {SELECTOR_DIALOG_TABS} from 'ui/store/constants/controlDialog';
 import {setTabs, SET_STATE, resetConnectionsUpdaters} from 'ui/units/dash/store/actions/dashTyped';
+import {isItemGlobal} from 'ui/units/dash/utils/selectors';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
@@ -373,6 +374,11 @@ export const applyGroupControlDialog = ({
             }
         });
 
+        const isGlobal = isItemGlobal({
+            data: validatedSelectorsGroup,
+            type: DashTabItemType.GroupControl,
+        });
+
         const tabId = selectTabId(state);
 
         const {impactType, impactTabsIds} = getValidScopeFields({
@@ -381,6 +387,7 @@ export const applyGroupControlDialog = ({
             tabId,
             isGroupSetting: true,
             isSingleControl,
+            isGlobal,
         });
 
         const data: SetItemDataGroupControl = {
@@ -417,6 +424,7 @@ export const applyGroupControlDialog = ({
                         impactTabsIds: selector.impactTabsIds,
                         tabId,
                         isSingleControl,
+                        isGlobal,
                     }),
                 };
             }),
@@ -554,6 +562,11 @@ export const applyExternalControlDialog = ({
 
         const tabId = selectTabId(state);
 
+        const isGlobal = isItemGlobal({
+            data: selectorDialog,
+            type: DashTabItemType.Control,
+        });
+
         const data: SetItemDataExternalControl = {
             title,
             sourceType,
@@ -565,6 +578,7 @@ export const applyExternalControlDialog = ({
                 tabId,
                 isGroupSetting: true,
                 isSingleControl: true,
+                isGlobal,
             }),
         };
         const getExtendedItemData = getExtendedItemDataAction();

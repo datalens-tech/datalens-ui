@@ -1079,6 +1079,23 @@ class DashboardPage extends BasePage {
 
         return jsonState?.hash;
     }
+
+    /**
+     * Scroll page to the bottom using keyboard End key
+     * @returns Promise that resolves when scrolling is complete
+     */
+    async scrollToBottom(): Promise<void> {
+        await this.page.locator(slct(DashBodyQa.App)).click();
+        await this.page.keyboard.press('End');
+    }
+
+    /**
+     * Click on action panel more button (ellipsis in the upper panel)
+     * @returns Promise that resolves when click is complete
+     */
+    async clickActionPanelMoreButton(): Promise<void> {
+        await this.page.click(slct(COMMON_SELECTORS.ENTRY_PANEL_MORE_BTN));
+    }
 }
 
 export default DashboardPage;

@@ -23,7 +23,7 @@ import {isEmbeddedEntry} from 'ui/utils/embedded';
 import ChartKit from '../../../../libs/DatalensChartkit';
 import {registry} from '../../../../registry';
 import {DASHKIT_STATE_VERSION} from '../../modules/constants';
-import type {GlobalItem} from '../../typings/dash';
+import type {GlobalItemWithId} from '../../typings/dash';
 import {
     type IsWidgetVisibleOnTabArgs,
     isGlobalWidgetVisibleByMainSetting,
@@ -249,7 +249,7 @@ export const applyDataProviderChartSettings = ({data}: {data: DashData}) => {
 
 export const getNewGlobalParamsAndQueueItems = (
     tabId: string,
-    selector: GlobalItem,
+    selector: GlobalItemWithId,
     appliedSelectorsIds: string[],
     params: ItemParams,
 ) => {
@@ -404,7 +404,7 @@ export const updateExistingStateWithGlobalSelector = (
 export const processTabForGlobalUpdate = (
     tab: DashTab,
     currentTabId: string | null,
-    selectorItem: GlobalItem,
+    selectorItem: GlobalItemWithId,
     appliedSelectorsIds: string[],
     params: ItemParams,
     hashStates: TabsHashStates | null | undefined,
