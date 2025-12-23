@@ -338,7 +338,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             !isItemGlobal({
                 data: controlData,
                 type: DashTabItemType.GroupControl,
-                id: this.props.id,
             })
         ) {
             return controlData.group;
