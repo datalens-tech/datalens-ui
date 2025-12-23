@@ -122,6 +122,7 @@ export const DialogAddSharedEntryFromLink: React.FC<DialogAddSharedEntryFromLink
                     message={
                         <Text variant="body-1">
                             {i18n('info-message')}
+                            {' '}
                             <Link
                                 // TODO doc link
                                 href="/"

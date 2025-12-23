@@ -74,6 +74,7 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                 <div className={b('permissions-container')}>
                     <Text variant="body-1">
                         {i18n('notice-text')}
+                        {' '}
                         <Link
                             // TODO doc link
                             href="/"
