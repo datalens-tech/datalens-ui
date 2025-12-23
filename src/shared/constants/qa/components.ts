@@ -200,3 +200,8 @@ export enum DatalensHeaderQa {
     DesktopContainer = 'datalens-header-desktop-container',
     MobileContainer = 'datalens-header-mobile-container',
 }
+
+// copied from @gravity-ui/uikit
+export enum UikitListQa {
+    ACTIVE_ITEM = 'list-active-item',
+}

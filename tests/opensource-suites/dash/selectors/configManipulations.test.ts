@@ -7,7 +7,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage, slct} from '../../../utils';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
 import {TestParametrizationConfig} from '../../../types/config';
-import {SelectorElementType} from '../../../page-objects/dashboard/ControlActions';
+import {SelectorElementType} from '../../../page-objects/dashboard/controlActions/ControlActions';
 
 const PARAMS = {
     MANUAL_CONTROL: {
