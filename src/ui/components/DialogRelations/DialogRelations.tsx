@@ -155,7 +155,10 @@ const DialogRelations = (props: DialogRelationsProps) => {
         const newWidgetData = widgetOptions.find((item) => item.value === value[0])?.data;
         // if it's tab of widget or item in group control, widgetId is in the option
         // data, for old controls it's value[0]
-        const currentId = newWidgetData?.widgetId || value[0];
+        if (!newWidgetData) {
+            return;
+        }
+        const currentId = newWidgetData.widgetId;
 
         const newCurrentWidget = widgets?.find((item) => item.id === currentId) as DashTabItem;
 
@@ -263,11 +266,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
             aliases,
             handleUpdateRelations,
             currentWidgetMeta,
+            changedWidgets,
             dashKitRef,
             dashWidgetsMeta,
             preparedRelations,
             datasets,
-            changedWidgets,
+            currentWidgetId,
         ],
     );
 
@@ -392,7 +396,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 setChangedWidgets(newChanged);
             }
         },
-        [changedWidgets, preparedRelations, handleAliasesClick],
+        [changedWidgets, currentWidgetId, preparedRelations, handleAliasesClick],
     );
 
     /**
@@ -452,7 +456,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
             setChangedWidgets(newChangedWidgets);
         },
-        [preparedRelations, filteredRelations, currentWidgetId],
+        [changedWidgets, currentWidgetId, filteredRelations, preparedRelations],
     );
 
     /**
@@ -485,7 +489,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
         } else {
             onApply(newData);
         }
-    }, [dashKitRef, aliases, dashTabAliases, changedWidgets, currentWidgetMeta, onClose, onApply]);
+    }, [dashKitRef, isLoading, changedWidgets, aliases, dashTabAliases, onClose, onApply]);
 
     const handleAliasesWarnClick = () => setAliasWarnPopupOpen(!aliasWarnPopupOpen);
 
