@@ -34,11 +34,11 @@ const isItemVisibleOnTabByGroup = (isVisibleByGroupSetting: boolean, impactType?
 };
 
 export const isGlobalWidgetVisibleByMainSetting = (
-    tabId: string,
+    tabId: string | null,
     groupImpactType?: ImpactType,
     groupImpactTabsIds?: ImpactTabsIds,
 ): boolean => {
-    if (!groupImpactType) {
+    if (!groupImpactType || !tabId) {
         return true;
     }
 
