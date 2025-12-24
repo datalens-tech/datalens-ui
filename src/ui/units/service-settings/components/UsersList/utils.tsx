@@ -20,6 +20,7 @@ export const getUsersListColumns = (): TableColumnConfig<ListUser>[] =>
         ? [
               {
                   id: 'user',
+                  // TODO: name: i18n('user'),
                   name: 'Пользователь',
                   template: ({firstName, lastName, email}) => (
                       <User
