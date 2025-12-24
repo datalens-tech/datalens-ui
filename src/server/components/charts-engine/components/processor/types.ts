@@ -94,7 +94,8 @@ export type ProcessorFiles =
     | 'Highcharts'
     | 'Config'
     | 'Prepare'
-    | 'Controls';
+    | 'Controls'
+    | 'Activities';
 export type ProcessorLogs = {modules: LogItem[][]} & Partial<
     Record<ProcessorFiles | 'failed', LogItem[][]>
 >;
@@ -163,6 +164,9 @@ export type ChartBuilder = {
         params: StringParams;
         actionParams: StringParams;
         hooks: ProcessorHooks;
+    }) => Promise<ChartBuilderResult>;
+    buildPaletteSources?: (args: {
+        sources?: Record<string, DataFetcherResult>;
     }) => Promise<ChartBuilderResult>;
     buildChartLibraryConfig: (args: {
         data?: unknown;

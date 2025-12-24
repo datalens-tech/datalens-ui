@@ -18,10 +18,11 @@ type GetSourceColumnArgs = {
     width: string;
     avatars?: DatasetSourceAvatar[];
     openDialogFieldEditor: (row: DatasetField) => void;
+    readonly: boolean;
 };
 
 export const getSourceColumn = (args: GetSourceColumnArgs): Column<DatasetField> => {
-    const {width, avatars, openDialogFieldEditor} = args;
+    const {width, avatars, openDialogFieldEditor, readonly} = args;
 
     return {
         name: 'formula',
@@ -45,6 +46,7 @@ export const getSourceColumn = (args: GetSourceColumnArgs): Column<DatasetField>
                     view="flat"
                     title={i18n('button_open-field-editor')}
                     width="max"
+                    disabled={readonly}
                     onClick={() => openDialogFieldEditor(row)}
                 >
                     {isFormulaField ? (

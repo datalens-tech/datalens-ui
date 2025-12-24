@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {CollectionItemEntities} from 'shared';
-import type {StructureItem} from 'shared/schema';
+import type {StructureItemWithPermissions} from 'shared/schema';
 import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 import {EntryIcon} from 'ui/components/EntryIcon/EntryIcon';
 import {WorkbookIcon} from 'ui/components/WorkbookIcon/WorkbookIcon';
@@ -9,7 +9,7 @@ import {WorkbookIcon} from 'ui/components/WorkbookIcon/WorkbookIcon';
 import {getIsWorkbookItem} from '../helpers';
 
 type CollectionItemIconProps = {
-    item: StructureItem;
+    item: StructureItemWithPermissions;
 };
 
 export const CollectionItemIcon = ({item}: CollectionItemIconProps) => {

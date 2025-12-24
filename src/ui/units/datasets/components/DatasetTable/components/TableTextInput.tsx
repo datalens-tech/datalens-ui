@@ -2,7 +2,6 @@ import React from 'react';
 
 import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import _debounce from 'lodash/debounce';
 
 import type {ColumnItem} from '../types';
 
@@ -12,10 +11,12 @@ type TableTextInputProps = ColumnItem & {
     text: string;
     error?: boolean;
     onUpdate?: (text: string) => void;
+    qa?: string;
+    disabled?: boolean;
 };
 
 export const TableTextInput = (props: TableTextInputProps) => {
-    const {text, index, error, setActiveRow, onUpdate} = props;
+    const {text, index, error, setActiveRow, onUpdate, qa, disabled} = props;
     const [localText, setLocalText] = React.useState(text);
     const ref = React.useRef<HTMLInputElement>(null);
 
@@ -53,6 +54,8 @@ export const TableTextInput = (props: TableTextInputProps) => {
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             onUpdate={handleUpdate}
+            disabled={disabled}
+            qa={qa}
         />
     );
 };

@@ -117,6 +117,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                                 <DashActionPanelAdditionalButtons
                                     key="additional-buttons"
                                     dashSettings={this.props.settings}
+                                    isEditMode={this.props.isEditMode}
                                 />,
                                 <div className={b('controls')} key="controls">
                                     {this.renderControls()}
@@ -288,6 +289,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         const getSelectStateMenuItemFn = registry.common.functions.get('getSelectStateMenuItem');
 
         const selectStateMenuItem = getSelectStateMenuItemFn({
+            entry,
             action: this.onSelectStateClick,
             hidden: !canEdit || !isCurrentRevisionActual || DL.IS_MOBILE || Boolean(entry?.fake),
         });

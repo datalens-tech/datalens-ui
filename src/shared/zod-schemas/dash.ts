@@ -116,6 +116,12 @@ const controlSchema = z
         namespace: z.literal(DASH_DEFAULT_NAMESPACE),
         title: z.string().min(1),
         sourceType: z.enum(DashTabItemControlSourceType),
+        // TODO(global selectors): uncomment when flag EnableGlobalSelectors will be enabled
+        // 'allTabs' = global selectors
+        // 'currentTab' = regular selector that is visible only on one tab
+        // 'selectedTabs' + impactTabsIds = selector is visible on the selected tabs
+        // impactType: z.enum(['allTabs', 'currentTab', 'selectedTabs']).optional().describe('Type that regulate which tabs the selector will be displayed on'),
+        // impactTabsIds: z.array(z.string()).optional().describe('List of tabs ids that regulate which tabs the selector will be displayed on. Depends on impactType field'),
     })
     .and(
         z.discriminatedUnion('sourceType', [
@@ -147,6 +153,12 @@ const groupControlItemsSchema = z
         defaults: z.record(z.any(), z.any()),
         placementMode: z.enum(CONTROLS_PLACEMENT_MODE).optional(),
         width: z.string().optional(),
+        // TODO(global selectors): uncomment when flag EnableGlobalSelectors will be enabled
+        // 'allTabs' = global selectors
+        // 'currentTab' = regular selector that is visible only on one tab
+        // 'selectedTabs' + impactTabsIds = selector is visible on the selected tabs
+        // impactType: z.enum(['allTabs', 'currentTab', 'selectedTabs']).optional().describe('Type that regulate which tabs the selector will be displayed on'),
+        // impactTabsIds: z.array(z.string()).optional().describe('List of tabs ids that regulate which tabs the selector will be displayed on. Depends on impactType field'),
     })
     .and(
         z.discriminatedUnion('sourceType', [
@@ -259,18 +271,9 @@ const settingsSchema = z.object({
 export const dataSchema = z.object({
     counter: z.number().int().min(1),
     salt: z.string().min(1),
-    schemeVersion: z.literal(DASH_CURRENT_SCHEME_VERSION).default(DASH_CURRENT_SCHEME_VERSION),
+    schemeVersion: z.literal(DASH_CURRENT_SCHEME_VERSION),
     tabs: z.array(tabSchema),
     settings: settingsSchema,
     supportDescription: z.string().optional(),
     accessDescription: z.string().optional(),
-});
-
-// Main dashboard API validation schema
-export const dashSchema = z.object({
-    key: z.string().min(1).optional(),
-    workbookId: z.union([z.null(), z.string()]).optional(),
-    data: dataSchema,
-    meta: z.record(z.any(), z.any()).optional(),
-    links: z.record(z.string(), z.string()).optional(),
 });

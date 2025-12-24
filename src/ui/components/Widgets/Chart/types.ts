@@ -12,10 +12,13 @@ import type {
     ControlWidget,
     LoadedWidget,
     LoadedWidgetData,
+    OnActivityComplete,
     OnChangeData,
+    RunActivityFn,
     WidgetDashState,
 } from 'ui/libs/DatalensChartkit/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
+import type {ExtendedDashKitContextType} from 'ui/units/dash/typings/context';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {
@@ -27,7 +30,6 @@ import type {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
 } from '../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import type {ControlProps} from '../../../libs/DatalensChartkit/components/Control/types';
 import type {Props as DrillProps} from '../../../libs/DatalensChartkit/components/Drill/Drill';
 import type {MenuItemConfig} from '../../../libs/DatalensChartkit/menu/Menu';
 import type {
@@ -126,6 +128,8 @@ type ChartKitBaseWrapperProps = ChartsProps & {
 
     needRenderContentControls?: boolean;
     reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
+    runActivity?: RunActivityFn;
+    updateTabsWithGlobalState?: ExtendedDashKitContextType['updateTabsWithGlobalState'];
 };
 
 export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
@@ -133,6 +137,7 @@ export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
     ChartsProps & {
         usageType: 'widget';
         onWidgetLoadData?: OnWidgetLoadDataHandler;
+        backgroundColor?: string;
     };
 
 export type ChartProviderPropsWithRefProps = ChartRefProp &
@@ -186,6 +191,7 @@ export type ChartWithProviderWithRefProps = ChartProviderPropsWithRefProps;
 export type ChartWrapperWithProviderProps = ChartWrapperWithRefProps & {
     workbookId?: string | null;
     enableAssistant?: boolean;
+    onActivityComplete?: OnActivityComplete;
 };
 
 export type ChartWidgetProps = ChartWidgetProviderPropsWithRefProps &
@@ -197,6 +203,7 @@ export type ChartNoWidgetProps = ChartProviderPropsWithRefProps &
     Omit<ChartKitBaseWrapperProps, 'onLoad'> & {
         rootNodeRef?: React.RefObject<HTMLDivElement>;
         chartKitRef?: React.RefObject<ChartKit | ChartKitRef>;
+        onActivityComplete?: OnActivityComplete;
     };
 
 export type ChartWidgetPropsWithContext = ChartWidgetProviderPropsWithRefProps &
@@ -224,6 +231,7 @@ export type ChartKitWrapperParams = {
     getControls: (params: StringParams) => void;
     paneSplitOrientation?: 'vertical' | 'horizontal';
     widgetDashState?: WidgetDashState;
+    runActivity?: RunActivityFn;
 };
 
 export type ChartWidgetData =
@@ -312,7 +320,6 @@ export type ChartContentProps = Pick<
         enableActionParams?: boolean;
         enableAssistant?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
-        runAction?: ControlProps['runAction'];
         backgroundColor?: string;
     };
 
@@ -328,8 +335,7 @@ export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChang
         initialParams: ChartInitialParams;
         getControls?: ChartKitWrapperParams['getControls'];
         onUpdate?: (data: OnChangeData) => void;
-        runAction?: ControlProps['runAction'];
-        onAction?: ControlProps['onAction'];
+        runActivity?: RunActivityFn;
     };
 
 export type ResolveWidgetControlDataRefArgs =

@@ -12,7 +12,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {getStringFullUrl, slct} from '../../../utils';
 import {TestParametrizationConfig} from '../../../types/config';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
-import {SelectorElementType} from '../../../page-objects/dashboard/ControlActions';
+import {SelectorElementType} from '../../../page-objects/dashboard/controlActions/ControlActions';
 
 const PARAMS = {
     DATASET_FIRST_CONTROL: {

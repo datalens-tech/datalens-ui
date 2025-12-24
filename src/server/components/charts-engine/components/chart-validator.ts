@@ -41,8 +41,10 @@ const MODEL_TABS: Record<string, Set<string>> = {
 
     [EDITOR_TYPE.MARKDOWN_NODE]: new Set([
         'js,params,shared,url',
+        'js,params,shared,url,ui',
         'js,meta,params,shared,url',
         'js,params,secrets,shared,url',
+        'js,params,secrets,shared,url,ui',
         'js,meta,params,secrets,shared,url',
     ]),
 
@@ -83,7 +85,7 @@ MODEL_TABS[EDITOR_TYPE.BLANK_CHART_NODE] = MODEL_TABS[EDITOR_TYPE.ADVANCED_CHART
 
 export const chartValidator = {
     validate: ({data, type}: {data: Record<string, unknown>; type: string}) => {
-        const dataTabs = Object.keys(data).sort();
+        let dataTabs = Object.keys(data).sort();
         const modelTabs = MODEL_TABS[type as keyof typeof MODEL_TABS];
 
         if (modelTabs) {
@@ -92,6 +94,9 @@ export const chartValidator = {
                     throw new Error(`Each tab must have content (failed at tab "${key}")`);
                 }
             });
+
+            // "activities" is not a required tab
+            dataTabs = dataTabs.filter((tab) => tab !== 'activities');
 
             return Array.from(modelTabs).some((modelTab) => {
                 const oldTabs = modelTab.split(',').sort();

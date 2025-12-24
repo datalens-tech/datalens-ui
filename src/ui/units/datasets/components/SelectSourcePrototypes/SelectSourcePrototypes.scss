@@ -80,8 +80,20 @@
         flex-shrink: 0;
     }
 
-    &__connection-title {
+    &__connection-title-container {
         flex-grow: 1;
+        display: flex;
+        gap: var(--g-spacing-1);
+        align-items: center;
+        min-width: 0;
+        margin-right: var(--g-spacing-2);
+    }
+
+    &__connection-shared-icon {
+        flex-shrink: 0;
+    }
+
+    &__connection-title {
         @include overflow-ellipsis;
 
         &_deleted {

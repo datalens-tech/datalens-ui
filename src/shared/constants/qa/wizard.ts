@@ -148,6 +148,10 @@ export const enum DialogPlaceholderQa {
     TooltipZeroToMaxScale = 'dialog-placeholder-tooltip-zero-to-max-scale',
     TooltipLogarithmicAxis = 'dialog-placeholder-tooltip-logarithmic-axis',
     AxisFormatMode = 'dialog-placeholder-axis-format-mode',
+    LabelsViewRadioButtons = 'dialog-placeholder-axis-labels-view',
+    AxisScaleModeRadioButtons = 'dialog-placeholder-axis-scale-mode',
+    AxisMinInput = 'dialog-placeholder-axis-min-input',
+    AxisMaxInput = 'dialog-placeholder-axis-max-input',
 }
 
 export const enum DatasetItemActionsQa {

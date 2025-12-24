@@ -1,6 +1,10 @@
 import type {ItemDropProps} from '@gravity-ui/dashkit';
+import type {ThemeType} from '@gravity-ui/uikit';
 
 import type {Operations} from '../modules';
+
+export type ImpactType = 'allTabs' | 'currentTab' | 'selectedTabs' | 'asGroup';
+export type ImpactTabsIds = string[] | null | undefined;
 
 import type {
     ClientChartsConfig,
@@ -89,6 +93,8 @@ export type DashSettings = {
     loadOnlyVisibleCharts?: boolean;
     margins?: [number, number];
     enableAssistant?: boolean;
+    backgroundSettings?: BackgroundSettings;
+    borderRadius?: number;
 };
 
 export interface DashData {
@@ -105,13 +111,16 @@ export interface DashData {
 
 export type DashDragOptions = ItemDropProps;
 
+type OptionalDashDataSettings = Pick<
+    DashSettings,
+    'margins' | 'enableAssistant' | 'backgroundSettings' | 'borderRadius'
+>;
+
 // config with strict requirements of settings for new dash
 // schemeVersion comes from server
 export type FakeDashData = Omit<DashData, 'schemeVersion'> & {
-    settings: Required<Omit<DashSettings, 'margins' | 'enableAssistant' | 'signedGlobalParams'>> & {
-        margins?: DashSettings['margins'];
-        enableAssistant?: boolean;
-    };
+    settings: Required<Omit<DashSettings, 'signedGlobalParams' | keyof OptionalDashDataSettings>> &
+        OptionalDashDataSettings;
 };
 
 export interface DashTabSettings {
@@ -125,6 +134,7 @@ export interface DashTab {
     aliases: DashTabAliases;
     connections: DashTabConnection[];
     settings?: DashTabSettings;
+    globalItems?: DashTabItem[];
 }
 
 export type DashSettingsGlobalParams = Record<string, string | string[]>;
@@ -138,22 +148,17 @@ export type DashTabItem =
     | DashTabItemGroupControl
     | DashTabItemImage;
 
-export type BackgroundSettings = {
+export type ColorByTheme = Partial<Record<ThemeType, string | undefined>>;
+
+export type OldBackgroundSettings = {
     enabled?: boolean;
     color: string;
 };
 
-export function isBackgroundSettings(value: unknown): value is BackgroundSettings {
-    return (
-        typeof value === 'object' &&
-        value !== null &&
-        'color' in value &&
-        typeof value.color === 'string' &&
-        ('enabled' in value
-            ? typeof value.enabled === 'boolean' || value.enabled === undefined
-            : true)
-    );
-}
+export type ColorSettings = ColorByTheme | string;
+export type BackgroundSettings = {color?: ColorSettings};
+
+export type TitleTextSettings = {color?: ColorSettings};
 
 export interface DashTabItemBase {
     id: string;
@@ -164,12 +169,17 @@ export interface DashTabItemBase {
     title?: string;
 }
 
+export type DashTabItemBaseData = {
+    background?: OldBackgroundSettings;
+    backgroundSettings?: BackgroundSettings;
+    borderRadius?: number;
+};
+
 export interface DashTabItemText extends DashTabItemBase {
     type: DashTabItemType.Text;
-    data: {
+    data: DashTabItemBaseData & {
         text: string;
         autoHeight?: boolean;
-        background?: BackgroundSettings;
     };
 }
 
@@ -182,20 +192,23 @@ export type DashTitleSize =
 
 export interface DashTabItemTitle extends DashTabItemBase {
     type: DashTabItemType.Title;
-    data: {
+    data: DashTabItemBaseData & {
         text: string;
         size: DashTitleSize;
         showInTOC: boolean;
         autoHeight?: boolean;
-        background?: BackgroundSettings;
         textColor?: string;
+        textSettings?: TitleTextSettings;
         hint?: HintSettings;
     };
 }
 
 export interface DashTabItemWidget extends DashTabItemBase {
     type: DashTabItemType.Widget;
-    data: {hideTitle: boolean; tabs: DashTabItemWidgetTab[]};
+    data: Omit<DashTabItemBaseData, 'background'> & {
+        hideTitle: boolean;
+        tabs: DashTabItemWidgetTab[];
+    };
 }
 
 export interface DashTabItemWidgetTab {
@@ -210,7 +223,7 @@ export interface DashTabItemWidgetTab {
     params: StringParams;
     autoHeight?: boolean;
     enableActionParams?: boolean;
-    background?: BackgroundSettings;
+    background?: OldBackgroundSettings;
 }
 
 export interface DashTabItemControl extends DashTabItemBase {
@@ -219,19 +232,24 @@ export interface DashTabItemControl extends DashTabItemBase {
     defaults: StringParams;
 }
 
-export interface DashTabItemControlData {
+export interface DashTabItemControlBaseData {
     id: string;
     title: string;
-    sourceType: DashTabItemControlSourceType;
-    source:
-        | DashTabItemControlDataset['source']
-        | DashTabItemControlManual['source']
-        | DashTabItemControlExternal['source'];
     placementMode?: 'auto' | '%' | 'px';
     autoHeight?: boolean;
     width?: string;
     defaults?: StringParams;
     namespace: string;
+    impactType?: ImpactType;
+    impactTabsIds?: ImpactTabsIds;
+}
+
+export interface DashTabItemControlData extends DashTabItemControlBaseData {
+    sourceType: DashTabItemControlSourceType;
+    source:
+        | DashTabItemControlDataset['source']
+        | DashTabItemControlManual['source']
+        | DashTabItemControlExternal['source'];
 }
 
 export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
@@ -333,15 +351,19 @@ export interface DashTabItemGroupControl extends DashTabItemBase {
     defaults: StringParams;
 }
 
-export interface DashTabItemGroupControlData {
+export interface DashTabItemGroupControlBaseData {
     showGroupName: boolean;
     groupName?: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
+    impactType?: ImpactType;
+    impactTabsIds?: ImpactTabsIds;
 
     updateControlsOnChange?: boolean;
+}
 
+export interface DashTabItemGroupControlData extends DashTabItemGroupControlBaseData {
     group: DashTabItemControlSingle[];
 }
 
@@ -383,10 +405,9 @@ export interface DashStats {
 
 export interface DashTabItemImage extends DashTabItemBase {
     type: DashTabItemType.Image;
-    data: {
+    data: DashTabItemBaseData & {
         src: string;
         alt?: string;
-        background?: BackgroundSettings;
         preserveAspectRatio?: boolean;
     };
 }

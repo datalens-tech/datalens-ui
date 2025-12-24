@@ -38,7 +38,6 @@ export enum Feature {
     EntryMenuItemMove = 'EntryMenuItemMove',
     ExternalSelectors = 'ExternalSelectors',
     DashBoardWidgetParamsStrictValidation = 'DashBoardWidgetParamsStrictValidation',
-    D3Visualizations = 'D3Visualizations',
     HideMultiDatasets = 'HideMultiDatasets',
     ShouldCheckEditorAccess = 'ShouldCheckEditorAccess',
     HideMultitenant = 'HideMultitenant',
@@ -57,8 +56,6 @@ export enum Feature {
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
-    /** Additional chart config for making requests by widget events */
-    ChartActions = 'ChartActions',
     /** Disable the use of html and function in chart configs */
     DisableFnAndHtml = 'DisableFnAndHtml',
     /** Enable using of presigned urls for uploading files to S3 */
@@ -90,17 +87,22 @@ export enum Feature {
     GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
     /** Use GravityUI Charts as the default library for some wizard visualizations(line, area and bar-x) */
     GravityChartsForLineAreaAndBarX = 'GravityChartsForLineAreaAndBarX',
-    /** Show dataset description button */
-    EnableDatasetDescription = 'EnableDatasetDescription',
-    /** Show connection description button */
-    EnableConnectionDescription = 'EnableConnectionDescription',
-    /** Enable connection revisions  */
-    EnableConnectionRevisions = 'EnableConnectionRevisions',
     /** Enable pagination in dataset sources table */
     EnableDatasetSourcesPagination = 'EnableDatasetSourcesPagination',
+    /** Enable shared connections and datasets */
+    EnableSharedEntries = 'EnableSharedEntries',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+    /** enabled redesign/moving to drawers existing settings */
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
+    /** Enable a setting in the Selector settings dialog that allows you to make the selector pass-through for all or several tabs */
+    EnableGlobalSelectors = 'EnableGlobalSelectors',
+    /** enables new dash & widgets settings */
+    EnableNewDashSettings = 'EnableNewDashSettings',
+    /** Enable color pickers with customization of values for light & dark themes separately */
+    EnableDashColorPickersByTheme = 'EnableDashColorPickersByTheme',
+    /** Shows updated settings page */
+    EnableNewServiceSettings = 'EnableNewServiceSettings',
 }
 
 export type FeatureConfig = Record<string, boolean>;

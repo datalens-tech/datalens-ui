@@ -9,9 +9,14 @@ const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 type GroupControlFooterProps = {
     handleClose: () => void;
     handleApply: () => void;
+    className?: string;
 };
 
-export const GroupControlFooter = ({handleClose, handleApply}: GroupControlFooterProps) => {
+export const GroupControlFooter = ({
+    handleClose,
+    handleApply,
+    className,
+}: GroupControlFooterProps) => {
     return (
         <Dialog.Footer
             onClickButtonCancel={handleClose}
@@ -20,6 +25,7 @@ export const GroupControlFooter = ({handleClose, handleApply}: GroupControlFoote
             textButtonCancel={i18n('button_cancel')}
             propsButtonApply={{qa: ControlQA.dialogControlApplyBtn}}
             propsButtonCancel={{qa: ControlQA.dialogControlCancelBtn}}
+            className={className}
         />
     );
 };

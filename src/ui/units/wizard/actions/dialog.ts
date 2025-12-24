@@ -136,9 +136,10 @@ export function openDialogPlaceholder({placeholder, onApply}: OpenDialogPlacehol
 
 type OpenDialogMetricArguments = {
     extraSettings: CommonSharedExtraSettings | undefined;
+    onApply?: () => void;
 };
 
-export function openDialogMetric({extraSettings}: OpenDialogMetricArguments) {
+export function openDialogMetric({extraSettings, onApply}: OpenDialogMetricArguments) {
     return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const colorPalettes = selectColorPalettes(getState());
         if (!colorPalettes.length) {
@@ -176,6 +177,8 @@ export function openDialogMetric({extraSettings}: OpenDialogMetricArguments) {
                         dispatch(setExtraSettings({...extraSettings, ...metricSettins}));
 
                         dispatch(updatePreviewAndClientChartsConfig({}));
+
+                        onApply?.();
                     },
                 },
             }),
@@ -200,10 +203,7 @@ export function openDialogPointsSize({
         const visualizationId = visualization.id;
 
         const pointType =
-            visualizationId === WizardVisualizationId.Scatter ||
-            visualizationId === WizardVisualizationId.ScatterD3
-                ? 'scatter'
-                : 'geopoint';
+            visualizationId === WizardVisualizationId.Scatter ? 'scatter' : 'geopoint';
 
         dispatch(
             openDialog({

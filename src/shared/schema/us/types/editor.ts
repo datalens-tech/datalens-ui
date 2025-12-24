@@ -7,6 +7,7 @@ export interface CreateEditorChartResponse extends EntryFields {
 }
 
 export interface CreateEditorChartArgs {
+    version?: number;
     type: string;
     data: EntryFieldData;
     key?: string;
@@ -24,6 +25,7 @@ export interface UpdateEditorChartResponse extends EntryFields {
 }
 
 export interface UpdateEditorChartArgs {
+    version?: number;
     entryId: string;
     mode: 'save' | 'publish';
     data: EntryFieldData;

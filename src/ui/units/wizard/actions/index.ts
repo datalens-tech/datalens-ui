@@ -68,7 +68,6 @@ import {getFilteredObject} from '../../../utils';
 import type {WizardDispatch, WizardGlobalState} from '../reducers';
 import {selectWizardWorkbookId} from '../selectors/settings';
 import {selectVisualization} from '../selectors/visualization';
-import {getWizardConfigFromRecipe} from '../utils/chart-recipe';
 import {filterVisualizationColors} from '../utils/colors';
 import {getChartFiltersWithDisabledProp} from '../utils/filters';
 import {getVisualization, transformSchema} from '../utils/helpers';
@@ -87,6 +86,7 @@ import {
 import {
     setDataset,
     setDatasetApiErrors,
+    setDatasetDelegation,
     setDatasetLoading,
     setDatasetSchema,
     setDatasets,
@@ -182,6 +182,36 @@ function getDataset({id, workbookId}: GetDatasetArgs) {
 
             return dataset;
         });
+}
+
+type GetDatasetDelegationArgs = {
+    datasetId: string;
+    workbookId: string;
+};
+
+function getDatasetDelegation({datasetId, workbookId}: GetDatasetDelegationArgs) {
+    return async function (dispatch: WizardDispatch) {
+        try {
+            const delegation = await getSdk().sdk.us.getSharedEntryDelegation({
+                sourceId: datasetId,
+                targetId: workbookId,
+            });
+            dispatch(
+                setDatasetDelegation({
+                    datasetId,
+                    delegation: delegation.isDelegated,
+                }),
+            );
+        } catch (error) {
+            dispatch(
+                showToast({
+                    title: error.message,
+                    type: 'danger',
+                    error,
+                }),
+            );
+        }
+    };
 }
 
 type GetDatasetsArgs = {
@@ -306,6 +336,14 @@ export function fetchDataset({id, replacing}: FetchDatasetArgs) {
                 }
 
                 dispatch(updatePreviewAndClientChartsConfig(preview));
+                if (dataset.collection_id && workbookId) {
+                    dispatch(
+                        getDatasetDelegation({
+                            datasetId: dataset.id,
+                            workbookId,
+                        }),
+                    );
+                }
             })
             .catch((error: DataLensApiError) => {
                 logger.logError('wizard: fetchDataset failed', error as Error);
@@ -2065,6 +2103,16 @@ function processWidget(args: ProcessWidgetArgs) {
                     isInitialPreview: true,
                 }),
             );
+            datasets.forEach((currentDataset) => {
+                if (currentDataset.collection_id && workbookId) {
+                    dispatch(
+                        getDatasetDelegation({
+                            datasetId: currentDataset.id,
+                            workbookId,
+                        }),
+                    );
+                }
+            });
         })
         .catch((error: DataLensApiError & {handeled: boolean}) => {
             if (error.handeled) {
@@ -2157,8 +2205,7 @@ export function setDefaults(args: SetDefaultsArgs) {
     const {entryId, revId, routeWorkbookId, unreleased} = args;
     return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const searchPairs = new URLSearchParams(window.location.search);
-        const entryConfigParam = searchPairs.get(URL_QUERY.ENTRY_CONFIG);
-        const chartRecipeParam = searchPairs.get(URL_QUERY.CHART_RECIPE);
+        const localConfigParam = searchPairs.get(URL_QUERY.LOCAL_CONFIG);
 
         if (routeWorkbookId) {
             dispatch(setRouteWorkbookId(routeWorkbookId));
@@ -2173,19 +2220,15 @@ export function setDefaults(args: SetDefaultsArgs) {
                 }),
             );
         } else {
-            if (entryConfigParam) {
+            if (localConfigParam) {
                 try {
-                    const config = JSON.parse(entryConfigParam);
-                    await processWidget({widget: {data: config}, dispatch, getState});
-                } catch (e) {
-                    console.error(e);
-                }
-            }
-
-            if (chartRecipeParam) {
-                try {
-                    const chartRecipe = JSON.parse(chartRecipeParam);
-                    const config = await getWizardConfigFromRecipe({recipe: chartRecipe});
+                    const config = JSON.parse(String(localStorage.getItem(URL_QUERY.LOCAL_CONFIG)));
+                    localStorage.removeItem(URL_QUERY.LOCAL_CONFIG);
+                    searchPairs.delete(URL_QUERY.LOCAL_CONFIG);
+                    history.replace({
+                        ...location,
+                        search: `?${searchPairs.toString()}`,
+                    });
                     await processWidget({widget: {data: config}, dispatch, getState});
                 } catch (e) {
                     console.error(e);

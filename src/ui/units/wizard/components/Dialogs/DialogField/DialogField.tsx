@@ -51,6 +51,7 @@ import {
     HIDE_LABEL_MODES,
 } from '../../../constants';
 import {getCommonDataType, getIconForDataType} from '../../../utils/helpers';
+import {getDefaultBarsSettings} from '../../../utils/table';
 import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
 
 import {BackgroundSettings} from './components/BackgroundSettings/BackgroundSettings';
@@ -62,7 +63,7 @@ import {
     getDefaultBackgroundSettings,
     showBackgroundSettingsInDialogField,
 } from './utils/backgroundSettings';
-import {getDefaultBarsSettings, showBarsInDialogField} from './utils/barsSettings';
+import {showBarsInDialogField} from './utils/barsSettings';
 import {
     canUseStringAsHtml,
     canUseStringAsMarkdown,
@@ -288,31 +289,29 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             <Dialog
                 open={true}
                 onClose={this.props.onCancel}
-                className={b()}
+                className={b({[itemType]: true})}
                 disableHeightTransition={true}
             >
-                <div className={b(itemType)}>
-                    <Dialog.Header
-                        caption={item.fakeTitle || item.title}
-                        insertBefore={<Icon data={dataTypeIconData} width="16" />}
-                    />
-                    <Dialog.Body className={b('body')}>{modalBody}</Dialog.Body>
-                    <Dialog.Footer
-                        preset="default"
-                        onClickButtonCancel={() => {
-                            this.props.onCancel();
-                        }}
-                        onClickButtonApply={() => {
-                            this.props.onApply(this.state);
-                        }}
-                        textButtonApply={i18n('wizard', 'button_apply')}
-                        textButtonCancel={i18n('wizard', 'button_cancel')}
-                        propsButtonApply={{
-                            disabled: !valid || isErrorOccurred,
-                            qa: 'field-dialog-apply',
-                        }}
-                    />
-                </div>
+                <Dialog.Header
+                    caption={item.fakeTitle || item.title}
+                    insertBefore={<Icon data={dataTypeIconData} width="16" />}
+                />
+                <Dialog.Body className={b('body')}>{modalBody}</Dialog.Body>
+                <Dialog.Footer
+                    preset="default"
+                    onClickButtonCancel={() => {
+                        this.props.onCancel();
+                    }}
+                    onClickButtonApply={() => {
+                        this.props.onApply(this.state);
+                    }}
+                    textButtonApply={i18n('wizard', 'button_apply')}
+                    textButtonCancel={i18n('wizard', 'button_cancel')}
+                    propsButtonApply={{
+                        disabled: !valid || isErrorOccurred,
+                        qa: 'field-dialog-apply',
+                    }}
+                />
             </Dialog>
         );
     }
@@ -482,8 +481,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
         const visualizationId = visualization.id as WizardVisualizationId;
         const canTransformToMarkdown =
             isStringField && canUseStringAsMarkdown(visualizationId, placeholderId);
-        const canTransformToHtml =
-            isStringField && canUseStringAsHtml(visualizationId, placeholderId);
+        const canTransformToHtml = isStringField && canUseStringAsHtml(visualizationId);
 
         if (!canTransformToMarkdown && !canTransformToHtml) {
             return null;

@@ -4,22 +4,23 @@ import {useDispatch} from 'react-redux';
 import {DIALOG_CREATE_ENTRY_IN_WORKBOOK} from 'ui/components/CollectionsStructure';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 
-import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_IN_WB_CONNECTION} from '../../dialogs';
+import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION} from '../../dialogs';
 import type {
     OpenDialogCreateConnectionArgs,
-    OpenDialogCreateConnectionInWbArgs,
+    OpenDialogCreateConnectionInWbOrCollectionArgs,
 } from '../../dialogs';
 
 type UseCreateConnectionHandlerProps = {
     hasWorkbookIdInParams?: boolean;
+    hasCollectionIdInParams?: boolean;
 };
 
 export type CreateConnectionHandlerArgs =
     | OpenDialogCreateConnectionArgs
-    | OpenDialogCreateConnectionInWbArgs;
+    | OpenDialogCreateConnectionInWbOrCollectionArgs;
 
 export const useCreateConnectionHandler = (props: UseCreateConnectionHandlerProps) => {
-    const {hasWorkbookIdInParams} = props;
+    const {hasWorkbookIdInParams, hasCollectionIdInParams} = props;
     const dispatch = useDispatch();
 
     const openCreationDialog = React.useCallback(
@@ -30,7 +31,7 @@ export const useCreateConnectionHandler = (props: UseCreateConnectionHandlerProp
     );
 
     const openCreateEntryInWorkbookDialog = React.useCallback(
-        (args: OpenDialogCreateConnectionInWbArgs) => {
+        (args: OpenDialogCreateConnectionInWbOrCollectionArgs) => {
             dispatch(
                 openDialog({
                     id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
@@ -39,8 +40,8 @@ export const useCreateConnectionHandler = (props: UseCreateConnectionHandlerProp
                         disableHistoryPush: true,
                         closeDialogAfterSuccessfulApply: false,
                         onApply: (workbookId) => {
-                            const extendedArgs: OpenDialogCreateConnectionInWbArgs = {
-                                id: DIALOG_CONN_CREATE_IN_WB_CONNECTION,
+                            const extendedArgs: OpenDialogCreateConnectionInWbOrCollectionArgs = {
+                                id: DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION,
                                 props: {
                                     workbookId,
                                     onApply: async (data) => {
@@ -68,8 +69,8 @@ export const useCreateConnectionHandler = (props: UseCreateConnectionHandlerProp
                     openCreationDialog(args);
                     break;
                 }
-                case DIALOG_CONN_CREATE_IN_WB_CONNECTION: {
-                    if (hasWorkbookIdInParams) {
+                case DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION: {
+                    if (hasWorkbookIdInParams || hasCollectionIdInParams) {
                         openCreationDialog(args);
                     } else {
                         openCreateEntryInWorkbookDialog(args);
@@ -77,7 +78,12 @@ export const useCreateConnectionHandler = (props: UseCreateConnectionHandlerProp
                 }
             }
         },
-        [hasWorkbookIdInParams, openCreationDialog, openCreateEntryInWorkbookDialog],
+        [
+            hasWorkbookIdInParams,
+            hasCollectionIdInParams,
+            openCreationDialog,
+            openCreateEntryInWorkbookDialog,
+        ],
     );
 
     return {createConnectionHandler};

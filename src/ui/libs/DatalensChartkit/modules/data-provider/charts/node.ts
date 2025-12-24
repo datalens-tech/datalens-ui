@@ -71,10 +71,15 @@ function shouldShowSafeChartInfo(params: StringParams) {
 }
 
 /* eslint-disable complexity */
-async function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyWidget>(
-    loaded: T,
-    noJsonFn?: boolean,
-): Promise<R & ChartsData> {
+async function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyWidget>({
+    loaded,
+    noJsonFn,
+    widgetElement,
+}: {
+    loaded: T;
+    noJsonFn?: boolean;
+    widgetElement?: Element;
+}): Promise<R & ChartsData> {
     const {
         type: loadedType,
         params,
@@ -128,10 +133,14 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
         }
 
         if (isNodeResponse(loaded)) {
+            const isWizardOrQl = result.isNewWizard || result.isQL;
             const parsedConfig = JSON.parse(loaded.config);
             const enableJsAndHtml = get(parsedConfig, 'enableJsAndHtml', true);
 
-            const jsonParse = noJsonFn || enableJsAndHtml === false ? JSON.parse : JSONfn.parse;
+            let jsonParse = JSON.parse;
+            if (!isWizardOrQl && !noJsonFn && enableJsAndHtml) {
+                jsonParse = JSONfn.parse;
+            }
 
             result.data = loaded.data;
             result.config = jsonParse(loaded.config);
@@ -166,6 +175,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     entryType: loadedType,
                     sandbox: uiSandbox,
                     options: uiSandboxOptions,
+                    widgetElement,
                 };
                 await unwrapPossibleFunctions({...unwrapFnArgs, target: result.config});
                 await unwrapPossibleFunctions({...unwrapFnArgs, target: result.libraryConfig});
@@ -173,7 +183,6 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            const isWizardOrQl = result.isNewWizard || result.isQL;
             const shouldProcessHtmlFields =
                 isPotentiallyUnsafeChart(loadedType) || result.config?.useHtml;
             if (shouldProcessHtmlFields) {

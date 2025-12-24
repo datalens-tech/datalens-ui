@@ -25,6 +25,7 @@ type SkippedListState<T> = {
 export type UpdateState<T> = ListState<T> | SkippedListState<T>;
 
 export type TabMenuProps<T> = {
+    className?: string;
     items: TabMenuItemData<T>[];
     selectedItemIndex: number;
     onUpdate: ({items, selectedItemIndex, action}: UpdateState<T>) => void;
@@ -35,6 +36,7 @@ export type TabMenuProps<T> = {
     onPasteItems?: (pasteConfig: CopiedConfigData | null) => null | TabMenuItemData<T>[];
     canPasteItems?: (pasteConfig: CopiedConfigData | null, workbooId?: string | null) => boolean;
     onCopyItem?: (itemIndex: number) => void;
+    renderWrapper?: (item: TabMenuItemData<T>, children: React.ReactNode) => React.ReactNode;
 } & (TabsWithMenu | TabsWithRemove);
 
 export type TabsWithMenu = {

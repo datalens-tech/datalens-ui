@@ -3,6 +3,7 @@ import type {SchemasByScope} from '@gravity-ui/gateway';
 import {AppError, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 
 import {getValidationSchema} from '../../../shared/schema/gateway-utils';
+import type {ChartsEngine} from '../../components/charts-engine';
 import {registerActionToOpenApi} from '../../components/public-api';
 import {registry} from '../../registry';
 import type {AnyApiServiceActionConfig} from '../../types/gateway';
@@ -11,9 +12,10 @@ import Utils from '../../utils';
 import {PUBLIC_API_ERRORS, PublicApiError} from './constants';
 import {parseRequestApiVersion, prepareError, validateRequestBody} from './utils';
 
-export const createPublicApiController = () => {
+export const createPublicApiController = (chartsEngine?: ChartsEngine) => {
     const {gatewayApi} = registry.getGatewayApi<SchemasByScope>();
-    const {baseConfig} = registry.getPublicApiConfig();
+    const {baseConfig, getAuthArgs} = registry.getPublicApiConfig();
+
     const schemasByScope = registry.getGatewaySchemasByScope();
 
     const actionToPathMap = new Map<Function, {serviceName: string; actionName: string}>();
@@ -51,11 +53,18 @@ export const createPublicApiController = () => {
         });
     });
 
+    const apiVersions = Object.keys(baseConfig).map(Number);
+    const latestApiVersion = Math.max(...apiVersions);
+
     return async function publicApiController(req: Request, res: Response) {
         try {
             const {action: actionName} = req.params;
 
-            const version = parseRequestApiVersion(req);
+            const version = parseRequestApiVersion({
+                req,
+                versions: apiVersions,
+                latestVersion: latestApiVersion,
+            });
 
             if (!actionName || !baseConfig[version].actions[actionName]) {
                 throw new PublicApiError(`Endpoint ${req.path} does not exist`, {
@@ -67,7 +76,8 @@ export const createPublicApiController = () => {
 
             const {ctx} = req;
 
-            const headers = Utils.pickRpcHeaders(req);
+            const headers = Utils.pickPublicApiHeaders(req);
+
             const requestId = ctx.get(REQUEST_ID_PARAM_NAME) || '';
 
             const gatewayAction = action.resolve(gatewayApi);
@@ -91,16 +101,33 @@ export const createPublicApiController = () => {
 
             const {paramsSchema} = validationSchema;
 
-            const validatedArgs = await validateRequestBody(paramsSchema, req.body);
+            if (action.rawAction) {
+                if (paramsSchema) {
+                    await validateRequestBody(paramsSchema, req.body);
+                }
 
-            const result = await gatewayAction({
-                headers,
-                args: validatedArgs,
-                ctx,
-                requestId,
-            });
+                await gatewayAction({
+                    headers,
+                    args: {req, res, chartsEngine},
+                    ctx,
+                    requestId,
+                    authArgs: getAuthArgs?.(req, res),
+                });
+            } else {
+                const validatedArgs = paramsSchema
+                    ? await validateRequestBody(paramsSchema, req.body)
+                    : undefined;
 
-            res.status(200).send(result.responseData);
+                const result = await gatewayAction({
+                    headers,
+                    args: validatedArgs,
+                    ctx,
+                    requestId,
+                    authArgs: getAuthArgs?.(req, res),
+                });
+
+                res.status(200).send(result.responseData);
+            }
         } catch (err: unknown) {
             const {status, message, code, details} = prepareError(err);
 

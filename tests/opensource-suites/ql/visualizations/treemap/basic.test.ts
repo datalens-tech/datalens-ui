@@ -20,7 +20,7 @@ datalensTest.describe('QL', () => {
             });
 
             const qlPage = new QLPage({page});
-            await qlPage.setVisualization(WizardVisualizationId.TreemapD3);
+            await qlPage.setVisualization(WizardVisualizationId.Treemap);
             await qlPage.setScript(script);
             await qlPage.runScript();
         });

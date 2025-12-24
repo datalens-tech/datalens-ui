@@ -4,11 +4,14 @@ import type {
     AddConfigItem,
     AddNewItemOptions,
     Config,
+    ConfigItemData,
     DashKit,
     ItemsStateAndParams,
     PluginTextProps,
     PluginTitleProps,
+    StateAndParamsMetaData,
 } from '@gravity-ui/dashkit';
+import type {ThemeType} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import {URL_QUERY, sdk} from 'index';
@@ -21,12 +24,13 @@ import type {
     DashTab,
     DashTabItem,
     DashTabItemControl,
-    DashTabItemGroupControl,
+    DashTabItemControlBaseData,
+    DashTabItemGroupControlBaseData,
     DashTabItemImage,
     DashTabItemWidget,
     RecursivePartial,
 } from 'shared';
-import {EntryScope, EntryUpdateMode} from 'shared';
+import {DashTabItemType, EntryScope, EntryUpdateMode, Feature} from 'shared';
 import type {AppDispatch} from 'ui/store';
 import {
     addEditHistoryPoint,
@@ -34,6 +38,7 @@ import {
     resetEditHistoryUnit,
 } from 'ui/store/actions/editHistory';
 import type {ItemDataSource} from 'ui/store/typings/controlDialog';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -50,9 +55,10 @@ import {LOCK_DURATION, Mode} from '../../modules/constants';
 import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
+import type {IsWidgetVisibleOnTabArgs} from '../../utils/selectors';
+import {isItemGlobal, isWidgetVisibleOnTab} from '../../utils/selectors';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
-import type {DashState} from '../reducers/dashTypedReducer';
 import {
     selectDash,
     selectDashData,
@@ -60,9 +66,14 @@ import {
     selectDashEntry,
     selectEntryId,
 } from '../selectors/dashTypedSelectors';
+import type {DashState, UpdateTabsWithGlobalStateArgs} from '../typings/dash';
 
 import {save} from './base/actions';
-import {migrateDataSettings} from './helpers';
+import {
+    getPreparedCopiedSelectorData,
+    migrateDataSettings,
+    processTabForGlobalUpdate,
+} from './helpers';
 
 import type {DashDispatch} from './index';
 
@@ -70,7 +81,7 @@ type GetState = () => DatalensGlobalState;
 
 export type TabsHashStates = {
     [key: string]: {
-        hash: string;
+        hash?: string;
         state: ItemsStateAndParams;
     };
 };
@@ -199,6 +210,7 @@ export type SetPageTabAction = {
         hashStates?: TabsHashStates;
     };
 };
+
 export const setPageTab = (tabId: string) => {
     return async function (dispatch: DashDispatch, getState: GetState) {
         const {dash} = getState();
@@ -216,6 +228,68 @@ export const setPageTab = (tabId: string) => {
             payload: {tabId},
         });
         dispatch(addDashEditHistoryPoint(true));
+    };
+};
+
+export const UPDATE_TABS_WITH_GLOBAL_STATE = Symbol('dash/UPDATE_TABS_WITH_GLOBAL_STATE');
+export type UpdateTabsWithGlobalStateAction = {
+    type: typeof UPDATE_TABS_WITH_GLOBAL_STATE;
+    payload: {hashStates: TabsHashStates};
+};
+
+export const updateTabsWithGlobalState = ({
+    params,
+    selectorItem,
+    appliedSelectorsIds,
+}: UpdateTabsWithGlobalStateArgs) => {
+    return function (dispatch: DashDispatch, getState: GetState) {
+        if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !isItemGlobal(selectorItem)) {
+            return;
+        }
+
+        const {
+            dash: {hashStates, tabId: currentTabId, data},
+        } = getState();
+
+        try {
+            const currentHashState = currentTabId ? hashStates?.[currentTabId] : null;
+            const currentMeta = currentHashState?.state?.__meta__ as StateAndParamsMetaData;
+
+            const updatedHashStates: TabsHashStates = {};
+            let hasUpdated = false;
+
+            data.tabs.forEach((tab) => {
+                const processedTab = processTabForGlobalUpdate(
+                    tab,
+                    currentTabId,
+                    selectorItem,
+                    appliedSelectorsIds,
+                    params,
+                    hashStates,
+                    currentMeta,
+                );
+                if (processedTab) {
+                    updatedHashStates[tab.id] = {
+                        state: processedTab.newState,
+                        hash: undefined,
+                    };
+                    hasUpdated = true;
+                }
+            });
+
+            if (!hasUpdated) {
+                return;
+            }
+
+            dispatch({
+                type: UPDATE_TABS_WITH_GLOBAL_STATE,
+                payload: {
+                    hashStates: updatedHashStates,
+                },
+            });
+        } catch (error) {
+            logger.logError('updateTabsWithGlobalState failed', error);
+        }
     };
 };
 
@@ -320,14 +394,48 @@ export type SetTabHashStateAction = {
 };
 
 export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'hashStates'>) {
-    return async (dispatch: DashDispatch) => {
+    return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        const {hashStates} = getState().dash;
         const {entryId, stateHashId, tabId} = data;
         const newData: SetTabHashStateAction['payload'] = {...data};
 
-        if (stateHashId && entryId) {
-            const hashData = await getSdk()
-                .sdk.us.getDashState({entryId, hash: stateHashId})
+        let hashId: string | undefined = stateHashId;
+        let hashData: ItemsStateAndParams | null | undefined = hashStates?.[tabId]?.state;
+        const prevHash = hashStates?.[tabId]?.hash;
+
+        // when generating a state for global parameters for inactive tabs, the hash remains undefined
+        // so we need to create hash
+        const needCreateHashByGlobalData = !stateHashId && !prevHash;
+
+        if (needCreateHashByGlobalData && hashData && entryId) {
+            await getSdk()
+                .sdk.us.createDashState({entryId, data: hashData})
+                .then(({hash}) => {
+                    hashId = hash;
+                    const searchParams = new URLSearchParams(location.search);
+
+                    if (hash) {
+                        searchParams.set('state', hash);
+
+                        history.replace({
+                            ...location,
+                            search: `?${searchParams.toString()}`,
+                        });
+                    }
+                })
                 .catch((error) => logger.logError('getDashState failed', error));
+        }
+
+        if (hashId && entryId) {
+            // don't need to get a state if it has already been generated for global items
+            if (!hashData || !needCreateHashByGlobalData) {
+                // a non-spa opening a link with an existing hash of the state
+                const calculatedHashData = await getSdk()
+                    .sdk.us.getDashState({entryId, hash: hashId})
+                    .catch((error) => logger.logError('getDashState failed', error));
+
+                hashData = calculatedHashData ? calculatedHashData.data : null;
+            }
 
             if (hashData) {
                 /*const {
@@ -336,9 +444,9 @@ export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'ha
 
                 newData.hashStates = {
                     [tabId]: {
-                        hash: stateHashId,
+                        hash: hashId,
                         // state: {...controls, ...states},
-                        state: hashData.data,
+                        state: hashData,
                     },
                 };
             }
@@ -348,6 +456,7 @@ export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'ha
             type: SET_TAB_HASH_STATE,
             payload: {
                 ...newData,
+                stateHashId: hashId,
             },
         });
     };
@@ -394,17 +503,20 @@ type SetItemDataBase = {
     autoHeight?: boolean;
     source?: ItemDataSource;
 };
+
+type SetItemDataGroupControlItem = Partial<DashTabItemControlBaseData> & SetItemDataBase;
+
 export type SetItemDataText = RecursivePartial<PluginTextProps['data']> & SetItemDataBase;
 export type SetItemDataTitle = RecursivePartial<PluginTitleProps['data']> & SetItemDataBase;
-export type SetItemDataGroupControl = Partial<DashTabItemGroupControl['data']> & SetItemDataBase;
+export type SetItemDataGroupControl = Partial<DashTabItemGroupControlBaseData> & {
+    group: SetItemDataGroupControlItem[];
+};
 export type SetItemDataExternalControl = Partial<DashTabItemControl['data']> & SetItemDataBase;
 export type SetItemDataImage = DashTabItemImage['data'];
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
 export type SetItemDataArgs = {
-    data: SetItemDataText | SetItemDataTitle | SetItemDataImage | SetItemDataGroupControl;
     defaults?: SetItemDataDefaults;
-    type?: string;
     namespace?: string;
     // context for selectors pasted from the buffer
     contextList?: {
@@ -413,7 +525,13 @@ export type SetItemDataArgs = {
         targetEntryId: string;
         targetDashTabId: string;
     }[];
-};
+} & (
+    | {type?: DashTabItemType.Control; data: SetItemDataExternalControl}
+    | {type?: DashTabItemType.GroupControl; data: SetItemDataGroupControl}
+    | {type?: DashTabItemType.Text; data: SetItemDataText}
+    | {type?: DashTabItemType.Title; data: SetItemDataTitle}
+    | {type?: DashTabItemType.Image; data: SetItemDataImage}
+);
 
 export type SetItemDataAction = {
     type: typeof actionTypes.SET_ITEM_DATA;
@@ -782,7 +900,7 @@ export function purgeData(data: DashData) {
     return {
         ...data,
         tabs: data.tabs.map((tab) => {
-            const {id: tabId, items: tabItems, layout, connections, aliases} = tab;
+            const {id: tabId, items, layout, connections, aliases, globalItems} = tab;
 
             const currentItemsIds = new Set();
             const currentWidgetTabsIds = new Set();
@@ -790,7 +908,20 @@ export function purgeData(data: DashData) {
 
             allTabsIds.add(tabId);
 
-            const resultItems = tabItems
+            globalItems?.forEach((item) => {
+                allItemsIds.add(item.id);
+                currentItemsIds.add(item.id);
+
+                if (item.type === ITEM_TYPE.GROUP_CONTROL && 'group' in item.data) {
+                    item.data.group.forEach((widgetItem) => {
+                        currentControlsIds.add(widgetItem.id);
+                    });
+                } else {
+                    currentControlsIds.add(item.id);
+                }
+            });
+
+            const resultItems = items
                 // there are empty data
                 .filter((item) => !isEmpty(item.data))
                 .map((item) => {
@@ -926,19 +1057,72 @@ export const updateAllDashSettings = (data: {
     };
 };
 
-export const setCopiedItemData = (payload: {
+type SetCopiedItemDataPayload = {
     item: AddConfigItem;
     context?: CopiedConfigContext;
     options: AddNewItemOptions;
-}) => {
-    return (dispatch: DashDispatch) => {
-        batch(() => {
-            dispatch({
-                type: actionTypes.SET_COPIED_ITEM_DATA as any, // TODO move to TS,
-                payload,
+    dashVisualSettings?: {
+        themeType?: ThemeType;
+    };
+};
+
+export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
+    return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        const {
+            tabId,
+            entry: {entryId},
+        } = getState().dash;
+
+        const isSelectorItem =
+            payload.item.type === DashTabItemType.Control ||
+            payload.item.type === DashTabItemType.GroupControl;
+
+        const dispatchEvents = (result: SetCopiedItemDataPayload) => {
+            batch(() => {
+                dispatch({
+                    type: actionTypes.SET_COPIED_ITEM_DATA as any, // TODO move to TS,
+                    payload: result,
+                });
+                dispatch(addDashEditHistoryPoint());
             });
-            dispatch(addDashEditHistoryPoint());
-        });
+        };
+
+        if (tabId && isSelectorItem) {
+            const selectorData = payload.item.data as IsWidgetVisibleOnTabArgs['itemData'];
+
+            const isWidgetVisible = isWidgetVisibleOnTab({
+                itemData: selectorData,
+                tabId,
+            });
+
+            if (isWidgetVisible) {
+                dispatchEvents(payload);
+                return;
+            }
+
+            const hasEntryChanged = payload.context?.targetEntryId !== entryId;
+            const hasTabChanged = payload.context?.targetDashTabId !== tabId;
+
+            const updatedData = getPreparedCopiedSelectorData({
+                selectorData,
+                hasEntryChanged,
+                hasTabChanged,
+                isWidgetVisible,
+                tabId,
+                dispatch,
+            });
+
+            if (updatedData) {
+                dispatchEvents({
+                    ...payload,
+                    item: {...payload.item, data: updatedData as ConfigItemData},
+                });
+            }
+
+            return;
+        }
+
+        dispatchEvents(payload);
     };
 };
 
@@ -1008,3 +1192,39 @@ export function updateDeprecatedDashConfig() {
         dispatch(addDashEditHistoryPoint());
     };
 }
+
+export const REMOVE_GLOBAL_ITEMS = Symbol('dash/REMOVE_GLOBAL_ITEMS');
+export type RemoveGlobalItemsAction = {
+    type: typeof REMOVE_GLOBAL_ITEMS;
+    payload: {itemId: string};
+};
+export const removeGlobalItems = (
+    payload: RemoveGlobalItemsAction['payload'],
+): RemoveGlobalItemsAction => ({
+    type: REMOVE_GLOBAL_ITEMS,
+    payload,
+});
+
+export const UPDATE_CONNECTIONS_UPDATERS = Symbol('dash/UPDATE_CONNECTIONS_UPDATERS');
+export type UpdateConnectionsUpdatersAction = {
+    type: typeof UPDATE_CONNECTIONS_UPDATERS;
+    payload: {
+        tabId: string;
+        joinedSelectorId: string;
+        targetSelectorParamId: string;
+    };
+};
+export const updateConnectionsUpdaters = (
+    payload: UpdateConnectionsUpdatersAction['payload'],
+): UpdateConnectionsUpdatersAction => ({
+    type: UPDATE_CONNECTIONS_UPDATERS,
+    payload,
+});
+
+export const RESET_CONNECTIONS_UPDATERS = Symbol('dash/RESET_CONNECTIONS_UPDATERS');
+export type ResetConnectionsUpdatersAction = {
+    type: typeof RESET_CONNECTIONS_UPDATERS;
+};
+export const resetConnectionsUpdaters = (): ResetConnectionsUpdatersAction => ({
+    type: RESET_CONNECTIONS_UPDATERS,
+});

@@ -36,6 +36,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
             paneSplitOrientation,
             widgetDashState,
             backgroundColor,
+            runActivity,
         } = props;
 
         const {data: chartkitHolidays} = useGetChartkitHolidaysAsyncQuery();
@@ -58,11 +59,21 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
                 extra: {holidays: chartkitHolidays},
             });
 
-            const additionalProps = getAdditionalProps({type: chartkitType, splitTooltip});
+            const additionalProps = getAdditionalProps({
+                type: chartkitType,
+                splitTooltip,
+                loadedData,
+            });
 
             return {
                 type: chartkitType,
-                data: getOpensourceChartKitData({type: chartkitType, loadedData, onChange}),
+                data: getOpensourceChartKitData({
+                    type: chartkitType,
+                    loadedData,
+                    onChange,
+                    runActivity,
+                    chartkitHolidays,
+                }),
                 lang,
                 splitTooltip,
                 isMobile,
@@ -125,6 +136,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
                 paneSplitOrientation={paneSplitOrientation}
                 widgetDashState={widgetDashState}
                 backgroundColor={backgroundColor}
+                runActivity={runActivity}
             />
         );
     },

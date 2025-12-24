@@ -26,6 +26,7 @@ import type {
     AccessBindingDelta,
     ListCollectionAccessBindingsResponse,
     ListWorkbookAccessBindingsResponse,
+    ListSharedEntryAccessBindingsResponse,
     PageTokenData,
     GetClaimsResponse,
     GetClaimsArgs,
@@ -37,11 +38,7 @@ import type {
 } from '../../../shared/schema';
 import {getSdk} from 'libs/schematic-sdk';
 import type {SuggestBatchListMembersArgs} from '../typings/iamAccessDialog';
-
-export enum ResourceType {
-    Collection = 'collection',
-    Workbook = 'workbook',
-}
+import {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 
 type ResetStateAction = {
     type: typeof RESET_STATE;
@@ -115,7 +112,10 @@ export const listAccessBindings = ({
         });
 
         const thenHandler = (
-            data: ListCollectionAccessBindingsResponse | ListWorkbookAccessBindingsResponse,
+            data:
+                | ListCollectionAccessBindingsResponse
+                | ListWorkbookAccessBindingsResponse
+                | ListSharedEntryAccessBindingsResponse,
         ) => {
             dispatch({
                 type: LIST_ACCESS_BINDINGS_SUCCESS,
@@ -145,22 +145,31 @@ export const listAccessBindings = ({
             return null;
         };
 
-        if (resourceType === ResourceType.Collection) {
-            return getSdk()
-                .sdk.extensions.listCollectionAccessBindings({
-                    collectionId: resourceId,
-                    ...restArgs,
-                })
-                .then(thenHandler)
-                .catch(catchHandler);
-        } else {
-            return getSdk()
-                .sdk.extensions.listWorkbookAccessBindings({
-                    workbookId: resourceId,
-                    ...restArgs,
-                })
-                .then(thenHandler)
-                .catch(catchHandler);
+        switch (resourceType) {
+            case ResourceType.Collection:
+                return getSdk()
+                    .sdk.extensions.listCollectionAccessBindings({
+                        collectionId: resourceId,
+                        ...restArgs,
+                    })
+                    .then(thenHandler)
+                    .catch(catchHandler);
+            case ResourceType.Workbook:
+                return getSdk()
+                    .sdk.extensions.listWorkbookAccessBindings({
+                        workbookId: resourceId,
+                        ...restArgs,
+                    })
+                    .then(thenHandler)
+                    .catch(catchHandler);
+            case ResourceType.SharedEntry:
+                return getSdk()
+                    .sdk.extensions.listSharedEntryAccessBindings({
+                        entryId: resourceId,
+                        ...restArgs,
+                    })
+                    .then(thenHandler)
+                    .catch(catchHandler);
         }
     };
 };
@@ -236,24 +245,34 @@ export const updateAccessBindings = ({
             return operation;
         };
 
-        if (resourceType === ResourceType.Collection) {
-            return getSdk()
-                .sdk.extensions.updateCollectionAccessBindings({
-                    collectionId: resourceId,
-                    deltas,
-                })
-                .then(thenWaitOperation)
-                .then(thenHandler)
-                .catch(catchHandler);
-        } else {
-            return getSdk()
-                .sdk.extensions.updateWorkbookAccessBindings({
-                    workbookId: resourceId,
-                    deltas,
-                })
-                .then(thenWaitOperation)
-                .then(thenHandler)
-                .catch(catchHandler);
+        switch (resourceType) {
+            case ResourceType.Collection:
+                return getSdk()
+                    .sdk.extensions.updateCollectionAccessBindings({
+                        collectionId: resourceId,
+                        deltas,
+                    })
+                    .then(thenWaitOperation)
+                    .then(thenHandler)
+                    .catch(catchHandler);
+            case ResourceType.Workbook:
+                return getSdk()
+                    .sdk.extensions.updateWorkbookAccessBindings({
+                        workbookId: resourceId,
+                        deltas,
+                    })
+                    .then(thenWaitOperation)
+                    .then(thenHandler)
+                    .catch(catchHandler);
+            case ResourceType.SharedEntry:
+                return getSdk()
+                    .sdk.extensions.updateSharedEntryAccessBindings({
+                        entryId: resourceId,
+                        deltas,
+                    })
+                    .then(thenWaitOperation)
+                    .then(thenHandler)
+                    .catch(catchHandler);
         }
     };
 };

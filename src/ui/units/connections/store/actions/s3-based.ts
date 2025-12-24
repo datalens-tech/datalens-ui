@@ -1,11 +1,12 @@
 import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {batch} from 'react-redux';
+import type {ConnectionData} from 'shared';
 import {ConnectorType} from 'shared';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import {showToast} from '../../../../store/actions/toaster';
-import {getWorkbookIdFromPathname} from '../../../../utils';
+import {getEntityIdFromPathname} from '../../../../utils';
 import history from '../../../../utils/history';
 import {FieldKey} from '../../constants';
 import type {ConnectionsReduxDispatch, GetState} from '../typings';
@@ -27,18 +28,28 @@ export const createS3BasedConnection = (args: {
     name: string;
     dirPath?: string;
     workbookId?: string;
+    collectionId?: string;
 }) => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
+        const {
+            name,
+            dirPath,
+            workbookId = getEntityIdFromPathname(),
+            collectionId = getEntityIdFromPathname(true),
+        } = args;
         const form = getState().connections.form;
-        const placementData: Record<string, string> = dirPath
-            ? {[FieldKey.DirPath]: dirPath}
-            : {[FieldKey.WorkbookId]: workbookId};
-        const resultForm = {
+        const resultForm: ConnectionData = {
             ...form,
-            ...placementData,
             [FieldKey.Name]: name,
         };
+
+        if (typeof dirPath === 'string') {
+            resultForm[FieldKey.DirPath] = dirPath;
+        } else if (workbookId) {
+            resultForm[FieldKey.WorkbookId] = workbookId;
+        } else {
+            resultForm[FieldKey.CollectionId] = collectionId;
+        }
 
         dispatch(setSubmitLoading({loading: true}));
 
@@ -53,7 +64,9 @@ export const createS3BasedConnection = (args: {
         }
 
         batch(() => {
-            if (id) {
+            if (id && collectionId) {
+                history.replace(`/collections/${collectionId}`);
+            } else if (id) {
                 history.replace(`/connections/${id}`);
             }
 

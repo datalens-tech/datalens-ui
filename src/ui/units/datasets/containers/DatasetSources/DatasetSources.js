@@ -82,6 +82,7 @@ export class DatasetSources extends React.Component {
         source: null,
         validRelation: true,
         isUpdating: false,
+        isLoadingConnectionInfo: false,
         isVisibleSourceEditorDialog: false,
         isVisibleRelationDialog: false,
     };
@@ -221,15 +222,26 @@ export class DatasetSources extends React.Component {
         }
     };
 
-    selectConnection = async ({entryId}) => {
+    selectConnection = async ({entryId, isDelegated}) => {
         try {
-            const connection = await getSdk().sdk.us.getEntry({entryId});
+            this.setState({isLoadingConnectionInfo: true});
+            const connection = await getSdk().sdk.us.getEntry({
+                entryId,
+                includePermissionsInfo: true,
+            });
 
-            this.props.addConnection({connection, tab: TAB_SOURCES});
+            await this.props.addConnection({
+                connection: {...connection, isDelegated},
+                tab: TAB_SOURCES,
+            });
+            this.setState({isLoadingConnectionInfo: false});
 
             this.clickConnection(entryId);
         } catch (error) {
-            logger.logError('DatasetSources: selectConnection failed', error);
+            this.setState({isLoadingConnectionInfo: false});
+            if (error !== null) {
+                logger.logError('DatasetSources: selectConnection failed', error);
+            }
             this._showToast({
                 error,
                 name: TOAST_TYPES.SELECT_CONNECTION,
@@ -391,15 +403,20 @@ export class DatasetSources extends React.Component {
             case DATASET_UPDATE_ACTIONS.CONNECTION_REPLACE: {
                 const {connection, newConnection} = update;
 
-                this.props.replaceConnection({
-                    connection,
-                    newConnection,
-                });
+                this.setState({isLoadingConnectionInfo: true});
 
-                return this.updateDatasetByValidation({
-                    updatePreview,
-                    validateEnabled,
-                });
+                return this.props
+                    .replaceConnection({
+                        connection,
+                        newConnection,
+                    })
+                    .then(() => {
+                        this.setState({isLoadingConnectionInfo: false});
+                        return this.updateDatasetByValidation({
+                            updatePreview,
+                            validateEnabled,
+                        });
+                    });
             }
             case DATASET_UPDATE_ACTIONS.SOURCE_UPDATE: {
                 const {source} = update;
@@ -638,11 +655,13 @@ export class DatasetSources extends React.Component {
         });
     };
 
-    replaceConnection = async (connection, {entryId}) => {
+    replaceConnection = async (connection, {entryId, isDelegated}) => {
         try {
-            const newConnection = await getSdk().sdk.us.getEntry({entryId});
-
-            const update = {connection, newConnection};
+            const newConnection = await getSdk().sdk.us.getEntry({
+                entryId,
+                includePermissionsInfo: true,
+            });
+            const update = {connection, newConnection: {...newConnection, isDelegated}};
             await this.updateDatasetConfig({
                 type: DATASET_UPDATE_ACTIONS.CONNECTION_REPLACE,
                 update,
@@ -681,6 +700,8 @@ export class DatasetSources extends React.Component {
             freeformSources,
             sourceLoadingError,
             workbookId,
+            collectionId,
+            readonly,
         } = this.props;
         const {
             isVisibleSourceEditorDialog,
@@ -689,6 +710,7 @@ export class DatasetSources extends React.Component {
             source,
             relation,
             validRelation,
+            isLoadingConnectionInfo,
         } = this.state;
 
         return (
@@ -707,6 +729,8 @@ export class DatasetSources extends React.Component {
                             isSourcesLoading={
                                 ui.isSourcesLoading || ui.isSourcesListingOptionsLoading
                             }
+                            isLoadingConnectionInfo={isLoadingConnectionInfo}
+                            readonly={readonly}
                             isDisabledAddSource={isUpdating}
                             isDisabledDropSource={this.isDisabledDropSource}
                             connections={connections}
@@ -716,6 +740,7 @@ export class DatasetSources extends React.Component {
                             freeformSources={freeformSources}
                             error={sourceLoadingError}
                             workbookId={workbookId}
+                            collectionId={collectionId}
                             options={options}
                             onSelectConnection={this.selectConnection}
                             onClickConnection={this.clickConnection}
@@ -728,6 +753,7 @@ export class DatasetSources extends React.Component {
                             getSources={this.retryToGetSources}
                         />
                         <RelationsMap
+                            readonly={readonly}
                             avatars={avatars}
                             relations={relations}
                             relationsErrors={this.relationsErrors}
@@ -799,10 +825,12 @@ DatasetSources.propTypes = {
     options: PropTypes.object,
     showToast: PropTypes.func.isRequired,
     workbookId: PropTypes.string,
+    collectionId: PropTypes.string,
     sourcesPagination: PropTypes.object,
     currentDbName: PropTypes.string,
     resetSourcesPagination: PropTypes.func.isRequired,
     getSourcesListingOptions: PropTypes.func.isRequired,
+    readonly: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
