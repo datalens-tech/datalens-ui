@@ -88,26 +88,21 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                     return res.json(openApiDocument);
                 });
 
-                const swaggerOptions = {
-                    url: jsonPath,
-                    validatorUrl: null,
-                    tagsSorter: 'alpha',
-                    operationsSorter: 'alpha',
+                const options = {
+                    customfavIcon: config.faviconUrl,
+                    customSiteTitle: 'DataLens API',
+                    customCss: '.swagger-ui .topbar { display: none }',
+                    swaggerOptions: {
+                        url: jsonPath,
+                        validatorUrl: null,
+                        tagsSorter: 'alpha',
+                        operationsSorter: 'alpha',
+                    },
                 };
 
-                app.express.use(
-                    basePath,
-                    swaggerUi.serveFiles(undefined, {
-                        swaggerOptions,
-                    }),
-                );
+                app.express.use(basePath, swaggerUi.serveFiles(undefined, options));
 
-                app.express.get(
-                    basePath,
-                    swaggerUi.setup(null, {
-                        swaggerOptions,
-                    }),
-                );
+                app.express.get(basePath, swaggerUi.setup(null, options));
             };
 
             addSwaggerRoutes(versionPath);
