@@ -79,7 +79,7 @@ const Settings = () => {
     const [expandTOC, setExpandTOC] = React.useState(settings.expandTOC);
     const [accessDescription, setAccessDesc] = React.useState(accessDesc);
     const [supportDescription, setSupportDesc] = React.useState(supportDesc);
-    const [margins, setMargins] = React.useState(settings.margins || DEFAULT_DASH_MARGINS);
+    const [margins, setMargins] = React.useState(settings.margins?.[0]);
     const [borderRadius, setBorderRadius] = React.useState(
         settings.borderRadius ??
             (!isNew && isEnabledFeature(Feature.EnableNewDashSettings)
@@ -152,12 +152,8 @@ const Settings = () => {
                 ...otherSettinsState,
             };
 
-            if (
-                margins &&
-                margins[0] !== DEFAULT_DASH_MARGINS[0] &&
-                margins[1] !== DEFAULT_DASH_MARGINS[1]
-            ) {
-                newSettings.margins = margins;
+            if (margins && margins !== DEFAULT_DASH_MARGINS[0]) {
+                newSettings.margins = [margins, margins];
             } else {
                 // Cleaning default values
                 delete newSettings.margins;
@@ -224,12 +220,8 @@ const Settings = () => {
         setGlobalParams(params);
     }, []);
 
-    const handleMarginsChange = React.useCallback((margins: number | [number, number]) => {
-        if (Array.isArray(margins)) {
-            setMargins(margins);
-        } else {
-            setMargins([margins, margins]);
-        }
+    const handleMarginsChange = React.useCallback((mgs: null | number) => {
+        setMargins(mgs === null ? undefined : mgs);
     }, []);
 
     const showDependentSelectors = !settings.dependentSelectors;

@@ -1,10 +1,17 @@
 import React from 'react';
 
+import {Rectangles4} from '@gravity-ui/icons';
 import {Checkbox, Label, Slider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
-import {DASH_MARGIN_STEP, MAX_DASH_MARGIN, MIN_DASH_MARGIN} from 'ui/components/DashKit/constants';
+import {
+    DASH_MARGIN_STEP,
+    DEFAULT_DASH_MARGINS,
+    MAX_DASH_MARGIN,
+    MIN_DASH_MARGIN,
+} from 'ui/components/DashKit/constants';
+import {NumberInputWithSlider} from 'ui/components/NumberInputWithSlider/NumberInputWithSlider';
 import {WidgetRoundingsInput} from 'ui/components/WidgetRoundingsInput/WidgetRoundingsInput';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -19,8 +26,8 @@ const b = block('dialog-settings');
 const i18n = I18n.keyset('dash.settings-dialog.edit');
 
 type DisplayProps = {
-    margins: [number, number];
-    onChangeMargins: (newMargins: number | [number, number]) => void;
+    margins: number | undefined;
+    onChangeMargins: (newMargins: number | null) => void;
     borderRadius: number | undefined;
     onChangeBorderRadius: (newBorderRadius: number | undefined) => void;
     hideTabsValue: boolean;
@@ -95,14 +102,26 @@ export const Display = ({
                             <Label theme={'warning'}>{i18n('label_experimental')}</Label>
                         </Title>
                     </div>
-                    <Slider
-                        min={MIN_DASH_MARGIN}
-                        max={MAX_DASH_MARGIN}
-                        step={DASH_MARGIN_STEP}
-                        tooltipDisplay={'on'}
-                        value={margins[0]}
-                        onUpdate={onChangeMargins}
-                    />
+                    {isNewDashSettingsEnabled ? (
+                        <NumberInputWithSlider
+                            min={MIN_DASH_MARGIN}
+                            max={MAX_DASH_MARGIN}
+                            step={DASH_MARGIN_STEP}
+                            value={margins}
+                            onUpdate={onChangeMargins}
+                            defaultValue={DEFAULT_DASH_MARGINS[0]}
+                            iconData={Rectangles4}
+                        />
+                    ) : (
+                        <Slider
+                            min={MIN_DASH_MARGIN}
+                            max={MAX_DASH_MARGIN}
+                            step={DASH_MARGIN_STEP}
+                            tooltipDisplay={'on'}
+                            value={margins}
+                            onUpdate={onChangeMargins}
+                        />
+                    )}
                 </Row>
             )}
         </SectionWrapper>
