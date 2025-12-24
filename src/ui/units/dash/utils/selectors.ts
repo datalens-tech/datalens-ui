@@ -1,8 +1,8 @@
 import {DashTabItemType, Feature} from 'shared';
-import type {DashTabItemGroupControlData, ImpactTabsIds, ImpactType} from 'shared/types/dash';
+import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import type {GlobalItem} from '../typings/dash';
+import type {GlobalItem, GroupGlobalItemData} from '../typings/dash';
 
 export interface ImpactTypeItem {
     impactType?: ImpactType;
@@ -51,14 +51,16 @@ export const isGroupItemVisibleOnTab = ({
     groupImpactType,
     groupImpactTabsIds,
     isVisibleByMainSetting,
+    isGlobal = true,
 }: {
     item: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds};
     tabId: string | null;
     groupImpactType?: ImpactType;
     groupImpactTabsIds?: ImpactTabsIds;
     isVisibleByMainSetting?: boolean;
+    isGlobal?: boolean;
 }): boolean => {
-    if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !tabId) {
+    if (!isGlobal || !isEnabledFeature(Feature.EnableGlobalSelectors) || !tabId) {
         return true;
     }
 
@@ -88,7 +90,7 @@ function isControlGlobal(impactType?: ImpactType, impactTabsIds?: ImpactTabsIds)
     );
 }
 
-function isGroupControlGlobal(itemData: Partial<DashTabItemGroupControlData>): boolean {
+function isGroupControlGlobal(itemData: GroupGlobalItemData): boolean {
     const groupImpactType = itemData.impactType;
     const groupImpactTabsIds = itemData.impactTabsIds;
     const isGroupSettingApplied = itemData.group?.some(

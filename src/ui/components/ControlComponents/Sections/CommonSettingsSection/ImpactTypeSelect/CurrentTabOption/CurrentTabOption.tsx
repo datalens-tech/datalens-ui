@@ -15,15 +15,17 @@ const CurrentTabOptionComponent = ({
     impactTabsIds,
     tabs,
     currentImpactType,
+    isGlobal,
 }: {
     currentTabTitle?: string;
     impactTabsIds: string[];
     tabs: DashTab[];
     currentImpactType: ImpactType;
+    isGlobal?: boolean;
 }) => {
     const optionTabTitle = React.useMemo(() => {
         const titleFromTab = currentTabTitle || '';
-        if (impactTabsIds.length !== 1 || currentImpactType !== 'currentTab') {
+        if (impactTabsIds.length !== 1 || currentImpactType !== 'currentTab' || !isGlobal) {
             return titleFromTab;
         }
 
@@ -31,7 +33,7 @@ const CurrentTabOptionComponent = ({
         const titleFromImpactTabs = optionTab?.title || '';
 
         return titleFromImpactTabs;
-    }, [currentImpactType, currentTabTitle, impactTabsIds, tabs]);
+    }, [currentImpactType, currentTabTitle, impactTabsIds, isGlobal, tabs]);
 
     return (
         <Flex gap={2} className={b('current-tab')}>
