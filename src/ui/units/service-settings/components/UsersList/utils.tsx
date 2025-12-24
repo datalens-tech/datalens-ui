@@ -24,12 +24,13 @@ export const getUsersListColumns = (): TableColumnConfig<ListUser>[] =>
                   name: 'Пользователь',
                   template: ({firstName, lastName, email}) => (
                       <User
+                          className={b('user')}
                           size="m"
                           name={`${firstName ?? ''} ${lastName ?? ''}`.trim() || '—'}
-                          description={email || '—'}
+                          description={email}
                       />
                   ),
-                  className: b('column-user'),
+                  width: '35%',
               },
               {
                   id: 'role',
@@ -39,12 +40,12 @@ export const getUsersListColumns = (): TableColumnConfig<ListUser>[] =>
               {
                   id: 'login',
                   name: i18n('label_field-login'),
+                  template: ({login}) => <div className={b('login')}>{login}</div>,
                   meta: {copy: ({login}: ListUser) => login},
               },
               {
                   id: 'userId',
                   name: i18n('label_field-id'),
-                  template: ({userId}) => userId,
                   meta: {copy: ({userId}: ListUser) => userId},
               },
           ]

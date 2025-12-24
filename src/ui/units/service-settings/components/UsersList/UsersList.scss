@@ -43,7 +43,13 @@
         }
     }
 
-    &__column-user {
-        width: 35%;
+    &__login {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__user {
+        min-height: 32px;
     }
 }
