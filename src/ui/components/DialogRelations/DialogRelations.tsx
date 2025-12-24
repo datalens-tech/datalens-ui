@@ -16,6 +16,7 @@ import type {DashTab, DashTabAliases, DashTabItem} from 'shared';
 import {DashCommonQa, DashTabItemType} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
+import {selectCurrentTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import {openDialogAliases} from '../../units/dash/store/actions/relations/actions';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
@@ -97,6 +98,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     } = props;
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
+    const tabId = useSelector(selectCurrentTabId);
 
     const aliasWarnButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
@@ -133,8 +135,8 @@ const DialogRelations = (props: DialogRelationsProps) => {
     }, [dashWidgetsMeta]);
 
     const widgetOptions = React.useMemo(() => {
-        return getWidgetsOptions(widgetsIconMap, widgets, showDebugInfo);
-    }, [widgets, widgetsIconMap, showDebugInfo]);
+        return getWidgetsOptions({tabId, widgetsIconMap, widgets, showDebugInfo});
+    }, [tabId, widgetsIconMap, widgets, showDebugInfo]);
 
     const currentWidgetId = itemId || currentWidgetMeta?.widgetId || '';
     const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>({});

@@ -6,6 +6,10 @@ import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
+import {
+    isGlobalWidgetVisibleByMainSetting,
+    isGroupItemVisibleOnTab,
+} from 'ui/units/dash/utils/selectors';
 
 import type {DashTabItem} from '../../../shared';
 import {DashTabItemType} from '../../../shared';
@@ -373,43 +377,68 @@ export const getPairedRelationType = (type: RelationType): RelationType => {
     return RELATION_TYPES.unknown as RelationType;
 };
 
-export const getWidgetsOptions = (
-    widgetsIconMap: Record<string, JSX.Element | null>,
-    widgets?: DashTabItem[],
-    showDebugInfo?: boolean,
-) => {
-    const options: SelectOption<{
-        widgetId?: string;
-        isItem?: boolean;
-        icon: JSX.Element | null;
-    }>[] = [];
+type WidgetOption = SelectOption<{
+    widgetId?: string;
+    isItem?: boolean;
+    icon: JSX.Element | null;
+}>;
 
+export const getWidgetsOptions = ({
+    widgetsIconMap,
+    widgets,
+    showDebugInfo,
+    tabId,
+}: {
+    widgetsIconMap: Record<string, JSX.Element | null>;
+    widgets?: DashTabItem[];
+    showDebugInfo?: boolean;
+    tabId: string | null;
+}) => {
     if (!widgets) {
-        return options;
+        return [];
     }
+
+    const groupControlsOptions: WidgetOption[] = [];
+    const controlsOptions: WidgetOption[] = [];
+    const widgetsOptions: WidgetOption[] = [];
 
     for (let i = 0; i < widgets?.length; i++) {
         const widgetItem = widgets[i];
 
         switch (widgetItem.type) {
             case DashTabItemType.GroupControl:
-                widgetItem.data.group.forEach((item) => {
-                    options.push({
-                        value: item.id,
-                        content: showDebugInfo
-                            ? `(${widgetItem.id} ${item.id}) ${item.title}`
-                            : item.title,
-                        data: {
-                            widgetId: widgetItem.id,
-                            isItem: true,
-                            icon: widgetsIconMap[widgetItem.id],
-                        },
+                {
+                    const isVisibleByMainSetting = isGlobalWidgetVisibleByMainSetting(
+                        tabId,
+                        widgetItem.data.impactType,
+                        widgetItem.data.impactTabsIds,
+                    );
+
+                    widgetItem.data.group.forEach((item) => {
+                        const isItemVisible = isGroupItemVisibleOnTab({
+                            tabId,
+                            item,
+                            isVisibleByMainSetting,
+                        });
+
+                        if (isItemVisible)
+                            groupControlsOptions.push({
+                                value: item.id,
+                                content: showDebugInfo
+                                    ? `(${widgetItem.id} ${item.id}) ${item.title}`
+                                    : item.title,
+                                data: {
+                                    widgetId: widgetItem.id,
+                                    isItem: true,
+                                    icon: widgetsIconMap[widgetItem.id],
+                                },
+                            });
                     });
-                });
+                }
                 break;
             case DashTabItemType.Widget:
                 widgetItem.data.tabs.forEach((item) => {
-                    options.push({
+                    widgetsOptions.push({
                         value: item.id,
                         content: showDebugInfo
                             ? `(${widgetItem.id} ${item.id}) ${item.title}`
@@ -422,16 +451,25 @@ export const getWidgetsOptions = (
                 });
                 break;
             case DashTabItemType.Control:
-                options.push({
-                    value: widgetItem.id,
-                    content: showDebugInfo
-                        ? `(${widgetItem.id}) ${widgetItem.data.title}`
-                        : widgetItem.data.title,
-                    data: {icon: widgetsIconMap[widgetItem.id]},
-                });
+                {
+                    const isVisibleByMainSetting = isGlobalWidgetVisibleByMainSetting(
+                        tabId,
+                        widgetItem.data.impactType,
+                        widgetItem.data.impactTabsIds,
+                    );
+                    if (isVisibleByMainSetting) {
+                        controlsOptions.push({
+                            value: widgetItem.id,
+                            content: showDebugInfo
+                                ? `(${widgetItem.id}) ${widgetItem.data.title}`
+                                : widgetItem.data.title,
+                            data: {icon: widgetsIconMap[widgetItem.id]},
+                        });
+                    }
+                }
                 break;
         }
     }
 
-    return options;
+    return [...groupControlsOptions, ...controlsOptions, ...widgetsOptions];
 };
