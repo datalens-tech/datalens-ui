@@ -155,10 +155,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
         const newWidgetData = widgetOptions.find((item) => item.value === value[0])?.data;
         // if it's tab of widget or item in group control, widgetId is in the option
         // data, for old controls it's value[0]
-        if (!newWidgetData) {
-            return;
-        }
-        const currentId = newWidgetData.widgetId;
+        const currentId = newWidgetData?.widgetId || value[0];
 
         const newCurrentWidget = widgets?.find((item) => item.id === currentId) as DashTabItem;
 
