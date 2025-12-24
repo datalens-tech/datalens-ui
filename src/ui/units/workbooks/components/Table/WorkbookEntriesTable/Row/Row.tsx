@@ -54,6 +54,7 @@ const Row = <T extends WorkbookEntry>({
     onUpdateSharedEntryBindings,
 }: RowProps<T>) => {
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
+    const {WorkbookTableRowExtendedContent} = registry.workbooks.components.getAll();
     const {getLoginById} = registry.common.functions.getAll();
     const dispatch: AppDispatch = useDispatch();
     const isSharedEntry = Boolean(item.collectionId);
@@ -119,6 +120,13 @@ const Row = <T extends WorkbookEntry>({
                     >
                         {item.name}
                     </div>
+                    <WorkbookTableRowExtendedContent
+                        item={item}
+                        workbook={workbook}
+                        onUpdateSharedEntryBindings={
+                            onUpdateSharedEntryBindings && (() => onUpdateSharedEntryBindings(item))
+                        }
+                    />
                 </div>
             </div>
             <div className={b('content-cell', {author: true})}>
