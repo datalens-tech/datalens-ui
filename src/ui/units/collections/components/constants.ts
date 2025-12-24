@@ -130,4 +130,6 @@ export const mockSharedEntriesTexts = {
         'Для редактирования и добавления фильтров перейдите к оригиналу датасета',
     'dataset-parameters-readonly-alert-message':
         'Для редактирования и добавления параметров перейдите к оригиналу датасета',
+    'label_delete-connections-for-delete': 'Будут удалены подключения',
+    'label_delete-datasets-for-delete': 'Будут удалены датасеты',
 };
