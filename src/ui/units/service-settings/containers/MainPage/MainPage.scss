@@ -22,10 +22,12 @@
 
     &__section {
         width: 520px;
+        margin-top: var(--g-spacing-3);
 
         &_new {
             padding-top: 30px;
             width: unset;
+            margin-top: unset;
         }
     }
 

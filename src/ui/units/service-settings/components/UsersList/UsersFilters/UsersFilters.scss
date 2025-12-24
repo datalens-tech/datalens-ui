@@ -1,4 +1,4 @@
-$filterBaseWidth: 160px;
+$filterBaseWidth: 220px;
 
 .service-settings-users-list-filters {
     padding-right: var(--g-spacing-2);
@@ -12,6 +12,10 @@ $filterBaseWidth: 160px;
 
     &__filter {
         width: $filterBaseWidth;
+
+        &_new {
+            width: 180px;
+        }
     }
 
     &__search {

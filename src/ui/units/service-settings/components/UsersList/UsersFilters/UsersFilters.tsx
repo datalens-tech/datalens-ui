@@ -69,7 +69,7 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
                 hasClear={true}
                 onUpdate={handleRoleChange}
                 label={i18n('label_field-roles')}
-                className={b('filter')}
+                className={b('filter', {new: newServiceSettingsEnabled})}
                 size={newServiceSettingsEnabled ? 'l' : 'm'}
             />
             <AdditionalUsersFilters onChange={onChange} className={b('filter')} />
