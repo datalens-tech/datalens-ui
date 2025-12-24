@@ -3,8 +3,8 @@ import React from 'react';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {List, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import type {SharedEntryBindingsItem} from 'shared/schema';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import {EntityRow} from '../EntityRow/EntityRow';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
@@ -14,6 +14,7 @@ import {ListSearch} from './ListSearch';
 
 import './SharedBindingsList.scss';
 
+const i18n = I18n.keyset('component.dialog-shared-entry-bindings.view');
 const b = block('shared-entities-list');
 
 interface SharedBindingsListProps {
@@ -29,7 +30,7 @@ export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({
     entities,
     searchProps,
     isLoading,
-    title = getSharedEntryMockText('shared-bindings-list-title'),
+    title,
     onClickRelationButton,
     getListItemActions,
 }) => {
@@ -47,7 +48,7 @@ export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({
                 <PlaceholderIllustration
                     direction="column"
                     name="emptyDirectory"
-                    title={getSharedEntryMockText('shared-bindings-list-empty')}
+                    title={i18n('list-empty')}
                 />
             );
         }

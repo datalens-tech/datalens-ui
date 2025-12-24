@@ -24,7 +24,6 @@ import {
     openDialogSaveDraftChartAsActualConfirm,
 } from 'ui/store/actions/dialog';
 import type {DataLensApiError} from 'ui/typings';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ErrorViewProps} from '../';
@@ -55,6 +54,7 @@ import './Page.scss';
 
 const b = block('conn-page');
 const i18n = I18n.keyset('connections.form');
+const i18nSharedEntry = I18n.keyset('shared-entry');
 
 type DispatchState = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -256,7 +256,7 @@ const PageComponent = (props: PageProps) => {
                               history.push(location.pathname);
                           }}
                       >
-                          {getSharedEntryMockText('workbook-shared-entry-original-link')}
+                          {i18nSharedEntry('workbook-shared-entry-original-link')}
                       </Button>,
                   ]
                 : undefined,

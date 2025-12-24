@@ -24,5 +24,7 @@
   "label_status-importing": "Importing",
   "label_title": "Name",
   "section_create-first": "You can create a workbook and connect your data",
-  "section_incorrect-filters": "Try other values in filters"
+  "section_incorrect-filters": "Try other values in filters",
+  "shared-actions-menu-notice": "Объекты для переиспользования и подключения в воркбуки",
+  "shared-actions-menu-title": "Общие объекты"
 }

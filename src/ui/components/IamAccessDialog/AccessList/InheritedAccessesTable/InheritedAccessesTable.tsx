@@ -5,7 +5,6 @@ import {Label, Table} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Link} from 'react-router-dom';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import type {SubjectDetails} from '../../../../../shared/schema/extensions/types';
 import {ClaimsSubjectType} from '../../../../../shared/schema/extensions/types';
@@ -95,17 +94,13 @@ export const InheritedAccessesTable = ({data}: Props) => {
                         case collection.roles.entryBindingCreator:
                         case sharedEntry.roles.entryBindingCreator:
                             return (
-                                <Label theme="normal">
-                                    {getSharedEntryMockText('iam-dialog-role-entryBindingCreator')}
-                                </Label>
+                                <Label theme="normal">{i18n('role-entry-binding-creator')}</Label>
                             );
                         case collection.roles.limitedEntryBindingCreator:
                         case sharedEntry.roles.limitedEntryBindingCreator:
                             return (
                                 <Label theme="normal">
-                                    {getSharedEntryMockText(
-                                        'iam-dialog-role-limitedEntryBindingCreator',
-                                    )}
+                                    {i18n('role-limited-entry-binding-creator')}
                                 </Label>
                             );
                         default:

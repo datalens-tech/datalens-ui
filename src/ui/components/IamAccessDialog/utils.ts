@@ -1,7 +1,6 @@
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
 import type {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {SubjectClaims, SubjectDetails} from '../../../shared/schema/extensions/types';
@@ -24,14 +23,14 @@ export const getResourceRoles = (type: ResourceType) => {
         if (isSharedEntryEnable) {
             if ('limitedEntryBindingCreator' in roles && roles.limitedEntryBindingCreator) {
                 result.push({
-                    title: getSharedEntryMockText('iam-dialog-role-limitedEntryBindingCreator'),
+                    title: i18n('role-limited-entry-binding-creator'),
                     value: roles.limitedEntryBindingCreator,
                 });
             }
 
             if ('entryBindingCreator' in roles && roles.entryBindingCreator) {
                 result.push({
-                    title: getSharedEntryMockText('iam-dialog-role-entryBindingCreator'),
+                    title: i18n('role-entry-binding-creator'),
                     value: roles.entryBindingCreator,
                 });
             }
