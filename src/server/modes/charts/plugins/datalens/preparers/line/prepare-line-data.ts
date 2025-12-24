@@ -92,7 +92,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const ySectionItems = yPlaceholder?.items || [];
     const y2SectionItems = y2Placeholder?.items || [];
     const mergedYSections = [...ySectionItems, ...y2SectionItems];
-    const isMultiAxis = Boolean(ySectionItems.length && y2SectionItems.length);
+    const isMultiAxis = Boolean(ySectionItems.length || y2SectionItems.length);
     const sortItem = sort?.[0];
     const isSortItemExists = sort.length > 0;
     const isSortingXAxis = sort?.some((s) => s.guid === xField?.guid);
