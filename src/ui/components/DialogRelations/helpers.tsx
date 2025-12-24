@@ -394,13 +394,11 @@ export const getWidgetsOptions = ({
     showDebugInfo?: boolean;
     tabId: string | null;
 }) => {
-    if (!widgets) {
-        return [];
-    }
+    const options: WidgetOption[] = [];
 
-    const groupControlsOptions: WidgetOption[] = [];
-    const controlsOptions: WidgetOption[] = [];
-    const widgetsOptions: WidgetOption[] = [];
+    if (!widgets) {
+        return options;
+    }
 
     for (let i = 0; i < widgets?.length; i++) {
         const widgetItem = widgets[i];
@@ -422,7 +420,7 @@ export const getWidgetsOptions = ({
                         });
 
                         if (isItemVisible)
-                            groupControlsOptions.push({
+                            options.push({
                                 value: item.id,
                                 content: showDebugInfo
                                     ? `(${widgetItem.id} ${item.id}) ${item.title}`
@@ -438,7 +436,7 @@ export const getWidgetsOptions = ({
                 break;
             case DashTabItemType.Widget:
                 widgetItem.data.tabs.forEach((item) => {
-                    widgetsOptions.push({
+                    options.push({
                         value: item.id,
                         content: showDebugInfo
                             ? `(${widgetItem.id} ${item.id}) ${item.title}`
@@ -458,7 +456,7 @@ export const getWidgetsOptions = ({
                         widgetItem.data.impactTabsIds,
                     );
                     if (isVisibleByMainSetting) {
-                        controlsOptions.push({
+                        options.push({
                             value: widgetItem.id,
                             content: showDebugInfo
                                 ? `(${widgetItem.id}) ${widgetItem.data.title}`
@@ -471,5 +469,5 @@ export const getWidgetsOptions = ({
         }
     }
 
-    return [...groupControlsOptions, ...controlsOptions, ...widgetsOptions];
+    return options;
 };
