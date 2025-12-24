@@ -4,7 +4,9 @@ import {Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import ColorPaletteEditorContainer from 'components/ColorPaletteEditorContainer/ColorPaletteEditorContainer';
 import {I18n} from 'i18n';
+import {Feature} from 'shared';
 import {DL} from 'ui/constants';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {SectionGroup} from '../SectionGroup/SectionGroup';
 
@@ -24,7 +26,14 @@ const AppearanceSettings = ({customSettings, disablePalettesEdit}: AppearanceSet
 
     return (
         <section className={b()}>
-            <Flex gap={7} direction="column" className={b('content', {tab: isTabContent})}>
+            <Flex
+                gap={7}
+                direction="column"
+                className={b('content', {
+                    tab: isTabContent,
+                    newTab: isTabContent && isEnabledFeature(Feature.EnableNewServiceSettings),
+                })}
+            >
                 <SectionGroup title={i18n('section_color-palettes')}>
                     <ColorPaletteEditorContainer
                         condensed={true}

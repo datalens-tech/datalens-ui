@@ -72,7 +72,10 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
                 className={b('filter', {new: newServiceSettingsEnabled})}
                 size={newServiceSettingsEnabled ? 'l' : 'm'}
             />
-            <AdditionalUsersFilters onChange={onChange} className={b('filter')} />
+            <AdditionalUsersFilters
+                onChange={onChange}
+                className={b('filter', {new: newServiceSettingsEnabled})}
+            />
         </Flex>
     );
 };

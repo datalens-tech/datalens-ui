@@ -144,7 +144,9 @@ const MainPage = ({
                             render={(routeProps) => (
                                 <AppearanceSettings
                                     customSettings={
-                                        customAppearanceSettings ?? customGeneralSettings
+                                        newServiceSettingsEnabled
+                                            ? customAppearanceSettings
+                                            : customGeneralSettings
                                     }
                                     disablePalettesEdit={disablePalettesEdit}
                                     {...routeProps}
