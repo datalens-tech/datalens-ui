@@ -9,6 +9,8 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {LabelsList} from './LabelsList/LabelsList';
 
+import './UsersList.scss';
+
 const b = block('service-settings-users-list');
 
 const i18n = I18n.keyset('service-settings.users-list.view');
