@@ -22,6 +22,8 @@
 
     &__breadcrumbs {
         flex-grow: 1;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     &__breadcrumbs-item {
