@@ -12,18 +12,18 @@ import './LabelsList.scss';
 
 const b = block('users-list-labels-list');
 
-const LABEL_SIZE = isEnabledFeature(Feature.EnableNewServiceSettings) ? 's' : undefined;
-
 export type LabelsListProps = {
     items: `${UserRole}`[];
     countVisibleElements: number;
     buttonTheme?: LabelProps['theme'];
+    size?: LabelProps['size'];
 };
 
 export const LabelsList = ({
     items,
     countVisibleElements = 1,
     buttonTheme = 'normal',
+    size = isEnabledFeature(Feature.EnableNewServiceSettings) ? 's' : 'xs',
 }: LabelsListProps) => {
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef<HTMLDivElement>(null);
@@ -49,14 +49,14 @@ export const LabelsList = ({
         return (
             <React.Fragment>
                 {visibleItems.map((item) => (
-                    <UserRoleLabel key={item} role={item} size={LABEL_SIZE} />
+                    <UserRoleLabel key={item} role={item} size={size} />
                 ))}
                 <Label
                     ref={anchorRef}
                     theme={buttonTheme}
                     onClick={toggleRolesPopup}
                     className={b('button')}
-                    size={LABEL_SIZE}
+                    size={size}
                 >
                     {buttonText}
                 </Label>
@@ -73,7 +73,7 @@ export const LabelsList = ({
                     <div className={b('popup')}>
                         <div className={b('popup-content')}>
                             {hiddenItems.map((item) => (
-                                <UserRoleLabel key={item} role={item} size={LABEL_SIZE} />
+                                <UserRoleLabel key={item} role={item} size={size} />
                             ))}
                         </div>
                     </div>
@@ -86,7 +86,7 @@ export const LabelsList = ({
         <Flex className={b()} alignItems="center" gap={2}>
             {items.length > countVisibleElements
                 ? renderList()
-                : items.map((item) => <UserRoleLabel key={item} role={item} size={LABEL_SIZE} />)}
+                : items.map((item) => <UserRoleLabel key={item} role={item} size={size} />)}
         </Flex>
     );
 };
