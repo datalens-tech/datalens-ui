@@ -76,5 +76,47 @@ datalensTest.describe('Wizard', () => {
             await expect(chart).toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });
+
+        datalensTest.only(
+            'The right Y-axis only with 2 lines and shape @screenshot',
+            async ({page}) => {
+                const wizardPage = new WizardPage({page});
+                const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+                const chart = chartContainer.locator('.chartkit-graph,.gcharts-chart');
+
+                await wizardPage.createNewFieldWithFormula(
+                    'orderMonth',
+                    `datetrunc([Order_date], 'month')`,
+                );
+                await wizardPage.createNewFieldWithFormula('orderYear', `year([Order_date])`);
+                await wizardPage.createNewFieldWithFormula('orderCount', `countd([order_id])`);
+                await wizardPage.createNewFieldWithFormula('salesSum', `sum([Sales])`);
+
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.X,
+                    'orderMonth',
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Y,
+                    'salesSum',
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Y,
+                    'orderCount',
+                );
+
+                await wizardPage.sectionVisualization.removeFieldByClick(
+                    PlaceholderName.Shapes,
+                    'Measure Names',
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Shapes,
+                    'orderYear',
+                );
+
+                await expect(chart).toBeVisible();
+                await expect(chartContainer).toHaveScreenshot();
+            },
+        );
     });
 });

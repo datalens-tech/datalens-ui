@@ -92,6 +92,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const ySectionItems = yPlaceholder?.items || [];
     const y2SectionItems = y2Placeholder?.items || [];
     const mergedYSections = [...ySectionItems, ...y2SectionItems];
+    const isMultiAxis = Boolean(ySectionItems.length && y2SectionItems.length);
     const sortItem = sort?.[0];
     const isSortItemExists = sort.length > 0;
     const isSortingXAxis = sort?.some((s) => s.guid === xField?.guid);
@@ -126,10 +127,6 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const segmentTitleFormatter = getSeriesTitleFormatter({fields: [segmentField]});
 
     const isShapeItemExist = Boolean(shapeItem && shapeItem.type !== 'PSEUDO');
-    const isMultiAxis = Boolean(
-        (ySectionItems.length > 0 && y2SectionItems.length > 0) ||
-            (isShapeItemExist && (ySectionItems.length > 1 || y2SectionItems.length > 1)),
-    );
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
     const isColorizeByMeasure = isMeasureField(colorItem);
     const colorMode = colorsConfig.colorMode;
