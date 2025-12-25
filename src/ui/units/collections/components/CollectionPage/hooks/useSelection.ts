@@ -1,10 +1,13 @@
 import React from 'react';
 
 import {useSelector} from 'react-redux';
+import type {ValueOf} from 'shared';
+import {CollectionItemEntities} from 'shared';
 
 import {selectStructureItems} from '../../../store/selectors';
+import {getIsWorkbookItem, getItemId} from '../../helpers';
 
-export type SelectionEntityType = 'workbook' | 'collection';
+type SelectionEntityType = ValueOf<typeof CollectionItemEntities>;
 
 export type SelectedMap = Record<string, SelectionEntityType>;
 
@@ -52,7 +55,7 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
 
         Object.keys(selectedMap).forEach((entityId) => {
             const itemWithMovePermission = itemsWithMovePermission.find(
-                (item) => ('workbookId' in item ? item.workbookId : item.collectionId) === entityId,
+                (item) => getItemId(item) === entityId,
             );
             if (itemWithMovePermission) {
                 result[entityId] = selectedMap[entityId];
@@ -67,7 +70,7 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
 
         Object.keys(selectedMap).forEach((entityId) => {
             const itemWithDeletePermission = itemsWithDeletePermission.find(
-                (item) => ('workbookId' in item ? item.workbookId : item.collectionId) === entityId,
+                (item) => getItemId(item) === entityId,
             );
             if (itemWithDeletePermission) {
                 result[entityId] = selectedMap[entityId];
@@ -92,10 +95,7 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
             checked: boolean;
         }) => {
             const itemHasPermission = Boolean(
-                itemsAvailableForSelection.find(
-                    (item) =>
-                        entityId === ('workbookId' in item ? item.workbookId : item.collectionId),
-                ),
+                itemsAvailableForSelection.find((item) => entityId === getItemId(item)),
             );
 
             if (itemHasPermission) {
@@ -124,9 +124,13 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
                 const newSelectedMap: SelectedMap = {};
 
                 itemsAvailableForSelection.forEach((item) => {
-                    const isWorkbook = 'workbookId' in item;
-                    const id = isWorkbook ? item.workbookId : item.collectionId;
-                    const type = isWorkbook ? 'workbook' : 'collection';
+                    const isWorkbook = getIsWorkbookItem(item);
+                    const id = getItemId(item);
+                    const type =
+                        item.entity ||
+                        (isWorkbook
+                            ? CollectionItemEntities.WORKBOOK
+                            : CollectionItemEntities.COLLECTION);
 
                     newSelectedMap[id] = type;
                 });
@@ -149,9 +153,7 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
         const selectedMapKeys = Object.keys(selectedMap);
 
         selectedMapKeys.forEach((entityId) => {
-            const entityInItems = items.find(
-                (item) => ('workbookId' in item ? item.workbookId : item.collectionId) === entityId,
-            );
+            const entityInItems = items.find((item) => getItemId(item) === entityId);
 
             if (entityInItems) {
                 newSelectedMap[entityId] = selectedMap[entityId];
