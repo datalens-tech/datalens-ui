@@ -210,7 +210,7 @@ export const DATASET_UPDATE_ACTIONS = {
     OBLIGATORY_FILTER_ADD: 'add_obligatory_filter',
     OBLIGATORY_FILTER_UPDATE: 'update_obligatory_filter',
     OBLIGATORY_FILTER_DELETE: 'delete_obligatory_filter',
-};
+} as const;
 
 export const CONDITION_TYPES = {
     BINARY: 'binary',
