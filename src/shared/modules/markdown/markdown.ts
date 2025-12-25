@@ -73,7 +73,10 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
             },
         }),
         imsize,
-        table,
+        (md: MarkdownIt) =>
+            md.use(table, {
+                table_ignoreSplittersInInlineMath: true,
+            }),
         monospace,
         sup,
         MarkdonwItSub,
