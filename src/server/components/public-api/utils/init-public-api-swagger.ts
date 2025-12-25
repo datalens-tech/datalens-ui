@@ -10,9 +10,6 @@ import {OPEN_API_VERSION_HEADER_COMPONENT_NAME, PUBLIC_API_VERSION_HEADER} from 
 export const initPublicApiSwagger = (app: ExpressKit) => {
     const {config} = app;
 
-    const installationText = `Installation – <b>${config.appInstallation}</b>`;
-    const envText = `Env – <b>${config.appEnv}</b>`;
-
     const {baseConfig, securitySchemes, biOpenapiSchemas} = registry.getPublicApiConfig();
 
     const latestVersion = Math.max(...Object.keys(baseConfig).map(Number));
@@ -52,7 +49,6 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                 info: {
                     version,
                     title: `DataLens API `,
-                    description: [installationText, envText].join('<br />'),
                 },
                 servers: [{url: '/'}],
             };
