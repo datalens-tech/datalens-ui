@@ -5,7 +5,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {slct} from '../../../utils';
 import {DashkitQa} from '../../../../src/shared';
 
-const katex = `Модуль $a$ больше 0:
+const katex = `Module $a$ is greater than 0:
 
 #|
 ||
