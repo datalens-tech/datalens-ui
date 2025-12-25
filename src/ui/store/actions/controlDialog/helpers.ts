@@ -6,15 +6,26 @@ export const getValidScopeFields = ({
     tabId,
     isGroupSetting,
     isSingleControl,
+    isGlobal,
 }: {
     impactType?: ImpactType;
     impactTabsIds: ImpactTabsIds;
     tabId: string | null;
     isGroupSetting?: boolean;
     isSingleControl?: boolean;
+    isGlobal?: boolean;
 }): {impactType: ImpactType; impactTabsIds: ImpactTabsIds} => {
     if (impactType === 'allTabs') {
         return {impactType, impactTabsIds: null};
+    }
+
+    const defaultValue: {impactType: ImpactType; impactTabsIds: ImpactTabsIds} = {
+        impactType: 'currentTab',
+        impactTabsIds: tabId ? [tabId] : undefined,
+    };
+
+    if (!isGlobal && impactType === 'currentTab' && tabId && !impactTabsIds?.includes(tabId)) {
+        return defaultValue;
     }
 
     if ((impactType === 'selectedTabs' || impactType === 'currentTab') && impactTabsIds?.length) {
@@ -29,5 +40,5 @@ export const getValidScopeFields = ({
         return {impactTabsIds: null, impactType: 'asGroup'};
     }
 
-    return {impactType: 'currentTab', impactTabsIds: tabId ? [tabId] : undefined};
+    return defaultValue;
 };

@@ -60,7 +60,7 @@ import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
 import {EditEntityButton} from '../workbook/EditEntityButton';
 import {Workbook} from '../workbook/Workbook';
 import {ChartkitControl} from './ChartkitControl';
-import ControlActions from './ControlActions';
+import ControlActions from './controlActions/ControlActions';
 import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
 import Description from './Description';
@@ -1078,6 +1078,23 @@ class DashboardPage extends BasePage {
         const jsonState = await responseState?.json();
 
         return jsonState?.hash;
+    }
+
+    /**
+     * Scroll page to the bottom using keyboard End key
+     * @returns Promise that resolves when scrolling is complete
+     */
+    async scrollToBottom(): Promise<void> {
+        await this.page.locator(slct(DashBodyQa.App)).click();
+        await this.page.keyboard.press('End');
+    }
+
+    /**
+     * Click on action panel more button (ellipsis in the upper panel)
+     * @returns Promise that resolves when click is complete
+     */
+    async clickActionPanelMoreButton(): Promise<void> {
+        await this.page.click(slct(COMMON_SELECTORS.ENTRY_PANEL_MORE_BTN));
     }
 }
 

@@ -10,6 +10,8 @@ import {AppearanceTitle} from './DialogControlPO/AppearanceTitle';
 import {AppearanceInnerTitle} from './DialogControlPO/AppearanceInnerTitle';
 import {FieldName} from './DialogControlPO/FieldName';
 import {RequiredCheckbox} from './DialogControlPO/RequiredCheckbox';
+import {ImpactTypeSelector} from './DialogControlPO/ImpactTypeSelector';
+import {ImpactTabsIdsSelector} from './DialogControlPO/ImpactTabsIdsSelector';
 
 export default class DialogControl {
     static selectors = {
@@ -28,6 +30,8 @@ export default class DialogControl {
     appearanceInnerTitle: AppearanceInnerTitle;
     fieldName: FieldName;
     requiredCheckbox: RequiredCheckbox;
+    impactTypeSelector: ImpactTypeSelector;
+    impactTabsIdsSelector: ImpactTabsIdsSelector;
 
     protected page: Page;
 
@@ -42,6 +46,8 @@ export default class DialogControl {
         this.appearanceInnerTitle = new AppearanceInnerTitle(page);
         this.fieldName = new FieldName(page);
         this.requiredCheckbox = new RequiredCheckbox(page);
+        this.impactTypeSelector = new ImpactTypeSelector(page);
+        this.impactTabsIdsSelector = new ImpactTabsIdsSelector(page);
     }
 
     async waitForVisible() {
