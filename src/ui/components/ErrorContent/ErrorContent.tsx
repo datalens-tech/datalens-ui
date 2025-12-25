@@ -7,6 +7,7 @@ import {I18n} from 'i18n';
 import type {ValueOf} from 'shared';
 import {ErrorContentTypes} from 'shared';
 import {DL} from 'ui/constants/common';
+import {getRouter} from 'ui/navigation';
 import {type DataLensApiError, type ParsedError, isParsedError} from 'ui/typings';
 import {getImageNameFromErrorContentType} from 'ui/utils/errorContentTypes';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
@@ -171,13 +172,15 @@ class ErrorContent extends React.PureComponent<ErrorContentProps> {
 
     renderConsoleAction() {
         if (this.state.showButtonConsole) {
+            const router = getRouter();
+
             return (
                 <Button
                     className={b('action-btn')}
                     view="action"
                     size={this.buttonSize}
                     width={this.buttonWidth}
-                    onClick={() => window.location.assign(window.DL.endpoints.console)}
+                    onClick={() => router.open(window.DL.endpoints.console)}
                 >
                     {i18n('button_console')}
                 </Button>

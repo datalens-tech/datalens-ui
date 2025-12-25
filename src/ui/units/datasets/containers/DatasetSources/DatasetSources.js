@@ -9,6 +9,8 @@ import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
 import {showToast} from 'store/actions/toaster';
 import {SPLIT_PANE_RESIZER_CLASSNAME} from 'ui';
+import {getSdk} from 'ui/libs/schematic-sdk';
+import {getRouter} from 'ui/navigation';
 import {
     addAvatar,
     addAvatarPrototypes,
@@ -34,7 +36,6 @@ import {
 import {v1 as uuidv1} from 'uuid';
 
 import logger from '../../../../libs/logger';
-import {getSdk} from '../../../../libs/schematic-sdk';
 import DragAndDrop from '../../components/DragAndDrop/DragAndDrop';
 import RelationDialog from '../../components/RelationDialog/RelationDialog';
 import RelationsMap from '../../components/RelationsMap/RelationsMap';
@@ -680,8 +681,7 @@ export class DatasetSources extends React.Component {
 
     openConnection = (connectionId) => {
         if (connectionId) {
-            // eslint-disable-next-line
-            window.open(`/connections/${connectionId}`, '_blank', 'noopener');
+            getRouter().openTab({pathname: `/connections/${connectionId}`}, 'noopener');
         }
     };
 

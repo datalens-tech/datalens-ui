@@ -1,11 +1,10 @@
 /* eslint no-bitwise: 0 */
 import {isTrueArg} from 'shared/modules/url';
-
-import {URL_QUERY} from '../../../constants';
+import {URL_QUERY} from 'ui/constants';
+import {getLocation} from 'ui/navigation';
 
 export const getQueryParam = (name = '') => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const param = searchParams.get(name);
+    const param = getLocation().params().get(name);
 
     return param ? decodeURIComponent(param) : undefined;
 };
@@ -38,20 +37,4 @@ export const getFormWithTrimmedValues = <T extends {}>(target: T) => {
 
 export const isDebugMode = () => {
     return isTrueArg(getQueryParam(URL_QUERY.DEBUG));
-};
-
-const getTrimmedPathname = (pathname: string) => {
-    return pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-};
-
-export const getPreviousRalativePathname = () => {
-    const trimmedPathname = getTrimmedPathname(window.location.pathname);
-    const nextPathName = trimmedPathname.split('/').slice(0, -1).join('/');
-    return `${nextPathName}${window.location.search}`;
-};
-
-export const getNextRalativePathname = (nextPart: string) => {
-    const trimmedPathname = getTrimmedPathname(window.location.pathname);
-    const nextPathName = trimmedPathname.split('/').concat(nextPart).join('/');
-    return `${nextPathName}${window.location.search}`;
 };

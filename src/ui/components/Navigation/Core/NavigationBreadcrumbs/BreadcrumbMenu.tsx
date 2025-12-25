@@ -7,22 +7,19 @@ import block from 'bem-cn-lite';
 import {ENTRY_CONTEXT_MENU_ACTION, EntryContextMenuBase} from 'components/EntryContextMenu';
 import type {EntryDialogues} from 'components/EntryDialogues';
 import {EntryDialogName, EntryDialogResolveStatus} from 'components/EntryDialogues';
+import {I18n} from 'i18n';
 import navigateHelper from 'libs/navigateHelper';
 import {PLACE} from 'shared';
+import type {EntryFields, GetEntryResponse, ListDirectoryBreadCrumb} from 'shared/schema';
 import {EntryScope} from 'shared/types/common';
 import type {MenuClickHandler} from 'ui/components/EntryContextMenu/EntryContextMenu';
 import type {EntryContextMenuItems} from 'ui/components/EntryContextMenu/helpers';
 import {DL} from 'ui/constants/common';
+import {useRouter} from 'ui/navigation';
 import {registry} from 'ui/registry';
 import {copyTextWithToast} from 'ui/utils/copyText';
 import Utils from 'utils';
 
-import {I18n} from '../../../../../i18n/index';
-import type {
-    EntryFields,
-    GetEntryResponse,
-    ListDirectoryBreadCrumb,
-} from '../../../../../shared/schema';
 import type {ChangeLocation, CurrentPageEntry} from '../../types';
 
 import './BreadcrumbMenu.scss';
@@ -54,6 +51,7 @@ export const BreadcrumbMenu = ({
     refresh,
     onChangeLocation,
 }: Props) => {
+    const router = useRouter();
     const btnRef = React.useRef<HTMLButtonElement>(null);
     const [show, setShow] = React.useState(false);
 
@@ -101,7 +99,7 @@ export const BreadcrumbMenu = ({
                     if (isCurrentPageEntryInside) {
                         const entryData = response.data ? response.data[0] : null;
                         if (!entryData) {
-                            window.location.reload();
+                            router.reload();
                         }
                         setEntryKey(entryData);
                     }
@@ -123,7 +121,7 @@ export const BreadcrumbMenu = ({
                     if (isCurrentPageEntryInside) {
                         const entryData = response.data ? response.data.result[0] : null;
                         if (!entryData) {
-                            window.location.reload();
+                            router.reload();
                         }
                         setEntryKey({...entryData, withRouting: false});
                     }

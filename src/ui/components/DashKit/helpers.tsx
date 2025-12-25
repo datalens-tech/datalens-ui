@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {ConfigItem, DashKitProps, ItemParams, ItemState, MenuItem} from '@gravity-ui/dashkit';
+import type {ConfigItem, DashKitProps, ItemState, MenuItem} from '@gravity-ui/dashkit';
 import {DashKit} from '@gravity-ui/dashkit';
 import {MenuItems} from '@gravity-ui/dashkit/helpers';
 import {Copy, Pencil, TrashBin} from '@gravity-ui/icons';
@@ -10,11 +10,9 @@ import {I18n} from 'i18n';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
+import {getRouter, toSearchParams} from 'ui/navigation';
 import type {UpdateTabsWithGlobalStateArgs} from 'ui/units/dash/store/typings/dash';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
-
-import {getEndpointForNavigation} from '../../libs/DatalensChartkit/modules/navigation';
-import URI from '../../libs/DatalensChartkit/modules/uri/uri';
 
 import './DashKit.scss';
 
@@ -23,16 +21,7 @@ const b = block('dashkit-plugin-menu');
 
 type TabData = {id: string; chartId: string; params: StringParams; state: ItemState};
 
-const removeEmptyParams = (params: ItemParams) => {
-    return Object.entries(params).reduce((result, [key, value]) => {
-        if (value !== null && value !== undefined) {
-            result[key] = value;
-        }
-        return result;
-    }, {} as ItemParams);
-};
-
-export function getEditLink(configItem: ConfigItem, params: ItemParams, state: ItemState) {
+export function getEntryId(configItem: ConfigItem, state: ItemState) {
     const {type, data} = configItem;
 
     let entryId: string | undefined;
@@ -51,18 +40,7 @@ export function getEditLink(configItem: ConfigItem, params: ItemParams, state: I
         }
     }
 
-    if (!entryId) {
-        return null;
-    }
-
-    // does not work properly in DEV mode without navigator
-    const endpoint = getEndpointForNavigation();
-
-    const linkParams = removeEmptyParams(params);
-
-    const queryPrams = URI.makeQueryString(linkParams);
-
-    return `${endpoint}/${entryId}${queryPrams}`;
+    return entryId ? entryId : null;
 }
 
 export function getDashKitMenu(onRemoveItem?: (configItem: ConfigItem) => void): Array<MenuItem> {
@@ -72,10 +50,13 @@ export function getDashKitMenu(onRemoveItem?: (configItem: ConfigItem) => void):
             title: i18n('label_edit'),
             icon: <Icon data={Pencil} size={16} />,
             handler: (configItem, params, state) => {
-                const link = getEditLink(configItem, params, state);
-
-                if (link) {
-                    window.open(link, '_blank');
+                const entryId = getEntryId(configItem, state);
+                if (entryId) {
+                    // does not work properly in DEV mode without navigator
+                    getRouter().open(
+                        {pathname: `/navigate/${entryId}`, search: toSearchParams(params)},
+                        '_blank',
+                    );
                 }
             },
             visible: (configItem) => {

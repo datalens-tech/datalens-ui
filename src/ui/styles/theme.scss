@@ -7,7 +7,7 @@
 }
 
 body.g-root {
-    --g-font-family-sans: 'Inter', sans-serif;
+    --g-font-family-sans: var(--datalens-font-family-variant);
 }
 
 .g-root_theme_light:not(#{$rebrandingRoot}),

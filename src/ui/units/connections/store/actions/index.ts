@@ -4,6 +4,7 @@ import {batch} from 'react-redux';
 import type {ConnectionData, ConnectorType} from 'shared';
 import type {ConnectorItem, FormSchema, GetEntryResponse} from 'shared/schema/types';
 import {URL_QUERY} from 'ui';
+import {getRouter} from 'ui/navigation';
 import {registry} from 'ui/registry';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
@@ -13,7 +14,6 @@ import {showToast} from '../../../../store/actions/toaster';
 import {RevisionsMode} from '../../../../store/typings/entryContent';
 import type {DataLensApiError} from '../../../../typings';
 import {getEntityIdFromPathname} from '../../../../utils';
-import history from '../../../../utils/history';
 import {FieldKey, InnerFieldKey} from '../../constants';
 import {getIsRevisionsSupported} from '../../utils';
 import {connectionIdSelector, newConnectionSelector} from '../selectors';
@@ -415,14 +415,16 @@ export function createConnection(args: {
             flow([resetFormsData, dispatch])();
         }
 
+        const router = getRouter();
+
         if (templateFolderId) {
-            history.replace(`/navigation/${templateFolderId}`);
+            router.replace({pathname: `/navigation/${templateFolderId}`});
         } else if (templateWorkbookId) {
-            history.replace(`/workbooks/${templateWorkbookId}`);
+            router.replace({pathname: `/workbooks/${templateWorkbookId}`});
         } else if (collectionId && connectionId) {
-            history.replace(`/collections/${collectionId}`);
+            router.replace({pathname: `/collections/${collectionId}`});
         } else if (connectionId) {
-            history.replace(`/connections/${connectionId}`);
+            router.replace({pathname: `/connections/${connectionId}`});
         }
 
         batch(() => {
@@ -509,15 +511,13 @@ export function updateConnectionWithRevision() {
             connections: {flattenConnectors, entry},
         } = getState();
         const isRevisionsSupported = getIsRevisionsSupported({entry, flattenConnectors});
-        const searchParams = new URLSearchParams(location.search);
-        searchParams.delete(URL_QUERY.REV_ID);
+        const router = getRouter();
+        const search = router.location().params();
+        search.delete(URL_QUERY.REV_ID);
         await dispatch(updateConnection());
 
         if (isRevisionsSupported) {
-            history.push({
-                ...location,
-                search: `?${searchParams.toString()}`,
-            });
+            router.push({search});
         }
     };
 }

@@ -73,7 +73,7 @@ class SectionVisualization extends Component<Props, State> {
         }
 
         return (
-            <div className="container visualization-container">
+            <div className="visualization-container">
                 {this.renderVisualizationSelectorContainer()}
                 <div className="placeholders-wrapper">
                     <div className={`placeholders${extraClass}`}>

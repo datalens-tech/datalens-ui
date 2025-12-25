@@ -1,4 +1,5 @@
 import type {Dataset} from 'shared';
+import {getLocation} from 'ui/navigation';
 
 import type {DatasetTab} from '../constants';
 import {DATASET_TABS, TAB_DATASET, TAB_SOURCES} from '../constants';
@@ -24,7 +25,7 @@ const isDatasetTab = (value: unknown): value is DatasetTab => {
 };
 
 export const getCurrentTab = (): DatasetTab => {
-    const defaultTab = isCreationProcess(location.pathname) ? TAB_SOURCES : TAB_DATASET;
+    const defaultTab = isCreationProcess(getLocation().pathname) ? TAB_SOURCES : TAB_DATASET;
     const queryTab = DatasetUtils.getQueryParam('tab');
 
     if (isDatasetTab(queryTab)) {

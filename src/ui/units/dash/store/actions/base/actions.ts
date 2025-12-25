@@ -8,6 +8,7 @@ import type {GetEntryArgs} from 'shared/schema';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
 import type {DatalensGlobalState} from 'ui';
 import {MarkdownProvider, URL_QUERY, Utils} from 'ui';
+import {getRouter} from 'ui/navigation';
 import type {ConnectionsReduxDispatch} from 'ui/units/connections/store';
 import type {ManualError} from 'ui/utils/errors/manual';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -135,7 +136,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
                 dispatch(
                     openDialogConfirm({
                         onApply: () => {
-                            location.reload();
+                            getRouter().reload();
                         },
                         message: i18n('label_obsolete-version'),
                         isWarningConfirm: true,

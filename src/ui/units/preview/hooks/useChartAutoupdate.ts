@@ -1,9 +1,11 @@
 import React from 'react';
 
 import {MIN_AUTOUPDATE_CHART_INTERVAL} from 'ui/constants/common';
+import {useLocation} from 'ui/navigation';
 import Utils from 'ui/utils';
 
 export const useChartAutoupdate = () => {
+    const location = useLocation();
     const [isPageHidden, setIsPageHidden] = React.useState(false);
     const [autoupdateInterval, setAutoupdateInterval] = React.useState<number | undefined>();
 
@@ -12,9 +14,7 @@ export const useChartAutoupdate = () => {
     }, []);
 
     React.useEffect(() => {
-        const {autoupdateInterval: updateInterval} = Utils.getOptionsFromSearch(
-            window.location.search,
-        );
+        const {autoupdateInterval: updateInterval} = Utils.getOptionsFromSearch(location.search);
 
         if (updateInterval) {
             setAutoupdateInterval(
@@ -29,7 +29,7 @@ export const useChartAutoupdate = () => {
         return () => {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
-    }, [onVisibilityChange]);
+    }, [onVisibilityChange, location]);
 
     return {
         isPageHidden,

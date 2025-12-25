@@ -2,29 +2,25 @@ import React from 'react';
 
 import {Box, Button, Flex, Loader} from '@gravity-ui/uikit';
 import {useDispatch} from 'react-redux';
-import {useHistory, useLocation} from 'react-router-dom';
-
-import {RELOADED_URL_QUERY} from '../../../../../shared/components/auth/constants/url';
-import {PlaceholderIllustration} from '../../../../components/PlaceholderIllustration/PlaceholderIllustration';
-import {useEffectOnce} from '../../../../hooks/useEffectOnce';
-import type {AppDispatch} from '../../../../store';
-import {logout} from '../../store/actions/logout';
+import {RELOADED_URL_QUERY} from 'shared/components/auth/constants/url';
+import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
+import {useEffectOnce} from 'ui/hooks/useEffectOnce';
+import {useLocation, useRouter} from 'ui/navigation';
+import type {AppDispatch} from 'ui/store';
+import {logout} from 'ui/units/auth/store/actions/logout';
 
 export const Logout = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const history = useHistory();
-    const {search} = useLocation();
+    const router = useRouter();
+    const location = useLocation();
 
     const [view, setView] = React.useState<'loader' | 'error'>('loader');
 
     useEffectOnce(() => {
-        const queryParams = new URLSearchParams(search);
-
-        if (queryParams.has(RELOADED_URL_QUERY)) {
-            queryParams.delete(RELOADED_URL_QUERY);
-            history.replace({
-                search: queryParams.toString(),
-            });
+        const search = location.params();
+        if (search.has(RELOADED_URL_QUERY)) {
+            search.delete(RELOADED_URL_QUERY);
+            router.replace({search});
         }
 
         dispatch(logout()).then(({error}) => {
@@ -47,7 +43,7 @@ export const Logout = () => {
                     size="l"
                     renderAction={() => (
                         <Box spacing={{mt: 4}}>
-                            <Button size="l" view="action" onClick={() => window.location.reload()}>
+                            <Button size="l" view="action" onClick={() => router.reload()}>
                                 Reload
                             </Button>
                         </Box>

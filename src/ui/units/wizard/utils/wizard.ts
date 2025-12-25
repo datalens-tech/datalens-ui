@@ -11,7 +11,6 @@ import type {
 } from 'shared';
 import {
     DATASET_FIELD_TYPES,
-    DatasetFieldType,
     NavigatorModes,
     Operations,
     isDateField,
@@ -37,9 +36,9 @@ import {
     POLYLINE_VISUALIZATION,
     VISUALIZATION_IDS,
 } from 'ui/constants/visualizations';
+import {getLocation, getRouter} from 'ui/navigation';
 import {v1 as uuidv1} from 'uuid';
 
-import history from '../../../utils/history';
 import {getPlaceholdersWithMergedSettings} from '../reducers/utils';
 import type {ThresholdsValidationStatus} from '../typings';
 
@@ -447,8 +446,6 @@ export const getDefaultExtraSettings = (
 export const isFieldVisible = (field: Field) =>
     !(field.quickFormula || field.hidden || field.virtual);
 
-export const isFieldPseudo = (field: Field) => field.type === DatasetFieldType.Pseudo;
-
 export const getFieldFormat = (field: Field) => {
     let format = field.format;
     if (!format) {
@@ -509,14 +506,14 @@ export const parseParameterDefaultValue = (item: Field): string => {
     return defaultValue;
 };
 
-export const removeUrlParameter = (key: string) => {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.delete(key);
+export const removeUrlParameters = (keys: string[]) => {
+    const router = getRouter();
+    const search = router.location().params();
+    if (!keys.length || !keys.some((key) => search.has(key))) return;
 
-    history.replace({
-        pathname: location.pathname,
-        search: searchParams.toString(),
-    });
+    keys.forEach((key) => search.delete(key));
+
+    router.replace({search});
 };
 
 type UpdateUrlParameter = {
@@ -525,21 +522,16 @@ type UpdateUrlParameter = {
 };
 
 export const updateUrlParameter = ({key, value}: UpdateUrlParameter) => {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set(key, value);
+    const router = getRouter();
+    const search = router.location().params();
 
-    history.replace({
-        pathname: location.pathname,
-        search: searchParams.toString(),
-    });
-};
+    search.set(key, value);
 
-export const removeUrlParameters = (keys: string[]) => {
-    keys.forEach(removeUrlParameter);
+    router.replace({search});
 };
 
 export const getExistedParameterKeys = (args: {possibleKeys: string[]}) => {
-    const searchParams = new URLSearchParams(window.location.search);
+    const searchParams = getLocation().params();
     return args.possibleKeys.filter((key) => searchParams.get(key) !== null);
 };
 
@@ -549,16 +541,12 @@ type AppendUrlParameterArgs = {
 };
 
 export const appendUrlParameters = ({key, values}: AppendUrlParameterArgs) => {
-    const searchParams = new URLSearchParams(window.location.search);
+    const router = getRouter();
+    const search = router.location().params();
 
-    values.forEach((value) => {
-        searchParams.append(key, value);
-    });
+    values.forEach((value) => search.append(key, value));
 
-    history.replace({
-        pathname: location.pathname,
-        search: searchParams.toString(),
-    });
+    router.replace({search});
 };
 
 export const validateThresholds = (args: {
