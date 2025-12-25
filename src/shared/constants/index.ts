@@ -1,4 +1,5 @@
 export * from './common';
+export * from './collections';
 export * from './connections';
 export * from './datasets';
 export * from './dash';
@@ -30,4 +31,3 @@ export * from './markup';
 export * from './print';
 export * from './charts';
 export * from './widgets';
-export * from './public-gallery';

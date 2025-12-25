@@ -20,10 +20,12 @@ import {
     deleteConnection,
     deleteSource,
     getSources,
+    getSourcesListingOptions,
     openDialogParameterCreate,
     openDialogParameterEdit,
     replaceConnection,
     replaceSource,
+    resetSourcesPagination,
     toggleSaveDataset,
     updateDatasetByValidation,
     updateRelation,
@@ -47,20 +49,22 @@ import {
     TOAST_TYPES,
 } from '../../constants';
 import {getComponentErrorsByType} from '../../helpers/datasets';
-import DatasetUtils from '../../helpers/utils';
+import DatasetUtils, {getSourceListingValues} from '../../helpers/utils';
 import {
     UISelector,
     componentErrorsSelector,
     connectionsSelector,
+    currentDbNameSelector,
     filteredRelationsSelector,
     filteredSourceAvatarsSelector,
     filteredSourcesSelector,
     freeformSourcesSelector,
     optionsSelector,
     selectedConnectionSelector,
-    sourcePrototypesSelector,
+    sortedSourcePrototypesSelector,
     sourceTemplateSelector,
     sourcesErrorSelector,
+    sourcesPaginationSelector,
 } from '../../store/selectors';
 
 import './DatasetSources.scss';
@@ -69,7 +73,7 @@ const b = block('dataset-sources');
 const SOURCES_PANEL_MIN_SIZE = 256;
 const SOURCES_PANEL_MAX_SIZE = 512;
 
-class DatasetSources extends React.Component {
+export class DatasetSources extends React.Component {
     state = {
         connectionId: null,
         dragSource: null,
@@ -78,6 +82,7 @@ class DatasetSources extends React.Component {
         source: null,
         validRelation: true,
         isUpdating: false,
+        isLoadingConnectionInfo: false,
         isVisibleSourceEditorDialog: false,
         isVisibleRelationDialog: false,
     };
@@ -197,9 +202,12 @@ class DatasetSources extends React.Component {
     };
 
     addAvatarOnMapAutoIfNeeds = (preparedSources = []) => {
-        const {avatars, freeformSources, sourceLoadingError} = this.props;
+        const {avatars, freeformSources, sourceLoadingError, sourcesPagination} = this.props;
         const isNeededToAddNewSource =
-            freeformSources.length && !preparedSources.length && !sourceLoadingError;
+            freeformSources.length &&
+            !preparedSources.length &&
+            !sourceLoadingError &&
+            !sourcesPagination.searchValue;
         const isNeededToAddPreparedSourceAvatar =
             preparedSources.length === 1 && !freeformSources.length && !avatars.length;
 
@@ -214,15 +222,26 @@ class DatasetSources extends React.Component {
         }
     };
 
-    selectConnection = async ({entryId}) => {
+    selectConnection = async ({entryId, isDelegated}) => {
         try {
-            const connection = await getSdk().sdk.us.getEntry({entryId});
+            this.setState({isLoadingConnectionInfo: true});
+            const connection = await getSdk().sdk.us.getEntry({
+                entryId,
+                includePermissionsInfo: true,
+            });
 
-            this.props.addConnection({connection, tab: TAB_SOURCES});
+            await this.props.addConnection({
+                connection: {...connection, isDelegated},
+                tab: TAB_SOURCES,
+            });
+            this.setState({isLoadingConnectionInfo: false});
 
             this.clickConnection(entryId);
         } catch (error) {
-            logger.logError('DatasetSources: selectConnection failed', error);
+            this.setState({isLoadingConnectionInfo: false});
+            if (error !== null) {
+                logger.logError('DatasetSources: selectConnection failed', error);
+            }
             this._showToast({
                 error,
                 name: TOAST_TYPES.SELECT_CONNECTION,
@@ -231,8 +250,14 @@ class DatasetSources extends React.Component {
         }
     };
 
-    clickConnection = (connectionId) => {
-        const {sourcePrototypes, selectedConnection: {entryId: selectedConnId} = {}} = this.props;
+    clickConnection = async (connectionId) => {
+        const {
+            sourcePrototypes,
+            sourcesPagination,
+            workbookId,
+            selectedConnection: {entryId: selectedConnId} = {},
+            resetSourcesPagination,
+        } = this.props;
 
         if (connectionId === selectedConnId) {
             return sourcePrototypes;
@@ -240,7 +265,18 @@ class DatasetSources extends React.Component {
 
         this.props.clickConnection({connectionId});
 
-        return this.props.getSources(connectionId, this.props.workbookId);
+        resetSourcesPagination();
+        const {sourceListing, currentDbName} =
+            await this.props.getSourcesListingOptions(connectionId);
+
+        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(sourceListing);
+
+        return this.props.getSources({
+            connectionId,
+            workbookId,
+            limit: serverPagination ? sourcesPagination.limit : undefined,
+            currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
+        });
     };
 
     deleteConnection = ({connectionId}) => {
@@ -255,14 +291,30 @@ class DatasetSources extends React.Component {
         }
     };
 
-    retryToGetSources = () => {
-        const {selectedConnection: {entryId} = {}} = this.props;
+    retryToGetSources = async () => {
+        const {
+            selectedConnection: {entryId} = {},
+            workbookId,
+            sourcesPagination,
+            resetSourcesPagination,
+            getSourcesListingOptions,
+        } = this.props;
 
         if (!entryId) {
             return;
         }
 
-        this.props.getSources(entryId, this.props.workbookId);
+        resetSourcesPagination();
+        const {sourceListing, currentDbName} = await getSourcesListingOptions(entryId);
+
+        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(sourceListing);
+
+        this.props.getSources({
+            connectionId: entryId,
+            workbookId,
+            limit: serverPagination ? sourcesPagination.limit : undefined,
+            currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
+        });
     };
 
     updateDatasetByValidation = (data) => {
@@ -351,15 +403,20 @@ class DatasetSources extends React.Component {
             case DATASET_UPDATE_ACTIONS.CONNECTION_REPLACE: {
                 const {connection, newConnection} = update;
 
-                this.props.replaceConnection({
-                    connection,
-                    newConnection,
-                });
+                this.setState({isLoadingConnectionInfo: true});
 
-                return this.updateDatasetByValidation({
-                    updatePreview,
-                    validateEnabled,
-                });
+                return this.props
+                    .replaceConnection({
+                        connection,
+                        newConnection,
+                    })
+                    .then(() => {
+                        this.setState({isLoadingConnectionInfo: false});
+                        return this.updateDatasetByValidation({
+                            updatePreview,
+                            validateEnabled,
+                        });
+                    });
             }
             case DATASET_UPDATE_ACTIONS.SOURCE_UPDATE: {
                 const {source} = update;
@@ -598,12 +655,14 @@ class DatasetSources extends React.Component {
         });
     };
 
-    replaceConnection = async (connection, {entryId}) => {
+    replaceConnection = async (connection, {entryId, isDelegated}) => {
         try {
-            const newConnection = await getSdk().sdk.us.getEntry({entryId});
-
-            const update = {connection, newConnection};
-            this.updateDatasetConfig({
+            const newConnection = await getSdk().sdk.us.getEntry({
+                entryId,
+                includePermissionsInfo: true,
+            });
+            const update = {connection, newConnection: {...newConnection, isDelegated}};
+            await this.updateDatasetConfig({
                 type: DATASET_UPDATE_ACTIONS.CONNECTION_REPLACE,
                 update,
                 updatePreview: true,
@@ -641,6 +700,8 @@ class DatasetSources extends React.Component {
             freeformSources,
             sourceLoadingError,
             workbookId,
+            collectionId,
+            readonly,
         } = this.props;
         const {
             isVisibleSourceEditorDialog,
@@ -649,6 +710,7 @@ class DatasetSources extends React.Component {
             source,
             relation,
             validRelation,
+            isLoadingConnectionInfo,
         } = this.state;
 
         return (
@@ -664,7 +726,11 @@ class DatasetSources extends React.Component {
                     >
                         <SelectSourcePrototypes
                             sdk={sdk}
-                            isSourcesLoading={ui.isSourcesLoading}
+                            isSourcesLoading={
+                                ui.isSourcesLoading || ui.isSourcesListingOptionsLoading
+                            }
+                            isLoadingConnectionInfo={isLoadingConnectionInfo}
+                            readonly={readonly}
                             isDisabledAddSource={isUpdating}
                             isDisabledDropSource={this.isDisabledDropSource}
                             connections={connections}
@@ -674,6 +740,7 @@ class DatasetSources extends React.Component {
                             freeformSources={freeformSources}
                             error={sourceLoadingError}
                             workbookId={workbookId}
+                            collectionId={collectionId}
                             options={options}
                             onSelectConnection={this.selectConnection}
                             onClickConnection={this.clickConnection}
@@ -686,6 +753,7 @@ class DatasetSources extends React.Component {
                             getSources={this.retryToGetSources}
                         />
                         <RelationsMap
+                            readonly={readonly}
                             avatars={avatars}
                             relations={relations}
                             relationsErrors={this.relationsErrors}
@@ -757,12 +825,18 @@ DatasetSources.propTypes = {
     options: PropTypes.object,
     showToast: PropTypes.func.isRequired,
     workbookId: PropTypes.string,
+    collectionId: PropTypes.string,
+    sourcesPagination: PropTypes.object,
+    currentDbName: PropTypes.string,
+    resetSourcesPagination: PropTypes.func.isRequired,
+    getSourcesListingOptions: PropTypes.func.isRequired,
+    readonly: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
     connections: connectionsSelector,
     componentErrors: componentErrorsSelector,
-    sourcePrototypes: sourcePrototypesSelector,
+    sourcePrototypes: sortedSourcePrototypesSelector,
     sourceTemplate: sourceTemplateSelector,
     sources: filteredSourcesSelector,
     avatars: filteredSourceAvatarsSelector,
@@ -772,6 +846,8 @@ const mapStateToProps = createStructuredSelector({
     options: optionsSelector,
     ui: UISelector,
     freeformSources: freeformSourcesSelector,
+    sourcesPagination: sourcesPaginationSelector,
+    currentDbName: currentDbNameSelector,
 });
 const mapDispatchToProps = {
     updateDatasetByValidation,
@@ -793,6 +869,8 @@ const mapDispatchToProps = {
     showToast,
     openDialogParameterCreate,
     openDialogParameterEdit,
+    resetSourcesPagination,
+    getSourcesListingOptions,
 };
 
 export default compose(connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true}))(

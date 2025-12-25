@@ -1,15 +1,13 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import type {SelectProps} from '@gravity-ui/uikit';
-import {Button, Checkbox} from '@gravity-ui/uikit';
+import {Button, Checkbox, HelpMark} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import type {DashLoadPriority, DashSettings} from '../../../../../../../shared';
-import {Feature} from '../../../../../../../shared';
+import {type DashLoadPriority, type DashSettings, Feature} from '../../../../../../../shared';
 import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';
 
 import {LoadPriority} from './LoadPriority';
@@ -55,7 +53,6 @@ export const OtherSettings = ({
     settings,
     onChange,
 }: OtherSettingsProps) => {
-    const showAccessDescriptionSetting = isEnabledFeature(Feature.DashBoardAccessDescription);
     const showSupportDescriptionSetting = isEnabledFeature(Feature.DashBoardSupportDescription);
     const {DialogDashOtherSettingsPrepend} = registry.dash.components.getAll();
 
@@ -68,7 +65,7 @@ export const OtherSettings = ({
             />
             <Row>
                 <Title text={i18n('label_load-only-visible-charts')}>
-                    <HelpPopover htmlContent={i18n('hint_load-only-visible-charts')} />
+                    <HelpMark>{i18n('hint_load-only-visible-charts')}</HelpMark>
                 </Title>
                 <Checkbox
                     size="l"
@@ -101,14 +98,12 @@ export const OtherSettings = ({
                     </Button>
                 </Row>
             )}
-            {showAccessDescriptionSetting && (
-                <Row>
-                    <Title text={i18n('label_access-description')} />
-                    <Button className={b('box')} onClick={onAccessDescriptionClick}>
-                        {i18n('button_setup')}
-                    </Button>
-                </Row>
-            )}
+            <Row>
+                <Title text={i18n('label_access-description')} />
+                <Button className={b('box')} onClick={onAccessDescriptionClick}>
+                    {i18n('button_setup')}
+                </Button>
+            </Row>
         </SectionWrapper>
     );
 };

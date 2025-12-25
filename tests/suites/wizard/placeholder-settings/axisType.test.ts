@@ -1,16 +1,12 @@
 import {Page} from '@playwright/test';
 
-import {
-    PlaceholderId,
-    RadioButtons,
-    RadioButtonsValues,
-} from '../../../page-objects/wizard/PlaceholderDialog';
+import {RadioButtons, RadioButtonsValues} from '../../../page-objects/wizard/PlaceholderDialog';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {DialogPlaceholderQa} from '../../../../src/shared';
+import {DialogPlaceholderQa, PlaceholderId} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - placeholder dialog ("Axis type") ', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
@@ -57,21 +53,10 @@ datalensTest.describe('Wizard - placeholder dialog ("Axis type") ', () => {
                 );
             });
 
-            const expectedTooltipValue = DialogPlaceholderQa.TooltipZeroToMaxScale;
-
-            let tooltipText: string | null | undefined;
-
-            await waitForCondition(async () => {
-                const tooltip = await wizardPage.placeholderDialog.getDialogTooltip();
-
-                tooltipText = await tooltip?.getAttribute('data-qa');
-
-                return tooltipText === expectedTooltipValue;
-            }).catch(() => {
-                throw new Error(
-                    `The text in the tooltip: ${tooltipText}, and expected ${expectedTooltipValue}`,
-                );
-            });
+            const tooltip = page
+                .locator('.g-popup')
+                .locator(slct(DialogPlaceholderQa.TooltipZeroToMaxScale));
+            await expect(tooltip).toBeVisible();
         },
     );
 
@@ -109,21 +94,10 @@ datalensTest.describe('Wizard - placeholder dialog ("Axis type") ', () => {
                 );
             });
 
-            const expectedTooltipValue = DialogPlaceholderQa.TooltipLogarithmicAxis;
-
-            let tooltipText: string | null | undefined;
-
-            await waitForCondition(async () => {
-                const tooltip = await wizardPage.placeholderDialog.getDialogTooltip();
-
-                tooltipText = await tooltip?.getAttribute('data-qa');
-
-                return tooltipText === expectedTooltipValue;
-            }).catch(() => {
-                throw new Error(
-                    `The text in the tooltip: ${tooltipText}, and expected ${expectedTooltipValue}`,
-                );
-            });
+            const tooltip = page
+                .locator('.g-popup')
+                .locator(slct(DialogPlaceholderQa.TooltipLogarithmicAxis));
+            await expect(tooltip).toBeVisible();
         },
     );
 });

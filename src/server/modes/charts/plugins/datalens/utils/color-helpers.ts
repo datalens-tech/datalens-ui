@@ -1,9 +1,11 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import isNumber from 'lodash/isNumber';
 
 import type {
     ExtendedSeriesLineOptions,
     RGBColor,
     RGBGradient,
+    ServerField,
     TableCellsRow,
     WrappedHTML,
     WrappedMarkup,
@@ -12,10 +14,11 @@ import {
     GradientType,
     getRangeDelta,
     getRgbColorValue,
-    getSortedData,
     transformHexToRgb,
 } from '../../../../../../shared';
 import type {WrappedMarkdown} from '../../../../../../shared/utils/markdown';
+import {getColorsSettings} from '../../helpers/color-palettes';
+import {interpolateRgbBasis} from '../preparers/helpers/colors';
 import type {ChartColorsConfig} from '../types';
 
 import {getColor, getMountedColor} from './constants';
@@ -31,6 +34,7 @@ export type ExtendedPointOptionsObject = Omit<
     colorValue?: string | null;
     colorGuid?: string;
     shapeValue?: string | null;
+    shapeLabel?: string | WrappedMarkdown | WrappedMarkup | WrappedHTML;
     name?: string | WrappedMarkdown | WrappedMarkup | WrappedHTML;
 };
 
@@ -202,8 +206,15 @@ function mapAndColorizeHashTableByGradient(hashTable: HashTable, colorsConfig: C
     return {colorData, min, mid: min + rangeMiddle, max};
 }
 
-function mapAndColorizeHashTableByPalette(hashTable: HashTable, colorsConfig: ChartColorsConfig) {
-    const {colorGuid} = hashTable;
+function mapAndColorizeHashTableByPalette({
+    hashTable,
+    colors,
+    mountedColors,
+}: {
+    hashTable: HashTable;
+    colors: string[];
+    mountedColors: Record<string, string>;
+}) {
     const knownValues: number[] = [];
     const result: Record<string, {backgroundColor: string}> = {};
 
@@ -217,14 +228,10 @@ function mapAndColorizeHashTableByPalette(hashTable: HashTable, colorsConfig: Ch
             colorIndex = knownValues.length - 1;
         }
 
-        if (
-            colorGuid === colorsConfig.fieldGuid &&
-            colorsConfig.mountedColors &&
-            colorsConfig.mountedColors[value]
-        ) {
-            color = getMountedColor(colorsConfig, value);
+        if (mountedColors && mountedColors[value]) {
+            color = getMountedColor({mountedColors, colors, value});
         } else {
-            color = getColor(colorIndex, colorsConfig.colors);
+            color = getColor(colorIndex, colors);
         }
 
         result[key] = {backgroundColor: color};
@@ -292,58 +299,27 @@ function mapAndColorizeGraphsByGradient(
     }
 }
 
-function mapAndColorizeCoordinatesByDimension(
-    points: Record<string, string>,
-    colorsConfig: ChartColorsConfig,
-    colorGuid: string,
-) {
-    const knownValues: {point: string; value: string; backgroundColor?: string}[] = [];
-
-    const colorData: Record<string, {backgroundColor?: string; colorIndex?: number}> = {};
-    const colorDictionary: Record<string, string> = {};
-
-    // eslint-disable-next-line guard-for-in
-    for (const point in points) {
-        const value = points[point];
-        colorData[point] = {};
-        let colorIndex = knownValues.findIndex(({value: knownValue}) => knownValue === value);
-
-        if (colorIndex === -1) {
-            knownValues.push({point, value});
-            colorIndex = knownValues.length - 1;
-
-            let color;
-
-            if (
-                colorsConfig &&
-                colorGuid === colorsConfig.fieldGuid &&
-                colorsConfig.mountedColors &&
-                colorsConfig.mountedColors[value]
-            ) {
-                color = getMountedColor(colorsConfig, value);
-            } else {
-                color = getColor(colorIndex, colorsConfig.colors);
-            }
-            knownValues[knownValues.length - 1].backgroundColor = color;
-            colorData[point].backgroundColor = color;
-
-            colorDictionary[value] = color;
-        } else {
-            colorData[point].backgroundColor = knownValues[colorIndex].backgroundColor;
-        }
-
-        colorData[point].colorIndex = colorIndex;
-    }
-
-    return {colorData, colorDictionary: getSortedData(colorDictionary)};
-}
-
-function mapAndColorizePointsByPalette(
-    points: ExtendedPointOptionsObject[],
-    chartColorConfig: ChartColorsConfig,
-): ExtendedSeriesScatterOptions[] {
+export function mapAndColorizePointsByPalette({
+    points,
+    colorsConfig,
+    colorField,
+    defaultColorPaletteId,
+}: {
+    points: ExtendedPointOptionsObject[];
+    colorsConfig: ChartColorsConfig;
+    colorField: ServerField;
+    defaultColorPaletteId: string;
+}): ExtendedSeriesScatterOptions[] {
     const series: ExtendedSeriesScatterOptions[] = [];
     const knownValues: (string | null | undefined)[] = [];
+
+    const {mountedColors, colors} = getColorsSettings({
+        field: colorField,
+        colorsConfig: colorsConfig,
+        defaultColorPaletteId,
+        availablePalettes: colorsConfig.availablePalettes,
+        customColorPalettes: colorsConfig.loadedColorPalettes,
+    });
 
     points.forEach((point) => {
         const value = point.colorValue;
@@ -353,16 +329,10 @@ function mapAndColorizePointsByPalette(
             colorIndex = knownValues.length - 1;
             let color;
 
-            if (
-                chartColorConfig &&
-                point.colorGuid === chartColorConfig.fieldGuid &&
-                chartColorConfig.mountedColors &&
-                point.colorValue &&
-                chartColorConfig.mountedColors[point.colorValue]
-            ) {
-                color = getMountedColor(chartColorConfig, point.colorValue);
+            if (point.colorValue && mountedColors[point.colorValue]) {
+                color = getMountedColor({mountedColors, colors, value: point.colorValue});
             } else {
-                color = getColor(colorIndex, chartColorConfig.colors);
+                color = getColor(colorIndex, colors);
             }
 
             series[colorIndex] = {
@@ -388,6 +358,8 @@ type MapAndColorizeGraphsByPalette = {
     isColorsItemExists?: boolean;
     isSegmentsExists?: boolean;
     usedColors?: (string | undefined)[];
+    colorField: ServerField | undefined;
+    defaultColorPaletteId: string;
 };
 
 function mapAndColorizeGraphsByPalette({
@@ -397,7 +369,17 @@ function mapAndColorizeGraphsByPalette({
     isShapesItemExists,
     isSegmentsExists,
     usedColors = [],
+    colorField,
+    defaultColorPaletteId,
 }: MapAndColorizeGraphsByPalette) {
+    const {mountedColors, colors} = getColorsSettings({
+        field: colorField,
+        colorsConfig,
+        defaultColorPaletteId,
+        availablePalettes: colorsConfig.availablePalettes,
+        customColorPalettes: colorsConfig.loadedColorPalettes,
+    });
+
     // eslint-disable-next-line complexity
     graphs.forEach((graph, i) => {
         let colorKey;
@@ -414,14 +396,8 @@ function mapAndColorizeGraphsByPalette({
             colorKey = colorTitle;
         }
 
-        if (
-            colorsConfig &&
-            colorsConfig.mountedColors &&
-            (graph.colorGuid === colorsConfig.fieldGuid || colorsConfig.coloredByMeasure) &&
-            colorKey &&
-            colorsConfig.mountedColors[colorKey]
-        ) {
-            graph.color = getMountedColor(colorsConfig, colorKey);
+        if (colorKey && mountedColors[colorKey]) {
+            graph.color = getMountedColor({mountedColors, colors, value: colorKey});
         } else {
             let value = graph.colorValue;
 
@@ -442,7 +418,7 @@ function mapAndColorizeGraphsByPalette({
                 colorIndex = usedColors.length - 1;
             }
 
-            graph.color = getColor(colorIndex, colorsConfig.colors);
+            graph.color = getColor(colorIndex, colors);
         }
     });
 
@@ -460,17 +436,18 @@ function getThresholdValues(
     colorsConfig: ChartColorsConfig,
     colorValues: ColorValue[],
 ): GradientThresholdValues {
+    const list = colorValues.filter((d) => d !== null).map(Number);
     const max =
         colorsConfig.thresholdsMode === 'manual' &&
         typeof colorsConfig.rightThreshold !== 'undefined'
             ? Number(colorsConfig.rightThreshold)
-            : Math.max(...colorValues.map(Number));
+            : Math.max(...list);
 
     const min =
         colorsConfig.thresholdsMode === 'manual' &&
         typeof colorsConfig.leftThreshold !== 'undefined'
             ? Number(colorsConfig.leftThreshold)
-            : Math.min(...colorValues.map(Number));
+            : Math.min(...list);
 
     const range = max - min;
 
@@ -507,13 +484,78 @@ function getColorValuesAmongSeries(graphs: ExtendedSeriesLineOptions[]) {
     }, [] as ColorValue[]);
 }
 
+const MAX_COLOR_DELTA_VALUE = 1;
+
+function getColorFn(colors: RGBColor[]) {
+    if (colors.length > 2) {
+        const firstColors = interpolateRgbBasis(colors.slice(0, 2));
+        const lastColors = interpolateRgbBasis(colors.slice(1));
+
+        return (colorValue: number) =>
+            colorValue >= 0.5 ? lastColors((colorValue - 0.5) * 2) : firstColors(colorValue * 2);
+    }
+
+    return interpolateRgbBasis(colors);
+}
+
+export function colorizeByColorValues({
+    colorValues,
+    colorsConfig,
+}: {
+    colorValues: ColorValue[];
+    colorsConfig: ChartColorsConfig;
+}) {
+    const {min, mid, max} = getThresholdValues(colorsConfig, colorValues.filter(isNumber));
+    const currentGradient = getCurrentGradient(colorsConfig);
+    const colors: RGBColor[] = getRgbColors(currentGradient.colors, Boolean(colorsConfig.reversed));
+    const getRgbColor = getColorFn(colors);
+
+    let deltas: (number | null)[];
+
+    if (min === max) {
+        // If all values are the same, then we paint in the maximum color.
+        deltas = colorValues.map((colorValue) => {
+            if (colorValue === null) {
+                return null;
+            }
+
+            return MAX_COLOR_DELTA_VALUE;
+        });
+    } else {
+        deltas = colorValues.map((colorValue) => {
+            if (colorValue === null) {
+                return null;
+            }
+
+            if (colorValue <= min) {
+                return 0;
+            }
+
+            if (colorValue >= max) {
+                return 1;
+            }
+
+            return colorValue >= mid
+                ? getRangeDelta(colorValue, 2 * mid - max, 2 * (max - mid))
+                : getRangeDelta(colorValue, min, 2 * (mid - min));
+        });
+    }
+
+    return deltas.map((delta) => {
+        if (delta === null) {
+            return null;
+        }
+
+        const {red, green, blue} = getRgbColor(delta);
+        return `rgb(${red}, ${green}, ${blue})`;
+    });
+}
+
 export {
     hexToRgb,
     mapAndColorizeTableCells,
     mapAndColorizeHashTableByPalette,
     mapAndColorizeHashTableByGradient,
-    mapAndColorizeCoordinatesByDimension,
-    mapAndColorizePointsByPalette,
     mapAndColorizePointsByGradient,
     mapAndColorizeGraphsByPalette,
     mapAndColorizeGraphsByGradient,

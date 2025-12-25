@@ -28,6 +28,9 @@ export const ChartkitMenuDialogsQA = {
 
 export const enum ChartKitQa {
     Loader = 'chartkit-loader',
+    DrillBreadcrumbs = 'chartkit-drillbreadcrumbs',
+    DrillBreadcrumbsItem = 'chartkit-drillbreadcrumbs-item',
+    Widget = 'chart-widget',
 }
 
 export const enum ChartQa {
@@ -48,4 +51,8 @@ export const enum ChartKitTableQa {
     PaginatorRange = 'chartkit-table-paginator-range',
     PaginatorPrevPageButton = 'chartkit-table-paginator-prev-btn',
     PaginatorNextPageButton = 'chartkit-table-paginator-next-btn',
+}
+
+export const enum ChartKitQlPreviewTableQa {
+    Widget = 'chartkit-preview-table-widget',
 }

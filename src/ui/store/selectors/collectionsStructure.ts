@@ -1,6 +1,7 @@
 import {createSelector} from 'reselect';
 import type {DatalensGlobalState} from 'index';
 import {getStatusFromOperation} from '../utils/collectionStructure';
+import {CollectionItemEntities} from 'shared';
 
 export const selectGetRootCollectionPermissions = (state: DatalensGlobalState) =>
     state.collectionsStructure.getRootCollectionPermissions;
@@ -15,7 +16,12 @@ export const selectGetStructureItems = (state: DatalensGlobalState) =>
     state.collectionsStructure.getStructureItems;
 
 export const selectStructureItems = (state: DatalensGlobalState) =>
-    state.collectionsStructure.items;
+    state.collectionsStructure.items ?? [];
+
+export const selectFilteredStructureItems = (state: DatalensGlobalState) =>
+    state.collectionsStructure.items?.filter(
+        (item) => item.entity !== CollectionItemEntities.ENTRY,
+    ) ?? [];
 
 export const selectCopyTemplate = (state: DatalensGlobalState) =>
     state.collectionsStructure.copyTemplate;
@@ -31,6 +37,9 @@ export const selectMoveCollection = (state: DatalensGlobalState) =>
 
 export const selectMoveWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.moveWorkbook;
+
+export const selectMoveSharedEntry = (state: DatalensGlobalState) =>
+    state.collectionsStructure.moveSharedEntry;
 
 export const selectCopyWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.copyWorkbook;
@@ -169,7 +178,7 @@ export const selectBreadcrumbsIsLoading = createSelector(
 // The result of loading the bread crumbs of the collection
 export const selectBreadcrumbs = createSelector(
     [selectGetCollectionBreadcrumbs],
-    (getCollectionBreadcrumbs) => getCollectionBreadcrumbs.data,
+    (getCollectionBreadcrumbs) => getCollectionBreadcrumbs.data ?? [],
 );
 
 // Status of loading information about the contents of the collection
@@ -206,10 +215,11 @@ export const selectCreateWorkbookIsLoading = createSelector(
     (createWorkbook) => createWorkbook.isLoading,
 );
 
-// Status of the request to move the collection / workbook
+// Status of the request to move the collection / workbook / shared entry
 export const selectMoveIsLoading = createSelector(
-    [selectMoveCollection, selectMoveWorkbook],
-    (moveCollection, moveWorkbook) => moveCollection.isLoading || moveWorkbook.isLoading,
+    [selectMoveCollection, selectMoveWorkbook, selectMoveSharedEntry],
+    (moveCollection, moveWorkbook, moveSharedEntry) =>
+        moveCollection.isLoading || moveWorkbook.isLoading || moveSharedEntry.isLoading,
 );
 
 // Status of the workbook copy request

@@ -1,35 +1,82 @@
 import React from 'react';
 
-import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
+import type {Plugin} from '@gravity-ui/dashkit';
+import {CustomPaletteBgColors} from 'shared/constants';
+import {isOldBackgroundSettings} from 'shared/utils';
+import type {ChartWidgetWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 
 import MarkdownProvider from '../../../../modules/markdownProvider';
 import {ChartWrapper} from '../../../Widgets/Chart/ChartWidgetWithProvider';
+import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
+import {useWidgetContext} from '../../context/WidgetContext';
+import {usePreparedWrapSettings} from '../../utils';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import type {WidgetPluginProps} from './types';
 
-const plugin = {
+type Props = WidgetPluginProps & CommonPluginProps;
+
+type PluginWidgetObjectSettings = CommonPluginSettings;
+
+type PluginWidget = Plugin<Props> &
+    CommonPluginSettings & {
+        setSettings: (settings: PluginWidgetObjectSettings) => PluginWidget;
+    };
+
+const widgetPlugin: PluginWidget = {
     type: 'widget',
     defaultLayout: {w: 12, h: 12},
+    setSettings: (settings: PluginWidgetObjectSettings) => {
+        widgetPlugin.scope = settings.scope;
+        widgetPlugin.globalWidgetSettings = settings.globalWidgetSettings;
+        return widgetPlugin;
+    },
     renderer: function Wrapper(
-        props: WidgetPluginProps,
-        forwardedRef: React.RefObject<ChartsChartKit>,
+        props: Props,
+        forwardedRef: React.RefObject<ChartWidgetWithWrapRefProps>,
     ) {
+        const rootNodeRef = React.useRef<HTMLDivElement>(null);
+        const {onWidgetLoadData} = useWidgetContext({
+            id: props.id,
+            elementRef: rootNodeRef,
+        });
+
         const workbookId = props.context.workbookId;
         const enableAssistant = props.context.enableAssistant;
+        const propsBg = props.data.tabs?.[0]?.background;
+
+        let oldWidgetBg = isOldBackgroundSettings(propsBg) ? propsBg : undefined;
+        if (widgetPlugin.scope === 'dash' && !props.data.backgroundSettings) {
+            oldWidgetBg = {color: CustomPaletteBgColors.LIKE_CHART};
+        }
+
+        const {style} = usePreparedWrapSettings({
+            ownWidgetSettings: {
+                background: oldWidgetBg,
+                backgroundSettings: props.backgroundSettings,
+                borderRadius: props.borderRadius,
+            },
+            globalWidgetSettings: widgetPlugin.globalWidgetSettings ?? {},
+            defaultOldColor:
+                widgetPlugin.scope === 'dash'
+                    ? CustomPaletteBgColors.LIKE_CHART
+                    : CustomPaletteBgColors.NONE,
+        });
 
         return (
-            <RendererWrapper type="widget" id={props.id}>
+            <RendererWrapper type="widget" nodeRef={rootNodeRef} id={props.id} style={style}>
                 <ChartWrapper
                     {...props}
                     usageType="widget"
-                    forwardedRef={forwardedRef as any}
+                    forwardedRef={forwardedRef}
                     getMarkdown={MarkdownProvider.getMarkdown}
                     workbookId={workbookId}
                     enableAssistant={enableAssistant}
+                    onWidgetLoadData={onWidgetLoadData}
+                    backgroundColor={style?.backgroundColor}
                 />
             </RendererWrapper>
         );
     },
 };
-export default plugin;
+export default widgetPlugin;

@@ -1,26 +1,6 @@
 import type {AppConfig} from '@gravity-ui/nodekit';
 import Redis from 'ioredis';
 
-export type RedisSentinel = {
-    host: string;
-    port: number;
-};
-
-export type RedisSentinelsList = Array<RedisSentinel>;
-
-export type RedisDsnConfig = {
-    sentinels: RedisSentinelsList;
-    name: string;
-    password?: string;
-};
-
-export type RedisConfig = RedisDsnConfig & {
-    family: 4 | 6;
-    role: 'master' | 'slave';
-};
-
-export type RedisConfigParams = {sentinels?: RedisSentinelsList; name?: string};
-
 export type CacheStatus =
     | typeof CacheClient.OK
     | typeof CacheClient.KEY_NOT_FOUND
@@ -41,48 +21,6 @@ const timeout = <T>(prom: Promise<T>, time: number): Promise<T> => {
             timer = setTimeout(rej, time, Error('TimeoutError'));
         }),
     ]).finally(() => clearTimeout(timer));
-};
-
-const getRedisDsnConfig = (params: RedisConfigParams = {}): RedisDsnConfig => {
-    if (!process.env.REDIS_DSN_LIST?.startsWith('redis://')) {
-        return {
-            name: params.name || '',
-            sentinels: params.sentinels || [],
-        };
-    }
-
-    const dnsListString = process.env.REDIS_DSN_LIST.slice('redis://'.length);
-
-    const [namePasswordString, redisSentinelsString] = dnsListString.split('@');
-
-    const [name, password] = namePasswordString.split(':');
-
-    const redisSentinels: Array<RedisSentinel> = redisSentinelsString
-        .trim()
-        .split(',')
-        .map((hostPort) => {
-            const [host, port] = hostPort.split(':');
-
-            return {host: host.trim(), port: port ? parseInt(port, 10) : 26379};
-        });
-
-    return {
-        sentinels: redisSentinels,
-        name,
-        password,
-    };
-};
-
-export const getRedisConfig = (params: RedisConfigParams = {}): RedisConfig => {
-    const dsnConfig = getRedisDsnConfig(params);
-
-    return {
-        sentinels: dsnConfig.sentinels,
-        name: dsnConfig.name,
-        family: 6,
-        password: dsnConfig.password,
-        role: 'master',
-    };
 };
 
 export class CacheClient {

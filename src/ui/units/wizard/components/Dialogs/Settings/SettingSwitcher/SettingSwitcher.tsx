@@ -31,16 +31,14 @@ type SettingSwitcherWithTooltipProps = React.PropsWithChildren<
     Pick<PropsWithTooltip, 'tooltipText' | 'tooltipPosition' | 'tooltipClassName'>
 >;
 
-const SettingSwitcherWithTooltip: React.FC<SettingSwitcherWithTooltipProps> = (
-    props: SettingSwitcherWithTooltipProps,
-) => {
+const SettingSwitcherWithTooltip = (props: SettingSwitcherWithTooltipProps) => {
     return (
         <Popover
             content={props.tooltipText}
             className={props.tooltipClassName}
             placement={props.tooltipPosition}
         >
-            {props.children}
+            {props.children as React.ReactElement}
         </Popover>
     );
 };

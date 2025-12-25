@@ -184,19 +184,16 @@ export default class SectionVisualization {
     }
 
     async removeGeoLayer(name: string) {
-        const oldLayerName = await this.page.waitForSelector(slct(name));
-
-        const oldLayerItem = (await getParentByQARole(oldLayerName, 'geolayer-select-item'))!;
-
+        const oldLayerItem = this.page.locator(slct('geolayer-select-item'), {
+            has: this.page.locator(slct(name)),
+        });
         await oldLayerItem.hover();
 
-        const oldLayerActions = (await oldLayerItem.$('[data-qa="geolayer-item-actions"]'))!;
-
+        const oldLayerActions = oldLayerItem.locator(slct('geolayer-item-actions'));
         await oldLayerActions.click();
 
-        await this.page.click(slct('geolayer-select-option-menu-remove'));
-
-        await this.page.click(slct(DialogConfirmQA.ApplyButton));
+        await this.page.locator(slct('geolayer-select-option-menu-remove')).click();
+        await this.page.locator(slct(DialogConfirmQA.ApplyButton)).click();
     }
 
     async setGeotype(type: GeopointType) {
@@ -240,9 +237,7 @@ export default class SectionVisualization {
         await this.page.hover(placeholderSelector);
 
         await this.page.hover(`${placeholderSelector} .add-field`);
-
-        const content = await this.page.$('.g-popover__tooltip-content > span');
-        return content?.getAttribute('data-qa');
+        return await this.page.locator('.g-popover [data-qa]').getAttribute('data-qa');
     }
 
     async getPlaceholderItemsInnerText(placeholderName: PlaceholderName) {

@@ -44,10 +44,6 @@
         /* .radiobox_size_n sets line-height: 36px for everything,
         that breaks the vertical centering of the calendar */
         line-height: 28px;
-
-        // &:first-child {
-        //     height: 48px;
-        // }
     }
 
     &__radiobox-item-label {
@@ -117,7 +113,8 @@
     }
 
     &__help-icon {
-        margin-left: 5px;
+        margin-left: var(--g-spacing-1);
+        vertical-align: middle;
     }
 
     & .textinput__box {

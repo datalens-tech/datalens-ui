@@ -18,14 +18,18 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {ControlType, DATASET_FIELD_TYPES, DashTabItemControlSourceType, Feature} from 'shared';
+import {
+    ControlType,
+    DATASET_FIELD_TYPES,
+    DashTabItemControlSourceType,
+    DashTabItemType,
+} from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
+import type {ChartWidgetWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 import {DL} from 'ui/constants/common';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
-import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
 import {
@@ -45,6 +49,7 @@ import {
     addOperationForValue,
     unwrapFromArrayAndSkipOperation,
 } from '../../../../units/dash/modules/helpers';
+import type {CommonPluginProps} from '../../DashKit';
 import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout, getControlHint} from '../../utils';
@@ -55,7 +60,6 @@ import {Error} from './Error/Error';
 import {ELEMENT_TYPE, LOAD_STATUS, TYPE} from './constants';
 import {prerenderMiddleware} from './prerenderMiddleware';
 import type {
-    ChartControlRef,
     ControlSettings,
     ErrorData,
     LoadStatus,
@@ -76,7 +80,13 @@ type ContextProps = {
     workbookId?: WorkbookId;
 };
 
-export interface PluginControlProps extends PluginWidgetProps, ContextProps, ControlSettings {
+type PluginControlRendererProps = PluginWidgetProps &
+    Omit<CommonPluginProps, 'background' | 'backgroundSettings'>;
+
+export interface PluginControlProps
+    extends PluginControlRendererProps,
+        ContextProps,
+        ControlSettings {
     settings: SettingsProps & {
         dependentSelectors?: boolean;
     };
@@ -85,6 +95,7 @@ export interface PluginControlProps extends PluginWidgetProps, ContextProps, Con
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: ControlSettings['getDistincts'];
+    globalWidgetSettings?: ControlSettings['globalWidgetSettings'];
 }
 
 const b = block('dashkit-plugin-control');
@@ -94,12 +105,12 @@ const CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
 const ControlWrapper = React.forwardRef<
     HTMLDivElement,
-    {id: string; children: React.ReactNode; className: string}
+    {id: string; children: React.ReactNode; className: string; style?: React.CSSProperties}
 >(function ControlWrapper(props, nodeRef) {
-    useWidgetContext(props.id, nodeRef as React.RefObject<HTMLElement>);
+    useWidgetContext({id: props.id, elementRef: nodeRef as React.RefObject<HTMLElement>});
 
     return (
-        <div ref={nodeRef} className={props.className}>
+        <div ref={nodeRef} className={props.className} style={props.style}>
             {props.children}
         </div>
     );
@@ -110,7 +121,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
     declare context: React.ContextType<typeof ExtendedDashKitContext>;
 
-    chartKitRef: React.RefObject<ChartsChartKit> = React.createRef<ChartsChartKit>();
+    chartKitRef = React.createRef<ChartWidgetWithWrapRefProps>();
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
     _isUnmounted = false;
@@ -287,30 +298,12 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     // public
     getMeta() {
         if (this.props.data.sourceType === DashTabItemControlSourceType.External) {
-            return (this.chartKitRef.current as ChartControlRef)?.getMeta();
+            return this.chartKitRef.current?.getMeta();
         }
-        if (this.context?.isNewRelations) {
-            return this.getCurrentWidgetMetaInfo();
-        }
-        if (this.chartKitRef && this.chartKitRef.current) {
-            this.chartKitRef.current.undeferred();
-        }
-        return new Promise((resolve) => {
-            this.resolve = resolve;
-            if (this.state.loadedData) {
-                this.resolveMeta(this.state.loadedData);
-            }
-            if (this.state.status === LOAD_STATUS.FAIL) {
-                this.resolveMeta(null);
-            }
-        });
+        return this.getCurrentWidgetMetaInfo();
     }
 
     getCurrentWidgetMetaInfo() {
-        if (this.chartKitRef.current) {
-            this.chartKitRef.current.undeferred();
-        }
-
         return new Promise((resolve: (value: unknown) => void) => {
             this.resolve = resolve;
             if (this.state.status !== LOAD_STATUS.PENDING) {
@@ -376,37 +369,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         this.resolve(widgetMetaInfo);
     }
 
-    resolveMeta(loadedData?: any) {
-        // @ts-ignore
-        if (this.resolve) {
-            let result: any = {id: this.props.id};
-
-            if (loadedData && loadedData.extra) {
-                result = {
-                    id: this.props.id,
-                    usedParams: loadedData.usedParams
-                        ? Object.keys(this.filterSignificantParams(loadedData.usedParams))
-                        : null,
-                    datasets: loadedData.extra.datasets,
-                    // deprecated
-                    datasetId: loadedData.extra.datasetId,
-                    datasetFields: loadedData.extra.datasetFields,
-                    type: 'control',
-                    sourceType: this.props.data?.sourceType,
-                };
-            }
-
-            // @ts-ignore
-            this.resolve(result);
-        }
-    }
-
     setLoadedData = (loadedData: ResponseSuccessControls, status: LoadStatus) => {
-        const isNewRelations = this.context?.isNewRelations;
-
-        const isAvailableStatus = isNewRelations
-            ? [LOAD_STATUS.SUCCESS, LOAD_STATUS.FAIL].includes(status)
-            : true;
+        const isAvailableStatus = [LOAD_STATUS.SUCCESS, LOAD_STATUS.FAIL].includes(status);
 
         if (this._isUnmounted || !isAvailableStatus) {
             return;
@@ -430,12 +394,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             });
         }
 
-        if (isNewRelations) {
-            this.getCurrentWidgetResolvedMetaInfo(loadedData);
-        } else {
-            const resolveDataArg = status === LOAD_STATUS.SUCCESS ? loadedData : null;
-            this.resolveMeta(resolveDataArg);
-        }
+        this.getCurrentWidgetResolvedMetaInfo(loadedData);
 
         this._onRedraw?.();
     };
@@ -541,6 +500,16 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     };
 
     onChange = ({param, value}: {param: string; value: string | string[]}) => {
+        const params: StringParams = {[param]: value};
+        this.context?.updateTabsWithGlobalState?.({
+            params,
+            selectorItem: {
+                type: DashTabItemType.Control,
+                data: this.propsControlData,
+                id: this.props.id,
+            },
+            appliedSelectorsIds: [this.props.id],
+        });
         this.props.onStateAndParamsChange({params: {[param]: value}}, {action: 'setParams'});
     };
 
@@ -555,6 +524,15 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         // }
         if (type === 'PARAMS_CHANGED') {
             const {params} = data as {params: StringParams};
+            this.context?.updateTabsWithGlobalState?.({
+                params,
+                selectorItem: {
+                    type: DashTabItemType.Control,
+                    data: this.propsControlData,
+                    id: this.props.id,
+                },
+                appliedSelectorsIds: [this.props.id],
+            });
             this.props.onStateAndParamsChange({params: params || {}});
         }
     };
@@ -584,13 +562,14 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         if (this.props.getDistincts) {
             this._getDistinctsMemo =
                 this._getDistinctsMemo ||
-                ((params) => {
+                ((params, _, options) => {
                     const {getDistincts} = this.props;
                     const headers = this?.context?.dataProviderContextGetter?.(this.props.id);
 
                     return (getDistincts as Exclude<ControlSettings['getDistincts'], void>)?.(
                         params,
                         headers,
+                        options,
                     );
                 });
         } else {
@@ -631,31 +610,14 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     renderControls() {
-        const data = this.props.data as unknown as DashTabItemControlSingle;
+        const data = this.propsControlData;
 
         const {sourceType} = data;
         const {id} = this.props;
-        const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
 
         switch (this.state.status) {
             case LOAD_STATUS.PENDING:
-                if (showFloatControls) {
-                    if (!this.state.loadedData) {
-                        return (
-                            <div className={b()}>
-                                <Loader size="s" />
-                            </div>
-                        );
-                    }
-                    return;
-                }
-
-                // save previous logic without flag
-                if (
-                    !this.state.silentLoading ||
-                    !this.state.loadedData ||
-                    !this.state.loadedData.uiScheme
-                ) {
+                if (!this.state.loadedData) {
                     return (
                         <div className={b()}>
                             <Loader size="s" />
@@ -758,12 +720,16 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     render() {
-        const {data, editMode, id, workbookId} = this.props;
+        const {data, editMode, id, workbookId, globalWidgetSettings, borderRadius} = this.props;
         const controlData = data as unknown as
             | DashTabItemControlExternal
             | DashTabItemControlManual
             | DashTabItemControlDataset;
         const {sourceType, source} = controlData;
+
+        const resultedBorderRadius = borderRadius ?? globalWidgetSettings?.borderRadius;
+
+        const style = resultedBorderRadius ? {borderRadius: resultedBorderRadius} : undefined;
 
         if (sourceType === DashTabItemControlSourceType.External) {
             const chartId = source.chartId;
@@ -775,6 +741,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     className={b({
                         external: true,
                     })}
+                    style={style}
                 >
                     <DebugInfoTool label={'chartId'} value={chartId} />
                     <ChartWrapper
@@ -799,8 +766,9 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         onChange={this.onChangeExternal}
                         widgetType={sourceType}
                         editMode={editMode}
-                        forwardedRef={this.chartKitRef as any}
+                        forwardedRef={this.chartKitRef}
                         workbookId={workbookId}
+                        updateTabsWithGlobalState={this.context?.updateTabsWithGlobalState}
                     />
                 </ControlWrapper>
             );
@@ -816,6 +784,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 id={this.props.id}
                 ref={this.rootNode}
                 className={b({mobile: DL.IS_MOBILE})}
+                style={style}
             >
                 {this.renderSilentLoader()}
                 <DebugInfoTool
@@ -830,6 +799,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     : this.renderControls()}
             </ControlWrapper>
         );
+    }
+
+    private get propsControlData() {
+        return this.props.data as unknown as DashTabItemControlSingle;
     }
 
     private setErrorData = (errorData: ErrorData, status: LoadStatus) => {
@@ -888,18 +861,19 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 }
 
 const plugin: PluginControl = {
-    type: 'control',
+    type: DashTabItemType.Control,
     defaultLayout: DEFAULT_CONTROL_LAYOUT,
     setSettings(settings: ControlSettings) {
         const {getDistincts} = settings;
 
         // TODO: remove this. use basic ChartKit abilities
         plugin.getDistincts = getDistincts;
+        plugin.globalWidgetSettings = settings.globalWidgetSettings;
 
         return plugin;
     },
     prerenderMiddleware,
-    renderer(props: PluginWidgetProps, forwardedRef) {
+    renderer(props: PluginControlRendererProps, forwardedRef) {
         const workbookId = props.context.workbookId;
 
         return (
@@ -908,6 +882,7 @@ const plugin: PluginControl = {
                 workbookId={workbookId}
                 getDistincts={plugin.getDistincts}
                 ref={forwardedRef}
+                globalWidgetSettings={plugin.globalWidgetSettings}
             />
         );
     },

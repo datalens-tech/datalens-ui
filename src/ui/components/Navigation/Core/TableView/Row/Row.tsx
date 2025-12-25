@@ -19,30 +19,33 @@ import EntryContextButton from '../../EntryContextButton/EntryContextButton';
 import {FavoritesNameWithAliasItem} from '../../FavoritesNameWithAliasItem/FavoritesNameWithAliasItem';
 import type {HookBatchSelectResult, ParentFolderEntry, TableViewProps} from '../types';
 
+import collectionIcon from '../../../../../assets/icons/collections/collection.svg';
 import workbookIcon from '../../../../../assets/icons/collections/workbook.svg';
 
 const b = block('dl-core-navigation-table-view');
 
 const i18n = I18n.keyset('component.navigation.view');
 
-const WorkbookItem: React.FC<{workbookId: string; workbookTitle?: string | null}> = ({
-    workbookId,
-    workbookTitle,
-}) => {
+const CollectionOrWorkbookItem: React.FC<{
+    id: string;
+    title?: string | null;
+    isWorkbook: boolean;
+}> = ({id, title, isWorkbook}) => {
     const history = useHistory();
-
+    const link = isWorkbook ? `/workbooks/${id}` : `/collections/${id}`;
+    const icon = isWorkbook ? workbookIcon : collectionIcon;
     return (
         <div
             className={b('parent-folder')}
             onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                 event.stopPropagation();
                 event.preventDefault();
-                history.push(`/workbooks/${workbookId}`);
+                history.push(link);
                 window.location.reload();
             }}
         >
-            <Icon className={b('folder-inline')} data={workbookIcon} size={13} />
-            <span className={b('parent-folder-name')}>{workbookTitle}</span>
+            <Icon className={b('folder-inline')} data={icon} size={13} />
+            <span className={b('parent-folder-name')}>{title}</span>
         </div>
     );
 };
@@ -85,7 +88,7 @@ export class Row extends React.Component<RowProps> {
             isOnlyCollectionsMode,
             onMenuClick,
         } = this.props;
-        const {name, displayAlias, entryId, hidden = false} = entry;
+        const {name, entryId, hidden = false} = entry;
 
         const isLocked = this.isLockedEntry();
         const inactive = !this.isEntryActive();
@@ -98,13 +101,13 @@ export class Row extends React.Component<RowProps> {
 
         const isFavoritesNameAliasesEnabled = place === PLACE.FAVORITES;
 
-        const visible = Boolean(displayAlias);
+        const visible = 'displayAlias' in entry && Boolean(entry.displayAlias);
 
         const nameElement = isFavoritesNameAliasesEnabled ? (
             <FavoritesNameWithAliasItem
                 entryId={entryId}
                 name={name}
-                displayAlias={displayAlias}
+                displayAlias={'displayAlias' in entry ? entry.displayAlias : undefined}
                 isLocked={isLocked}
                 onMenuClick={onMenuClick}
                 className={b('edit-favorites-alias-btn', {visible})}
@@ -285,9 +288,20 @@ export class Row extends React.Component<RowProps> {
     private renderParentFolder() {
         if (this.props.entry.workbookId) {
             return (
-                <WorkbookItem
-                    workbookId={this.props.entry.workbookId}
-                    workbookTitle={this.props.entry.workbookTitle}
+                <CollectionOrWorkbookItem
+                    id={this.props.entry.workbookId}
+                    title={this.props.entry.workbookTitle}
+                    isWorkbook
+                />
+            );
+        }
+
+        if (this.props.entry.collectionId) {
+            return (
+                <CollectionOrWorkbookItem
+                    id={this.props.entry.collectionId}
+                    title={this.props.entry.collectionTitle}
+                    isWorkbook={false}
                 />
             );
         }

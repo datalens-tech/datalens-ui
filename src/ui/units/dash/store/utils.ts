@@ -1,3 +1,8 @@
+import type {
+    ItemsStateAndParams,
+    ItemsStateAndParamsBase,
+    QueueItem,
+} from '@gravity-ui/dashkit/helpers';
 import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import {I18n} from 'i18n';
 import {EntryScope} from 'shared';
@@ -6,7 +11,7 @@ import {DashLoadPriority} from 'shared/types/dash';
 import {DL, URL_QUERY} from 'ui/constants';
 import Utils from 'ui/utils';
 
-import {Mode} from '../modules/constants';
+import {DASHKIT_STATE_VERSION, Mode} from '../modules/constants';
 
 const storeI18n = I18n.keyset('dash.store.view');
 const dashCreateI18n = I18n.keyset('component.dialog-create-dashboard.view');
@@ -59,6 +64,7 @@ export const getFakeDashEntry = (workbookId?: string) => {
             fakeName: dashCreateI18n('label_default-name'),
             workbookId,
             scope: EntryScope.Dash,
+            annotation: null,
         },
         data,
         tabId: newTabId,
@@ -70,5 +76,17 @@ export const getFakeDashEntry = (workbookId?: string) => {
             admin: true,
         },
         navigationPath: Utils.getNavigationPathFromKey(initialKey),
+        annotation: null,
     };
 };
+
+export const createNewTabState = (
+    params: ItemsStateAndParamsBase,
+    queue: QueueItem[],
+): ItemsStateAndParams => ({
+    ...params,
+    __meta__: {
+        queue,
+        version: DASHKIT_STATE_VERSION,
+    },
+});

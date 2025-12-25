@@ -4,8 +4,6 @@ const {
     flatTableFormattingIntPrecisionArgs,
     flatTableFormattingFloatPrecisionArgs,
     flatTablePrepareWithTotalsArgs,
-    flatTablePrepareForQLArgs,
-    flatTablePrepareForQLResult,
 } = require('./mocks/flat-table.mock');
 
 describe('prepareFlatTable', () => {
@@ -35,6 +33,7 @@ describe('prepareFlatTable', () => {
                                 'background-color': 'var(--g-color-base-generic)',
                                 'font-weight': 500,
                             },
+                            type: 'text',
                         },
                         {
                             value: '',
@@ -83,14 +82,6 @@ describe('prepareFlatTable', () => {
             ];
 
             expect(totals).toEqual(expectedTotals);
-        });
-    });
-
-    describe('ql', () => {
-        test('should render simple table correctly', () => {
-            const result = prepareFlatTable(flatTablePrepareForQLArgs) as any;
-
-            expect(result).toEqual(flatTablePrepareForQLResult);
         });
     });
 });

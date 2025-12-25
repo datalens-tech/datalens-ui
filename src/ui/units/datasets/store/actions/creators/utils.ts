@@ -1,7 +1,8 @@
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
-import type {ValidateDatasetUpdate} from 'shared/schema';
+import type {GetSourceResponse, ValidateDatasetUpdate} from 'shared/schema';
 
+import {SUBSELECT_SOURCE_TYPES} from '../../../constants';
 import type {DatasetReduxState, Update} from '../../types';
 
 type ContentKey = keyof DatasetReduxState['content'];
@@ -32,3 +33,34 @@ export const prepareUpdates = (updates: Update[]) => {
         return update as ValidateDatasetUpdate;
     });
 };
+
+export function filterSources(sources: GetSourceResponse['sources']) {
+    return sources.filter(
+        ({source_type: sourceType}) => !SUBSELECT_SOURCE_TYPES.includes(sourceType),
+    );
+}
+
+export function checkFetchingPreview({
+    updatePreview,
+    updates,
+}: {
+    updatePreview: boolean;
+    updates?: Update[];
+}) {
+    return (
+        !updatePreview &&
+        updates &&
+        updates.length &&
+        !updates.every((update) => {
+            if ('field' in update) {
+                const {field: {description, title} = {}} = update;
+
+                if (description || title) {
+                    return true;
+                }
+            }
+
+            return false;
+        })
+    );
+}

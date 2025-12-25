@@ -1,4 +1,5 @@
 import type {ChartKitType, ChartKitProps as OpenSourceChartKitProps} from '@gravity-ui/chartkit';
+import type {ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
 import type {
     Highcharts,
     HighchartsComment,
@@ -11,6 +12,8 @@ import type DataTable from '@gravity-ui/react-data-table';
 import type {Optional, Required} from 'utility-types';
 
 import type {
+    ApiV2DataExportField,
+    ChartActivityResponseData,
     ChartkitHandlers,
     ChartsInsightsItem,
     GraphTooltipLine,
@@ -83,11 +86,13 @@ export interface WidgetBase {
     entryId?: string;
     revId?: string;
     data?: object;
+    dataExport?: Record<string, ApiV2DataExportField | undefined>;
     params: StringParams;
     unresolvedParams?: StringParams;
     initialParams?: StringParams;
     config?: {
         drillDown?: DrillDownConfig;
+        hideComments?: boolean;
         comments?: {
             matchedParams: Array<any>;
             feeds: {
@@ -292,6 +297,7 @@ export type MarkdownWidget = WidgetBaseWithData & {
         html?: string;
         markdown?: string;
         meta?: object;
+        original_markdown?: string;
     };
 };
 
@@ -394,3 +400,10 @@ export type OnChangeData = ParamsChangedOnChange | YMapGeoObjectVisibilityChange
 export type LoadedWidgetData<TProviderData = unknown> = (Widget & TProviderData) | null;
 
 export type WidgetData = (Widget & ChartsData) | null;
+
+export type OnActivityComplete = (args: {responseData?: ChartActivityResponseData | null}) => void;
+
+export type RunActivityArgs = {
+    params?: StringParams | ChartSeriesData;
+};
+export type RunActivityFn = (args: RunActivityArgs) => Promise<ChartActivityResponseData | null>;

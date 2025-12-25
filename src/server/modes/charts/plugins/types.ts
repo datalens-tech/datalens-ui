@@ -15,7 +15,7 @@ import type {
     CONTROL_MIDDLEWARE_URL_TYPE,
     REQUEST_WITH_DATASET_SOURCE_NAME,
 } from './constants/middleware-urls';
-import type {SourcesArgs} from './datalens/url/build-sources/types';
+import type {SourcesArgs} from './datalens/url/types';
 
 export interface SourceAdapterRequestSettings {
     useCaching: boolean;

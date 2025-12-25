@@ -111,7 +111,7 @@ export type BuildDefaultRequestArgs = {
     fields: ServerField[];
     apiVersion: ApiVersion;
     params: StringParams;
-    revisionId: string;
+    revisionId?: string;
     datasetId: string;
 
     allMeasuresMap: Record<string, boolean>;

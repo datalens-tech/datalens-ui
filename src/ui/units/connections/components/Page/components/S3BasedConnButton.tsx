@@ -8,8 +8,9 @@ import {ConnectionsBaseQA} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
 
-import type {DialogCreateConnectionInWbProps, DialogCreateConnectionProps} from '../..';
-import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_IN_WB_CONNECTION} from '../..';
+import type {DialogCreateConnectionInWbOrCollectionProps, DialogCreateConnectionProps} from '../..';
+import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION} from '../..';
+import {CreationPlaces} from '../../../constants';
 import {
     connectionTypeSelector,
     createS3BasedConnection,
@@ -37,9 +38,10 @@ const S3BasedConnButtonComponent = (props: S3BasedConnButtonProps) => {
         view = 'action',
     } = props;
     const dispatch = useDispatch();
-    const {workbookId} = useParams<{workbookId?: string}>();
+    const {workbookId, collectionId} = useParams<{workbookId?: string; collectionId?: string}>();
     const {createConnectionHandler} = useCreateConnectionHandler({
         hasWorkbookIdInParams: Boolean(workbookId),
+        hasCollectionIdInParams: Boolean(collectionId),
     });
 
     const applyCreationHandler: DialogCreateConnectionProps['onApply'] = React.useCallback(
@@ -49,27 +51,56 @@ const S3BasedConnButtonComponent = (props: S3BasedConnButtonProps) => {
         [dispatch],
     );
 
-    const applyCreationInWbHandler: DialogCreateConnectionInWbProps['onApply'] = React.useCallback(
-        async (args) => {
-            dispatch(createS3BasedConnection({name: args.name, workbookId: args.workbookId}));
-        },
-        [dispatch],
-    );
+    const applyCreationInWbHandler: DialogCreateConnectionInWbOrCollectionProps['onApply'] =
+        React.useCallback(
+            async (args) => {
+                dispatch(createS3BasedConnection({name: args.name, workbookId: args.workbookId}));
+            },
+            [dispatch],
+        );
+
+    const applyCreationInCollectionHandler: DialogCreateConnectionInWbOrCollectionProps['onApply'] =
+        React.useCallback(
+            async (args) => {
+                dispatch(
+                    createS3BasedConnection({
+                        name: args.name,
+                        workbookId: args.workbookId,
+                        collectionId: args.collectionId,
+                    }),
+                );
+            },
+            [dispatch],
+        );
 
     const getOpenDialogArs = React.useCallback((): CreateConnectionHandlerArgs => {
         const {getNewConnectionDestination} = registry.connections.functions.getAll();
-        const destination = getNewConnectionDestination(Boolean(workbookId));
+        const destination = getNewConnectionDestination(Boolean(workbookId), Boolean(collectionId));
 
-        return destination === 'folder'
-            ? {
-                  id: DIALOG_CONN_CREATE_CONNECTION,
-                  props: {onApply: applyCreationHandler},
-              }
-            : {
-                  id: DIALOG_CONN_CREATE_IN_WB_CONNECTION,
-                  props: {onApply: applyCreationInWbHandler},
-              };
-    }, [workbookId, applyCreationHandler, applyCreationInWbHandler]);
+        switch (destination) {
+            case CreationPlaces.Folder:
+                return {
+                    id: DIALOG_CONN_CREATE_CONNECTION,
+                    props: {onApply: applyCreationHandler},
+                };
+            case CreationPlaces.Workbook:
+                return {
+                    id: DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION,
+                    props: {onApply: applyCreationInWbHandler},
+                };
+            case CreationPlaces.Collection:
+                return {
+                    id: DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION,
+                    props: {onApply: applyCreationInCollectionHandler, collectionId},
+                };
+        }
+    }, [
+        workbookId,
+        applyCreationHandler,
+        applyCreationInWbHandler,
+        applyCreationInCollectionHandler,
+        collectionId,
+    ]);
 
     const handleClick = () => {
         if (newConnection) {

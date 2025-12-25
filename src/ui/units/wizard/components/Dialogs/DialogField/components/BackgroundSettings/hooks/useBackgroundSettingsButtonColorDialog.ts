@@ -2,7 +2,7 @@ import React from 'react';
 
 import type {ColorsConfig, NestedPartial, TableFieldBackgroundSettings} from 'shared';
 
-import {PaletteType} from '../../../../../PaletteIcon/PaletteIcon';
+import {PaletteType} from '../../../../../../../../components/PaletteIcon/PaletteIcon';
 import {extractGradientSettings, extractPaletteSettings} from '../../../utils/backgroundSettings';
 
 type UseBackgroundSettingsButtonColorDialogArgs = {

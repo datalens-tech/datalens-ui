@@ -1,9 +1,11 @@
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import {i18n} from 'i18n';
 import JSONfn from 'json-fn';
 import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
-import {omit} from 'lodash';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
 import {WidgetKind} from 'shared/types/widget';
@@ -69,10 +71,15 @@ function shouldShowSafeChartInfo(params: StringParams) {
 }
 
 /* eslint-disable complexity */
-async function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyWidget>(
-    loaded: T,
-    noJsonFn?: boolean,
-): Promise<R & ChartsData> {
+async function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyWidget>({
+    loaded,
+    noJsonFn,
+    widgetElement,
+}: {
+    loaded: T;
+    noJsonFn?: boolean;
+    widgetElement?: Element;
+}): Promise<R & ChartsData> {
     const {
         type: loadedType,
         params,
@@ -85,6 +92,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
         sources,
         logs_v2,
         timings,
+        dataExport,
         extra,
         requestId,
         traceId,
@@ -104,6 +112,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             sources,
             logs_v2,
             timings,
+            dataExport,
             extra,
             requestId,
             traceId,
@@ -124,10 +133,14 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
         }
 
         if (isNodeResponse(loaded)) {
+            const isWizardOrQl = result.isNewWizard || result.isQL;
             const parsedConfig = JSON.parse(loaded.config);
             const enableJsAndHtml = get(parsedConfig, 'enableJsAndHtml', true);
 
-            const jsonParse = noJsonFn || enableJsAndHtml === false ? JSON.parse : JSONfn.parse;
+            let jsonParse = JSON.parse;
+            if (!isWizardOrQl && !noJsonFn && enableJsAndHtml) {
+                jsonParse = JSONfn.parse;
+            }
 
             result.data = loaded.data;
             result.config = jsonParse(loaded.config);
@@ -162,6 +175,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     entryType: loadedType,
                     sandbox: uiSandbox,
                     options: uiSandboxOptions,
+                    widgetElement,
                 };
                 await unwrapPossibleFunctions({...unwrapFnArgs, target: result.config});
                 await unwrapPossibleFunctions({...unwrapFnArgs, target: result.libraryConfig});
@@ -169,7 +183,6 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            const isWizardOrQl = result.isNewWizard || result.isQL;
             const shouldProcessHtmlFields =
                 isPotentiallyUnsafeChart(loadedType) || result.config?.useHtml;
             if (shouldProcessHtmlFields) {
@@ -180,6 +193,9 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     allowHtml,
                     parseHtml,
                     ignoreInvalidValues,
+                    // we expand its below
+                    // additional checks should be inside the markup and markdown processing
+                    excludedKeys: [WRAPPED_MARKUP_KEY, WRAPPED_MARKDOWN_KEY],
                 });
                 processHtmlFields(result.libraryConfig, {
                     allowHtml,
@@ -198,6 +214,24 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
             if ('sideMarkdown' in loaded.extra && loaded.extra.sideMarkdown) {
                 (result as GraphWidget).sideMarkdown = loaded.extra.sideMarkdown;
+            }
+
+            if ('colors' in loaded.extra && loaded.extra.colors) {
+                if (result.type === WidgetKind.GravityCharts) {
+                    const gravityUIChartsConfig = result.data as ChartData;
+
+                    if (isEmpty(gravityUIChartsConfig.colors)) {
+                        gravityUIChartsConfig.colors = loaded.extra?.colors;
+                    }
+                }
+
+                if (
+                    result.type === WidgetKind.Graph &&
+                    result.libraryConfig &&
+                    isEmpty(result.libraryConfig.colors)
+                ) {
+                    result.libraryConfig.colors = loaded.extra.colors;
+                }
             }
 
             if ('chartsInsights' in loaded.extra && loaded.extra.chartsInsights) {
@@ -257,6 +291,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
 async function unwrapMarkdown(args: {config: Widget['config']; data: Widget['data']}) {
     const {config, data} = args;
+
     if (config?.useMarkdown) {
         const renderMarkdown = await getRenderMarkdownFn();
         const unwrapItem = (item: unknown) => {
@@ -292,6 +327,8 @@ async function unwrapMarkdown(args: {config: Widget['config']; data: Widget['dat
         try {
             unwrapItem(get(data, 'graphs', []));
             unwrapItem(get(data, 'series.data', []));
+            unwrapItem(get(data, 'xAxis'));
+            unwrapItem(get(data, 'yAxis'));
             unwrapItem(get(data, 'categories', []));
         } catch (e) {
             console.error(e);
@@ -363,6 +400,31 @@ function applyChartkitHandlers(args: {
             libraryConfig.legend.labelFormatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardLabelFormatter];
         }
+
+        if (
+            libraryConfig.xAxis?.labels?.formatter === ChartkitHandlers.WizardDatetimeAxisFormatter
+        ) {
+            libraryConfig.xAxis.labels.formatter = ChartkitHandlersDict[
+                ChartkitHandlers.WizardDatetimeAxisFormatter
+            ](libraryConfig.xAxis?.labels?.format);
+        }
+
+        if (
+            libraryConfig.yAxis?.labels?.formatter === ChartkitHandlers.WizardDatetimeAxisFormatter
+        ) {
+            libraryConfig.yAxis.labels.formatter = ChartkitHandlersDict[
+                ChartkitHandlers.WizardDatetimeAxisFormatter
+            ](libraryConfig.yAxis?.labels?.format);
+        }
+
+        libraryConfig.yAxis?.forEach?.((item: typeof libraryConfig.yAxis) => {
+            const formatter = item?.labels?.formatter;
+            if (formatter && formatter === ChartkitHandlers.WizardDatetimeAxisFormatter) {
+                item.labels.formatter = ChartkitHandlersDict[
+                    ChartkitHandlers.WizardDatetimeAxisFormatter
+                ](item.labels.format);
+            }
+        });
 
         if (libraryConfig.xAxis?.labels?.formatter === ChartkitHandlers.WizardXAxisFormatter) {
             libraryConfig.xAxis.labels.formatter =

@@ -1,11 +1,12 @@
-import {Page} from '@playwright/test';
+import {expect, Page} from '@playwright/test';
 
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage, slct} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {ChartKitQa} from '../../../../src/shared';
 
 async function createHierarchy(wizardPage: WizardPage, hierarchyName: string, fields: string[]) {
     await wizardPage.openHierarchyEditor();
@@ -53,10 +54,9 @@ datalensTest.describe('Wizard Hierarchy', () => {
             const cell = wizardPage.chartkit.getTableLocator().getByText('100100');
             await cell.click();
 
-            await waitForCondition(async () => {
-                const breadcrumbs = await wizardPage.chartkit.getBreadcrumbs();
-
-                return ['Population String: 100100', 'City'].join() === breadcrumbs.join();
+            const breadcrumbItems = page.locator(slct(ChartKitQa.DrillBreadcrumbsItem));
+            await expect(breadcrumbItems).toHaveText(['Population String: 100100', 'City'], {
+                useInnerText: true,
             });
 
             await wizardPage.sectionVisualization.replaceFieldByDragAndDrop(
@@ -65,10 +65,8 @@ datalensTest.describe('Wizard Hierarchy', () => {
                 secondHierarchy.name,
             );
 
-            await waitForCondition(async () => {
-                const breadcrumbs = await wizardPage.chartkit.getBreadcrumbs();
-
-                return ['City'].join() === breadcrumbs.join();
+            await expect(breadcrumbItems).toHaveText(['City'], {
+                useInnerText: true,
             });
         },
     );

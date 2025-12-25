@@ -5,7 +5,7 @@ import type {
     SetActiveSelectorIndexAction,
     SetSelectorDialogItemAction,
     UpdateSelectorsGroupAction,
-} from 'ui/store/actions/controlDialog';
+} from 'ui/store/actions/controlDialog/controlDialog';
 import type {EditHistoryAction} from 'ui/store/actions/editHistory';
 
 import type {EntryContentAction} from '../../../../store/actions/entryContent';
@@ -13,12 +13,13 @@ import type {EntryContentAction} from '../../../../store/actions/entryContent';
 import type {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
 import type {
     ChangeNavigationPathAction,
+    RemoveGlobalItemsAction,
+    ResetConnectionsUpdatersAction,
     SetAccessDescriptionAction,
     SetDashKeyAction,
     SetDashKitRefAction,
     SetDashOpenedDescKeyAction,
     SetDashUpdateStatusAction,
-    SetDescViewModeAction,
     SetDescriptionAction,
     SetErrorModeAction,
     SetHashStateAction,
@@ -38,9 +39,10 @@ import type {
     SetViewModeAction,
     SetWidgetCurrentTabAction,
     ToggleTableOfContentAction,
+    UpdateConnectionsUpdatersAction,
+    UpdateTabsWithGlobalStateAction,
 } from './dashTyped';
 import type {CloseDialogAction, OpenDialogAction, OpenItemDialogAction} from './dialogs/actions';
-import type {SetNewRelationsAction} from './relations/actions';
 
 export type DashAction<T = unknown> =
     | SetStateAction<T>
@@ -59,7 +61,6 @@ export type DashAction<T = unknown> =
     | AddSelectorToGroupAction
     | UpdateSelectorsGroupAction
     | SetViewModeAction
-    | SetDescViewModeAction
     | SetDescriptionAction
     | SetAccessDescriptionAction
     | SetSupportDescriptionAction
@@ -67,7 +68,6 @@ export type DashAction<T = unknown> =
     | SetLoadingEditModeAction
     | EntryContentAction
     | SetDashUpdateStatusAction
-    | SetNewRelationsAction
     | SetItemDataAction
     | SetDashKeyAction
     | SetActiveSelectorIndexAction
@@ -80,6 +80,10 @@ export type DashAction<T = unknown> =
     | SaveDashErrorAction
     | SetSettingsAction
     | SetHistoryStateAction
-    | EditHistoryAction;
+    | EditHistoryAction
+    | RemoveGlobalItemsAction
+    | UpdateTabsWithGlobalStateAction
+    | UpdateConnectionsUpdatersAction
+    | ResetConnectionsUpdatersAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

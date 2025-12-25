@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {PlaceholderContainer} from '@gravity-ui/components';
+import {PlaceholderContainer} from '@gravity-ui/uikit';
 import {DL} from 'ui/constants';
 import {registry} from 'ui/registry';
 
@@ -17,7 +17,7 @@ export const PlaceholderIllustration = ({
 }: PlaceholderIllustrationProps) => {
     const placeholderDirection = direction || (DL.IS_MOBILE ? 'column' : 'row');
 
-    const renderImage = React.useCallback(() => {
+    const image = React.useMemo(() => {
         const {PlaceholderIllustrationImage} = registry.common.components.getAll();
         const {getIllustrationStore} = registry.common.functions.getAll();
 
@@ -26,14 +26,16 @@ export const PlaceholderIllustration = ({
         return <PlaceholderIllustrationImage illustrationStore={store} name={name} size={size} />;
     }, [name, size]);
 
+    const actions = renderAction?.();
+
     return (
         <PlaceholderContainer
-            image={renderImage()}
+            image={image}
             size={size}
             title={title}
             className={className}
             description={description}
-            renderAction={renderAction}
+            actions={actions}
             direction={placeholderDirection}
         />
     );

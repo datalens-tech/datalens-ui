@@ -2,7 +2,8 @@ import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 
 import type {IChartEditor} from '../../../../../../../../../shared';
-import {DATASET_FIELD_TYPES} from '../../../../../../../../../shared';
+import {COMMON_PALETTE_ID, DATASET_FIELD_TYPES} from '../../../../../../../../../shared';
+import classic20 from '../../../../../../../../../shared/constants/colors/common/classic-20';
 import {EmptyPrepapreArgs} from '../../../__tests__/common.mock';
 import type {PrepareFunctionArgs} from '../../../types';
 
@@ -78,32 +79,12 @@ export const piePrepareBaseArgs = {
         totals: [],
     },
     colorsConfig: {
-        colors: [
-            '#4DA2F1',
-            '#FF3D64',
-            '#8AD554',
-            '#FFC636',
-            '#FFB9DD',
-            '#84D1EE',
-            '#FF91A1',
-            '#54A520',
-            '#DB9100',
-            '#BA74B3',
-            '#1F68A9',
-            '#ED65A9',
-            '#0FA08D',
-            '#FF7E00',
-            '#E8B0A4',
-            '#52A6C5',
-            '#BE2443',
-            '#70C1AF',
-            '#FFB46C',
-            '#DCA3D7',
-        ],
+        availablePalettes: {[COMMON_PALETTE_ID.CLASSIC_20]: classic20},
         gradientColors: ['#0044A3', '#8CCBFF'],
         loadedColorPalettes: {},
     },
     features: {},
+    defaultColorPaletteId: COMMON_PALETTE_ID.CLASSIC_20,
 };
 
 export const measureNumberAndMeasure = {
@@ -130,31 +111,11 @@ export const measureNumberAndMeasure = {
         gradientPalette: 'violet',
         polygonBorders: 'show',
         reversed: false,
-        colors: [
-            '#4DA2F1',
-            '#FF3D64',
-            '#8AD554',
-            '#FFC636',
-            '#FFB9DD',
-            '#84D1EE',
-            '#FF91A1',
-            '#54A520',
-            '#DB9100',
-            '#BA74B3',
-            '#1F68A9',
-            '#ED65A9',
-            '#0FA08D',
-            '#FF7E00',
-            '#E8B0A4',
-            '#52A6C5',
-            '#BE2443',
-            '#70C1AF',
-            '#FFB46C',
-            '#DCA3D7',
-        ],
+        availablePalettes: {[COMMON_PALETTE_ID.CLASSIC_20]: classic20},
         gradientColors: ['#6B32C9', '#D0A3FF'],
         loadedColorPalettes: {},
     },
+    defaultColorPaletteId: COMMON_PALETTE_ID.CLASSIC_20,
 };
 
 export const measureTextAndMeasure = {
@@ -178,31 +139,11 @@ export const measureTextAndMeasure = {
         totals: [],
     },
     colorsConfig: {
-        colors: [
-            '#4DA2F1',
-            '#FF3D64',
-            '#8AD554',
-            '#FFC636',
-            '#FFB9DD',
-            '#84D1EE',
-            '#FF91A1',
-            '#54A520',
-            '#DB9100',
-            '#BA74B3',
-            '#1F68A9',
-            '#ED65A9',
-            '#0FA08D',
-            '#FF7E00',
-            '#E8B0A4',
-            '#52A6C5',
-            '#BE2443',
-            '#70C1AF',
-            '#FFB46C',
-            '#DCA3D7',
-        ],
+        availablePalettes: {[COMMON_PALETTE_ID.CLASSIC_20]: classic20},
         gradientColors: ['#0044A3', '#8CCBFF'],
         loadedColorPalettes: {},
     },
+    defaultColorPaletteId: COMMON_PALETTE_ID.CLASSIC_20,
 };
 
 export const piePrepareArgs = {
@@ -289,28 +230,7 @@ export const piePrepareForQLArgs = {
     fields: [],
     colors: [],
     colorsConfig: {
-        colors: [
-            '#4DA2F1',
-            '#FF3D64',
-            '#8AD554',
-            '#FFC636',
-            '#FFB9DD',
-            '#84D1EE',
-            '#FF91A1',
-            '#54A520',
-            '#DB9100',
-            '#BA74B3',
-            '#1F68A9',
-            '#ED65A9',
-            '#0FA08D',
-            '#FF7E00',
-            '#E8B0A4',
-            '#52A6C5',
-            '#BE2443',
-            '#70C1AF',
-            '#FFB46C',
-            '#DCA3D7',
-        ],
+        availablePalettes: {[COMMON_PALETTE_ID.CLASSIC_20]: classic20},
         gradientColors: ['#0044A3', '#8CCBFF'],
         loadedColorPalettes: {},
     },
@@ -349,6 +269,7 @@ export const piePrepareForQLArgs = {
     shapesConfig: {},
     segments: [],
     disableDefaultSorting: false,
+    defaultColorPaletteId: COMMON_PALETTE_ID.CLASSIC_20,
 };
 
 export const piePrepareForQLResult = {

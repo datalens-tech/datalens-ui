@@ -26,7 +26,12 @@ import {DeleteUserDialog} from 'ui/units/auth/components/DeleteUserDialog/Delete
 import {EditUserProfileDialog} from 'ui/units/auth/components/EditUserProfileDialog/EditUserProfileDialog';
 
 import type {ServiceSettingsDispatch} from '../../store/actions/serviceSettings';
-import {getUsersList, resetServiceUsersList} from '../../store/actions/serviceSettings';
+import {
+    getUsersList,
+    resetServiceUsersList,
+    restoreUsersStateAfterFilter,
+    saveUsersStateBeforeFilter,
+} from '../../store/actions/serviceSettings';
 import {
     selectServiceUsersListIsLoading,
     selectServiceUsersListPageToken,
@@ -57,6 +62,15 @@ const prepareFilterValue = (filterValue: string | string[]) => {
     return filterValue.length ? filterValue : undefined;
 };
 
+const hasActiveFilters = (filters: Record<string, string | string[]>) => {
+    return Object.values(filters).some((value) => {
+        if (typeof value === 'string') {
+            return Boolean(value);
+        }
+        return Array.isArray(value) && value.length;
+    });
+};
+
 const UsersList = () => {
     const history = useHistory();
     const location = useLocation();
@@ -84,7 +98,7 @@ const UsersList = () => {
     const [deleteUserDialogOpenForUser, setDeleteUserDialogOpenForUser] = React.useState<
         ListUser | undefined
     >();
-    const [editProfileDialogOpenForUser, setEditProfileeDialogOpenForUser] = React.useState<
+    const [editProfileDialogOpenForUser, setEditProfileDialogOpenForUser] = React.useState<
         ListUser | undefined
     >();
     const [changePasswordDialogOpenForUser, setChangePasswordUserDialogOpenForUser] =
@@ -99,11 +113,24 @@ const UsersList = () => {
     }, [dispatch]);
 
     const handleFilterChange = React.useCallback(
-        (filternName, filterValue) => {
-            dispatch(resetServiceUsersList());
+        (filterName, filterValue) => {
             setFilters((oldFilters) => {
+                const hadActiveFilters = hasActiveFilters(oldFilters);
                 const validatedFilterValue = prepareFilterValue(filterValue);
-                const updatedFilters = {...oldFilters, [filternName]: validatedFilterValue};
+                const updatedFilters = {...oldFilters, [filterName]: validatedFilterValue};
+                const willHaveActiveFilters = hasActiveFilters(updatedFilters);
+
+                // Save state before first filter
+                if (!hadActiveFilters && willHaveActiveFilters) {
+                    dispatch(saveUsersStateBeforeFilter());
+                }
+
+                // Restore state when clearing all filters
+                if (hadActiveFilters && !willHaveActiveFilters) {
+                    dispatch(restoreUsersStateAfterFilter());
+                    return updatedFilters;
+                }
+
                 dispatch(
                     getUsersList({
                         pageSize: USERS_PAGE_SIZE,
@@ -158,7 +185,7 @@ const UsersList = () => {
         const menuItems: TableAction<ListUser>[] = [
             {
                 text: i18n('label_menu-edit-profile'),
-                handler: () => setEditProfileeDialogOpenForUser(item),
+                handler: () => setEditProfileDialogOpenForUser(item),
             },
             {
                 text: i18n('label_menu-change-role'),
@@ -217,7 +244,7 @@ const UsersList = () => {
                 {editProfileDialogOpenForUser && (
                     <EditUserProfileDialog
                         open
-                        onClose={() => setEditProfileeDialogOpenForUser(undefined)}
+                        onClose={() => setEditProfileDialogOpenForUser(undefined)}
                         userId={editProfileDialogOpenForUser.userId}
                         email={editProfileDialogOpenForUser.email}
                         firstName={editProfileDialogOpenForUser.firstName}

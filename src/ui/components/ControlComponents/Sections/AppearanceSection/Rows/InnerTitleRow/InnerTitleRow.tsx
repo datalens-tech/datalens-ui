@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
-import {Checkbox, TextInput} from '@gravity-ui/uikit';
+import {FormRow} from '@gravity-ui/components';
+import {Checkbox, HelpMark, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, DashTabItemControlSourceType, DialogControlQa} from 'shared';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,
@@ -54,11 +55,14 @@ export const InnerTitleRow = ({className}: {className?: string}) => {
     const label = (
         <React.Fragment>
             <span>{i18n('field_inner-title')}</span>
-            <HelpPopover
-                htmlContent={getHelpPopoverText(sourceType)}
-                placement={['bottom', 'top']}
-                offset={{top: -1, left: 5}}
-            />
+            <HelpMark
+                popoverProps={{
+                    placement: ['bottom', 'top'],
+                }}
+                style={{left: 5}}
+            >
+                <YfmWrapper content={getHelpPopoverText(sourceType)} setByInnerHtml={true} />
+            </HelpMark>
         </React.Fragment>
     );
 

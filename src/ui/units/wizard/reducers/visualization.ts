@@ -152,7 +152,10 @@ export function visualization(
 
             let prevColors = state.colors;
 
-            if (oldVisualization && oldVisualization.id !== visualization.id) {
+            const isVisualizationChanged =
+                oldVisualization && oldVisualization.id !== visualization.id;
+
+            if (isVisualizationChanged) {
                 const transition = `${oldVisualization.id}-${visualization.id}`;
 
                 visualization.placeholders = getPlaceholdersWithMergedSettings({
@@ -537,11 +540,7 @@ export function visualization(
                         });
 
                         if (dimensions.length > 0) {
-                            placeholders[0].items = [dimensions[0]];
-                        }
-
-                        if (dimensions.length > 1) {
-                            placeholders[1].items = [dimensions[1]];
+                            placeholders[1].items = dimensions;
                         }
 
                         if (measures.length > 0) {
@@ -689,7 +688,7 @@ export function visualization(
             const onDesignItemsChange = (visualization as GraphShared['visualization'])
                 .onDesignItemsChange;
 
-            if (onDesignItemsChange) {
+            if (isVisualizationChanged && onDesignItemsChange) {
                 onDesignItemsChange({
                     visualization: visualization as GraphShared['visualization'],
                     colors,

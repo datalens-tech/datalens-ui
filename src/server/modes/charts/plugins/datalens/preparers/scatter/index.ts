@@ -1,2 +1,2 @@
-export * from './d3';
+export * from './gravity-charts';
 export * from './highcharts';

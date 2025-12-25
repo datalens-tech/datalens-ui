@@ -45,8 +45,10 @@ import {openEmptyDialogRelations} from '../../store/actions/relations/actions';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../../store/constants';
 import {
     selectDashAccessDescription,
+    selectDashDescription,
     selectDashShowOpenedDescription,
     selectLoadingEditMode,
+    selectSettings,
     selectStateMode,
 } from '../../store/selectors/dashTypedSelectors';
 import type {DashEntry} from '../../typings/entry';
@@ -92,6 +94,9 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         const enablePublish = isEnabledFeature(Feature.EnablePublishEntry) && !entry?.fake;
 
         const DashSelectState = registry.dash.components.get('DashSelectState');
+        const DashActionPanelAdditionalButtons = registry.dash.components.get(
+            'DashActionPanelAdditionalButtons',
+        );
 
         let deprecationWarning = null;
         if (this.isDeprecated()) {
@@ -109,6 +114,11 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                             entry={entry as GetEntryResponse}
                             additionalEntryItems={this.getAdditionalEntryItems()}
                             rightItems={[
+                                <DashActionPanelAdditionalButtons
+                                    key="additional-buttons"
+                                    dashSettings={this.props.settings}
+                                    isEditMode={this.props.isEditMode}
+                                />,
                                 <div className={b('controls')} key="controls">
                                     {this.renderControls()}
                                 </div>,
@@ -145,12 +155,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 onSaveAsNewClick={this.handlerSaveAsNewClick}
                 onCancelClick={this.handlerCancelEditClick}
                 onOpenDialogSettingsClick={this.openDialogSettings}
-                onOpenDialogConnectionsClick={
-                    !isEnabledFeature(Feature.HideOldRelations) ||
-                    isEnabledFeature(Feature.ShowNewRelationsButton)
-                        ? this.openDialogConnections
-                        : undefined
-                }
+                onOpenDialogConnectionsClick={this.openDialogConnections}
                 onOpenDialogTabsClick={this.openDialogTabs}
                 entryDialoguesRef={this.props.entryDialoguesRef}
                 isDraft={this.props.isDraft}
@@ -178,13 +183,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     }
 
     openDialogSettings = () => this.props.openDialog(DIALOG_TYPE.SETTINGS);
-    openDialogConnections = () => {
-        if (isEnabledFeature(Feature.ShowNewRelationsButton)) {
-            this.props.openEmptyDialogRelations();
-        } else if (!isEnabledFeature(Feature.HideOldRelations)) {
-            this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
-        }
-    };
+    openDialogConnections = () => this.props.openEmptyDialogRelations();
     openDialogTabs = () => this.props.openDialog(DIALOG_TYPE.TABS);
 
     openDialogAccess = () => {
@@ -290,6 +289,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         const getSelectStateMenuItemFn = registry.common.functions.get('getSelectStateMenuItem');
 
         const selectStateMenuItem = getSelectStateMenuItemFn({
+            entry,
             action: this.onSelectStateClick,
             hidden: !canEdit || !isCurrentRevisionActual || DL.IS_MOBILE || Boolean(entry?.fake),
         });
@@ -339,6 +339,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 workbookId: entry?.workbookId,
                 initDestination: Utils.getPathBefore({path: entry.key}),
                 data,
+                annotation: {description: this.props.description},
             },
         });
 
@@ -364,6 +365,8 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         isSelectStateMode: selectStateMode(state),
         accessDescription: selectDashAccessDescription(state),
         showOpenedDescription: selectDashShowOpenedDescription(state),
+        description: selectDashDescription(state),
+        settings: selectSettings(state),
     };
 };
 

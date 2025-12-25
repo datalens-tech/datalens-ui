@@ -42,3 +42,5 @@ export const GROUPED_ITEMS: MenuItem[][] = [
     [{action: FieldAction.Remove, label: 'button_remove', theme: 'danger'}],
     [{action: FieldAction.Inspect, label: 'button_inspect', hidden: !Utils.isSuperUser()}],
 ];
+
+export const READONLY_AVAILABLE_ITEMS = [FieldAction.CopyGuid];

@@ -33,7 +33,7 @@ export default async (
     const shared = urlsSourceArgs.shared;
     const wizardDataset = shared.wizardDataset;
 
-    let revisionId: string;
+    let revisionId: string | undefined;
     let datasetFields: PartialDatasetField[];
 
     // When Urls are executed on the Wizard side, we don't need a dataset from the CHARTS side to avoid an unnecessary request
@@ -73,10 +73,9 @@ export default async (
         datasetFields,
         layerId,
         revisionId,
-        ctx,
     });
 
     ctx.log('CHARTS_DATASET_FIELDS_PROCESSED');
 
-    return {...source, data};
+    return {...source, data, datasetFields};
 };

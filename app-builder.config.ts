@@ -26,8 +26,7 @@ const vendors = (vendorsList: string[]) => {
         'react-dnd',
         'react-grid-layout',
         'react-beautiful-dnd',
-        '@popperjs/core',
-        'focus-trap',
+        '@floating-ui/react',
     ]);
 };
 
@@ -80,6 +79,7 @@ const config: ServiceConfig = {
             'highlight.js': false,
             buffer: false,
         },
+        javaScriptLoader: 'swc',
         ...(devClientPort
             ? {
                   devServer: {

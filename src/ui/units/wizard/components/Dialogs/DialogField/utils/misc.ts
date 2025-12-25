@@ -42,6 +42,7 @@ export const getFormattingDataType = (item: TField, cast: DATASET_FIELD_TYPES | 
     return item.data_type;
 };
 
+// eslint-disable-next-line complexity
 export function canUseStringAsMarkdown(
     visualizationId: WizardVisualizationId,
     placeholderId: PlaceholderId | undefined,
@@ -57,8 +58,7 @@ export function canUseStringAsMarkdown(
             ];
             return placeholderId && possiblePlaceholders.includes(placeholderId);
         }
-        case WizardVisualizationId.Treemap:
-        case WizardVisualizationId.TreemapD3: {
+        case WizardVisualizationId.Treemap: {
             const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Dimensions];
             return placeholderId && possiblePlaceholders.includes(placeholderId);
         }
@@ -85,6 +85,7 @@ export function canUseStringAsMarkdown(
     }
 }
 
+// eslint-disable-next-line complexity
 export function canUseStringAsHtml(visualizationId: WizardVisualizationId) {
     switch (visualizationId) {
         case WizardVisualizationId.Scatter:

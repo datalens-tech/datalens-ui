@@ -30,6 +30,8 @@ export enum FieldKey {
     Username = 'username',
     Warehouse = 'warehouse',
     WorkbookId = 'workbook_id',
+    CollectionId = 'collection_id',
+    Description = 'description',
 }
 
 export enum InnerFieldKey {
@@ -37,3 +39,9 @@ export enum InnerFieldKey {
     CacheTtlMode = 'cache_ttl_mode',
     isAutoCreateDashboard = 'is_auto_create_dashboard',
 }
+
+export const CreationPlaces = {
+    Folder: 'folder',
+    Workbook: 'workbook',
+    Collection: 'collection',
+} as const;

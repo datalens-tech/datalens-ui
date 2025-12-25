@@ -47,12 +47,10 @@ class DatasetPage extends BasePage {
     }
 
     async createDatasetInFolder({name = uuidv1()}: {name?: string} = {}) {
-        const formSubmit = await this.page.waitForSelector(slct(DatasetActionQA.CreateButton));
         // open creation dialog
-        await formSubmit.click();
-        const textInput = await this.page.waitForSelector(slct('path-select'));
+        await this.page.locator(slct(DatasetActionQA.CreateButton)).click();
         // type dataset name
-        await textInput.type(name);
+        await this.page.locator(slct(EntryDialogQA.PathSelect)).locator('input').fill(name);
         const dialogApplyButton = await this.page.waitForSelector(slct(EntryDialogQA.Apply));
         // create dataset
         await dialogApplyButton.click();

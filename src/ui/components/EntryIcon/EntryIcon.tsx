@@ -8,8 +8,8 @@ import {getConnectorIconData} from 'ui/utils';
 import {registry} from '../../registry';
 import type {ConnectorIconViewProps} from '../ConnectorIcon/ConnectorIcon';
 import {ConnectorIcon} from '../ConnectorIcon/ConnectorIcon';
-import type {EntityIconSize, EntityIconType} from '../EntityIcon/EntityIcon';
 import {EntityIcon, defaultIconSize} from '../EntityIcon/EntityIcon';
+import type {EntityIconProps, EntityIconSize, EntityIconType} from '../EntityIcon/EntityIcon';
 
 import iconFilesBroken from '../../assets/icons/broken.svg';
 
@@ -53,12 +53,21 @@ export const getEntryIconData = ({type}: EntryData) => {
     return iconData;
 };
 
-const getEntityIconType = (
-    {scope, type}: EntryData,
-    className?: string,
-    entityIconSize?: EntityIconSize,
-    overrideIconType?: EntityIconType,
-) => {
+type EntityIconTypeProps = {
+    entryData: EntryData;
+    className?: string;
+    entityIconSize?: EntityIconSize;
+    overrideIconType?: EntityIconType;
+    entityIconProps?: Partial<EntityIconProps>;
+};
+
+const getEntityIconType = ({
+    entryData: {scope, type},
+    className,
+    entityIconSize,
+    overrideIconType,
+    entityIconProps = {},
+}: EntityIconTypeProps) => {
     let iconType;
 
     if (type) {
@@ -78,7 +87,8 @@ const getEntityIconType = (
                 type={entityIconType as EntityIconType}
                 iconSize={iconSize}
                 size={entityIconSize}
-                classMixin={className}
+                className={className}
+                {...entityIconProps}
             />
         );
     }
@@ -90,10 +100,19 @@ interface EntryIconProps extends Partial<ConnectorIconViewProps> {
     entityIconSize?: EntityIconSize;
     // can be used to use connection icon without type of connection
     overrideIconType?: EntityIconType;
+    entityIconProps?: Partial<EntityIconProps>;
 }
 
 export const EntryIcon = (props: EntryIconProps) => {
-    const {entry, className, entityIconSize, overrideIconType, size, ...restProps} = props;
+    const {
+        entry,
+        className,
+        entityIconSize,
+        overrideIconType,
+        size,
+        entityIconProps,
+        ...restProps
+    } = props;
     const iconData = getEntryIconData(entry);
     const iconSize = size ?? defaultIconSize[entityIconSize || 's'];
     if (iconData) {
@@ -108,8 +127,12 @@ export const EntryIcon = (props: EntryIconProps) => {
         );
     }
     return (
-        getEntityIconType(entry, className, entityIconSize, overrideIconType) || (
-            <Icon data={iconFilesBroken} className={className} size={iconSize} {...restProps} />
-        )
+        getEntityIconType({
+            entryData: entry,
+            className,
+            entityIconSize,
+            overrideIconType,
+            entityIconProps,
+        }) || <Icon data={iconFilesBroken} className={className} size={iconSize} {...restProps} />
     );
 };

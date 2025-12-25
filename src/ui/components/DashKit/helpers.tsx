@@ -10,6 +10,7 @@ import {I18n} from 'i18n';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
+import type {UpdateTabsWithGlobalStateArgs} from 'ui/units/dash/store/typings/dash';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {getEndpointForNavigation} from '../../libs/DatalensChartkit/modules/navigation';
@@ -64,7 +65,7 @@ export function getEditLink(configItem: ConfigItem, params: ItemParams, state: I
     return `${endpoint}/${entryId}${queryPrams}`;
 }
 
-export function getDashKitMenu(): Array<MenuItem> {
+export function getDashKitMenu(onRemoveItem?: (configItem: ConfigItem) => void): Array<MenuItem> {
     return [
         {
             id: 'edit',
@@ -99,6 +100,7 @@ export function getDashKitMenu(): Array<MenuItem> {
             icon: <Icon data={TrashBin} size={16} />,
             className: b('item', {danger: true}),
             qa: DashKitOverlayMenuQa.RemoveButton,
+            handler: onRemoveItem,
         },
     ];
 }
@@ -110,12 +112,12 @@ interface DashkitWrapperProps extends DashKitProps {
     noOverlay?: boolean;
     // Extended Controls props
     skipReload?: boolean;
-    isNewRelations?: boolean;
     hideErrorDetails?: boolean;
     selectorsGroupTitlePlaceholder?: string;
     // Extended headers context for widgets
     dataProviderContextGetter?: (widgetId: string) => DashChartRequestContext;
     setWidgetCurrentTab?: (payload: {widgetId: string; tabId: string}) => void;
+    updateTabsWithGlobalState?: (payload: UpdateTabsWithGlobalStateArgs) => void;
 }
 
 export const DashkitWrapper: React.FC<
@@ -128,9 +130,9 @@ export const DashkitWrapper: React.FC<
     (
         {
             skipReload = false,
-            isNewRelations = false,
             dataProviderContextGetter,
             setWidgetCurrentTab,
+            updateTabsWithGlobalState,
             ...props
         },
         ref: React.ForwardedRef<DashKit>,
@@ -140,8 +142,8 @@ export const DashkitWrapper: React.FC<
                 config: props.config,
                 defaultGlobalParams: props.defaultGlobalParams,
                 skipReload,
-                isNewRelations,
                 setWidgetCurrentTab,
+                updateTabsWithGlobalState,
                 dataProviderContextGetter,
                 hideErrorDetails: props.hideErrorDetails,
                 selectorsGroupTitlePlaceholder: props.selectorsGroupTitlePlaceholder,
@@ -150,8 +152,8 @@ export const DashkitWrapper: React.FC<
             props.config,
             props.defaultGlobalParams,
             skipReload,
-            isNewRelations,
             setWidgetCurrentTab,
+            updateTabsWithGlobalState,
             dataProviderContextGetter,
             props.hideErrorDetails,
             props.selectorsGroupTitlePlaceholder,

@@ -6,6 +6,8 @@ export type ServiceSettingsState = {
         users: ListUser[];
         nextPageToken: string | null;
         error: Error | null;
+        loadedBeforeFilter: ListUser[] | null;
+        nextPageTokenBeforeFilter: string | null;
     };
     createUser: {
         isLoading: boolean;

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {TriangleExclamationFill} from '@gravity-ui/icons';
-import type {ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps as ButtonProps} from '@gravity-ui/uikit';
 import {Alert, Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 

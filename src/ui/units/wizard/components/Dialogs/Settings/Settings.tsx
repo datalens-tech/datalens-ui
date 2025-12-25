@@ -1,9 +1,11 @@
 import React from 'react';
 
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
+import {Dialog, Loader, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
 import _pick from 'lodash/pick';
 import {connect} from 'react-redux';
@@ -28,15 +30,16 @@ import {
     MapCenterMode,
     NavigatorLinesMode,
     PlaceholderId,
+    WidgetKind,
     WidgetSize,
     WizardVisualizationId,
     ZoomMode,
     getIsNavigatorAvailable,
-    isD3Visualization,
     isDateField,
     isTreeField,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
+import type {Widget} from 'ui/libs/DatalensChartkit/types/widget';
 import {getFirstFieldInPlaceholder} from 'ui/units/wizard/utils/placeholder';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import type {WidgetData} from 'units/wizard/actions/widget';
@@ -47,11 +50,6 @@ import {DEFAULT_PAGE_ROWS_LIMIT} from '../../../../../constants/misc';
 import {getQlAutoExecuteChartValue} from '../../../../ql/utils/chart-settings';
 import {CHART_SETTINGS, SETTINGS, VISUALIZATION_IDS} from '../../../constants';
 import {getDefaultChartName} from '../../../utils/helpers';
-import {
-    getAvailableVisualizations,
-    getD3Analog,
-    getHighchartsAnalog,
-} from '../../../utils/visualization';
 
 import {CenterSetting} from './CenterSetting/CenterSetting';
 import IndicatorTitleSetting from './IndicatorTitleSetting/IndicatorTitleSetting';
@@ -95,7 +93,6 @@ const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteC
 
 const VISUALIZATION_WITH_TOOLTIP_AVAILABLE = new Set<string>([
     WizardVisualizationId.Line,
-    WizardVisualizationId.LineD3,
     WizardVisualizationId.Area,
     WizardVisualizationId.Area100p,
     WizardVisualizationId.Column,
@@ -124,7 +121,6 @@ const DEFAULT_PERIOD: Period = 'day';
 const visualizationsWithLegendDict = (
     [
         VISUALIZATION_IDS.LINE,
-        WizardVisualizationId.LineD3,
 
         VISUALIZATION_IDS.AREA,
         VISUALIZATION_IDS.AREA_100P,
@@ -146,13 +142,6 @@ const visualizationsWithLegendDict = (
         VISUALIZATION_IDS.COMBINED_CHART,
 
         VISUALIZATION_IDS.POLYLINE,
-
-        VISUALIZATION_IDS.SCATTER_D3,
-        VISUALIZATION_IDS.PIE_D3,
-        VISUALIZATION_IDS.BAR_X_D3,
-        WizardVisualizationId.DonutD3,
-        WizardVisualizationId.BarYD3,
-        WizardVisualizationId.BarY100pD3,
     ] as string[]
 ).reduce((acc: Record<string, boolean>, item) => {
     acc[item] = true;
@@ -196,7 +185,6 @@ interface State {
     pivotFallback?: string;
     navigatorSettings: NavigatorSettings;
     navigatorSeries: string[];
-    d3Fallback: string;
     qlAutoExecuteChart?: string;
     isPivotTable: boolean;
     pivotInlineSort: string;
@@ -226,9 +214,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
 
         const isFlatTable = visualization.id === 'flatTable';
         const isPivotTable = visualization.id === 'pivotTable';
-        const isDonut = [WizardVisualizationId.Donut, WizardVisualizationId.DonutD3].includes(
-            visualization.id as WizardVisualizationId,
-        );
+        const isDonut = visualization.id === WizardVisualizationId.Donut;
 
         if (isFlatTable) {
             const placeholderWithGrouppingSettings = visualization.placeholders.find(
@@ -316,9 +302,6 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             navigatorSeries,
             ...(isDonut && {totals}),
             ...tableSettings,
-            d3Fallback: isD3Visualization(visualization.id as WizardVisualizationId)
-                ? CHART_SETTINGS.D3_FALLBACK.OFF
-                : CHART_SETTINGS.D3_FALLBACK.ON,
             tooltip,
             stacking,
             size,
@@ -358,28 +341,39 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         if (!isNavigatorAvailable) {
             return [];
         }
-        const highchartsWidget = this.props?.highchartsWidget;
-        const userSeries = highchartsWidget?.userOptions?.series || [];
-        const graphs = highchartsWidget?.series || [];
 
-        const seriesNames = userSeries.map(
-            (userSeria) => userSeria.legendTitle || userSeria.title || userSeria.name,
-        );
-        return graphs
-            .filter((series: Highcharts.Series) => {
-                const axisExtremes = series.yAxis.getExtremes();
+        const widgetData = this.props?.highchartsWidget;
 
-                if (!series.data.length) {
-                    return false;
-                }
+        const widgetType = get(widgetData, 'type');
+        switch (widgetType) {
+            case WidgetKind.GravityCharts: {
+                const chartData = (widgetData as unknown as Widget).data as ChartData;
+                return chartData.series.data.map((s) => get(s, 'name'));
+            }
+            default: {
+                const userSeries = widgetData?.userOptions?.series || [];
+                const graphs = widgetData?.series || [];
 
-                if (axisExtremes.dataMin === null && axisExtremes.dataMax === null) {
-                    return false;
-                } else {
-                    return seriesNames.includes(series.name);
-                }
-            })
-            .map((series) => series.name);
+                const seriesNames = userSeries.map(
+                    (userSeria) => userSeria.legendTitle || userSeria.title || userSeria.name,
+                );
+                return graphs
+                    .filter((series: Highcharts.Series) => {
+                        const axisExtremes = series.yAxis.getExtremes();
+
+                        if (!series.data.length) {
+                            return false;
+                        }
+
+                        if (axisExtremes.dataMin === null && axisExtremes.dataMax === null) {
+                            return false;
+                        } else {
+                            return seriesNames.includes(series.name);
+                        }
+                    })
+                    .map((series) => series.name);
+            }
+        }
     }
 
     prepareNavigatorSettings(
@@ -446,7 +440,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             this.props.qlMode ? QL_SETTINGS_KEYS : BASE_SETTINGS_KEYS,
         );
 
-        let isSettingsEqual = _isEqual(settings, this.props.extraSettings);
+        const isSettingsEqual = _isEqual(settings, this.props.extraSettings);
 
         let extraSettings: CommonSharedExtraSettings = {
             ...this.props.extraSettings,
@@ -483,37 +477,12 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             } as Shared['visualization'];
         }
 
-        const newVisualizationId = this.getNewVisualizationId();
-        const newVisualization = getAvailableVisualizations().find(
-            (v) => v.id === newVisualizationId,
-        ) as Shared['visualization'];
-
-        if (newVisualization) {
-            visualization = newVisualization as Shared['visualization'];
-            isSettingsEqual = false;
-        }
-
         this.props.onApply({
             extraSettings,
             visualization,
             isSettingsEqual,
             qlMode: this.props.qlMode,
         });
-    };
-
-    getNewVisualizationId = () => {
-        const {visualization} = this.props;
-        const {d3Fallback} = this.state;
-
-        if (d3Fallback === CHART_SETTINGS.D3_FALLBACK.OFF) {
-            return getD3Analog(visualization.id as WizardVisualizationId);
-        }
-
-        if (d3Fallback === CHART_SETTINGS.D3_FALLBACK.ON) {
-            return getHighchartsAnalog(visualization.id as WizardVisualizationId);
-        }
-
-        return null;
     };
 
     handleNavigatorSelectedLineUpdate = (updatedSelectedLines: string[]) => {
@@ -865,7 +834,6 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const shouldRenderTotal = [
             WizardVisualizationId.FlatTable,
             WizardVisualizationId.Donut,
-            WizardVisualizationId.DonutD3,
         ].includes(visualizationId);
 
         if (!shouldRenderTotal || qlMode) {
@@ -1023,35 +991,6 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         );
     }
 
-    renderD3Switch() {
-        const {visualization} = this.props;
-        const {d3Fallback} = this.state;
-        const visualizationId = visualization.id as WizardVisualizationId;
-        const hasOtherLibraryAnalog = isD3Visualization(visualizationId)
-            ? getHighchartsAnalog(visualizationId)
-            : getD3Analog(visualizationId);
-        const enabled = hasOtherLibraryAnalog && isEnabledFeature(Feature.D3Visualizations);
-
-        if (!enabled) {
-            return null;
-        }
-
-        return (
-            <SettingSwitcher
-                currentValue={d3Fallback}
-                checkedValue={CHART_SETTINGS.D3_FALLBACK.ON}
-                uncheckedValue={CHART_SETTINGS.D3_FALLBACK.OFF}
-                onChange={(value) => {
-                    this.setState({
-                        d3Fallback: value,
-                    });
-                }}
-                title={i18n('wizard', 'label_d3-fallback')}
-                qa="d3-fallback-switcher"
-            />
-        );
-    }
-
     renderQlAutoExecutionChart() {
         const {qlMode} = this.props;
 
@@ -1133,7 +1072,6 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 {this.renderFeed()}
                 {this.renderPivotFallback()}
                 {this.renderNavigator()}
-                {this.renderD3Switch()}
                 {this.renderQlAutoExecutionChart()}
                 {this.renderInlineSortSwitch()}
                 {this.renderStackingSwitch()}
@@ -1147,12 +1085,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const {valid} = this.state;
 
         return (
-            <Dialog
-                open={true}
-                className={b()}
-                onClose={this.props.onCancel}
-                disableFocusTrap={true}
-            >
+            <Dialog open={true} className={b()} onClose={this.props.onCancel}>
                 <div className={b('content')}>
                     <Dialog.Header caption={i18n('wizard', 'label_chart-settings')} />
                     <Dialog.Body>{this.renderModalBody()}</Dialog.Body>

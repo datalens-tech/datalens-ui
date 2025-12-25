@@ -20,14 +20,14 @@ datalensTest.describe('QL', () => {
             });
 
             const qlPage = new QLPage({page});
-            await qlPage.setVisualization(WizardVisualizationId.TreemapD3);
+            await qlPage.setVisualization(WizardVisualizationId.Treemap);
             await qlPage.setScript(script);
             await qlPage.runScript();
         });
 
         datalensTest('Visualization of the graph without errors', async ({page}) => {
             const previewLoader = page.locator('.grid-loader');
-            const chart = page.locator('.gcharts-d3');
+            const chart = page.locator('.gcharts-chart');
 
             await expect(previewLoader).not.toBeVisible();
             await expect(chart).toBeVisible();

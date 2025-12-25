@@ -11,7 +11,12 @@ import {
     onLineChartDesignItemsChange,
 } from '../../utils/visualizations/line';
 import {onMeasureAxisChange} from '../../utils/visualizations/placeholders/common-measures';
-import {ITEM_TYPES, PRIMITIVE_DATA_TYPES, PRIMITIVE_DATA_TYPES_AND_HIERARCHY} from '../misc';
+import {
+    DEFAULT_DATE_FORMAT,
+    ITEM_TYPES,
+    PRIMITIVE_DATA_TYPES,
+    PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
+} from '../misc';
 
 import {prepareFieldToDimensionTransformation} from './utils';
 
@@ -35,6 +40,8 @@ const LineXPlaceholder = {
         hideLabels: 'no',
         labelsView: 'auto',
         holidays: 'off',
+        axisLabelDateFormat: DEFAULT_DATE_FORMAT,
+        axisLabelFormating: {},
         axisFormatMode: 'auto',
         axisModeMap: {},
         axisVisibility: 'show',
@@ -64,6 +71,8 @@ const LineYPlaceholder = {
         hideLabels: 'no',
         labelsView: 'auto',
         nulls: AxisNullsMode.Connect,
+        axisLabelDateFormat: DEFAULT_DATE_FORMAT,
+        axisLabelFormating: {},
         axisFormatMode: 'auto',
         axisVisibility: 'show',
     },
@@ -130,19 +139,14 @@ export const LINE_VISUALIZATION: GraphShared['visualization'] = {
                 hideLabels: 'no',
                 labelsView: 'auto',
                 nulls: AxisNullsMode.Connect,
+                axisLabelDateFormat: DEFAULT_DATE_FORMAT,
+                axisLabelFormating: {},
                 axisFormatMode: 'auto',
                 axisVisibility: 'show',
             },
             transform: prepareFieldToMeasureTransformation,
         },
     ] as Placeholder[],
-};
-
-export const LINE_D3_VISUALIZATION: GraphShared['visualization'] = {
-    ...LINE_VISUALIZATION,
-    id: WizardVisualizationId.LineD3,
-    placeholders: [LineXPlaceholder, {...LineYPlaceholder, required: true}],
-    allowSegments: false,
 };
 
 export const AREA_VISUALIZATION: GraphShared['visualization'] = {
@@ -181,6 +185,8 @@ export const AREA_VISUALIZATION: GraphShared['visualization'] = {
                 hideLabels: 'no',
                 labelsView: 'auto',
                 holidays: 'off',
+                axisLabelDateFormat: DEFAULT_DATE_FORMAT,
+                axisLabelFormating: {},
                 axisFormatMode: 'auto',
                 axisModeMap: {},
                 axisVisibility: 'show',
@@ -209,6 +215,8 @@ export const AREA_VISUALIZATION: GraphShared['visualization'] = {
                 hideLabels: 'no',
                 labelsView: 'auto',
                 nulls: AxisNullsMode.AsZero,
+                axisLabelDateFormat: DEFAULT_DATE_FORMAT,
+                axisLabelFormating: {},
                 axisFormatMode: 'auto',
                 axisVisibility: 'show',
             },
@@ -279,6 +287,8 @@ export const COLUMN_VISUALIZATION: GraphShared['visualization'] = {
                 hideLabels: 'no',
                 labelsView: 'auto',
                 holidays: 'off',
+                axisLabelDateFormat: DEFAULT_DATE_FORMAT,
+                axisLabelFormating: {},
                 axisFormatMode: 'auto',
                 axisModeMap: {},
                 axisVisibility: 'show',
@@ -307,6 +317,8 @@ export const COLUMN_VISUALIZATION: GraphShared['visualization'] = {
                 hideLabels: 'no',
                 labelsView: 'auto',
                 nulls: AxisNullsMode.Ignore,
+                axisLabelDateFormat: DEFAULT_DATE_FORMAT,
+                axisLabelFormating: {},
                 axisFormatMode: 'auto',
                 axisVisibility: 'show',
             },
@@ -369,6 +381,8 @@ export const BAR_VISUALIZATION: GraphShared['visualization'] = {
                 gridStepValue: 50,
                 hideLabels: 'no',
                 labelsView: 'auto',
+                axisLabelDateFormat: DEFAULT_DATE_FORMAT,
+                axisLabelFormating: {},
                 axisFormatMode: 'auto',
                 axisModeMap: {},
                 axisVisibility: 'show',
@@ -398,6 +412,8 @@ export const BAR_VISUALIZATION: GraphShared['visualization'] = {
                 labelsView: 'auto',
                 nulls: AxisNullsMode.Ignore,
                 holidays: 'off',
+                axisLabelDateFormat: DEFAULT_DATE_FORMAT,
+                axisLabelFormating: {},
                 axisFormatMode: 'auto',
                 axisVisibility: 'show',
             },

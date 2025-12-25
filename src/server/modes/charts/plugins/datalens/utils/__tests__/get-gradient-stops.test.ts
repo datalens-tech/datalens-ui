@@ -1,6 +1,6 @@
 import {GradientType} from '../../../../../../../shared';
 import type {ChartColorsConfig} from '../../types';
-import {getGradientStops} from '../get-gradient-stops';
+import {getHighchartsGradientStops} from '../get-gradient-stops';
 
 describe('getGradientStops', () => {
     const points = [1, 2, 3, 4, 5];
@@ -153,7 +153,7 @@ describe('getGradientStops', () => {
             const minColorValue = Math.min(...values);
             const maxColorValue = Math.max(...values);
             it(testArgs.title, () => {
-                const result = getGradientStops({
+                const result = getHighchartsGradientStops({
                     colorsConfig: {...colorsConfig, ...testArgs.colorsConfig},
                     points: values.map((value) => ({colorValue: value})),
                     minColorValue,
@@ -293,7 +293,7 @@ describe('getGradientStops', () => {
             const minColorValue = Math.min(...values);
             const maxColorValue = Math.max(...values);
             it(testArgs.title, () => {
-                const result = getGradientStops({
+                const result = getHighchartsGradientStops({
                     colorsConfig: {...colorsConfig, ...testArgs.colorsConfig},
                     points: values.map((value) => ({colorValue: value})),
                     minColorValue,

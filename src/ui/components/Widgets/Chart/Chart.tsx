@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';
 import isEqual from 'lodash/isEqual';
@@ -65,6 +66,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         loaderDelay,
         config,
         id: chartId,
+        revId: chartRevId,
         menuType,
         customMenuOptions,
         onChartRender,
@@ -81,6 +83,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         paneSplitOrientation,
         widgetDashState,
         onBeforeChartLoad,
+        onActivityComplete,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -126,6 +129,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
     );
 
     const rootNodeRef = React.useRef<HTMLDivElement>(props.rootNodeRef?.current || null);
+    const chartRevIdRef = React.useRef<string | undefined>();
     const widgetDataRef = React.useRef<ChartWidgetData>(null);
     const widgetRenderTimeRef = React.useRef<number | null>(null);
     const chartKitRef = React.useRef<ChartKit>(null);
@@ -145,6 +149,12 @@ export const Chart = (props: ChartNoWidgetProps) => {
             status: 'unset',
         },
     });
+
+    React.useEffect(() => {
+        if (chartRevIdRef.current !== chartRevId) {
+            chartRevIdRef.current = chartRevId;
+        }
+    }, [chartRevId]);
 
     /**
      * for correct cancellation on rerender & changed request params & data props
@@ -173,7 +183,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         dataProps,
         isWidgetMenuDataChanged,
         reloadChart,
-        runAction,
+        runActivity,
         handleChartkitReflow,
     } = useLoadingChart({
         chartKitRef,
@@ -197,6 +207,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         autoupdateInterval,
         forceShowSafeChart,
         onBeforeChartLoad,
+        onActivityComplete,
     });
 
     /**
@@ -251,7 +262,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         return undefined;
     }, [reloadChart]);
 
-    React.useImperativeHandle<unknown, ChartWithWrapRefProps>(
+    React.useImperativeHandle<ChartKit | ChartKitRef, ChartWithWrapRefProps>(
         forwardedRef,
         () => ({
             reflow: handleChartkitReflow,
@@ -276,6 +287,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 widgetBodyClassName={widgetBodyClassName}
                 hasHiddenClassMod={hasHiddenClassMod}
                 chartId={chartId}
+                chartRevIdRef={chartRevIdRef}
                 noControls={noControls}
                 transformLoadedData={transformLoadedData}
                 splitTooltip={splitTooltip}
@@ -289,7 +301,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 loadedData={loadedData}
                 forwardedRef={chartKitRef}
                 getControls={loadControls}
-                runAction={runAction}
+                runActivity={runActivity}
                 drillDownFilters={drillDownFilters}
                 drillDownLevel={drillDownLevel}
                 widgetType={widgetType}
@@ -305,6 +317,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 rootNodeRef={rootNodeRef}
                 needRenderContentControls={true}
                 enableAssistant={enableAssistant}
+                reload={reloadChart}
             />
         </div>
     );

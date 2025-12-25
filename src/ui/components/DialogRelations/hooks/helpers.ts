@@ -10,6 +10,7 @@ import {
     DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES,
     DASH_FILTERING_CHARTS_WIDGET_TYPES,
 } from 'ui/units/dash/modules/constants';
+import {getAllTabItems} from 'ui/units/dash/utils/selectors';
 
 import type {FiltersTypes} from '../components/Filters/Filters';
 import {DEFAULT_FILTERS} from '../components/Filters/Filters';
@@ -52,7 +53,8 @@ export const getPreparedMetaData = (
 
     const config = dashkitData.props.config;
     const configItems: Record<string, string> = {};
-    config.items.forEach((item) => {
+    const allItems = getAllTabItems(config);
+    allItems.forEach((item) => {
         configItems[item.id] = item.namespace;
     });
 

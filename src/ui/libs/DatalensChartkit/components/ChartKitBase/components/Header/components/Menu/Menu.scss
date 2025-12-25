@@ -16,10 +16,6 @@
         }
     }
 
-    &__switcher:not(&__switcher_flat):hover:before {
-        background: none;
-    }
-
     &__popup-item:not(&__popup-item_disabled) {
         color: var(--g-color-text-complementary);
 

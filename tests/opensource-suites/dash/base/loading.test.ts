@@ -14,7 +14,7 @@ const TEXTS = {
 };
 
 const SELECTORS = {
-    CHART_LINE_ITEM: '.gcharts-d3-axis',
+    CHART_LINE_ITEM: '.gcharts-axis',
 };
 
 const waitForDashFirstResponseSentData = async ({
@@ -88,8 +88,9 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
         'Dashboard with delayed loading of widgets (do not fall into viewport)',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
+
             // we set small viewport sizes for a more stable check
-            page.setViewportSize({width: 1000, height: 300});
+            await page.setViewportSize({width: 1000, height: 300});
 
             const initPromise = page.waitForRequest('/api/run');
 
@@ -122,26 +123,24 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
             const dashboardPage = new DashboardPage({page});
             await openTestPage(page, config.dash.urls.DashboardWithLongContentBeforeChart);
 
-            page.setViewportSize({width: 1000, height: 600});
+            // we set small viewport sizes for a more stable check
+            await page.setViewportSize({width: 1000, height: 400});
 
             await dashboardPage.duplicateDashboard({
                 dashId: config.dash.urls.DashboardWithLongContentBeforeChart,
                 useUserFolder: true,
             });
 
-            // we set small viewport sizes for a more stable check
-            page.setViewportSize({width: 1000, height: 300});
-
-            const initPromise = page.waitForRequest('/api/run');
-
             // waiting for the widget container to be rendered
             await page.waitForSelector(`${slct(COMMON_DASH_SELECTORS.DASH_PLUGIN_WIDGET_BODY)}`);
 
             // check that the widget content is not loaded
             await waitForCondition(async () => {
-                const elems = await page.$$(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+                const elems = await page.$$(COMMON_CHARTKIT_SELECTORS.chart);
                 return elems.length === 0;
             });
+
+            const initPromise = page.waitForRequest('/api/run');
 
             await dashboardPage.openControlRelationsDialog();
 
@@ -153,8 +152,8 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
             // check that the widget content has appeared
             await page
                 .locator(SELECTORS.CHART_LINE_ITEM)
+                .or(page.locator(COMMON_CHARTKIT_SELECTORS.chart))
                 .first()
-                .or(page.locator(`.${COMMON_CHARTKIT_SELECTORS.graph}`))
                 .waitFor({state: 'visible'});
 
             await dashboardPage.exitEditMode();

@@ -60,7 +60,12 @@ export class MetricTile extends React.PureComponent<MetricTileProps> {
                                     this.renderDiff(content, 'diffPercent', colorize)}
                             </div>
 
-                            <span className={b('unit')}>{getUnitValue(current)}</span>
+                            <span
+                                className={b('unit')}
+                                style={current.color ? {color: current.color} : {}}
+                            >
+                                {getUnitValue(current)}
+                            </span>
                         </div>
                     </div>
 

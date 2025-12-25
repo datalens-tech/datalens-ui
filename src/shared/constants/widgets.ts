@@ -1,3 +1,4 @@
+import {DashTabItemType} from '../types';
 import type {ValueOf} from '../types';
 
 export const CustomPaletteBgColors = {
@@ -5,13 +6,10 @@ export const CustomPaletteBgColors = {
     NONE: 'transparent',
 } as const;
 
+export const TRANSPARENT_COLOR_HEX = '#00000000';
+
+export const LIKE_CHART_COLOR_TOKEN = 'var(--g-color-base-float)';
 export const BASE_GREY_BACKGROUND_COLOR = 'var(--g-color-base-generic)';
-
-export type CustomPaletteBgColor = ValueOf<typeof CustomPaletteBgColors>;
-
-export function isCustomPaletteBgColor(color: string): color is CustomPaletteBgColor {
-    return Object.values(CustomPaletteBgColors).includes(color as CustomPaletteBgColor);
-}
 
 export const WIDGET_BG_HEAVY_COLORS_PRESET = [
     'var(--g-color-base-info-heavy)',
@@ -67,8 +65,47 @@ export const WIDGET_BG_COLORS_PRESET = [
     'var(--g-color-base-neutral-medium-hover)',
 ];
 
+export const TITLE_WIDGET_TEXT_COLORS_PRESET = [
+    'var(--g-color-text-info)',
+    'var(--g-color-text-positive)',
+    'var(--g-color-text-warning)',
+    'var(--g-color-text-danger)',
+    'var(--g-color-text-utility)',
+    'var(--g-color-text-misc)',
+
+    'var(--g-color-text-info-heavy)',
+    'var(--g-color-text-positive-heavy)',
+    'var(--g-color-text-warning-heavy)',
+    'var(--g-color-text-danger-heavy)',
+    'var(--g-color-text-utility-heavy)',
+    'var(--g-color-text-misc-heavy)',
+];
+
+export const CustomPaletteTextColors = {
+    PRIMARY: 'var(--g-color-text-primary)',
+    COMPLEMENTARY: 'var(--g-color-text-complementary)',
+    SECONDARY: 'var(--g-color-text-secondary)',
+    HINT: 'var(--g-color-text-hint)',
+    INVERTED_PRIMARY: 'var(--g-color-text-inverted-primary)',
+} as const;
+
+export type CustomPaletteTextColor = ValueOf<typeof CustomPaletteTextColors>;
+
 export const CONTROLS_PLACEMENT_MODE = {
     AUTO: 'auto',
     PERCENT: '%',
     PIXELS: 'px',
-};
+} as const;
+
+export function getDefaultDashWidgetBgColorByType(type: DashTabItemType) {
+    return type === DashTabItemType.Widget
+        ? CustomPaletteBgColors.LIKE_CHART
+        : CustomPaletteBgColors.NONE;
+}
+
+export function getColorSettingsWithValue(
+    color: string | undefined,
+    enableSeparateThemeColorSelector: boolean,
+) {
+    return enableSeparateThemeColorSelector ? {light: color, dark: color} : color;
+}

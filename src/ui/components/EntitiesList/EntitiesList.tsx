@@ -13,7 +13,11 @@ const i18n = I18n.keyset('component.dialog-related-entities.view');
 
 const b = block('related-entities-list');
 
-const getLabelByScope = (scope: string) => {
+const getLabelByScope = (scope?: string) => {
+    if (!scope) {
+        return null;
+    }
+
     switch (scope) {
         case EntryScope.Dash:
             return i18n('label_scope-dash');
@@ -37,8 +41,10 @@ export const EntitiesList = ({
     rightSectionSlot,
     rowClassName,
     className,
+    title: customTitle,
 }: EntitiesListProps) => {
-    const title = isCurrent ? i18n('label_current-object') : getLabelByScope(scope);
+    const title =
+        customTitle ?? (isCurrent ? i18n('label_current-object') : getLabelByScope(scope));
 
     const RightSectionSlot = rightSectionSlot;
 

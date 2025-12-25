@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {ConfigLayout} from '@gravity-ui/dashkit';
-import {Link} from '@gravity-ui/uikit';
+import {Link, type ThemeType} from '@gravity-ui/uikit';
 import {AccessRightsUrlOpen} from 'components/AccessRights/AccessRightsUrlOpen';
 import {I18n} from 'i18n';
 import logger from 'libs/logger';
@@ -59,7 +59,6 @@ import {
 } from '../../store/selectors/dashTypedSelectors';
 import {getTabId} from '../../utils/getTabId';
 import {getUrlGlobalParams} from '../../utils/url';
-import Body from '../Body/Body';
 import {DashHotkeys} from '../DashHotkes/DashHotkeys';
 import Dialogs from '../Dialogs/Dialogs';
 import Header from '../Header/Header';
@@ -70,7 +69,9 @@ const AUTH_UPDATE_TIMEOUT = 40 * 60 * 1000;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
-type OwnProps = {};
+type OwnProps = {
+    themeType?: ThemeType;
+};
 
 type DashProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
 
@@ -264,6 +265,8 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             this.props;
         const subtitle = getTabTitleById({tabs, tabId});
 
+        const {DashBody} = registry.dash.components.getAll();
+
         return (
             <DashHotkeys>
                 <PageTitle entry={entry} extraSettings={{subtitle}} />
@@ -280,7 +283,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     location={location}
                     isEditModeLoading={this.state.isEditModeLoading}
                 />
-                <Body
+                <DashBody
                     onRetry={this.handleRetry}
                     handlerEditClick={this.handlerEditClick}
                     isEditModeLoading={this.state.isEditModeLoading}
@@ -303,22 +306,26 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         this.props.setRevisionsListMode?.(RevisionsListMode.Expanded);
     };
 
-    private setEditMode = async () => {
+    private setEditMode = async (successCallback?: () => void) => {
         try {
             this.setState({isEditModeLoading: true});
-            await this.props.setEditMode();
+            await this.props.setEditMode(successCallback);
         } catch (error) {
             logger.logError('dash Header: setEditMode failed', error);
         }
         this.setState({isEditModeLoading: false});
     };
 
-    private setEditDash = () => {
+    private setEditDash = (successCallback?: () => void) => {
         this.props.setRevisionsMode?.(RevisionsMode.Closed);
-        this.setEditMode();
+        this.setEditMode(successCallback);
     };
 
-    private handlerEditClick = () => {
+    private handlerEditClick = (onConfirmCallback?: () => void, onCancelCallback?: () => void) => {
+        if (this.state.isEditModeLoading) {
+            return;
+        }
+
         const {savedId, publishedId, revId} = this.props.entry;
         const hasLatestUnpublishedVersion = savedId !== publishedId && savedId !== revId;
 
@@ -326,14 +333,19 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             this.entryDialoguesRef.current?.open({
                 dialog: EntryDialogName.EditWarning,
                 dialogProps: {
-                    onEditClick: this.setEditDash,
-                    onShowHistoryClick: this.setExpandedRevisions,
+                    onEditClick: () => {
+                        this.setEditDash(onConfirmCallback);
+                    },
+                    onShowHistoryClick: () => {
+                        onCancelCallback?.();
+                        this.setExpandedRevisions();
+                    },
                 },
             });
             return;
         }
 
-        this.setEditDash();
+        this.setEditDash(onConfirmCallback);
     };
 
     private handleRetry = () => {
@@ -408,6 +420,9 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             context: itemData.copyContext,
             options: {
                 updateLayout,
+            },
+            dashVisualSettings: {
+                themeType: this.props.themeType,
             },
         });
     };

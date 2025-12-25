@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {flip} from '@floating-ui/react';
 import type {PopupProps} from '@gravity-ui/uikit';
 import {Button, Dialog, List, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -120,18 +121,18 @@ export const PopupWidgetsOrder = (props: PopupWidgetsOrderProps) => {
     const captionText = getCaptionText() || '';
     return (
         <Popup
-            anchorRef={anchorRef}
+            anchorElement={anchorRef?.current}
             open={true}
             placement="right-start"
-            offset={[-20, 10]}
-            onClose={onClose}
-            modifiers={[
-                {
-                    name: 'flip',
-                    options: {fallbackPlacements: ['bottom-start', 'bottom', 'right-start']},
-                },
+            offset={{mainAxis: -20, crossAxis: 10}}
+            onOpenChange={(isOpened) => {
+                if (!isOpened) {
+                    onClose();
+                }
+            }}
+            floatingMiddlewares={[
+                flip({fallbackPlacements: ['bottom-start', 'bottom', 'right-start']}),
             ]}
-            contentClassName={b('popover')}
             qa={DialogTabsQA.PopupWidgetOrder}
         >
             <Dialog.Header className={b('header')} caption={captionText} />

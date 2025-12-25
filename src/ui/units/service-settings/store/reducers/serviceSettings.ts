@@ -2,6 +2,8 @@ import {type ServiceSettingsActions} from '../actions/serviceSettings';
 import {
     RESET_CREATE_USER,
     RESET_SERVICE_USERS_LIST,
+    RESTORE_USERS_STATE_AFTER_FILTER,
+    SAVE_USERS_STATE_BEFORE_FILTER,
     SET_CREATE_USER_FAILED,
     SET_CREATE_USER_LOADING,
     SET_CREATE_USER_SUCCESS,
@@ -17,6 +19,8 @@ const initialState: ServiceSettingsState = {
         error: null,
         users: [],
         nextPageToken: null,
+        loadedBeforeFilter: null,
+        nextPageTokenBeforeFilter: null,
     },
     createUser: {
         isLoading: false,
@@ -105,6 +109,31 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
                     ...initialState.createUser,
                 },
             };
+        }
+        case SAVE_USERS_STATE_BEFORE_FILTER: {
+            return {
+                ...state,
+                getUsersList: {
+                    ...state.getUsersList,
+                    loadedBeforeFilter: [...state.getUsersList.users],
+                    nextPageTokenBeforeFilter: state.getUsersList.nextPageToken,
+                },
+            };
+        }
+        case RESTORE_USERS_STATE_AFTER_FILTER: {
+            if (state.getUsersList.loadedBeforeFilter) {
+                return {
+                    ...state,
+                    getUsersList: {
+                        ...state.getUsersList,
+                        users: state.getUsersList.loadedBeforeFilter,
+                        nextPageToken: state.getUsersList.nextPageTokenBeforeFilter,
+                        loadedBeforeFilter: null,
+                        nextPageTokenBeforeFilter: null,
+                    },
+                };
+            }
+            return state;
         }
         default:
             return state;

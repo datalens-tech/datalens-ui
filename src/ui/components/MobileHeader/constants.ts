@@ -1,0 +1,1 @@
+export const MOBILE_HEADER_LOGO_ICON_SIZE = 28;

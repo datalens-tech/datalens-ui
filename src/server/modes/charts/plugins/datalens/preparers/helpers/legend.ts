@@ -1,0 +1,65 @@
+import type {ServerChartsConfig, ServerColor} from '../../../../../../../shared';
+import {WizardVisualizationId, isDimensionField} from '../../../../../../../shared';
+import type {ChartColorsConfig} from '../../types';
+import {getGradientStops} from '../../utils/get-gradient-stops';
+import {isGradientMode} from '../../utils/misc-helpers';
+
+export function shouldUseGradientLegend(
+    colorField: ServerColor | undefined,
+    colorsConfig: ChartColorsConfig,
+    shared: ServerChartsConfig,
+) {
+    if (!colorField) {
+        return false;
+    }
+
+    const isCombinedChartColorizedBySomeDimenstion =
+        shared.visualization.id === WizardVisualizationId.CombinedChart &&
+        shared.visualization.layers?.some((layer) =>
+            layer.commonPlaceholders.colors.some(isDimensionField),
+        );
+
+    const isGradient = isGradientMode({
+        colorField,
+        colorFieldDataType: colorField.data_type,
+        colorsConfig,
+    });
+
+    return isGradient && !isCombinedChartColorizedBySomeDimenstion;
+}
+
+export function getLegendColorScale({
+    colorsConfig,
+    points,
+}: {
+    colorsConfig: ChartColorsConfig;
+    points: {colorValue?: unknown}[];
+}) {
+    const colorValues = points
+        .map((point) => point.colorValue)
+        .filter((d): d is number => Boolean(d));
+
+    const minColorValue = Math.min(...colorValues);
+    const maxColorValue = Math.max(...colorValues);
+
+    const colorScaleColors = [...colorsConfig.gradientColors];
+    if (colorsConfig.reversed) {
+        colorScaleColors.reverse();
+    }
+
+    let stops = colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1];
+    if (colorsConfig && typeof minColorValue === 'number' && typeof maxColorValue === 'number') {
+        stops = getGradientStops({colorsConfig, points, minColorValue, maxColorValue});
+    }
+
+    if (stops[0] > 0) {
+        stops.unshift(0);
+        colorScaleColors.unshift(colorScaleColors[0]);
+    }
+
+    if (stops[stops.length - 1] < 1) {
+        stops.push(1);
+        colorScaleColors.push(colorScaleColors[colorScaleColors.length - 1]);
+    }
+    return {colors: colorScaleColors, stops};
+}

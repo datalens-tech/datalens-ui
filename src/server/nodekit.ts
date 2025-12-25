@@ -1,10 +1,14 @@
 import * as path from 'path';
 
+import {extendZodWithOpenApi} from '@asteasolutions/zod-to-openapi';
 import {NodeKit} from '@gravity-ui/nodekit';
 import dotenv from 'dotenv';
+import {z} from 'zod';
+
+extendZodWithOpenApi(z);
 dotenv.config();
 
-import {anonymousSchema, authSchema, schema} from '../shared/schema';
+import {authSchema, schema} from '../shared/schema';
 
 import {getFeaturesConfig} from './components/features';
 import {registry} from './registry';
@@ -27,7 +31,6 @@ nodekit.config.features = getFeaturesConfig(appEnv);
 registry.setupGateway(getGatewayConfig(nodekit), {
     root: schema,
     auth: authSchema,
-    anonymous: anonymousSchema,
 });
 
 export {nodekit};

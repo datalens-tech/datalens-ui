@@ -1,5 +1,11 @@
 import type {ColorsConfig, Field, TableFieldBackgroundSettings} from 'shared';
-import {PlaceholderId, WizardVisualizationId, isMeasureField, isMeasureName} from 'shared';
+import {
+    PlaceholderId,
+    WizardVisualizationId,
+    getFieldUISettings,
+    isMeasureField,
+    isMeasureName,
+} from 'shared';
 import {v1 as uuidv1} from 'uuid';
 
 import type {GradientState, PaletteState} from '../../../../actions/dialogColor';
@@ -43,7 +49,15 @@ export const getDefaultBackgroundSettings = (field: Field): TableFieldBackground
     if (isContinuous) {
         settings.gradientState = getDefaultGradientSettings();
     } else {
-        settings.paletteState = getDefaultPaletteSettings();
+        const fieldUISettings = getFieldUISettings({field});
+        if (fieldUISettings?.colors) {
+            settings.paletteState = {
+                palette: fieldUISettings.palette,
+                mountedColors: fieldUISettings.colors,
+            };
+        } else {
+            settings.paletteState = getDefaultPaletteSettings();
+        }
     }
 
     return {

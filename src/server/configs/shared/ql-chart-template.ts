@@ -3,9 +3,10 @@ import type {Request} from '@gravity-ui/expresskit';
 import type {ServerI18n} from '../../../i18n/types';
 import type {QlExtendedConfig} from '../../../shared';
 import {
+    Feature,
     QL_TYPE,
     WizardVisualizationId,
-    isD3Visualization,
+    isGravityChartsVisualization,
     isMonitoringOrPrometheusChart,
 } from '../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../shared/modules/config/ql';
@@ -29,7 +30,21 @@ export default {
         const {visualization, chartType} = config;
         const id = visualization.id;
 
-        if (isD3Visualization(id as WizardVisualizationId)) {
+        const {ctx} = req;
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+        const features = {
+            GravityChartsForPieAndTreemap: isEnabledServerFeature(
+                Feature.GravityChartsForPieAndTreemap,
+            ),
+            GravityChartsForBarYAndScatter: isEnabledServerFeature(
+                Feature.GravityChartsForBarYAndScatter,
+            ),
+            GravityChartsForLineAreaAndBarX: isEnabledServerFeature(
+                Feature.GravityChartsForLineAreaAndBarX,
+            ),
+        };
+
+        if (isGravityChartsVisualization({id, features})) {
             return QL_TYPE.D3_QL_NODE;
         }
 

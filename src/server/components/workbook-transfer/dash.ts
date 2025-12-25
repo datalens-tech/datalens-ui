@@ -1,5 +1,6 @@
 import {
     type DashEntry,
+    type EntryAnnotation,
     EntryScope,
     EntryUpdateMode,
     type TransferIdMapping,
@@ -17,12 +18,13 @@ import {
     warningTransferNotification,
 } from './create-transfer-notifications';
 
-export async function prepareDashImportData(
-    entryData: {data: DashEntry['data']; name: string},
+export function prepareDashImportData(
+    entryData: {data: DashEntry['data']; name: string; annotation?: EntryAnnotation},
     idMapping: TransferIdMapping,
 ) {
-    const data = await Dash.migrate(entryData.data);
+    const data = Dash.migrate(entryData.data);
     const notifications: TransferNotification[] = [];
+    const description = entryData.annotation?.description ?? '';
     const defaults = {
         name: entryData.name,
         scope: EntryScope.Dash,
@@ -30,6 +32,7 @@ export async function prepareDashImportData(
         links: {},
         type: '',
         key: '',
+        annotation: {description},
     };
 
     try {
@@ -83,8 +86,8 @@ export async function prepareDashImportData(
     };
 }
 
-export async function prepareDashExportData(entry: DashEntry, idMapping: TransferIdMapping) {
-    const data = await Dash.migrate(entry.data);
+export function prepareDashExportData(entry: DashEntry, idMapping: TransferIdMapping) {
+    const data = Dash.migrate(entry.data);
     const notifications: TransferNotification[] = [];
     let isMissingMapping = false;
 
@@ -109,6 +112,7 @@ export async function prepareDashExportData(entry: DashEntry, idMapping: Transfe
     const dash = {
         name,
         data,
+        annotation: entry.annotation,
     };
 
     return {

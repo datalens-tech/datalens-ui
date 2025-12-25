@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, Tabs} from '@gravity-ui/uikit';
+import {Button, Tab, TabList, TabProvider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
@@ -55,11 +55,15 @@ export class PopupContent extends React.PureComponent {
                 {showTabs && (
                     <React.Fragment>
                         <div className={b('tabs')}>
-                            <Tabs
-                                items={getTabs()}
-                                activeTab={activeTab}
-                                onSelectTab={this.props.onSelectTab}
-                            />
+                            <TabProvider value={activeTab} onUpdate={this.props.onSelectTab}>
+                                <TabList>
+                                    {getTabs().map((item) => (
+                                        <Tab key={item.id} value={item.id}>
+                                            {item.title}
+                                        </Tab>
+                                    ))}
+                                </TabList>
+                            </TabProvider>
                         </div>
                         {range && (
                             <Presets

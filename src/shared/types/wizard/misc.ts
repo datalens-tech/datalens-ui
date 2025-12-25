@@ -53,6 +53,7 @@ export const enum AxisMode {
 export const enum AxisLabelFormatMode {
     Auto = 'auto',
     ByField = 'by-field',
+    Manual = 'manual',
 }
 
 export const enum AxisNullsMode {

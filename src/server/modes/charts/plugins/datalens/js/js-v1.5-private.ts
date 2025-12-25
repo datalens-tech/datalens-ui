@@ -225,10 +225,12 @@ export const fallbackJSFunctionPrivate = ({
     options,
     features,
     palettes,
+    defaultColorPaletteId,
 }: {
     options: JSTabOptions;
     features: FeatureConfig;
     palettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 }) => {
     let data: any;
     let shared: Shared | ServerChartsConfig;
@@ -430,6 +432,7 @@ export const fallbackJSFunctionPrivate = ({
                 loadedColorPalettes,
                 palettes,
                 features,
+                defaultColorPaletteId,
             });
 
             if (localResult && localResult[0] && localResult[0].bounds) {
@@ -485,6 +488,7 @@ export const fallbackJSFunctionPrivate = ({
             loadedColorPalettes,
             palettes,
             features,
+            defaultColorPaletteId,
         });
 
         if (result && result[0] && result[0].bounds) {

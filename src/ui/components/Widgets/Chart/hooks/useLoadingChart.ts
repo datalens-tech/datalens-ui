@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import type {ItemStateAndParamsChangeOptions} from '@gravity-ui/dashkit';
 import {
@@ -14,21 +15,24 @@ import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
+import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
-import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {START_PAGE} from '../../../../libs/DatalensChartkit/ChartKit/components/Widget/components/Table/Paginator/Paginator';
 import type {
     ChartKitWrapperLoadError,
     ChartKitWrapperLoadStatusUnknown,
-    ChartKitWrapperLoadSuccess,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsProps} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import DatalensChartkitCustomError, {
     ERROR_CODE,
     formatError,
 } from '../../../../libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
-import type {CombinedError, OnChangeData} from '../../../../libs/DatalensChartkit/types';
+import type {
+    CombinedError,
+    OnActivityComplete,
+    OnChangeData,
+} from '../../../../libs/DatalensChartkit/types';
 import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
@@ -43,7 +47,6 @@ import {
 import type {
     ChartContentProps,
     ChartNoWidgetProps,
-    ChartSelectorWithRefProps,
     ChartWithProviderProps,
     ChartWrapperWithRefProps,
     CurrentRequestState,
@@ -58,6 +61,7 @@ import type {
 } from '../types';
 import {cleanUpConflictingParameters} from '../utils';
 
+import {useChartActivities} from './useChartActivities';
 import {useIntersectionObserver} from './useIntersectionObserver';
 import {useMemoCallback} from './useMemoCallback';
 
@@ -73,7 +77,9 @@ export type LoadingChartHookProps = {
     hasChangedOuterProps: boolean;
     hasChangedOuterParams: boolean;
     hasChartTabChanged?: boolean;
-    chartKitRef: React.RefObject<ChartKit> | React.MutableRefObject<ChartKit | undefined>;
+    chartKitRef:
+        | React.RefObject<ChartKit | ChartKitRef>
+        | React.MutableRefObject<ChartKit | ChartKitRef | undefined>;
     resolveMetaDataRef?: React.MutableRefObject<ResolveMetaDataRef | undefined>;
     resolveWidgetDataRef?: React.MutableRefObject<
         ResolveWidgetDataRef | ResolveWidgetControlDataRef | undefined
@@ -89,11 +95,12 @@ export type LoadingChartHookProps = {
     onInnerParamsChanged?: (params: StringParams) => void;
     hasChangedActionParams?: boolean;
     enableActionParams?: boolean;
-    widgetType?: ChartSelectorWithRefProps['widgetType'];
+    widgetType?: ChartWrapperWithRefProps['widgetType'];
     isPageHidden?: boolean;
     autoupdateInterval?: number;
     forceShowSafeChart?: boolean;
     onBeforeChartLoad?: () => Promise<void>;
+    onActivityComplete?: OnActivityComplete;
 };
 
 type AutoupdateDataType = {
@@ -152,6 +159,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isPageHidden,
         forceShowSafeChart,
         onBeforeChartLoad,
+        onActivityComplete,
     } = props;
 
     const [{isInit, canBeLoaded}, setLoadingState] = React.useReducer(loadingStateReducer, {
@@ -427,6 +435,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                     requestCancellationRef.current[requestId]?.requestCancellation ||
                     dataProvider.getRequestCancellation(),
                 ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
+                widgetElement: rootNodeRef.current ?? undefined,
             });
 
             const isCanceled = requestCancellationRef.current?.[requestId]?.status === 'canceled';
@@ -465,7 +474,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 data: {
                     loadedData: loadedWidgetData,
                 },
-            } as ChartKitWrapperLoadSuccess);
+            });
 
             // order is important for updateHighchartsConfig from editor
             dispatch({type: WIDGET_CHART_SET_LOADED_DATA, payload: loadedWidgetData});
@@ -700,7 +709,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                         widgetData: renderedData.widget || null,
                         loadedData, // for ChartStats
                     },
-                } as ChartKitWrapperLoadSuccess,
+                },
                 dataProvider,
             );
         },
@@ -930,16 +939,14 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         [loadChartData, handleChange],
     );
 
-    const runAction = React.useCallback(
-        (params: StringParams) => {
-            return dataProvider.runAction({
-                props: {...initialData, params},
-                requestId,
-                ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
-            });
-        },
-        [dataProvider, initialData, requestId, requestHeadersGetter],
-    );
+    const {runActivity} = useChartActivities({
+        requestId,
+        requestHeadersGetter,
+        dataProvider,
+        initialData,
+        onChange: handleChange,
+        onActivityComplete,
+    });
 
     return {
         loadedData,
@@ -964,6 +971,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isInit,
         dataProps: requestDataProps,
         isWidgetMenuDataChanged,
-        runAction,
+        runActivity,
     };
 };

@@ -51,7 +51,9 @@ export const runController = (
 
         let config: ResolvedConfig | {error: unknown};
         if (chartConfig) {
-            config = chartConfig;
+            config = {
+                ...chartConfig,
+            };
         } else {
             if (!params && key) {
                 const parsedUrl = url.parse(key);
@@ -151,7 +153,7 @@ export const runController = (
 
             req.body.key = req.body.key || config.key;
 
-            runnerFound.handler(ctx, {
+            await runnerFound.handler(ctx, {
                 chartsEngine,
                 req,
                 res,

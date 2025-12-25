@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {ControlGroupOption} from '@gravity-ui/uikit';
-import {RadioButton, Select} from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as RadioButton, Select} from '@gravity-ui/uikit';
 
 type ItemFieldProps = {
     isMobile: boolean;

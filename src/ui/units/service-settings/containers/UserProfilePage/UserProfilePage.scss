@@ -6,4 +6,12 @@
     &__content {
         padding: var(--g-spacing-5);
     }
+
+    &__breadcrumbs {
+        flex-grow: 1;
+    }
+
+    &__breadcrumbs-item {
+        height: 100%;
+    }
 }

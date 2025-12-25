@@ -1,0 +1,22 @@
+.created-illustration {
+    $sizeS: 100px;
+    $sizeM: 150px;
+    $sizeL: 230px;
+
+    &__skeleton {
+        &_size_s {
+            height: $sizeS;
+            width: $sizeS;
+        }
+
+        &_size_m {
+            width: $sizeM;
+            height: $sizeM;
+        }
+
+        &_size_l {
+            height: $sizeL;
+            width: $sizeL;
+        }
+    }
+}

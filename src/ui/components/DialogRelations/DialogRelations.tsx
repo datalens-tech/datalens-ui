@@ -16,6 +16,7 @@ import type {DashTab, DashTabAliases, DashTabItem} from 'shared';
 import {DashCommonQa, DashTabItemType} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
+import {selectCurrentTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import {openDialogAliases} from '../../units/dash/store/actions/relations/actions';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
@@ -98,8 +99,9 @@ const DialogRelations = (props: DialogRelationsProps) => {
     } = props;
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
+    const tabId = useSelector(selectCurrentTabId);
 
-    const aliasWarnButtonRef = React.useRef<HTMLElement | null>(null);
+    const aliasWarnButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
     const [aliasWarnPopupOpen, setAliasWarnPopupOpen] = React.useState(false);
     const [searchValue, setSearchValue] = React.useState('');
@@ -134,8 +136,8 @@ const DialogRelations = (props: DialogRelationsProps) => {
     }, [dashWidgetsMeta]);
 
     const widgetOptions = React.useMemo(() => {
-        return getWidgetsOptions(widgetsIconMap, widgets, showDebugInfo);
-    }, [widgets, widgetsIconMap, showDebugInfo]);
+        return getWidgetsOptions({tabId, widgetsIconMap, widgets, showDebugInfo});
+    }, [tabId, widgetsIconMap, widgets, showDebugInfo]);
 
     const currentWidgetId = selectedSubItemId || currentWidgetMeta?.widgetId || '';
     const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>({});
@@ -265,11 +267,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
             aliases,
             handleUpdateRelations,
             currentWidgetMeta,
+            changedWidgets,
             dashKitRef,
             dashWidgetsMeta,
             preparedRelations,
             datasets,
-            changedWidgets,
+            currentWidgetId,
         ],
     );
 
@@ -393,7 +396,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 setChangedWidgets(newChanged);
             }
         },
-        [changedWidgets, preparedRelations, handleAliasesClick],
+        [changedWidgets, currentWidgetId, preparedRelations, handleAliasesClick],
     );
 
     /**
@@ -486,7 +489,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
         } else {
             onApply(newData);
         }
-    }, [dashKitRef, aliases, isLoading, dashTabAliases, changedWidgets, onClose, onApply]);
+    }, [dashKitRef, isLoading, changedWidgets, aliases, dashTabAliases, onClose, onApply]);
 
     const handleAliasesWarnClick = () => setAliasWarnPopupOpen(!aliasWarnPopupOpen);
 
@@ -592,12 +595,14 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                     qa: DashCommonQa.RelationsDisconnectAllSelectors,
                                 },
                             ]}
-                            switcher={
+                            renderSwitcher={({onClick, onKeyDown}) => (
                                 <Button
                                     className={b('switcher-button')}
                                     view="normal"
                                     qa={DashCommonQa.RelationsDisconnectAllSwitcher}
                                     disabled={isDisconnectDisabled}
+                                    onClick={onClick}
+                                    onKeyDown={onKeyDown}
                                 >
                                     <Icon
                                         className={b('switcher-button-icon')}
@@ -605,7 +610,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                         size={ICON_SIZE}
                                     />
                                 </Button>
-                            }
+                            )}
                         />
                         {Boolean(shownInvalidAliases?.length) && (
                             <React.Fragment>
@@ -622,7 +627,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                 </Button>
                                 <Popup
                                     hasArrow={true}
-                                    anchorRef={aliasWarnButtonRef}
+                                    anchorElement={aliasWarnButtonRef.current}
                                     open={aliasWarnPopupOpen}
                                     placement="right"
                                     className={b('invalid-list-popup')}

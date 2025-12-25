@@ -2,6 +2,7 @@ import {expect, Page} from '@playwright/test';
 
 import {slct, waitForCondition} from '../../utils';
 import {CommonSelectors} from '../constants/common-selectors';
+import {PlaceholderId} from '../../../src/shared';
 
 export enum RadioButtons {
     AutoScale = 'autoscale-radio-buttons',
@@ -25,12 +26,6 @@ export enum RadioButtonsValues {
 
 export enum Inputs {
     TitleValueInput = 'dialog-placeholder-title-value',
-}
-
-export enum PlaceholderId {
-    Y = 'y',
-    Y2 = 'y2',
-    X = 'x',
 }
 
 export default class PlaceholderDialog {
@@ -71,11 +66,7 @@ export default class PlaceholderDialog {
         await radioGroupLocator.locator(`[value="${value}"]`).click();
     }
 
-    async getDialogTooltip() {
-        return await this.page.$('.g-popover__tooltip-content > span');
-    }
-
-    async fillInput(qa: Inputs, value: string) {
+    async fillInput(qa: string, value: string) {
         await this.page.fill(`${slct(qa)} input`, value);
     }
 
@@ -89,13 +80,17 @@ export default class PlaceholderDialog {
     }
 
     async getRadioButtonsSelectedValue(radioButton: RadioButtons) {
-        const button = await this.page.$(`${slct(radioButton)} .g-radio-button__option [checked]`);
+        const button = await this.page.$(
+            `${slct(radioButton)} .g-segmented-radio-group__option [checked]`,
+        );
 
         return button?.getAttribute('value');
     }
 
     async checkRadioButtonsSelectedValue(radioButton: RadioButtons, value: string) {
-        const button = this.page.locator(`${slct(radioButton)} .g-radio-button__option [checked]`);
+        const button = this.page.locator(
+            `${slct(radioButton)} .g-segmented-radio-group__option [checked]`,
+        );
         await expect(button).toHaveValue(value);
     }
 

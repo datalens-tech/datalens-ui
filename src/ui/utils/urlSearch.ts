@@ -32,10 +32,10 @@ export class UrlSearch {
         return value ? decodeURI(value) : null;
     }
 
-    delete(name: string | string[]) {
+    delete(name: string | string[], value?: string) {
         const names = Array.isArray(name) ? name : [name];
         names.forEach((curr) => {
-            this.searchParams.delete(curr);
+            this.searchParams.delete(curr, value);
         });
         return this;
     }

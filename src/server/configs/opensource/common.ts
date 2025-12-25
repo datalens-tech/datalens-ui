@@ -7,6 +7,7 @@ import {
     CSP_REPORT_TO_HEADER,
     DL_CONTEXT_HEADER,
     Language,
+    PALETTE_ID,
     SERVICE_USER_ACCESS_TOKEN_HEADER,
     isTrueArg,
 } from '../../../shared';
@@ -138,6 +139,8 @@ export default {
                 editor: 'datalens.collections.editor',
                 viewer: 'datalens.collections.viewer',
                 limitedViewer: 'datalens.collections.limitedViewer',
+                entryBindingCreator: 'datalens.collections.entryBindingCreator',
+                limitedEntryBindingCreator: 'datalens.collections.limitedEntryBindingCreator',
             },
         },
         workbook: {
@@ -146,6 +149,16 @@ export default {
                 editor: 'datalens.workbooks.editor',
                 viewer: 'datalens.workbooks.viewer',
                 limitedViewer: 'datalens.workbooks.limitedViewer',
+            },
+        },
+        sharedEntry: {
+            roles: {
+                admin: 'datalens.sharedEntries.admin',
+                editor: 'datalens.sharedEntries.editor',
+                viewer: 'datalens.sharedEntries.viewer',
+                limitedViewer: 'datalens.sharedEntries.limitedViewer',
+                entryBindingCreator: 'datalens.sharedEntries.entryBindingCreator',
+                limitedEntryBindingCreator: 'datalens.sharedEntries.limitedEntryBindingCreator',
             },
         },
     },
@@ -198,6 +211,7 @@ export default {
             token: process.env.YANDEX_MAP_TOKEN,
         },
     },
+    defaultColorPaletteId: PALETTE_ID.DEFAULT_20,
 
     appSensitiveKeys: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
     appSensitiveHeaders: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
@@ -218,6 +232,7 @@ export default {
     isAuthEnabled: isTrueArg(process.env.AUTH_ENABLED),
     authTokenPublicKey: getEnvCert(process.env.AUTH_TOKEN_PUBLIC_KEY),
     authManageLocalUsersDisabled: isTrueArg(process.env.AUTH_MANAGE_LOCAL_USERS_DISABLED),
+    authSignupDisabled: isTrueArg(process.env.AUTH_SIGNUP_DISABLED),
 
     apiPrefix: '/api',
 } satisfies Partial<AppConfig>;

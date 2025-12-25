@@ -24,6 +24,8 @@ import type {
     TableCommonCell,
     TableHead,
     TableRow,
+    TableWidgetEventScope,
+    WidgetEvent,
 } from 'shared';
 import {ChartKitTableQa, isMarkupItem} from 'shared';
 import {isWrappedHTML} from 'shared/utils/ui-sandbox';
@@ -288,8 +290,8 @@ export function valueFormatter(
         >
             {button}
             {shouldShowTooltip ? (
-                <Popover content={cellOnClickEvent?.args?.message} openOnHover={false}>
-                    {resultValue}
+                <Popover content={cellOnClickEvent?.args?.message} trigger="click">
+                    <React.Fragment>{resultValue}</React.Fragment>
                 </Popover>
             ) : (
                 resultValue
@@ -331,6 +333,8 @@ export const getColumnsAndNames = ({
     topLevelWidth,
     tableRef,
     actionParamsData,
+    events,
+    runActivity,
 }: {
     onChange: TableProps['onChange'];
     head: TableHead[];
@@ -342,6 +346,8 @@ export const getColumnsAndNames = ({
     tableWidth?: number;
     topLevelWidth?: number;
     actionParamsData?: ActionParamsData;
+    events?: WidgetEvent<TableWidgetEventScope>[];
+    runActivity: TableProps['runActivity'];
 }) => {
     const resizeTable = debounce(() => tableRef?.resize());
 
@@ -383,6 +389,7 @@ export const getColumnsAndNames = ({
                         ? currentColumnWidth / column.sub.length
                         : undefined,
                     actionParamsData,
+                    runActivity,
                 });
                 const columnName = generateName({
                     id: column.id,
@@ -542,6 +549,8 @@ export const getColumnsAndNames = ({
                         head,
                         rows,
                         onChange,
+                        runActivity,
+                        events,
                     }),
                     sortable: isGroupSortAvailable && isColumnSortable,
                     width: columnWidth,

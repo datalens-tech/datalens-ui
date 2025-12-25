@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {RadioButton, Switch} from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as RadioButton, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {
@@ -11,7 +11,7 @@ import type {
     TableFieldBackgroundSettings,
     WizardVisualizationId,
 } from 'shared';
-import {DialogFieldBackgroundSettingsQa} from 'shared';
+import {DialogFieldBackgroundSettingsQa, GradientNullModes} from 'shared';
 import {NULLS_OPTIONS} from 'ui/units/wizard/constants/dialogColor';
 
 import {DialogRadioButtons} from '../../../components/DialogRadioButtons/DialogRadioButtons';
@@ -142,10 +142,16 @@ export const BackgroundSettings: React.FC<Props> = (props) => {
                     setting={
                         <RadioButton
                             disabled={!state.enabled}
-                            options={NULLS_OPTIONS}
-                            value={nullMode}
+                            value={nullMode ?? GradientNullModes.Ignore}
                             onUpdate={handleNullModeUpdate}
-                        />
+                            qa={DialogFieldBackgroundSettingsQa.NullModeRadioButtons}
+                        >
+                            {NULLS_OPTIONS.map((option) => (
+                                <RadioButton.Option key={option.value} value={option.value}>
+                                    {option.content}
+                                </RadioButton.Option>
+                            ))}
+                        </RadioButton>
                     }
                 />
             )}

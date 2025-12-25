@@ -1,10 +1,10 @@
 import type React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {CancelTokenSource} from 'axios';
 import type {Split} from 'react-split-pane';
 import type {DashTabItemControlSourceType, StringParams} from 'shared';
 
-import type {ChartWidgetDataRef} from '../../../../components/Widgets/Chart/types';
 import type {WidgetType} from '../../../../units/dash/modules/constants';
 import type {ChartKit} from '../../ChartKit/ChartKit';
 import type {ChartsData, ChartsProps} from '../../modules/data-provider/charts';
@@ -21,18 +21,18 @@ import type {MenuItems} from '../../types/menu';
 
 export interface ChartKitWrapperLoadSuccess {
     status: 'success';
-    requestId: string;
+    requestId?: string;
     data:
         | {
               loadedData: TWidget & ChartKitDataProvider;
               widget: LoadedWidget;
               widgetRendering: number | null;
               yandexMapAPIWaiting: number | null;
-              widgetData?: ChartWidgetDataRef;
+              widgetData?: LoadedWidget;
           }
         | {
               loadedData: LoadedWidgetData<ChartsData>;
-              widgetData?: ChartWidgetDataRef;
+              widgetData?: LoadedWidget;
           };
 }
 
@@ -87,7 +87,9 @@ export type ChartKitBaseWrapperProps = ChartsProps & {
 };
 
 export type ChartKitBaseWrapperWithRefProps = ChartKitBaseWrapperProps & {
-    forwardedRef: React.RefObject<ChartKit> | React.MutableRefObject<ChartKit | null>;
+    forwardedRef:
+        | React.RefObject<ChartKit | ChartKitRef>
+        | React.MutableRefObject<ChartKit | ChartKitRef | null>;
 };
 
 export interface ChartKitWrapperState {

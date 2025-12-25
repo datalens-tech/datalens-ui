@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {CollectionId} from 'shared';
 import type {SDK} from 'ui';
 
 import type {DatasetTab} from '../../constants';
@@ -14,22 +15,39 @@ type Props = {
     sdk: SDK;
     datasetId?: string;
     forwardedRef?: React.ForwardedRef<React.Component>;
-    workbookId?: string;
+    workbookId?: string | null;
+    collectionId?: CollectionId;
+    readonly: boolean;
 };
 
 function DatasetTabViewer(props: Props) {
-    const {tab, sdk, datasetId, forwardedRef, workbookId} = props;
+    const {tab, sdk, datasetId, forwardedRef, workbookId, collectionId, readonly} = props;
 
     switch (tab) {
         case TAB_SOURCES:
-            return <DatasetSources ref={forwardedRef} sdk={sdk} workbookId={workbookId} />;
+            return (
+                <DatasetSources
+                    ref={forwardedRef}
+                    sdk={sdk}
+                    workbookId={workbookId}
+                    collectionId={collectionId}
+                    readonly={readonly}
+                />
+            );
         case TAB_FILTERS:
-            return <DatasetFilters />;
+            return <DatasetFilters readonly={readonly} />;
         case TAB_PARAMETERS:
-            return <DatasetParameters />;
+            return <DatasetParameters readonly={readonly} />;
         case TAB_DATASET:
         default:
-            return <DatasetEditor ref={forwardedRef} sdk={sdk} datasetId={datasetId} />;
+            return (
+                <DatasetEditor
+                    ref={forwardedRef}
+                    sdk={sdk}
+                    datasetId={datasetId}
+                    readonly={readonly}
+                />
+            );
     }
 }
 

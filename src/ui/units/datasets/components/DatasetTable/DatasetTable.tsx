@@ -17,6 +17,7 @@ import type {
     DatasetSelectionMap,
     DatasetSourceAvatar,
 } from 'shared';
+import {DatasetFieldsTabQa} from 'shared';
 import type {Permissions} from 'shared/types/permissions';
 import {Interpolate} from 'ui/components/Interpolate';
 import {DL} from 'ui/constants';
@@ -67,12 +68,14 @@ type DatasetTableProps = {
     batchRemoveFields: (data: {fields: DatasetField[]}) => void;
     onClickRow: (data: {field: DatasetField}) => void;
     openRLSDialog: (data: {field: DatasetField}) => void;
+    openFieldSettingsDialog: (data: {field: DatasetField}) => void;
     openDialog: typeof openDialog;
     openDialogConfirm: typeof openDialogConfirm;
     closeDialog: typeof closeDialog;
     onDisplaySettingsUpdate: (itemsToDisplay: string[]) => void;
     rls: DatasetRls;
     permissions?: Permissions;
+    readonly: boolean;
 };
 
 type DatasetTableState = {
@@ -166,6 +169,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                         onSort={() => {
                             this.selectionIndexAnchor = null;
                         }}
+                        data-qa={DatasetFieldsTabQa.TableRow}
                     />
                 </div>
 
@@ -253,12 +257,14 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             handleTitleUpdate: this.handleTitleUpdate,
             handleIdUpdate: this.handleIdUpdate,
             handleHiddenUpdate: this.handleHiddenUpdate,
+            handleUpdateFieldSettings: this.handleUpdateFieldSettings,
             handleRlsUpdate: this.handleRlsUpdate,
             handleTypeSelectUpdate: this.handleTypeSelectUpdate,
             handleAggregationSelectUpdate: this.handleAggregationSelectUpdate,
             handleDescriptionUpdate: this.handleDescriptionUpdate,
             handleMoreActionClick: this.handleMoreActionClick,
             onSelectChange: this.onSelectChange,
+            readonly: this.props.readonly,
         });
     }
 
@@ -487,6 +493,10 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             updatePreview: true,
             debounce: true,
         });
+    };
+
+    private handleUpdateFieldSettings = (field: DatasetField) => {
+        this.props.openFieldSettingsDialog({field});
     };
 
     private handleRlsUpdate = (field: DatasetField) => {

@@ -19,6 +19,7 @@ import {
     SuperuserHeader,
     WORKBOOK_ID_HEADER,
 } from '../../../../../shared';
+import type {PartialDatasetField} from '../../../../../shared/schema/types';
 import {registry} from '../../../../registry';
 import type {CacheClient} from '../../../cache-client';
 import {config} from '../../constants';
@@ -157,6 +158,7 @@ export type DataFetcherResult = {
     uiUrl?: string;
     dataUrl?: string;
     datasetId: string;
+    datasetFields?: PartialDatasetField[];
     hideInInspector?: boolean;
     url: string;
     message?: string;
@@ -524,6 +526,9 @@ export class DataFetcher {
         const singleFetchingTimeout =
             ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+        const useChartsEngineLogin = Boolean(isEnabledServerFeature(Feature.UseChartsEngineLogin));
+
         try {
             source = prepareSource(source);
         } catch (e) {
@@ -555,9 +560,6 @@ export class DataFetcher {
             sourceName,
             source: loggedSource,
         };
-
-        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
-        const useChartsEngineLogin = Boolean(isEnabledServerFeature(Feature.UseChartsEngineLogin));
 
         if (useChartsEngineLogin && userLogin) {
             loggedInfo.login = userLogin;
@@ -738,6 +740,9 @@ export class DataFetcher {
         ];
         if (Array.isArray(proxyHeaders)) {
             proxyHeaders.forEach((headerName) => {
+                if (sourceConfig.isExternal && headerName.toLowerCase().startsWith('x-dl')) {
+                    return;
+                }
                 if (subrequestHeaders[headerName]) {
                     headers[headerName] = subrequestHeaders[headerName];
                 }
@@ -1061,6 +1066,7 @@ export class DataFetcher {
                                 uiUrl: userTargetUriUi,
                                 dataUrl: publicTargetUri,
                                 datasetId,
+                                datasetFields: source.datasetFields,
                                 hideInInspector,
                                 data: publicSourceData,
                                 /** @deprecated use uiUrl or dataUrl */

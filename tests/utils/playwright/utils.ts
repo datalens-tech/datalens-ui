@@ -13,38 +13,7 @@ export async function makeScreen(page: Page, name: string) {
     await page.screenshot({path: `${DEFAULT_SCREENSHOT_PATH}/${name}.png`, fullPage: true});
 }
 
-const GO_TO_TIMEOUT = 30 * 1000;
-const RETRIES = 5;
-
 export const generateScreenshotName = (name: string) => encodeURIComponent(name);
-
-export const goToWithRetry = async (page: Page, url: string, retryCount = RETRIES) => {
-    if (retryCount < 0) {
-        throw new Error(`Failed to navigate to ${url} after ${RETRIES} retries.`);
-    }
-
-    try {
-        console.log(`Try to get access to ${url}. Attempt ${retryCount}`);
-        await page.waitForSelector('.app .container-loader', {
-            state: 'detached',
-            timeout: 60 * 1000,
-        });
-
-        console.log('Farm is created, try to goto');
-
-        await Promise.all([
-            page.goto(url, {
-                timeout: GO_TO_TIMEOUT,
-                waitUntil: 'load',
-            }),
-            page.waitForURL(url, {timeout: GO_TO_TIMEOUT}),
-        ]);
-    } catch (err) {
-        console.log('GOTO RETRY! Error: ', err);
-        await page.reload();
-        await goToWithRetry(page, url, retryCount - 1);
-    }
-};
 
 export async function readDownload(download: Download): Promise<Buffer | null> {
     const stream = await download.createReadStream();

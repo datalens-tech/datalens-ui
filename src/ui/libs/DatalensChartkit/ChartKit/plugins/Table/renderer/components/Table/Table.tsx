@@ -46,6 +46,8 @@ type Props = {
     onChangeParams?: (params: StringParams) => void;
     onReady?: () => void;
     backgroundColor?: string;
+    disableCellFormatting?: boolean;
+    emptyDataMessage?: string;
 };
 
 export const Table = React.memo<Props>((props: Props) => {
@@ -55,6 +57,8 @@ export const Table = React.memo<Props>((props: Props) => {
         onChangeParams,
         onReady,
         backgroundColor,
+        disableCellFormatting = false,
+        emptyDataMessage,
     } = props;
     const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
     const title = getTableTitle(config);
@@ -167,16 +171,17 @@ export const Table = React.memo<Props>((props: Props) => {
         sortingState: initialSortingState,
         backgroundColor,
         preserveWhiteSpace: config?.preserveWhiteSpace,
+        disableCellFormatting,
     });
 
+    const noData = !props.widgetData.data?.head?.length;
     React.useEffect(() => {
-        if (onReady && cellMinSizes) {
+        if (onReady && (cellMinSizes || noData)) {
             setTimeout(onReady, 0);
         }
-    }, [onReady, cellMinSizes]);
+    }, [onReady, cellMinSizes, noData]);
 
     const highlightRows = get(config, 'settings.highlightRows') ?? !hasGroups(data.head);
-    const noData = !props.widgetData.data?.head?.length;
 
     const handleCellClick = React.useCallback(
         (event: React.MouseEvent, cellData: unknown, rowId: string) => {
@@ -270,7 +275,7 @@ export const Table = React.memo<Props>((props: Props) => {
                 <div className={b('table-wrapper', {'highlight-rows': highlightRows, size})}>
                     {noData && (
                         <div className={b('no-data')}>
-                            {i18n('chartkit-table', 'message-no-data')}
+                            {emptyDataMessage || i18n('chartkit-table', 'message-no-data')}
                         </div>
                     )}
                     {!noData && (

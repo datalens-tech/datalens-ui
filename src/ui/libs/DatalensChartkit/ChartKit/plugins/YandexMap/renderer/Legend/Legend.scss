@@ -1,23 +1,16 @@
 .chartkit-ymap-legend {
     position: fixed;
-    top: 25px;
-    right: 10px;
+    top: 44px;
+    right: 8px;
     overflow: auto;
+    overflow-x: hidden;
     background: var(--g-color-base-background);
     border-radius: 4px;
     width: 180px;
-    max-height: calc(100% - 35px);
-
-    overflow-x: hidden;
-
-    &_float {
-        top: 44px;
-        right: 8px;
-        max-height: calc(100% - 44px - 8px);
-    }
+    max-height: calc(100% - 44px - 8px);
 }
 
-.dl-widget_ymap:has(.widget-header__tabs) .chartkit-ymap-legend_float {
+.dl-widget_ymap:has(.widget-header__tabs) .chartkit-ymap-legend {
     max-height: calc(100% - 8px - 8px);
     top: 8px;
 }

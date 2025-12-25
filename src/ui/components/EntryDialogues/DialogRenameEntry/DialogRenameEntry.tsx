@@ -61,6 +61,7 @@ class DialogRenameEntry extends React.Component<Props, DialogRenameEntryState> {
                 caption={i18n('section_caption')}
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={i18n('button_apply')}
+                initialFocus={0}
             >
                 <TextInput
                     autoFocus={true}

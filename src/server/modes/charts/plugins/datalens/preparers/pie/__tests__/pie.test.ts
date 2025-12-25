@@ -60,10 +60,14 @@ describe('preparePie', () => {
             },
             colorsConfig: {
                 fieldGuid: colorFieldDimensionFloat.guid,
+                availablePalettes: {
+                    custom: {id: 'custom', scheme: ['color_0.5', 'color_1.0', 'color_2.0']},
+                },
+                palette: 'custom',
                 mountedColors: {
-                    '0.5': 'color_0.5',
-                    '1.0': 'color_1.0',
-                    '2.0': 'color_2.0',
+                    '0.5': '0',
+                    '1.0': '1',
+                    '2.0': '2',
                 },
             },
         } as unknown as PrepareFunctionArgs);

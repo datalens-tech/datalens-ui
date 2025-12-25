@@ -3,12 +3,10 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
-import {Feature} from 'shared';
+import {Header as ChartHeader} from 'ui/components/Widgets/Chart/components/Header';
 import {DL} from 'ui/constants';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
-import {registry} from 'ui/registry';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {getRandomCKId} from '../../../../libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import {DatalensChartkitContent} from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
@@ -18,7 +16,6 @@ import Drill from '../../../../libs/DatalensChartkit/components/Drill/Drill';
 import {SideMarkdown} from '../../../../libs/DatalensChartkit/components/SideMarkdown/SideMarkdown';
 import ExtensionsManager from '../../../../libs/DatalensChartkit/modules/extensions-manager/extensions-manager';
 import type {ControlsOnlyWidget, DrillDownConfig} from '../../../../libs/DatalensChartkit/types';
-import {useChartActions} from '../helpers/chart-actions';
 import type {ChartContentProps, ChartControlsType, OnLoadChartkitData} from '../types';
 
 import '../ChartWidget.scss';
@@ -54,6 +51,7 @@ export const Content = (props: ChartContentProps) => {
         splitTooltip,
         compactLoader,
         chartId,
+        chartRevIdRef,
         requestId,
         error,
         onRender,
@@ -82,10 +80,11 @@ export const Content = (props: ChartContentProps) => {
         paneSplitOrientation,
         widgetDashState,
         rootNodeRef,
-        runAction,
+        runActivity,
         backgroundColor,
         showActionParamsFilter,
         onFiltersClear,
+        reload,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -121,21 +120,14 @@ export const Content = (props: ChartContentProps) => {
     const showContentLoader = showLoader || isExportLoading;
     const showLoaderVeil = veil && !isExportLoading;
 
-    const {onAction} = useChartActions({onChange});
-
-    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
-    const isFirstLoadingFloat = showFloatControls && loadedData === null;
+    const isFirstLoadingFloat = loadedData === null;
 
     // chartkit doesn't call onLoad when spltTooltip is enabled
-    const [hasDummy, setHasDummy] = React.useState<boolean>(
-        DL.IS_MOBILE && showFloatControls && !splitTooltip,
-    );
+    const [hasDummy, setHasDummy] = React.useState<boolean>(DL.IS_MOBILE && !splitTooltip);
 
     const chartInnerLoaderComponent = isFirstLoadingFloat
         ? emptyLoaderComponent
         : renderPluginLoader;
-
-    const {ChartHeader} = registry.chart.components.getAll();
 
     const handleRender = React.useCallback(
         (args: OnLoadChartkitData) => {
@@ -166,6 +158,7 @@ export const Content = (props: ChartContentProps) => {
                         dataProps={dataProps}
                         requestId={requestId}
                         loadedData={loadedData}
+                        chartRevIdRef={chartRevIdRef}
                         widgetDataRef={widgetDataRef}
                         widgetRenderTimeRef={widgetRenderTimeRef}
                         yandexMapAPIWaiting={yandexMapAPIWaiting}
@@ -177,6 +170,7 @@ export const Content = (props: ChartContentProps) => {
                         onFullscreenClick={onFullscreenClick}
                         showActionParamsFilter={showActionParamsFilter}
                         onFiltersClear={onFiltersClear}
+                        reload={reload}
                     />
                 </React.Fragment>
             )}
@@ -198,8 +192,7 @@ export const Content = (props: ChartContentProps) => {
                         getControls={getControls}
                         nonBodyScroll={nonBodyScroll}
                         initialParams={initialParams}
-                        runAction={runAction}
-                        onAction={onAction}
+                        runActivity={runActivity}
                     />
                 )}
                 {Boolean(drillDownData) && (
@@ -230,6 +223,7 @@ export const Content = (props: ChartContentProps) => {
                     widgetDashState={widgetDashState}
                     rootNodeRef={rootNodeRef}
                     backgroundColor={backgroundColor}
+                    runActivity={runActivity}
                 />
                 {showChartOverlay && (
                     <div

@@ -153,6 +153,7 @@ class DropdownNavigation extends React.PureComponent {
                     quickItems: [QUICK_ITEMS.USER_FOLDER],
                 }}
                 ignoreWorkbookEntries={true}
+                ignoreSharedEntries={true}
                 includeClickableType={this.props.includeClickableType}
                 excludeClickableType={this.props.excludeClickableType}
                 onEntryClick={(entry) => {

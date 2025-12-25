@@ -2,8 +2,9 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
-import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
+import {selectSelectorDialog, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 
+import {ImpactTypeSelect} from '../ImpactTypeSelect/ImpactTypeSelect';
 import {ParameterNameInput} from '../ParameterNameInput/ParameterNameInput';
 
 import {ConnectionSelector} from './components/ConnectionSelector/ConnectionSelector';
@@ -15,12 +16,15 @@ export const ConnectionSettings = ({
     navigationPath,
     changeNavigationPath,
     rowClassName,
+    enableGlobalSelectors,
 }: {
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
     rowClassName?: string;
+    enableGlobalSelectors?: boolean;
 }) => {
     const {connectionQueryTypes} = useSelector(selectSelectorDialog);
+    const {impactType, impactTabsIds, group} = useSelector(selectSelectorsGroup);
 
     return (
         <React.Fragment>
@@ -37,6 +41,13 @@ export const ConnectionSettings = ({
                     />
                     <QueryTypeControl connectionQueryTypes={connectionQueryTypes} />
                 </React.Fragment>
+            )}
+            {enableGlobalSelectors && (
+                <ImpactTypeSelect
+                    groupImpactType={impactType}
+                    groupImpactTabsIds={impactTabsIds}
+                    hasMultipleSelectors={group.length > 1}
+                />
             )}
         </React.Fragment>
     );

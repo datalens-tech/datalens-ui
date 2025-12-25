@@ -8,17 +8,23 @@ import axios from 'axios';
 import pick from 'lodash/pick';
 
 import {
+    AUDIT_MODE_HEADER,
     AuthHeader,
     DL_CONTEXT_HEADER,
     FORWARDED_FOR_HEADER,
     PROJECT_ID_HEADER,
     REQUEST_ID_HEADER,
+    REQUEST_SOURCE_HEADER,
+    RequestSourceHeaderValue,
     SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
     US_MASTER_TOKEN_HEADER,
+    makeTenantIdFromOrgId,
 } from '../../shared';
 import {isOpensourceInstallation} from '../app-env';
+import {PUBLIC_API_VERSION_HEADER} from '../components/public-api/constants';
+import {PUBLIC_API_ORG_ID_HEADER} from '../constants/public-api';
 
 import {isGatewayError} from './gateway';
 
@@ -84,6 +90,25 @@ class Utils {
         };
     }
 
+    static pickPublicApiHeaders(req: Request) {
+        const headersMap = req.ctx.config.headersMap;
+
+        const orgId = req.headers[PUBLIC_API_ORG_ID_HEADER];
+        const tenantId = orgId && !Array.isArray(orgId) ? makeTenantIdFromOrgId(orgId) : undefined;
+
+        return {
+            ...pick(req.headers, [
+                AuthHeader.Authorization,
+                headersMap.subjectToken,
+                PUBLIC_API_VERSION_HEADER,
+                AUDIT_MODE_HEADER,
+            ]),
+            ...Utils.pickForwardHeaders(req.headers),
+            [TENANT_ID_HEADER]: tenantId,
+            [REQUEST_SOURCE_HEADER]: RequestSourceHeaderValue.PublicApi,
+        };
+    }
+
     static pickUsMasterToken(req: Request) {
         const token = req.headers[US_MASTER_TOKEN_HEADER];
         if (typeof token !== 'string') {
@@ -115,6 +140,8 @@ class Utils {
     static getErrorCode(error: unknown) {
         if (axios.isAxiosError(error)) {
             return error.response?.data.code;
+        } else if (isGatewayError(error)) {
+            return error.error.code;
         }
         return undefined;
     }

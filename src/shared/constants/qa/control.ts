@@ -28,8 +28,9 @@ export const ControlQA = {
     dialogControlApplyBtn: 'control-dialog-apply-button',
     dialogControlCancelBtn: 'control-dialog-cancel-button',
 
-    groupCommonLoader: 'group-control-common-loader',
     groupCommonLockedBlock: 'group-control-common-locked-block',
+
+    errorBlock: 'type-error',
 };
 
 export const DialogControlQa = {
@@ -52,6 +53,14 @@ export const DialogControlQa = {
     typeControlSelect: 'type-control-select',
     typeControlInput: 'type-control-input',
     typeControlCheckbox: 'type-control-checkbox',
+
+    impactTypeSelect: 'dialog-control-impact-type-select',
+    impactTabsIdsSelect: 'dialog-control-impact-tabs-ids-select',
+    impactTypeValueAllTabs: 'dialog-control-impact-type-value-all-tabs',
+    impactTypeValueSelectedTabs: 'dialog-control-impact-type-value-selected-tabs',
+    impactTypeValueCurrentTab: 'dialog-control-impact-type-value-current-tab',
+    impactTypeValueAsGroup: 'dialog-control-impact-type-value-as-group',
+    impactTabsIdsSelectOption: 'dialog-control-impact-tabs-ids-select-option',
 };
 
 export const DialogControlParamsQa = {
@@ -60,13 +69,12 @@ export const DialogControlParamsQa = {
 };
 
 export const DialogGroupControlQa = {
-    autoHeightCheckbox: 'autoheight-checkbox',
-    applyButtonCheckbox: 'apply-button-checkbox',
-    resetButtonCheckbox: 'reset-button-checkbox',
+    autoHeightSwitch: 'autoheight-switch',
+    applyButtonSwitch: 'apply-button-switch',
+    resetButtonSwitch: 'reset-button-switch',
     updateControlOnChangeCheckbox: 'update-controls-button-checkbox',
-    extendedSettingsButton: 'extended-settings-button',
+    groupSettingsTab: 'group-settings-tab',
     placementControlList: 'selectors-placement-control-list',
-    extendedSettingsApplyButton: 'selectors-extended-settings-apply-button',
     controlMenu: 'control-menu',
     removeControlButton: 'remove-control-button',
     copyControlButton: 'copy-control-button',

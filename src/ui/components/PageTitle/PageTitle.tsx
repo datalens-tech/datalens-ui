@@ -5,10 +5,11 @@ type Props = {
     entry?: {key: string} | null;
     defaultTitle?: string;
     extraSettings?: PageTitleExtraSettings;
+    title?: string | null;
 };
 
-function PageTitle({entry, defaultTitle, extraSettings}: Props) {
-    usePageTitle({entry, defaultTitle, extraSettings});
+function PageTitle({entry, defaultTitle, extraSettings, title}: Props) {
+    usePageTitle({entry, defaultTitle, extraSettings, title});
     return null;
 }
 

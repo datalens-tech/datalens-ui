@@ -1,5 +1,5 @@
-import type {Link} from '../../shared';
-import {WizardVisualizationId} from '../../shared';
+import type {FeatureConfig, Link} from '../../shared';
+import {Feature, WizardVisualizationId} from '../../shared';
 import {QLChartType} from '../constants';
 
 export function isMonitoringOrPrometheusChart(chartType: string | null | undefined) {
@@ -29,16 +29,42 @@ export function getItemLinkWithDatasets(
     return targetLink;
 }
 
-export function isD3Visualization(id: WizardVisualizationId) {
-    const d3Visualizations = [
-        WizardVisualizationId.ScatterD3,
-        WizardVisualizationId.PieD3,
-        WizardVisualizationId.BarXD3,
-        WizardVisualizationId.LineD3,
-        WizardVisualizationId.DonutD3,
-        WizardVisualizationId.BarYD3,
-        WizardVisualizationId.BarY100pD3,
-        WizardVisualizationId.TreemapD3,
-    ];
-    return d3Visualizations.includes(id);
+export function isGravityChartsVisualization({
+    id,
+    features,
+}: {
+    id: string;
+    features?: FeatureConfig;
+}) {
+    const isPieOrTreemap = [
+        WizardVisualizationId.Pie,
+        WizardVisualizationId.Donut,
+        WizardVisualizationId.Treemap,
+    ].includes(id as WizardVisualizationId);
+    if (isPieOrTreemap && features?.[Feature.GravityChartsForPieAndTreemap]) {
+        return true;
+    }
+
+    const isScatterOrBarY = [
+        WizardVisualizationId.Bar,
+        WizardVisualizationId.Bar100p,
+        WizardVisualizationId.Scatter,
+    ].includes(id as WizardVisualizationId);
+    if (isScatterOrBarY && features?.[Feature.GravityChartsForBarYAndScatter]) {
+        return true;
+    }
+
+    const isLineAreaOrBarX = [
+        WizardVisualizationId.Line,
+        WizardVisualizationId.Area,
+        WizardVisualizationId.Area100p,
+        WizardVisualizationId.Column,
+        WizardVisualizationId.Column100p,
+        WizardVisualizationId.CombinedChart,
+    ].includes(id as WizardVisualizationId);
+    if (isLineAreaOrBarX && features?.[Feature.GravityChartsForLineAreaAndBarX]) {
+        return true;
+    }
+
+    return false;
 }

@@ -1,23 +1,47 @@
-import type {WorkbookId} from '../../../../shared';
+import type z from 'zod';
+
+import type {
+    CollectionItemEntities,
+    EntryAnnotationArgs,
+    EntryScope,
+    EntryUpdateMode,
+    WorkbookId,
+} from '../../..';
 import type {Permissions} from '../../../types';
+import type {
+    getEntriesEntryResponseSchema,
+    getEntriesTransformedSchema,
+} from '../schemas/entries/get-entries';
+import type {
+    listDirectoryBreadCrumbSchema,
+    listDirectoryEntryResponseSchema,
+    listDirectoryTransformedSchema,
+} from '../schemas/entries/list-directory';
 
 import type {EntriesCommonArgs} from './common';
 import type {
     EntryFieldData,
     EntryFieldLinks,
+    EntryFieldMeta,
     EntryFields,
     EntryMetaFields,
     EntryNavigationFields,
     EntryRelationFields,
+    SharedEntryPermissions,
+    SharedEntryRelationFields,
 } from './fields';
 
 export interface GetEntryResponse extends EntryFields {
     isFavorite: boolean;
     permissions?: Permissions;
+    fullPermissions?: SharedEntryPermissions;
     isLocked?: boolean;
     links?: EntryFieldLinks;
     parentDashEntryId?: string;
     parentDashName?: string;
+}
+export interface GetSharedEntryResponse extends GetEntryResponse {
+    isDelegated: boolean;
 }
 export interface GetEntryArgs {
     entryId: string;
@@ -26,6 +50,7 @@ export interface GetEntryArgs {
     branch?: string;
     includePermissionsInfo?: boolean;
     includeLinks?: boolean;
+    includeFavorite?: boolean;
     includeDlComponentUiData?: boolean;
 }
 
@@ -76,70 +101,31 @@ export interface GetRevisionsArgs {
     revIds?: string[];
 }
 
-export interface ListDirectoryEntryOutput extends EntryNavigationFields {
-    isFavorite: boolean;
-    isLocked: boolean;
-    permissions?: Permissions;
-}
+export type ListDirectoryEntryResponse = z.infer<typeof listDirectoryEntryResponseSchema>;
 
-export interface ListDirectoryEntryResponse extends ListDirectoryEntryOutput {
-    name: string;
-}
-
-export interface ListDirectoryEntryWithPermissions
-    extends Omit<ListDirectoryEntryResponse, 'permissions'> {
+export type ListDirectoryEntryWithPermissions = Omit<ListDirectoryEntryResponse, 'permissions'> & {
     permissions: Permissions;
-}
+};
 
-export interface ListDirectoryBreadCrumb {
-    title: string;
-    path: string;
-    entryId: string;
-    isLocked: boolean;
+export type ListDirectoryBreadCrumb = z.infer<typeof listDirectoryBreadCrumbSchema>;
+
+export type ListDirectoryResponse = z.infer<typeof listDirectoryTransformedSchema>;
+
+export type GetEntriesEntryResponse = z.infer<typeof getEntriesEntryResponseSchema>;
+
+export type GetEntriesEntryWithExcludedLocked = Extract<
+    GetEntriesEntryResponse,
+    {isLocked?: false}
+>;
+
+export type GetEntriesEntryWithExcludedLockedAndPermissions = Omit<
+    GetEntriesEntryWithExcludedLocked,
+    'permissions'
+> & {
     permissions: Permissions;
-}
+};
 
-export interface ListDirectoryOutput {
-    nextPageToken?: string;
-    breadCrumbs: ListDirectoryBreadCrumb[];
-    entries: ListDirectoryEntryOutput[];
-}
-
-export interface ListDirectoryResponse {
-    hasNextPage: boolean;
-    breadCrumbs: ListDirectoryBreadCrumb[];
-    entries: ListDirectoryEntryResponse[];
-}
-
-export interface ListDirectoryArgs extends EntriesCommonArgs {
-    path?: string;
-}
-
-export interface GetEntriesEntryOutput extends EntryNavigationFields {
-    isFavorite: boolean;
-    isLocked: boolean;
-    permissions?: Permissions;
-    links?: EntryFieldLinks;
-    data?: EntryFieldData;
-}
-
-export interface GetEntriesEntryResponse extends GetEntriesEntryOutput {
-    name: string;
-}
-
-export interface GetEntriesEntryWithPermissions
-    extends Omit<GetEntriesEntryResponse, 'permissions'> {
-    permissions: Permissions;
-}
-
-export interface GetEntriesOutput {
-    nextPageToken?: string;
-    entries: GetEntriesEntryOutput[];
-}
-export interface GetEntriesResponse {
-    hasNextPage: boolean;
-    entries: GetEntriesEntryResponse[];
-}
+export type GetEntriesResponse = z.infer<typeof getEntriesTransformedSchema>;
 
 export type GetEntriesArgs = EntriesCommonArgs & {
     excludeLocked?: boolean;
@@ -152,6 +138,12 @@ export type MoveEntryResponse = EntryFields[];
 export interface MoveEntryArgs {
     entryId: string;
     destination: string;
+    name?: string;
+}
+
+export interface MoveSharedEntryArgs {
+    entryId: string;
+    collectionId: string;
     name?: string;
 }
 
@@ -198,6 +190,8 @@ export interface DeleteUSEntryResponse extends EntryFields {
 export interface DeleteUSEntryArgs {
     entryId: string;
     lockToken?: string;
+    scope?: EntryScope;
+    types?: string[];
 }
 
 interface GetRelationsEntryOutput extends EntryRelationFields {
@@ -260,3 +254,121 @@ export interface CopyEntriesToWorkbookArgs {
 export interface CopyEntriesToWorkbookResponse {
     workbookId: string;
 }
+
+export type GetEntriesAnnotationResponse = Array<
+    | {
+          entryId: string;
+          result: {
+              scope: EntryScope;
+              type: string;
+              annotation: {
+                  description?: string;
+              };
+          };
+      }
+    | {
+          entryId: string;
+          error: {
+              code: string;
+              message: string;
+              details?: unknown;
+          };
+      }
+>;
+
+export interface GetEntriesAnnotationArgs {
+    entryIds: string[];
+    scope?: EntryScope;
+    type?: string;
+}
+
+export interface CreateEntryResponse extends EntryFields {
+    links: EntryFieldLinks;
+}
+
+export interface CreateEntryArgs {
+    scope: EntryScope;
+    type: string;
+    data: EntryFieldData;
+    key?: string;
+    meta?: EntryFieldMeta;
+    workbookId?: string;
+    name?: string;
+    mode?: EntryUpdateMode;
+    links?: EntryFieldLinks;
+    description?: string;
+    annotation?: EntryAnnotationArgs;
+}
+
+export interface UpdateEntryResponse extends EntryFields {
+    links?: EntryFieldLinks;
+}
+
+export interface UpdateEntryArgs {
+    entryId: string;
+    mode: EntryUpdateMode;
+    data: EntryFieldData;
+    revId?: string;
+    meta?: EntryFieldMeta;
+    links?: EntryFieldLinks;
+    description?: string;
+    annotation?: EntryAnnotationArgs;
+    skipSyncLinks?: boolean;
+}
+
+export interface EntityBindingsResponse {
+    sourceId: string;
+    targetId: string;
+    isDelegated: boolean;
+}
+
+export interface EntityBindingsArgs {
+    sourceId: string;
+    targetId: string;
+    delegation: boolean;
+}
+
+export type GetSharedEntryBindingsArgs = {
+    entryId: string;
+    entryAs: 'target' | 'source';
+    mode?: 'all' | 'onlyWorkbooks' | 'onlyEntries';
+    filterString?: string;
+    page?: number;
+    pageSize?: number;
+    includePermissionsInfo?: boolean;
+};
+
+export type SharedEntry = {
+    entity: typeof CollectionItemEntities.ENTRY;
+    entryId: string;
+    scope: string;
+    type: string;
+    displayKey: string;
+    key: string;
+};
+
+type Workbook = {
+    entity: typeof CollectionItemEntities.WORKBOOK;
+    title: string;
+};
+
+export type SharedEntryBindingsItem = {
+    collectionTitle: string;
+    collectionId: string;
+    workbookId: WorkbookId;
+    isDelegated: boolean;
+} & (SharedEntry | Workbook);
+
+export type GetSharedEntryBindingsResponse = {
+    items: SharedEntryBindingsItem[];
+};
+
+export type GetSharedEntryWorkbookRelationsArgs = {
+    entryId: string;
+    workbookId: string;
+    scope?: `${EntryScope}`;
+};
+
+export type GetSharedEntryWorkbookRelationsResponse = {
+    relations: SharedEntryRelationFields[];
+};

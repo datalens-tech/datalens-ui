@@ -4,20 +4,20 @@ import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import type {WorkbookId} from 'shared';
-import {PreviewQa} from 'shared';
+import {PreviewQa, SCR_USER_AGENT_HEADER_VALUE} from 'shared';
 import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
 import {pushStats} from 'ui/components/Widgets/Chart/helpers/helpers';
-import {EMBEDDED_CHART_MESSAGE_NAME, MIN_AUTOUPDATE_CHART_INTERVAL} from 'ui/constants/common';
-import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
+import type {ChartWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
+import {EMBEDDED_CHART_MESSAGE_NAME} from 'ui/constants/common';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {fetchEntryById} from 'ui/store/actions/entryContent';
 import {PostMessage} from 'ui/units/dash/modules/postMessage';
+import {useChartAutoupdate} from 'ui/units/preview/hooks/useChartAutoupdate';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'ui/units/workbooks/store/actions';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
-import type {ChartKit as ChartKitType} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {
     ChartKitDataProvider,
     ChartKitWrapperLoadStatusUnknown,
@@ -62,13 +62,12 @@ const Preview: React.FC<PreviewProps> = (props) => {
 
     const [name, setName] = React.useState<string | null>(null);
 
-    const [isPageHidden, setIsPageHidden] = React.useState(false);
-    const [autoupdateInterval, setAutoupdateInterval] = React.useState<undefined | number>();
+    const {isPageHidden, autoupdateInterval} = useChartAutoupdate();
 
     const params = React.useMemo(() => Utils.getParamsFromSearch(search), [search]);
 
     const previewRef = React.useRef<HTMLDivElement>(null);
-    const chartKitRef = React.useRef<ChartsChartKit>(null);
+    const chartKitRef = React.useRef<ChartWithWrapRefProps>(null);
 
     const [workbookInfo, setWorkbookInfo] = React.useState<{
         isLoading: boolean;
@@ -76,30 +75,6 @@ const Preview: React.FC<PreviewProps> = (props) => {
     }>({
         isLoading: true,
     });
-
-    const onVisibilityChange = () => {
-        setIsPageHidden(document.hidden);
-    };
-
-    React.useEffect(() => {
-        const {autoupdateInterval: updateInterval} = Utils.getOptionsFromSearch(
-            window.location.search,
-        );
-
-        if (updateInterval) {
-            setAutoupdateInterval(
-                updateInterval >= MIN_AUTOUPDATE_CHART_INTERVAL
-                    ? updateInterval
-                    : MIN_AUTOUPDATE_CHART_INTERVAL,
-            );
-        }
-
-        document.addEventListener('visibilitychange', onVisibilityChange);
-
-        return () => {
-            document.removeEventListener('visibilitychange', onVisibilityChange);
-        };
-    }, []);
 
     React.useEffect(() => {
         let concurrentId = '';
@@ -178,7 +153,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
             if (status === 'success') {
                 pushStats(
                     load,
-                    navigator.userAgent === 'StatScreenshooter' ? 'snapter' : 'preview',
+                    navigator.userAgent === SCR_USER_AGENT_HEADER_VALUE ? 'snapter' : 'preview',
                     dataProvider,
                 );
 
@@ -252,7 +227,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
                         onChartRender={onChartRender}
                         noControls={noControls}
                         actionParamsEnabled={actionParamsEnabled}
-                        forwardedRef={chartKitRef as unknown as React.RefObject<ChartKitType>}
+                        forwardedRef={chartKitRef}
                         splitTooltip={hasSplitTooltip}
                         menuType="preview"
                         isPageHidden={isPageHidden}

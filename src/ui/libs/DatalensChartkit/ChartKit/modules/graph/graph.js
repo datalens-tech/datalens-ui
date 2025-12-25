@@ -1,7 +1,6 @@
 import {drawComments} from '../comments/drawing';
 import {initHighcharts} from '../highcharts/highcharts';
 
-import {addHolidays} from './add-holidays';
 import {prepareConfig} from './config/config';
 import {prepareData} from './prepare-data';
 
@@ -97,14 +96,6 @@ function getGraph(options, data, comments, isMobile) {
                     // TODO: xAxis.setExtremes(extmin, extmax, false, false);
                     xAxis.setExtremes(extmin, extmax, false, false);
                     needRedraw = true;
-                }
-            }
-
-            if (!options.hideHolidaysBands) {
-                if (needRedraw) {
-                    addHolidays(chart);
-                } else {
-                    needRedraw = addHolidays(chart);
                 }
             }
 

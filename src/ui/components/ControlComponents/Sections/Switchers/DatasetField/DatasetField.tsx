@@ -24,12 +24,14 @@ type Props = {
     fieldId?: string;
     ignoredFieldTypes?: DatasetFieldType[];
     ignoredDataTypes?: DATASET_FIELD_TYPES[];
-    onChange?: (args: {
-        fieldId: string;
-        fieldType: DATASET_FIELD_TYPES;
-        fieldName: string;
-        datasetFieldType: DatasetFieldType;
-    }) => void;
+    onChange?: (
+        args: {
+            fieldId: string;
+            fieldType: DATASET_FIELD_TYPES;
+            fieldName: string;
+            datasetFieldType: DatasetFieldType;
+        } | null,
+    ) => void;
     hasValidationError: boolean;
 };
 
@@ -81,6 +83,7 @@ export class DatasetField extends React.PureComponent<Props, State> {
             workbookId,
         } = this.props;
 
+        const validFields: string[] = [];
         getSdk()
             .sdk.bi.getDataSetFieldsById({
                 dataSetId: this.props.datasetId!,
@@ -98,20 +101,27 @@ export class DatasetField extends React.PureComponent<Props, State> {
                                 type: string;
                                 calc_mode: DatasetFieldCalcMode;
                             }) => {
-                                return (
+                                const isFieldValid =
                                     !field.hidden &&
                                     !ignoredFieldTypes.includes(field.type as DatasetFieldType) &&
                                     !ignoredDataTypes.includes(
                                         field.data_type as DATASET_FIELD_TYPES,
                                     ) &&
-                                    !isParameter(field)
-                                );
+                                    !isParameter(field);
+
+                                if (isFieldValid) {
+                                    validFields.push(field.guid);
+                                }
+
+                                return isFieldValid;
                             },
                         ),
                     },
                     () => {
-                        if (this.props.fieldId) {
+                        if (this.props.fieldId && validFields.includes(this.props.fieldId)) {
                             this.handleChange([this.props.fieldId]);
+                        } else {
+                            this.props.onChange?.(null);
                         }
                     },
                 ),

@@ -18,13 +18,13 @@ datalensTest.describe('Wizard', () => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             const wizardPage = new WizardPage({page});
             await wizardPage.createNewFieldWithFormula('sum', 'sum([Sales])');
-            await wizardPage.setVisualization(WizardVisualizationId.TreemapD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Treemap);
         });
 
         datalensTest('Markdown dimension @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const chart = chartContainer.locator('.gcharts-d3');
+            const chart = chartContainer.locator('.gcharts-chart');
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
             await wizardPage.createNewFieldWithFormula(
