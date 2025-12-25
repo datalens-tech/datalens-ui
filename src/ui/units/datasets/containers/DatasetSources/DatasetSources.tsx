@@ -162,8 +162,12 @@ export class DatasetSources extends React.Component<Props, State> {
 
     get isDisabledDropSource() {
         const {
-            options: {source_avatars: {max = 0, items = []} = {}},
+            options: {source_avatars: {max, items = []} = {}},
         } = this.props;
+
+        if (max === undefined) {
+            return false;
+        }
 
         return items.length >= max;
     }
