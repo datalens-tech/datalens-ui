@@ -1,10 +1,12 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .color-palettes-card {
     &__description-wrapper {
         margin-bottom: 10px;
     }
 
     &__title {
-        font-weight: 500;
+        @include text-subheader-1();
         margin-bottom: 4px;
     }
 

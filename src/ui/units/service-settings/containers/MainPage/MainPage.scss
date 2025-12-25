@@ -1,17 +1,34 @@
-.service-settings {
-    $baseClass: &;
+@import '../../../../styles/variables.scss';
+@import '../../styles/variables.scss';
 
+.service-settings {
     min-height: 100vh;
     padding: var(--g-spacing-5) var(--g-spacing-6);
     width: 100%;
 
+    &_new {
+        padding: $settingsPagePadding;
+        max-width: $pageMaxWidth;
+        margin: 0 auto;
+    }
+
     &__header {
         margin: 0;
+
+        &_new {
+            margin: var(--g-spacing-1) 0 28px;
+        }
     }
 
     &__section {
         width: 520px;
         margin-top: var(--g-spacing-3);
+
+        &_new {
+            padding-top: 30px;
+            width: unset;
+            margin-top: unset;
+        }
     }
 
     &__loader {
@@ -23,6 +40,10 @@
 
     &__tabs {
         margin-top: var(--g-spacing-3);
+
+        &_new {
+            margin-top: 0;
+        }
     }
 
     &__tabs-content {

@@ -16,8 +16,13 @@ const labelThemeByUserRole: Record<`${UserRole}`, LabelProps['theme']> = {
 
 interface UserRoleLabelProps {
     role: `${UserRole}`;
+    size?: LabelProps['size'];
 }
 
-export function UserRoleLabel({role}: UserRoleLabelProps) {
-    return <Label theme={labelThemeByUserRole[role]}>{getRoleByKey(role)}</Label>;
+export function UserRoleLabel({role, size}: UserRoleLabelProps) {
+    return (
+        <Label size={size} theme={labelThemeByUserRole[role]}>
+            {getRoleByKey(role)}
+        </Label>
+    );
 }
