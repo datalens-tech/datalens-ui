@@ -7,13 +7,14 @@ import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
+import {DIALOG_SHARED_ENTRY_BINDINGS} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {CollectionItemEntities, Feature} from '../../../../../../shared';
 import type {
     CollectionWithPermissions,
     SharedEntryFieldsWithPermissions,
-    StructureItem,
+    StructureItemWithPermissions,
     UpdateCollectionResponse,
     UpdateWorkbookResponse,
     WorkbookWithPermissions,
@@ -23,8 +24,10 @@ import {
     DIALOG_DELETE_COLLECTION,
     DIALOG_DELETE_WORKBOOK,
     DIALOG_EDIT_COLLECTION,
+    DIALOG_EDIT_SHARED_ENTRY,
     DIALOG_EDIT_WORKBOOK,
     DIALOG_MOVE_COLLECTION,
+    DIALOG_MOVE_SHARED_ENTRY,
     DIALOG_MOVE_WORKBOOK,
 } from '../../../../../components/CollectionsStructure';
 import {DropdownAction} from '../../../../../components/DropdownAction/DropdownAction';
@@ -34,7 +37,11 @@ import {ResourceType} from '../../../../../registry/units/common/types/component
 import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
-import {deleteCollectionInItems, deleteWorkbookInItems} from '../../../store/actions';
+import {
+    deleteCollectionInItems,
+    deleteSharedEntryInItems,
+    deleteWorkbookInItems,
+} from '../../../store/actions';
 import {getIsWorkbookItem} from '../../helpers';
 
 const i18n = I18n.keyset('collections');
@@ -366,7 +373,70 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             if (item.permissions.update) {
                 actions.push({
                     text: <DropdownAction icon={PencilToLine} text={i18n('action_edit')} />,
-                    action: () => {},
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_EDIT_SHARED_ENTRY,
+                                props: {
+                                    open: true,
+                                    entryId: item.entryId,
+                                    title: item.title,
+                                    onApply: () => {
+                                        fetchStructureItems();
+                                    },
+                                    onClose: () => {
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
+                });
+            }
+
+            if (item.permissions.move) {
+                actions.push({
+                    text: <DropdownAction icon={ArrowRight} text={i18n('action_move')} />,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_MOVE_SHARED_ENTRY,
+                                props: {
+                                    open: true,
+                                    entryId: item.entryId,
+                                    entryTitle: item.title,
+                                    initialParentId: item.collectionId,
+                                    onApply: fetchStructureItems,
+                                    onClose: onCloseMoveDialog,
+                                },
+                            }),
+                        );
+                    },
+                });
+            }
+
+            if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
+                actions.push({
+                    text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_IAM_ACCESS,
+                                props: {
+                                    open: true,
+                                    resourceId: item.entryId,
+                                    resourceType: ResourceType.SharedEntry,
+                                    resourceTitle: item.title,
+                                    parentId: item.collectionId,
+                                    resourceScope: item.scope,
+                                    canUpdate: item.permissions.updateAccessBindings,
+                                    onClose: () => {
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
                 });
             }
 
@@ -375,7 +445,23 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             if (item.permissions.delete) {
                 otherActions.push({
                     text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
-                    action: () => {},
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_SHARED_ENTRY_BINDINGS,
+                                props: {
+                                    onClose: () => dispatch(closeDialog()),
+                                    open: true,
+                                    entry: item,
+                                    isDeleteDialog: true,
+                                    onDeleteSuccess: () => {
+                                        dispatch(deleteSharedEntryInItems(item.entryId));
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
                     theme: 'danger',
                 });
             }
@@ -386,11 +472,11 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
 
             return actions;
         },
-        [],
+        [fetchStructureItems, onCloseMoveDialog, dispatch, collectionsAccessEnabled],
     );
 
     const getItemActions = React.useCallback(
-        (item: StructureItem) => {
+        (item: StructureItemWithPermissions) => {
             switch (item.entity) {
                 case CollectionItemEntities.COLLECTION:
                     return getCollectionActions(item);

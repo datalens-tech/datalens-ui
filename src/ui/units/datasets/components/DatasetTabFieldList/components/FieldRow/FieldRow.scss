@@ -6,6 +6,10 @@
     padding-right: 5px;
     cursor: pointer;
 
+    &_readonly {
+        cursor: default;
+    }
+
     &__control-item {
         display: flex;
         flex: 0 0 24px;

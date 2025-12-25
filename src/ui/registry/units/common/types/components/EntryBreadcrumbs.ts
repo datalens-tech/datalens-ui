@@ -7,7 +7,7 @@ export type EntryBreadcrumbsProps = {
     renderRootContent?: (item: BreadcrumbsItem) => React.ReactNode;
     entry?: GetEntryResponse;
     workbookName?: string;
-    workbookBreadcrumbs?: GetCollectionBreadcrumbsResponse | null;
+    entityBreadcrumbs?: GetCollectionBreadcrumbsResponse | null;
     openNavigationAction?: (startFromNavigation: string) => void;
     endContent?: React.ReactNode;
 };

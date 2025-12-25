@@ -2,6 +2,22 @@
     width: 536px;
     max-height: 580px;
 
+    &_dimension {
+        .g-dialog-header {
+            svg {
+                color: var(--g-color-text-positive);
+            }
+        }
+    }
+
+    &_measure {
+        .g-dialog-header {
+            svg {
+                color: var(--g-color-text-info);
+            }
+        }
+    }
+
     &__divider {
         margin: 0 auto 16px;
     }
@@ -11,27 +27,5 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
-    }
-
-    &__dimension {
-        display: flex;
-        flex-direction: column;
-        max-height: 580px;
-        .g-dialog-header {
-            svg {
-                color: var(--g-color-text-positive);
-            }
-        }
-    }
-
-    &__measure {
-        display: flex;
-        flex-direction: column;
-        max-height: 580px;
-        .g-dialog-header {
-            svg {
-                color: var(--g-color-text-info);
-            }
-        }
     }
 }

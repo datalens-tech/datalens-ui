@@ -1,4 +1,5 @@
 {
   "label_autoheight-checkbox": "Автовысота",
-  "label_background-checkbox": "Фон"
+  "label_background-checkbox": "Фон",
+  "label_border-radius": "Скругление"
 }

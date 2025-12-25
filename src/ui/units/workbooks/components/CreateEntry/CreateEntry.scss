@@ -11,4 +11,12 @@
     &__dropdown-text {
         margin-left: 8px;
     }
+
+    &__shared-entry-notice {
+        margin: 4px -4px 8px;
+        cursor: initial;
+        &:hover {
+            background-color: initial;
+        }
+    }
 }

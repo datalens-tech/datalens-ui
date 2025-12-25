@@ -22,7 +22,7 @@ type GetColorPalettesRequestArgs = {
     palettes: Record<string, Palette>;
 };
 
-function isCustomColorPaletteId(value: string, systemPalettes: Record<string, Palette>) {
+export function isCustomColorPaletteId(value: string, systemPalettes: Record<string, Palette>) {
     const isSystem = isSystemGradientPaletteId(value) || isSystemPaletteId(value, systemPalettes);
     return !isSystem && isEntryId(value);
 }

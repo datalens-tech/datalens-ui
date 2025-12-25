@@ -12,12 +12,17 @@ import {loadRevisions, setEntryContent} from '../../../../store/actions/entryCon
 import {showToast} from '../../../../store/actions/toaster';
 import {RevisionsMode} from '../../../../store/typings/entryContent';
 import type {DataLensApiError} from '../../../../typings';
-import {getWorkbookIdFromPathname} from '../../../../utils';
+import {getEntityIdFromPathname} from '../../../../utils';
 import history from '../../../../utils/history';
 import {FieldKey, InnerFieldKey} from '../../constants';
 import {getIsRevisionsSupported} from '../../utils';
 import {connectionIdSelector, newConnectionSelector} from '../selectors';
-import type {ConnectionsReduxDispatch, ConnectionsReduxState, GetState} from '../typings';
+import type {
+    ConnectionEntry,
+    ConnectionsReduxDispatch,
+    ConnectionsReduxState,
+    GetState,
+} from '../typings';
 import {
     getConnectorItemFromFlattenList,
     getDataForParamsChecking,
@@ -105,18 +110,22 @@ async function getConnectionDataRequest({
 export function setPageData({
     entryId,
     workbookId,
+    collectionId,
     rev_id,
+    bindedWorkbookId,
 }: {
     entryId?: string | null;
     workbookId?: string;
+    collectionId?: string;
     rev_id?: string;
+    bindedWorkbookId?: string | null;
 }) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         dispatch(setPageLoading({pageLoading: true}));
         const groupedConnectors = await api.fetchConnectors();
         const flattenConnectors = getFlattenConnectors(groupedConnectors);
         const {checkData, form, validationErrors} = getState().connections;
-        let entry: GetEntryResponse | undefined;
+        let entry: ConnectionEntry | undefined;
         let entryError: DataLensApiError | undefined;
         let connectionData: ConnectionData | undefined;
         let connectionError: DataLensApiError | undefined;
@@ -130,9 +139,26 @@ export function setPageData({
             }));
         }
 
+        if (entry?.collectionId && bindedWorkbookId) {
+            const {delegation, error: delegationError} = await api.fetchSharedEntryDelegation(
+                entry.entryId,
+                bindedWorkbookId,
+            );
+            if (delegationError) {
+                dispatch(
+                    showToast({
+                        title: delegationError.message,
+                        error: delegationError,
+                    }),
+                );
+            } else {
+                entry.isDelegated = delegation?.isDelegated;
+            }
+        }
+
         if (!entry) {
             const getFakeEntry = registry.connections.functions.get('getFakeEntry');
-            entry = getFakeEntry(workbookId);
+            entry = getFakeEntry(workbookId, collectionId);
         }
 
         batch(() => {
@@ -312,9 +338,19 @@ export function changeInitialForm(initialFormUpdates: ConnectionsReduxState['ini
     };
 }
 
-export function createConnection(args: {name: string; dirPath?: string; workbookId?: string}) {
+export function createConnection(args: {
+    name: string;
+    dirPath?: string;
+    workbookId?: string;
+    collectionId?: string;
+}) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
+        const {
+            name,
+            dirPath,
+            workbookId = getEntityIdFromPathname(),
+            collectionId = getEntityIdFromPathname(true),
+        } = args;
         const {form, innerForm, schema} = getState().connections;
 
         if (!schema || !schema.apiSchema?.create) {
@@ -335,8 +371,10 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
 
         if (typeof dirPath === 'string') {
             resultForm[FieldKey.DirPath] = dirPath;
-        } else {
+        } else if (workbookId) {
             resultForm[FieldKey.WorkbookId] = workbookId;
+        } else {
+            resultForm[FieldKey.CollectionId] = collectionId;
         }
 
         flow([setSubmitLoading, dispatch])({loading: true});
@@ -381,6 +419,8 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
             history.replace(`/navigation/${templateFolderId}`);
         } else if (templateWorkbookId) {
             history.replace(`/workbooks/${templateWorkbookId}`);
+        } else if (collectionId && connectionId) {
+            history.replace(`/collections/${collectionId}`);
         } else if (connectionId) {
             history.replace(`/connections/${connectionId}`);
         }

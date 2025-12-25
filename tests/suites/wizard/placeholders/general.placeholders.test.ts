@@ -2,7 +2,6 @@ import {Page} from '@playwright/test';
 
 import {
     Inputs,
-    PlaceholderId,
     RadioButtons,
     RadioButtonsValues,
 } from '../../../page-objects/wizard/PlaceholderDialog';
@@ -18,6 +17,7 @@ import {CommonUrls} from '../../../page-objects/constants/common-urls';
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {WIZARD_VISULAIZATIONS} from '../constants';
 import {openTestPage} from '../../../utils';
+import {PlaceholderId} from '../../../../src/shared';
 
 const getVisualisationPlaceholders = async (page: Page): Promise<string[]> => {
     return await page.evaluate(() => {

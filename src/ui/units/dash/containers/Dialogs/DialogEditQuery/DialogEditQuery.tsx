@@ -7,7 +7,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import type {ConnectionQueryContent} from 'shared';
 import {mapParametersRecordToTypedQueryApiParameters} from 'shared/modules/typed-query-api';
 import type {GetConnectionTypedQueryErrorResponse} from 'shared/schema';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import DialogManager from '../../../../../components/DialogManager/DialogManager';

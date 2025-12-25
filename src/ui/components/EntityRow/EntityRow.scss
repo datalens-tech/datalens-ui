@@ -1,0 +1,66 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.entity-row {
+    $class: &;
+    width: 100%;
+    height: 28px;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 4px;
+
+    &__text-block {
+        @include overflow-ellipsis;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
+
+    &__name {
+        @include text-body-1;
+        @include overflow-ellipsis;
+        margin-left: 10px;
+    }
+
+    &__entity {
+        margin-right: 10px;
+
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
+
+    &__icon {
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+    }
+
+    &__workbook-relations {
+        margin-left: 8px;
+        padding-left: 4px;
+        border-left: 1px solid var(--g-color-line-generic);
+    }
+
+    &__right-block {
+        flex-shrink: 0;
+        width: 50%;
+        display: grid;
+        grid-template-columns: 4fr 3fr auto;
+    }
+
+    &__delegation-status {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    &__delegation-status-icon {
+        flex-shrink: 0;
+        color: var(--g-color-text-secondary);
+    }
+
+    &__notice {
+        max-width: 250px;
+    }
+}

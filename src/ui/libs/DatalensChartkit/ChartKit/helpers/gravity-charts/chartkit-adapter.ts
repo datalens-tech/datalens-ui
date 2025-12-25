@@ -5,6 +5,7 @@ import get from 'lodash/get';
 import merge from 'lodash/merge';
 import set from 'lodash/set';
 import type {ExtendedChartData} from 'shared/types/chartkit';
+import type {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
 
 import type {GraphWidget} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
@@ -13,6 +14,7 @@ import {getNormalizedClickActions} from '../utils';
 
 import {convertChartCommentsToPlotBandsAndLines, shouldUseCommentsOnYAxis} from './comments';
 import {handleClick} from './event-handlers';
+import {convertHolidaysToPlotBands} from './holidays';
 import {
     getCustomShapeRenderer,
     isPointSelected,
@@ -23,8 +25,10 @@ import {
 export function getGravityChartsChartKitData(args: {
     loadedData: ChartKitAdapterProps['loadedData'];
     onChange?: ChartKitAdapterProps['onChange'];
+    runActivity?: ChartKitAdapterProps['runActivity'];
+    chartkitHolidays: ChartKitHolidays | undefined;
 }) {
-    const {loadedData, onChange} = args;
+    const {loadedData, chartkitHolidays, runActivity, onChange} = args;
     const widgetData = loadedData?.data as ExtendedChartData;
     const chartId = loadedData?.entryId;
 
@@ -40,6 +44,7 @@ export function getGravityChartsChartKitData(args: {
                         ),
                         event,
                         onChange,
+                        runActivity,
                     });
                 },
             },
@@ -116,12 +121,17 @@ export function getGravityChartsChartKitData(args: {
     const hideComments = get(loadedData, 'config.hideComments', false);
     const comments = hideComments ? [] : get(loadedData, 'comments', []);
     const {plotBands, plotLines} = convertChartCommentsToPlotBandsAndLines({comments});
+    const holidaysPlotBands = convertHolidaysToPlotBands({holidays: chartkitHolidays, loadedData});
 
     if (shouldUseCommentsOnYAxis(result)) {
         set(result, 'yAxis[0].plotBands', [...(result.yAxis?.[0]?.plotBands ?? []), ...plotBands]);
         set(result, 'yAxis[0].plotLines', [...(result.yAxis?.[0]?.plotLines ?? []), ...plotLines]);
     } else {
-        set(result, 'xAxis.plotBands', [...(result.xAxis?.plotBands ?? []), ...plotBands]);
+        set(result, 'xAxis.plotBands', [
+            ...(result.xAxis?.plotBands ?? []),
+            ...holidaysPlotBands,
+            ...plotBands,
+        ]);
         set(result, 'xAxis.plotLines', [...(result.xAxis?.plotLines ?? []), ...plotLines]);
     }
 

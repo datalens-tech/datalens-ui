@@ -6,7 +6,7 @@ import DataTable from '@gravity-ui/react-data-table';
 import {ActionTooltip, Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {DatasetField} from 'shared';
+import {type DatasetField, DatasetFieldsTabQa} from 'shared';
 import {isDisplaySettingsAvailable, isFieldWithDisplaySettings} from 'shared/utils';
 
 const b = block('dataset-table');
@@ -14,6 +14,7 @@ const i18n = I18n.keyset('dataset.dataset-editor.modify');
 
 type GetHiddenColumnArgs = {
     onUpdate: (row: DatasetField) => void;
+    readonly: boolean;
 };
 
 const sortAscending = (row1: SortedDataItem<DatasetField>, row2: SortedDataItem<DatasetField>) => {
@@ -22,7 +23,10 @@ const sortAscending = (row1: SortedDataItem<DatasetField>, row2: SortedDataItem<
     return Number(value1) - Number(value2);
 };
 
-export const getFieldSettingsColumn = ({onUpdate}: GetHiddenColumnArgs): Column<DatasetField> => ({
+export const getFieldSettingsColumn = ({
+    onUpdate,
+    readonly,
+}: GetHiddenColumnArgs): Column<DatasetField> => ({
     name: 'field-settings',
     className: b('column'),
     align: DataTable.CENTER,
@@ -46,6 +50,8 @@ export const getFieldSettingsColumn = ({onUpdate}: GetHiddenColumnArgs): Column<
                     view="flat"
                     title={i18n('button_field-settings')}
                     onClick={() => onUpdate(row)}
+                    qa={DatasetFieldsTabQa.FieldSettingsColumnIcon}
+                    disabled={readonly}
                 >
                     <Icon
                         className={b('hidden', {hidden: fieldHasSettings})}

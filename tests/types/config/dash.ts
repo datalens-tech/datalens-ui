@@ -13,6 +13,7 @@ export type DashParametrizationConfig = {
         DashboardWithErrorChart: string;
         DashboardWithAPIErrorChart: string;
         DashboardWithDifferentWidgets: string;
+        DashboardWithWidgetsBackgrounds: string;
     };
     charts: {
         ChartCityPie: ChartConfig;

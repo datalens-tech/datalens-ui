@@ -1035,6 +1035,7 @@ class SectionDataset extends React.Component<Props, State> {
                                     scope="dataset"
                                     startFrom={startFrom}
                                     ignoreWorkbookEntries={true}
+                                    ignoreSharedEntries={true}
                                     placeSelectParameters={getPlaceSelectParameters([
                                         PLACE.ROOT,
                                         PLACE.FAVORITES,

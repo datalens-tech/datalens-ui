@@ -3,13 +3,10 @@ import {expect} from '@playwright/test';
 import QLPage from '../../../../page-objects/ql/QLPage';
 import {openTestPage} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
-import {AxisMode} from '../../../../../src/shared';
+import {AxisMode, PlaceholderId} from '../../../../../src/shared';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
-import {
-    PlaceholderId,
-    RadioButtons,
-    RadioButtonsValues,
-} from '../../../../page-objects/wizard/PlaceholderDialog';
+import {RadioButtons, RadioButtonsValues} from '../../../../page-objects/wizard/PlaceholderDialog';
+import {COMMON_CHARTKIT_SELECTORS} from '../../../../page-objects/constants/chartkit';
 
 datalensTest.describe('QL', () => {
     datalensTest.describe('Column chart', () => {
@@ -24,11 +21,11 @@ datalensTest.describe('QL', () => {
 
         datalensTest(
             'Check that fields order does not affect axis settings @screenshot',
-            async ({page, config}) => {
+            async ({page, config}, testInfo) => {
                 const qlPage = new QLPage({page});
 
                 const previewLoader = page.locator('.grid-loader');
-                const chart = page.locator('.chartkit-graph,.gcharts-chart');
+                const chart = page.locator(COMMON_CHARTKIT_SELECTORS.chart);
 
                 await qlPage.sectionVisualization.removeFieldByClick(
                     PlaceholderName.X,
@@ -58,8 +55,9 @@ datalensTest.describe('QL', () => {
                 await qlPage.placeholderDialog.apply();
 
                 await expect(previewLoader).not.toBeVisible();
-
-                const discreteXAxisScreenshot = await chart.screenshot();
+                // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+                await page.mouse.move(-1, -1);
+                await expect(await chart.screenshot()).toMatchSnapshot(`${testInfo.title}.png`);
 
                 await qlPage.clearScript();
                 await qlPage.setScript(config.ql.queries.dateAndSalesModified);
@@ -87,9 +85,10 @@ datalensTest.describe('QL', () => {
 
                 await qlPage.placeholderDialog.close();
 
-                // @ts-ignore
+                // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+                await page.mouse.move(-1, -1);
                 // X axis should stay discrete after changing the query
-                await expect(await chart.screenshot()).toMatchSnapshot(discreteXAxisScreenshot);
+                await expect(await chart.screenshot()).toMatchSnapshot(`${testInfo.title}.png`);
             },
         );
     });

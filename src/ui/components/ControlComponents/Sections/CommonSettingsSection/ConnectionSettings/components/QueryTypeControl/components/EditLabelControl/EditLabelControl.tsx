@@ -4,7 +4,7 @@ import {FormRow} from '@gravity-ui/components';
 import {TextInput} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {FieldWrapper} from '../../../../../../../../FieldWrapper/FieldWrapper';

@@ -13,6 +13,8 @@ export const typesSelector = (state: DatalensGlobalState) => state.dataset.types
 export const datasetKeySelector = (state: DatalensGlobalState) => state.dataset.key;
 export const datasetIdSelector = (state: DatalensGlobalState) => state.dataset.id;
 export const datasetWorkbookId = (state: DatalensGlobalState) => state.dataset.workbookId;
+export const datasetCollectionIdSelector = (state: DatalensGlobalState) =>
+    state.dataset.collectionId;
 export const datasetContentSelector = (state: DatalensGlobalState) => state.dataset.content;
 export const datasetPublishedIdSelector = (state: DatalensGlobalState) => state.dataset.publishedId;
 export const datasetCurrentRevIdSelector = (state: DatalensGlobalState) =>
@@ -119,6 +121,7 @@ export const connectionsSelector = (state: DatalensGlobalState) => {
         };
     });
 };
+export type SelectedConnections = ReturnType<typeof connectionsSelector>;
 
 const getSourceHashTitleId = <T extends {parameter_hash: string; title: string}>({
     parameter_hash,
@@ -167,6 +170,8 @@ export const sortedSourcePrototypesSelector = (state: DatalensGlobalState) => {
     });
 };
 
+export type SortedSourcePrototypes = ReturnType<typeof sortedSourcePrototypesSelector>;
+
 export const selectedConnectionSelector = (state: DatalensGlobalState) => {
     const {ui: {selectedConnectionId} = {}, selectedConnections} = state.dataset;
 
@@ -192,6 +197,12 @@ export const editorItemsToDisplaySelector = (state: DatalensGlobalState) => {
 };
 
 export const datasetPermissionsSelector = (state: DatalensGlobalState) => state.dataset.permissions;
+export const datasetFullPermissionsSelector = (state: DatalensGlobalState) =>
+    state.dataset.fullPermissions;
+
+export const datasetDelegationSelector = (state: DatalensGlobalState) => {
+    return state.dataset.isDelegated;
+};
 
 export const workbookIdSelector = (state: DatalensGlobalState) => {
     return selectedConnectionSelector(state)?.workbookId || datasetWorkbookId(state) || null;
@@ -228,3 +239,6 @@ export const isDescriptionChangedSelector = createSelector(
     [datasetInitialDescriptionSelector, datasetDescriptionSelector],
     (initialDescription, previewDescription) => initialDescription !== previewDescription,
 );
+
+export const selectedConnectionDelegationStatusSelector = (state: DatalensGlobalState) =>
+    state.dataset.ui.selectedConnectionDelegationStatus;

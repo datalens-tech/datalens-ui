@@ -214,14 +214,16 @@ async function getUnwrappedFunction(args: {
     entryId: string;
     entryType: string;
     name?: string;
+    widgetElement?: Element;
 }) {
-    const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
+    const {sandbox, wrappedFn, options, entryId, entryType, name, widgetElement} = args;
     const uiSandboxLibs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
     const isAdvancedChart = (
         [EditorType.AdvancedChartNode, LegacyEditorType.BlankChart] as string[]
     ).includes(entryType);
 
+    // eslint-disable-next-line complexity
     return function (this: unknown, ...restArgs: unknown[]) {
         let libs = uiSandboxLibs;
         const runId = getRandomCKId();
@@ -260,136 +262,157 @@ async function getUnwrappedFunction(args: {
             },
         };
 
-        // extend API for Highcharts charts
-        if (entryType === 'graph_node') {
-            const getCurrentChart = () => {
-                const chart = window.Highcharts.charts?.find(
-                    (c: unknown) => get(c, 'userOptions._config.entryId') === entryId,
-                );
+        switch (entryType) {
+            case EditorType.GraphNode: {
+                const getCurrentChart = () => {
+                    const chart = window.Highcharts.charts?.find(
+                        (c: unknown) => get(c, 'userOptions._config.entryId') === entryId,
+                    );
 
-                if (!chart) {
-                    throw Error("Couldn't find a chart associated with this function");
-                }
-                return chart;
-            };
+                    if (!chart) {
+                        throw Error("Couldn't find a chart associated with this function");
+                    }
+                    return chart;
+                };
 
-            merge(globalApi, {
-                Highcharts: {
-                    numberFormat: window.Highcharts.numberFormat,
-                    dateFormat: window.Highcharts.dateFormat,
-                },
-                Chart: {
-                    getBoundingClientRect: () => {
-                        return getCurrentChart()?.container.getBoundingClientRect();
+                merge(globalApi, {
+                    Highcharts: {
+                        numberFormat: window.Highcharts.numberFormat,
+                        dateFormat: window.Highcharts.dateFormat,
                     },
-                    appendElements: (node: unknown) => {
-                        const chart = getCurrentChart();
+                    Chart: {
+                        getBoundingClientRect: () => {
+                            return getCurrentChart()?.container.getBoundingClientRect();
+                        },
+                        appendElements: (node: unknown) => {
+                            const chart = getCurrentChart();
 
-                        const html = unwrapHtml({
-                            value: wrapHtml(node as ChartKitHtmlItem),
-                        }) as string;
-                        const container = chart.container;
-                        const wrapper = document.createElement('div');
-                        wrapper.insertAdjacentHTML('beforeend', html);
-                        const nodes = Array.from(wrapper.childNodes);
+                            const html = unwrapHtml({
+                                value: wrapHtml(node as ChartKitHtmlItem),
+                            }) as string;
+                            const container = chart.container;
+                            const wrapper = document.createElement('div');
+                            wrapper.insertAdjacentHTML('beforeend', html);
+                            const nodes = Array.from(wrapper.childNodes);
 
-                        return nodes.map((node) => {
-                            const el = container.appendChild(node) as HTMLElement;
-                            return el.getBoundingClientRect();
-                        });
-                    },
-                    updateSeries: (seriesIndex: number, data: any) => {
-                        processHtmlFields(data);
-                        getCurrentChart()?.series?.[seriesIndex]?.update(data);
-                    },
-                    updateTitle: (data: any) => {
-                        processHtmlFields(data);
-                        getCurrentChart()?.title?.update(data);
-                    },
-                    updatePoints: (updates: PointOptionsType, match?: Record<string, unknown>) => {
-                        const seriesOptions: [string, unknown][] = [];
-                        const pointOptions: [string, unknown][] = [];
-                        Object.entries(match ?? {}).forEach(([key, value]) => {
-                            if (key.startsWith('series.')) {
-                                seriesOptions.push([key.replace('series.', ''), value]);
-                            } else {
-                                pointOptions.push([key, value]);
+                            return nodes.map((node) => {
+                                const el = container.appendChild(node) as HTMLElement;
+                                return el.getBoundingClientRect();
+                            });
+                        },
+                        updateSeries: (seriesIndex: number, data: any) => {
+                            processHtmlFields(data);
+                            getCurrentChart()?.series?.[seriesIndex]?.update(data);
+                        },
+                        updateTitle: (data: any) => {
+                            processHtmlFields(data);
+                            getCurrentChart()?.title?.update(data);
+                        },
+                        updatePoints: (
+                            updates: PointOptionsType,
+                            match?: Record<string, unknown>,
+                        ) => {
+                            const seriesOptions: [string, unknown][] = [];
+                            const pointOptions: [string, unknown][] = [];
+                            Object.entries(match ?? {}).forEach(([key, value]) => {
+                                if (key.startsWith('series.')) {
+                                    seriesOptions.push([key.replace('series.', ''), value]);
+                                } else {
+                                    pointOptions.push([key, value]);
+                                }
+                            });
+
+                            let shouldRedraw = false;
+                            const chart = getCurrentChart();
+                            const chartSeries = chart.series;
+                            chartSeries.forEach((s) => {
+                                if (seriesOptions.every(([key, value]) => get(s, key) === value)) {
+                                    s.points?.forEach((p) => {
+                                        if (
+                                            pointOptions.every(
+                                                ([key, value]) => get(p, key) === value,
+                                            )
+                                        ) {
+                                            p.update(updates, false);
+                                            shouldRedraw = true;
+                                        }
+                                    });
+                                }
+                            });
+
+                            if (shouldRedraw) {
+                                chart.redraw();
                             }
-                        });
-
-                        let shouldRedraw = false;
-                        const chart = getCurrentChart();
-                        const chartSeries = chart.series;
-                        chartSeries.forEach((s) => {
-                            if (seriesOptions.every(([key, value]) => get(s, key) === value)) {
-                                s.points?.forEach((p) => {
-                                    if (
-                                        pointOptions.every(([key, value]) => get(p, key) === value)
-                                    ) {
-                                        p.update(updates, false);
-                                        shouldRedraw = true;
+                        },
+                        findPoint: (fn: (point: unknown) => boolean) => {
+                            const chartSeries = getCurrentChart()?.series ?? [];
+                            for (let i = 0; i < chartSeries.length; i++) {
+                                const points = chartSeries[i].data;
+                                for (let pointIndex = 0; pointIndex < points.length; pointIndex++) {
+                                    const cleanPoint = clearVmProp(points[pointIndex]);
+                                    if (fn(cleanPoint)) {
+                                        return cleanPoint;
                                     }
-                                });
-                            }
-                        });
-
-                        if (shouldRedraw) {
-                            chart.redraw();
-                        }
-                    },
-                    findPoint: (fn: (point: unknown) => boolean) => {
-                        const chartSeries = getCurrentChart()?.series ?? [];
-                        for (let i = 0; i < chartSeries.length; i++) {
-                            const points = chartSeries[i].data;
-                            for (let pointIndex = 0; pointIndex < points.length; pointIndex++) {
-                                const cleanPoint = clearVmProp(points[pointIndex]);
-                                if (fn(cleanPoint)) {
-                                    return cleanPoint;
                                 }
                             }
-                        }
-                        return null;
+                            return null;
+                        },
                     },
-                },
-                window: {
-                    open: function (url: string, target?: string) {
-                        try {
-                            const href = sanitizeUrl(url);
-                            window.open(href, target === '_self' ? '_self' : '_blank');
-                        } catch (e) {
-                            console.error(e);
-                        }
+                    window: {
+                        open: function (url: string, target?: string) {
+                            try {
+                                const href = sanitizeUrl(url);
+                                window.open(href, target === '_self' ? '_self' : '_blank');
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        },
                     },
-                },
-            });
-        } else if (isAdvancedChart) {
-            const chartId = get(this, 'chartId');
-            const chartContext = chartStorage.get(chartId);
+                });
+                break;
+            }
+            case EditorType.AdvancedChartNode:
+            case LegacyEditorType.BlankChart: {
+                const chartId = get(this, 'chartId');
+                const chartContext = chartStorage.get(chartId);
 
-            merge(globalApi, {
-                Chart: {
-                    getState: () => {
-                        return chartContext.getState();
+                merge(globalApi, {
+                    Chart: {
+                        getState: () => {
+                            return chartContext.getState();
+                        },
+                        setState: (update: any, options?: any) => {
+                            chartContext?.setState(update, options);
+                        },
+                        updateActionParams: (params: StringParams) => {
+                            chartContext?.updateActionParams(params);
+                        },
                     },
-                    setState: (update: any, options?: any) => {
-                        chartContext?.setState(update, options);
+                    ChartEditor: {
+                        updateActionParams: (params: StringParams) => {
+                            chartContext?.updateActionParams(params);
+                        },
+                        updateParams: (params: StringParams) => {
+                            chartContext?.updateParams(params);
+                        },
                     },
-                    updateActionParams: (params: StringParams) => {
-                        chartContext?.updateActionParams(params);
-                    },
-                },
-                ChartEditor: {
-                    updateActionParams: (params: StringParams) => {
-                        chartContext?.updateActionParams(params);
-                    },
-                    updateParams: (params: StringParams) => {
-                        chartContext?.updateParams(params);
-                    },
-                },
-            });
+                });
 
-            if (fnContext && typeof fnContext === 'object' && '__innerHTML' in fnContext) {
-                libs += `document.body.innerHTML = (${JSON.stringify(fnContext.__innerHTML)});`;
+                if (fnContext && typeof fnContext === 'object' && '__innerHTML' in fnContext) {
+                    libs += `document.body.innerHTML = (${JSON.stringify(fnContext.__innerHTML)});`;
+                }
+                break;
+            }
+            case EditorType.GravityChartsNode: {
+                merge(globalApi, {
+                    Chart: {
+                        getBoundingClientRect: () => {
+                            return widgetElement?.getBoundingClientRect();
+                        },
+                    },
+                });
+
+                break;
             }
         }
 
@@ -453,8 +476,9 @@ export async function unwrapPossibleFunctions(args: {
     sandbox: QuickJSWASMModule;
     target: TargetValue;
     options?: UiSandboxRuntimeOptions;
+    widgetElement?: Element;
 }) {
-    const {sandbox, target, options, entryId, entryType} = args;
+    const {sandbox, target, options, entryId, entryType, widgetElement} = args;
     if (!target || typeof target !== 'object') {
         return;
     }
@@ -476,6 +500,7 @@ export async function unwrapPossibleFunctions(args: {
                     entryId,
                     entryType,
                     name: key,
+                    widgetElement,
                 });
             } else if (Array.isArray(value)) {
                 await Promise.all(
@@ -486,6 +511,7 @@ export async function unwrapPossibleFunctions(args: {
                             options,
                             target: item,
                             entryType,
+                            widgetElement,
                         }),
                     ),
                 );
@@ -496,6 +522,7 @@ export async function unwrapPossibleFunctions(args: {
                     options,
                     target: value,
                     entryType,
+                    widgetElement,
                 });
             }
         }),

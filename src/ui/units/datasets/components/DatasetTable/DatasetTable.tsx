@@ -17,6 +17,7 @@ import type {
     DatasetSelectionMap,
     DatasetSourceAvatar,
 } from 'shared';
+import {DatasetFieldsTabQa} from 'shared';
 import type {Permissions} from 'shared/types/permissions';
 import {Interpolate} from 'ui/components/Interpolate';
 import {DL} from 'ui/constants';
@@ -74,6 +75,7 @@ type DatasetTableProps = {
     onDisplaySettingsUpdate: (itemsToDisplay: string[]) => void;
     rls: DatasetRls;
     permissions?: Permissions;
+    readonly: boolean;
 };
 
 type DatasetTableState = {
@@ -167,6 +169,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                         onSort={() => {
                             this.selectionIndexAnchor = null;
                         }}
+                        data-qa={DatasetFieldsTabQa.TableRow}
                     />
                 </div>
 
@@ -261,6 +264,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             handleDescriptionUpdate: this.handleDescriptionUpdate,
             handleMoreActionClick: this.handleMoreActionClick,
             onSelectChange: this.onSelectChange,
+            readonly: this.props.readonly,
         });
     }
 

@@ -44,6 +44,8 @@ import type {
     WidgetDataRef,
 } from '../types';
 
+import {getMapSimpleConfig} from './yandex-map';
+
 export const COMPONENT_CLASSNAME = 'dl-widget';
 
 /**
@@ -112,6 +114,55 @@ const getUniqDatasetsFields = (datasets?: Array<DatasetsData>) => {
     return datasets;
 };
 
+export const getChartSimpleLoadedData = ({
+    widget,
+    loadedData,
+}: {
+    widget?: WidgetDataRef['current'];
+    loadedData: LoadedWidgetData<unknown>;
+}) => {
+    const convertedToTableData = convertChartToTable({
+        widget,
+        widgetData: loadedData,
+    });
+
+    let queries;
+
+    if (loadedData && 'sources' in loadedData) {
+        const sources = loadedData.sources ?? {};
+        const sourceValues = Object.values(sources);
+
+        queries = sourceValues.map((source) => {
+            return 'info' in source ? source?.info : '';
+        });
+    }
+
+    let data: object | null = convertedToTableData;
+    if (isEmpty(convertedToTableData)) {
+        switch (loadedData?.type) {
+            case 'metric':
+            case 'metric2':
+            case 'markup':
+            case 'markdown': {
+                data = loadedData?.data;
+                break;
+            }
+            case 'ymap': {
+                data = getMapSimpleConfig({
+                    widgetData: loadedData as LoadedWidgetData<unknown>,
+                });
+                break;
+            }
+            default: {
+                data = loadedData;
+                break;
+            }
+        }
+    }
+
+    return {queries, data};
+};
+
 /**
  * For new (by flag relations) for charts only
  * @param tabs
@@ -176,29 +227,10 @@ export const getWidgetMeta = ({
             isEditor: Boolean(loadedData?.isEditor),
             isQL: Boolean(loadedData?.isQL),
             getSimpleLoadedData: () => {
-                const convertedToTableData = convertChartToTable({
+                return getChartSimpleLoadedData({
                     widget: widgetDataRef?.current,
-                    widgetData: loadedData as LoadedWidgetData<unknown>,
+                    loadedData: loadedData as LoadedWidgetData<unknown>,
                 });
-
-                let queries;
-
-                if (loadedData && 'sources' in loadedData) {
-                    const sources = loadedData.sources;
-                    const sourceValues = Object.values(sources);
-
-                    queries = sourceValues.map((source) => {
-                        return 'info' in source ? source?.info : '';
-                    });
-                }
-
-                // eslint-disable-next-line no-nested-ternary
-                const data = isEmpty(convertedToTableData)
-                    ? ['metric2', 'metric', 'markup', 'markdown'].includes(loadedData?.type || '')
-                        ? loadedData?.data
-                        : loadedData
-                    : convertedToTableData;
-                return {queries, data};
             },
         };
 

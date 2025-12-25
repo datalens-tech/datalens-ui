@@ -8,8 +8,8 @@ export const mapV3ConfigToV4 = (config: QlConfigV3): QlConfigV4 => {
     const affectedVisualizations = [
         WizardVisualizationId.Pie,
         WizardVisualizationId.Donut,
-        WizardVisualizationId.PieD3,
-        WizardVisualizationId.DonutD3,
+        'pie-d3',
+        'donut-d3',
     ];
 
     let visualization = config.visualization;

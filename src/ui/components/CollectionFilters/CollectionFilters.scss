@@ -28,6 +28,11 @@ $block: '.dl-collection-filters';
         align-items: center;
     }
 
+    &__filter-string-container {
+        width: 100%;
+        display: flex;
+    }
+
     &__filter-string {
         flex: 1;
     }

@@ -135,10 +135,8 @@ class VisualizationPlaceholder extends React.Component<Props> {
         const {visualization, placeholder} = this.props;
 
         switch (visualization.id) {
-            case WizardVisualizationId.PieD3:
-            case WizardVisualizationId.DonutD3:
-            case 'pie':
-            case 'donut': {
+            case WizardVisualizationId.Pie:
+            case WizardVisualizationId.Donut: {
                 const hasSettings =
                     placeholder.items.length > 0 && placeholder.id === PlaceholderId.Colors;
                 const colorsContainsHierarchies = placeholder.items.some(isFieldHierarchy);
@@ -239,9 +237,9 @@ class VisualizationPlaceholder extends React.Component<Props> {
     };
 
     private openDialogMetric = () => {
-        const {extraSettings} = this.props;
+        const {extraSettings, onUpdate} = this.props;
 
-        this.props.openDialogMetric({extraSettings});
+        this.props.openDialogMetric({extraSettings, onApply: onUpdate});
     };
 
     private openDialogPointsSize = () => {

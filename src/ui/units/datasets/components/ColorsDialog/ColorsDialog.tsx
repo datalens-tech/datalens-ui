@@ -7,6 +7,7 @@ import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import type {DatasetField, DatasetFieldColorConfig, DatasetUpdate, FieldUISettings} from 'shared';
 import {
+    DatasetFieldColorsDialogQa,
     TIMEOUT_90_SEC,
     getFieldDistinctValues,
     getFieldsApiV2RequestSection,
@@ -154,10 +155,18 @@ export const ColorsDialog = (props: Props) => {
 
         return (
             <React.Fragment>
-                <div className={b('value-color', {default: !mountedColorIndex})} style={style}>
+                <div
+                    data-qa={DatasetFieldColorsDialogQa.ValueItemColorIcon}
+                    className={b('value-color', {default: !mountedColorIndex})}
+                    style={style}
+                >
                     {mountedColorIndex ? null : 'a'}
                 </div>
-                <div className={b('value-label')} title={value}>
+                <div
+                    data-qa={DatasetFieldColorsDialogQa.ValueItem}
+                    className={b('value-label')}
+                    title={value}
+                >
                     {value}
                 </div>
             </React.Fragment>
@@ -173,6 +182,7 @@ export const ColorsDialog = (props: Props) => {
                     isSelected={String(index) === paletteSelectedValue}
                     className={b('palette-item')}
                     color={color}
+                    qa={DatasetFieldColorsDialogQa.PaleteItem}
                 />
             ),
             value: String(index),
@@ -183,17 +193,24 @@ export const ColorsDialog = (props: Props) => {
                     isSelected={paletteSelectedValue === undefined}
                     className={b('palette-item')}
                     isDefault={true}
+                    qa={DatasetFieldColorsDialogQa.PaleteItem}
                 >
                     auto
                 </PaletteItem>
             ),
-            value: '',
+            value: 'auto',
         });
         return items;
     }, [colorsList, paletteSelectedValue]);
 
     return (
-        <Dialog onClose={onClose} open={open} className={b()} disableHeightTransition={true}>
+        <Dialog
+            qa={DatasetFieldColorsDialogQa.Dialog}
+            onClose={onClose}
+            open={open}
+            className={b()}
+            disableHeightTransition={true}
+        >
             <Dialog.Header caption={i18n('label_colors-settings')} />
             <Dialog.Body className={b('body')}>
                 <div className={b('content')}>
@@ -217,7 +234,7 @@ export const ColorsDialog = (props: Props) => {
                             className={b('palette')}
                             size="l"
                             options={paletteOptions}
-                            value={paletteSelectedValue ? [paletteSelectedValue] : undefined}
+                            value={[paletteSelectedValue ?? 'auto']}
                             onUpdate={handleSelectColor}
                         />
                     </div>

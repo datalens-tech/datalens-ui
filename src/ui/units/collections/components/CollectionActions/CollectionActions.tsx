@@ -11,12 +11,15 @@ import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
+import {useHistory} from 'react-router-dom';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared';
 import {registry} from '../../../../registry';
 import {selectCollection} from '../../store/selectors';
+
+import {getSharedEntriesMenuItems} from './utils';
 
 import collectionIcon from '../../../../assets/icons/collections/collection.svg';
 import workbookIcon from '../../../../assets/icons/collections/workbook.svg';
@@ -47,12 +50,17 @@ export const CollectionActions = React.memo<Props>(
         onDeleteClick,
     }) => {
         const collection = useSelector(selectCollection);
-
+        const history = useHistory();
         const {CustomActionPanelCollectionActions} = registry.collections.components.getAll();
 
         const showCreateCollection = collection ? collection.permissions?.createCollection : true;
 
         const showCreateWorkbook = collection ? collection.permissions?.createWorkbook : true;
+
+        const showCreateSharedEntry =
+            isEnabledFeature(Feature.EnableSharedEntries) && collection
+                ? collection.permissions?.createSharedEntry
+                : false;
 
         const createActionItems: DropdownMenuItemMixed<void>[] = [];
 
@@ -86,6 +94,20 @@ export const CollectionActions = React.memo<Props>(
                 }),
                 action: onCreateCollectionClick,
             });
+        }
+
+        if (showCreateSharedEntry) {
+            createActionItems.push(
+                getSharedEntriesMenuItems({
+                    connectionAction: () => {
+                        history.push(`/collections/${collection?.collectionId}/connections/new`);
+                    },
+                    datasetAction: () => {
+                        history.push(`/collections/${collection?.collectionId}/datasets/new`);
+                    },
+                    noticeClassName: b('notice'),
+                }),
+            );
         }
 
         const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);
@@ -139,7 +161,7 @@ export const CollectionActions = React.memo<Props>(
 
                 {(showCreateCollection || showCreateWorkbook) && (
                     <DropdownMenu
-                        size="s"
+                        size="m"
                         items={createActionItems}
                         switcherWrapperClassName={b('create-wrapper')}
                         popupProps={{placement: 'bottom-end'}}

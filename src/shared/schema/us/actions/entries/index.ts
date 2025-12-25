@@ -1,12 +1,6 @@
 import {omit, uniqBy} from 'lodash';
 
-import {
-    DL_COMPONENT_HEADER,
-    DlComponentHeader,
-    TIMEOUT_60_SEC,
-    TIMEOUT_90_SEC,
-    WORKBOOK_ID_HEADER,
-} from '../../../../constants';
+import {TIMEOUT_60_SEC, TIMEOUT_90_SEC} from '../../../../constants';
 import {getEntryNameByKey, normalizeDestination} from '../../../../modules';
 import {Feature} from '../../../../types/feature';
 import {createAction} from '../../../gateway-utils';
@@ -22,16 +16,16 @@ import type {
     CreateFolderResponse,
     DeleteUSEntryArgs,
     DeleteUSEntryResponse,
+    EntityBindingsArgs,
+    EntityBindingsResponse,
     GetEntriesAnnotationArgs,
     GetEntriesAnnotationResponse,
     GetEntriesByKeyPatternArgs,
     GetEntriesByKeyPatternResponse,
-    GetEntryArgs,
     GetEntryByKeyArgs,
     GetEntryByKeyResponse,
     GetEntryMetaArgs,
     GetEntryMetaResponse,
-    GetEntryResponse,
     GetRelationsArgs,
     GetRelationsGraphArgs,
     GetRelationsGraphResponse,
@@ -40,48 +34,38 @@ import type {
     GetRevisionsArgs,
     GetRevisionsOutput,
     GetRevisionsResponse,
+    GetSharedEntryBindingsArgs,
+    GetSharedEntryBindingsResponse,
+    GetSharedEntryWorkbookRelationsArgs,
+    GetSharedEntryWorkbookRelationsResponse,
     MoveEntryArgs,
     MoveEntryResponse,
+    MoveSharedEntryArgs,
     RenameEntryArgs,
     RenameEntryResponse,
     SwitchPublicationStatusArgs,
     SwitchPublicationStatusResponse,
 } from '../../types';
 
+import {_createEntry} from './create-entry';
 import {getEntries} from './get-entries';
+import {getEntriesRelations} from './get-entries-relations';
+import {getEntry} from './get-entry';
 import {listDirectory} from './list-directory';
+import {_updateEntry} from './update-entry';
 
 const PATH_PREFIX = '/v1';
 const PATH_PREFIX_V2 = '/v2';
 const PRIVATE_PATH_PREFIX = '/private';
 
 export const entriesActions = {
+    _createEntry,
+    _updateEntry,
+    getEntriesRelations,
     listDirectory,
     getEntries,
-    getEntry: createAction<GetEntryResponse, GetEntryArgs>({
-        method: 'GET',
-        path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: (
-            {
-                entryId: _entryId,
-                workbookId,
-                includeDlComponentUiData,
-                includeFavorite = true,
-                ...query
-            },
-            headers,
-        ) => ({
-            query: {
-                ...query,
-                includeFavorite,
-            },
-            headers: {
-                ...headers,
-                ...(includeDlComponentUiData ? {[DL_COMPONENT_HEADER]: DlComponentHeader.UI} : {}),
-                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
-            },
-        }),
-    }),
+    getEntry,
+    _getEntryWithAudit: getEntry,
     getEntryByKey: createAction<GetEntryByKeyResponse, GetEntryByKeyArgs>({
         method: 'GET',
         path: () => `${PATH_PREFIX}/entriesByKey`,
@@ -252,5 +236,87 @@ export const entriesActions = {
             body: params,
             headers,
         }),
+    }),
+    getSharedEntryDelegation: createAction<
+        EntityBindingsResponse,
+        Omit<EntityBindingsArgs, 'delegation'>
+    >({
+        method: 'GET',
+        path: () => `${PATH_PREFIX}/entity-bindings`,
+        params: ({sourceId, targetId}, headers) => ({
+            query: {
+                sourceId,
+                targetId,
+            },
+            headers,
+        }),
+    }),
+    createSharedEntryBinding: createAction<EntityBindingsResponse, EntityBindingsArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/entity-bindings/create`,
+        params: (params, headers) => ({
+            body: params,
+            headers,
+        }),
+    }),
+    updateSharedEntryBinding: createAction<EntityBindingsResponse, EntityBindingsArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/entity-bindings/update`,
+        params: (params, headers) => ({
+            body: params,
+            headers,
+        }),
+    }),
+    deleteSharedEntryBinding: createAction<
+        EntityBindingsResponse,
+        Omit<EntityBindingsArgs, 'delegation'>
+    >({
+        method: 'DELETE',
+        path: () => `${PATH_PREFIX}/entity-bindings/delete`,
+        params: (params, headers) => ({
+            query: params,
+            headers,
+        }),
+    }),
+    getSharedEntryBindings: createAction<
+        GetSharedEntryBindingsResponse,
+        GetSharedEntryBindingsArgs
+    >({
+        method: 'GET',
+        path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${entryId}/entity-bindings`,
+        params: (
+            {page, pageSize, entryAs, mode, filterString, includePermissionsInfo},
+            headers,
+        ) => ({
+            query: {
+                pageSize,
+                page,
+                entryAs,
+                mode,
+                filterString,
+                includePermissionsInfo,
+            },
+            headers,
+        }),
+    }),
+    getSharedEntryWorkbookRelations: createAction<
+        GetSharedEntryWorkbookRelationsResponse,
+        GetSharedEntryWorkbookRelationsArgs
+    >({
+        method: 'GET',
+        path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${entryId}/workbook-relations`,
+        params: ({scope, workbookId}, headers) => ({
+            query: {
+                workbookId,
+                scope,
+            },
+            headers,
+        }),
+    }),
+    moveSharedEntry: createAction<MoveEntryResponse, MoveSharedEntryArgs>({
+        method: 'POST',
+        path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${filterUrlFragment(entryId)}/move`,
+        params: ({collectionId, name}, headers) => ({headers, body: {collectionId, name}}),
+        timeout: TIMEOUT_60_SEC,
     }),
 };

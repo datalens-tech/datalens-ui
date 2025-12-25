@@ -13,7 +13,7 @@ datalensTest.describe('Wizard', () => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.BarYD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Bar);
         });
 
         datalensTest('Coloring by measure field (gradient) @screenshot', async ({page}) => {
@@ -36,5 +36,57 @@ datalensTest.describe('Wizard', () => {
 
             await expect(preview).toHaveScreenshot();
         });
+
+        datalensTest('Coloring by Measure Values (gradient) @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+
+            // Create measure field
+            await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
+
+            const preview = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = preview.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'segment');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'SalesSum');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Colors,
+                'Measure Values',
+            );
+
+            // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+            await page.mouse.move(-1, -1);
+            await expect(previewLoader).not.toBeVisible();
+            await expect(preview).toHaveScreenshot();
+        });
+
+        datalensTest(
+            'Coloring by Measure Values with Measure Names in Y section @screenshot',
+            async ({page}) => {
+                const wizardPage = new WizardPage({page});
+
+                // Create measure fields
+                await wizardPage.createNewFieldWithFormula('1', 'sum(1)');
+                await wizardPage.createNewFieldWithFormula('2', 'sum(2)');
+
+                const preview = page.locator(slct(WizardPageQa.SectionPreview));
+                const previewLoader = preview.locator(slct(ChartKitQa.Loader));
+
+                await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, '1');
+                await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, '2');
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Y,
+                    'Measure Names',
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Colors,
+                    'Measure Values',
+                );
+
+                // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+                await page.mouse.move(-1, -1);
+                await expect(previewLoader).not.toBeVisible();
+                await expect(preview).toHaveScreenshot();
+            },
+        );
     });
 });

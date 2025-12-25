@@ -15,11 +15,15 @@ import {
 import type {ExtendedChartData} from '../../../../../../../shared/types/chartkit';
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
+import {colorizeByColorValues} from '../../utils/color-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting} from '../helpers/axis';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
-import {mapToGravityChartValueFormat} from '../utils';
+import {
+    mapChartkitFormatSettingsToGravityChartValueFormat,
+    mapToGravityChartValueFormat,
+} from '../utils';
 
 import {prepareBarYData} from './prepare-bar-y-data';
 
@@ -57,10 +61,41 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         shouldUsePercentStacking ||
         shared.extraSettings?.labelsPosition !== LabelsPositions.Outside;
 
+    let gradientColorMap: Record<string, string | null> = {};
+    const shouldSetColorByValues = graphs.some((s) =>
+        s.data.some((d: any) => !d.color && d.colorValue),
+    );
+    if (shouldSetColorByValues) {
+        const colorValues: number[] = [];
+        graphs.forEach((s) => {
+            s.data.forEach((d: any) => {
+                const colorValue = Number(d.colorValue);
+                if (Number.isFinite(colorValue)) {
+                    colorValues.push(colorValue);
+                }
+            });
+        });
+
+        const gradientColors = colorizeByColorValues({colorsConfig, colorValues});
+
+        gradientColorMap = gradientColors.reduce(
+            (acc, color, index) => {
+                acc[String(colorValues[index])] = color;
+
+                return acc;
+            },
+            {} as Record<string, string | null>,
+        );
+    }
+
     const series = graphs.map<BarYSeries>((graph) => {
         const labelFormatting = graph.dataLabels
-            ? mapToGravityChartValueFormat(graph.dataLabels)
+            ? mapToGravityChartValueFormat({field: labelField, formatSettings: graph.dataLabels})
             : undefined;
+        const shouldUsePercentageAsLabel =
+            labelFormatting &&
+            'labelMode' in labelFormatting &&
+            labelFormatting?.labelMode === 'percent';
         return {
             ...graph,
             type: 'bar-y',
@@ -76,9 +111,14 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                         0,
                     ) ?? 0;
                 const percentage = (d.y / total) * 100;
-                const label = labelFormatting?.labelMode === 'percent' ? percentage : originalLabel;
+                const label = shouldUsePercentageAsLabel ? percentage : originalLabel;
 
-                return {...other, y: x, x: y, label, total, percentage};
+                let color = d.color;
+                if (!color && typeof d.colorValue === 'number') {
+                    color = gradientColorMap[String(d.colorValue)];
+                }
+
+                return {...other, y: x, x: y, label, total, percentage, color};
             }),
             dataLabels: {
                 enabled: graph.dataLabels?.enabled,
@@ -86,6 +126,13 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 html: shouldUseHtmlForLabels,
                 format: labelFormatting,
             },
+            tooltip: graph.tooltip?.chartKitFormatting
+                ? {
+                      valueFormat: mapChartkitFormatSettingsToGravityChartValueFormat({
+                          chartkitFormatSettings: graph.tooltip,
+                      }),
+                  }
+                : undefined,
             custom: {
                 ...graph.custom,
                 colorValue: graph.colorValue,
@@ -136,13 +183,18 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         });
 
         config.legend = {
-            enabled: true,
+            enabled: shared.extraSettings?.legendMode !== 'hide',
             type: 'continuous',
             title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
             colorScale,
         };
-    } else if (graphs.length <= 1) {
-        config.legend = {enabled: false};
+    } else {
+        const shouldUseHtmlForLegend = isHtmlField(colorItem);
+        config.legend = {html: shouldUseHtmlForLegend};
+
+        if (graphs.length <= 1) {
+            config.legend.enabled = false;
+        }
     }
 
     if (xField) {

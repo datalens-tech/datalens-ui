@@ -21,7 +21,7 @@ import {copyData, downloadData, isExportVisible} from './utils';
 
 const i18n = I18n.keyset('chartkit.menu.export');
 
-const directExportAction = (
+export const directExportAction = (
     format: ExportFormatsType,
     onExportLoading?: ExportChartArgs['onExportLoading'],
 ) => {
@@ -98,6 +98,10 @@ const getSubItems = ({
         customConfig?.items?.find((item) => item.id === MenuItemsIds.EXPORT_CSV)?.action ??
         csvExportAction(chartsDataProvider, onExportLoading);
 
+    const xlsxAction =
+        customConfig?.items?.find((item) => item.id === MenuItemsIds.EXPORT_XLSX)?.action ??
+        directExportAction(EXPORT_FORMATS.XLSX, onExportLoading);
+
     if (customConfig?.actionWrapper) {
         csvAction = customConfig.actionWrapper(csvAction);
     }
@@ -109,7 +113,7 @@ const getSubItems = ({
             isVisible: ({loadedData, error}: MenuItemArgs) =>
                 isEnabledFeature(Feature.XlsxChartExportEnabled) &&
                 isExportVisible({loadedData, error}),
-            action: directExportAction(EXPORT_FORMATS.XLSX, onExportLoading),
+            action: xlsxAction,
         },
         {
             id: MenuItemsIds.EXPORT_CSV,

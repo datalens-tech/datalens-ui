@@ -4,7 +4,7 @@ import {slct} from '../../utils';
 import {RobotChartsDatasets} from '../../utils/constants';
 import {SectionDatasetQA} from '../../../src/shared';
 
-class DatasetSelector {
+class DatasetSelectorSettings {
     errorIconSelector = slct('dataset-error-icon');
 
     private page: Page;
@@ -61,4 +61,4 @@ class DatasetSelector {
     }
 }
 
-export default DatasetSelector;
+export default DatasetSelectorSettings;

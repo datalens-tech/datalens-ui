@@ -39,19 +39,14 @@ function getActionParamsEvents(
             };
         }
         case WizardVisualizationId.Line:
-        case WizardVisualizationId.LineD3:
         case WizardVisualizationId.Area:
         case WizardVisualizationId.Column:
         case WizardVisualizationId.Column100p:
-        case WizardVisualizationId.BarXD3:
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p:
         case WizardVisualizationId.Scatter:
-        case WizardVisualizationId.ScatterD3:
         case WizardVisualizationId.Pie:
-        case WizardVisualizationId.PieD3:
         case WizardVisualizationId.Donut:
-        case WizardVisualizationId.DonutD3:
         case WizardVisualizationId.CombinedChart: {
             return {
                 click: [{handler: {type: 'setActionParams'}, scope: 'point'}],

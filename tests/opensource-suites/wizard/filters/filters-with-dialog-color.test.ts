@@ -67,7 +67,7 @@ datalensTest.describe('Wizard filters', () => {
         async ({page}: {page: Page}) => {
             const dateFilterValues = ['2015-01-01', '2016-01-01'];
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.PieD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Pie);
 
             await wizardPage.createNewFieldWithFormula(
                 'order_year',

@@ -77,5 +77,5 @@ export default async (
 
     ctx.log('CHARTS_DATASET_FIELDS_PROCESSED');
 
-    return {...source, data};
+    return {...source, data, datasetFields};
 };

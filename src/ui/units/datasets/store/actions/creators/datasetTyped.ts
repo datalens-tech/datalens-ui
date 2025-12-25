@@ -9,20 +9,24 @@ import get from 'lodash/get';
 import {batch} from 'react-redux';
 import type {Dispatch} from 'redux';
 import type {
+    CollectionId,
     Dataset,
     DatasetAvatarRelation,
     DatasetField,
     DatasetSource,
     DatasetSourceAvatar,
     SourceListingOptions,
+    ValueOf,
     WorkbookId,
 } from 'shared';
 import {Feature, TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
 import type {
     BaseSource,
+    CreateCollectionDatasetArgs,
     CreateDatasetArgs,
     CreateDirDatasetArgs,
     CreateWorkbookDatasetArgs,
+    EntityBindingsArgs,
     GetEntryResponse,
     GetPreviewResponse,
     GetSourceResponse,
@@ -31,8 +35,10 @@ import type {
 import {sdk} from 'ui';
 import {BI_ERRORS} from 'ui/constants';
 import type {AppDispatch} from 'ui/store';
+import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
 import {loadRevisions, setEntryContent} from 'ui/store/actions/entryContent';
+import {showToast} from 'ui/store/actions/toaster';
 import {EDIT_HISTORY_ACTION} from 'ui/store/constants/editHistory';
 import type {EditHistoryUnit} from 'ui/store/reducers/editHistory';
 import type {EntryGlobalState} from 'ui/store/typings/entryContent';
@@ -40,6 +46,7 @@ import {RevisionsMode} from 'ui/store/typings/entryContent';
 import Utils, {getFilteredObject} from 'ui/utils';
 
 import type {ApplyData} from '../../../../../components/DialogFilter/DialogFilter';
+import {DIALOG_SHARED_ENTRY_PERMISSIONS} from '../../../../../components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {
@@ -54,7 +61,7 @@ import type {ActionTypeNotification} from '../../../helpers/dataset-error-helper
 import {getToastTitle} from '../../../helpers/dataset-error-helpers';
 import {getComponentErrorsByType} from '../../../helpers/datasets';
 import DatasetUtils, {getSourceListingValues} from '../../../helpers/utils';
-import {EDIT_HISTORY_OPTIONS_KEY, initialState} from '../../constants';
+import {ConnectionUpdateActions, EDIT_HISTORY_OPTIONS_KEY, initialState} from '../../constants';
 import {
     datasetContentSelector,
     datasetFieldsSelector,
@@ -75,7 +82,9 @@ import type {
     FreeformSource,
     SetCurrentDbName,
     SetCurrentTab,
+    SetDelegationFromConnToSharedDataset,
     SetLastModifiedTab,
+    SetSelectedConnectionDelegation,
     SetSourcesPagination,
     SetValidationState,
     SourcesPagination,
@@ -448,24 +457,12 @@ export function clickConnection({connectionId}: {connectionId: string}) {
         });
     };
 }
-export function addConnection({
-    connection,
-    editHistoryOptions,
-}: {
-    connection: ConnectionEntry;
+type ConnectionEntryWithDelegation = ConnectionEntry & {isDelegated?: boolean};
+export function addConnection(args: {
+    connection: ConnectionEntryWithDelegation;
     editHistoryOptions?: EditHistoryOptions;
 }) {
-    return (dispatch: DatasetDispatch) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.ADD_CONNECTION,
-            payload: {
-                connection,
-                [EDIT_HISTORY_OPTIONS_KEY]: {
-                    ...editHistoryOptions,
-                },
-            },
-        });
-    };
+    return changeConnection({...args, action: ConnectionUpdateActions.ADD});
 }
 export function deleteConnection({
     connectionId,
@@ -484,7 +481,8 @@ export function deleteConnection({
                 },
             },
         });
-
+        dispatch(setSharedConnectionDelegation(null));
+        dispatch(setDelegationFromConnToSharedDataset(null));
         const {
             dataset: {
                 selectedConnections,
@@ -621,27 +619,130 @@ export function replaceSource({
     };
 }
 
-export function replaceConnection({
+export function replaceConnection(args: {
+    connection: ConnectionEntryWithDelegation;
+    newConnection?: ConnectionEntryWithDelegation;
+    editHistoryOptions?: EditHistoryOptions;
+}) {
+    return changeConnection({...args, action: ConnectionUpdateActions.REPLACE});
+}
+
+export function changeConnection({
     connection,
     newConnection,
     editHistoryOptions,
+    action,
 }: {
-    connection?: ConnectionEntry;
-    newConnection?: ConnectionEntry;
+    connection: ConnectionEntryWithDelegation;
+    newConnection?: ConnectionEntryWithDelegation;
     editHistoryOptions?: EditHistoryOptions;
+    action: ValueOf<typeof ConnectionUpdateActions>;
 }) {
-    return (dispatch: DatasetDispatch) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.CONNECTION_REPLACE,
-            payload: {
-                connection,
-                newConnection,
-                [EDIT_HISTORY_OPTIONS_KEY]: {
-                    tab: TAB_SOURCES,
-                    ...editHistoryOptions,
-                },
-            },
-        });
+    return async (dispatch: DatasetDispatch, getState: GetState) => {
+        dispatch(setDelegationFromConnToSharedDataset(null));
+        dispatch(setSharedConnectionDelegation(null));
+
+        if (newConnection?.collectionId || connection.collectionId) {
+            const {id, workbookId} = getState().dataset;
+            const targetId = workbookId || id;
+            const sourceId = newConnection?.entryId || connection.entryId;
+            const connectionDelegegation = newConnection?.isDelegated ?? connection.isDelegated;
+            const isAlreadyBinded = typeof connectionDelegegation === 'boolean';
+            const needCheckBinding = targetId && sourceId && !isAlreadyBinded;
+
+            if (needCheckBinding) {
+                const result = await dispatch(
+                    getSharedConnectionDelegation({
+                        targetId,
+                        sourceId,
+                    }),
+                );
+                if (!result && result !== null) {
+                    return Promise.reject();
+                }
+            }
+
+            if (isAlreadyBinded) {
+                dispatch(setSharedConnectionDelegation(connectionDelegegation));
+            }
+
+            const {
+                ui: {selectedConnectionDelegationStatus},
+            } = getState().dataset;
+
+            if (selectedConnectionDelegationStatus === null) {
+                const promise = new Promise((resolveDialog, rejectDialog) => {
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_SHARED_ENTRY_PERMISSIONS,
+                            props: {
+                                open: true,
+                                onClose: () => {
+                                    dispatch(closeDialog());
+                                    rejectDialog(null);
+                                },
+                                entry: newConnection || connection,
+                                onApply: async (delegation) => {
+                                    if (id) {
+                                        const response = await dispatch(
+                                            createSharedConnectionBinding({
+                                                targetId: id,
+                                                sourceId:
+                                                    newConnection?.entryId || connection.entryId,
+                                                delegation,
+                                            }),
+                                        );
+                                        if (!response) {
+                                            rejectDialog(null);
+                                            return;
+                                        }
+                                    } else {
+                                        dispatch(setDelegationFromConnToSharedDataset(delegation));
+                                    }
+
+                                    dispatch(setSharedConnectionDelegation(delegation));
+
+                                    dispatch(closeDialog());
+                                    dispatch(closeDialog());
+                                    resolveDialog(null);
+                                },
+                            },
+                        }),
+                    );
+                });
+                await promise;
+            } else {
+                dispatch(closeDialog());
+            }
+        }
+
+        switch (action) {
+            case ConnectionUpdateActions.ADD:
+                dispatch({
+                    type: DATASET_ACTION_TYPES.ADD_CONNECTION,
+                    payload: {
+                        connection,
+                        [EDIT_HISTORY_OPTIONS_KEY]: {
+                            ...editHistoryOptions,
+                        },
+                    },
+                });
+                break;
+            case ConnectionUpdateActions.REPLACE:
+                dispatch({
+                    type: DATASET_ACTION_TYPES.CONNECTION_REPLACE,
+                    payload: {
+                        connection,
+                        newConnection,
+                        [EDIT_HISTORY_OPTIONS_KEY]: {
+                            tab: TAB_SOURCES,
+                            ...editHistoryOptions,
+                        },
+                    },
+                });
+                break;
+        }
+        return Promise.resolve();
     };
 }
 
@@ -1521,7 +1622,8 @@ export function getDbNames(connectionIds: string[]) {
 
 interface SaveDatasetProps {
     key?: string;
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
+    collectionId?: CollectionId;
     name?: string;
     history: History;
     isCreationProcess?: boolean;
@@ -1532,6 +1634,7 @@ interface SaveDatasetProps {
 export function saveDataset({
     key,
     workbookId,
+    collectionId,
     name,
     history,
     isCreationProcess,
@@ -1545,8 +1648,15 @@ export function saveDataset({
                 payload: {},
             });
 
-            const {entryContent, dataset: {id, content: dataset} = {}} = getState();
+            const {
+                entryContent,
+                dataset: {id, content: dataset, selectedConnections, savingDataset} = {},
+            } = getState();
             let datasetId = id;
+            const isSharedDataset =
+                DatasetUtils.isEnabledFeature(Feature.EnableSharedEntries) && Boolean(collectionId);
+            const sharedDatasetDelegationState =
+                savingDataset?.delegationFromConnToSharedDataset ?? null;
 
             if (isCreationProcess) {
                 const creationData: Partial<CreateDatasetArgs> = {
@@ -1556,6 +1666,9 @@ export function saveDataset({
 
                 if (workbookId) {
                     (creationData as CreateWorkbookDatasetArgs).workbook_id = workbookId;
+                    creationData.name = name;
+                } else if (collectionId) {
+                    (creationData as CreateCollectionDatasetArgs).collection_id = collectionId;
                     creationData.name = name;
                 } else {
                     const dividedKey = DatasetUtils.divideKey(key);
@@ -1578,6 +1691,20 @@ export function saveDataset({
                 });
 
                 dispatch(setValidationData(validation as unknown as ValidateDatasetResponse));
+            }
+
+            if (
+                isSharedDataset &&
+                selectedConnections?.[0].entryId &&
+                sharedDatasetDelegationState !== null
+            ) {
+                dispatch(
+                    createSharedConnectionBinding({
+                        sourceId: selectedConnections[0].entryId,
+                        targetId: datasetId!,
+                        delegation: sharedDatasetDelegationState,
+                    }),
+                );
             }
 
             if (!isCreationProcess) {
@@ -1628,7 +1755,11 @@ export function saveDataset({
                 history.replace(`/datasets/${datasetId}`);
                 DatasetUtils.openCreationWidgetPage({datasetId: datasetId!, target: '_self'});
             } else if (isCreationProcess) {
-                history.push(`/datasets/${datasetId}`);
+                if (isSharedDataset) {
+                    history.push(`/collections/${collectionId}`);
+                } else {
+                    history.push(`/datasets/${datasetId}`);
+                }
             }
 
             dispatch(resetEditHistoryUnit({unitId: DATASETS_EDIT_HISTORY_UNIT_ID}));
@@ -1834,10 +1965,53 @@ function setInitialSources(ids: string[]) {
     };
 }
 
-export function initializeDataset({connectionId}: {connectionId: string}) {
-    return async (dispatch: DatasetDispatch) => {
+export function initializeDataset({
+    connectionId,
+    collectionId,
+    workbookId,
+}: {
+    connectionId: string;
+    collectionId?: CollectionId;
+    workbookId?: WorkbookId;
+}) {
+    return async (dispatch: DatasetDispatch, getState: GetState) => {
         if (connectionId) {
             await dispatch(setInitialSources([connectionId]));
+        }
+
+        const state = getState();
+        const connection = selectedConnectionSelector(state);
+
+        if (workbookId && connection?.collectionId) {
+            await dispatch(
+                getSharedConnectionDelegation({
+                    targetId: workbookId,
+                    sourceId: connection.entryId,
+                }),
+            );
+        }
+
+        if (collectionId) {
+            if (connection) {
+                const onDelegate = (delegate: boolean) => {
+                    dispatch(setDelegationFromConnToSharedDataset(delegate));
+                    dispatch(setSharedConnectionDelegation(delegate));
+                    dispatch(closeDialog());
+                };
+
+                dispatch(
+                    openDialog({
+                        id: DIALOG_SHARED_ENTRY_PERMISSIONS,
+                        props: {
+                            // required delegation status, if user close dialog and ignore question
+                            onClose: onDelegate,
+                            onApply: onDelegate,
+                            open: true,
+                            entry: connection,
+                        },
+                    }),
+                );
+            }
         }
 
         dispatch(_getSources());
@@ -1852,9 +2026,11 @@ export function initializeDataset({connectionId}: {connectionId: string}) {
 export function initialFetchDataset({
     datasetId,
     rev_id,
+    bindedWorkbookId,
     isInitialFetch = true,
 }: {
     datasetId: string;
+    bindedWorkbookId?: string | null;
     rev_id?: string;
     isInitialFetch?: boolean;
 }) {
@@ -1882,11 +2058,21 @@ export function initialFetchDataset({
             });
 
             const {
+                collection_id: collectionId,
                 dataset: {sources = []},
                 options: {
                     preview: {enabled: previewEnabled},
                 },
             } = dataset;
+            let isDelegated: boolean | undefined;
+
+            if (dataset.collection_id && bindedWorkbookId) {
+                const result = await getSdk().sdk.us.getSharedEntryDelegation({
+                    sourceId: dataset.id,
+                    targetId: bindedWorkbookId,
+                });
+                isDelegated = result.isDelegated;
+            }
 
             const connectionsIds = new Set(
                 sources
@@ -1906,13 +2092,15 @@ export function initialFetchDataset({
                     dataset: dataset as Dataset,
                     publishedId,
                     currentRevId,
+                    isDelegated,
+                    collectionId: collectionId ?? null,
                 },
             });
 
             dispatch(_getSources());
 
             dispatch(validateDataset({initial: true}));
-
+            const state = getState();
             const {
                 dataset: {
                     content: {
@@ -1921,7 +2109,19 @@ export function initialFetchDataset({
                     } = {},
                     preview: {amountPreviewRows} = {},
                 } = {},
-            } = getState();
+            } = state;
+            const selectedConnection = selectedConnectionSelector(state);
+
+            if (selectedConnection?.collectionId) {
+                const targetId = workbookId || dataset.id;
+
+                dispatch(
+                    getSharedConnectionDelegation({
+                        targetId,
+                        sourceId: selectedConnection.entryId,
+                    }),
+                );
+            }
 
             if (previewEnabled) {
                 if (loadPreviewByDefault) {
@@ -2021,5 +2221,112 @@ export function getSourcesListingOptions(connectionId: string) {
         const currentDbName = getState().dataset.currentDbName;
 
         return {sourceListing, currentDbName};
+    };
+}
+
+export function setDelegationFromConnToSharedDataset(
+    delegation: boolean | null,
+): SetDelegationFromConnToSharedDataset {
+    return {
+        type: DATASET_ACTION_TYPES.SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET,
+        payload: delegation,
+    };
+}
+
+export function setSharedConnectionDelegation(
+    delegation: boolean | null,
+): SetSelectedConnectionDelegation {
+    return {
+        type: DATASET_ACTION_TYPES.SET_SELECTED_CONNECTION_DELEGATION,
+        payload: delegation,
+    };
+}
+
+export function getSharedConnectionDelegation({
+    targetId,
+    sourceId,
+}: Omit<EntityBindingsArgs, 'delegation'>) {
+    return async (dispatch: DatasetDispatch) => {
+        let delegation;
+        try {
+            const result = await getSdk().sdk.us.getSharedEntryDelegation(
+                {
+                    targetId,
+                    sourceId,
+                },
+                {concurrentId: 'getEntityBinding', retries: 2},
+            );
+            dispatch(setSharedConnectionDelegation(result.isDelegated));
+            delegation = result;
+        } catch (error) {
+            if (error.status === 404) {
+                dispatch(setSharedConnectionDelegation(null));
+                dispatch(setDelegationFromConnToSharedDataset(null));
+                delegation = null;
+            } else {
+                logger.logError('dataset: getSharedEntryDelegation failed', error);
+                dispatch(
+                    showToast({
+                        title: error.message,
+                        error,
+                    }),
+                );
+            }
+        }
+        return delegation;
+    };
+}
+
+function createSharedConnectionBinding({sourceId, targetId, delegation}: EntityBindingsArgs) {
+    return async (dispatch: DatasetDispatch) => {
+        let result;
+        try {
+            const response = await getSdk().sdk.us.createSharedEntryBinding(
+                {
+                    sourceId,
+                    targetId,
+                    delegation,
+                },
+                {concurrentId: 'createEntityBinding', retries: 2},
+            );
+            result = response;
+        } catch (error) {
+            logger.logError('dataset: getSharedEntryDelegation failed', error);
+            dispatch(
+                showToast({
+                    title: error.message,
+                    error,
+                }),
+            );
+        }
+        return result;
+    };
+}
+
+export function updateDatasetDelegation({delegation, sourceId, targetId}: EntityBindingsArgs) {
+    return async (dispatch: DatasetDispatch) => {
+        let result;
+        try {
+            const delegationResult = await getSdk().sdk.us.updateSharedEntryBinding({
+                sourceId,
+                targetId,
+                delegation,
+            });
+            if (delegationResult) {
+                dispatch({
+                    type: DATASET_ACTION_TYPES.SET_DATASET_DELEGATION,
+                    payload: delegationResult.isDelegated,
+                });
+            }
+            result = delegationResult;
+        } catch (error) {
+            dispatch(
+                showToast({
+                    title: error.message,
+                    error,
+                }),
+            );
+        }
+        return result;
     };
 }

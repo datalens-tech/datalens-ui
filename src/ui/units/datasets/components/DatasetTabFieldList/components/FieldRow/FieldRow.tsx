@@ -19,6 +19,7 @@ type FieldRowProps = {
     controlSettings?: FieldRowControlSettings;
     isValid?: boolean;
     field?: DatasetField;
+    readonly?: boolean;
 };
 
 type FieldRowControlProps = {
@@ -34,6 +35,9 @@ const FieldRowControl: React.FC<FieldRowControlProps> = ({
 }: FieldRowControlProps) => {
     switch (controlSettings.type) {
         case 'button':
+            if (controlSettings.readonly) {
+                return null;
+            }
             return (
                 <Button
                     view="flat"
@@ -81,11 +85,11 @@ const FieldRowControl: React.FC<FieldRowControlProps> = ({
 };
 
 export const FieldRow: React.FC<FieldRowProps> = (props: FieldRowProps) => {
-    const {columns, isHeader, height, controlSettings, field, isValid} = props;
+    const {columns, isHeader, height, controlSettings, field, isValid, readonly} = props;
 
     return (
         <div
-            className={b({header: isHeader, invalid: !isValid && !isHeader})}
+            className={b({header: isHeader, invalid: !isValid && !isHeader, readonly})}
             style={{height: height || 41}}
             data-qa={isHeader ? DatasetTabSectionQA.FieldRowHeader : DatasetTabSectionQA.FieldRow}
         >

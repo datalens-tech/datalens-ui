@@ -1,0 +1,656 @@
+/* eslint-disable complexity */
+import {DashTabItemType, TitlePlacementOption} from 'shared';
+import type {
+    DashTab,
+    DashTabItem,
+    DashTabItemControlData,
+    DashTabItemControlExternal,
+    DashTabItemGroupControl,
+    StringParams,
+} from 'shared';
+import type {PreparedCopyItemOptions} from '@gravity-ui/dashkit';
+import type {
+    PastedSelectorDialogState,
+    DialogEditItemFeaturesProp,
+    SelectorDialogState,
+    SelectorsGroupDialogState,
+    SetSelectorDialogItemArgs,
+    ItemDataSource,
+    SelectorsGroupValidation,
+    SelectorDialogValidation,
+} from '../../typings/controlDialog';
+import type {AppDispatch} from '../..';
+import {
+    getControlDefaultsForField,
+    getControlValidation,
+    getGroupControlValidation,
+    getItemDataSource,
+} from '../../utils/controlDialog';
+import isEmpty from 'lodash/isEmpty';
+import {
+    getBeforeCloseDialogItemAction,
+    getExtendedItemDataAction,
+} from 'ui/units/dash/store/actions/helpers';
+import {showToast} from '../toaster';
+import {I18n} from 'i18n';
+import type {ControlDialogStateItemMeta} from '../../reducers/controlDialog/controlDialog';
+import {getGroupSelectorDialogInitialState} from '../../reducers/controlDialog/controlDialog';
+import {DEFAULT_CONTROL_LAYOUT} from 'ui/components/DashKit/constants';
+import {COPIED_WIDGET_STORAGE_KEY} from 'ui/constants';
+import type {ConfigItemGroup} from '@gravity-ui/dashkit/helpers';
+import {DEFAULT_NAMESPACE} from '@gravity-ui/dashkit/helpers';
+import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
+import type {RealTheme} from '@gravity-ui/uikit';
+import {getPreparedCopyItemOptions, type CopiedConfigContext} from 'ui/units/dash/modules/helpers';
+import type {
+    SetItemDataArgs,
+    SetItemDataExternalControl,
+    SetItemDataGroupControl,
+    TabsHashStates,
+} from 'ui/units/dash/store/actions/dashTyped';
+import type {DatalensGlobalState} from 'ui/index';
+import {
+    selectActiveSelectorIndex,
+    selectIsControlSourceTypeHasChanged,
+    selectOpenedItemData,
+    selectOpenedItemId,
+    selectOpenedItemMeta,
+    selectSelectorDialog,
+    selectSelectorsGroup,
+    selectControlDialogFeatureByType,
+    selectControlDialogState,
+    selectDashChangesBuffer,
+} from '../../selectors/controlDialog';
+import {getValidScopeFields} from './helpers';
+import {selectTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {SELECTOR_DIALOG_TABS} from 'ui/store/constants/controlDialog';
+import {setTabs, SET_STATE, resetConnectionsUpdaters} from 'ui/units/dash/store/actions/dashTyped';
+import {isItemGlobal} from 'ui/units/dash/utils/selectors';
+
+const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
+
+export const INIT_DIALOG = Symbol('controlDialog/INIT_DIALOG');
+
+export type InitDialogAction = {
+    type: typeof INIT_DIALOG;
+    payload: {
+        id: string | null;
+        data: DashTabItem['data'];
+        type: DashTabItemType;
+        defaults?: StringParams | null;
+        features?: DialogEditItemFeaturesProp;
+        theme?: RealTheme;
+        titlePlaceholder?: string;
+        openedItemMeta: ControlDialogStateItemMeta;
+    };
+};
+
+export const initControlDialog = (payload: InitDialogAction['payload']): InitDialogAction => {
+    return {
+        type: INIT_DIALOG,
+        payload,
+    };
+};
+
+export const RESET_DIALOG = Symbol('controlDialog/RESET_DIALOG');
+
+export type ResetDialogAction = {
+    type: typeof RESET_DIALOG;
+};
+
+export const resetControlDialog = () => {
+    return (dispatch: AppDispatch) => {
+        dispatch(resetConnectionsUpdaters());
+        dispatch({type: RESET_DIALOG});
+    };
+};
+
+export const ADD_SELECTOR_TO_GROUP = Symbol('controlDialog/ADD_SELECTOR_TO_GROUP');
+
+export type AddSelectorToGroupAction = {
+    type: typeof ADD_SELECTOR_TO_GROUP;
+    payload: SetSelectorDialogItemArgs;
+};
+
+export const addSelectorToGroup = (
+    payload: AddSelectorToGroupAction['payload'],
+): AddSelectorToGroupAction => {
+    return {
+        type: ADD_SELECTOR_TO_GROUP,
+        payload,
+    };
+};
+
+export const UPDATE_SELECTORS_GROUP = Symbol('controlDialog/UPDATE_SELECTORS_GROUP');
+
+export type UpdateSelectorsGroupAction = {
+    type: typeof UPDATE_SELECTORS_GROUP;
+    payload: SelectorsGroupDialogState;
+};
+
+export const updateSelectorsGroup = (
+    payload: UpdateSelectorsGroupAction['payload'],
+): UpdateSelectorsGroupAction => {
+    return {
+        type: UPDATE_SELECTORS_GROUP,
+        payload,
+    };
+};
+
+export const SET_ACTIVE_SELECTOR_INDEX = Symbol('controlDialog/SET_ACTIVE_SELECTOR_INDEX');
+
+export type SetActiveSelectorIndexAction = {
+    type: typeof SET_ACTIVE_SELECTOR_INDEX;
+    payload: {
+        activeSelectorIndex: number;
+    };
+};
+
+export const setActiveSelectorIndex = (
+    payload: SetActiveSelectorIndexAction['payload'],
+): SetActiveSelectorIndexAction => {
+    return {
+        type: SET_ACTIVE_SELECTOR_INDEX,
+        payload,
+    };
+};
+
+export const SET_SELECTOR_DIALOG_ITEM = Symbol('controlDialog/SET_SELECTOR_DIALOG_ITEM');
+
+export type SetSelectorDialogItemAction = {
+    type: typeof SET_SELECTOR_DIALOG_ITEM;
+    payload: SetSelectorDialogItemArgs;
+};
+
+export const setSelectorDialogItem = (
+    payload: SetSelectorDialogItemAction['payload'],
+): SetSelectorDialogItemAction => {
+    return {
+        type: SET_SELECTOR_DIALOG_ITEM,
+        payload,
+    };
+};
+
+export const SET_LAST_USED_DATASET_ID = Symbol('controlDialog/SET_LAST_USED_DATASET_ID');
+export type SetLastUsedDatasetIdAction = {
+    type: typeof SET_LAST_USED_DATASET_ID;
+    payload: string;
+};
+
+export const setLastUsedDatasetId = (datasetId: string): SetLastUsedDatasetIdAction => ({
+    type: SET_LAST_USED_DATASET_ID,
+    payload: datasetId,
+});
+
+export const SET_LAST_USED_CONNECTION_ID = Symbol('controlDialog/SET_LAST_USED_CONNECTION_ID');
+export type SetLastUsedConnectionIdAction = {
+    type: typeof SET_LAST_USED_CONNECTION_ID;
+    payload: string;
+};
+
+export const setLastUsedConnectionId = (connectionId: string): SetLastUsedConnectionIdAction => ({
+    type: SET_LAST_USED_CONNECTION_ID,
+    payload: connectionId,
+});
+
+export const UPDATE_CONTROLS_VALIDATION = Symbol('controlDialog/UPDATE_CONTROLS_VALIDATION');
+
+export type UpdateControlsValidationAction = {
+    type: typeof UPDATE_CONTROLS_VALIDATION;
+    payload: {
+        groupValidation?: SelectorsGroupValidation;
+        itemsValidation?: SelectorDialogValidation;
+    };
+};
+
+export const updateControlsValidation = (
+    payload: UpdateControlsValidationAction['payload'],
+): UpdateControlsValidationAction => {
+    return {
+        type: UPDATE_CONTROLS_VALIDATION,
+        payload,
+    };
+};
+
+export const SET_ACTIVE_TAB = Symbol('controlDialog/SET_ACTIVE_TAB');
+
+export type SetActiveTabAction = {
+    type: typeof SET_ACTIVE_TAB;
+    payload: string;
+};
+
+export const setActiveTab = (payload: SetActiveTabAction['payload']): SetActiveTabAction => {
+    return {
+        type: SET_ACTIVE_TAB,
+        payload,
+    };
+};
+
+const isSelectorWithContext = (
+    selector: SelectorDialogState,
+): selector is PastedSelectorDialogState => {
+    return 'originalId' in selector;
+};
+
+export const applyGroupControlDialog = ({
+    setItemData,
+    closeDialog,
+    groupTabError,
+}: {
+    closeDialog: () => void;
+    setItemData: (newItemData: SetItemDataArgs) => void;
+    groupTabError: boolean;
+}) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
+        const state = getState();
+        const selectorsGroup = selectSelectorsGroup(state);
+        const activeSelectorIndex = selectActiveSelectorIndex(state);
+        const openedItemData = selectOpenedItemData(state);
+        const openedItemId = selectOpenedItemId(state);
+        const controlState = selectControlDialogState(state);
+        const features = selectControlDialogFeatureByType(state)(DashTabItemType.GroupControl);
+
+        let firstInvalidIndex: number | null = null;
+        const groupFieldNames: Record<string, string[]> = {};
+        selectorsGroup.group.forEach((groupItem) => {
+            if (groupItem.fieldName) {
+                const itemName = groupItem.title;
+                if (groupFieldNames[groupItem.fieldName] && itemName) {
+                    groupFieldNames[groupItem.fieldName].push(itemName);
+                }
+
+                if (!groupFieldNames[groupItem.fieldName] && itemName) {
+                    groupFieldNames[groupItem.fieldName] = [itemName];
+                }
+            }
+        });
+
+        const validatedSelectorsGroup = Object.assign({}, selectorsGroup);
+
+        // check validation for every control
+        for (let i = 0; i < validatedSelectorsGroup.group.length; i += 1) {
+            const validation = getControlValidation({
+                selectorDialog: validatedSelectorsGroup.group[i],
+                groupFieldNames,
+                selectorsGroup: validatedSelectorsGroup,
+            });
+
+            if (!isEmpty(validation) && firstInvalidIndex === null) {
+                firstInvalidIndex = i;
+            }
+
+            validatedSelectorsGroup.group[i].validation = validation;
+        }
+
+        validatedSelectorsGroup.validation = getGroupControlValidation({
+            selectorsGroup: validatedSelectorsGroup,
+        });
+
+        if (firstInvalidIndex !== null) {
+            const activeSelectorValidation =
+                validatedSelectorsGroup.group[activeSelectorIndex].validation;
+
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.SELECTORS));
+            if (!isEmpty(activeSelectorValidation)) {
+                dispatch(
+                    setSelectorDialogItem({
+                        validation: activeSelectorValidation,
+                    }),
+                );
+
+                return;
+            }
+            dispatch(setActiveSelectorIndex({activeSelectorIndex: firstInvalidIndex}));
+            return;
+        }
+
+        if (!isEmpty(validatedSelectorsGroup.validation)) {
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.GROUP));
+            return;
+        }
+
+        if (groupTabError) {
+            dispatch(setActiveTab(SELECTOR_DIALOG_TABS.GROUP));
+            return;
+        }
+
+        // Apply dashChangesBuffer if it exists
+        const dashChangesBuffer = selectDashChangesBuffer(state);
+        if (dashChangesBuffer) {
+            // Apply tabs changes
+            dispatch(setTabs(dashChangesBuffer.tabs));
+
+            // Apply hashStates changes
+            if (dashChangesBuffer.hashStates) {
+                dispatch({
+                    type: SET_STATE,
+                    payload: {
+                        hashStates: dashChangesBuffer.hashStates,
+                    },
+                });
+            }
+
+            // Reset buffer
+            dispatch(updateDashChangesBuffer({tabs: undefined, hashStates: undefined}));
+        }
+
+        const {enableAutoheightDefault} = features;
+        const isSingleControl = selectorsGroup.group.length === 1;
+
+        let autoHeight;
+        if (enableAutoheightDefault) {
+            autoHeight = true;
+        } else {
+            const hasButtons = selectorsGroup.buttonApply || selectorsGroup.buttonReset;
+            const hasGroupName =
+                selectorsGroup.showGroupName &&
+                (selectorsGroup.groupName || controlState.titlePlaceholder);
+            const hasTopPlacementTitle =
+                selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top;
+
+            if (!isSingleControl || hasButtons || hasGroupName || hasTopPlacementTitle) {
+                autoHeight = selectorsGroup.autoHeight;
+            } else {
+                autoHeight = false;
+            }
+        }
+        const updateControlsOnChange =
+            !isSingleControl && selectorsGroup.buttonApply
+                ? selectorsGroup.updateControlsOnChange
+                : false;
+
+        const contextList: SetItemDataArgs['contextList'] = [];
+
+        selectorsGroup.group.forEach((selector, index) => {
+            if (isSelectorWithContext(selector)) {
+                contextList.push({
+                    index,
+                    targetId: selector.originalId,
+                    targetEntryId: selector.targetEntryId,
+                    targetDashTabId: selector.targetDashTabId,
+                });
+            }
+        });
+
+        const isGlobal = isItemGlobal({
+            data: validatedSelectorsGroup,
+            type: DashTabItemType.GroupControl,
+        });
+
+        const tabId = selectTabId(state);
+
+        const {impactType, impactTabsIds} = getValidScopeFields({
+            impactType: selectorsGroup.impactType,
+            impactTabsIds: selectorsGroup.impactTabsIds,
+            tabId,
+            isGroupSetting: true,
+            isSingleControl,
+            isGlobal,
+        });
+
+        const data: SetItemDataGroupControl = {
+            autoHeight,
+            updateControlsOnChange,
+            showGroupName: selectorsGroup.showGroupName,
+            groupName: selectorsGroup.groupName,
+            buttonApply: selectorsGroup.buttonApply,
+            buttonReset: selectorsGroup.buttonReset,
+            group: selectorsGroup.group.map((selector) => {
+                let hasChangedSourceType = false;
+                if (openedItemId) {
+                    const configSelectorItem = (
+                        openedItemData as DashTabItemGroupControl['data']
+                    ).group?.find(({id}) => id === selector.id);
+
+                    // we check changing of sourceType only if selector was already saved and it's not the old one
+                    hasChangedSourceType = configSelectorItem
+                        ? configSelectorItem.sourceType !== selector.sourceType
+                        : false;
+                }
+
+                return {
+                    id: selector.id,
+                    title: selector.title,
+                    sourceType: selector.sourceType,
+                    source: getItemDataSource(selector),
+                    placementMode: isSingleControl ? 'auto' : selector.placementMode,
+                    width: isSingleControl ? '' : selector.width,
+                    defaults: getControlDefaultsForField(selector, hasChangedSourceType),
+                    namespace: selector.namespace,
+                    ...getValidScopeFields({
+                        impactType: selector.impactType,
+                        impactTabsIds: selector.impactTabsIds,
+                        tabId,
+                        isSingleControl,
+                        isGlobal,
+                    }),
+                };
+            }),
+            // if control is single we take the scope params from the control data
+            impactType: isSingleControl ? undefined : impactType,
+            impactTabsIds: isSingleControl ? undefined : impactTabsIds,
+        };
+
+        const getExtendedItemData = getExtendedItemDataAction();
+        const itemData = dispatch(
+            getExtendedItemData({data, type: DashTabItemType.GroupControl, contextList}),
+        );
+
+        setItemData(itemData);
+
+        closeDialog();
+    };
+};
+
+export const copyControlToStorage = (controlIndex: number) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
+        const state = getState();
+        const selectorsGroup = selectSelectorsGroup(state);
+        const activeSelectorIndex = selectActiveSelectorIndex(state);
+        const {
+            workbookId,
+            scope,
+            entryId,
+            namespace,
+            currentTabId: tabId,
+        } = selectOpenedItemMeta(state);
+        const validation = getControlValidation({
+            selectorDialog: selectorsGroup.group[controlIndex],
+            selectorsGroup,
+        });
+
+        if (!scope) {
+            return;
+        }
+
+        if (!isEmpty(validation)) {
+            if (activeSelectorIndex !== controlIndex) {
+                dispatch(setActiveSelectorIndex({activeSelectorIndex: controlIndex}));
+            }
+
+            dispatch(
+                setSelectorDialogItem({
+                    validation,
+                }),
+            );
+
+            dispatch(
+                showToast({
+                    type: 'danger',
+                    title: dialogI18n('label_copy-invalid-control'),
+                }),
+            );
+
+            return;
+        }
+
+        // logic is copied from dashkit
+        const selectorToCopy = selectorsGroup.group[controlIndex];
+
+        const copiedItem = {
+            id: selectorToCopy.id,
+            title: selectorToCopy.title,
+            sourceType: selectorToCopy.sourceType,
+            source: getItemDataSource(selectorToCopy) as DashTabItemControlData['source'],
+            defaults: getControlDefaultsForField(selectorToCopy),
+            namespace: namespace || DEFAULT_NAMESPACE,
+            width: '',
+            placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
+        };
+
+        const options: PreparedCopyItemOptions<CopiedConfigContext> = {
+            timestamp: Date.now(),
+            data: {
+                ...getGroupSelectorDialogInitialState(),
+                group: [copiedItem as unknown as ConfigItemGroup],
+            },
+            type: DashTabItemType.GroupControl,
+            defaults: copiedItem.defaults,
+            namespace: copiedItem.namespace,
+            layout: DEFAULT_CONTROL_LAYOUT,
+            targetId: selectorToCopy.id,
+        };
+
+        const preparedOptions = getPreparedCopyItemOptions(options, null, {
+            workbookId: workbookId ?? null,
+            fromScope: scope,
+            targetDashTabId: tabId,
+            targetEntryId: entryId,
+        });
+
+        localStorage.setItem(COPIED_WIDGET_STORAGE_KEY, JSON.stringify(preparedOptions));
+        // https://stackoverflow.com/questions/35865481/storage-event-not-firing
+        window.dispatchEvent(new Event('storage'));
+    };
+};
+
+const isValidExternalSource = (
+    dataSource: ItemDataSource,
+): dataSource is DashTabItemControlExternal['source'] => {
+    return typeof dataSource.chartId === 'string';
+};
+
+export const applyExternalControlDialog = ({
+    closeDialog,
+    setItemData,
+}: {
+    closeDialog: () => void;
+    setItemData: (newItemData: SetItemDataArgs) => void;
+}) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
+        const state = getState();
+        const selectorDialog = selectSelectorDialog(state);
+        const {title, sourceType, autoHeight, impactType, impactTabsIds} = selectorDialog;
+
+        const validation = getControlValidation({selectorDialog});
+
+        if (!isEmpty(validation)) {
+            dispatch(
+                setSelectorDialogItem({
+                    validation,
+                }),
+            );
+            return;
+        }
+
+        const hasChangedSourceType = selectIsControlSourceTypeHasChanged(state);
+        const defaults = getControlDefaultsForField(selectorDialog, hasChangedSourceType);
+
+        const dataSource = getItemDataSource(selectorDialog);
+
+        const tabId = selectTabId(state);
+
+        const isGlobal = isItemGlobal({
+            data: selectorDialog,
+            type: DashTabItemType.Control,
+        });
+
+        const data: SetItemDataExternalControl = {
+            title,
+            sourceType,
+            autoHeight,
+            source: isValidExternalSource(dataSource) ? dataSource : undefined,
+            ...getValidScopeFields({
+                impactType,
+                impactTabsIds,
+                tabId,
+                isGroupSetting: true,
+                isSingleControl: true,
+                isGlobal,
+            }),
+        };
+        const getExtendedItemData = getExtendedItemDataAction();
+        const itemData = dispatch(
+            getExtendedItemData({data, defaults, type: DashTabItemType.Control}),
+        );
+
+        setItemData(itemData);
+        closeDialog();
+    };
+};
+
+export const closeExternalControlDialog = ({closeDialog}: {closeDialog: () => void}) => {
+    return (dispatch: AppDispatch) => {
+        const beforeCloseDialogItem = getBeforeCloseDialogItemAction();
+        dispatch(beforeCloseDialogItem());
+        closeDialog();
+    };
+};
+
+export const SET_NEED_SIMILAR_SELECTORS_CHECK = Symbol(
+    'controlDialog/SET_NEED_SIMILAR_SELECTORS_CHECK',
+);
+
+export type SetNeedSimilarSelectorsCheckAction = {
+    type: typeof SET_NEED_SIMILAR_SELECTORS_CHECK;
+    payload: boolean;
+};
+
+export const setNeedSimilarSelectorsCheck = (
+    payload: SetNeedSimilarSelectorsCheckAction['payload'],
+): SetNeedSimilarSelectorsCheckAction => {
+    return {
+        type: SET_NEED_SIMILAR_SELECTORS_CHECK,
+        payload,
+    };
+};
+
+export const INIT_DASH_CHANGES_BUFFER = Symbol('controlDialog/INIT_DASH_CHANGES_BUFFER');
+
+export type InitDashChangesBufferAction = {
+    type: typeof INIT_DASH_CHANGES_BUFFER;
+    payload: {
+        tabs: DashTab[];
+        hashStates: TabsHashStates;
+    };
+};
+
+export const initDashChangesBuffer = (
+    payload: InitDashChangesBufferAction['payload'],
+): InitDashChangesBufferAction => {
+    return {
+        type: INIT_DASH_CHANGES_BUFFER,
+        payload,
+    };
+};
+
+export const UPDATE_DASH_CHANGES_BUFFER = Symbol('controlDialog/UPDATE_DASH_CHANGES_BUFFER');
+
+export type UpdateDashChangesBufferAction = {
+    type: typeof UPDATE_DASH_CHANGES_BUFFER;
+    payload: {
+        tabs?: DashTab[];
+        hashStates?: TabsHashStates;
+    };
+};
+
+export const updateDashChangesBuffer = (
+    payload: UpdateDashChangesBufferAction['payload'],
+): UpdateDashChangesBufferAction => {
+    return {
+        type: UPDATE_DASH_CHANGES_BUFFER,
+        payload,
+    };
+};

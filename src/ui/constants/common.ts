@@ -1,10 +1,10 @@
 import {UserRole} from 'shared/components/auth/constants/role';
+import {isNotAuthenticatedError} from 'ui/utils/errorContentTypes';
 
 import type {LineShapeType} from '../../shared';
 import {
     AppEnvironment,
     DeviceType,
-    ErrorContentTypes,
     FALLBACK_LANGUAGES,
     GRADIENT_PALETTES,
     GradientType,
@@ -167,10 +167,7 @@ export const DL = {
         return window.DL.landingPageSettings;
     },
     get IS_NOT_AUTHENTICATED() {
-        return (
-            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED ||
-            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED_GALLERY
-        );
+        return isNotAuthenticatedError(this.LANDING_PAGE_ERROR_TYPE);
     },
     get PUSH_SERVICE_CONFIG() {
         return window.DL.push;
@@ -337,8 +334,8 @@ export const URL_QUERY = {
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
     UNRELEASED: 'unreleased',
-    ENTRY_CONFIG: '_entry_config',
-    CHART_RECIPE: '_chart_recipe',
+    LOCAL_CONFIG: '_use_local_config',
+    BINDED_WOKRBOOK: 'bindedWorkbookId',
 };
 
 const GRADIENT_ICONS = {
