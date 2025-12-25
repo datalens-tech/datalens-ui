@@ -24,4 +24,5 @@ export type SourceDeclaration = {
     staging?: SourceEnvDeclaration;
     production?: SourceEnvDeclaration;
     prod?: SourceEnvDeclaration;
+    jest?: SourceEnvDeclaration;
 };

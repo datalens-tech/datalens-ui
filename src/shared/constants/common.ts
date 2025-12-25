@@ -12,6 +12,7 @@ export enum AppEnvironment {
     Development = 'development',
     Staging = 'staging',
     Prod = 'prod',
+    Jest = 'jest',
 }
 
 export enum AppMode {
