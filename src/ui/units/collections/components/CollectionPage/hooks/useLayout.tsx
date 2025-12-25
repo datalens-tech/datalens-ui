@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {DIALOG_ACCESS} from 'ui/components/AccessDialog';
 import {getParentCollectionPath} from 'ui/units/collections-navigation/utils';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -259,24 +260,47 @@ export const useLayout = ({
                             }}
                             onEditAccessClick={() => {
                                 if (collectionsAccessEnabled && curCollectionId && collection) {
-                                    dispatch(
-                                        openDialog({
-                                            id: DIALOG_IAM_ACCESS,
-                                            props: {
-                                                open: true,
-                                                resourceId: collection.collectionId,
-                                                resourceType: ResourceType.Collection,
-                                                resourceTitle: collection.title,
-                                                parentId: collection.parentId,
-                                                canUpdate: Boolean(
-                                                    collection.permissions?.updateAccessBindings,
-                                                ),
-                                                onClose: () => {
-                                                    dispatch(closeDialog());
-                                                },
-                                            },
-                                        }),
+                                    const isNewAccessDialogEnabled = isEnabledFeature(
+                                        Feature.EnableNewAccessDialog,
                                     );
+                                    if (isNewAccessDialogEnabled) {
+                                        dispatch(
+                                            openDialog({
+                                                id: DIALOG_ACCESS,
+                                                props: {
+                                                    collectionId: collection.collectionId,
+                                                    resourceTitle: collection.title,
+                                                    canUpdateAccessBindings: Boolean(
+                                                        collection.permissions
+                                                            ?.updateAccessBindings,
+                                                    ),
+                                                    onClose: () => {
+                                                        dispatch(closeDialog());
+                                                    },
+                                                },
+                                            }),
+                                        );
+                                    } else {
+                                        dispatch(
+                                            openDialog({
+                                                id: DIALOG_IAM_ACCESS,
+                                                props: {
+                                                    open: true,
+                                                    resourceId: collection.collectionId,
+                                                    resourceType: ResourceType.Collection,
+                                                    resourceTitle: collection.title,
+                                                    parentId: collection.parentId,
+                                                    canUpdate: Boolean(
+                                                        collection.permissions
+                                                            ?.updateAccessBindings,
+                                                    ),
+                                                    onClose: () => {
+                                                        dispatch(closeDialog());
+                                                    },
+                                                },
+                                            }),
+                                        );
+                                    }
                                 }
                             }}
                         />

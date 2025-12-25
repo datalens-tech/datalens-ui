@@ -93,6 +93,7 @@ export enum Feature {
     EnableSharedEntries = 'EnableSharedEntries',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+
     /** enabled redesign/moving to drawers existing settings */
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
     /** Enable a setting in the Selector settings dialog that allows you to make the selector pass-through for all or several tabs */
@@ -103,6 +104,8 @@ export enum Feature {
     EnableDashColorPickersByTheme = 'EnableDashColorPickersByTheme',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
+    /** Enable new access dialog (AccessDialog) */
+    EnableNewAccessDialog = 'EnableNewAccessDialog',
 }
 
 export type FeatureConfig = Record<string, boolean>;

@@ -228,7 +228,9 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
         {
             ...CONTEXT_MENU_COPY_LINK,
             scopes: getAllEntryScopes(),
-            isVisible: (params) => !isVisibleEntryContextShareItem(params),
+            isVisible: (params) =>
+                !isVisibleEntryContextShareItem(params) &&
+                !isEnabledFeature(Feature.EnableNewAccessDialog),
         },
         {
             ...CONTEXT_MENU_COPY_ID,
@@ -246,7 +248,9 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             text: 'value_share',
             enable: () => true,
             scopes: getAllEntryScopes(),
-            isVisible: isVisibleEntryContextShareItem,
+            isVisible: (params) =>
+                isVisibleEntryContextShareItem(params) &&
+                !isEnabledFeature(Feature.EnableNewAccessDialog),
         },
         {
             id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,

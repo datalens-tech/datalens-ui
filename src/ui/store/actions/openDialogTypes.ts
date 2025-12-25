@@ -58,6 +58,7 @@ import type {OpenDialogReleaseVersionArgs} from 'ui/components/AsideHeaderAdapte
 import type {OpenDialogExportWorkbookArgs} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import type {OpenDialogDefaultArgs} from 'ui/components/DialogDefault/DialogDefault';
 import type {OpenDialogEntryDescriptionArgs} from 'ui/components/DialogEntryDescription/DialogEntryDescriptionWrapper';
+import type {OpenDialogAccessDialogArgs} from 'ui/components/AccessDialog';
 import type {OpenDialogSharedEntryBindingArgs} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 import type {OpenDialogSharedEntryUnbindArgs} from 'ui/components/DialogSharedEntryUnbind/DialogSharedEntryUnbind';
 import type {OpenDialogSharedEntryPermissionsArgs} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
@@ -125,6 +126,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogCollectionNoCreatePermissionArgs
     | OpenDialogExportWorkbookArgs
     | OpenDialogDefaultArgs
+    | OpenDialogAccessDialogArgs
     | OpenDialogSharedEntryBindingArgs
     | OpenDialogSharedEntryUnbindArgs
     | OpenDialogSharedEntryPermissionsArgs
