@@ -170,7 +170,7 @@ export const ChartAlert = (props: ChartAlertProps) => {
             getPreparedConstants({
                 isLoading,
                 error,
-                loadedData: loadedData,
+                loadedData,
                 isReloadWithNoVeil: false,
                 noLoader: false,
                 noVeil: true,
