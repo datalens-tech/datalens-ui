@@ -1,16 +1,18 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {usePrevious} from 'hooks';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
+import {Feature} from 'shared';
 import {useLoadingChart} from 'ui/components/Widgets/Chart/hooks/useLoadingChart';
 import {DL} from 'ui/constants/common';
+import {usePrevious} from 'ui/hooks';
 import {DatalensChartkitContent} from 'ui/libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
 import Loader from 'ui/libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import {getDataProviderData} from 'ui/libs/DatalensChartkit/components/ChartKitBase/helpers';
 import settings from 'ui/libs/DatalensChartkit/modules/settings/settings';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {
     COMPONENT_CLASSNAME,
@@ -24,10 +26,12 @@ import type {
     CurrentRequestState,
     DataProps,
 } from './types';
+import {checkIsGravityWidgetData, getAlertsGravityLoadedData} from './utils-chart-alert';
 
 import './Chart.scss';
 
 const b = block(COMPONENT_CLASSNAME);
+const IS_GRAVITY_CHARTS_ENABLED = isEnabledFeature(Feature.GravityChartsForLineAreaAndBarX);
 
 /**
  * changing any fields in list triggers loading widget chart data (by api/run)
@@ -47,6 +51,8 @@ const influencingProps: Array<keyof ChartWidgetPropsWithContext> = [
  */
 export const ChartAlert = (props: ChartAlertProps) => {
     const {
+        alarm,
+        condition,
         dataProvider,
         forwardedRef,
         config,
@@ -54,6 +60,8 @@ export const ChartAlert = (props: ChartAlertProps) => {
         onChartRender,
         onChartLoad,
         onLoadStart,
+        selectedSeriesNames = [],
+        yAxisIndex,
     } = props;
 
     const chartkitParams = React.useMemo(
@@ -115,7 +123,7 @@ export const ChartAlert = (props: ChartAlertProps) => {
     }, [requestCancellationRef, dataProvider, requestId]);
 
     const {
-        loadedData,
+        loadedData: originalLoadedData,
         isLoading,
         error,
         handleRenderChart,
@@ -137,8 +145,25 @@ export const ChartAlert = (props: ChartAlertProps) => {
         onChartLoad,
         ignoreUsedParams: true,
         clearedOuterParams,
-        enableActionParams: true,
     });
+
+    const loadedData = React.useMemo(() => {
+        if (
+            !IS_GRAVITY_CHARTS_ENABLED ||
+            !checkIsGravityWidgetData(originalLoadedData) ||
+            typeof yAxisIndex !== 'number'
+        ) {
+            return originalLoadedData;
+        }
+
+        return getAlertsGravityLoadedData({
+            alarm,
+            condition,
+            loadedData: originalLoadedData,
+            selectedSeriesNames,
+            yAxisIndex,
+        });
+    }, [alarm, condition, originalLoadedData, selectedSeriesNames, yAxisIndex]);
 
     const {mods} = React.useMemo(
         () =>
