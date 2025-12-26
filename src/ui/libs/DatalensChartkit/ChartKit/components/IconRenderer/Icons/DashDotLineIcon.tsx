@@ -2,7 +2,11 @@ import React from 'react';
 
 import type {CommonIconProps} from '../types';
 
-const DashDotLineIcon: React.FC<CommonIconProps> = ({height, width}: CommonIconProps) => (
+const DashDotLineIcon: React.FC<CommonIconProps> = ({
+    height,
+    width,
+    strokeWidth,
+}: CommonIconProps) => (
     <svg
         width={width}
         height={height}
@@ -15,6 +19,7 @@ const DashDotLineIcon: React.FC<CommonIconProps> = ({height, width}: CommonIconP
             clipRule="evenodd"
             d="M30 2h8V0h-8v2zM8 2h8V0H8v2zM22 2h2V0h-2v2zM0 2h2V0H0v2z"
             fill="currentColor"
+            strokeWidth={strokeWidth}
         />
     </svg>
 );

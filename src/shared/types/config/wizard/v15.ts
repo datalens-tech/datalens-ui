@@ -311,6 +311,8 @@ export type V15ColorsConfig = {
 
 export type V15ShapesConfig = {
     mountedShapes?: Record<string, string>;
+    lineWidth?: number;
+    lineWidthPlus?: number;
     fieldGuid?: string;
 };
 

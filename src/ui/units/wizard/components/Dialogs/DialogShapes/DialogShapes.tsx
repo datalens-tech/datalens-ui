@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Shapes4} from '@gravity-ui/icons';
-import {Button, Dialog, Icon} from '@gravity-ui/uikit';
+import {Button, Dialog, Flex, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
@@ -9,7 +9,9 @@ import type {DatasetOptions, Field, FilterField, ShapesConfig, Update} from 'sha
 
 import type {PaletteTypes} from '../../../constants';
 
+import {DialogLineWidth} from './DialogLineWidth/DialogLineWidth';
 import DialogShapesPalette from './DialogShapesPalette/DialogShapesPalette';
+import {DialogValueList} from './DialogValueList/DialogValueList';
 
 import './DialogShapes.scss';
 
@@ -41,6 +43,7 @@ export type OpenDialogShapesArgs = {
 export type ShapesState = {
     mountedShapes: Record<string, string>;
     selectedValue: string | null;
+    lineWidth?: number;
 };
 
 const DialogShapes: React.FC<Props> = ({
@@ -64,6 +67,7 @@ const DialogShapes: React.FC<Props> = ({
             shapesConfig.mountedShapes && Object.keys(shapesConfig.mountedShapes)
                 ? shapesConfig.mountedShapes
                 : {},
+        lineWidth: shapesConfig.lineWidth,
     });
 
     const onPaletteItemClick = React.useCallback(
@@ -102,11 +106,12 @@ const DialogShapes: React.FC<Props> = ({
     const onApplyButtonClick = React.useCallback(() => {
         const shapesConfig: ShapesConfig = {
             mountedShapes: shapesState.mountedShapes,
+            lineWidth: shapesState.lineWidth,
             fieldGuid: item.guid,
         };
         onApply(shapesConfig);
         onClose();
-    }, [item.guid, onApply, onClose, shapesState.mountedShapes]);
+    }, [item.guid, onApply, onClose, shapesState.lineWidth, shapesState.mountedShapes]);
 
     return (
         <Dialog onClose={onClose} open={true}>
@@ -120,23 +125,38 @@ const DialogShapes: React.FC<Props> = ({
                     caption={i18n('wizard', 'label_shapes-settings')}
                 />
                 <Dialog.Body>
-                    <DialogShapesPalette
+                    <DialogValueList
+                        item={item}
+                        items={items}
+                        distincts={distincts}
+                        filters={filters}
                         parameters={parameters}
                         dashboardParameters={dashboardParameters}
+                        updates={updates}
+                        options={options}
+                        datasetId={datasetId}
                         shapesState={shapesState}
+                        paletteType={paletteType}
                         setShapesState={(state) =>
                             setShapesState((prevState) => ({...prevState, ...state}))
                         }
-                        onPaletteItemClick={onPaletteItemClick}
-                        distincts={distincts}
-                        items={items}
-                        item={item}
-                        datasetId={datasetId}
-                        updates={updates}
-                        filters={filters}
-                        options={options}
-                        paletteType={paletteType}
                     />
+                    <Flex direction="column" gap={4} spacing={{py: '5', px: '6'}}>
+                        <DialogLineWidth
+                            value={shapesState.lineWidth || null}
+                            onChange={(nextLineWidth: number) => {
+                                setShapesState((prevState) => ({
+                                    ...prevState,
+                                    lineWidth: nextLineWidth,
+                                }));
+                            }}
+                        />
+                        <DialogShapesPalette
+                            shapesState={shapesState}
+                            onPaletteItemClick={onPaletteItemClick}
+                            paletteType={paletteType}
+                        />
+                    </Flex>
                 </Dialog.Body>
                 <Dialog.Footer
                     preset="default"

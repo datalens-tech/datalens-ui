@@ -16,6 +16,7 @@ interface NumberInputProps {
 const b = block('wizard-number-input');
 const DEFAULT_VALUE = 0;
 
+// CHARTS-10226: refactor and move up the tree?
 const NumberInput: React.FC<NumberInputProps> = ({
     value,
     onChange,
@@ -41,11 +42,14 @@ const NumberInput: React.FC<NumberInputProps> = ({
         onChange(newValue);
     }, [min, onChange, value]);
 
-    const memorizedInputAttrs = React.useMemo(() => ({min, max}), [min, max]);
+    const memorizedInputAttrs: React.InputHTMLAttributes<HTMLInputElement> = React.useMemo(
+        () => ({min, max, style: {textAlign: 'center'}}),
+        [min, max],
+    );
 
     return (
         <div className={b()}>
-            <Button pin="round-brick" onClick={onMinus}>
+            <Button view="outlined" pin="round-brick" onClick={onMinus}>
                 -
             </Button>
             <TextInput
@@ -56,8 +60,9 @@ const NumberInput: React.FC<NumberInputProps> = ({
                 value={String(value)}
                 onBlur={onBlur}
                 onUpdate={onInput}
+                className={b('text-input')}
             />
-            <Button pin="brick-round" onClick={onPlus}>
+            <Button view="outlined" pin="brick-round" onClick={onPlus}>
                 +
             </Button>
         </div>
