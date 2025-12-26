@@ -7,7 +7,7 @@ import type {
     DLUser,
     TenantSettings,
 } from '../../../shared';
-import {FALLBACK_LANGUAGES, Feature, Language, USER_SETTINGS_KEY} from '../../../shared';
+import {FALLBACK_LANGUAGES, Language, USER_SETTINGS_KEY} from '../../../shared';
 import type {AppLayoutSettings, GetLayoutConfig} from '../../types/app-layout';
 import {addTranslationsScript} from '../../utils/language';
 import {getUserInfo} from '../zitadel/utils';
@@ -72,11 +72,6 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         };
     }
 
-    const isRebrandingEnabled = req.ctx.get('isEnabledServerFeature')(Feature.EnableDLRebranding);
-
-    // applying new favicon from rebranding
-    const faviconUrl = isRebrandingEnabled ? '/os-favicon.ico' : config.faviconUrl;
-
     const tenantSettings: TenantSettings = {
         defaultColorPaletteId: res.locals.tenantDefaultColorPaletteId,
     };
@@ -115,7 +110,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         lang,
         icon: {
             type: 'image/ico',
-            href: faviconUrl,
+            href: config.faviconUrl,
             sizes: '32x32',
         },
         inlineScripts: ['window.DL = window.__DATA__.DL', ...chartkitInlineScripts],
