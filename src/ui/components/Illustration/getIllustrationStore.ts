@@ -3,7 +3,7 @@ export const getIllustrationStore = () => ({
         notFound: () => import('assets/images/illustration/light/404.svg'),
         notFoundError: () => import('assets/images/illustration/light/404.svg'),
         noAccess: () => import('assets/images/illustration/light/403.svg'),
-        error: () => import('assets/images/new-illustrations/light/500.svg'),
+        error: () => import('assets/images/illustrations/light/500.svg'),
         identity: () => import('assets/images/illustrations/light/no_permission.svg'),
         project: () => import('assets/images/illustrations/light/project.svg'),
         template: () => import('assets/images/illustrations/light/empty_state.svg'),

@@ -110,7 +110,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         lang,
         icon: {
             type: 'image/ico',
-            href: '/os-favicon.ico',
+            href: config.faviconUrl,
             sizes: '32x32',
         },
         inlineScripts: ['window.DL = window.__DATA__.DL', ...chartkitInlineScripts],
