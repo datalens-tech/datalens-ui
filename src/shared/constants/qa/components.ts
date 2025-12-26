@@ -190,7 +190,7 @@ export enum PreviewQa {
     ChartWrapper = 'preview-chart-wrapper',
 }
 
-export enum DatalensTabs {
+export enum DatalensTabsQa {
     MobileItem = 'dash-mobile-tab-item',
     Item = 'dash-tab-item',
     SwitcherItem = 'dash-tab-switcher-item',
