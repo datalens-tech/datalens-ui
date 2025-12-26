@@ -57,10 +57,13 @@ import {
     TAB_SOURCES,
     TOASTERS_NAMES,
 } from '../../../constants';
-import type {ActionTypeNotification} from '../../../helpers/dataset-error-helpers';
 import {getToastTitle} from '../../../helpers/dataset-error-helpers';
 import {getComponentErrorsByType} from '../../../helpers/datasets';
 import DatasetUtils, {getSourceListingValues} from '../../../helpers/utils';
+import type {
+    ConnectionEntryWithDelegation,
+    UpdateDatasetByValidationProps,
+} from '../../../typings/redux';
 import {ConnectionUpdateActions, EDIT_HISTORY_OPTIONS_KEY, initialState} from '../../constants';
 import {
     datasetContentSelector,
@@ -457,7 +460,7 @@ export function clickConnection({connectionId}: {connectionId: string}) {
         });
     };
 }
-type ConnectionEntryWithDelegation = ConnectionEntry & {isDelegated?: boolean};
+
 export function addConnection(args: {
     connection: ConnectionEntryWithDelegation;
     editHistoryOptions?: EditHistoryOptions;
@@ -1840,13 +1843,6 @@ export function fetchFieldTypes() {
 
         return types;
     };
-}
-
-interface UpdateDatasetByValidationProps {
-    actionTypeNotification?: ActionTypeNotification;
-    compareContent?: boolean;
-    updatePreview?: boolean;
-    validateEnabled?: boolean;
 }
 
 export function updateDatasetByValidation({
