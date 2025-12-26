@@ -1,6 +1,6 @@
 @import './variables.scss';
 
-.g-root {
+.g-root:not(#{$customThemeRoot}) {
     --dl-color-export-loading-toast: var(--g-color-private-brand-100-solid);
     --gn-aside-header-item-icon-color: var(--g-color-text-primary);
 }
