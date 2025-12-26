@@ -1,21 +1,41 @@
-import type {AppContext} from '@gravity-ui/nodekit';
-import {crc32c} from '@node-rs/crc32';
-import type {RequiredUriUrl} from 'request';
-import type {RequestPromise, RequestPromiseOptions} from 'request-promise-native';
-import requestPromise from 'request-promise-native';
+import type {IncomingMessage, OutgoingHttpHeaders} from 'http';
+import querystring from 'node:querystring';
 
+import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
+import {crc32c} from '@node-rs/crc32';
+import type {AxiosInstance, AxiosRequestConfig, RawAxiosRequestHeaders} from 'axios';
+import axios from 'axios';
+import axiosRetry from 'axios-retry';
+
+import {DEFAULT_TIMEOUT} from '../../../../../shared/constants/timeout';
+import {getAxios} from '../../../axios';
 import {CacheClient} from '../../../cache-client';
 import {config} from '../../constants';
 import {hideSensitiveData} from '../utils';
 
-type RequestOptions = RequiredUriUrl &
-    RequestPromiseOptions & {useCaching?: boolean; signal: AbortSignal};
+type RequestOptions = Omit<AxiosRequestConfig, 'headers'> & {
+    useCaching?: boolean;
+    signal: AbortSignal;
+    uri?: string; // Для обратной совместимости, мапится в url
+    form?: unknown; // Для обратной совместимости
+    json?: boolean; // Для обратной совместимости
+    qs?: Record<string, unknown>; // Query string params
+    body?: unknown; // Request body
+    headers?: OutgoingHttpHeaders | RawAxiosRequestHeaders; // Support both Node.js and Axios headers
+};
 
 type CachedRequestOptions = RequestOptions & {
     uri: string;
     ctx: AppContext;
     spCacheDuration: string | number | null;
 };
+
+// Интерфейс для псевдо-объекта request instance (совместимость с dataLengthCheck)
+interface RequestInstanceLike {
+    abort: () => void;
+    emit: (event: string, error: Error) => void;
+    _started?: boolean;
+}
 
 const isCachedRequestOptions = (
     options: RequestOptions | CachedRequestOptions,
@@ -33,31 +53,54 @@ const CACHE_PREFIX = 'sp';
 
 let cacheClient: CacheClient;
 
-const requestWithPresets = requestPromise.defaults({
-    transform: (body, response) => {
-        if (
-            typeof body === 'string' &&
-            // Stat in qloud do no return content-type with code 204
-            response.headers['content-type'] &&
-            response.headers['content-type'].indexOf('application/json') > -1
-        ) {
-            try {
-                response.body = JSON.parse(body);
-            } catch (e) {
-                response.body = body;
-            }
+// Типобезопасная конвертация OutgoingHttpHeaders в RawAxiosRequestHeaders
+function normalizeHeaders(
+    headers: OutgoingHttpHeaders | RawAxiosRequestHeaders | undefined,
+): RawAxiosRequestHeaders | undefined {
+    if (!headers) {
+        return undefined;
+    }
+
+    const normalized: RawAxiosRequestHeaders = {};
+
+    for (const [key, value] of Object.entries(headers)) {
+        if (value === undefined) {
+            continue;
         }
 
-        return response;
-    },
-    useQuerystring: true,
-    maxRedirects: 0,
-    followAllRedirects: true,
-});
+        // Конвертируем string[] в строку через join
+        if (Array.isArray(value)) {
+            normalized[key] = value.join(', ');
+        } else if (typeof value === 'string' || typeof value === 'number') {
+            normalized[key] = value;
+        }
+        // Пропускаем другие типы которые не поддерживаются Axios
+    }
+
+    return normalized;
+}
 
 export class Request {
-    static init({cacheClientInstance}: {cacheClientInstance: CacheClient}) {
+    private static axiosInstance: AxiosInstance;
+
+    static init({
+        cacheClientInstance,
+        config: appConfig,
+    }: {
+        cacheClientInstance: CacheClient;
+        config?: AppConfig;
+    }) {
         cacheClient = cacheClientInstance;
+
+        if (appConfig) {
+            this.axiosInstance = getAxios(appConfig);
+        } else {
+            // Fallback для обратной совместимости
+            this.axiosInstance = axios.create({
+                timeout: DEFAULT_TIMEOUT,
+            });
+            axiosRetry(this.axiosInstance, {retries: 0});
+        }
     }
 
     static request({
@@ -77,7 +120,7 @@ export class Request {
             throw new Error(signal.reason);
         }
 
-        function dataLengthCheck(requestInstance: RequestPromise) {
+        function dataLengthCheck(requestInstance: RequestInstanceLike) {
             let bufferLength = 0;
 
             return function (chunk: Buffer | string) {
@@ -118,10 +161,85 @@ export class Request {
         dataLengthCheck,
     }: {
         requestOptions: RequestOptions;
-        dataLengthCheck: (requestInstance: RequestPromise) => (data: Buffer | string) => void;
+        dataLengthCheck: (requestInstance: RequestInstanceLike) => (data: Buffer | string) => void;
     }) {
-        const requestInstance = requestWithPresets(requestOptions);
-        return requestInstance.on('data', dataLengthCheck(requestInstance));
+        const axiosConfig: AxiosRequestConfig = {
+            ...this.mapRequestOptions(requestOptions),
+            responseType: 'stream',
+            signal: requestOptions.signal,
+        };
+
+        return this.axiosInstance
+            .request<IncomingMessage>(axiosConfig)
+            .then((response) => {
+                const stream = response.data;
+                const chunks: Buffer[] = [];
+
+                // Создаём псевдо-объект для callback совместимости
+                const requestInstance: RequestInstanceLike = {
+                    abort: () => stream.destroy(),
+                    emit: (event: string, error: Error) => {
+                        if (event === 'error') {
+                            stream.destroy(error);
+                        }
+                    },
+                    _started: true, // Для совместимости с dataLengthCheck
+                };
+
+                const onData = dataLengthCheck(requestInstance);
+
+                return new Promise<{
+                    statusCode: number;
+                    body: unknown;
+                    headers: Record<string, unknown>;
+                }>((resolve, reject) => {
+                    stream.on('data', (chunk: Buffer) => {
+                        chunks.push(chunk);
+                        try {
+                            onData(chunk);
+                        } catch (error) {
+                            // dataLengthCheck бросил ошибку о превышении лимита
+                            const errorMessage = (error as Error).message;
+                            if (
+                                errorMessage === REQUEST_SIZE_LIMIT_EXCEEDED ||
+                                errorMessage === ALL_REQUESTS_SIZE_LIMIT_EXCEEDED
+                            ) {
+                                // Оборачиваем в "Error: " для совместимости с isFetchLimitError()
+                                const wrappedError = Object.assign(
+                                    new Error(`Error: ${errorMessage}`),
+                                    {code: errorMessage},
+                                );
+                                stream.destroy();
+                                reject(wrappedError);
+                            } else {
+                                stream.destroy();
+                                reject(error);
+                            }
+                        }
+                    });
+
+                    stream.on('end', () => {
+                        const buffer = Buffer.concat(chunks);
+                        const body = this.parseResponse(buffer, response.headers);
+
+                        // Создаём response в формате request-promise
+                        const result = {
+                            statusCode: response.status,
+                            body,
+                            headers: response.headers,
+                        };
+
+                        resolve(result);
+                    });
+
+                    stream.on('error', (error) => {
+                        reject(error);
+                    });
+                });
+            })
+            .catch((error) => {
+                throw this.normalizeError(error);
+            });
     }
 
     static cacheRequest({
@@ -129,7 +247,7 @@ export class Request {
         dataLengthCheck,
     }: {
         requestOptions: CachedRequestOptions;
-        dataLengthCheck: (requestInstance: RequestPromise) => (data: Buffer | string) => void;
+        dataLengthCheck: (requestInstance: RequestInstanceLike) => (data: Buffer | string) => void;
     }) {
         const {uri, ctx} = requestOptions;
         let {spCacheDuration, useCaching} = requestOptions;
@@ -265,5 +383,96 @@ export class Request {
 
                 throw error;
             });
+    }
+
+    // Маппинг опций request → axios
+    private static mapRequestOptions(options: RequestOptions): AxiosRequestConfig {
+        const axiosConfig: AxiosRequestConfig = {
+            url: options.uri || options.url,
+            method: options.method,
+            headers: normalizeHeaders(options.headers),
+            timeout: options.timeout,
+            maxRedirects: 0,
+        };
+
+        // Body handling
+        if (options.body !== undefined) {
+            axiosConfig.data = options.body;
+        }
+
+        // Form data handling
+        if (options.form !== undefined) {
+            axiosConfig.data =
+                typeof options.form === 'string'
+                    ? options.form
+                    : querystring.stringify(
+                          options.form as Record<string, string | number | boolean>,
+                      );
+            axiosConfig.headers = {
+                ...axiosConfig.headers,
+                'content-type': 'application/x-www-form-urlencoded',
+            };
+        }
+
+        // Query params
+        if (options.qs) {
+            axiosConfig.params = options.qs;
+        }
+
+        return axiosConfig;
+    }
+
+    // Парсинг response body (JSON auto-detection)
+    private static parseResponse(buffer: Buffer, headers: Record<string, unknown>): unknown {
+        const body = buffer.toString('utf-8');
+        const contentType = headers['content-type'];
+
+        if (
+            typeof body === 'string' &&
+            // Stat in qloud do no return content-type with code 204
+            typeof contentType === 'string' &&
+            contentType.indexOf('application/json') > -1
+        ) {
+            try {
+                return JSON.parse(body);
+            } catch (e) {
+                return body;
+            }
+        }
+
+        return body;
+    }
+
+    // Нормализация ошибок axios → request-promise формат
+    private static normalizeError(error: unknown): Error & {
+        statusCode?: number;
+        response?: {
+            statusCode: number;
+            body: unknown;
+            headers: Record<string, string>;
+        };
+    } {
+        if (axios.isAxiosError(error)) {
+            const normalized = Object.assign(new Error(error.message), {
+                statusCode: error.response?.status,
+                code: error.code,
+                stack: error.stack,
+                response: error.response
+                    ? {
+                          statusCode: error.response.status,
+                          body: error.response.data,
+                          headers: error.response.headers as Record<string, string>,
+                      }
+                    : undefined,
+            });
+
+            return normalized;
+        }
+
+        if (error instanceof Error) {
+            return error;
+        }
+
+        return new Error(String(error));
     }
 }
