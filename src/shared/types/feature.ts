@@ -103,6 +103,8 @@ export enum Feature {
     EnableDashColorPickersByTheme = 'EnableDashColorPickersByTheme',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
+    /** Use axios instead of request-promise-native for HTTP requests in charts-engine */
+    UseAxiosRequest = 'UseAxiosRequest',
 }
 
 export type FeatureConfig = Record<string, boolean>;
