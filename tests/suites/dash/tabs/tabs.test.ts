@@ -40,8 +40,9 @@ datalensTest.describe(`Dashboards - tabs`, () => {
             await dashboardPage.exitEditMode();
 
             // Check that the added tab is not left on the dashboard
+            // if there is only one tab left, then the tab elements are not displayed.
             const tabsCount = await page.locator(slct(DatalensTabsQa.Item)).count();
-            await expect(tabsCount).toEqual(1);
+            await expect(tabsCount).toEqual(0);
 
             await dashboardPage.deleteDashFromViewMode();
         },
