@@ -1,7 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {REBRANDING_PRODUCT_NAME} from 'ui/constants';
+import {FULL_PRODUCT_NAME} from 'ui/constants';
 
 import './LogoText.scss';
 
@@ -16,7 +16,7 @@ export type LogoTextProps = {
 export const LogoText = React.forwardRef<HTMLDivElement, LogoTextProps>(
     ({installationInfo, productName, installationInfoClassName}, ref) => {
         const showInstallation = installationInfo;
-        const defaultProductName = REBRANDING_PRODUCT_NAME;
+        const defaultProductName = FULL_PRODUCT_NAME;
 
         return (
             <div className={b()}>
