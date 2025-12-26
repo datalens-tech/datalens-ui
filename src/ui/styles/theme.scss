@@ -5,8 +5,8 @@
     --gn-aside-header-item-icon-color: var(--g-color-text-primary);
 }
 
-.g-root_theme_light:not(#{$disableThemeRoot}),
-.g-root_theme_light-hc:not(#{$disableThemeRoot}) {
+.g-root_theme_light:not(#{$customThemeRoot}),
+.g-root_theme_light-hc:not(#{$customThemeRoot}) {
     --g-color-private-brand-50: rgba(1, 123, 254, 0.1);
     --g-color-private-brand-100: rgba(1, 123, 254, 0.15);
     --g-color-private-brand-150: rgba(1, 123, 254, 0.2);
@@ -54,8 +54,8 @@
     --gn-aside-header-item-current-background-color: var(--g-color-private-brand-100);
 }
 
-.g-root_theme_dark:not(#{$disableThemeRoot}),
-.g-root_theme_dark-hc:not(#{$disableThemeRoot}) {
+.g-root_theme_dark:not(#{$customThemeRoot}),
+.g-root_theme_dark-hc:not(#{$customThemeRoot}) {
     --g-color-private-brand-50: rgba(1, 123, 254, 0.1);
     --g-color-private-brand-100: rgba(1, 123, 254, 0.15);
     --g-color-private-brand-150: rgba(1, 123, 254, 0.2);
