@@ -1,9 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {Feature} from 'shared/types';
-import {PRODUCT_NAME, REBRANDING_PRODUCT_NAME} from 'ui/constants';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {FULL_PRODUCT_NAME} from 'ui/constants';
 
 import './LogoText.scss';
 
@@ -17,15 +15,12 @@ export type LogoTextProps = {
 
 export const LogoText = React.forwardRef<HTMLDivElement, LogoTextProps>(
     ({installationInfo, productName, installationInfoClassName}, ref) => {
-        const isRebrandingEnabled = isEnabledFeature(Feature.EnableDLRebranding);
-        const showInstallation = isRebrandingEnabled && installationInfo;
-        const defaultProductName = isRebrandingEnabled ? REBRANDING_PRODUCT_NAME : PRODUCT_NAME;
+        const showInstallation = installationInfo;
+        const defaultProductName = FULL_PRODUCT_NAME;
 
         return (
             <div className={b()}>
-                <div className={b('title', {rebranding: isRebrandingEnabled})}>
-                    {productName || defaultProductName}
-                </div>
+                <div className={b('title')}>{productName || defaultProductName}</div>
                 {showInstallation && (
                     <div ref={ref} className={b('installation-info', installationInfoClassName)}>
                         {installationInfo}
