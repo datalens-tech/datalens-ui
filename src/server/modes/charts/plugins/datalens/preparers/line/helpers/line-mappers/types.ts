@@ -95,6 +95,7 @@ export interface MapDataToDimensionColoredLinesArgs extends CommonMapDataToLines
     values: Array<string | number | null>;
     order: ResultDataOrder;
     multiaxis: boolean;
+    isMultiLineWithShape: boolean;
     x2IsDate: boolean;
     x2DataType: DATASET_FIELD_TYPES | null;
     yItem: ServerField;
