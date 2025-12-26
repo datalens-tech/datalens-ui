@@ -371,7 +371,7 @@ export class RequestAxios {
             method: options.method,
             headers: normalizeHeaders(options.headers),
             timeout: options.timeout,
-            maxRedirects: 0,
+            maxRedirects: options.maxRedirects ?? 10,
         };
 
         if (options.body !== undefined) {
@@ -420,10 +420,17 @@ export class RequestAxios {
 
     private static normalizeError(error: unknown): Error & {
         statusCode?: number;
+        code?: string;
         response?: {
             statusCode: number;
             body: unknown;
             headers: Record<string, string>;
+            req?: {
+                headers: Record<string, unknown>;
+            };
+            request?: {
+                headers: Record<string, unknown>;
+            };
         };
     } {
         if (axios.isAxiosError(error)) {
@@ -436,6 +443,12 @@ export class RequestAxios {
                           statusCode: error.response.status,
                           body: error.response.data,
                           headers: error.response.headers as Record<string, string>,
+                          req: error.config?.headers
+                              ? {headers: error.config.headers as Record<string, unknown>}
+                              : undefined,
+                          request: error.config?.headers
+                              ? {headers: error.config.headers as Record<string, unknown>}
+                              : undefined,
                       }
                     : undefined,
             });
