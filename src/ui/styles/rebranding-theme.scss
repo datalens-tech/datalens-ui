@@ -2,7 +2,7 @@
 
 @import './variables.scss';
 
-.dl-root {
+#{$rebrandingRoot} {
     --dl-color-export-loading-toast: var(--g-color-private-brand-100-solid);
 
     --gn-aside-header-item-icon-color: var(--g-color-text-primary);
