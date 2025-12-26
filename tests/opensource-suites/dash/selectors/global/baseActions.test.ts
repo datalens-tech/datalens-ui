@@ -138,6 +138,8 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
             await dashboardPage.createDashboard({
                 editDash: async () => {
+                    // change default tab name to "Tab 1"
+                    await dashboardPage.renameTab(0, PARAMS.TAB_NAMES.TAB_1);
                     await dashboardPage.addTab(PARAMS.TAB_NAMES.TAB_2);
                     await dashboardPage.addTab(PARAMS.TAB_NAMES.TAB_3);
 
