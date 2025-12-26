@@ -133,12 +133,20 @@ export function getAlertsGravityLoadedData(args: {
         });
 
         if (typeof min === 'number' && typeof max === 'number') {
-            const middle = (max + min) * 0.5;
-            const padding = Math.abs((max - min) * 0.25);
-            const shiftMin = numericAlarm - padding;
-            const shiftMax = numericAlarm + padding;
-            gravityLoadedData.data.yAxis[0].min = numericAlarm < middle ? shiftMin : undefined;
-            gravityLoadedData.data.yAxis[0].max = numericAlarm > middle ? shiftMax : undefined;
+            let yAxisMin: number | undefined;
+            let yAxisMax: number | undefined;
+            const alarmPadding = Math.abs(numericAlarm * 0.1);
+
+            if (numericAlarm - alarmPadding < min) {
+                yAxisMin = numericAlarm - alarmPadding;
+            }
+
+            if (numericAlarm + alarmPadding > max) {
+                yAxisMax = numericAlarm + alarmPadding;
+            }
+
+            gravityLoadedData.data.yAxis[0].min = yAxisMin;
+            gravityLoadedData.data.yAxis[0].max = yAxisMax;
         }
 
         gravityLoadedData.data.yAxis[0].plotBands = getPlotBandsGravity({
