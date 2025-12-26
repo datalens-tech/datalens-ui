@@ -29,6 +29,7 @@ import {prepareBarYData} from './prepare-bar-y-data';
 
 type BarYPoint = {x: number; y: number} & Record<string, unknown>;
 
+// eslint-disable-next-line complexity
 export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     const {shared, visualizationId, colors, colorsConfig, labels, placeholders} = args;
     const {graphs, categories} = prepareBarYData(args);
@@ -147,6 +148,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
               visualizationId,
           })
         : undefined;
+    const xAxisType = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
 
     const config: ExtendedChartData = {
         series: {
@@ -159,7 +161,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             },
         },
         xAxis: {
-            type: 'linear',
+            type: xAxisType,
             labels: {
                 numberFormat: xAxisLabelNumberFormat ?? undefined,
             },
