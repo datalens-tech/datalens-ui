@@ -17,6 +17,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useLocation} from 'react-router';
 import {Link} from 'react-router-dom';
+import {Waypoint} from 'react-waypoint';
 import {Feature} from 'shared';
 import type {ListUser} from 'shared/schema/auth/types/users';
 import {DL} from 'ui/constants';
@@ -263,21 +264,12 @@ const UsersList = () => {
                     emptyMessage={i18n('label_users-empty-message')}
                     onRowClick={handleRowClick}
                 />
-
-                {nextPageToken && (
-                    <Button
-                        className={b('load-button')}
-                        loading={isDataLoading}
-                        onClick={handleLoadMoreClick}
-                    >
-                        {i18n('button_load-more')}
-                    </Button>
-                )}
             </React.Fragment>
         );
     };
 
     const showAddUser = !DL.AUTH_MANAGE_LOCAL_USERS_DISABLED;
+    const canLoadMore = !isDataLoading && !isLoadingMore && nextPageToken;
 
     return (
         <div className={b({new: newServiceSettingsEnabled})}>
@@ -305,6 +297,18 @@ const UsersList = () => {
                 </Flex>
 
                 {renderTable()}
+
+                {/* {nextPageToken && (
+                    <Button
+                        className={b('load-button')}
+                        loading={isDataLoading}
+                        onClick={handleLoadMoreClick}
+                    >
+                        {i18n('button_load-more')}
+                    </Button>
+                )} */}
+                {isLoadingMore && <Loader size="s" className={b('lazy-loader')} />}
+                {canLoadMore && <Waypoint onEnter={handleLoadMoreClick} />}
             </div>
         </div>
     );
