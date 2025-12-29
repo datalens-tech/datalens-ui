@@ -54,10 +54,6 @@ export const SETTINGS = {
         AUTO: 'auto',
         MANUAL: 'manual',
     },
-    SCALE_VALUE: {
-        MIN_MAX: 'min-max',
-        ZERO_MAX: '0-max',
-    },
     TITLE: {
         AUTO: 'auto',
         MANUAL: 'manual',

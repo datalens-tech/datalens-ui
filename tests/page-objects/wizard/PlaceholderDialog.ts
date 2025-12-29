@@ -14,8 +14,6 @@ export enum RadioButtons {
 }
 
 export enum RadioButtonsValues {
-    MinMax = 'min-max',
-    ZeroMax = '0-max',
     Linear = 'linear',
     Logarithmic = 'logarithmic',
     Manual = 'manual',
