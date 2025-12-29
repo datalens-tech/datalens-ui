@@ -6,6 +6,9 @@ import type {DashTabItem, WorkbookId} from 'shared';
 
 import type {GetEntriesDatasetsFieldsResponse} from '../../../../shared/schema';
 import {getSdk} from '../../../libs/schematic-sdk';
+import type {LoadHiddenWidgetMetaType} from '../../../units/dash/contexts/WidgetMetaContext';
+import type {DashkitMetaDataItemBase, DatasetsData} from '../../DashKit/plugins/types';
+import type {CurrentRequestState} from '../../Widgets/Chart/types';
 import {getRowTitle} from '../components/Content/helpers';
 import {DEFAULT_ALIAS_NAMESPACE} from '../constants';
 import type {
@@ -32,6 +35,8 @@ export const useRelations = ({
     workbookId,
     selectedSubItemId,
     widgetsCurrentTab,
+    loadHiddenWidgetMeta,
+    silentRequestCancellationRef,
 }: {
     dashKitRef: React.RefObject<DashKit>;
     widget: DashTabItem | null;
@@ -39,9 +44,13 @@ export const useRelations = ({
     workbookId: WorkbookId;
     selectedSubItemId: string | null;
     widgetsCurrentTab: Record<string, string>;
+    loadHiddenWidgetMeta?: LoadHiddenWidgetMetaType;
+    silentRequestCancellationRef: React.MutableRefObject<CurrentRequestState>;
 }) => {
     const [isInited, setIsInited] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
+    const [isSilentFetching, setIsSilentFetching] = React.useState(false);
+
     const [relations, setRelations] = React.useState<Array<DashkitMetaDataItem>>([]);
     const [currentWidgetMeta, setCurrentWidgetMeta] = React.useState<DashkitMetaDataItem | null>(
         null,
@@ -91,6 +100,88 @@ export const useRelations = ({
         [dashKitRef, dialogAliases, selectedSubItemId, widget, widgetsCurrentTab],
     );
 
+    const handleMetaUpdate = React.useCallback(
+        (
+            widgetId: string,
+            subItemId: string | null,
+            updatedMeta:
+                | Omit<DashkitMetaDataItem, 'relations'>
+                | Omit<DashkitMetaDataItemBase, 'defaultParams'>,
+        ) => {
+            if (!dashWidgetsMeta || !datasets) {
+                return;
+            }
+
+            const requestKey = subItemId || widgetId;
+            if (silentRequestCancellationRef.current[requestKey]) {
+                delete silentRequestCancellationRef.current[requestKey];
+            }
+
+            const updatedWidgetsMeta = dashWidgetsMeta.map((item) => {
+                if (item.widgetId === (subItemId || widgetId)) {
+                    return {
+                        ...item,
+                        ...updatedMeta,
+                        isFetchPrevented: true,
+                    };
+                }
+                return item;
+            });
+            const updatedDatasets = {...datasets};
+
+            setDashWidgetsMeta(updatedWidgetsMeta);
+
+            if (updatedMeta.datasets?.length) {
+                updatedMeta.datasets.forEach((datasetItem: DatasetsData) => {
+                    if (datasetItem.id) {
+                        updatedDatasets[datasetItem.id] = {
+                            fields: datasetItem.fieldsList,
+                        };
+                    }
+                });
+                setDatasets(updatedDatasets);
+            }
+
+            getCurrentWidgetInfo(updatedWidgetsMeta, updatedDatasets);
+        },
+        [dashWidgetsMeta, datasets, getCurrentWidgetInfo],
+    );
+
+    const loadWidgetMeta = React.useCallback(
+        async (widgetId: string, subItemId: string | null) => {
+            if (!loadHiddenWidgetMeta) {
+                return null;
+            }
+
+            const requestKey = subItemId || widgetId;
+
+            // Проверяем, есть ли уже запрос в процессе для этого виджета
+            if (silentRequestCancellationRef.current[requestKey]?.status === 'loading') {
+                return null;
+            }
+
+            try {
+                const updatedMeta = await loadHiddenWidgetMeta({
+                    widgetId,
+                    subItemId,
+                    silentRequestCancellationRef,
+                });
+
+                return updatedMeta;
+            } catch (error) {
+                // Удаляем из списка активных запросов в случае ошибки
+                if (silentRequestCancellationRef.current[requestKey]) {
+                    delete silentRequestCancellationRef.current[requestKey];
+                }
+
+                return null;
+            } finally {
+                setIsSilentFetching(false);
+            }
+        },
+        [loadHiddenWidgetMeta, silentRequestCancellationRef],
+    );
+
     // the current item is changed in the modal
     if (
         isInited &&
@@ -98,7 +189,28 @@ export const useRelations = ({
         dashWidgetsMeta &&
         datasets
     ) {
-        getCurrentWidgetInfo(dashWidgetsMeta, datasets);
+        const selectedWidgetMeta = dashWidgetsMeta?.find(
+            (item) => item.widgetId === selectedSubItemId,
+        );
+
+        if (
+            selectedWidgetMeta &&
+            loadHiddenWidgetMeta &&
+            !selectedWidgetMeta?.loaded &&
+            !selectedWidgetMeta?.loadError &&
+            !selectedWidgetMeta?.isFetchPrevented
+        ) {
+            setIsSilentFetching(true);
+            loadWidgetMeta(widget?.id || '', selectedSubItemId).then((updatedMeta) => {
+                if (updatedMeta) {
+                    handleMetaUpdate(widget?.id || '', selectedSubItemId, updatedMeta);
+                }
+            });
+        } else {
+            setIsSilentFetching(false);
+            getCurrentWidgetInfo(dashWidgetsMeta, datasets);
+        }
+
         setPrevWidgetId(widget?.id ?? null);
         setPrevSelectedSubItemId(selectedSubItemId);
     }
@@ -110,7 +222,12 @@ export const useRelations = ({
             }
 
             setIsLoading(true);
+
+            // Collect metadata from all dashboard widgets
             const data = (await Promise.all(dashKitRef.current.getItemsMeta())) as DashkitMetaData;
+            // Transform raw metadata into structured format with namespaces and extract datasets/entries lists
+            // The dataset IDs are collected from loaded widgets (loadedData).
+            // If widget is not loaded (inactive tabs), getEntriesDatasetsFields will be able to pull up the dataset by entryId in the case of wizard charts and editor with defined datasets on Shared tab.
             const {metaData, datasetsList, entriesList, controlsList} = getPreparedMetaData(
                 data,
                 dashKitRef.current,
@@ -125,23 +242,34 @@ export const useRelations = ({
                     workbookId,
                 });
             }
-            const dashWidgetsMetaData = entriesDatasetsFields.length
-                ? getMetaDataWithDatasetInfo({
-                      metaData,
-                      entriesDatasetsFields,
-                      datasetsList,
-                  })
-                : metaData;
+            // Merge server-fetched dataset fields info into metadata if available
+            // Add/update fields 'datasets' | 'type' | 'enableFiltering' | 'visualizationType' | 'usedParams'
+            let dashWidgetsMetaData: Omit<DashkitMetaDataItem, 'relations'>[];
+            const preventFetchIds = [];
+            if (entriesDatasetsFields.length) {
+                const {updatedMetaData, fetchedWidgetsIds} = getMetaDataWithDatasetInfo({
+                    metaData,
+                    entriesDatasetsFields,
+                    datasetsList,
+                });
+                dashWidgetsMetaData = updatedMetaData;
+                preventFetchIds.push(...fetchedWidgetsIds);
+            } else {
+                dashWidgetsMetaData = metaData;
+            }
 
+            // Sort widgets alphabetically by display title (combines label and title with separator)
             dashWidgetsMetaData.sort((prevItem, item) => {
                 const prevItemTitle = getRowTitle(prevItem.title, prevItem.label);
                 const itemTitle = getRowTitle(item.title, item.label);
                 return prevItemTitle.localeCompare(itemTitle);
             });
 
+            // Extract only dataset entries from server response
             const fetchedDatasets =
                 entriesDatasetsFields?.filter((item) => item.type === 'dataset') || [];
 
+            // Update local dataset info ('datasetsList') with names and fields from server
             if (fetchedDatasets?.length) {
                 fetchedDatasets.forEach((datasetItem) => {
                     if (datasetItem.datasetId && datasetItem.datasetId in datasetsList) {
@@ -163,6 +291,7 @@ export const useRelations = ({
                 return result;
             }, new Set());
 
+            // Find alias parameters that don't exist in any widget
             const invalidAliasesData: string[] = [];
             if (DEFAULT_ALIAS_NAMESPACE in dialogAliases) {
                 dialogAliases[DEFAULT_ALIAS_NAMESPACE].forEach((aliasRow) => {
@@ -174,6 +303,7 @@ export const useRelations = ({
                 });
             }
 
+            // Calculate relations for current widget and update component state
             getCurrentWidgetInfo(dashWidgetsMetaData, datasetsList);
 
             setIsInited(true);
@@ -202,5 +332,46 @@ export const useRelations = ({
         getCurrentWidgetInfo,
     ]);
 
-    return {isLoading, relations, currentWidgetMeta, datasets, dashWidgetsMeta, invalidAliases};
+    const updateWidgetMeta = (widgetId: string, meta: DashkitMetaDataItem) => {
+        if (dashWidgetsMeta && dashWidgetsMeta?.find((item) => item.widgetId === widgetId)) {
+            const updatedWidgetsMeta = dashWidgetsMeta.map((item) => {
+                if (item.widgetId === widgetId) {
+                    return {
+                        ...item,
+                        ...meta,
+                    };
+                }
+                return item;
+            });
+            const updatedDatasets = {...datasets};
+
+            setDashWidgetsMeta(updatedWidgetsMeta);
+
+            if (meta.datasets?.length) {
+                meta.datasets.forEach((datasetItem) => {
+                    if (datasetItem.id) {
+                        updatedDatasets[datasetItem.id] = {
+                            fields: datasetItem.fieldsList,
+                        };
+                    }
+                });
+                setDatasets(updatedDatasets);
+            }
+
+            getCurrentWidgetInfo(updatedWidgetsMeta, updatedDatasets);
+        }
+    };
+
+    return {
+        isLoading,
+        relations,
+        currentWidgetMeta,
+        datasets,
+        dashWidgetsMeta,
+        invalidAliases,
+        updateWidgetMeta,
+        isSilentFetching,
+        handleMetaUpdate,
+        loadWidgetMeta,
+    };
 };

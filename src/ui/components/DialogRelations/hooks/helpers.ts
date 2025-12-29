@@ -114,7 +114,9 @@ export const getMetaDataWithDatasetInfo = ({
         Boolean(item.datasetFields?.length),
     );
 
-    const res = (metaData || []).map((item) => {
+    const fetchedWidgetsIds: string[] = [];
+
+    const res: Omit<DashkitMetaDataItem, 'relations'>[] = (metaData || []).map((item) => {
         const itemWithDataset = {...item};
         const entryWithDataset = entriesWithDatasetsFields.find(
             (entryItem) => entryItem.entryId === itemWithDataset.entryId,
@@ -168,6 +170,10 @@ export const getMetaDataWithDatasetInfo = ({
             ) as Array<DatasetsData>; // TODO for multi-datasets, this did not work, you need to support in API to return a different format
             itemWithDataset.type = item.type || type; // TODO order from US type for graph
             itemWithDataset.enableFiltering = item.enableFiltering || false;
+
+            fetchedWidgetsIds.push(itemWithDataset.widgetId);
+
+            itemWithDataset.isFetchPrevented = true;
         }
 
         if (visualizationType) {
@@ -176,7 +182,8 @@ export const getMetaDataWithDatasetInfo = ({
 
         return itemWithDataset;
     });
-    return res;
+
+    return {updatedMetaData: res, fetchedWidgetsIds};
 };
 
 export const showInRelation = (

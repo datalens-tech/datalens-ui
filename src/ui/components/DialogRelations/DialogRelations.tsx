@@ -4,7 +4,7 @@ import React from 'react';
 import type {Config, DashKit} from '@gravity-ui/dashkit';
 import {ChevronDown, TriangleExclamationFill} from '@gravity-ui/icons';
 import type {SelectOption} from '@gravity-ui/uikit';
-import {Button, Dialog, DropdownMenu, Icon, Popup, Select} from '@gravity-ui/uikit';
+import {Button, Dialog, DropdownMenu, Icon, Popup, Select, Skeleton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -16,6 +16,8 @@ import type {DashTab, DashTabAliases, DashTabItem} from 'shared';
 import {DashCommonQa, DashTabItemType} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
+import type {CurrentRequestState} from 'ui/components/Widgets/Chart/types';
+import type {LoadHiddenWidgetMetaType} from 'ui/units/dash/contexts/WidgetMetaContext';
 import {selectCurrentTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import {openDialogAliases} from '../../units/dash/store/actions/relations/actions';
@@ -63,6 +65,7 @@ export type DialogRelationsProps = {
     dashTabAliases: DashTabAliases | null;
     workbookId: string | null;
     widgetsCurrentTab: Record<string, string>;
+    loadHiddenWidgetMeta?: LoadHiddenWidgetMetaType;
 };
 
 export type OpenDialogRelationsArgs = {
@@ -70,7 +73,14 @@ export type OpenDialogRelationsArgs = {
     props: DialogRelationsProps;
 };
 
-const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
+const renderOptions = (option: SelectOption, isSilentFetching?: boolean) => {
+    const icon = isSilentFetching ? (
+        <Skeleton style={{width: '16px', height: '16px'}} />
+    ) : (
+        option.data?.icon
+    );
+    return <SelectOptionWithIcon option={{...option, data: {...option.data, icon}}} />;
+};
 
 const EmptyState: React.FC = () => {
     return (
@@ -96,12 +106,14 @@ const DialogRelations = (props: DialogRelationsProps) => {
         allWidgets: widgets,
         onClose,
         onApply,
+        loadHiddenWidgetMeta,
     } = props;
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
     const tabId = useSelector(selectCurrentTabId);
 
     const aliasWarnButtonRef = React.useRef<HTMLButtonElement | null>(null);
+    const silentRequestCancellationRef = React.useRef<CurrentRequestState>({});
 
     const [aliasWarnPopupOpen, setAliasWarnPopupOpen] = React.useState(false);
     const [searchValue, setSearchValue] = React.useState('');
@@ -115,15 +127,39 @@ const DialogRelations = (props: DialogRelationsProps) => {
         getInitialSubItemId(currentWidget, widgetsCurrentTab),
     );
 
-    const {isLoading, currentWidgetMeta, relations, datasets, dashWidgetsMeta, invalidAliases} =
-        useRelations({
-            dashKitRef,
-            widget: currentWidget,
-            dialogAliases: aliases,
-            workbookId,
-            selectedSubItemId,
-            widgetsCurrentTab,
-        });
+    const {
+        isLoading,
+        isSilentFetching,
+        currentWidgetMeta,
+        relations,
+        datasets,
+        dashWidgetsMeta,
+        invalidAliases,
+        handleMetaUpdate,
+        loadWidgetMeta,
+    } = useRelations({
+        dashKitRef,
+        widget: currentWidget,
+        dialogAliases: aliases,
+        workbookId,
+        selectedSubItemId,
+        widgetsCurrentTab,
+        loadHiddenWidgetMeta,
+        silentRequestCancellationRef,
+    });
+
+    const handleLoadMeta = React.useCallback(
+        async (widgetId: string, subItemId: string | null) => {
+            const updatedMeta = await loadWidgetMeta(widgetId, subItemId);
+
+            if (updatedMeta) {
+                handleMetaUpdate(widgetId, subItemId, updatedMeta);
+            }
+        },
+        [loadWidgetMeta, handleMetaUpdate],
+    );
+
+    const isContentLoading = isLoading || isSilentFetching;
 
     const widgetsIconMap = React.useMemo(() => {
         const iconsMap: Record<string, JSX.Element | null> = {};
@@ -145,7 +181,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const [shownInvalidAliases, setShownInvalidAliases] = React.useState<string[] | null>(null);
 
     const {filteredRelations} = useFilteredRelations({
-        relations: preparedRelations,
+        relations,
         searchValue,
         typeValues,
         changedWidgets,
@@ -489,14 +525,14 @@ const DialogRelations = (props: DialogRelationsProps) => {
         } else {
             onApply(newData);
         }
-    }, [dashKitRef, isLoading, changedWidgets, aliases, dashTabAliases, onClose, onApply]);
+    }, [dashKitRef, aliases, isLoading, dashTabAliases, changedWidgets, onClose, onApply]);
 
     const handleAliasesWarnClick = () => setAliasWarnPopupOpen(!aliasWarnPopupOpen);
 
     // disable disconnect button when loading
     // when selected only 'none' filter
     const isDisconnectDisabled = Boolean(
-        isLoading ||
+        isContentLoading ||
             (typeValues.length === 1 && typeValues[0] === 'none') ||
             !filteredRelations.length,
     );
@@ -512,6 +548,18 @@ const DialogRelations = (props: DialogRelationsProps) => {
             setShownInvalidAliases(invalidAliases);
         }
     }, [shownInvalidAliases, invalidAliases]);
+
+    // Cancel all silent requests on unmount
+    React.useEffect(() => {
+        return () => {
+            Object.values(silentRequestCancellationRef.current).forEach((requestState) => {
+                if (requestState.status === 'loading' && requestState.requestCancellation) {
+                    requestState.status = 'canceled';
+                    requestState.requestCancellation.cancel();
+                }
+            });
+        };
+    }, []);
 
     return (
         <Dialog
@@ -536,8 +584,8 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     onUpdate={handleItemChange}
                     filterable={true}
                     disabled={isLoading}
-                    renderOption={renderOptions}
-                    renderSelectedOption={renderOptions}
+                    renderOption={(option) => renderOptions(option)}
+                    renderSelectedOption={(option) => renderOptions(option, isSilentFetching)}
                     popupWidth="fit"
                 />
                 {currentWidget ? (
@@ -549,11 +597,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
                         <Content
                             relations={filteredRelations}
                             widgetMeta={currentWidgetMeta}
-                            isLoading={isLoading}
+                            isLoading={isContentLoading}
                             onChange={handleRelationTypeChange}
                             onAliasClick={handleAliasesClick}
                             showDebugInfo={showDebugInfo}
                             widgetIcon={widgetsIconMap[currentWidgetMeta?.widgetId || '']}
+                            onLoadMeta={handleLoadMeta}
                         />
                     </React.Fragment>
                 ) : (

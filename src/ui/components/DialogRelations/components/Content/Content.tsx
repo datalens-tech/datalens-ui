@@ -28,6 +28,7 @@ type ContentProps = {
     onAliasClick: (props: AliasClickHandlerData) => void;
     showDebugInfo: boolean;
     widgetIcon: React.ReactNode;
+    onLoadMeta?: (widgetId: string, subItemId: string | null) => Promise<void>;
 };
 
 export const Content = ({
@@ -38,6 +39,7 @@ export const Content = ({
     onAliasClick,
     showDebugInfo,
     widgetIcon,
+    onLoadMeta,
 }: ContentProps) => {
     if (isLoading) {
         return (
@@ -70,6 +72,7 @@ export const Content = ({
             onAliasClick={onAliasClick}
             showDebugInfo={showDebugInfo}
             widgetIcon={widgetIcon}
+            onLoadMeta={onLoadMeta}
         />
     ));
 
