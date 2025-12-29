@@ -560,7 +560,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
 
             const requestCancellation = dataProvider.getRequestCancellation();
 
-            const id = getWidgetProps.id ?? getWidgetProps.config?.key ?? '';
+            const id = getWidgetProps.id ?? '';
 
             if (silentRequestCancellationRef) {
                 silentRequestCancellationRef.current[id] = {

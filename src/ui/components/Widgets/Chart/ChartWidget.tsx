@@ -469,7 +469,16 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         return () => {
             metaCallback?.unregisterCallback(widgetId);
         };
-    }, [chartkitParams, metaCallback, silentLoadChartData, tabIndex, tabs, widgetId, workbookId]);
+    }, [
+        chartkitParams,
+        currentTab.chartId,
+        metaCallback,
+        silentLoadChartData,
+        tabIndex,
+        tabs,
+        widgetId,
+        workbookId,
+    ]);
 
     /**
      * Clear action params on disable of filtration of widget

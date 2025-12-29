@@ -164,40 +164,44 @@ export const getChartSimpleLoadedData = ({
 };
 
 export const getTabMeta = ({
-    tabWidget,
     id,
+    tabWidget,
     loadData,
     savedData,
     error,
+    widgetDataRef,
+    currentTabChartId,
 }: {
-    tabWidget: CurrentTab;
     id: string;
+    tabWidget: CurrentTab;
     loadData: LoadedWidgetData<ChartsData>;
     savedData?: LoadedWidgetData<ChartsData>;
     error: CombinedError | null;
+    widgetDataRef?: WidgetDataRef;
+    currentTabChartId?: string;
 }) => {
-    let loadedData:
-        | (Omit<
-              Partial<DashkitMetaDataItemBase> & Widget & ChartsData,
-              'type' | 'usedParams' | 'defaultParams'
-          > & {
-              type: ChartContentProps['widgetType'];
-              usedParams: ChartsData['usedParams'];
-          })
-        | null = null;
+    let loadedData: WidgetLoadedData = null;
+    let loadedWithError = false;
     if (loadData?.entryId === tabWidget.chartId) {
+        const loadDataError = (loadData as unknown as AxiosResponse<ResponseError>)?.data?.error;
+
+        loadedWithError = Boolean(loadDataError);
         loadedData = loadData;
     } else if (savedData?.entryId === tabWidget.chartId) {
         loadedData = savedData;
+        const savedDataError = (savedData as unknown as AxiosResponse<ResponseError>)?.data?.error;
+        loadedWithError = Boolean(savedDataError);
     }
 
-    const loadDataError = (loadData as unknown as AxiosResponse<ResponseError>)?.data?.error;
-    const errorCode = (error as DatalensChartkitCustomError)?.code;
+    if (currentTabChartId === tabWidget.chartId || !currentTabChartId) {
+        const errorCode = (error as DatalensChartkitCustomError)?.code;
 
-    const loadedWithError = Boolean(
-        (loadDataError || error) &&
-            (typeof errorCode !== 'string' || !ALLOWED_ERRORS.includes(errorCode)),
-    );
+        loadedWithError =
+            loadedWithError ||
+            Boolean(
+                error && (typeof errorCode !== 'string' || !ALLOWED_ERRORS.includes(errorCode)),
+            );
+    }
 
     const metaInfo: Omit<DashkitMetaDataItemBase, 'defaultParams'> = {
         layoutId: id,
@@ -224,6 +228,12 @@ export const getTabMeta = ({
         isWizard: Boolean(loadedData?.isNewWizard || loadedData?.isOldWizard),
         isEditor: Boolean(loadedData?.isEditor),
         isQL: Boolean(loadedData?.isQL),
+        getSimpleLoadedData: () => {
+            return getChartSimpleLoadedData({
+                widget: widgetDataRef?.current,
+                loadedData: loadedData as LoadedWidgetData<unknown>,
+            });
+        },
     };
 
     return metaInfo;
@@ -242,15 +252,27 @@ export const getWidgetMeta = ({
     loadData,
     savedData,
     error,
+    widgetDataRef,
+    currentTabChartId,
 }: {
     tabs: Array<CurrentTab>;
     id: string;
     loadData: LoadedWidgetData<ChartsData>;
-    savedData?: LoadedWidgetData<ChartsData>;
+    savedData: LoadedWidgetData<ChartsData>;
     error: CombinedError | null;
+    widgetDataRef?: WidgetDataRef;
+    currentTabChartId: string;
 }) => {
     return tabs.map((tabWidget) => {
-        return getTabMeta({tabWidget, loadData, savedData, error, id});
+        return getTabMeta({
+            id,
+            tabWidget,
+            loadData,
+            savedData,
+            error,
+            widgetDataRef,
+            currentTabChartId,
+        });
     });
 };
 
@@ -299,6 +321,7 @@ export const getWidgetSelectorMeta = ({
             type: (loadedData?.type as DashTabItemType) || null,
             visualizationType: null,
             loadError: loadedWithError,
+            getSimpleLoadedData: () => loadedData,
         };
 
     return metaInfo;
@@ -423,7 +446,7 @@ export const pushStats = (
  * @param tabId
  */
 export const getTabIndex = (tabs: WidgetPluginDataWithTabs['tabs'], tabId: string | null) => {
-    if (!tabs || !tabId) {
+    if (!tabs) {
         return 0;
     }
     const index = tabId

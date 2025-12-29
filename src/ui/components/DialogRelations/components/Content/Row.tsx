@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
-import {Button, DropdownMenu, Icon, Loader, Popover} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Flex, Icon, Loader, Popover, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DashCommonQa, DashRelationTypes} from 'shared';
@@ -336,9 +336,15 @@ export const Row = ({
                             )}
                         >
                             {isLoadingMeta && (
-                                <div className={b('dropdown-loader')}>
+                                <Flex
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    height="50px"
+                                    minWidth="160px"
+                                    className={spacing({p: 3})}
+                                >
                                     <Loader size="s" />
-                                </div>
+                                </Flex>
                             )}
                         </DropdownMenu>
                         <Popover

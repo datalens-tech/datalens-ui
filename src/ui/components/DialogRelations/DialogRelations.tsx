@@ -39,13 +39,7 @@ import {
 } from './helpers';
 import {useFilteredRelations} from './hooks/useFilteredRelations';
 import {useRelations} from './hooks/useRelations';
-import type {
-    ClickCallbackArgs,
-    DashMetaData,
-    RelationType,
-    RelationTypeChangeProps,
-    WidgetsTypes,
-} from './types';
+import type {ClickCallbackArgs, RelationType, RelationTypeChangeProps, WidgetsTypes} from './types';
 
 import './DialogRelations.scss';
 
@@ -119,13 +113,19 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const [searchValue, setSearchValue] = React.useState('');
     const [typeValues, setTypeValues] = React.useState<Array<FiltersTypes>>([]);
 
-    const [preparedRelations, setPreparedRelations] = React.useState<DashMetaData>([]);
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
 
     // used for control in group or tab of widget
     const [selectedSubItemId, setSelectedSubItemId] = React.useState(
         getInitialSubItemId(currentWidget, widgetsCurrentTab),
     );
+
+    const currentChartId = React.useMemo(() => {
+        if (currentWidget?.type === DashTabItemType.Widget) {
+            return currentWidget.data.tabs.find((tab) => tab.id === selectedSubItemId)?.chartId;
+        }
+        return null;
+    }, [currentWidget?.data, currentWidget?.type, selectedSubItemId]);
 
     const {
         isLoading,
@@ -135,17 +135,18 @@ const DialogRelations = (props: DialogRelationsProps) => {
         datasets,
         dashWidgetsMeta,
         invalidAliases,
-        handleMetaUpdate,
+        onMetaUpdate,
         loadWidgetMeta,
+        setUpdatedRelations,
     } = useRelations({
         dashKitRef,
         widget: currentWidget,
         dialogAliases: aliases,
         workbookId,
         selectedSubItemId,
-        widgetsCurrentTab,
         loadHiddenWidgetMeta,
         silentRequestCancellationRef,
+        currentChartId,
     });
 
     const handleLoadMeta = React.useCallback(
@@ -153,10 +154,10 @@ const DialogRelations = (props: DialogRelationsProps) => {
             const updatedMeta = await loadWidgetMeta(widgetId, subItemId);
 
             if (updatedMeta) {
-                handleMetaUpdate(widgetId, subItemId, updatedMeta);
+                onMetaUpdate(widgetId, subItemId, updatedMeta);
             }
         },
-        [loadWidgetMeta, handleMetaUpdate],
+        [loadWidgetMeta, onMetaUpdate],
     );
 
     const isContentLoading = isLoading || isSilentFetching;
@@ -202,7 +203,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
         setCurrentWidget(newCurrentWidget);
 
         setSelectedSubItemId(newWidgetData?.isItem ? selectedItemId : null);
-        setPreparedRelations([]);
 
         if (!changedWidgets[selectedWidgetId]) {
             const updatedChangedWidgets = {...changedWidgets};
@@ -224,11 +224,11 @@ const DialogRelations = (props: DialogRelationsProps) => {
      */
     const handleUpdateRelations = React.useCallback(
         (changedAliases: string[][]) => {
-            if (isEmpty(preparedRelations)) {
+            if (relations.length === 0) {
                 return;
             }
 
-            const relationsWithChangedAliases = preparedRelations.map((widgetItem) => {
+            const relationsWithChangedAliases = relations.map((widgetItem) => {
                 const byAliases: Array<Array<string>> = changedAliases.filter((aliasArr) => {
                     if (!widgetItem.usedParams?.length) {
                         return false;
@@ -252,9 +252,9 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 });
                 setAliases(newAliases);
             }
-            setPreparedRelations(relationsWithChangedAliases);
+            setUpdatedRelations(relationsWithChangedAliases);
         },
-        [aliases, preparedRelations],
+        [aliases, relations, setUpdatedRelations],
     );
 
     /**
@@ -275,7 +275,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 changedWidgetsData: changedWidgets,
                 dashkitData: dashKitRef.current || null,
                 dashWidgetsMeta,
-                preparedRelations,
+                relations,
                 datasets,
                 currentWidgetId,
                 type: 'aliases',
@@ -297,7 +297,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 }
             });
             setChangedWidgets(newChangedWidgets);
-            setPreparedRelations(newPreparedRelations);
+            setUpdatedRelations(newPreparedRelations);
         },
         [
             aliases,
@@ -306,9 +306,10 @@ const DialogRelations = (props: DialogRelationsProps) => {
             changedWidgets,
             dashKitRef,
             dashWidgetsMeta,
-            preparedRelations,
+            relations,
             datasets,
             currentWidgetId,
+            setUpdatedRelations,
         ],
     );
 
@@ -364,24 +365,20 @@ const DialogRelations = (props: DialogRelationsProps) => {
      */
     const handleRelationTypeChange = React.useCallback(
         (changedData: RelationTypeChangeProps) => {
-            const {type, widgetId, forceAddAlias, itemId: selectorSubItemId, ...rest} = changedData;
+            const {type, widgetId, forceAddAlias, itemId: subItemId, ...rest} = changedData;
 
             const newChanged = {...changedWidgets};
             if (!newChanged[currentWidgetId]) {
                 newChanged[currentWidgetId] = {};
             }
             let currentRelations;
-            if (selectorSubItemId) {
-                currentRelations = preparedRelations.find(
-                    (item) => item.itemId === selectorSubItemId,
-                )?.relations;
+            if (subItemId) {
+                currentRelations = relations.find((item) => item.itemId === subItemId)?.relations;
             } else {
-                currentRelations = preparedRelations.find(
-                    (item) => item.widgetId === widgetId,
-                )?.relations;
+                currentRelations = relations.find((item) => item.widgetId === widgetId)?.relations;
             }
 
-            const relationSubjectId = selectorSubItemId || widgetId;
+            const relationSubjectId = subItemId || widgetId;
             const currentRelationType = currentRelations?.type;
             if (currentRelationType === type) {
                 if (
@@ -425,6 +422,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                             forceAddAlias: true,
                             changedWidgetsData: newChanged,
                             changedWidgetId: widgetId,
+                            changedItemId: subItemId,
                         });
                     }
                 }
@@ -432,7 +430,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 setChangedWidgets(newChanged);
             }
         },
-        [changedWidgets, currentWidgetId, preparedRelations, handleAliasesClick],
+        [changedWidgets, currentWidgetId, relations, handleAliasesClick],
     );
 
     /**
@@ -479,7 +477,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 return res;
             }, {});
 
-            preparedRelations.forEach((item) => {
+            relations.forEach((item) => {
                 const widgetId = item.itemId || item.widgetId;
 
                 if (filteredIds[widgetId]) {
@@ -492,7 +490,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
             setChangedWidgets(newChangedWidgets);
         },
-        [changedWidgets, currentWidgetId, filteredRelations, preparedRelations],
+        [changedWidgets, currentWidgetId, filteredRelations, relations],
     );
 
     /**
@@ -536,12 +534,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
             (typeValues.length === 1 && typeValues[0] === 'none') ||
             !filteredRelations.length,
     );
-
-    React.useEffect(() => {
-        if (!preparedRelations?.length && relations.length) {
-            setPreparedRelations(relations);
-        }
-    }, [relations, preparedRelations]);
 
     React.useEffect(() => {
         if (!shownInvalidAliases && invalidAliases?.length) {

@@ -536,14 +536,12 @@ export const getCurrentWidgetMeta = ({
     dashkitData,
     widget,
     selectedSubItemId,
-    tabId,
 }: {
     metaData: DashMetaDataNoRelations;
     dashkitData: DashKit | null;
     widget: DashTabItem;
     // current item id for widgets with multiple items
     selectedSubItemId: string | null;
-    tabId?: string | null;
 }): DashkitMetaDataItem => {
     if (widget.type === DashTabItemType.GroupControl && selectedSubItemId) {
         return (metaData?.find((item) => item.itemId === selectedSubItemId) ||
@@ -556,7 +554,7 @@ export const getCurrentWidgetMeta = ({
             {}) as DashkitMetaDataItem;
     }
 
-    const tabInfo = getCurrentWidgetTabShortInfo(dashkitData, widget, tabId);
+    const tabInfo = getCurrentWidgetTabShortInfo(dashkitData, widget, selectedSubItemId);
     return (metaData?.find((item) => item.widgetId === tabInfo?.id) || {}) as DashkitMetaDataItem;
 };
 

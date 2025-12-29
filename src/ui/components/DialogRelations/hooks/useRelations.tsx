@@ -34,24 +34,24 @@ export const useRelations = ({
     dialogAliases,
     workbookId,
     selectedSubItemId,
-    widgetsCurrentTab,
     loadHiddenWidgetMeta,
     silentRequestCancellationRef,
+    currentChartId,
 }: {
     dashKitRef: React.RefObject<DashKit>;
     widget: DashTabItem | null;
     dialogAliases: Record<string, string[][]>;
     workbookId: WorkbookId;
     selectedSubItemId: string | null;
-    widgetsCurrentTab: Record<string, string>;
     loadHiddenWidgetMeta?: LoadHiddenWidgetMetaType;
     silentRequestCancellationRef: React.MutableRefObject<CurrentRequestState>;
+    currentChartId?: string | null;
 }) => {
     const [isInited, setIsInited] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [isSilentFetching, setIsSilentFetching] = React.useState(false);
 
-    const [relations, setRelations] = React.useState<Array<DashkitMetaDataItem>>([]);
+    const [relations, setRelations] = React.useState<DashkitMetaDataItem[]>([]);
     const [currentWidgetMeta, setCurrentWidgetMeta] = React.useState<DashkitMetaDataItem | null>(
         null,
     );
@@ -76,14 +76,11 @@ export const useRelations = ({
 
             const {connections} = dashKitRef.current.props.config;
 
-            const widgetCurrentTabId = widgetsCurrentTab[widget.id];
-
             const currentMeta = getCurrentWidgetMeta({
                 metaData: dashWidgetsMetaData,
                 dashkitData: dashKitRef.current,
                 widget,
                 selectedSubItemId,
-                tabId: widgetCurrentTabId,
             });
 
             const currentRelations = getRelationsData({
@@ -97,16 +94,17 @@ export const useRelations = ({
             setCurrentWidgetMeta(currentMeta);
             setRelations(currentRelations);
         },
-        [dashKitRef, dialogAliases, selectedSubItemId, widget, widgetsCurrentTab],
+        [dashKitRef, dialogAliases, selectedSubItemId, widget],
     );
 
-    const handleMetaUpdate = React.useCallback(
+    const onMetaUpdate = React.useCallback(
         (
             widgetId: string,
             subItemId: string | null,
             updatedMeta:
                 | Omit<DashkitMetaDataItem, 'relations'>
-                | Omit<DashkitMetaDataItemBase, 'defaultParams'>,
+                | Omit<DashkitMetaDataItemBase, 'defaultParams'>
+                | {widgetId: string},
         ) => {
             if (!dashWidgetsMeta || !datasets) {
                 return;
@@ -131,7 +129,7 @@ export const useRelations = ({
 
             setDashWidgetsMeta(updatedWidgetsMeta);
 
-            if (updatedMeta.datasets?.length) {
+            if ('datasets' in updatedMeta && updatedMeta.datasets?.length) {
                 updatedMeta.datasets.forEach((datasetItem: DatasetsData) => {
                     if (datasetItem.id) {
                         updatedDatasets[datasetItem.id] = {
@@ -144,7 +142,7 @@ export const useRelations = ({
 
             getCurrentWidgetInfo(updatedWidgetsMeta, updatedDatasets);
         },
-        [dashWidgetsMeta, datasets, getCurrentWidgetInfo],
+        [dashWidgetsMeta, datasets, getCurrentWidgetInfo, silentRequestCancellationRef],
     );
 
     const loadWidgetMeta = React.useCallback(
@@ -153,10 +151,10 @@ export const useRelations = ({
                 return null;
             }
 
-            const requestKey = subItemId || widgetId;
-
-            // Проверяем, есть ли уже запрос в процессе для этого виджета
-            if (silentRequestCancellationRef.current[requestKey]?.status === 'loading') {
+            if (
+                currentChartId &&
+                silentRequestCancellationRef.current[currentChartId]?.status === 'loading'
+            ) {
                 return null;
             }
 
@@ -169,17 +167,16 @@ export const useRelations = ({
 
                 return updatedMeta;
             } catch (error) {
-                // Удаляем из списка активных запросов в случае ошибки
-                if (silentRequestCancellationRef.current[requestKey]) {
-                    delete silentRequestCancellationRef.current[requestKey];
+                if (currentChartId && silentRequestCancellationRef.current[currentChartId]) {
+                    delete silentRequestCancellationRef.current[currentChartId];
                 }
 
-                return null;
+                return {widgetId: subItemId || widgetId, loadError: true};
             } finally {
                 setIsSilentFetching(false);
             }
         },
-        [loadHiddenWidgetMeta, silentRequestCancellationRef],
+        [currentChartId, loadHiddenWidgetMeta, silentRequestCancellationRef],
     );
 
     // the current item is changed in the modal
@@ -203,7 +200,7 @@ export const useRelations = ({
             setIsSilentFetching(true);
             loadWidgetMeta(widget?.id || '', selectedSubItemId).then((updatedMeta) => {
                 if (updatedMeta) {
-                    handleMetaUpdate(widget?.id || '', selectedSubItemId, updatedMeta);
+                    onMetaUpdate(widget?.id || '', selectedSubItemId, updatedMeta);
                 }
             });
         } else {
@@ -288,6 +285,10 @@ export const useRelations = ({
                 (item.usedParams || []).forEach(result.add, result);
                 Object.keys(item.widgetParams || {}).forEach(result.add, result);
 
+                if (item.isQL || item.isEditor) {
+                    Object.keys(item.params || {}).forEach(result.add, result);
+                }
+
                 return result;
             }, new Set());
 
@@ -328,7 +329,6 @@ export const useRelations = ({
         selectedSubItemId,
         datasets,
         dashWidgetsMeta,
-        prevSelectedSubItemId,
         getCurrentWidgetInfo,
     ]);
 
@@ -362,6 +362,10 @@ export const useRelations = ({
         }
     };
 
+    const setUpdatedRelations = React.useCallback((updatedRelations: DashkitMetaDataItem[]) => {
+        setRelations(updatedRelations);
+    }, []);
+
     return {
         isLoading,
         relations,
@@ -371,7 +375,8 @@ export const useRelations = ({
         invalidAliases,
         updateWidgetMeta,
         isSilentFetching,
-        handleMetaUpdate,
+        onMetaUpdate,
         loadWidgetMeta,
+        setUpdatedRelations,
     };
 };
