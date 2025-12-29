@@ -3,7 +3,11 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {CollectionsStructureDispatch} from 'ui/store/actions/collectionsStructure';
-import {deleteCollections, deleteWorkbooks} from 'ui/store/actions/collectionsStructure';
+import {
+    deleteCollections,
+    deleteSharedEntries,
+    deleteWorkbooks,
+} from 'ui/store/actions/collectionsStructure';
 
 import {selectDeleteIsLoading} from '../../store/selectors/collectionsStructure';
 import DialogManager from '../DialogManager/DialogManager';
@@ -19,6 +23,9 @@ export type Props = {
     workbookIds: string[];
     collectionTitles: string[];
     workbookTitles: string[];
+    datasetTitles: string[];
+    entryIds: string[];
+    connectionTitles: string[];
     onApply: () => void;
     onClose: () => void;
 };
@@ -36,6 +43,9 @@ export const DeleteCollectionsWorkbooksDialog: React.FC<Props> = ({
     workbookIds,
     collectionTitles,
     workbookTitles,
+    entryIds,
+    datasetTitles,
+    connectionTitles,
     onApply,
     onClose,
 }) => {
@@ -45,6 +55,15 @@ export const DeleteCollectionsWorkbooksDialog: React.FC<Props> = ({
     const handleDelete = React.useCallback(async () => {
         let deleteCollectionsPromise: Promise<unknown> = Promise.resolve();
         let deleteWorkbooksPromise: Promise<unknown> = Promise.resolve();
+        let deleteSharedEntriesPromise: Promise<unknown> = Promise.resolve();
+
+        if (entryIds?.length) {
+            deleteSharedEntriesPromise = dispatch(
+                deleteSharedEntries({
+                    entryIds,
+                }),
+            );
+        }
 
         if (collectionIds?.length) {
             deleteCollectionsPromise = dispatch(
@@ -62,12 +81,16 @@ export const DeleteCollectionsWorkbooksDialog: React.FC<Props> = ({
             );
         }
 
-        await Promise.all([deleteCollectionsPromise, deleteWorkbooksPromise]).then((response) => {
+        await Promise.all([
+            deleteCollectionsPromise,
+            deleteWorkbooksPromise,
+            deleteSharedEntriesPromise,
+        ]).then((response) => {
             if (response.filter((res) => res).length) {
                 onApply();
             }
         });
-    }, [collectionIds, dispatch, onApply, workbookIds]);
+    }, [collectionIds, dispatch, onApply, workbookIds, entryIds]);
 
     return (
         <DeleteDialog
@@ -77,6 +100,8 @@ export const DeleteCollectionsWorkbooksDialog: React.FC<Props> = ({
                 <DeleteCollectionsWorkbooksContent
                     collectionTitles={collectionTitles}
                     workbookTitles={workbookTitles}
+                    datasetTitles={datasetTitles}
+                    connectionTitles={connectionTitles}
                 />
             }
             textButtonApply={i18n('action_delete')}

@@ -19,4 +19,13 @@
     &__icon {
         min-width: 20px;
     }
+
+    &__entry-icon {
+        height: 20px;
+        width: 20px;
+        .custom-color-box {
+            height: 20px;
+            width: 20px;
+        }
+    }
 }

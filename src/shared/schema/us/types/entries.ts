@@ -135,6 +135,13 @@ export type GetEntriesArgs = EntriesCommonArgs & {
 
 export type MoveEntryResponse = EntryFields[];
 
+export type DeleteSharedEntriesResponse = {
+    entries: EntryFields[];
+};
+export type MoveSharedEntriesResponse = {
+    entries: EntryFields[];
+};
+
 export interface MoveEntryArgs {
     entryId: string;
     destination: string;
@@ -145,6 +152,15 @@ export interface MoveSharedEntryArgs {
     entryId: string;
     collectionId: string;
     name?: string;
+}
+
+export interface DeleteSharedEntriesArgs {
+    entryIds: string[];
+}
+
+export interface MoveSharedEntriesArgs {
+    entryIds: string[];
+    collectionId: string;
 }
 
 export interface CopyEntry extends EntryFields {
