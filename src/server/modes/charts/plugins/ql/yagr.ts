@@ -1,7 +1,12 @@
 import type {ChartType, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 import set from 'lodash/set';
 
-import {LegendDisplayMode, PlaceholderId, QlVisualizationId} from '../../../../../shared';
+import {
+    AxisAutoScaleModes,
+    LegendDisplayMode,
+    PlaceholderId,
+    QlVisualizationId,
+} from '../../../../../shared';
 import type {IChartEditor, QlConfig, ServerVisualization} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import {getAxisTitle} from '../datalens/utils/axis-helpers';
@@ -34,7 +39,7 @@ const applyPlaceholderSettingsToYAxis = ({
             if (
                 yPlaceholder.settings.autoscale === false ||
                 (yPlaceholder.settings.scale === 'auto' &&
-                    yPlaceholder.settings.scaleValue === '0-max')
+                    yPlaceholder.settings.scaleValue === AxisAutoScaleModes.ZeroMax)
             ) {
                 scale.min = 0;
             } else if (yPlaceholder.settings.scale === 'manual') {

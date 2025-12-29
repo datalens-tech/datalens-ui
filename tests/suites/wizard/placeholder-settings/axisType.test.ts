@@ -6,7 +6,7 @@ import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {DialogPlaceholderQa, PlaceholderId} from '../../../../src/shared';
+import {AxisAutoScaleModes, DialogPlaceholderQa, PlaceholderId} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - placeholder dialog ("Axis type") ', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
@@ -28,7 +28,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Axis type") ', () => {
 
             await wizardPage.placeholderDialog.toggleRadioButton(
                 RadioButtons.AutoScale,
-                RadioButtonsValues.ZeroMax,
+                AxisAutoScaleModes.ZeroMax,
             );
 
             await wizardPage.placeholderDialog.toggleRadioButton(
@@ -36,7 +36,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Axis type") ', () => {
                 RadioButtonsValues.Logarithmic,
             );
 
-            const expectedValue = 'min-max';
+            const expectedValue = AxisAutoScaleModes.Auto;
 
             let autoScaleSelectedValue: string | null | undefined;
 
@@ -74,7 +74,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Axis type") ', () => {
 
             await wizardPage.placeholderDialog.toggleRadioButton(
                 RadioButtons.AutoScale,
-                RadioButtonsValues.ZeroMax,
+                AxisAutoScaleModes.ZeroMax,
             );
 
             const expectedValue = 'linear';

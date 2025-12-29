@@ -1,6 +1,6 @@
 import {ArrowDown, ArrowRight, ArrowUp} from '@gravity-ui/icons';
 import type {Field, GraphShared, Placeholder, Shared} from 'shared';
-import {AxisNullsMode, WizardVisualizationId} from 'shared';
+import {AxisAutoScaleModes, AxisNullsMode, WizardVisualizationId} from 'shared';
 import {checkAllowedAreaSort} from 'units/wizard/utils/helpers';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
@@ -61,7 +61,7 @@ const LineYPlaceholder = {
     onChange: onMeasureAxisChange,
     settings: {
         scale: 'auto',
-        scaleValue: 'min-max',
+        scaleValue: AxisAutoScaleModes.Auto,
         title: 'off',
         titleValue: '',
         type: 'linear',
@@ -129,7 +129,7 @@ export const LINE_VISUALIZATION: GraphShared['visualization'] = {
             onChange: onMeasureAxisChange,
             settings: {
                 scale: 'auto',
-                scaleValue: 'min-max',
+                scaleValue: AxisAutoScaleModes.Auto,
                 title: 'off',
                 titleValue: '',
                 type: 'linear',
@@ -205,7 +205,7 @@ export const AREA_VISUALIZATION: GraphShared['visualization'] = {
             onChange: onMeasureAxisChange,
             settings: {
                 scale: 'auto',
-                scaleValue: 'min-max',
+                scaleValue: AxisAutoScaleModes.Auto,
                 title: 'off',
                 titleValue: '',
                 type: 'linear',
@@ -307,7 +307,7 @@ export const COLUMN_VISUALIZATION: GraphShared['visualization'] = {
             onChange: onMeasureAxisChange,
             settings: {
                 scale: 'auto',
-                scaleValue: 'min-max',
+                scaleValue: AxisAutoScaleModes.Auto,
                 title: 'off',
                 titleValue: '',
                 type: 'linear',
@@ -401,7 +401,7 @@ export const BAR_VISUALIZATION: GraphShared['visualization'] = {
             onChange: onMeasureAxisChange,
             settings: {
                 scale: 'auto',
-                scaleValue: 'min-max',
+                scaleValue: AxisAutoScaleModes.Auto,
                 title: 'off',
                 titleValue: '',
                 type: 'linear',
