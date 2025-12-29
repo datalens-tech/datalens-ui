@@ -197,15 +197,6 @@ export const getCollectionBreadcrumbs = ({collectionId}: {collectionId: string})
             .catch((error: Error) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
 
-                if (!isCanceled) {
-                    dispatch(
-                        showToast({
-                            title: error.message,
-                            error,
-                        }),
-                    );
-                }
-
                 dispatch({
                     type: GET_COLLECTION_BREADCRUMBS_FAILED,
                     error: isCanceled ? null : error,
