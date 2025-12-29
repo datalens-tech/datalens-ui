@@ -1,6 +1,5 @@
 import type {ChartData, ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
 import {CustomShapeRenderer} from '@gravity-ui/chartkit/gravity-charts';
-import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import set from 'lodash/set';
@@ -10,7 +9,7 @@ import type {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
 import type {GraphWidget} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
 import {getTooltipHeaderFormat, getTooltipRenderer, getTooltipRowRenderer} from '../tooltip';
-import {getNormalizedClickActions} from '../utils';
+import {getEscapedActionParams, getNormalizedClickActions} from '../utils';
 
 import {convertChartCommentsToPlotBandsAndLines, shouldUseCommentsOnYAxis} from './comments';
 import {handleClick} from './event-handlers';
@@ -145,7 +144,7 @@ function getStyledSeries(loadedData: ChartKitAdapterProps['loadedData']) {
         const handlers = Array.isArray(a.handler) ? a.handler : [a.handler];
         return handlers.some((h) => h.type === 'setActionParams');
     });
-    const actionParams = pickActionParamsFromParams(get(loadedData, 'unresolvedParams', {}));
+    const actionParams = getEscapedActionParams(loadedData);
 
     if (clickScope?.scope === 'point' && Object.keys(actionParams).length > 0) {
         const chartSeries = widgetData.series.data;

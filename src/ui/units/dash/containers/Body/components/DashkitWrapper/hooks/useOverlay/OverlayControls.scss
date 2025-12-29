@@ -1,0 +1,17 @@
+.dash-body-overlay-controls {
+    $block: &;
+
+    &__global-icon {
+        svg {
+            overflow: visible;
+        }
+
+        &:hover #{$block}__global-icon-background {
+            fill: var(--g-color-base-simple-hover-solid);
+        }
+    }
+
+    &__gear-global-icon {
+        color: var(--g-color-text-utility);
+    }
+}

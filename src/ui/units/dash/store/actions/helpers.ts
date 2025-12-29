@@ -6,6 +6,7 @@ import type {
     StateAndParamsMetaData,
 } from '@gravity-ui/dashkit/helpers';
 import type {History} from 'history';
+import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
 import {DashTabItemType} from 'shared';
 import type {
@@ -40,23 +41,14 @@ import type {DashDispatch} from './index';
 export const NOT_FOUND_ERROR_TEXT = 'No entry found';
 export const DOES_NOT_EXIST_ERROR_TEXT = "The entity doesn't exist";
 
-// TODO (global selectors): add translations
-const TEMP_I18N_DASH_MAIN_VIEW = {
-    'title_failed-copy-global-item': 'Не удалось скопировать',
-    'label_failed-copy-global-item':
-        'Настройки скопированного селектора делают невозможным отображение его на текущей вкладке. Поменяйти настройки в целевом селекторе перед копированием',
-    button_close: 'Закрыть',
-};
+const i18n = I18n.keyset('dash.main.view');
 
 export const openFailedCopyGlobalItemDialog = (dispatch: DashDispatch) => {
     dispatch(
         openDialogDefault({
-            // i18n('dash.main.view', 'title_failed-copy-global-item')
-            caption: TEMP_I18N_DASH_MAIN_VIEW['title_failed-copy-global-item'],
-            // i18n('dash.main.view', 'label_failed-copy-global-item')
-            message: TEMP_I18N_DASH_MAIN_VIEW['label_failed-copy-global-item'],
-            // i18n('dash.main.view', 'button_close')
-            textButtonCancel: TEMP_I18N_DASH_MAIN_VIEW['button_close'],
+            caption: i18n('title_failed-copy-global-item'),
+            message: i18n('label_failed-copy-global-item'),
+            textButtonCancel: i18n('button_close'),
             propsButtonCancel: {
                 view: 'action',
             },
