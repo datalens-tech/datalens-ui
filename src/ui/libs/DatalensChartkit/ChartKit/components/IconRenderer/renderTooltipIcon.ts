@@ -33,9 +33,12 @@ export const renderTooltipIcon = (args: {
     type?: LineShapeType;
     width?: string;
     height?: string;
+    strokeWidth?: number;
 }) => {
     const {type, width = DEFAULT_ICON_WIDTH, height = DEFAULT_ICON_HEIGHT} = args;
     const templateIcon = type && TEMPLATE_ICONS[type];
+    const widthPx = `${width}px`;
+    const heightPx = `${height}px`;
 
-    return templateIcon ? templateIcon({width, height}) : '';
+    return templateIcon ? templateIcon({width: widthPx, height: heightPx}) : '';
 };

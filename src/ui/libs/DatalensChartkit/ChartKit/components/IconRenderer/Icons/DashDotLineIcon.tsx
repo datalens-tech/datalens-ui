@@ -1,19 +1,23 @@
 import React from 'react';
 
-import type {CommonIconProps} from '../types';
+import type {LineIconProps} from '../types';
 
-const DashDotLineIcon: React.FC<CommonIconProps> = ({height, width}: CommonIconProps) => (
+const DashDotLineIcon: React.FC<LineIconProps> = ({
+    height,
+    width,
+    lineWidth = 2,
+}: LineIconProps) => (
     <svg
         width={width}
         height={height}
         fill="none"
-        viewBox="0 0 38 2"
+        viewBox={`0 ${2 - lineWidth / 2} 38 ${lineWidth}`}
         xmlns="http://www.w3.org/2000/svg"
     >
         <path
             fillRule="evenodd"
             clipRule="evenodd"
-            d="M30 2h8V0h-8v2zM8 2h8V0H8v2zM22 2h2V0h-2v2zM0 2h2V0H0v2z"
+            d={`M30 ${2 + lineWidth / 2}h8V${2 - lineWidth / 2}h-8v${lineWidth}zM8 ${2 + lineWidth / 2}h8V${2 - lineWidth / 2}H8v${lineWidth}zM22 ${2 + lineWidth / 2}h2V${2 - lineWidth / 2}h-2v${lineWidth}zM0 ${2 + lineWidth / 2}h2V${2 - lineWidth / 2}H0v${lineWidth}z`}
             fill="currentColor"
         />
     </svg>

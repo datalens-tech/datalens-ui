@@ -510,6 +510,8 @@ export type Sort = Field & {
 
 export interface ShapesConfig {
     mountedShapes?: Record<string, string>;
+    lineWidth?: number;
+    lineWidthPlus?: number;
     fieldGuid?: string;
 }
 

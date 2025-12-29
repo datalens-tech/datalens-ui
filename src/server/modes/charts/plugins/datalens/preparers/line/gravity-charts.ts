@@ -187,6 +187,12 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 shapeValue: graph.shapeValue,
             },
             rangeSlider,
+            lineWidth: graph.lineWidth,
+            states: {
+                hover: {
+                    lineWidthPlus: graph.states?.hover?.lineWidthPlus || 2, // Default hover line width increase
+                },
+            },
         };
     });
 

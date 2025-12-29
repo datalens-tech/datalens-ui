@@ -1,22 +1,32 @@
 import React from 'react';
 
-import type {CommonIconProps} from '../types';
+import type {LineIconProps} from '../types';
 
-const LongDashDotDotLineIcon: React.FC<CommonIconProps> = ({width, height}: CommonIconProps) => (
-    <svg
-        width={width}
-        height={height}
-        viewBox="0 0 38 2"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-    >
-        <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M30 2h16V0H30v2zM-8 2H8V0H-8v2zM22 2h2V0h-2v2zM14 2h2V0h-2v2z"
-            fill="currentColor"
-        />
-    </svg>
-);
+const LongDashDotDotLineIcon: React.FC<LineIconProps> = ({
+    width,
+    height,
+    setLineWidth,
+}: LineIconProps) => {
+    const viewBoxHeight = setLineWidth ? parseInt(height, 10) : 2;
+    const pathY2 = setLineWidth ? parseInt(height, 10) : 2;
+    const pathY0 = setLineWidth ? 0 : 0;
+
+    return (
+        <svg
+            width={width}
+            height={height}
+            viewBox={`0 0 38 ${viewBoxHeight}`}
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d={`M30 ${pathY2}h16V${pathY0}H30v${pathY2}zM-8 ${pathY2}H8V${pathY0}H-8v${pathY2}zM22 ${pathY2}h2V${pathY0}h-2v${pathY2}zM14 ${pathY2}h2V${pathY0}h-2v${pathY2}z`}
+                fill="currentColor"
+            />
+        </svg>
+    );
+};
 
 export default LongDashDotDotLineIcon;

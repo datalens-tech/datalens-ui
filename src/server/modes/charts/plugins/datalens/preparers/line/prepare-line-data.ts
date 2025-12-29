@@ -46,6 +46,170 @@ import {colorizeByGradient} from './helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from './helpers/getSortedLineKeys';
 import type {LineTemplate, LinesRecord, MergedYSectionItems} from './types';
 
+function createGraphObject(params: {
+    line: LineTemplate;
+    lineKey: string;
+    categories: (string | number)[];
+    seriesNameFormatter: any;
+    isMarkdownLabel: boolean;
+    isMarkupLabel: boolean;
+    isHtmlLabel: boolean;
+    labelsValues: Record<string, Record<string, any>>;
+    labelsLength: number | undefined;
+    labelItem: any;
+    nulls: any;
+    visualizationId: string;
+    isXCategoryAxis: boolean;
+    xField: any;
+    ySectionItems: any[];
+    isActionParamsEnable: boolean | undefined;
+    segmentsMap: any;
+    isHtmlSegment: boolean;
+    colorItem: any;
+    shapeItem: any;
+    shapesConfig: any;
+}) {
+    const {
+        line,
+        lineKey,
+        categories,
+        seriesNameFormatter,
+        isMarkdownLabel,
+        isMarkupLabel,
+        isHtmlLabel,
+        labelsValues,
+        labelsLength,
+        labelItem,
+        nulls,
+        visualizationId,
+        isXCategoryAxis,
+        xField,
+        ySectionItems,
+        isActionParamsEnable,
+        segmentsMap,
+        isHtmlSegment,
+        colorItem,
+        shapeItem,
+        shapesConfig,
+    } = params;
+
+    const innerLabels = labelsValues[lineKey];
+    const shouldUsePreviousValueForEmptyPoint =
+        visualizationId === WizardVisualizationId.Area && nulls === AxisNullsMode.UsePrevious;
+    let prevYValue: string | number | null | undefined = null;
+
+    const graph: any = {
+        id: line.id,
+        title: seriesNameFormatter(line.title ?? 'Null'),
+        tooltip: line.tooltip,
+        dataLabels: {
+            ...line.dataLabels,
+            useHTML: isMarkdownLabel || isMarkupLabel || isHtmlLabel,
+        },
+        data: categories
+            .map((category, i) => {
+                const lineData = line.data[category];
+                const colorValue = lineData?.colorValue;
+
+                let value = lineData?.value;
+
+                if (typeof value === 'undefined' && nulls === AxisNullsMode.AsZero) {
+                    value = 0;
+                }
+
+                if (shouldUsePreviousValueForEmptyPoint) {
+                    if (isNil(value)) {
+                        value = prevYValue ?? value;
+                    } else {
+                        prevYValue = value;
+                    }
+                }
+
+                // We can skip a point only if we put x in each point instead of categories
+                if (
+                    !isXCategoryAxis &&
+                    typeof value === 'undefined' &&
+                    nulls === AxisNullsMode.Connect
+                ) {
+                    return null;
+                }
+
+                const y = typeof value === 'number' ? Number(value) : null;
+
+                const dataLabels = {
+                    enabled: Boolean(labelsLength && labelItem),
+                };
+
+                const point: any = {
+                    x: i,
+                    y,
+                    colorValue,
+                    dataLabels,
+                };
+
+                if (line.segmentNameKey) {
+                    const currentSegment = segmentsMap[line.segmentNameKey];
+                    const pointValue = `${currentSegment.title}: ${line.title}`;
+                    point.custom = {
+                        tooltipPointName: isHtmlSegment ? wrapHtml(pointValue) : pointValue,
+                    };
+                }
+
+                if (!isXCategoryAxis) {
+                    const pointX = category;
+
+                    point.x = pointX;
+
+                    if (xField && isNumericalDataType(xField.data_type)) {
+                        const formatting = getFormatOptions(xField);
+                        if (formatting) {
+                            point.xFormatted = chartKitFormatNumberWrapper(Number(pointX), {
+                                lang: 'ru',
+                                ...formatting,
+                            });
+                        }
+                    }
+                }
+
+                point.label = getLabelValue(innerLabels?.[category], {
+                    isMarkdownLabel,
+                    isMarkupLabel,
+                    isHtmlLabel,
+                });
+
+                if (isActionParamsEnable) {
+                    const [yField] = ySectionItems || [];
+                    const actionParams: Record<string, any> = {};
+                    addActionParamValue(actionParams, xField, category);
+                    addActionParamValue(actionParams, yField, point.y);
+
+                    point.custom = {
+                        ...point.custom,
+                        actionParams,
+                    };
+                }
+
+                return point;
+            })
+            .filter((point) => point !== null),
+        legendTitle: line.legendTitle ?? line.title ?? 'Null',
+        formattedName: colorItem ? undefined : seriesNameFormatter(line.formattedName),
+        drillDownFilterValue: line.drillDownFilterValue,
+        colorKey: line.colorKey,
+        colorGuid: colorItem?.guid || null,
+        shapeGuid: shapeItem?.guid || null,
+        measureFieldTitle: line.fieldTitle,
+        lineWidth: shapesConfig?.lineWidth,
+        states: {
+            hover: {
+                lineWidthPlus: shapesConfig?.lineWidthPlus || 12, // Default hover line width increase
+            },
+        },
+    };
+
+    return graph;
+}
+
 // eslint-disable-next-line complexity
 export function prepareLineData(args: PrepareFunctionArgs) {
     const {
@@ -356,121 +520,31 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
                 nulls = getAxisNullsSettings(nulls, visualizationId);
 
-                const innerLabels = labelsValues[lineKey];
-
                 const customSeriesData: HighchartsSeriesCustomObject = {};
 
-                const shouldUsePreviousValueForEmptyPoint =
-                    visualizationId === WizardVisualizationId.Area &&
-                    nulls === AxisNullsMode.UsePrevious;
-                let prevYValue: string | number | null | undefined = null;
-                const graph: any = {
-                    id: line.id,
-                    title: seriesNameFormatter(line.title ?? 'Null'),
-                    tooltip: line.tooltip,
-                    dataLabels: {
-                        ...line.dataLabels,
-                        useHTML: isMarkdownLabel || isMarkupLabel || isHtmlLabel,
-                    },
-                    data: categories
-                        .map((category, i) => {
-                            const lineData = line.data[category];
-                            const colorValue = lineData?.colorValue;
-
-                            let value = lineData?.value;
-
-                            if (typeof value === 'undefined' && nulls === AxisNullsMode.AsZero) {
-                                value = 0;
-                            }
-
-                            if (shouldUsePreviousValueForEmptyPoint) {
-                                if (isNil(value)) {
-                                    value = prevYValue ?? value;
-                                } else {
-                                    prevYValue = value;
-                                }
-                            }
-
-                            // We can skip a point only if we put x in each point instead of categories
-                            if (
-                                !isXCategoryAxis &&
-                                typeof value === 'undefined' &&
-                                nulls === AxisNullsMode.Connect
-                            ) {
-                                return null;
-                            }
-
-                            const y = typeof value === 'number' ? Number(value) : null;
-
-                            const dataLabels = {
-                                enabled: Boolean(labelsLength && labelItem),
-                            };
-
-                            const point: any = {
-                                x: i,
-                                y,
-                                colorValue,
-                                dataLabels,
-                            };
-
-                            if (line.segmentNameKey) {
-                                const currentSegment = segmentsMap[line.segmentNameKey];
-                                const pointValue = `${currentSegment.title}: ${line.title}`;
-                                point.custom = {
-                                    tooltipPointName: isHtmlSegment
-                                        ? wrapHtml(pointValue)
-                                        : pointValue,
-                                };
-                            }
-
-                            if (!isXCategoryAxis) {
-                                const pointX = category;
-
-                                point.x = pointX;
-
-                                if (xField && isNumericalDataType(xField.data_type)) {
-                                    const formatting = getFormatOptions(xField);
-                                    if (formatting) {
-                                        point.xFormatted = chartKitFormatNumberWrapper(
-                                            Number(pointX),
-                                            {
-                                                lang: 'ru',
-                                                ...formatting,
-                                            },
-                                        );
-                                    }
-                                }
-                            }
-
-                            point.label = getLabelValue(innerLabels?.[category], {
-                                isMarkdownLabel,
-                                isMarkupLabel,
-                                isHtmlLabel,
-                            });
-
-                            if (isActionParamsEnable) {
-                                const [yField] = ySectionItems || [];
-                                const actionParams: Record<string, any> = {};
-                                addActionParamValue(actionParams, xField, category);
-                                addActionParamValue(actionParams, yField, point.y);
-
-                                point.custom = {
-                                    ...point.custom,
-                                    actionParams,
-                                };
-                            }
-
-                            return point;
-                        })
-                        .filter((point) => point !== null),
-                    legendTitle: line.legendTitle ?? line.title ?? 'Null',
-                    formattedName: colorItem ? undefined : seriesNameFormatter(line.formattedName),
-                    drillDownFilterValue: line.drillDownFilterValue,
-                    colorKey: line.colorKey,
-                    colorGuid: colorItem?.guid || null,
-                    shapeGuid: shapeItem?.guid || null,
-                    measureFieldTitle: line.fieldTitle,
-                };
+                const graph = createGraphObject({
+                    line,
+                    lineKey,
+                    categories,
+                    seriesNameFormatter,
+                    isMarkdownLabel,
+                    isMarkupLabel,
+                    isHtmlLabel,
+                    labelsValues,
+                    labelsLength,
+                    labelItem,
+                    nulls,
+                    visualizationId,
+                    isXCategoryAxis,
+                    xField,
+                    ySectionItems,
+                    isActionParamsEnable,
+                    segmentsMap,
+                    isHtmlSegment,
+                    colorItem,
+                    shapeItem,
+                    shapesConfig,
+                });
 
                 // For one point (non-zero), the setting of the connection empty values has a strange effect:
                 // the value stops being displayed on the graph

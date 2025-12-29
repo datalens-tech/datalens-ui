@@ -1,8 +1,8 @@
 import React from 'react';
 
-import type {CommonIconProps} from '../types';
+import type {CommonIconProps, LineIconProps} from '../types';
 
-const ShortDotLineIcon: React.FC<CommonIconProps> = ({height, width}: CommonIconProps) => (
+const ShortDotLineIcon: React.FC<LineIconProps> = ({height, width}: LineIconProps) => (
     <svg
         width={width}
         height={height}

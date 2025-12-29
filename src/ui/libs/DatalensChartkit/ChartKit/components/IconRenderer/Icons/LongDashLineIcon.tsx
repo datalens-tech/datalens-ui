@@ -1,18 +1,25 @@
 import React from 'react';
 
-import type {CommonIconProps} from '../types';
+import type {LineIconProps} from '../types';
 
-const LongDashLineIcon: React.FC<CommonIconProps> = ({height, width}: CommonIconProps) => (
+const LongDashLineIcon: React.FC<LineIconProps> = ({
+    height,
+    width,
+    lineWidth = 2,
+}: LineIconProps) => (
     <svg
         width={width}
         height={height}
         fill="none"
-        viewBox="2 2 38 2"
+        viewBox={`0 ${2 - lineWidth / 2} 38 ${lineWidth}`}
         xmlns="http://www.w3.org/2000/svg"
     >
-        <g fill="currentColor">
-            <path d="M0 2h16v2H0zM24 2h16v2H24z" />
-        </g>
+        <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d={`M24 ${2 + lineWidth / 2}h16V${2 - lineWidth / 2}H24v${lineWidth}zM0 ${2 + lineWidth / 2}h16V${2 - lineWidth / 2}H0v${lineWidth}z`}
+            fill="currentColor"
+        />
     </svg>
 );
 

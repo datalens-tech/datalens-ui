@@ -58,7 +58,7 @@ export const Palette = (props: Props) => {
                 content = isDefault ? (
                     'auto'
                 ) : (
-                    <IconRenderer iconType={item as LineShapeType} width="80px" height="5px" />
+                    <IconRenderer iconType={item as LineShapeType} width={80} height={5} />
                 );
                 break;
             }
@@ -66,7 +66,7 @@ export const Palette = (props: Props) => {
                 content = isDefault ? (
                     'auto'
                 ) : (
-                    <IconRenderer iconType={item as PointsShapeType} width="20" />
+                    <IconRenderer iconType={item as PointsShapeType} width={20} />
                 );
                 break;
             }
