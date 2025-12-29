@@ -62,3 +62,13 @@ export const enum AxisNullsMode {
     AsZero = 'as-0',
     UsePrevious = 'use-previous',
 }
+
+export const AxisAutoScaleModes = {
+    // historically, auto mode was called min-max, so it is written that way in the config
+    // todo: add renaming to the wizard config migration, when needs to add a new version
+    Auto: 'min-max',
+    MinMax: 'data-min-max',
+    ZeroMax: '0-max',
+} as const;
+
+export type AxisAutoScaleMode = (typeof AxisAutoScaleModes)[keyof typeof AxisAutoScaleModes];

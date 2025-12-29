@@ -20,6 +20,7 @@ import type {
     ServerSort,
 } from 'shared';
 import {
+    AxisAutoScaleModes,
     DialogPlaceholderQa,
     Feature,
     PlaceholderId,
@@ -936,7 +937,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                 : ['0', '100'];
 
         const scaleValue =
-            scaleMode === SETTINGS.SCALE.MANUAL ? defaultManualValue : SETTINGS.SCALE_VALUE.MIN_MAX;
+            scaleMode === SETTINGS.SCALE.MANUAL ? defaultManualValue : AxisAutoScaleModes.Auto;
 
         this.setState({
             settings: {
@@ -963,10 +964,10 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         updatedState.tooltipContent = '';
 
         if (axisType === SETTINGS.TYPE.LOGARITHMIC) {
-            if (settings.scaleValue === SETTINGS.SCALE_VALUE.ZERO_MAX) {
+            if (settings.scaleValue === AxisAutoScaleModes.ZeroMax) {
                 updatedState.settings = {
                     ...updatedState.settings,
-                    scaleValue: SETTINGS.SCALE_VALUE.MIN_MAX,
+                    scaleValue: AxisAutoScaleModes.Auto,
                 };
                 updatedState.tooltipType = 'scaleValue';
                 updatedState.tooltipContent = (
@@ -981,7 +982,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                 updatedState.settings = {
                     ...updatedState.settings,
                     scale: SETTINGS.SCALE.AUTO,
-                    scaleValue: SETTINGS.SCALE_VALUE.MIN_MAX,
+                    scaleValue: AxisAutoScaleModes.Auto,
                 };
 
                 updatedState.tooltipType = 'scale';
@@ -1010,7 +1011,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         };
 
         if (
-            scaleValue === SETTINGS.SCALE_VALUE.ZERO_MAX &&
+            scaleValue === AxisAutoScaleModes.ZeroMax &&
             settings.type === SETTINGS.TYPE.LOGARITHMIC
         ) {
             updatedState.settings = {
