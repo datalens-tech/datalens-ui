@@ -36,7 +36,8 @@ import {
     saveUsersStateBeforeFilter,
 } from '../../store/actions/serviceSettings';
 import {
-    selectServiceUsersListIsLoading,
+    selectServiceUsersListIsInitialLoading,
+    selectServiceUsersListIsLoadingMore,
     selectServiceUsersListPageToken,
     selectServiceUsersListUsers,
 } from '../../store/selectors/serviceSettings';
@@ -83,7 +84,9 @@ const UsersList = () => {
         Record<BaseFiltersNames | string, string | string[]>
     >({});
 
-    const isDataLoading = useSelector(selectServiceUsersListIsLoading);
+    const isInitialLoading = useSelector(selectServiceUsersListIsInitialLoading);
+    const isLoadingMore = useSelector(selectServiceUsersListIsLoadingMore);
+
     const nextPageToken = useSelector(selectServiceUsersListPageToken);
     const displayedUsers = useSelector(selectServiceUsersListUsers);
 
@@ -213,9 +216,11 @@ const UsersList = () => {
     }, []);
 
     const renderTable = () => {
-        if (isDataLoading && !displayedUsers.length) {
+        if (isInitialLoading && !displayedUsers.length) {
             return <Loader className={b('data-loader')} size="m" />;
         }
+
+        const canLoadMore = !isInitialLoading && !isLoadingMore && nextPageToken;
 
         return (
             <React.Fragment>
@@ -264,12 +269,27 @@ const UsersList = () => {
                     emptyMessage={i18n('label_users-empty-message')}
                     onRowClick={handleRowClick}
                 />
+                {newServiceSettingsEnabled ? (
+                    <React.Fragment>
+                        {isLoadingMore && <Loader size="s" className={b('lazy-loader')} />}
+                        {canLoadMore && <Waypoint onEnter={handleLoadMoreClick} />}
+                    </React.Fragment>
+                ) : (
+                    nextPageToken && (
+                        <Button
+                            className={b('load-button')}
+                            loading={isInitialLoading || isLoadingMore}
+                            onClick={handleLoadMoreClick}
+                        >
+                            {i18n('button_load-more')}
+                        </Button>
+                    )
+                )}
             </React.Fragment>
         );
     };
 
     const showAddUser = !DL.AUTH_MANAGE_LOCAL_USERS_DISABLED;
-    const canLoadMore = !isDataLoading && !isLoadingMore && nextPageToken;
 
     return (
         <div className={b({new: newServiceSettingsEnabled})}>
@@ -297,18 +317,6 @@ const UsersList = () => {
                 </Flex>
 
                 {renderTable()}
-
-                {/* {nextPageToken && (
-                    <Button
-                        className={b('load-button')}
-                        loading={isDataLoading}
-                        onClick={handleLoadMoreClick}
-                    >
-                        {i18n('button_load-more')}
-                    </Button>
-                )} */}
-                {isLoadingMore && <Loader size="s" className={b('lazy-loader')} />}
-                {canLoadMore && <Waypoint onEnter={handleLoadMoreClick} />}
             </div>
         </div>
     );
