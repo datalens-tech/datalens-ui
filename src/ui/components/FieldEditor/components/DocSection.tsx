@@ -1,13 +1,15 @@
 import React from 'react';
 
-import {List, Loader} from '@gravity-ui/uikit';
+import {Link, List, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import SplitPane from 'react-split-pane';
 import {DocSectionQa} from 'shared';
+import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import type {
     DataLensFunctionsDocGroupTocItem,
     DocsTocItemLastLevel,
 } from 'ui/registry/units/common/types/functions/getFunctionsDocumentation';
+import {formDocsEndpointDL} from 'ui/utils/docs';
 
 import {I18n} from '../../../../i18n';
 import {DL, SPLIT_PANE_RESIZER_CLASSNAME} from '../../../constants';
@@ -49,6 +51,36 @@ type UpdateEvent = 'init' | 'click' | 'filter';
 const b = block('dl-field-editor');
 const i18n = I18n.keyset('component.dl-field-editor.view');
 const ITEM_HEIGHT = 28;
+
+const EmptyState: React.FC = () => {
+    const isExternalLink = DL.ENDPOINTS.public;
+
+    const docsUrl = formDocsEndpointDL('/concepts/calculations/formula-syntax');
+
+    return (
+        <PlaceholderIllustration
+            className={b('empty-state')}
+            name={'template'}
+            title={i18n('label_doc-formula-is-empty')}
+            description={
+                <div>
+                    <div>
+                        <Link target="_blank" href={docsUrl}>
+                            {i18n('label_doc-formula-is-empty-description-syntax-link')}
+                        </Link>
+                    </div>
+                    {isExternalLink && (
+                        <div>
+                            <Link target="_blank" href={`${isExternalLink}/9fms9uae7ip02?tab=87P`}>
+                                {i18n('label_doc-formula-is-empty-description-examples-link')}
+                            </Link>
+                        </div>
+                    )}
+                </div>
+            }
+        />
+    );
+};
 
 class DocSection extends React.Component<DocSectionProps, DocSectionState> {
     ref: React.RefObject<HTMLDivElement>;
@@ -129,18 +161,24 @@ class DocSection extends React.Component<DocSectionProps, DocSectionState> {
                                 </div>
                             ) : (
                                 <React.Fragment>
-                                    <div
-                                        className={b('doc-item-title')}
-                                        data-qa={DocSectionQa.Title}
-                                    >
-                                        {selectedItem?.name}
-                                    </div>
-                                    <YfmWrapper
-                                        className={b('doc-item')}
-                                        setByInnerHtml={true}
-                                        content={functionDoc?.html || ''}
-                                        noMagicLinks={true}
-                                    />
+                                    {selectedItem ? (
+                                        <React.Fragment>
+                                            <div
+                                                className={b('doc-item-title')}
+                                                data-qa={DocSectionQa.Title}
+                                            >
+                                                {selectedItem?.name}
+                                            </div>
+                                            <YfmWrapper
+                                                className={b('doc-item')}
+                                                setByInnerHtml={true}
+                                                content={functionDoc?.html || ''}
+                                                noMagicLinks={true}
+                                            />
+                                        </React.Fragment>
+                                    ) : (
+                                        <EmptyState />
+                                    )}
                                 </React.Fragment>
                             )}
                         </div>

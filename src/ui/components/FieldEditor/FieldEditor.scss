@@ -251,12 +251,19 @@
         }
     }
 
-    &__doc-loader {
+    &__doc-loader,
+    &__empty-state {
         height: 100%;
         width: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    &__empty-state {
+        padding-top: 0;
+        padding-bottom: 0;
+        overflow: clip;
     }
 
     /* TODO: remove styles, when it is possible to customize styles on List.Input [DATAUI-360] */
