@@ -5,6 +5,10 @@
     --gn-aside-header-item-icon-color: var(--g-color-text-primary);
 }
 
+.g-root {
+    --gn-aside-header-item-current-background-color: var(--g-color-base-selection);
+}
+
 .g-root_theme_light:not(#{$customThemeRoot}),
 .g-root_theme_light-hc:not(#{$customThemeRoot}) {
     --g-color-private-brand-50: rgba(1, 123, 254, 0.1);
@@ -50,8 +54,6 @@
 
     --g-color-text-link: var(--g-color-private-brand-550-solid);
     --g-color-text-link-hover: var(--g-color-private-brand-700-solid);
-
-    --gn-aside-header-item-current-background-color: var(--g-color-private-brand-100);
 }
 
 .g-root_theme_dark:not(#{$customThemeRoot}),
