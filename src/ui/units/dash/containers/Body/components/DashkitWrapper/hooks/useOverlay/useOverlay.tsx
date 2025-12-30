@@ -19,6 +19,7 @@ import type {DashTab, DashTabItem, DashTabLayout} from 'shared';
 import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
 import {openDialogDefault} from 'ui/components/DialogDefault/DialogDefault';
+import {useWidgetMetaContext} from 'ui/units/dash/contexts/WidgetMetaContext';
 
 import {removeGlobalItems, setCurrentTabData} from '../../../../../../store/actions/dashTyped';
 import {openDialogRelations} from '../../../../../../store/actions/relations/actions';
@@ -60,6 +61,8 @@ export const useOverlay = ({
     onChange,
 }: Args): {controls: DashKitProps['overlayControls']; menu: DashKitProps['overlayMenuItems']} => {
     const dispatch = useDispatch();
+
+    const metaContext = useWidgetMetaContext();
 
     const rawTabDataConfig = useSelector(selectCurrentTab) as DashTab;
 
@@ -186,13 +189,20 @@ export const useOverlay = ({
                                 widget,
                                 dashKitRef,
                                 onClose: () => {},
+                                loadHiddenWidgetMeta: metaContext?.loadHiddenWidgetMeta,
                             }),
                         );
                     },
                 } as OverlayControlItem,
             ],
         };
-    }, [dispatch, dashKitRef, getWidgetLayoutById, togglePinElement]);
+    }, [
+        togglePinElement,
+        getWidgetLayoutById,
+        dispatch,
+        dashKitRef,
+        metaContext?.loadHiddenWidgetMeta,
+    ]);
 
     const removeItemManual = React.useCallback(
         (itemId: string, isGlobal?: boolean) => {

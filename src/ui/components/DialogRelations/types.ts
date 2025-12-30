@@ -1,6 +1,6 @@
 import type React from 'react';
 
-import type {DashTabConnectionKind} from 'shared';
+import type {DashTabConnectionKind, DashTabItem} from 'shared';
 
 import type {DashkitMetaDataItemBase, DatasetsFieldsListData} from '../DashKit/plugins/types';
 
@@ -10,6 +10,15 @@ export type DashkitMetaDataItem = DashkitMetaDataItemBase & {
     relations: RelationsData;
     namespace: string;
 };
+
+export type OnLoadMetaType = (
+    params: {
+        subItemId: string | null;
+    } & (
+        | {needChangeCurrent: true; widget: DashTabItem}
+        | {needChangeCurrent?: false; widget: DashkitMetaDataItem}
+    ),
+) => Promise<void> | null;
 
 export type RelationType = keyof typeof RELATION_TYPES;
 

@@ -163,6 +163,82 @@ export const getChartSimpleLoadedData = ({
     return {queries, data};
 };
 
+export const getTabMeta = ({
+    id,
+    tabWidget,
+    loadData,
+    savedData,
+    error,
+    widgetDataRef,
+    currentTabChartId,
+}: {
+    id: string;
+    tabWidget: CurrentTab;
+    loadData: LoadedWidgetData<ChartsData>;
+    savedData?: LoadedWidgetData<ChartsData>;
+    error: CombinedError | null;
+    widgetDataRef?: WidgetDataRef;
+    currentTabChartId?: string;
+}) => {
+    let loadedData: WidgetLoadedData = null;
+    let loadedWithError = false;
+    if (loadData?.entryId === tabWidget.chartId) {
+        const loadDataError = (loadData as unknown as AxiosResponse<ResponseError>)?.data?.error;
+
+        loadedWithError = Boolean(loadDataError);
+        loadedData = loadData;
+    } else if (savedData?.entryId === tabWidget.chartId) {
+        loadedData = savedData;
+        const savedDataError = (savedData as unknown as AxiosResponse<ResponseError>)?.data?.error;
+        loadedWithError = Boolean(savedDataError);
+    }
+
+    if (currentTabChartId === tabWidget.chartId || !currentTabChartId) {
+        const errorCode = (error as DatalensChartkitCustomError)?.code;
+
+        loadedWithError =
+            loadedWithError ||
+            Boolean(
+                error && (typeof errorCode !== 'string' || !ALLOWED_ERRORS.includes(errorCode)),
+            );
+    }
+
+    const metaInfo: Omit<DashkitMetaDataItemBase, 'defaultParams'> = {
+        layoutId: id,
+        chartId: tabWidget.chartId,
+        widgetId: tabWidget.id,
+        title: tabWidget.title,
+        label: (loadedData?.key && Utils.getEntryNameFromKey(loadedData?.key || '')) || '',
+        params: tabWidget.params,
+        enableFiltering: tabWidget.enableActionParams || false,
+        loaded: Boolean(loadedData),
+        entryId: tabWidget.chartId,
+        usedParams: loadedData?.usedParams
+            ? Object.keys(loadedData?.usedParams || {}) || null
+            : null,
+        datasets:
+            getUniqDatasetsFields(loadedData?.datasets || loadedData?.extra?.datasets) || null,
+        datasetId:
+            (loadedData?.sources as ResponseSourcesSuccess)?.fields?.datasetId ||
+            loadedData?.extra?.datasets?.[0]?.id ||
+            '',
+        type: (loadedData?.type as DashTabItemType) || null,
+        visualizationType: loadedData?.libraryConfig?.chart?.type || null,
+        loadError: loadedWithError,
+        isWizard: Boolean(loadedData?.isNewWizard || loadedData?.isOldWizard),
+        isEditor: Boolean(loadedData?.isEditor),
+        isQL: Boolean(loadedData?.isQL),
+        getSimpleLoadedData: () => {
+            return getChartSimpleLoadedData({
+                widget: widgetDataRef?.current,
+                loadedData: loadedData as LoadedWidgetData<unknown>,
+            });
+        },
+    };
+
+    return metaInfo;
+};
+
 /**
  * For new (by flag relations) for charts only
  * @param tabs
@@ -177,6 +253,7 @@ export const getWidgetMeta = ({
     savedData,
     error,
     widgetDataRef,
+    currentTabChartId,
 }: {
     tabs: Array<CurrentTab>;
     id: string;
@@ -184,57 +261,18 @@ export const getWidgetMeta = ({
     savedData: LoadedWidgetData<ChartsData>;
     error: CombinedError | null;
     widgetDataRef?: WidgetDataRef;
+    currentTabChartId: string;
 }) => {
     return tabs.map((tabWidget) => {
-        let loadedData: WidgetLoadedData = null;
-        if (loadData?.entryId === tabWidget.chartId) {
-            loadedData = loadData;
-        } else if (savedData?.entryId === tabWidget.chartId) {
-            loadedData = savedData;
-        }
-
-        const loadDataError = (loadData as unknown as AxiosResponse<ResponseError>)?.data?.error;
-        const errorCode = (error as DatalensChartkitCustomError)?.code;
-
-        const loadedWithError = Boolean(
-            (loadDataError || error) &&
-                (typeof errorCode !== 'string' || !ALLOWED_ERRORS.includes(errorCode)),
-        );
-
-        const metaInfo: Omit<DashkitMetaDataItemBase, 'defaultParams'> = {
-            layoutId: id,
-            chartId: tabWidget.chartId,
-            widgetId: tabWidget.id,
-            title: tabWidget.title,
-            label: (loadedData?.key && Utils.getEntryNameFromKey(loadedData?.key || '')) || '',
-            params: tabWidget.params,
-            enableFiltering: tabWidget.enableActionParams || false,
-            loaded: Boolean(loadedData),
-            entryId: tabWidget.chartId,
-            usedParams: loadedData?.usedParams
-                ? Object.keys(loadedData?.usedParams || {}) || null
-                : null,
-            datasets:
-                getUniqDatasetsFields(loadedData?.datasets || loadedData?.extra?.datasets) || null,
-            datasetId:
-                (loadedData?.sources as ResponseSourcesSuccess)?.fields?.datasetId ||
-                loadedData?.extra?.datasets?.[0]?.id ||
-                '',
-            type: (loadedData?.type as DashTabItemType) || null,
-            visualizationType: loadedData?.libraryConfig?.chart?.type || null,
-            loadError: loadedWithError,
-            isWizard: Boolean(loadedData?.isNewWizard || loadedData?.isOldWizard),
-            isEditor: Boolean(loadedData?.isEditor),
-            isQL: Boolean(loadedData?.isQL),
-            getSimpleLoadedData: () => {
-                return getChartSimpleLoadedData({
-                    widget: widgetDataRef?.current,
-                    loadedData: loadedData as LoadedWidgetData<unknown>,
-                });
-            },
-        };
-
-        return metaInfo;
+        return getTabMeta({
+            id,
+            tabWidget,
+            loadData,
+            savedData,
+            error,
+            widgetDataRef,
+            currentTabChartId,
+        });
     });
 };
 
@@ -407,7 +445,7 @@ export const pushStats = (
  * @param tabs
  * @param tabId
  */
-export const getTabIndex = (tabs: WidgetPluginDataWithTabs['tabs'], tabId: string) => {
+export const getTabIndex = (tabs: WidgetPluginDataWithTabs['tabs'], tabId: string | null) => {
     if (!tabs) {
         return 0;
     }

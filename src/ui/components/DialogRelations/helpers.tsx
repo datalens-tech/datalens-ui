@@ -1,6 +1,7 @@
 import React from 'react';
 
 import type {Config, ConfigConnection, DashKit} from '@gravity-ui/dashkit';
+import {TriangleExclamation} from '@gravity-ui/icons';
 import type {SelectOption} from '@gravity-ui/uikit';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -70,6 +71,10 @@ export const getRelationsIcon = (
 ) => {
     if (!widgetMeta) {
         return null;
+    }
+
+    if (widgetMeta.loadError) {
+        return <Icon data={TriangleExclamation} size={DEFAULT_ICON_SIZE} className={className} />;
     }
 
     if (widgetMeta.visualizationType) {
@@ -285,7 +290,7 @@ export const getUpdatedPreparedRelations = (props: {
     changedWidgetsData?: WidgetsTypes;
     dashkitData: DashKit | null;
     dashWidgetsMeta: Omit<DashkitMetaDataItem, 'relations'>[] | null;
-    preparedRelations: DashMetaData;
+    relations: DashMetaData;
     datasets: DatasetsListData | null;
     type?: 'aliases' | 'connections';
 }) => {
@@ -296,7 +301,7 @@ export const getUpdatedPreparedRelations = (props: {
         changedWidgetsData,
         dashkitData,
         dashWidgetsMeta,
-        preparedRelations,
+        relations,
         datasets,
         type = 'connections',
     } = props;
@@ -313,7 +318,7 @@ export const getUpdatedPreparedRelations = (props: {
         return null;
     }
 
-    const newPreparedRelations = [...preparedRelations];
+    const newPreparedRelations = [...relations];
     const changedRelationsItem = newPreparedRelations.find(
         (item) => (item.itemId || item.widgetId) === currentWidgetId,
     );
@@ -332,7 +337,7 @@ export const getUpdatedPreparedRelations = (props: {
                 );
             })
             .forEach((item) => {
-                const relations = getRelationsInfo({
+                const relationsData = getRelationsInfo({
                     aliases: newAliases,
                     connections: (dashkitData?.props.config.connections || []) as ConnectionsData,
                     datasets,
@@ -342,7 +347,7 @@ export const getUpdatedPreparedRelations = (props: {
 
                 relationsItems.push({
                     ...item,
-                    relations,
+                    relations: relationsData,
                 });
             });
 
@@ -443,6 +448,7 @@ export const getWidgetsOptions = ({
                             : item.title,
                         data: {
                             widgetId: widgetItem.id,
+                            isItem: true,
                             icon: widgetsIconMap[item.id],
                         },
                     });
@@ -470,4 +476,21 @@ export const getWidgetsOptions = ({
     }
 
     return options;
+};
+
+export const getInitialSubItemId = (
+    widget: DashTabItem | null,
+    widgetsCurrentTab: Record<string, string>,
+) => {
+    if (!widget) {
+        return null;
+    }
+    switch (widget.type) {
+        case DashTabItemType.GroupControl:
+            return widget.data.group[0].id;
+        case DashTabItemType.Widget:
+            return widgetsCurrentTab[widget.id] || null;
+    }
+
+    return null;
 };

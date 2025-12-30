@@ -623,11 +623,15 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         requestId,
         requestCancellation,
         widgetElement,
+        responseOptions,
     }: {
         props: ChartsProps;
         contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
+        responseOptions?: {
+            includeConfig?: boolean;
+        };
         widgetElement?: Element;
     }) {
         const loaded = await this.load({
@@ -635,6 +639,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             contextHeaders,
             requestId,
             requestCancellation,
+            includeConfig: responseOptions?.includeConfig,
         });
 
         if (loaded) {
@@ -971,12 +976,14 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         requestId,
         requestCancellation,
         onlyControls = false,
+        includeConfig = true,
     }: {
         data: ChartsProps;
         contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
         onlyControls?: boolean;
+        includeConfig?: boolean;
     }) {
         const {
             id,
@@ -1012,7 +1019,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                     : undefined,
                 responseOptions: {
                     // relevant for graph_wizard and metric_wizard
-                    includeConfig: true,
+                    includeConfig,
                     includeLogs,
                 },
                 uiOnly: onlyControls || undefined,
