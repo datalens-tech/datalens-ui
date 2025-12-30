@@ -79,8 +79,6 @@ export enum Feature {
     EnableExportSettings = 'EnableExportSettings',
     /** Enable updating dataset settings by action ('load_preview_by_default' | 'template_enabled' | 'data_export_forbidden') */
     EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
-    /** Enable new favicon, icon, theme, decorations and illustrations */
-    EnableDLRebranding = 'EnableDLRebranding',
     /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
     GravityChartsForPieAndTreemap = 'GravityChartsForPieAndTreemap',
     /** Use GravityUI Charts as the default library for some wizard visualizations(scatter and bar-y) */
