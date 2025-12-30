@@ -21,6 +21,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Autoscaling")', () => {
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'Category');
     });
 
+    // todo: remove along with GravityChartsForLineAreaAndBarX feature flag
     datalensTest('Scaling from 0 to max works in the Y section', async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
         const yAxisLabelsLocator = wizardPage.page.locator('.highcharts-yaxis-labels');
