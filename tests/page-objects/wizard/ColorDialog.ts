@@ -8,6 +8,8 @@ export enum ColorValue {
     Red = '#FF3D64',
     Green = '#8AD554',
     Orange = '#DB9101',
+    DEFAULT_20_DarkOrange = '#FF8C00',
+    DEFAULT_20_LightGreen = '#7FD169',
 }
 
 type OpenDialogColorArgs = {

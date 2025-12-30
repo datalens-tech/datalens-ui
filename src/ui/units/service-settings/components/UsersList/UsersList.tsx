@@ -17,6 +17,8 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useLocation} from 'react-router';
 import {Link} from 'react-router-dom';
+import {Waypoint} from 'react-waypoint';
+import {Feature} from 'shared';
 import type {ListUser} from 'shared/schema/auth/types/users';
 import {DL} from 'ui/constants';
 import {registry} from 'ui/registry';
@@ -24,6 +26,7 @@ import {ChangePasswordDialog} from 'ui/units/auth/components/ChangePasswordDialo
 import {ChangeUserRoleDialog} from 'ui/units/auth/components/ChangeUserRoleDialog/ChangeUserRoleDialog';
 import {DeleteUserDialog} from 'ui/units/auth/components/DeleteUserDialog/DeleteUserDialog';
 import {EditUserProfileDialog} from 'ui/units/auth/components/EditUserProfileDialog/EditUserProfileDialog';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ServiceSettingsDispatch} from '../../store/actions/serviceSettings';
 import {
@@ -33,7 +36,8 @@ import {
     saveUsersStateBeforeFilter,
 } from '../../store/actions/serviceSettings';
 import {
-    selectServiceUsersListIsLoading,
+    selectServiceUsersListIsInitialLoading,
+    selectServiceUsersListIsLoadingMore,
     selectServiceUsersListPageToken,
     selectServiceUsersListUsers,
 } from '../../store/selectors/serviceSettings';
@@ -74,12 +78,15 @@ const hasActiveFilters = (filters: Record<string, string | string[]>) => {
 const UsersList = () => {
     const history = useHistory();
     const location = useLocation();
+    const newServiceSettingsEnabled = isEnabledFeature(Feature.EnableNewServiceSettings);
 
     const [filters, setFilters] = React.useState<
         Record<BaseFiltersNames | string, string | string[]>
     >({});
 
-    const isDataLoading = useSelector(selectServiceUsersListIsLoading);
+    const isInitialLoading = useSelector(selectServiceUsersListIsInitialLoading);
+    const isLoadingMore = useSelector(selectServiceUsersListIsLoadingMore);
+
     const nextPageToken = useSelector(selectServiceUsersListPageToken);
     const displayedUsers = useSelector(selectServiceUsersListUsers);
 
@@ -209,9 +216,11 @@ const UsersList = () => {
     }, []);
 
     const renderTable = () => {
-        if (isDataLoading && !displayedUsers.length) {
+        if (isInitialLoading && !displayedUsers.length) {
             return <Loader className={b('data-loader')} size="m" />;
         }
+
+        const canLoadMore = !isInitialLoading && !isLoadingMore && nextPageToken;
 
         return (
             <React.Fragment>
@@ -260,15 +269,21 @@ const UsersList = () => {
                     emptyMessage={i18n('label_users-empty-message')}
                     onRowClick={handleRowClick}
                 />
-
-                {nextPageToken && (
-                    <Button
-                        className={b('load-button')}
-                        loading={isDataLoading}
-                        onClick={handleLoadMoreClick}
-                    >
-                        {i18n('button_load-more')}
-                    </Button>
+                {newServiceSettingsEnabled ? (
+                    <React.Fragment>
+                        {isLoadingMore && <Loader size="s" className={b('lazy-loader')} />}
+                        {canLoadMore && <Waypoint onEnter={handleLoadMoreClick} />}
+                    </React.Fragment>
+                ) : (
+                    nextPageToken && (
+                        <Button
+                            className={b('load-button')}
+                            loading={isInitialLoading || isLoadingMore}
+                            onClick={handleLoadMoreClick}
+                        >
+                            {i18n('button_load-more')}
+                        </Button>
+                    )
                 )}
             </React.Fragment>
         );
@@ -277,16 +292,23 @@ const UsersList = () => {
     const showAddUser = !DL.AUTH_MANAGE_LOCAL_USERS_DISABLED;
 
     return (
-        <div className={b()}>
-            <Text variant="subheader-3">{i18nMain('section_users')}</Text>
+        <div className={b({new: newServiceSettingsEnabled})}>
+            {!newServiceSettingsEnabled && (
+                <Text variant="subheader-3">{i18nMain('section_users')}</Text>
+            )}
             <div className={b('content')}>
-                <Flex justifyContent="space-between" wrap gap={2}>
+                <Flex
+                    justifyContent="space-between"
+                    wrap
+                    className={b('filters', {new: newServiceSettingsEnabled})}
+                >
                     <UsersFilter onChange={handleFilterChange} />
                     {showAddUser && (
                         <Link
                             to={{pathname: '/settings/users/new', state: {from: location.pathname}}}
+                            className={b('add-link', {new: newServiceSettingsEnabled})}
                         >
-                            <Button view="action">
+                            <Button view="action" size={newServiceSettingsEnabled ? 'l' : 'm'}>
                                 <Icon data={Plus} />
                                 {i18n('button_add-user')}
                             </Button>
