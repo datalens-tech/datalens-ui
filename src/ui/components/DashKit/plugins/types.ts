@@ -30,7 +30,7 @@ export type DashkitMetaDataItemBase = {
     isEditor?: boolean;
     isQL?: boolean;
     getSimpleLoadedData?: () => WidgetLoadedData | Widget['data'] | string[];
-    isFetchPrevented?: boolean;
+    isFetchFinished?: boolean;
 };
 
 export type DatasetsData = {

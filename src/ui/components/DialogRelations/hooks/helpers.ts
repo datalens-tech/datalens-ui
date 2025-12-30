@@ -173,7 +173,7 @@ export const getMetaDataWithDatasetInfo = ({
 
             fetchedWidgetsIds.push(itemWithDataset.widgetId);
 
-            itemWithDataset.isFetchPrevented = true;
+            itemWithDataset.isFetchFinished = true;
         }
 
         if (visualizationType) {
@@ -608,3 +608,14 @@ export const getChangedRelations = (
         return newItem;
     });
 };
+
+export const getChartId = (widget: DashTabItem | DashkitMetaDataItem) => {
+    if ('data' in widget) {
+        return widget.type === DashTabItemType.Widget ? widget.data.tabs[0].chartId : null;
+    }
+
+    return widget.chartId;
+};
+
+export const isTabItem = (widget: DashTabItem | DashkitMetaDataItem): widget is DashTabItem =>
+    'id' in widget;

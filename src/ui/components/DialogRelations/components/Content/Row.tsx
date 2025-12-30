@@ -9,7 +9,12 @@ import logger from 'ui/libs/logger';
 
 import {TEXT_LIMIT} from '../../constants';
 import {getRelationsIcon} from '../../helpers';
-import type {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
+import type {
+    AliasClickHandlerData,
+    DashkitMetaDataItem,
+    OnLoadMetaType,
+    RelationType,
+} from '../../types';
 
 import {
     getClampedText,
@@ -50,7 +55,7 @@ type RowParams = {
     onAliasClick?: (props: AliasClickHandlerData) => void;
     showDebugInfo: boolean;
     widgetIcon: React.ReactNode;
-    onLoadMeta?: (widgetId: string, subItemId: string | null) => Promise<void>;
+    onLoadMeta?: OnLoadMetaType;
 };
 
 export const getTooltipInfo = ({
@@ -250,10 +255,10 @@ export const Row = ({
         async (open: boolean) => {
             setIsDropdownOpen(open);
 
-            if (open && onLoadMeta && !data.loaded && !data.loadError && !data.isFetchPrevented) {
+            if (open && onLoadMeta && !data.loaded && !data.loadError && !data.isFetchFinished) {
                 setIsLoadingMeta(true);
                 try {
-                    await onLoadMeta(data.layoutId, data.widgetId);
+                    await onLoadMeta({widget: data, subItemId: data.widgetId});
                 } catch (error) {
                     logger.logError('Failed to load widget meta:', error);
                 } finally {
