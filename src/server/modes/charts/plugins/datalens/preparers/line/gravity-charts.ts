@@ -128,6 +128,9 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
     const inNavigatorEnabled = getIsNavigatorEnabled(shared);
 
+    const layers = shared.visualization?.layers ?? [];
+    const hasMultipleLayers = layers.length > 1;
+
     const seriesData: ExtendedLineSeries[] = preparedData.graphs.map<LineSeries>((graph: any) => {
         const rangeSlider = inNavigatorEnabled
             ? getSeriesRangeSliderConfig({
@@ -136,8 +139,15 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
               })
             : undefined;
 
+        let seriesName = graph.title;
+        if (graph.colorGuid) {
+            if (hasMultipleLayers) {
+                seriesName = `${graph.measureFieldTitle}: ${graph.title}`;
+            }
+        }
+
         return {
-            name: graph.title,
+            name: seriesName,
             type: 'line',
             color: graph.color,
             data: graph.data.reduce((acc: ExtendedLineSeriesData[], item: any, index: number) => {
@@ -177,6 +187,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                     width: 36,
                 },
                 groupId: graph.id,
+                itemText: graph.legendTitle,
             },
             dashStyle: graph.dashStyle,
             yAxis: graph.yAxis,
