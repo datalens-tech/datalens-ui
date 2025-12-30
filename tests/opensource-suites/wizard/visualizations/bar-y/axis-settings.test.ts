@@ -77,5 +77,32 @@ datalensTest.describe('Wizard', () => {
             await expect(previewLoader).not.toBeVisible();
             await expect(preview).toHaveScreenshot();
         });
+
+        datalensTest('Logarithmic x-axis with zero values @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+
+            const preview = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = preview.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.createNewFieldWithFormula(
+                'ordersCount',
+                'if([segment] != "Consumer") then countd([order_id]) else 0 end',
+            );
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'segment');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'ordersCount');
+
+            await wizardPage.placeholderDialog.open(PlaceholderId.X);
+            await wizardPage.placeholderDialog.toggleRadioButton(
+                RadioButtons.AxisType,
+                RadioButtonsValues.Logarithmic,
+            );
+            await wizardPage.placeholderDialog.apply();
+
+            // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+            await page.mouse.move(-1, -1);
+            await expect(previewLoader).not.toBeVisible();
+            await expect(preview).toHaveScreenshot();
+        });
     });
 });

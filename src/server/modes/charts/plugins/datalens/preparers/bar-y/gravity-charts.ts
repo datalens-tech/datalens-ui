@@ -1,4 +1,4 @@
-import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/gravity-charts';
+import type {BarYSeries, BarYSeriesData, ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
@@ -36,6 +36,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     const hasCategories = Boolean(categories?.length);
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
+    const isLogXAxis = xPlaceholder?.settings?.type === 'logarithmic';
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yField: ServerField | undefined = yPlaceholder?.items?.[0];
     const labelField = labels?.[0];
@@ -89,7 +90,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         );
     }
 
-    const series = graphs.map<BarYSeries>((graph) => {
+    const series = graphs.reduce<BarYSeries[]>((items, graph) => {
         const labelFormatting = graph.dataLabels
             ? mapToGravityChartValueFormat({field: labelField, formatSettings: graph.dataLabels})
             : undefined;
@@ -97,30 +98,51 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             labelFormatting &&
             'labelMode' in labelFormatting &&
             labelFormatting?.labelMode === 'percent';
-        return {
+
+        const seriesData = graph.data.reduce((acc: BarYSeriesData[], d: BarYPoint) => {
+            const {x, y, label: originalLabel, ...other} = d;
+            const xValue: number | null = y;
+
+            if (isLogXAxis && xValue <= 0) {
+                return acc;
+            }
+
+            const total =
+                graphs.reduce(
+                    (sum, g) => sum + (g.data.find((point: BarYPoint) => point.x === x)?.y ?? 0),
+                    0,
+                ) ?? 0;
+            const percentage = (d.y / total) * 100;
+            const label = shouldUsePercentageAsLabel ? percentage : (originalLabel as string);
+
+            let color = d.color;
+            if (!color && typeof d.colorValue === 'number') {
+                color = gradientColorMap[String(d.colorValue)] ?? undefined;
+            }
+
+            acc.push({
+                ...other,
+                y: x,
+                x: xValue,
+                label,
+                total,
+                percentage,
+                color,
+            } as BarYSeriesData);
+            return acc;
+        }, []);
+
+        if (!seriesData.length) {
+            return items;
+        }
+
+        items.push({
             ...graph,
             type: 'bar-y',
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             name: graph.title,
-            data: graph.data.map((d: BarYPoint) => {
-                const {x, y, label: originalLabel, ...other} = d;
-                const total =
-                    graphs.reduce(
-                        (sum, g) =>
-                            sum + (g.data.find((point: BarYPoint) => point.x === x)?.y ?? 0),
-                        0,
-                    ) ?? 0;
-                const percentage = (d.y / total) * 100;
-                const label = shouldUsePercentageAsLabel ? percentage : originalLabel;
-
-                let color = d.color;
-                if (!color && typeof d.colorValue === 'number') {
-                    color = gradientColorMap[String(d.colorValue)];
-                }
-
-                return {...other, y: x, x: y, label, total, percentage, color};
-            }),
+            data: seriesData,
             dataLabels: {
                 enabled: graph.dataLabels?.enabled,
                 inside: dataLabelsInside,
@@ -139,8 +161,10 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 colorValue: graph.colorValue,
                 exportSettings,
             },
-        } as BarYSeries;
-    });
+        } as BarYSeries);
+
+        return items;
+    }, [] as BarYSeries[]);
 
     const xAxisLabelNumberFormat = xPlaceholder
         ? getAxisFormatting({
@@ -148,7 +172,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
               visualizationId,
           })
         : undefined;
-    const xAxisType = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
+    const xAxisType = isLogXAxis ? 'logarithmic' : 'linear';
 
     const config: ExtendedChartData = {
         series: {
