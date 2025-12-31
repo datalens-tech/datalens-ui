@@ -113,7 +113,7 @@
     "p-queue": "^6.6.2",
     "passport": "^0.5.3",
     "passport-openidconnect": "^0.1.2",
-    "qs": "^6.10.1",
+    "qs": "^6.14.1",
     "querystring": "^0.2.0",
     "quickjs-emscripten": "^0.31.0",
     "react": "^17.0.2",
