@@ -11,6 +11,7 @@ import type {
     QlConfigParam,
     QlConfigResultEntryMetadataDataColumnOrGroup,
 } from 'shared/types/config/ql';
+import {getLocation} from 'ui/navigation';
 import {addEditHistoryPoint} from 'ui/store/actions/editHistory';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -41,7 +42,7 @@ import {getSdk} from '../../../../libs/schematic-sdk';
 import {registry} from '../../../../registry';
 import type {AppDispatch} from '../../../../store';
 import {saveWidget, setActualChart} from '../../../../store/actions/chartWidget';
-import {UrlSearch, getUrlParamFromStr, isUnreleasedByUrlParams} from '../../../../utils';
+import {getUrlParamFromStr, isUnreleasedByUrlParams} from '../../../../utils';
 import {
     resetWizardStore,
     setVisualizationPlaceholderItems,
@@ -519,7 +520,7 @@ const applyUrlParams = (params: QlConfigParam[]) => {
     }
 
     // Splitting search into pairs
-    const searchPairs = new URLSearchParams(window.location.search);
+    const searchPairs = getLocation().params();
 
     if (searchPairs) {
         // If there are filters that come through search parameters
@@ -673,9 +674,9 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
         let entry: QLEntry;
 
-        const urlSearch = new UrlSearch(window.location.search);
+        const params = getLocation().params();
 
-        const searchCurrentPath = urlSearch.get(URL_QUERY.CURRENT_PATH);
+        const searchCurrentPath = params.get(URL_QUERY.CURRENT_PATH);
         if (searchCurrentPath) {
             dispatch(setDefaultPath(decodeURIComponent(searchCurrentPath)));
         }
@@ -945,7 +946,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
             });
 
             // Did the user come from a link with a presetId?
-            const presetId = urlSearch.get('presetId');
+            const presetId = params.get('presetId');
             if (presetId) {
                 // Just in case, let's check that this is the interface for creating a new monitoringql chart
                 let initialChartType = '';
@@ -1059,7 +1060,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                     }),
                 );
 
-                const connectionEntryId = urlSearch.get('connectionId');
+                const connectionEntryId = params.get('connectionId');
                 if (connectionEntryId) {
                     try {
                         // We request the connection for which the chart is built

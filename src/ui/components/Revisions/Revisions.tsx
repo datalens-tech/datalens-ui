@@ -15,6 +15,7 @@ import type {GetRevisionsEntry} from 'shared/schema';
 import {showToast} from 'store/actions/toaster';
 import type {DatalensGlobalState} from 'ui';
 import {URL_QUERY} from 'ui';
+import {getRouter} from 'ui/navigation';
 
 import logger from '../../libs/logger';
 import {loadRevisions, setEntryCurrentRevId} from '../../store/actions/entryContent';
@@ -22,7 +23,6 @@ import {
     selectEntryContentCurrentRevId,
     selectRevisionsItems,
 } from '../../store/selectors/entryContent';
-import history from '../../utils/history';
 
 import {RevisionsList} from './RevisionsList/RevisionsList';
 import {REVISIONS_LIST_DEBOUNCE_DELAY} from './helpers';
@@ -156,12 +156,14 @@ class Revisions extends React.Component<Props, State> {
             } else {
                 this.setState({status: Status.Loading, loadMore: true});
             }
-            const searchParams = new URLSearchParams(location.search);
+
+            const router = getRouter();
+            const search = router.location().params();
 
             await this.props.loadRevisions({
                 entryId: this.props.entryContent.entryId,
                 page: this.state.page,
-                revId: searchParams.get(URL_QUERY.REV_ID),
+                revId: search.get(URL_QUERY.REV_ID),
                 concurrentId: CONCURRENT_ID,
             });
 
@@ -201,17 +203,15 @@ class Revisions extends React.Component<Props, State> {
     }) {
         setCurrentRevId(revId);
 
-        const searchParams = new URLSearchParams(location.search);
-        searchParams.delete(URL_QUERY.UNRELEASED);
+        const router = getRouter();
+        const search = router.location().params();
+        search.delete(URL_QUERY.UNRELEASED);
         if (revId === actualRevId) {
-            searchParams.delete(URL_QUERY.REV_ID);
+            search.delete(URL_QUERY.REV_ID);
         } else {
-            searchParams.set(URL_QUERY.REV_ID, revId);
+            search.set(URL_QUERY.REV_ID, revId);
         }
-        history.push({
-            ...location,
-            search: `?${searchParams.toString()}`,
-        });
+        router.push({search});
     }
 }
 

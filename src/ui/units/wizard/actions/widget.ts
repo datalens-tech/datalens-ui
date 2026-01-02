@@ -9,14 +9,15 @@ import type {
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {WIZARD_DATASET_ID_PARAMETER_KEY} from 'ui/constants/misc';
+import {getRouter} from 'ui/navigation';
+import type {SaveWidgetArgs} from 'ui/store/actions/chartWidget';
+import {saveWidget} from 'ui/store/actions/chartWidget';
 import {updateClientChartsConfig} from 'ui/units/wizard/actions/preview';
 
-import type {SaveWidgetArgs} from '../../../store/actions/chartWidget';
-import {saveWidget} from '../../../store/actions/chartWidget';
 import {CHART_SETTINGS} from '../constants';
 import type {WizardDispatch} from '../reducers';
 import {mapClientConfigToChartsConfig} from '../utils/mappers/mapClientToChartsConfig';
-import {removeUrlParameter} from '../utils/wizard';
+import {removeUrlParameters} from '../utils/wizard';
 
 export const RECEIVE_WIDGET = Symbol('wizard/widget/RECEIVE_WIDGET');
 export const SET_EXTRA_SETTINGS = Symbol('wizard/widget/SET_EXTRA_SETTINGS');
@@ -41,27 +42,25 @@ export function receiveWidgetAndPrepareMetadata({
     return function (dispatch: WizardDispatch) {
         if (data) {
             const entryId = data.entryId;
-
-            if (isWidgetWasSaved || entryId) {
-                removeUrlParameter(WIZARD_DATASET_ID_PARAMETER_KEY);
+            if (entryId || isWidgetWasSaved) {
+                removeUrlParameters([WIZARD_DATASET_ID_PARAMETER_KEY]);
             }
 
-            const url = new URL(window.location.href);
-            const pathname = url.pathname;
+            const router = getRouter();
+            const location = router.location();
 
-            let resultPath = '/wizard/';
+            let pathname = '/wizard/';
 
-            if (pathname.indexOf('/preview/') !== -1) {
-                resultPath += 'preview/';
+            if (location.pathname.includes('/preview/')) {
+                pathname += 'preview/';
             }
 
             if (entryId) {
-                resultPath += entryId;
+                pathname += entryId;
             }
 
-            if (!pathname.includes(entryId)) {
-                const updatedUrl = `${resultPath}${url.search}${url.hash}`;
-                window.history.replaceState({}, '', updatedUrl);
+            if (!location.pathname.includes(entryId)) {
+                router.replace({pathname});
             }
         }
 

@@ -9,15 +9,15 @@ import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {EntryScope, PLACE} from 'shared';
+import {EntryScope, PLACE, ScreenEditorQA, TabQueryQA} from 'shared';
 import type {DatalensGlobalState, EntryDialogues, MonacoTypes} from 'ui';
 import {DL, NavigationMinimal, sdk} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
+import {getRouter} from 'ui/navigation';
+import {registry} from 'ui/registry';
 import {ConnectionStatus} from 'ui/units/ql/constants';
 
-import {ScreenEditorQA, TabQueryQA} from '../../../../../../shared';
-import {registry} from '../../../../../registry';
 import {drawPreview, performManualConfiguration} from '../../../store/actions/ql';
 import {
     getChartType,
@@ -194,7 +194,9 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                         },
                         {
                             action: () => {
-                                window.open(`${DL.ENDPOINTS.connections}/${connection?.entryId}`);
+                                getRouter().openTab({
+                                    pathname: `${DL.ENDPOINTS.connections}/${connection?.entryId}`,
+                                });
                             },
                             text: i18n('sql', 'button_to-connection'),
                         },

@@ -3,6 +3,7 @@ import React from 'react';
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {getRouter} from 'ui/navigation';
 
 import DialogManager from '../DialogManager/DialogManager';
 
@@ -45,10 +46,7 @@ class DialogNeedReset extends React.Component<Props> {
         );
     }
 
-    private onApply = () => {
-        window.location.reload();
-    };
-
+    private onApply = () => getRouter().reload();
     private onClose = () => {};
 }
 

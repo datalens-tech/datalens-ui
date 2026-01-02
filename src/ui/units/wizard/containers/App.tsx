@@ -44,13 +44,11 @@ const App = ({widget, setCurrentPageEntry, asideHeaderData, ...routeProps}: Prop
 
     return (
         <div className={b()}>
-            <div className={b('main', {aside: isAsideHeaderEnabled})}>
-                <Wizard
-                    {...routeProps}
-                    //@ts-ignore
-                    asideHeaderSize={asideHeaderData.size}
-                />
-            </div>
+            <Wizard
+                {...routeProps}
+                //@ts-ignore
+                asideHeaderSize={asideHeaderData.size}
+            />
         </div>
     );
 };

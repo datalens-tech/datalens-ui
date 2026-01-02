@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared/types';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
+import {useLocation} from 'ui/navigation';
 import {registry} from 'ui/registry';
 import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -65,11 +66,13 @@ export const ShareButton = ({
         initDialogShareProps.withFederation = true;
     }
 
+    const location = useLocation();
+
     const getContent = () => {
         if (enablePopover && !DL.IS_MOBILE) {
             return (
                 <SharePopover
-                    url={window.location.href}
+                    url={location.href}
                     title={popoverTitle}
                     text={popoverText}
                     shareOptions={socialNets}

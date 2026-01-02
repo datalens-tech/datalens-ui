@@ -5,18 +5,18 @@ import debounce from 'lodash/debounce';
 import {useHistory} from 'react-router-dom';
 import {DashTabItemType} from 'shared';
 import type {DashSettings, DashTabItemControl, DashTabItemControlData} from 'shared';
+import type {WidgetPluginProps} from 'ui/components/DashKit/plugins/Widget/types';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 import {useBeforeLoad} from 'ui/hooks/useBeforeLoad';
-import type {ExtendedDashKitContextType} from 'ui/units/dash/typings/context';
-import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
-
 import type {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
-} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import type {ResponseError} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
-import type {OnActivityComplete} from '../../../../libs/DatalensChartkit/types';
-import type {WidgetPluginProps} from '../../../DashKit/plugins/Widget/types';
+} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
+import type {ResponseError} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+import type {OnActivityComplete} from 'ui/libs/DatalensChartkit/types';
+import type {ExtendedDashKitContextType} from 'ui/units/dash/typings/context';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
+
 import {getPreparedConstants, getWidgetSelectorMeta, pushStats} from '../helpers/helpers';
 import type {
     ChartWidgetProps,
@@ -70,8 +70,6 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         layout,
         noVeil,
         noLoader,
-        compactLoader,
-        loaderDelay,
         onStateAndParamsChange,
         chartKitRef,
         width,
@@ -256,9 +254,9 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
             isReloadWithNoVeil,
             noLoader,
             noVeil,
-            compactLoader,
-            loaderDelay,
-            history.location.search,
+            isSilentReload,
+            history,
+            widgetId,
         ],
     );
 

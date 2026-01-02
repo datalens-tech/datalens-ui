@@ -1788,6 +1788,7 @@ export function setActualDataset({history}: {history: History}) {
     return async (dispatch: DatasetDispatch) => {
         await dispatch(saveDataset({history}));
 
+        const location = {...history.location};
         const searchParams = new URLSearchParams(location.search);
         searchParams.delete(URL_QUERY.REV_ID);
         history.push({

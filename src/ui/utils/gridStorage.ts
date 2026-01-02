@@ -1,21 +1,18 @@
 import {Utils} from 'ui';
-
-import {MODULE_TYPE, URL_QUERY} from '../constants';
-
-import {UrlSearch} from './urlSearch';
+import {MODULE_TYPE, URL_QUERY} from 'ui/constants';
+import {getLocation} from 'ui/navigation';
 
 const KEY = 'qlGrid';
 
 export class GridStorage {
     static canStorage(entry: any) {
-        if (entry.type === MODULE_TYPE) {
-            return false;
-        }
-        const urlSearch = new UrlSearch(window.location.search);
-        if (urlSearch.has(URL_QUERY.ACTIVE_TAB) || urlSearch.has(URL_QUERY.ACTIVE_TAB)) {
-            return false;
-        }
-        return true;
+        const params = getLocation().params();
+
+        return (
+            entry.type !== MODULE_TYPE &&
+            !params.has(URL_QUERY.ACTIVE_TAB) &&
+            !params.has(URL_QUERY.ACTIVE_TAB)
+        );
     }
 
     static formPanesViewsAndStore({

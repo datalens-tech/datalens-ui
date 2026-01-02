@@ -4,21 +4,11 @@ import {i18n} from 'i18n';
 import {isObject} from 'lodash';
 import {MenuItemsIds} from 'shared';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
+import {getRouter, toSearchParams} from 'ui/navigation';
 import {registry} from 'ui/registry';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 
 import {getChartkitMenuItems} from '../../menu/Menu';
-import URI from '../uri/uri';
-
-export function isChartkitMenuItemVisible() {
-    const wizardNewChartPathnames = ['/wizard/new', '/wizard/', '/wizard'];
-
-    const isNotSavedChart = wizardNewChartPathnames.some((pathname) =>
-        window.location.pathname.endsWith(pathname),
-    );
-
-    return !isNotSavedChart;
-}
 
 export const getChartkitMenuByType = (props?: GetChartkitMenuByType) => {
     const {
@@ -45,15 +35,20 @@ export const getChartkitMenuByType = (props?: GetChartkitMenuByType) => {
             [MenuItemsIds.NEW_WINDOW]: {
                 title: i18n('dash.chartkit-menu.view', 'button_new-tab'),
                 action: ({propsData: {id, params}}) => {
-                    window.open(`/preview/${id}?${stringify(params)}`);
+                    getRouter().openTab({
+                        pathname: `/preview/${id}`,
+                        search: stringify(params),
+                    });
                 },
             },
             [MenuItemsIds.OPEN_AS_TABLE]: {
                 action: ({propsData: {id, params}}) => {
                     const resultParams = isObject(params) ? {...params} : {};
-                    const uriParams = {...resultParams, _chart_type: 'table'};
-                    const query = URI.makeQueryString(uriParams);
-                    window.open(`/preview/${id}${query}`);
+
+                    getRouter().openTab({
+                        pathname: `/preview/${id}`,
+                        search: toSearchParams({...resultParams, _chart_type: 'table'}),
+                    });
                 },
             },
             [MenuItemsIds.EDIT]: {

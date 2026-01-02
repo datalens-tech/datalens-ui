@@ -4,10 +4,10 @@ import type {GetEntryResponse, GetRevisionsEntry} from '../../../shared/schema';
 import type {ThunkDispatch} from 'redux-thunk';
 import type {DatalensGlobalState} from 'ui';
 import {URL_QUERY} from 'ui';
-import {getSdk} from '../../libs/schematic-sdk';
+import {getSdk} from 'ui/libs/schematic-sdk';
 import {REVISIONS_LIST_PART_SIZE} from '../../components/Revisions/helpers';
 import type {EntryContentState} from '../reducers/entryContent';
-import history from '../../utils/history';
+import {getRouter} from 'ui/navigation';
 import {filterUsersIds} from '../../../shared';
 import {getResolveUsersByIdsAction} from './usersByIds';
 
@@ -286,18 +286,16 @@ export function setChartsEntryContent(entry: GetEntryResponse) {
     return (dispatch: EntryContentDispatch) => {
         dispatch(setEntryContent(entry));
 
-        const searchParams = new URLSearchParams(location.search);
-        searchParams.delete(URL_QUERY.UNRELEASED);
+        const router = getRouter();
+        const search = router.location().params();
+        search.delete(URL_QUERY.UNRELEASED);
         if (entry.publishedId) {
             if (entry.revId === entry.publishedId) {
-                searchParams.delete(URL_QUERY.REV_ID);
+                search.delete(URL_QUERY.REV_ID);
             } else {
-                searchParams.set(URL_QUERY.REV_ID, entry.revId);
+                search.set(URL_QUERY.REV_ID, entry.revId);
             }
-            history.push({
-                ...location,
-                search: `?${searchParams.toString()}`,
-            });
+            router.push({search});
         }
     };
 }

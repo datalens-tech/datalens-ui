@@ -8,18 +8,18 @@ import {I18n, i18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
 import uniqBy from 'lodash/uniqBy';
 import {useDispatch} from 'react-redux';
+import {useLocation} from 'react-router-dom';
 import {ChartkitMenuDialogsQA, ErrorCode} from 'shared';
+import {DL, Interpolate, Utils} from 'ui';
+import {CHARTKIT_ERROR_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
+import {CHARTS_ERROR_CODE} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+import dlLogger, {CHARTKIT_LOGGER} from 'ui/libs/logger';
 import {registry} from 'ui/registry';
+import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 
-import {DL, Interpolate, Utils} from '../../..';
-import {CHARTKIT_ERROR_NODE_CLASSNAME} from '../../../libs/DatalensChartkit/ChartKit/helpers/constants';
-import {CHARTS_ERROR_CODE} from '../../../libs/DatalensChartkit/modules/data-provider/charts';
-import dlLogger, {CHARTKIT_LOGGER} from '../../../libs/logger';
-import {openDialogErrorWithTabs} from '../../../store/actions/dialog';
 import type {ExtraParams} from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {ERROR_CODE} from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
-import {getEndpointForNavigation} from '../modules/navigation';
 
 import './Error.scss';
 
@@ -66,6 +66,7 @@ const InterpolatedErrorMessage: React.FC<InterpolatedErrorMessageProps> = (
 // eslint-disable-next-line complexity
 const ChartKitError: React.FC<any> = (props) => {
     const dispatch = useDispatch();
+    const location = useLocation();
 
     const {error, onAction} = props;
     React.useEffect(() => {
@@ -84,7 +85,10 @@ const ChartKitError: React.FC<any> = (props) => {
     const {hideDebugInfo, hideRetry, openedMore, actionText, actionData, showErrorMessage} =
         extraParams;
 
-    const {noControls} = Utils.getOptionsFromSearch(window.location.search);
+    const {noControls} = React.useMemo(
+        () => Utils.getOptionsFromSearch(location.search),
+        [location],
+    );
 
     const more = isEmpty(details) ? null : details;
     const showMore = more || extraParams.showMore;
@@ -155,9 +159,8 @@ const ChartKitError: React.FC<any> = (props) => {
                 iconData = Lock;
                 const entryId = error?.debug?.entryId;
                 if (entryId) {
-                    const endpoint = getEndpointForNavigation();
                     const text = i18n('component.chartkit-error.codes', code);
-                    const href = `${endpoint}/${entryId}`;
+                    const href = `/navigate/${entryId}`;
 
                     const message = <InterpolatedErrorMessage text={text} href={href} />;
 
