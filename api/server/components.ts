@@ -17,6 +17,8 @@ export {
     DataFetcher,
 } from '../../src/server/components/charts-engine';
 
+export {Request} from '../../src/server/components/charts-engine/components/request';
+
 export {renderHTML} from '../../src/server/components/charts-engine/components/markdown';
 
 export {initPublicApiSwagger} from '../../src/server/components/public-api';

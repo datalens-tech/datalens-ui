@@ -166,9 +166,11 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
             await dashboardPage.clickFirstControlSettingsButton();
 
+            // Pick Tab 3
+            // Tab 1 is selected by default
             await dashboardPage.controlActions.editSelectorBySettings({
                 impactType: 'selectedTabs',
-                impactTabsIndexes: [1],
+                impactTabsIndexes: [2],
             });
 
             await dashboardPage.controlActions.applyControlSettings();
