@@ -13,7 +13,7 @@ import type {
 } from 'shared';
 import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared/constants/widgets';
 import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
-import {computeColorFromToken} from 'ui/utils/widgets/colors';
+import {computeColorFromToken} from 'ui/utils/widgetColors';
 
 import {DL} from '../../constants';
 import {
