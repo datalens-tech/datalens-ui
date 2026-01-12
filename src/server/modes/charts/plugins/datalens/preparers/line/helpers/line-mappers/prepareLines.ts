@@ -215,6 +215,8 @@ export const prepareLines = (args: PrepareLinesArgs) => {
 
     const yFields = ySectionItems.map((ySectionItem) => ySectionItem.field);
 
+    const isMultiLineWithShape = isShapeItemExist && ySectionItems.length > 1;
+
     // eslint-disable-next-line complexity
     ySectionItems.forEach((mergedItem) => {
         const {field, lines, labelsValues, nullsSetting, isFirstSection} = mergedItem;
@@ -291,6 +293,7 @@ export const prepareLines = (args: PrepareLinesArgs) => {
                     x2Value,
                     xValue: rawXValue,
                     multiaxis: isMultiAxis,
+                    isMultiLineWithShape,
                     shownTitle,
                     lines,
                     seriesOptions,
