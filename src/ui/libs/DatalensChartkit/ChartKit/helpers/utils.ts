@@ -1,9 +1,11 @@
+import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import type {Point} from 'highcharts';
+import escape from 'lodash/escape';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
 import type {StringParams} from '../../../../../shared';
-import type {GraphWidget} from '../../types';
+import type {GraphWidget, LoadedWidgetData} from '../../types';
 import {ChartKitCustomError} from '../modules/chartkit-custom-error/chartkit-custom-error';
 
 export type PointActionParams = Record<string, string>;
@@ -82,4 +84,16 @@ export function getNormalizedClickActions(data: GraphWidget) {
     }
 
     return Array.isArray(actions) ? actions : [actions];
+}
+
+export function getEscapedActionParams(widgetData: LoadedWidgetData | undefined) {
+    const actionParams = pickActionParamsFromParams(get(widgetData, 'unresolvedParams', {}));
+    const escapedActionParams: StringParams = {};
+    Object.entries(actionParams).forEach(([key, value]) => {
+        escapedActionParams[key] = Array.isArray(value)
+            ? value.map((v) => escape(String(v)))
+            : escape(String(value));
+    });
+
+    return escapedActionParams;
 }

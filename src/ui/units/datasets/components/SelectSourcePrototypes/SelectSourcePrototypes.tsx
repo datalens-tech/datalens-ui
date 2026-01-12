@@ -5,9 +5,9 @@ import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import type {ConnectorType, DatasetOptions, DatasetSource} from 'shared';
+import type {CollectionId, ConnectorType, DatasetOptions, WorkbookId} from 'shared';
 import {CollectionItemEntities, DatasetSourcesLeftPanelQA, EntryScope, PLACE} from 'shared';
-import type {BaseSource, GetEntryResponse, SharedEntryFields} from 'shared/schema';
+import type {BaseSource, GetEntryResponse} from 'shared/schema';
 import {NavigationMinimal, type SDK} from 'ui';
 import {ConnectorIcon} from 'ui/components/ConnectorIcon/ConnectorIcon';
 import {DIALOG_SELECT_SHARED_ENTRY} from 'ui/components/DialogSelectSharedEntry/DialogSelectSharedEntry';
@@ -24,7 +24,12 @@ import {
     type SortedSourcePrototypes,
     selectedConnectionDelegationStatusSelector,
 } from '../../store/selectors';
-import type {ConnectionEntry, DatasetError, FreeformSource} from '../../store/types';
+import type {
+    ConnectionEntry,
+    DatasetError,
+    FreeformSource,
+    SourcePrototype,
+} from '../../store/types';
 
 import {SourcesTable} from './SourcesTable';
 import {ICON_PLUS_SIZE} from './constants';
@@ -76,30 +81,30 @@ function hasEnabledFreeformSources(freeformSources: FreeformSource[]) {
 function getInactiveEntryIds(connections: SelectedConnections = []) {
     return connections.map(({entryId}) => entryId);
 }
-
-type DeleteConnectionHandle = (props: {connectionId?: string}) => void;
+type PartialEntryResponse = Partial<GetEntryResponse> & {entryId: string};
+type DeleteConnectionHandle = (props: {connectionId: string}) => void;
 type OpenConnectionHandle = (connectionId?: string) => void;
-type ReplaceConnectionHandle = (connection: {id?: string}, args: Partial<GetEntryResponse>) => void;
+type ReplaceConnectionHandle = (connection: {id?: string}, args: PartialEntryResponse) => void;
 type DeleteSourceHandle = (props: {id: string}) => void;
-type EditSourceHandle = (source: DatasetSource) => void;
-type ClickConnectionHandle = (connectionId: string) => Promise<BaseSource[]>;
-type SelectConnectionHandle = (props: Partial<GetEntryResponse>) => void;
+type EditSourceHandle = (source: BaseSource) => void;
+type ClickConnectionHandle = (connectionId: string) => Promise<BaseSource[] | SourcePrototype[]>;
+type SelectConnectionHandle = (props: PartialEntryResponse) => void;
 type OnSharedDatasetCreationHandle = (
-    onApply: (entry: Partial<SharedEntryFields>) => Promise<void> | void,
+    onApply: (entry: PartialEntryResponse) => Promise<void> | void,
 ) => void;
 
 type ConnectionMenuProps = {
     sdk: SDK;
     openEnabled: boolean;
     deleteEnabled: boolean;
-    connectionId?: string;
+    connectionId: string;
     inactiveEntryIds: string[];
     onClickDeleteConnection: DeleteConnectionHandle;
     onClickOpenConnection: OpenConnectionHandle;
     onClickReplaceConnectionMenuItem: ReplaceConnectionHandle;
     clickableTypes?: ConnectorType[];
-    workbookId?: string;
-    collectionId?: string;
+    workbookId: WorkbookId;
+    collectionId: CollectionId;
     onSharedDatasetCreationHandle: OnSharedDatasetCreationHandle;
     readonly: boolean;
 };
@@ -123,7 +128,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
     const menuControlBtnRef = React.useRef(null);
     const [isNavVisible, setNavVisibility] = useState(false);
 
-    function onEntryClick(connection: Partial<GetEntryResponse>, e?: React.MouseEvent) {
+    function onEntryClick(connection: PartialEntryResponse, e?: React.MouseEvent) {
         e?.stopPropagation();
         setNavVisibility(false);
         onClickReplaceConnectionMenuItem({id: connectionId}, connection);
@@ -233,8 +238,8 @@ type ConnectionsListProps = {
     connectionId?: string;
     onClickConnection: ClickConnectionHandle;
     onClickConnectionDeleteButton: DeleteConnectionHandle;
-    workbookId?: string;
-    collectionId?: string;
+    workbookId: WorkbookId;
+    collectionId: CollectionId;
     openConnection: OpenConnectionHandle;
     onClickReplaceConnectionMenuItem: ReplaceConnectionHandle;
     clickableTypes?: ConnectorType[];
@@ -338,8 +343,8 @@ type SelectConnectionsProps = {
     openConnection: OpenConnectionHandle;
     replaceConnection: ReplaceConnectionHandle;
     connectionId?: string;
-    workbookId?: string;
-    collectionId?: string;
+    workbookId: WorkbookId;
+    collectionId: CollectionId;
     options: Partial<DatasetOptions>;
     isLoadingConnectionInfo: boolean;
     readonly: boolean;
@@ -365,7 +370,7 @@ function SelectConnections(props: SelectConnectionsProps) {
     const [isNavVisible, setNavVisibility] = useState(false);
     const connectionBtnRef = useRef(null);
 
-    function onEntryClick(entry: Partial<GetEntryResponse>) {
+    function onEntryClick(entry: PartialEntryResponse) {
         onSelectConnection(entry);
         setNavVisibility(false);
     }
@@ -501,8 +506,8 @@ type SelectSourcePrototypesProps = SelectConnectionsProps & {
     isDisabledAddSource?: boolean;
     isSourcesLoading: boolean;
     error?: DatasetError;
-    workbookId?: string;
-    collectionId?: string;
+    workbookId: WorkbookId;
+    collectionId: CollectionId;
     options: Partial<DatasetOptions>;
     isLoadingConnectionInfo: boolean;
     readonly: boolean;

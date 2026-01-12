@@ -29,9 +29,8 @@ import {Settings as SettingsPanel} from './Settings/Settings';
 import {DIALOG_RELEASE_VERSION} from './VersionDialog/VersionDialog';
 import {ASIDE_HEADER_LOGO_ICON_SIZE} from './constants';
 
-import defaultLogoIcon from '../../assets/icons/logo.svg';
 import iconCollection from '../../assets/icons/mono-collection.svg';
-import rebrandingLogoIcon from '../../assets/icons/os-logo.svg';
+import defaultLogoIcon from '../../assets/icons/os-logo.svg';
 
 import './AsideHeaderAdapter.scss';
 
@@ -222,8 +221,6 @@ export const AsideHeaderAdapter = ({
         setCurrentPopup(null);
     }, []);
 
-    const isRebrandingEnabled = isEnabledFeature(Feature.EnableDLRebranding);
-
     const renderFooter = () => {
         return (
             <React.Fragment>
@@ -328,14 +325,12 @@ export const AsideHeaderAdapter = ({
         );
     };
 
-    const defaultLogo = isRebrandingEnabled ? rebrandingLogoIcon : defaultLogoIcon;
-
     return (
         <AsideHeader
             compact={isCompact}
             logo={{
                 text: () => <LogoText {...logoTextProps} />,
-                icon: logoIcon ?? defaultLogo,
+                icon: logoIcon ?? defaultLogoIcon,
                 iconSize: ASIDE_HEADER_LOGO_ICON_SIZE,
                 iconClassName: b('logo-icon'),
                 className: b('logo'),

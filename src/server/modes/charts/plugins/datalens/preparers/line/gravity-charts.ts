@@ -223,6 +223,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
     const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
     const isSplitWithHtmlValues = isHtmlField(split?.[0]);
+    const isMultiAxis = Boolean(yPlaceholder?.items.length && y2Placeholder?.items.length);
 
     let yAxis: ChartYAxis[] = [];
     if (isSplitEnabled) {
@@ -238,7 +239,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
             const axisBaseConfig = getYAxisBaseConfig({
                 placeholder,
             });
-            const shouldUseSegmentTitle = yAxisItems.length === 1 || !d.isOpposite;
+            const shouldUseSegmentTitle = isMultiAxis ? !d.isOpposite : placeholder?.items.length;
             let axisTitle: ChartYAxis['title'] | null = null;
             if (shouldUseSegmentTitle) {
                 let titleText: string = d.title;

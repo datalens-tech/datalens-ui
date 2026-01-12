@@ -15,7 +15,8 @@ import type {ServiceSettingsState} from '../typings/serviceSettings';
 
 const initialState: ServiceSettingsState = {
     getUsersList: {
-        isLoading: false,
+        isInitialLoading: false,
+        isLoadingMore: false,
         error: null,
         users: [],
         nextPageToken: null,
@@ -36,7 +37,8 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
                 ...state,
                 getUsersList: {
                     ...state.getUsersList,
-                    isLoading: true,
+                    isInitialLoading: !action.payload.isLoadMore,
+                    isLoadingMore: action.payload.isLoadMore,
                     error: null,
                 },
             };
@@ -45,8 +47,7 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
             return {
                 ...state,
                 getUsersList: {
-                    ...state.getUsersList,
-                    isLoading: false,
+                    ...initialState.getUsersList,
                     users: action.payload.isLoadMore
                         ? [...state.getUsersList.users, ...action.payload.data.users]
                         : action.payload.data.users,
@@ -59,7 +60,8 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
                 ...state,
                 getUsersList: {
                     ...state.getUsersList,
-                    isLoading: false,
+                    isInitialLoading: false,
+                    isLoadingMore: false,
                     error: action.error,
                 },
             };

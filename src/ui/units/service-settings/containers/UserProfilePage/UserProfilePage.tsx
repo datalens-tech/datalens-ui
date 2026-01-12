@@ -1,10 +1,11 @@
 import React from 'react';
 
-import {Breadcrumbs, Flex} from '@gravity-ui/uikit';
+import {Breadcrumbs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n as i18nGlobal} from 'i18n';
 import {useSelector} from 'react-redux';
 import {useParams} from 'react-router';
+import {Feature} from 'shared';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {BreadcrumbsItemLink} from 'ui/components/BreadcrumbsItemLink/BreadcrumbsItemLink';
 import {PageTitle} from 'ui/components/PageTitle';
@@ -12,6 +13,7 @@ import {DL} from 'ui/constants/common';
 import {UserProfile} from 'ui/units/auth/containers/UserProfile/UserProfile';
 import {selectUserProfile} from 'ui/units/auth/store/selectors/userProfile';
 import {getUserDisplayName} from 'ui/units/auth/utils/userProfile';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import AccessErrorPage from '../AccessErrorPage/AccessErrorPage';
 
@@ -48,9 +50,11 @@ const UserProfilePage = () => {
                     </Breadcrumbs>
                 }
             />
-            <Flex justifyContent="center" className={b('content')}>
+            <div
+                className={b('content', {new: isEnabledFeature(Feature.EnableNewServiceSettings)})}
+            >
                 <UserProfile userId={userId} />
-            </Flex>
+            </div>
         </main>
     );
 };

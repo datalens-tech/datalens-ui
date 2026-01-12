@@ -5,6 +5,7 @@ import {Button, Icon, List, Loader, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import {useDispatch, useSelector} from 'react-redux';
+import type {BaseSource} from 'shared/schema';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
 import {usePrevious} from 'ui';
 
@@ -44,7 +45,7 @@ type ErrorViewProps = {
 };
 
 type SourcesTableProps = {
-    onEdit: (source: DatasetSource) => void;
+    onEdit: (source: BaseSource) => void;
     onAdd: () => void;
     onDelete: (props: {id: string}) => void;
     onRetry: () => void;

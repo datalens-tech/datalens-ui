@@ -3,14 +3,14 @@
 .dl-signin {
     $class: &;
     height: 100%;
-    background-color: var(--g-color-base-misc-light);
 
     &__form-container {
         background-color: var(--g-color-base-background);
-        border-radius: var(--g-border-radius-l);
+        border-radius: 32px;
         width: 440px;
         min-height: 200px;
         padding: 48px;
+        box-shadow: 0 30px 100px 0 rgba(0, 0, 0, 0.25);
     }
 
     &__link {
@@ -23,15 +23,6 @@
 
         &:hover {
             color: var(--g-color-text-link-hover);
-        }
-    }
-
-    &_rebranding {
-        background-color: unset;
-
-        #{$class}__form-container {
-            border-radius: 32px;
-            box-shadow: 0 30px 100px 0 rgba(0, 0, 0, 0.25);
         }
     }
 }

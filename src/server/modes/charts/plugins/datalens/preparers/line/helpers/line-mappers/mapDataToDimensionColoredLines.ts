@@ -61,6 +61,7 @@ export const mapDataToDimensionColoredLines = ({
     x2Value,
     xValue,
     multiaxis,
+    isMultiLineWithShape,
     shownTitle,
     lines,
     seriesOptions,
@@ -120,6 +121,7 @@ export const mapDataToDimensionColoredLines = ({
         x2AxisValue: x2Value,
         isX2Axis: Boolean(x2),
         isMultiAxis: multiaxis,
+        isMultiLineWithShape,
         value: String(itemValues.value),
         segmentName,
     });
@@ -154,7 +156,7 @@ export const mapDataToDimensionColoredLines = ({
                 line.formattedName = `${itemValues.formattedValue}: ${x2Value}`;
                 line.drillDownFilterValue = String(itemValues.value);
             }
-        } else if (multiaxis) {
+        } else if (multiaxis || isMultiLineWithShape) {
             line.title = `${itemValues.formattedValue}: ${shownTitle}`;
             line.formattedName = `${itemValues.formattedValue}: ${shownTitle}`;
             line.drillDownFilterValue = String(itemValues.value);
