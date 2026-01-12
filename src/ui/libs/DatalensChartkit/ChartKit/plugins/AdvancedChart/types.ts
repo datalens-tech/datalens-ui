@@ -10,19 +10,21 @@ export type WidgetDimensions = {
     height: number;
 };
 
+export type AdvancedChartWidgetData = {
+    render: (options: WidgetDimensions | undefined) => any;
+    events?: {
+        click: (event: any) => void;
+        keydown: (event: any) => void;
+    };
+    tooltip?: {
+        renderer: (args: unknown) => any;
+    };
+};
+
 export type AdvancedChartWidgetProps = {
     id: string;
     data: {
-        data: {
-            render: (options: WidgetDimensions | undefined) => any;
-            events?: {
-                click: (event: any) => void;
-                keydown: (event: any) => void;
-            };
-            tooltip?: {
-                renderer: (args: unknown) => any;
-            };
-        };
+        data: AdvancedChartWidgetData;
         config: any;
         unresolvedParams?: StringParams;
     };

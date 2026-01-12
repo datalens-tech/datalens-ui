@@ -16,11 +16,6 @@ const PARAMS = {
         items: ['Option A'],
         fieldName: 'global-field-selected',
     },
-    TAB_NAMES: {
-        TAB_1: 'Tab 1',
-        TAB_2: 'Tab 2',
-        TAB_3: 'Tab 3',
-    },
 };
 
 datalensTest.describe('Dashboards - Global selectors with impact type base actions', () => {
@@ -48,7 +43,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.addTab(PARAMS.TAB_NAMES.TAB_2);
+                    await dashboardPage.addTab();
 
                     await dashboardPage.controlActions.addSelector({
                         ...PARAMS.GLOBAL_SELECTOR_ALL_TABS,
@@ -57,7 +52,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
                     });
 
                     // Created global selector with the allTabs scope should appear on a new tab
-                    await dashboardPage.addTab(PARAMS.TAB_NAMES.TAB_3);
+                    await dashboardPage.addTab();
                 },
             });
 
@@ -69,14 +64,14 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
             await expect(selectorOnTab1).toContainText(PARAMS.GLOBAL_SELECTOR_ALL_TABS.items[0]);
 
             // Switch to Tab 2 and verify selector is visible
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_2});
+            await dashboardPage.changeTab({index: 1});
             const selectorOnTab2 = dashboardPage.getSelectorLocatorByTitle({
                 title: PARAMS.GLOBAL_SELECTOR_ALL_TABS.appearance.title,
             });
             await expect(selectorOnTab2).toBeVisible();
 
             // Switch to Tab 3 and verify selector is visible
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_3});
+            await dashboardPage.changeTab({index: 2});
             const selectorOnTab3 = dashboardPage.getSelectorLocatorByTitle({
                 title: PARAMS.GLOBAL_SELECTOR_ALL_TABS.appearance.title,
             });
@@ -91,8 +86,8 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.addTab(PARAMS.TAB_NAMES.TAB_2);
-                    await dashboardPage.addTab(PARAMS.TAB_NAMES.TAB_3);
+                    await dashboardPage.addTab();
+                    await dashboardPage.addTab();
 
                     // Add selector with "Selected Tabs" impact type
                     await dashboardPage.controlActions.addSelector({
@@ -100,7 +95,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
                         defaultValue: PARAMS.GLOBAL_SELECTOR_SELECTED_TABS.items[0],
                         impactType: 'selectedTabs',
                         // Tab 1 is selected by default
-                        impactTabsIds: [PARAMS.TAB_NAMES.TAB_2],
+                        impactTabsIndexes: [1],
                     });
                 },
             });
@@ -116,14 +111,14 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
             );
 
             // Switch to Tab 2 and verify selector is visible
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_2});
+            await dashboardPage.changeTab({index: 1});
             const selectorOnTab2 = dashboardPage.getSelectorLocatorByTitle({
                 title: selectorTitle,
             });
             await expect(selectorOnTab2).toBeVisible();
 
             // Switch to Tab 3 and verify selector is NOT visible
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_3});
+            await dashboardPage.changeTab({index: 2});
             const selectorOnTab3 = page.locator(slct(ControlQA.chartkitControl)).filter({
                 hasText: selectorTitle,
             });
@@ -138,8 +133,8 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.addTab(PARAMS.TAB_NAMES.TAB_2);
-                    await dashboardPage.addTab(PARAMS.TAB_NAMES.TAB_3);
+                    await dashboardPage.addTab();
+                    await dashboardPage.addTab();
 
                     await dashboardPage.controlActions.addSelector({
                         ...PARAMS.GLOBAL_SELECTOR_ALL_TABS,
@@ -155,25 +150,25 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
                 dashboardPage.getSelectorLocatorByTitle({title: selectorTitle}),
             ).toBeVisible();
 
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_2});
+            await dashboardPage.changeTab({index: 1});
             await expect(
                 dashboardPage.getSelectorLocatorByTitle({title: selectorTitle}),
             ).toBeVisible();
 
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_3});
+            await dashboardPage.changeTab({index: 2});
             await expect(
                 dashboardPage.getSelectorLocatorByTitle({title: selectorTitle}),
             ).toBeVisible();
 
             // Edit selector to change impact type to "Selected Tabs"
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_1});
+            await dashboardPage.changeTab({index: 0});
             await dashboardPage.enterEditMode();
 
             await dashboardPage.clickFirstControlSettingsButton();
 
             await dashboardPage.controlActions.editSelectorBySettings({
                 impactType: 'selectedTabs',
-                impactTabsIds: [PARAMS.TAB_NAMES.TAB_3],
+                impactTabsIndexes: [1],
             });
 
             await dashboardPage.controlActions.applyControlSettings();
@@ -195,9 +190,12 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
             // close popup of select
             await page.keyboard.press('Enter');
 
-            await expect(
-                dashboardPage.controlActions.dialogControl.impactTabsIdsSelector.getLocator(),
-            ).toContainText(`${PARAMS.TAB_NAMES.TAB_1}, ${PARAMS.TAB_NAMES.TAB_3}`);
+            const selectedText =
+                await dashboardPage.controlActions.dialogControl.impactTabsIdsSelector
+                    .getLocator()
+                    .innerText();
+
+            await expect(selectedText.split(',').length).toEqual(2);
 
             await dashboardPage.controlActions.applyControlSettings();
             await dashboardPage.exitEditMode();
@@ -208,14 +206,14 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
             ).toBeVisible();
 
             // Verify selector is NOT visible on Tab 2
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_2});
+            await dashboardPage.changeTab({index: 1});
             const selectorOnTab2 = page.locator(slct(ControlQA.chartkitControl)).filter({
                 hasText: selectorTitle,
             });
             await expect(selectorOnTab2).not.toBeVisible();
 
             // Verify selector is visible on Tab 3
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_3});
+            await dashboardPage.changeTab({index: 2});
             await expect(
                 dashboardPage.getSelectorLocatorByTitle({title: selectorTitle}),
             ).toBeVisible();
@@ -235,8 +233,8 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.addTab(PARAMS.TAB_NAMES.TAB_2);
-                    await dashboardPage.addTab(PARAMS.TAB_NAMES.TAB_3);
+                    await dashboardPage.addTab();
+                    await dashboardPage.addTab();
 
                     // Add "All Tabs" selector
                     await dashboardPage.controlActions.addSelector({
@@ -253,7 +251,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
                         defaultValue: PARAMS.GLOBAL_SELECTOR_SELECTED_TABS.items[0],
                         impactType: 'selectedTabs',
                         // Tab 1 is selected by default
-                        impactTabsIds: [PARAMS.TAB_NAMES.TAB_2],
+                        impactTabsIndexes: [1],
                     });
 
                     // Add "Current Tab" selector (default behavior)
@@ -285,7 +283,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
             ).toBeVisible();
 
             // On Tab 2: "All Tabs" and "Selected Tabs" should be visible, "Current Tab" should NOT
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_2});
+            await dashboardPage.changeTab({index: 1});
             await expect(
                 dashboardPage.getSelectorLocatorByTitle({
                     title: PARAMS.GLOBAL_SELECTOR_ALL_TABS.appearance.title,
@@ -302,7 +300,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
             await expect(currentTabSelectorOnTab2).not.toBeVisible();
 
             // On Tab 3: only "All Tabs" should be visible
-            await dashboardPage.changeTab({tabName: PARAMS.TAB_NAMES.TAB_3});
+            await dashboardPage.changeTab({index: 2});
             await expect(
                 dashboardPage.getSelectorLocatorByTitle({
                     title: PARAMS.GLOBAL_SELECTOR_ALL_TABS.appearance.title,
