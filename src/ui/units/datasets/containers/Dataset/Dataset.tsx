@@ -206,7 +206,12 @@ class Dataset extends React.Component<Props, State> {
         if (isCreationProcess) {
             initializeDataset({connectionId, collectionId, workbookId});
         } else if (datasetId) {
-            initialFetchDataset({datasetId, rev_id: revId, bindedWorkbookId});
+            initialFetchDataset({
+                datasetId,
+                rev_id: revId,
+                bindedWorkbookId,
+                workbookIdFromPath: workbookId,
+            });
         }
 
         this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.DATASETS);
@@ -218,6 +223,7 @@ class Dataset extends React.Component<Props, State> {
             datasetPreview: {view: prevView},
             ui: {isSourcesLoading: prevIsSourcesLoading},
             location: prevLocation,
+            bindedWorkbookId: prevBindedWorkbookId,
         } = prevProps;
         const {
             currentTab,
@@ -240,12 +246,13 @@ class Dataset extends React.Component<Props, State> {
         const prevRevId = prevSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
         const hasRevisionChanged = revId !== prevRevId;
         const isSavingUpdate = publishedId === currentRevId && !revId;
+        const isBindingChanged = bindedWorkbookId !== prevBindedWorkbookId;
 
         if (datasetId && prevDatasetId !== datasetId) {
             initialFetchDataset({datasetId, rev_id: revId, bindedWorkbookId});
         }
 
-        if (hasRevisionChanged && !isSavingUpdate) {
+        if ((hasRevisionChanged && !isSavingUpdate) || isBindingChanged) {
             initialFetchDataset({
                 datasetId,
                 rev_id: revId,
@@ -682,6 +689,7 @@ class Dataset extends React.Component<Props, State> {
                         sdk={sdk}
                         datasetId={datasetId}
                         workbookId={this.getWorkbookId()}
+                        bindedWorkbookId={this.props.bindedWorkbookId}
                         collectionId={this.getCollectionId()}
                     />
                     <DatasetPreview closePreview={this.closeDatasetPreview} />

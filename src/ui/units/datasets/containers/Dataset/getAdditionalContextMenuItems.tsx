@@ -46,8 +46,11 @@ export const getAdditionalContextMenuItems = ({
     const items: (EntryContextMenuItem & {theme?: string})[] = [];
 
     if (isWorkbookSharedDataset) {
-        items.push(
-            {
+        if (
+            entry.fullPermissions?.createEntryBinding ||
+            entry.fullPermissions?.createLimitedEntryBinding
+        ) {
+            items.push({
                 id: ENTRY_CONTEXT_MENU_ACTION.ACCESS,
                 action: () => {
                     openDialog({
@@ -72,8 +75,10 @@ export const getAdditionalContextMenuItems = ({
                 },
                 icon: <Shield />,
                 text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
-            },
-            {
+            });
+        }
+        if (entry.fullPermissions?.delete) {
+            items.push({
                 id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
                 action: () => {
                     openDialog({
@@ -94,26 +99,26 @@ export const getAdditionalContextMenuItems = ({
                 icon: <TrashBin />,
                 theme: 'danger',
                 text: getSharedEntryMockText('shared-entry-delete-dropdown-menu-title'),
-            },
-        );
+            });
+        }
     } else {
-        items.push(
-            {
-                id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
-                action: () => {
-                    openDialog({
-                        id: DIALOG_SHARED_ENTRY_BINDINGS,
-                        props: {
-                            onClose: closeDialog,
-                            open: true,
-                            entry,
-                        },
-                    });
-                },
-                icon: <CodeTrunk />,
-                text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
+        items.push({
+            id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+            action: () => {
+                openDialog({
+                    id: DIALOG_SHARED_ENTRY_BINDINGS,
+                    props: {
+                        onClose: closeDialog,
+                        open: true,
+                        entry,
+                    },
+                });
             },
-            {
+            icon: <CodeTrunk />,
+            text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
+        });
+        if (entry.fullPermissions?.listAccessBindings) {
+            items.push({
                 id: ENTRY_CONTEXT_MENU_ACTION.ACCESS,
                 action: () =>
                     openDialog({
@@ -131,8 +136,10 @@ export const getAdditionalContextMenuItems = ({
                     }),
                 icon: <Persons />,
                 text: i18ContextMenu('value_access'),
-            },
-            {
+            });
+        }
+        if (entry.fullPermissions?.delete) {
+            items.push({
                 id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
                 action: () => {
                     openDialog({
@@ -152,8 +159,8 @@ export const getAdditionalContextMenuItems = ({
                 icon: <TrashBin />,
                 theme: 'danger',
                 text: getSharedEntryMockText('shared-entry-delete-dropdown-menu-title'),
-            },
-        );
+            });
+        }
     }
     return items;
 };
