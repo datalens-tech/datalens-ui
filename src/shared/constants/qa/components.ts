@@ -190,7 +190,7 @@ export enum PreviewQa {
     ChartWrapper = 'preview-chart-wrapper',
 }
 
-export enum DatalensTabs {
+export enum DatalensTabsQa {
     MobileItem = 'dash-mobile-tab-item',
     Item = 'dash-tab-item',
     SwitcherItem = 'dash-tab-switcher-item',
@@ -199,4 +199,9 @@ export enum DatalensTabs {
 export enum DatalensHeaderQa {
     DesktopContainer = 'datalens-header-desktop-container',
     MobileContainer = 'datalens-header-mobile-container',
+}
+
+// copied from @gravity-ui/uikit
+export enum UikitListQa {
+    ACTIVE_ITEM = 'list-active-item',
 }

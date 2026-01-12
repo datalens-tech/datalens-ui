@@ -1,7 +1,7 @@
 import {ArrowRight, ArrowUp, ChevronsExpandUpRight, Circles5Random} from '@gravity-ui/icons';
 
 import type {Field, GraphShared, Placeholder, Shared} from '../../../shared';
-import {WizardVisualizationId} from '../../../shared';
+import {AxisAutoScaleModes, WizardVisualizationId} from '../../../shared';
 import {
     DEFAULT_DATE_FORMAT,
     ITEM_TYPES,
@@ -52,7 +52,7 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
             capacity: 1,
             settings: {
                 scale: 'auto',
-                scaleValue: 'min-max',
+                scaleValue: AxisAutoScaleModes.Auto,
                 title: 'off',
                 titleValue: '',
                 type: 'linear',
@@ -82,7 +82,7 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
             capacity: 1,
             settings: {
                 scale: 'auto',
-                scaleValue: 'min-max',
+                scaleValue: AxisAutoScaleModes.Auto,
                 title: 'off',
                 titleValue: '',
                 type: 'linear',

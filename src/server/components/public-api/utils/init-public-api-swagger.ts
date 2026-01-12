@@ -10,9 +10,6 @@ import {OPEN_API_VERSION_HEADER_COMPONENT_NAME, PUBLIC_API_VERSION_HEADER} from 
 export const initPublicApiSwagger = (app: ExpressKit) => {
     const {config} = app;
 
-    const installationText = `Installation – <b>${config.appInstallation}</b>`;
-    const envText = `Env – <b>${config.appEnv}</b>`;
-
     const {baseConfig, securitySchemes, biOpenapiSchemas} = registry.getPublicApiConfig();
 
     const latestVersion = Math.max(...Object.keys(baseConfig).map(Number));
@@ -52,7 +49,6 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                 info: {
                     version,
                     title: `DataLens API `,
-                    description: [installationText, envText].join('<br />'),
                 },
                 servers: [{url: '/'}],
             };
@@ -88,26 +84,21 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                     return res.json(openApiDocument);
                 });
 
-                const swaggerOptions = {
-                    url: jsonPath,
-                    validatorUrl: null,
-                    tagsSorter: 'alpha',
-                    operationsSorter: 'alpha',
+                const options = {
+                    customfavIcon: config.faviconUrl,
+                    customSiteTitle: 'DataLens API',
+                    customCss: '.swagger-ui .topbar { display: none }',
+                    swaggerOptions: {
+                        url: jsonPath,
+                        validatorUrl: null,
+                        tagsSorter: 'alpha',
+                        operationsSorter: 'alpha',
+                    },
                 };
 
-                app.express.use(
-                    basePath,
-                    swaggerUi.serveFiles(undefined, {
-                        swaggerOptions,
-                    }),
-                );
+                app.express.use(basePath, swaggerUi.serveFiles(undefined, options));
 
-                app.express.get(
-                    basePath,
-                    swaggerUi.setup(null, {
-                        swaggerOptions,
-                    }),
-                );
+                app.express.get(basePath, swaggerUi.setup(null, options));
             };
 
             addSwaggerRoutes(versionPath);

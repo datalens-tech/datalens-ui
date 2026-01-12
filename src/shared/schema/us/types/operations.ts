@@ -1,19 +1,9 @@
+import type z from 'zod';
+
+import type {datalensOperationSchema} from '../schemas/operation';
+
 export type GetDatalensOperationArgs = {
     operationId: string;
 };
 
-export type GetDatalensOperationResponse = {
-    id: string;
-    description: string;
-    createdBy: string;
-    createdAt: {
-        seconds: string;
-        nanos?: number;
-    };
-    modifiedAt: {
-        seconds: string;
-        nanos?: number;
-    };
-    metadata: {};
-    done: boolean;
-};
+export type GetDatalensOperationResponse = z.infer<typeof datalensOperationSchema>;

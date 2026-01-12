@@ -6,7 +6,7 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {slct} from '../../../utils';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
-import {SelectorElementType} from '../../../page-objects/dashboard/ControlActions';
+import {SelectorElementType} from '../../../page-objects/dashboard/controlActions/ControlActions';
 
 const PARAMS = {
     MANUAL_OUTSIDE_SELECTOR: {

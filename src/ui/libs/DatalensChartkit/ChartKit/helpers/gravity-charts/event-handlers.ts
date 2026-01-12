@@ -1,8 +1,5 @@
 import type {ChartData, ChartSeries, ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
-import {
-    pickActionParamsFromParams,
-    transformParamsToActionParams,
-} from '@gravity-ui/dashkit/helpers';
+import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 
@@ -10,7 +7,7 @@ import type {GraphWidgetEventScope, StringParams} from '../../../../../../shared
 import type {GraphWidget, LoadedWidgetData, RunActivityFn} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
 import {addParams, subtractParameters} from '../action-params-handlers';
-import {getNormalizedClickActions} from '../utils';
+import {getEscapedActionParams, getNormalizedClickActions} from '../utils';
 
 import {getPointActionParams, isPointSelected} from './utils';
 
@@ -73,9 +70,7 @@ export function handleClick(args: OnClickHandlerArgs) {
         handlers.forEach((handler) => {
             switch (handler.type) {
                 case 'setActionParams': {
-                    const actionParams = pickActionParamsFromParams(
-                        get(widgetData, 'unresolvedParams', {}),
-                    );
+                    const actionParams = getEscapedActionParams(widgetData);
                     const clickScope: GraphWidgetEventScope = get(action, 'scope', 'point');
                     setActionParamsByClick({
                         event,

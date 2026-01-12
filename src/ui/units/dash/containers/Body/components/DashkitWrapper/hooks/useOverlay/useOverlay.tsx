@@ -11,6 +11,7 @@ import type {
 import {DEFAULT_GROUP, MenuItems} from '@gravity-ui/dashkit/helpers';
 import {Gear, Pin, PinSlash} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, DashKitOverlayMenuQa, DashTabItemType} from 'shared';
@@ -19,25 +20,22 @@ import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/Das
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
 import {openDialogDefault} from 'ui/components/DialogDefault/DialogDefault';
 
-import {removeGlobalItems, setCurrentTabData} from '../../../../../store/actions/dashTyped';
-import {openDialogRelations} from '../../../../../store/actions/relations/actions';
-import {selectCurrentTab} from '../../../../../store/selectors/dashTypedSelectors';
-import {isItemGlobal} from '../../../../../utils/selectors';
+import {removeGlobalItems, setCurrentTabData} from '../../../../../../store/actions/dashTyped';
+import {openDialogRelations} from '../../../../../../store/actions/relations/actions';
+import {selectCurrentTab} from '../../../../../../store/selectors/dashTypedSelectors';
+import {isItemGlobal} from '../../../../../../utils/selectors';
+
+import {getGlobalIcon, isConfigItemGlobal} from './helpers';
 
 import iconRelations from 'ui/assets/icons/relations.svg';
+
+import './OverlayControls.scss';
+
+const b = block('dash-body-overlay-controls');
 
 // TODO: add issue
 type OverlayControls = NonNullable<DashKitProps['overlayControls']>;
 type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
-
-// TODO (global selectors): add translations
-const TEMP_I18N_DASH_MAIN_VIEW = {
-    'title_remove-global-selector': 'Селектор есть на других вкладках',
-    'label_remove-global-selector':
-        'У селектора выставлены настройки показа на других вкладках. Точно удалить его со всех вкладок?',
-    'button_apply-remove-global-item': 'Удалить',
-    button_cancel: 'Отменить',
-};
 
 type Args = {
     dashKitRef: React.RefObject<DashKitComponent>;
@@ -150,11 +148,27 @@ export const useOverlay = ({
                     qa: DashKitOverlayMenuQa.UnpinButton,
                 },
                 {
-                    allWidgetsControls: true,
                     id: MenuItems.Settings,
                     title: i18n('dash.settings-dialog.edit', 'label_settings'),
                     icon: Gear,
                     qa: ControlQA.controlSettings,
+                    visible: (configItem) => {
+                        return !isConfigItemGlobal(configItem);
+                    },
+                },
+                {
+                    id: MenuItems.Settings,
+                    title: i18n('dash.settings-dialog.edit', 'label_settings'),
+                    className: b('global-icon'),
+                    iconSize: 20,
+                    renderIcon: (widget) => {
+                        const dashItem = widget as DashTabItem;
+                        return getGlobalIcon(dashItem);
+                    },
+                    qa: ControlQA.controlSettings,
+                    visible: (configItem) => {
+                        return isConfigItemGlobal(configItem);
+                    },
                 },
                 {
                     allWidgetsControls: true,
@@ -213,18 +227,13 @@ export const useOverlay = ({
             ) {
                 dispatch(
                     openDialogDefault({
-                        // i18n('dash.main.view', 'title_remove-global-selector')
-                        caption: TEMP_I18N_DASH_MAIN_VIEW['title_remove-global-selector'],
-                        // i18n('dash.main.view', 'label_remove-global-selector')
-                        message: TEMP_I18N_DASH_MAIN_VIEW['label_remove-global-selector'],
+                        caption: i18n('dash.main.view', 'title_remove-global-selector'),
+                        message: i18n('dash.main.view', 'label_remove-global-selector'),
                         onApply: () => {
                             removeItemManual(configItem.id, true);
                         },
-                        // i18n('dash.main.view', 'button_apply-remove-global-item')
-                        textButtonApply:
-                            TEMP_I18N_DASH_MAIN_VIEW['button_apply-remove-global-item'],
-                        // i18n('dash.main.view', 'button_cancel')
-                        textButtonCancel: TEMP_I18N_DASH_MAIN_VIEW['button_cancel'],
+                        textButtonApply: i18n('dash.main.view', 'button_apply-remove-global-item'),
+                        textButtonCancel: i18n('dash.main.view', 'button_cancel'),
                         size: 's',
                     }),
                 );

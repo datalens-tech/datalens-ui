@@ -44,6 +44,7 @@ export type ServiceSettingsDispatch = ThunkDispatch<
 
 type SetServiceUsersListLoadingAction = {
     type: typeof SET_SERVICE_USERS_LIST_LOADING;
+    payload: {isLoadMore?: boolean};
 };
 type SetServiceUsersListSuccessAction = {
     type: typeof SET_SERVICE_USERS_LIST_SUCCESS;
@@ -80,6 +81,7 @@ export const getUsersList = ({
         try {
             dispatch({
                 type: SET_SERVICE_USERS_LIST_LOADING,
+                payload: {isLoadMore},
             });
             const data = await getSdk().sdk.auth.getUsersList(
                 {

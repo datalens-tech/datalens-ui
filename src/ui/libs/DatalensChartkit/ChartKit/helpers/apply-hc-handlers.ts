@@ -1,6 +1,5 @@
 import {sanitizeUrl} from '@braintree/sanitize-url';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import {wrap} from 'highcharts';
 import get from 'lodash/get';
 import has from 'lodash/has';
@@ -16,7 +15,7 @@ import {
     handleSeriesClickForActionParams,
 } from './action-params-handlers';
 import type {ShapedAction} from './types';
-import {extractHcTypeFromData} from './utils';
+import {extractHcTypeFromData, getEscapedActionParams} from './utils';
 
 export const fixPieTotals = (args: {data: GraphWidget}) => {
     const {data} = args;
@@ -77,7 +76,7 @@ export const applySetActionParamsEvents = (args: {
         set(data, pathToScatterMarkerStates, {});
     }
 
-    const actionParams = pickActionParamsFromParams(get(data, 'unresolvedParams', {}));
+    const actionParams = getEscapedActionParams(data);
 
     wrap(
         get(data, pathToChartEvents),
