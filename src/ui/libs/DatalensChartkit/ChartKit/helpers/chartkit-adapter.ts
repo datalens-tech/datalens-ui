@@ -1,6 +1,7 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import type {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature, isMarkupItem} from '../../../../../shared';
@@ -114,11 +115,13 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
     loadedData,
     onChange,
     runActivity,
+    chartkitHolidays,
 }: {
     type: T;
     loadedData: ChartKitAdapterProps['loadedData'];
     onChange?: ChartKitAdapterProps['onChange'];
     runActivity?: ChartKitAdapterProps['runActivity'];
+    chartkitHolidays: ChartKitHolidays | undefined;
 }) => {
     switch (type) {
         case 'indicator': {
@@ -215,6 +218,7 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
                 loadedData: data,
                 onChange,
                 runActivity,
+                chartkitHolidays,
             });
         }
         default: {
@@ -225,11 +229,13 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
 
 export const getAdditionalProps = <T extends ChartKitType>({
     type,
+    loadedData,
     splitTooltip,
 }: {
     type: T;
+    loadedData?: LoadedWidgetData;
     splitTooltip?: boolean;
-}) => {
+}): Partial<ChartKitProps<ChartKitType>> | undefined => {
     switch (type) {
         case 'highcharts': {
             return {
@@ -237,8 +243,20 @@ export const getAdditionalProps = <T extends ChartKitType>({
             } as Partial<ChartKitProps<ChartKitType>>;
         }
         case 'gravity-charts': {
+            const withoutLineLimit =
+                loadedData?.config &&
+                'withoutLineLimit' in loadedData.config &&
+                loadedData.config.withoutLineLimit;
+            const seriesCountLimit =
+                loadedData?.config &&
+                'linesLimit' in loadedData.config &&
+                loadedData.config.linesLimit;
+
             return {
                 tooltip: {splitted: splitTooltip},
+                validation: {
+                    seriesCountLimit: withoutLineLimit ? undefined : seriesCountLimit,
+                },
             } as Partial<ChartKitProps<ChartKitType>>;
         }
         default: {

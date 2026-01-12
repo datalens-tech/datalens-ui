@@ -32,7 +32,7 @@ export default {
     singleFetchingTimeout: process.env.DATA_SINGLE_FETCHING_TIMEOUT_MS
         ? parseInt(process.env.DATA_SINGLE_FETCHING_TIMEOUT_MS, 10)
         : undefined,
-    faviconUrl: '/favicon.ico',
+    faviconUrl: '/os-favicon.ico',
     appMode: process.env.APP_MODE,
     serviceName: SERVICE_NAME_DATALENS,
     gatewayProxyHeaders: [

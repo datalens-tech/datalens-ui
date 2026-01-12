@@ -7,6 +7,7 @@ import {useHistory} from 'react-router';
 import {EntryScope, getEntryNameByKey} from 'shared';
 import {DIALOG_SHARED_ENTRY_BINDINGS} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
+import {DIALOG_SHARED_RELATED_ENTITIES} from 'ui/components/DialogSharedRelatedEntities/DialogSharedRelatedEntities';
 import {ENTRY_CONTEXT_MENU_ACTION} from 'ui/components/EntryContextMenu';
 import type {EntryContextMenuItem} from 'ui/components/EntryContextMenu/helpers';
 import {DIALOG_IAM_ACCESS} from 'ui/components/IamAccessDialog';
@@ -15,7 +16,6 @@ import {ResourceType} from 'ui/registry/units/common/types/components/IamAccessD
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {showToast} from 'ui/store/actions/toaster';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
-import {DIALOG_DELETE_SHARED_ENTRY_IN_WORKBOOK} from 'ui/units/workbooks/components/DeleteSharedEntryDialog/DeleteSharedEntryDialog';
 
 import type {ConnectionEntry} from '../../store';
 import {setEntryDelegation} from '../../store';
@@ -93,12 +93,13 @@ export const useAdditionalContextMenuItems = ({
                     action: () => {
                         dispatch(
                             openDialog({
-                                id: DIALOG_DELETE_SHARED_ENTRY_IN_WORKBOOK,
+                                id: DIALOG_SHARED_RELATED_ENTITIES,
                                 props: {
                                     onClose: () => dispatch(closeDialog()),
                                     open: true,
                                     workbookId: bindedWorkbookId,
                                     entry,
+                                    isDeleteDialog: true,
                                     onDeleteSuccess: () => {
                                         dispatch(closeDialog());
                                         history.push(`/workbooks/${bindedWorkbookId}`);

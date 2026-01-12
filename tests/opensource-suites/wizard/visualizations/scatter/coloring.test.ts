@@ -6,6 +6,7 @@ import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {SMALL_SCREENSHOT_VIEWPORT_SIZE} from '../constants';
+import {ColorValue} from '../../../../page-objects/wizard/ColorDialog';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Scatter chart', () => {
@@ -38,7 +39,7 @@ datalensTest.describe('Wizard', () => {
 
                 // set color by fake title
                 await wizardPage.colorDialog.open();
-                await wizardPage.colorDialog.selectColor('#FF8C00');
+                await wizardPage.colorDialog.selectColor(ColorValue.DEFAULT_20_DarkOrange);
                 await wizardPage.colorDialog.apply();
 
                 await expect(previewLoader).not.toBeVisible();

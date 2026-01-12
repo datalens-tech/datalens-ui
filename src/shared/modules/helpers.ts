@@ -10,6 +10,7 @@ import {
 import type {
     Field,
     ServerChartsConfig,
+    ServerCommonSharedExtraSettings,
     ServerField,
     ServerPlaceholder,
     ServerPlaceholderSettings,
@@ -173,10 +174,13 @@ export function getIsNavigatorAvailable(
     );
 }
 
+export function getNavigatorMode(extraSettings?: ServerCommonSharedExtraSettings) {
+    return extraSettings?.navigatorSettings?.navigatorMode || extraSettings?.navigatorMode;
+}
+
 export function getIsNavigatorEnabled(shared: ServerChartsConfig) {
     const extraSettings = shared.extraSettings;
-    const navigatorMode =
-        extraSettings?.navigatorSettings?.navigatorMode || extraSettings?.navigatorMode;
+    const navigatorMode = getNavigatorMode(extraSettings);
     return getIsNavigatorAvailable(shared.visualization) && navigatorMode === NavigatorModes.Show;
 }
 

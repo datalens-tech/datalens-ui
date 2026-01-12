@@ -1,20 +1,24 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import type {SelectOption} from '@gravity-ui/uikit';
-import {Flex, Select} from '@gravity-ui/uikit';
+import {Magnifier} from '@gravity-ui/icons';
+import type {SelectOption, SelectProps} from '@gravity-ui/uikit';
+import {ActionTooltip, Button, Flex, Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashTabItemType, Feature} from 'shared';
+import {DashTabItemType, DialogControlQa, Feature} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
 import {
+    setNeedSimilarSelectorsCheck,
     setSelectorDialogItem,
     updateControlsValidation,
     updateSelectorsGroup,
 } from 'ui/store/actions/controlDialog/controlDialog';
 import {
+    selectNeedSimilarSelectorsCheck,
     selectOpenedDialogType,
     selectSelectorDialog,
     selectSelectorValidation,
@@ -26,14 +30,17 @@ import {
     selectTabId,
     selectTabs,
 } from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {isItemGlobal} from 'ui/units/dash/utils/selectors';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {IMPACT_TYPE_OPTION_VALUE} from './constants';
+import {CurrentTabOption} from './CurrentTabOption/CurrentTabOption';
+import {SelectedTabsOption} from './SelectedTabsOption/SelectedTabsOption';
+import {IMPACT_TYPE_OPTION_VALUE, LABEL_BY_SCOPE_MAP} from './constants';
 import {
+    getCurrentImpactTabsIds,
     getIconByImpactType,
     getImpactTypeByValue,
     getImpactTypeValidation,
-    getInitialImpactTabsIds,
 } from './helpers';
 import {useTabVisibilityValidation} from './useTabVisibilityValidation';
 
@@ -41,30 +48,8 @@ import './ImpactTypeSelect.scss';
 
 const b = block('impact-type-select');
 
-// const i18n = I18n.keyset('dash.control-dialog.edit');
-
-// TODO (global selectors): Add translations
-const i18n = (key: string) => {
-    const values: Record<string, string> = {
-        'label_tabs-scope': 'Показать во вкладках',
-        'label_selected-tabs-placeholder': 'Выберите вкладки',
-        'value_all-tabs': 'На всех вкладках',
-        'value_selected-tabs': 'Выбранные вкладки',
-        'value_current-tab': 'Текущая вкладка',
-        'value_as-group': 'Как у группы',
-        'validation_need-current-tab-impact':
-            'Должен быть хотя бы один селектор, видимый на текущей вкладке',
-    };
-
-    return values[key];
-};
-
-const LABEL_BY_SCOPE_MAP = {
-    [IMPACT_TYPE_OPTION_VALUE.ALL_TABS]: i18n('value_all-tabs'),
-    [IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB]: i18n('value_current-tab'),
-    [IMPACT_TYPE_OPTION_VALUE.AS_GROUP]: i18n('value_as-group'),
-    [IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS]: i18n('value_selected-tabs'),
-};
+const i18n = I18n.keyset('dash.control-dialog.edit');
+const groupI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
 const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
@@ -73,7 +58,8 @@ export type ImpactTypeSelectProps = {
     groupImpactTabsIds?: ImpactTabsIds;
     hasMultipleSelectors?: boolean;
     isGroupSettings?: boolean;
-    onRaiseTabVisibilityProblem?: () => void;
+    selectorWidth?: SelectProps['width'];
+    className?: string;
 };
 
 export const ImpactTypeSelect = ({
@@ -81,7 +67,8 @@ export const ImpactTypeSelect = ({
     groupImpactTabsIds,
     hasMultipleSelectors,
     isGroupSettings,
-    onRaiseTabVisibilityProblem,
+    selectorWidth = 'max',
+    className,
 }: ImpactTypeSelectProps) => {
     const dispatch = useDispatch();
     const selectorDialog = useSelector(selectSelectorDialog);
@@ -93,83 +80,120 @@ export const ImpactTypeSelect = ({
     const openedDialogType = useSelector(selectOpenedDialogType);
     const validation = useSelector(selectSelectorValidation);
     const groupValidation = useSelector(selectSelectorsGroupValidation);
+    const needSimilarSelectorsCheck = useSelector(selectNeedSimilarSelectorsCheck);
 
     const isGroupControl = openedDialogType === DashTabItemType.GroupControl;
-
-    const [impactTabsIds, setImpactTabsIds] = React.useState<string[]>(
-        getInitialImpactTabsIds({
-            isGroupSettings,
-            groupImpactTabsIds,
-            selectorImpactTabsIds: selectorDialog.impactTabsIds,
-        }),
-    );
-
-    const {validateTabVisibility} = useTabVisibilityValidation({
-        isGroupControl,
-        isGroupSettings,
-        currentTabId,
-        impactTabsIds,
-        selectorsGroup,
-        selectorDialog,
-        onRaiseTabVisibilityProblem,
-    });
-
-    const optionTabTitle = React.useMemo(() => {
-        if (impactTabsIds.length !== 1) {
-            return currentTab?.title || '';
-        }
-
-        const optionTab = tabs.find((tab) => tab.id === impactTabsIds[0]);
-        const currentTabTitle = optionTab?.title || '';
-
-        return currentTabTitle;
-    }, [currentTab?.title, impactTabsIds, tabs]);
 
     const tabsOptions = React.useMemo(() => {
         return tabs.map((tab) => ({
             value: tab.id,
             content: tab.title,
+            qa: DialogControlQa.impactTabsIdsSelectOption,
         }));
     }, [tabs]);
+
+    const isGlobal = React.useMemo(() => {
+        if (
+            !openedDialogType ||
+            (openedDialogType !== DashTabItemType.GroupControl &&
+                openedDialogType !== DashTabItemType.Control)
+        ) {
+            return false;
+        }
+
+        if (openedDialogType === DashTabItemType.GroupControl) {
+            return isItemGlobal({
+                type: DashTabItemType.GroupControl,
+                data: {
+                    impactType: selectorsGroup.impactType,
+                    impactTabsIds: selectorsGroup.impactTabsIds,
+                    group: selectorsGroup.group,
+                },
+            });
+        }
+
+        return isItemGlobal({
+            type: DashTabItemType.Control,
+            data: {
+                impactType: selectorDialog.impactType,
+                impactTabsIds: selectorDialog.impactTabsIds,
+            },
+        });
+    }, [
+        openedDialogType,
+        selectorDialog.impactTabsIds,
+        selectorDialog.impactType,
+        selectorsGroup.group,
+        selectorsGroup.impactTabsIds,
+        selectorsGroup.impactType,
+    ]);
+
+    const currentImpactTabsIds = getCurrentImpactTabsIds({
+        selectorImpactTabsIds: isGroupSettings ? groupImpactTabsIds : selectorDialog.impactTabsIds,
+        currentTabId,
+    });
 
     const currentImpactType = getImpactTypeByValue({
         selectorImpactType: isGroupSettings ? groupImpactType : selectorDialog.impactType,
         hasMultipleSelectors,
+        isGroupSettings,
+    });
+
+    const {validateTabVisibility} = useTabVisibilityValidation({
+        hasMultipleSelectors,
+        isGroupSettings,
+        currentTabId,
+        impactTabsIds: currentImpactTabsIds,
+        selectorsGroup,
+        selectorDialog,
     });
 
     // Create options based on whether there are multiple selectors
     // GroupItem impact value is disabled if it does not narrow down or does not match the group setting
     const tabsScopeOptions: SelectOption<{icon?: JSX.Element}>[] = React.useMemo(() => {
+        const allTabsOption = {
+            value: IMPACT_TYPE_OPTION_VALUE.ALL_TABS,
+            content: LABEL_BY_SCOPE_MAP[IMPACT_TYPE_OPTION_VALUE.ALL_TABS],
+            data: {icon: getIconByImpactType(IMPACT_TYPE_OPTION_VALUE.ALL_TABS)},
+            qa: DialogControlQa.impactTypeValueAllTabs,
+        };
+
         const needDisableIncorrectOptions =
             hasMultipleSelectors && !isGroupSettings && isGroupControl;
-        const baseOptions = [
+
+        const isSelectedTabsDisabled =
+            needDisableIncorrectOptions &&
+            selectorsGroup.impactType !== 'selectedTabs' &&
+            selectorsGroup.impactType !== 'allTabs';
+
+        const baseOptions: SelectOption<{icon?: JSX.Element}>[] = [
             {
                 value: IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB,
                 content: (
-                    <Flex gap={2} className={b('current-tab')}>
-                        <span>{LABEL_BY_SCOPE_MAP[IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB]}</span>
-                        {optionTabTitle && <span className={b('tab-hint')}>{optionTabTitle}</span>}
-                    </Flex>
+                    <CurrentTabOption
+                        tabs={tabs}
+                        currentImpactType={currentImpactType}
+                        currentTabTitle={currentTab?.title}
+                        impactTabsIds={currentImpactTabsIds}
+                        isGlobal={isGlobal}
+                    />
                 ),
-            },
-            {
-                value: IMPACT_TYPE_OPTION_VALUE.ALL_TABS,
-                content: LABEL_BY_SCOPE_MAP[IMPACT_TYPE_OPTION_VALUE.ALL_TABS],
-                data: {icon: getIconByImpactType(IMPACT_TYPE_OPTION_VALUE.ALL_TABS)},
-                disabled: needDisableIncorrectOptions && selectorsGroup.impactType !== 'allTabs',
+                qa: DialogControlQa.impactTypeValueCurrentTab,
             },
             {
                 value: IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS,
-                content: LABEL_BY_SCOPE_MAP[IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS],
+                content: <SelectedTabsOption isSelectedTabsDisabled={isSelectedTabsDisabled} />,
                 data: {
                     icon: getIconByImpactType(IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS),
                 },
-                disabled:
-                    needDisableIncorrectOptions &&
-                    selectorsGroup.impactType !== 'selectedTabs' &&
-                    selectorsGroup.impactType !== 'allTabs',
+                disabled: isSelectedTabsDisabled,
+                qa: DialogControlQa.impactTypeValueSelectedTabs,
             },
         ];
+
+        if (!hasMultipleSelectors || isGroupSettings) {
+            baseOptions.push(allTabsOption);
+        }
 
         if (hasMultipleSelectors && !isGroupSettings) {
             const groupImpactTypeItem = getImpactTypeByValue({
@@ -190,6 +214,7 @@ export const ImpactTypeSelect = ({
                     data: {
                         icon: getIconByImpactType(groupImpactTypeItem),
                     },
+                    qa: DialogControlQa.impactTypeValueAsGroup,
                 },
                 ...baseOptions,
             ];
@@ -200,7 +225,10 @@ export const ImpactTypeSelect = ({
         hasMultipleSelectors,
         isGroupSettings,
         isGroupControl,
-        optionTabTitle,
+        tabs,
+        currentImpactType,
+        currentTab?.title,
+        currentImpactTabsIds,
         selectorsGroup.impactType,
         groupImpactType,
     ]);
@@ -232,9 +260,8 @@ export const ImpactTypeSelect = ({
             updatedImpactTabsIds?: string[] | null;
         }) => {
             if (
-                !isGroupControl ||
-                (!selectorsGroup.validation.currentTabVisibility &&
-                    !selectorDialog.validation.currentTabVisibility)
+                !selectorsGroup.validation.currentTabVisibility &&
+                !selectorDialog.validation.currentTabVisibility
             ) {
                 return;
             }
@@ -245,11 +272,9 @@ export const ImpactTypeSelect = ({
                         groupValidation: {
                             currentTabVisibility: undefined,
                         },
-                        itemsValidation: isGroupSettings
-                            ? undefined
-                            : {
-                                  currentTabVisibility: undefined,
-                              },
+                        itemsValidation: {
+                            currentTabVisibility: undefined,
+                        },
                     }),
                 );
             }
@@ -257,8 +282,6 @@ export const ImpactTypeSelect = ({
         [
             currentTabId,
             dispatch,
-            isGroupControl,
-            isGroupSettings,
             selectorDialog.validation.currentTabVisibility,
             selectorsGroup.validation.currentTabVisibility,
         ],
@@ -271,14 +294,12 @@ export const ImpactTypeSelect = ({
             let newImpactTabsIds = null;
             if (impactTypeValue === IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS) {
                 // When switching to selected tabs, ensure current tab is included
-                newImpactTabsIds = impactTabsIds.includes(currentTabId)
-                    ? impactTabsIds
-                    : [...impactTabsIds, currentTabId];
-                setImpactTabsIds(newImpactTabsIds);
+                newImpactTabsIds = currentImpactTabsIds.includes(currentTabId)
+                    ? currentImpactTabsIds
+                    : [...currentImpactTabsIds, currentTabId];
             } else if (impactTypeValue === IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB) {
                 // When switching to current tab, set impactTabsIds to current tab
                 newImpactTabsIds = [currentTabId];
-                setImpactTabsIds(newImpactTabsIds);
             }
 
             updateSelectorsState(impactTypeValue, newImpactTabsIds);
@@ -287,12 +308,11 @@ export const ImpactTypeSelect = ({
                 updatedImpactTabsIds: newImpactTabsIds,
             });
         },
-        [currentTabId, impactTabsIds, onChangeImpact, updateSelectorsState],
+        [currentImpactTabsIds, currentTabId, onChangeImpact, updateSelectorsState],
     );
 
     const handleImpactTabsIdsChange = React.useCallback(
         (value: string[]) => {
-            setImpactTabsIds(value);
             updateSelectorsState(IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS, value);
 
             validateTabVisibility(value);
@@ -303,6 +323,10 @@ export const ImpactTypeSelect = ({
         },
         [onChangeImpact, updateSelectorsState, validateTabVisibility],
     );
+
+    const handleFindSimilarSelectorsClick = React.useCallback(() => {
+        dispatch(setNeedSimilarSelectorsCheck(!needSimilarSelectorsCheck));
+    }, [dispatch, needSimilarSelectorsCheck]);
 
     if (!currentTabId || !isEnabledFeature(Feature.EnableGlobalSelectors)) {
         return null;
@@ -320,27 +344,39 @@ export const ImpactTypeSelect = ({
         ? groupValidation.currentTabVisibility || groupValidation.impactTabsIds
         : validation.currentTabVisibility || validation.impactTabsIds;
 
+    const showSearchButton =
+        !isGroupSettings && (selectorDialog.fieldName || selectorDialog.datasetFieldId);
+
     return (
-        <FormRow label={i18n('label_tabs-scope')}>
+        <FormRow label={i18n('label_tabs-scope')} className={className}>
             <Flex direction="column" gap={2}>
-                <FieldWrapper error={impactTypeValidation}>
+                <FieldWrapper error={impactTypeValidation} className={b('impact-type-container')}>
                     <Select
+                        qa={DialogControlQa.impactTypeSelect}
                         value={[currentImpactType]}
                         onUpdate={handleImpactTypeChange}
-                        width="max"
+                        width={selectorWidth}
                         options={tabsScopeOptions}
                         renderOption={renderOptions}
                         renderSelectedOption={renderOptions}
                         validationState={impactTypeValidation ? 'invalid' : undefined}
                     />
+                    {showSearchButton && (
+                        <ActionTooltip title={groupI18n('hint_find-similiar-selectors')}>
+                            <Button onClick={handleFindSimilarSelectorsClick} view="outlined">
+                                <Icon data={Magnifier} size={16} />
+                            </Button>
+                        </ActionTooltip>
+                    )}
                 </FieldWrapper>
 
                 {showTabsSelector && (
                     <FieldWrapper error={impactTabsIdsValidation}>
                         <Select
-                            value={impactTabsIds}
+                            qa={DialogControlQa.impactTabsIdsSelect}
+                            value={currentImpactTabsIds}
                             onUpdate={handleImpactTabsIdsChange}
-                            width="max"
+                            width={selectorWidth}
                             multiple
                             options={tabsOptions}
                             placeholder={i18n('label_selected-tabs-placeholder')}

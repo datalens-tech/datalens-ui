@@ -348,7 +348,7 @@ type Props = {
     onSave: (args?: {relation: DatasetAvatarRelation}) => void;
     avatars: DatasetSourceAvatar[];
     sources: DatasetSource[];
-    options: DatasetOptions;
+    options: Partial<DatasetOptions>;
     visible: boolean;
     valid?: boolean;
     relation: DatasetAvatarRelation;

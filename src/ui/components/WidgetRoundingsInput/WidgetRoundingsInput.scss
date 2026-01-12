@@ -1,0 +1,20 @@
+.dl-widget-roundings-input {
+    position: relative;
+
+    width: 120px;
+
+    &__icon {
+        color: var(--g-color-text-hint);
+        margin-inline: var(--g-spacing-half);
+        flex-shrink: 0;
+    }
+
+    &__slider {
+        position: absolute;
+        bottom: 0;
+        left: 3px;
+        right: 3px;
+        z-index: 1;
+        height: 8px;
+    }
+}

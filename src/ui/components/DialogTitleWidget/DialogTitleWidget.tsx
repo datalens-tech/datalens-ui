@@ -20,7 +20,7 @@ import {
 } from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
-import {i18n} from 'i18n';
+import {I18n, i18n} from 'i18n';
 import type {ColorSettings, DashTabItemTitle, DashTabItemTitleSize, HintSettings} from 'shared';
 import {
     DashTabItemTitleSizes,
@@ -36,11 +36,13 @@ import {PaletteText} from 'ui/units/dash/containers/Dialogs/components/PaletteTe
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 
 import {useBackgroundColorSettings, useColorSettings} from './useColorSettings';
 
 import './DialogTitleWidget.scss';
 
+const i18nCommon = I18n.keyset('dash.dashkit-plugin-common.view');
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
 
 type RadioButtonFontSizeOption = DashTabItemTitleSize | 'custom';
@@ -84,6 +86,7 @@ interface DialogTitleWidgetState {
     textColor?: string;
     textColorSettings?: ColorSettings;
     hint?: HintSettings;
+    borderRadius?: number;
 }
 
 export interface DialogTitleWidgetFeatureProps {
@@ -92,6 +95,7 @@ export interface DialogTitleWidgetFeatureProps {
     enableCustomFontSize?: boolean;
     enableCustomBgColorSelector?: boolean;
     enableSeparateThemeColorSelector?: boolean;
+    enableBorderRadiusSelector?: boolean;
     enableCustomTextColorSelector?: boolean;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
@@ -140,6 +144,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         enableCustomBgColorSelector = false,
         enableSeparateThemeColorSelector = true,
         enableCustomTextColorSelector = false,
+        enableBorderRadiusSelector = false,
         theme,
         closeDialog,
         setItemData,
@@ -165,7 +170,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
               }),
         showInTOC: openedItemData.showInTOC,
         autoHeight: Boolean(openedItemData.autoHeight),
-
+        borderRadius: openedItemData.borderRadius,
         hint: openedItemData.hint,
     });
 
@@ -205,6 +210,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         hint,
         autoHeight,
         previousSelectedFontSize,
+        borderRadius,
     } = state;
 
     const enableCustomFontSize =
@@ -294,6 +300,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                             : fontSize,
                     showInTOC,
                     autoHeight,
+                    borderRadius,
                     ...resultedBackgroundSettings,
                     ...resultTextColorSettings,
                     hint,
@@ -314,6 +321,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         previousSelectedFontSize,
         showInTOC,
         autoHeight,
+        borderRadius,
         resultedBackgroundSettings,
         oldTextColor,
         textColorSettings,
@@ -341,6 +349,10 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
 
     const handleAutoHeightChanged = React.useCallback(() => {
         setState((prevState) => ({...prevState, autoHeight: !prevState.autoHeight}));
+    }, []);
+
+    const setBorderRadius = React.useCallback((value: number | undefined) => {
+        setState((prevState) => ({...prevState, borderRadius: value}));
     }, []);
 
     const inputRef: React.Ref<HTMLInputElement> = React.useRef(null);
@@ -453,6 +465,11 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                         enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
+                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                    <FormRow className={b('row')} label={i18nCommon('label_border-radius')}>
+                        <WidgetRoundingsInput value={borderRadius} onUpdate={setBorderRadius} />
+                    </FormRow>
+                )}
                 <FormRow className={b('row')} label={i18n('dash.widget-dialog.edit', 'field_hint')}>
                     <div className={b('settings-container')}>
                         <Checkbox

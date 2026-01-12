@@ -4,6 +4,7 @@ import {Moon, Sun} from '@gravity-ui/icons';
 import type {FlexProps, RealTheme} from '@gravity-ui/uikit';
 import {Flex, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import type {ColorPickerInputProps} from 'ui/components/ColorPickerInput/ColorPickerInput';
 import ColorPickerInputWithPreset from 'ui/units/dash/containers/Dialogs/components/ColorPickerInputWithPreset/ColorPickerInputWithPreset';
 
 import type {ColorSettings} from '../../../../../../../shared/types';
@@ -12,7 +13,7 @@ import {isColorByTheme} from '../../../../../../../shared/utils';
 import './ColorInputsGroup.scss';
 const b = block('color-inputs-group');
 
-export interface ColorInputsGroupProps {
+export interface ColorInputsGroupProps extends Pick<ColorPickerInputProps, 'placeholder'> {
     theme?: RealTheme;
     value: ColorSettings | undefined;
     onUpdate: (value: ColorSettings | undefined) => void;
@@ -21,6 +22,7 @@ export interface ColorInputsGroupProps {
     className?: string;
     mainPresetOptions?: string[];
     paletteOptions?: string[];
+    width?: 'max';
 }
 
 export function ColorInputsGroup({
@@ -32,15 +34,18 @@ export function ColorInputsGroup({
     direction = 'row',
     mainPresetOptions,
     paletteOptions,
+    placeholder,
+    width,
 }: ColorInputsGroupProps) {
     const {light, dark, common} = isColorByTheme(value)
         ? {...value, common: undefined}
         : {common: value};
 
     return (
-        <Flex className={b(null, className)} direction={direction}>
+        <Flex className={b({width}, className)} direction={direction}>
             {isSingleColorSelector ? (
                 <ColorPickerInputWithPreset
+                    placeholder={placeholder}
                     mainPresetOptions={mainPresetOptions}
                     paletteOptions={paletteOptions}
                     className={b('color-input')}

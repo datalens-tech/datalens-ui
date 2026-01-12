@@ -1,4 +1,6 @@
+// TODO: Remove CHARTS-11919
 $rebrandingRoot: '.dl-root_rebranding';
+$customThemeRoot: '.dl-root_custom-theme';
 
 $backgroundMenu: #fbfbfb;
 
@@ -51,6 +53,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
     --dl-color-entity-dashboard: #ff8c3c;
 
     --dl-color-widget-background: var(--g-color-base-float);
+    --dl-widget-border-radius: 20px;
 
     --dl-color-text-workbook-icon: var(--g-color-text-dark-primary);
 

@@ -237,9 +237,9 @@ class VisualizationPlaceholder extends React.Component<Props> {
     };
 
     private openDialogMetric = () => {
-        const {extraSettings} = this.props;
+        const {extraSettings, onUpdate} = this.props;
 
-        this.props.openDialogMetric({extraSettings});
+        this.props.openDialogMetric({extraSettings, onApply: onUpdate});
     };
 
     private openDialogPointsSize = () => {

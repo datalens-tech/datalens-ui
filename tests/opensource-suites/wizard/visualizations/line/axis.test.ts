@@ -5,6 +5,7 @@ import {openTestPage, slct} from '../../../../utils';
 import {WizardPageQa, WizardVisualizationId} from '../../../../../src/shared';
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
+import {ColorValue} from '../../../../page-objects/wizard/ColorDialog';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Line chart', () => {
@@ -50,6 +51,8 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'salesSum');
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y2, 'orderCount');
 
+            // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+            await page.mouse.move(-1, -1);
             await expect(chart).toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });
@@ -69,8 +72,65 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'orderMonth');
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y2, 'orderCount');
 
+            // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+            await page.mouse.move(-1, -1);
             await expect(chart).toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });
+
+        datalensTest(
+            'The left Y-axis only with 2 lines using shapes, colors are assigned correctly @screenshot',
+            async ({page}) => {
+                const wizardPage = new WizardPage({page});
+                const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+                const chart = chartContainer.locator('.chartkit-graph,.gcharts-chart');
+
+                await wizardPage.createNewFieldWithFormula(
+                    'orderMonth',
+                    `datetrunc([Order_date], 'month')`,
+                );
+                await wizardPage.createNewFieldWithFormula('orderYear', `year([Order_date])`);
+                await wizardPage.createNewFieldWithFormula('orderCount', `countd([order_id])`);
+                await wizardPage.createNewFieldWithFormula('salesSum', `sum([Sales])`);
+
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.X,
+                    'orderMonth',
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Y,
+                    'salesSum',
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Y,
+                    'orderCount',
+                );
+
+                await wizardPage.sectionVisualization.removeFieldByClick(
+                    PlaceholderName.Shapes,
+                    'Measure Names',
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Shapes,
+                    'orderYear',
+                );
+
+                await wizardPage.colorDialog.open();
+
+                const fieldValues = await wizardPage.colorDialog.getFieldValues();
+
+                expect(fieldValues.length).toBe(2);
+
+                await wizardPage.colorDialog.selectColor(ColorValue.DEFAULT_20_DarkOrange);
+
+                await wizardPage.colorDialog.selectFieldValue(fieldValues[1]);
+                await wizardPage.colorDialog.selectColor(ColorValue.DEFAULT_20_LightGreen);
+
+                await wizardPage.colorDialog.apply();
+
+                await expect(chart).toBeVisible();
+                await expect(chartContainer).toHaveScreenshot();
+            },
+        );
     });
 });

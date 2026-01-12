@@ -87,10 +87,9 @@ type PluginText = Plugin<Props> &
 const textPlugin: PluginText = {
     ...pluginText,
     setSettings(settings: PluginTextObjectSettings) {
-        const {apiHandler, globalBackground, globalBackgroundSettings} = settings;
+        const {apiHandler, globalWidgetSettings} = settings;
         pluginText._apiHandler = apiHandler;
-        textPlugin.globalBackground = globalBackground;
-        textPlugin.globalBackgroundSettings = globalBackgroundSettings;
+        textPlugin.globalWidgetSettings = globalWidgetSettings;
         return textPlugin;
     },
     renderer: function Wrapper(
@@ -195,10 +194,12 @@ const textPlugin: PluginText = {
         const data = props.data as DashTabItemText['data'];
 
         const {style, hasBgColor} = usePreparedWrapSettings({
-            widgetBackground: data.background,
-            globalBackground: textPlugin.globalBackground,
-            widgetBackgroundSettings: data.backgroundSettings,
-            globalBackgroundSettings: textPlugin.globalBackgroundSettings,
+            ownWidgetSettings: {
+                background: data.background,
+                backgroundSettings: data.backgroundSettings,
+                borderRadius: data.borderRadius,
+            },
+            globalWidgetSettings: textPlugin.globalWidgetSettings ?? {},
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 

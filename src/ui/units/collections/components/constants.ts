@@ -69,6 +69,8 @@ export const mockSharedEntriesTexts = {
     'collection-structure-dialog-caption': 'Выберите коллекцию для создания',
     'shared-bindings-list-title': 'Привязанные объекты',
     'shared-bindings-list-empty': 'Биндинги отсутствуют',
+    'shared-object-related-entities-list-empty': 'Связанные объекты в воркбуке отсутствуют',
+    'shared-object-related-entities-dialog-title': 'Связанные объекты в воркбуке',
     'shared-bindings-list-action-unbind': 'Отвязать',
     'shared-bindings-list-action-change-permissions': 'Поменять права',
     'entity-row-relation-tooltip-text': 'Перейти к связанным объектам в воркбуке',
@@ -128,4 +130,10 @@ export const mockSharedEntriesTexts = {
         'Для редактирования и добавления фильтров перейдите к оригиналу датасета',
     'dataset-parameters-readonly-alert-message':
         'Для редактирования и добавления параметров перейдите к оригиналу датасета',
+    'dataset-shared-entry-popup-title': 'Датасет привязан {{delegation}}',
+    'connection-shared-entry-popup-title': 'Подключение привязано {{delegation}}',
+    'delegated-shared-entry-popup-title': 'с делегацией прав',
+    'not-delegated-shared-entry-popup-title': 'без делегации прав',
+    'workbook-list-change-delegation': 'Изменить делегацию прав',
+    'link-to-original-entry-button': 'Перейти к оригиналу',
 };

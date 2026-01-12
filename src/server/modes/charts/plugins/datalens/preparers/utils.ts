@@ -1,3 +1,5 @@
+import type {ValueFormat} from '@gravity-ui/chartkit/gravity-charts';
+
 import type {ServerField} from '../../../../../../shared';
 import {isMeasureValue, isNumberField} from '../../../../../../shared';
 import type {FormatNumberOptions} from '../../../../../../shared/modules/format-units/types';
@@ -14,17 +16,28 @@ export function mapToGravityChartValueFormat({
 }) {
     const isNumber = isNumberField(field) || isMeasureValue(field);
     if (isNumber && formatSettings) {
-        return {
-            type: 'number',
-            precision: formatSettings.chartKitPrecision,
-            showRankDelimiter: formatSettings.chartKitShowRankDelimiter,
-            labelMode: formatSettings.chartKitLabelMode,
-            format: formatSettings.chartKitFormat as FormatNumberOptions['format'], // ?
-            prefix: formatSettings.chartKitPrefix,
-            postfix: formatSettings.chartKitPostfix,
-            unit: formatSettings.chartKitUnit as FormatNumberOptions['unit'],
-        };
+        return mapChartkitFormatSettingsToGravityChartValueFormat({
+            chartkitFormatSettings: formatSettings,
+        });
     }
 
     return getFieldFormatOptions({field});
+}
+
+export function mapChartkitFormatSettingsToGravityChartValueFormat(args: {
+    type?: ValueFormat['type'];
+    chartkitFormatSettings?: ChartKitFormatSettings;
+}): ValueFormat {
+    const {chartkitFormatSettings = {}, type = 'number'} = args;
+
+    return {
+        format: chartkitFormatSettings.chartKitFormat as FormatNumberOptions['format'],
+        labelMode: chartkitFormatSettings.chartKitLabelMode,
+        postfix: chartkitFormatSettings.chartKitPostfix,
+        precision: chartkitFormatSettings.chartKitPrecision,
+        prefix: chartkitFormatSettings.chartKitPrefix,
+        showRankDelimiter: chartkitFormatSettings.chartKitShowRankDelimiter,
+        type,
+        unit: chartkitFormatSettings.chartKitUnit as FormatNumberOptions['unit'],
+    };
 }

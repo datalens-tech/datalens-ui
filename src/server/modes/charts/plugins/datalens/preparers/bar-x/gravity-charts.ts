@@ -3,6 +3,7 @@ import type {
     BarXSeriesData,
     ChartData,
     ChartSeries,
+    ChartYAxis,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
@@ -14,6 +15,7 @@ import {
     PERCENT_VISUALIZATIONS,
     PlaceholderId,
     getFakeTitleOrTitle,
+    getIsNavigatorEnabled,
     getXAxisMode,
     isDateField,
     isHtmlField,
@@ -25,6 +27,7 @@ import type {WrappedHTML} from '../../../../../../../shared/types/charts';
 import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
+import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slider';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
@@ -66,6 +69,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         colors,
         colorsConfig,
         visualizationId,
+        segments: split,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
@@ -116,7 +120,15 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
     const shouldUsePercentStacking = PERCENT_VISUALIZATIONS.has(visualizationId);
+    const inNavigatorEnabled = getIsNavigatorEnabled(shared);
     const seriesData = preparedData.graphs.map<ExtendedBarXSeries>((graph) => {
+        const rangeSlider = inNavigatorEnabled
+            ? getSeriesRangeSliderConfig({
+                  extraSettings: shared.extraSettings,
+                  seriesName: graph.title,
+              })
+            : undefined;
+
         return {
             name: graph.title,
             type: 'bar-x',
@@ -165,6 +177,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 html: shouldUseHtmlForLabels,
             },
             yAxis: graph.yAxis,
+            rangeSlider,
         };
     });
 
@@ -200,11 +213,17 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
     }
 
     let xAxis: ChartData['xAxis'] = {};
-    if (isCategoriesXAxis) {
+    if (isCategoriesXAxis && xCategories?.length) {
         xAxis = {
             type: 'category',
             // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
-            categories: xCategories,
+            categories: xCategories.map((category) => {
+                if (typeof category === 'number') {
+                    return String(category);
+                }
+
+                return category;
+            }),
             labels: {
                 html: isHtmlField(xField) || isMarkdownField(xField) || isMarkupField(xField),
             },
@@ -233,6 +252,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
     const segmentsMap = getSegmentMap(args);
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
     const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
+    const isSplitWithHtmlValues = isHtmlField(split?.[0]);
 
     const axisLabelNumberFormat = yPlaceholder
         ? getAxisFormatting({
@@ -251,12 +271,28 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 placeholder: yPlaceholder,
             });
 
+            let axisTitle: ChartYAxis['title'] | null = null;
+            if (isSplitEnabled) {
+                let titleText: string = d.title;
+                if (isSplitWithHtmlValues) {
+                    // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+                    titleText = wrapHtml(d.title);
+                }
+
+                axisTitle = {
+                    text: titleText,
+                    rotation: 0,
+                    maxWidth: '25%',
+                    html: isSplitWithHtmlValues,
+                };
+            }
+
             return merge(axisBaseConfig, {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
                 plotIndex: d.index,
-                title: isSplitEnabled ? {text: d.title} : undefined,
+                title: axisTitle,
             });
         }),
         split: {
