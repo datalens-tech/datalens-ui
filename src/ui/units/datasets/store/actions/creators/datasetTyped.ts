@@ -2186,14 +2186,10 @@ export function getSourcesListingOptions(connectionId: string) {
         dispatch(toggleSourcesListingOptionsLoader(true));
         let sourceListing: SourceListingOptions['source_listing'] | undefined;
         try {
-            const result = await (DatasetUtils.isEnabledFeature(
-                Feature.EnableDatasetSourcesPagination,
-            )
-                ? getSdk().sdk.bi.getSourceListingOptions(
-                      {connectionId},
-                      {concurrentId: 'getSourceListingOptions', retries: 2},
-                  )
-                : undefined);
+            const result = await getSdk().sdk.bi.getSourceListingOptions(
+                {connectionId},
+                {concurrentId: 'getSourceListingOptions', retries: 2},
+            );
             sourceListing = result?.source_listing;
 
             dispatch({
