@@ -5,7 +5,6 @@ import {openTestPage, slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {SectionDatasetQA} from '../../../../../src/shared';
 
-// todo: remove along with GravityChartsForLineAreaAndBarX feature flag
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Combined chart', () => {
         datalensTest.beforeEach(async ({page, config}) => {

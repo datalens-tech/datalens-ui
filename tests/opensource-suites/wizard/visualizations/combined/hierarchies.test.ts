@@ -5,7 +5,6 @@ import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../../utils';
 
-// todo: remove along with GravityChartsForLineAreaAndBarX feature flag
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Combined chart', () => {
         datalensTest.beforeEach(async ({page, config}) => {
