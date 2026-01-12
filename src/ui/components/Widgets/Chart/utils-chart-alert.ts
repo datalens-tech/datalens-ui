@@ -6,6 +6,7 @@ import type {
 } from '@gravity-ui/chartkit/gravity-charts';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import {WidgetKind} from 'shared';
 import type {WidgetData} from 'ui/libs/DatalensChartkit/types';
 
 import type {ChartAlertProps} from './types';
@@ -28,7 +29,7 @@ export function checkIsGravityWidgetData(
         return false;
     }
 
-    return Boolean(get(value, 'data.series.data'));
+    return get(value, 'type') === WidgetKind.GravityCharts;
 }
 
 export function getGravityExtremes(args: {key: 'x' | 'y'; series: OnlyLineChartSeries[]}) {
