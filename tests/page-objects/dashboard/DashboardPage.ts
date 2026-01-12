@@ -747,18 +747,6 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DialogTabsQA.Save));
     }
 
-    async renameTab(index: number, name: string) {
-        await this.clickTabs();
-        const tabLocator = this.page.locator(slct(DialogTabsQA.ReadOnlyTabItem)).nth(index);
-        const tabName = await tabLocator.textContent();
-        if (tabName === name) {
-            return;
-        }
-        await tabLocator.dblclick();
-        await this.page.locator(`${slct(DialogTabsQA.EditTabItem)} input`).fill(name);
-        await this.page.click(slct(DialogTabsQA.Save));
-    }
-
     async changeTab({tabName, index}: {tabName?: string; index?: number}) {
         const tabsContainerLocator = this.page.locator(slct(DashTabsQA.Root));
 
