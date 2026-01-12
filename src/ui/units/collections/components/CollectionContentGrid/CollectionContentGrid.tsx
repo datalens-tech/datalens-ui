@@ -16,7 +16,7 @@ import {setWorkbook} from '../../../workbooks/store/actions';
 import {setCollection} from '../../store/actions';
 import {selectStructureItems} from '../../store/selectors';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
-import {getIsWorkbookItem, getItemKey, getItemLink} from '../helpers';
+import {getIsWorkbookItem, getItemId, getItemLink} from '../helpers';
 
 import {CollectionItemIcon} from './CollectionItemIcon';
 
@@ -51,25 +51,22 @@ export const CollectionContentGrid = React.memo<Props>(
                         const actions = getItemActions(item);
 
                         return (
-                            <AnimateBlock key={getItemKey(item)} delay={Math.min(index * 5, 100)}>
+                            <AnimateBlock key={getItemId(item)} delay={Math.min(index * 5, 100)}>
                                 <div
                                     className={b('item')}
                                     onClick={
                                         isOpenSelectionMode && canMove
                                             ? () => {
-                                                  if (isWorkbook) {
-                                                      onUpdateCheckboxClick({
-                                                          entityId: item.workbookId,
-                                                          type: 'workbook',
-                                                          checked: !selectedMap[item.workbookId],
-                                                      });
-                                                  } else if (!isEntry) {
-                                                      onUpdateCheckboxClick({
-                                                          entityId: item.collectionId,
-                                                          type: 'collection',
-                                                          checked: !selectedMap[item.collectionId],
-                                                      });
-                                                  }
+                                                  const type =
+                                                      item.entity ||
+                                                      (isWorkbook
+                                                          ? CollectionItemEntities.WORKBOOK
+                                                          : CollectionItemEntities.COLLECTION);
+                                                  onUpdateCheckboxClick({
+                                                      entityId: getItemId(item),
+                                                      type,
+                                                      checked: !selectedMap[getItemId(item)],
+                                                  });
                                               }
                                             : undefined
                                     }
@@ -78,15 +75,9 @@ export const CollectionContentGrid = React.memo<Props>(
                                         <Checkbox
                                             size="l"
                                             className={b('checkbox')}
-                                            disabled={!canMove || isEntry}
+                                            disabled={!canMove}
                                             checked={
-                                                Boolean(
-                                                    selectedMap[
-                                                        isWorkbook
-                                                            ? item.workbookId
-                                                            : item.collectionId
-                                                    ],
-                                                ) && canMove
+                                                Boolean(selectedMap[getItemId(item)]) && canMove
                                             }
                                         />
                                     )}
