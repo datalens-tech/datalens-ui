@@ -33,13 +33,21 @@ export const getItemsValues = (
 };
 
 export const getLineKey = (args: GetLineKeyArgs) => {
-    const {shownTitle, isX2Axis, isMultiAxis, value, x2AxisValue, segmentName} = args;
+    const {
+        shownTitle,
+        isX2Axis,
+        isMultiAxis,
+        isMultiLineWithShape,
+        value,
+        x2AxisValue,
+        segmentName,
+    } = args;
     const itemTitleValue = value || shownTitle;
     let key = itemTitleValue;
 
     if (isX2Axis) {
         key = `${itemTitleValue}-${x2AxisValue}`;
-    } else if (isMultiAxis) {
+    } else if (isMultiAxis || isMultiLineWithShape) {
         key = `${itemTitleValue}-${shownTitle}`;
     }
 

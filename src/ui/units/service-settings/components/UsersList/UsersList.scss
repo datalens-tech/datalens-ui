@@ -3,6 +3,10 @@
 .service-settings-users-list {
     margin-top: var(--g-spacing-6);
 
+    &_new {
+        margin-top: var(--g-spacing-7);
+    }
+
     &__content {
         margin-top: var(--g-spacing-4);
     }
@@ -23,5 +27,36 @@
 
     &__load-button {
         margin-top: var(--g-spacing-5);
+    }
+
+    &__filters {
+        gap: var(--g-spacing-2);
+
+        &_new {
+            gap: 10px;
+        }
+    }
+
+    &__add-link {
+        &_new {
+            max-width: 210px;
+        }
+    }
+
+    &__login {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__user {
+        min-height: 32px;
+    }
+
+    &__lazy-loader {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding-top: var(--g-spacing-2);
     }
 }

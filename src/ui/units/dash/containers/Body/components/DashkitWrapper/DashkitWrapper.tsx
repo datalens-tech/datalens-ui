@@ -54,7 +54,7 @@ import {useDashKitContext} from './hooks/useDashKitContext';
 import {useDashkitRef} from './hooks/useDashkitRef';
 import {useDataProviderContext} from './hooks/useDataProviderContext';
 import {useHashStates} from './hooks/useHashStates';
-import {useOverlay} from './hooks/useOverlay';
+import {useOverlay} from './hooks/useOverlay/useOverlay';
 import {usePreparedCopyItemOptions} from './hooks/usePreparedCopyItemOptions';
 import type {GetPreparedCopyItemOptions} from './hooks/usePreparedCopyItemOptions';
 
