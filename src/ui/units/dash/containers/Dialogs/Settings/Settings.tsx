@@ -80,6 +80,9 @@ const Settings = () => {
     const [accessDescription, setAccessDesc] = React.useState(accessDesc);
     const [supportDescription, setSupportDesc] = React.useState(supportDesc);
     const [margins, setMargins] = React.useState(settings.margins || DEFAULT_DASH_MARGINS);
+    const [internalMarginsEnabled, setInternalMarginsEnabled] = React.useState(
+        settings.internalMarginsEnabled ?? true,
+    );
     const [borderRadius, setBorderRadius] = React.useState(
         settings.borderRadius ??
             (!isNew && isEnabledFeature(Feature.EnableNewDashSettings)
@@ -149,6 +152,7 @@ const Settings = () => {
                 hideDashTitle,
                 expandTOC,
                 loadPriority,
+                internalMarginsEnabled,
                 ...otherSettinsState,
             };
 
@@ -264,6 +268,8 @@ const Settings = () => {
                 <Display
                     margins={margins}
                     onChangeMargins={handleMarginsChange}
+                    internalMarginsEnabled={internalMarginsEnabled}
+                    onChangeInternalMarginsEnabled={setInternalMarginsEnabled}
                     hideTabsValue={hideTabs}
                     onChangeHideTabs={() => setHideTabs(!hideTabs)}
                     hideDashTitleValue={hideDashTitle}

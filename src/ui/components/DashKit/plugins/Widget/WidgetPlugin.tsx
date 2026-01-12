@@ -55,6 +55,7 @@ const widgetPlugin: PluginWidget = {
                 background: oldWidgetBg,
                 backgroundSettings: props.backgroundSettings,
                 borderRadius: props.borderRadius,
+                internalMarginsEnabled: props.internalMarginsEnabled,
             },
             globalWidgetSettings: widgetPlugin.globalWidgetSettings ?? {},
             defaultOldColor:

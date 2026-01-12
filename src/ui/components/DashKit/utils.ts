@@ -4,6 +4,7 @@ import type {CSSProperties} from 'react';
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
 import type {ThemeType} from '@gravity-ui/uikit';
 import {useThemeType} from '@gravity-ui/uikit';
+import {color as d3Color} from 'd3-color';
 import type {
     BackgroundSettings,
     ColorSettings,
@@ -12,6 +13,7 @@ import type {
 } from 'shared';
 import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared/constants/widgets';
 import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
+import {computeColorFromToken} from 'ui/utils/widgets/colors';
 
 import {DL} from '../../constants';
 import {
@@ -282,7 +284,8 @@ function getPreparedWrapSettings(
     backgroundColor: string | undefined,
     additionalStyle?: CSSProperties,
 ) {
-    const hasBgColor = Boolean(backgroundColor) && backgroundColor !== CustomPaletteBgColors.NONE;
+    const hexColor = backgroundColor ? computeColorFromToken(backgroundColor) : undefined;
+    const hasBgColor = hexColor ? (d3Color(hexColor)?.opacity ?? 0) > 0 : true;
 
     const newBackgroundColor =
         backgroundColor === CustomPaletteBgColors.LIKE_CHART
@@ -291,14 +294,12 @@ function getPreparedWrapSettings(
 
     const style: CSSProperties = {
         ...additionalStyle,
-        backgroundColor:
-            hasBgColor || backgroundColor === CustomPaletteBgColors.NONE
-                ? newBackgroundColor
-                : undefined,
+        backgroundColor: hasBgColor || hexColor ? newBackgroundColor : undefined,
     };
     return {
         style,
         hasBgColor,
+        hasInternalMargins: hasBgColor,
     };
 }
 
@@ -326,6 +327,7 @@ interface WidgetVisualSettings {
     background?: OldBackgroundSettings | undefined;
     backgroundSettings?: BackgroundSettings | undefined;
     borderRadius?: number | undefined;
+    internalMarginsEnabled?: boolean;
 }
 
 export function usePreparedWrapSettings({

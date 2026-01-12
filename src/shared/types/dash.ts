@@ -91,6 +91,7 @@ export type DashSettings = {
     signedGlobalParams?: DashSettingsGlobalParams;
     loadPriority?: DashLoadPriority;
     loadOnlyVisibleCharts?: boolean;
+    internalMarginsEnabled?: boolean;
     margins?: [number, number];
     enableAssistant?: boolean;
     backgroundSettings?: BackgroundSettings;
@@ -113,7 +114,7 @@ export type DashDragOptions = ItemDropProps;
 
 type OptionalDashDataSettings = Pick<
     DashSettings,
-    'margins' | 'enableAssistant' | 'backgroundSettings' | 'borderRadius'
+    'margins' | 'enableAssistant' | 'backgroundSettings' | 'borderRadius' | 'internalMarginsEnabled'
 >;
 
 // config with strict requirements of settings for new dash
@@ -173,6 +174,7 @@ export type DashTabItemBaseData = {
     background?: OldBackgroundSettings;
     backgroundSettings?: BackgroundSettings;
     borderRadius?: number;
+    internalMarginsEnabled?: boolean;
 };
 
 export interface DashTabItemText extends DashTabItemBase {

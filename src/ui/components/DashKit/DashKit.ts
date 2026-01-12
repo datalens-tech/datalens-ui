@@ -39,6 +39,7 @@ export interface CommonGlobalWidgetSettings {
     background?: OldBackgroundSettings;
     backgroundSettings?: BackgroundSettings;
     borderRadius?: number;
+    internalMarginsEnabled?: boolean;
 }
 
 export interface CommonPluginSettings {
@@ -50,6 +51,7 @@ export interface CommonPluginProps {
     background?: OldBackgroundSettings;
     backgroundSettings?: BackgroundSettings;
     borderRadius?: number;
+    internalMarginsEnabled: boolean;
 }
 
 export const getConfiguredDashKit = (
@@ -70,6 +72,8 @@ export const getConfiguredDashKit = (
                 backgroundSettings: options?.globalWidgetSettings?.backgroundSettings,
                 borderRadius:
                     options?.globalWidgetSettings?.borderRadius ?? OLD_DEFAULT_WIDGET_BORDER_RADIUS,
+                internalMarginsEnabled:
+                    options?.globalWidgetSettings?.internalMarginsEnabled ?? true,
             },
         };
         const titleSettings = {

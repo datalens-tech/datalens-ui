@@ -265,6 +265,7 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
             globalWidgetSettings: {
                 borderRadius: settings.borderRadius,
                 backgroundSettings: settings.backgroundSettings,
+                internalMarginsEnabled: settings.internalMarginsEnabled,
             },
         },
         shouldReconfigureDashkit,

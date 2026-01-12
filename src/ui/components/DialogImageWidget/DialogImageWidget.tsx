@@ -25,9 +25,9 @@ const b = block('dialog-image');
 const INPUT_SRC_ID = 'dialog-image-input-src';
 const INPUT_ALT_ID = 'dialog-image-input-alt';
 const INPUT_PRESERVE_ASPECT_RATIO_ID = 'dialog-image-input-preserve-aspect-ratio';
-
+const INPUT_INTERNAL_MARGINS_ID = 'widgetInternalMarginsField';
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
-
+const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
 const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
     src: '',
     alt: '',
@@ -48,6 +48,7 @@ const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
 export type DialogImageWidgetFeatureProps = {
     enableSeparateThemeColorSelector?: boolean;
     enableBorderRadiusSelector?: boolean;
+    enableInternalMarginsSelector?: boolean;
 };
 
 type Props = {
@@ -81,6 +82,7 @@ export function DialogImageWidget(props: Props) {
         theme,
         enableSeparateThemeColorSelector = true,
         enableBorderRadiusSelector = false,
+        enableInternalMarginsSelector = true,
     } = props;
     const isNewWidget = !props.openedItemData;
     const [data, setData] = React.useState(
@@ -200,11 +202,28 @@ export function DialogImageWidget(props: Props) {
                         enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
-                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                {enableBorderRadiusSelector && isNewDashSettingsEnabled && (
                     <FormRow className={b('row')} label={i18nCommon('label_border-radius')}>
                         <WidgetRoundingsInput
                             value={data.borderRadius}
                             onUpdate={(borderRadius) => updateData({borderRadius})}
+                        />
+                    </FormRow>
+                )}
+                {enableInternalMarginsSelector && isNewDashSettingsEnabled && (
+                    <FormRow
+                        className={b('row')}
+                        label={i18nCommon('label_internal-margins')}
+                        fieldId={INPUT_INTERNAL_MARGINS_ID}
+                    >
+                        <Checkbox
+                            className={b('checkbox')}
+                            id={INPUT_INTERNAL_MARGINS_ID}
+                            size="m"
+                            onUpdate={(internalMarginsEnabled) =>
+                                updateData({internalMarginsEnabled})
+                            }
+                            checked={data.internalMarginsEnabled}
                         />
                     </FormRow>
                 )}

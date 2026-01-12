@@ -25,6 +25,7 @@ export interface DialogTextWidgetFeatureProps {
     enableCustomBgColorSelector?: boolean;
     enableSeparateThemeColorSelector?: boolean;
     enableBorderRadiusSelector?: boolean;
+    enableInternalMarginsSelector?: boolean;
 }
 
 export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {
@@ -43,11 +44,12 @@ interface DialogTextWidgetState {
     prevVisible?: boolean;
     autoHeight?: boolean;
     borderRadius?: number;
+    internalMarginsEnabled?: boolean;
 }
 
 const INPUT_TEXT_ID = 'widgetTextField';
 const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
-
+const INPUT_INTERNAL_MARGINS_ID = 'widgetInternalMarginsField';
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
 
 const DEFAULT_OPENED_ITEM_DATA: DashTabItemText['data'] = {
@@ -72,6 +74,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         enableCustomBgColorSelector = false,
         enableSeparateThemeColorSelector = true,
         enableBorderRadiusSelector = false,
+        enableInternalMarginsSelector = true,
         openedItemData = DEFAULT_OPENED_ITEM_DATA,
         dialogIsVisible,
         closeDialog,
@@ -80,11 +83,12 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
     } = props;
 
     const isNewWidget = !props.openedItemData;
-
+    const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
     const [state, setState] = React.useState<DialogTextWidgetState>({
         text: openedItemData.text,
         autoHeight: Boolean(openedItemData.autoHeight),
         borderRadius: openedItemData.borderRadius,
+        internalMarginsEnabled: Boolean(openedItemData.internalMarginsEnabled),
     });
     const {
         oldBackgroundColor,
@@ -165,13 +169,14 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
     }, []);
 
     const onApply = React.useCallback(() => {
-        const {text, autoHeight, borderRadius} = state;
+        const {text, autoHeight, borderRadius, internalMarginsEnabled} = state;
 
         setItemData({
             data: {
                 text,
                 autoHeight,
                 borderRadius,
+                internalMarginsEnabled,
                 ...resultedBackgroundSettings,
             },
         });
@@ -186,7 +191,11 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         setState((prevState) => ({...prevState, borderRadius: value}));
     }, []);
 
-    const {text, autoHeight, borderRadius} = state;
+    const handleUpdateInternalMarginsEnabled = React.useCallback((value: boolean) => {
+        setState((prevState) => ({...prevState, internalMarginsEnabled: value}));
+    }, []);
+
+    const {text, autoHeight, borderRadius, internalMarginsEnabled} = state;
 
     return (
         <Dialog
@@ -219,7 +228,22 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
                         enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
-                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                {enableInternalMarginsSelector && isNewDashSettingsEnabled && (
+                    <FormRow
+                        className={b('row')}
+                        label={i18nCommon('label_internal-margins')}
+                        fieldId={INPUT_INTERNAL_MARGINS_ID}
+                    >
+                        <Checkbox
+                            className={b('checkbox')}
+                            id={INPUT_INTERNAL_MARGINS_ID}
+                            size="m"
+                            onUpdate={handleUpdateInternalMarginsEnabled}
+                            checked={internalMarginsEnabled}
+                        />
+                    </FormRow>
+                )}
+                {enableBorderRadiusSelector && isNewDashSettingsEnabled && (
                     <FormRow className={b('row')} label={i18nCommon('label_border-radius')}>
                         <WidgetRoundingsInput value={borderRadius} onUpdate={setBorderRadius} />
                     </FormRow>

@@ -1,5 +1,6 @@
 {
   "label_autoheight-checkbox": "Autoheight",
   "label_background-checkbox": "Background",
-  "label_border-radius": "Rounding"
+  "label_border-radius": "Rounding",
+  "label_internal-margins": "Margins"
 }
