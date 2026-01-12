@@ -76,6 +76,7 @@ function normalizeHeaders(
 
 export class RequestAxios {
     private static axiosInstance: AxiosInstance;
+    private static appConfig: AppConfig;
 
     static init({
         cacheClientInstance,
@@ -85,6 +86,7 @@ export class RequestAxios {
         config: AppConfig;
     }) {
         cacheClient = cacheClientInstance;
+        this.appConfig = appConfig;
         this.axiosInstance = getAxios(appConfig);
     }
 
@@ -153,7 +155,7 @@ export class RequestAxios {
             signal: requestOptions.signal,
         };
 
-        return this.axiosInstance
+        return this.getAxiosInstance()
             .request<IncomingMessage>(axiosConfig)
             .then((response) => {
                 const stream = response.data;
@@ -461,5 +463,17 @@ export class RequestAxios {
         }
 
         return new Error(String(error));
+    }
+
+    private static getAxiosInstance(): AxiosInstance {
+        if (!this.axiosInstance) {
+            if (!this.appConfig) {
+                throw new Error(
+                    'RequestAxios not initialized. Call RequestAxios.init() before making requests.',
+                );
+            }
+            this.axiosInstance = getAxios(this.appConfig);
+        }
+        return this.axiosInstance;
     }
 }
