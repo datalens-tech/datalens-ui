@@ -12,5 +12,6 @@
   "label_menu-delete": "Удалить пользователя",
   "label_menu-edit-profile": "Редактировать профиль",
   "label_search-placeholder": "Поиск",
+  "label_user": "Пользователь",
   "label_users-empty-message": "Пользователи не найдены"
 }

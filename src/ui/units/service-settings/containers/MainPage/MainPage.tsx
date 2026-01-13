@@ -24,8 +24,7 @@ const DEFAULT_TABS = isEnabledFeature(Feature.EnableNewServiceSettings)
           {id: 'users', title: i18n('section_users')},
           {
               id: 'appearance',
-              // TODO:  title: i18n('section_appearance'),
-              title: 'Оформление',
+              title: i18n('section_appearance'),
           },
       ]
     : [

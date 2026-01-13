@@ -54,6 +54,7 @@ export type SelectorSettings = {
     required?: boolean;
     impactType?: ImpactType;
     impactTabsIds?: string[];
+    impactTabsIndexes?: number[];
 };
 
 type GroupSelectorOptions = {
@@ -326,13 +327,27 @@ class ControlActions {
             );
 
             // If impact type is "selectedTabs", select the specified tabs
-            if (setting.impactType === 'selectedTabs' && setting.impactTabsIds) {
+            if (
+                setting.impactType === 'selectedTabs' &&
+                (setting.impactTabsIds || setting.impactTabsIndexes)
+            ) {
                 await expect(this.dialogControl.impactTabsIdsSelector.getLocator()).toBeVisible();
                 await this.dialogControl.impactTabsIdsSelector.click();
 
-                // Select each tab from the list
-                for (const tabId of setting.impactTabsIds) {
-                    await this.dialogControl.impactTabsIdsSelector.selectListItemByName(tabId);
+                if (setting.impactTabsIds) {
+                    // Select each tab from the list
+                    for (const tabId of setting.impactTabsIds) {
+                        await this.dialogControl.impactTabsIdsSelector.selectListItemByName(tabId);
+                    }
+                }
+
+                if (setting.impactTabsIndexes) {
+                    // Select each tab from the list
+                    for (const tabIndex of setting.impactTabsIndexes) {
+                        await this.dialogControl.impactTabsIdsSelector.selectListItemByIdx(
+                            tabIndex,
+                        );
+                    }
                 }
 
                 // Close the multi-select popup

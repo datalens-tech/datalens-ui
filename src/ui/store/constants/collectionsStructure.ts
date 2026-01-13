@@ -68,6 +68,16 @@ export const DELETE_WORKBOOKS_LOADING = Symbol('collectionsStructure/DELETE_WORK
 export const DELETE_WORKBOOKS_SUCCESS = Symbol('collectionsStructure/DELETE_WORKBOOKS_SUCCESS');
 export const DELETE_WORKBOOKS_FAILED = Symbol('collectionsStructure/DELETE_WORKBOOKS_FAILED');
 
+export const DELETE_SHARED_ENTRIES_LOADING = Symbol(
+    'collectionsStructure/DELETE_SHARED_ENTRIES_LOADING',
+);
+export const DELETE_SHARED_ENTRIES_SUCCESS = Symbol(
+    'collectionsStructure/DELETE_SHARED_ENTRIES_SUCCESS',
+);
+export const DELETE_SHARED_ENTRIES_FAILED = Symbol(
+    'collectionsStructure/DELETE_SHARED_ENTRIES_FAILED',
+);
+
 // Moving collections
 export const MOVE_COLLECTIONS_LOADING = Symbol('collectionsStructure/MOVE_COLLECTIONS_LOADING');
 export const MOVE_COLLECTIONS_SUCCESS = Symbol('collectionsStructure/MOVE_COLLECTIONS_SUCCESS');
@@ -92,6 +102,14 @@ export const MOVE_WORKBOOK_FAILED = Symbol('collectionsStructure/MOVE_WORKBOOK_F
 export const MOVE_SHARED_ENTRY_LOADING = Symbol('collectionsStructure/MOVE_SHARED_ENTRY_LOADING');
 export const MOVE_SHARED_ENTRY_SUCCESS = Symbol('collectionsStructure/MOVE_SHARED_ENTRY_SUCCESS');
 export const MOVE_SHARED_ENTRY_FAILED = Symbol('collectionsStructure/MOVE_SHARED_ENTRY_FAILED');
+
+export const MOVE_SHARED_ENTRIES_LOADING = Symbol(
+    'collectionsStructure/MOVE_SHARED_ENTRIES_LOADING',
+);
+export const MOVE_SHARED_ENTRIES_SUCCESS = Symbol(
+    'collectionsStructure/MOVE_SHARED_ENTRIES_SUCCESS',
+);
+export const MOVE_SHARED_ENTRIES_FAILED = Symbol('collectionsStructure/MOVE_SHARED_ENTRIES_FAILED');
 
 // Copying a workbook
 export const COPY_WORKBOOK_LOADING = Symbol('collectionsStructure/COPY_WORKBOOK_LOADING');

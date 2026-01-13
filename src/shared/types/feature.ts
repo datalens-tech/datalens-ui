@@ -85,8 +85,6 @@ export enum Feature {
     GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
     /** Use GravityUI Charts as the default library for some wizard visualizations(line, area and bar-x) */
     GravityChartsForLineAreaAndBarX = 'GravityChartsForLineAreaAndBarX',
-    /** Enable pagination in dataset sources table */
-    EnableDatasetSourcesPagination = 'EnableDatasetSourcesPagination',
     /** Enable shared connections and datasets */
     EnableSharedEntries = 'EnableSharedEntries',
 
