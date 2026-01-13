@@ -132,11 +132,14 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const hasMultipleLayers = layers.length > 1;
 
     const seriesData: ExtendedLineSeries[] = preparedData.graphs.map<LineSeries>((graph: any) => {
-        const rangeSlider = inNavigatorEnabled
-            ? getSeriesRangeSliderConfig({
-                  extraSettings: shared.extraSettings,
-                  seriesName: graph.title,
-              })
+        const rangeSlider: LineSeries['rangeSlider'] = inNavigatorEnabled
+            ? {
+                  ...getSeriesRangeSliderConfig({
+                      extraSettings: shared.extraSettings,
+                      seriesName: graph.title,
+                  }),
+                  lineWidth: 1,
+              }
             : undefined;
 
         let seriesName = graph.title;
