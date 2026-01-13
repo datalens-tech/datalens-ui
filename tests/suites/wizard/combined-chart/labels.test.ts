@@ -8,6 +8,7 @@ import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
 
+// todo: remove along with GravityChartsForLineAreaAndBarX feature flag
 datalensTest.describe('Wizard - Combined diagram. Signatures', () => {
     datalensTest('Adding prefix and postfix to signature', async ({page}) => {
         const wizardPage = new WizardPage({page});

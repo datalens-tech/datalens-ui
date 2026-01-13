@@ -511,6 +511,7 @@ type SelectSourcePrototypesProps = SelectConnectionsProps & {
     options: Partial<DatasetOptions>;
     isLoadingConnectionInfo: boolean;
     readonly: boolean;
+    bindedWorkbookId?: WorkbookId;
 };
 
 function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
@@ -538,6 +539,7 @@ function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
         options,
         isLoadingConnectionInfo,
         readonly,
+        bindedWorkbookId,
     } = props;
 
     const connectionId = id || entryId;
@@ -562,6 +564,7 @@ function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
                 readonly={readonly}
             />
             <SourcesTable
+                bindedWorkbookId={bindedWorkbookId}
                 readonly={readonly}
                 error={error}
                 sources={sourcePrototypes}

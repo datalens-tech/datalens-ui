@@ -19,10 +19,20 @@ type Props = {
     workbookId: string | null;
     collectionId: CollectionId;
     readonly: boolean;
+    bindedWorkbookId?: string | null;
 };
 
 function DatasetTabViewer(props: Props) {
-    const {tab, sdk, datasetId, forwardedRef, workbookId, collectionId, readonly} = props;
+    const {
+        tab,
+        sdk,
+        datasetId,
+        forwardedRef,
+        workbookId,
+        collectionId,
+        readonly,
+        bindedWorkbookId,
+    } = props;
 
     switch (tab) {
         case TAB_SOURCES:
@@ -33,6 +43,7 @@ function DatasetTabViewer(props: Props) {
                     workbookId={workbookId}
                     collectionId={collectionId}
                     readonly={readonly}
+                    bindedWorkbookId={bindedWorkbookId}
                 />
             );
         case TAB_FILTERS:

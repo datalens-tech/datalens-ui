@@ -5,7 +5,7 @@ import {
     DashCommonQa,
     DashEntryQa,
     DashRelationTypes,
-    DatalensTabs,
+    DatalensTabsQa,
     DialogConfirmQA,
     DialogDashWidgetQA,
     DialogGroupControlQa,
@@ -300,7 +300,7 @@ class DashboardPage extends BasePage {
         const workbookPO = new Workbook(this.page);
 
         await workbookPO.openE2EWorkbookPage();
-        await this.page.locator(slct(DatalensTabs.Item), {hasText: 'Dashboards'}).click();
+        await this.page.locator(slct(DatalensTabsQa.Item), {hasText: 'Dashboards'}).click();
 
         await workbookPO.openWorkbookItemMenu(dashId);
 
@@ -741,20 +741,13 @@ class DashboardPage extends BasePage {
         await this.clickTabs();
         await this.page.click(slct(DialogTabsQA.RowAdd));
         if (name) {
-            await this.page
-                .locator(`${slct(DialogTabsQA.ReadOnlyTabItem)}`)
-                .last()
-                .dblclick();
+            await this.page.locator(slct(DialogTabsQA.ReadOnlyTabItem)).last().dblclick();
             await this.page.locator(`${slct(DialogTabsQA.EditTabItem)} input`).fill(name);
         }
         await this.page.click(slct(DialogTabsQA.Save));
     }
 
-    async selectTab(tabSelector: string) {
-        return this.page.$(tabSelector);
-    }
-
-    async changeTab({tabName, tabSelector}: {tabName?: string; tabSelector?: string}) {
+    async changeTab({tabName, index}: {tabName?: string; index?: number}) {
         const tabsContainerLocator = this.page.locator(slct(DashTabsQA.Root));
 
         await expect(tabsContainerLocator).toBeVisible();
@@ -762,8 +755,11 @@ class DashboardPage extends BasePage {
         let tabLocator;
         if (tabName) {
             tabLocator = tabsContainerLocator.getByText(tabName);
-        } else if (tabSelector) {
-            tabLocator = tabsContainerLocator.locator(tabSelector);
+        } else if (typeof index === 'number') {
+            tabLocator = tabsContainerLocator
+                .locator(slct(DatalensTabsQa.Item))
+                .or(tabsContainerLocator.locator(slct(DatalensTabsQa.MobileItem)))
+                .nth(index);
         } else {
             throw new Error('Tabs selector not found');
         }
@@ -776,9 +772,9 @@ class DashboardPage extends BasePage {
         }
 
         // it can be single switcher with tab name or some tabs and "more" switcher
-        const switcherLocator = tabsContainerLocator.locator(slct(DatalensTabs.SwitcherItem));
+        const switcherLocator = tabsContainerLocator.locator(slct(DatalensTabsQa.SwitcherItem));
         const switcherTabLocator = tabsContainerLocator
-            .locator(slct(DatalensTabs.MobileItem))
+            .locator(slct(DatalensTabsQa.MobileItem))
             .first();
 
         const isSwitcherVisible = await switcherLocator.isVisible();
@@ -796,10 +792,20 @@ class DashboardPage extends BasePage {
         await mobileTabLocator.click();
         await expect(this.page.locator(slct(SelectQa.SHEET))).toBeVisible();
 
-        const selector = tabSelector
-            ? tabSelector
-            : `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`;
-        await this.page.locator(selector).click();
+        if (tabName) {
+            await this.page
+                .locator(
+                    `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`,
+                )
+                .click();
+        } else if (typeof index === 'number') {
+            await this.page
+                .locator(
+                    `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle}`,
+                )
+                .nth(index)
+                .click();
+        }
         return;
     }
 

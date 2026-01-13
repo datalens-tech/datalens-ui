@@ -45,6 +45,7 @@ export interface ColorPickerInputProps extends Pick<TextInputProps, 'qa' | 'onFo
     hasOpacityInput?: boolean;
     autoFocus?: boolean;
     onUpdate: (value: string | null) => void;
+    onBlur?: () => void;
     onValidChange?: (isValid: boolean) => void;
     theme?: RealTheme;
     className?: string;
@@ -67,6 +68,7 @@ export const ColorPickerInput = React.forwardRef<HTMLElement, ColorPickerInputPr
             hasOpacityInput,
             autoFocus,
             onFocus,
+            onBlur,
             onUpdate,
             onValidChange,
             theme,
@@ -190,6 +192,7 @@ export const ColorPickerInput = React.forwardRef<HTMLElement, ColorPickerInputPr
                     onChange={(e) => {
                         setColor(e.target.value);
                     }}
+                    onBlur={onBlur}
                 />
             </div>
         );
@@ -207,6 +210,7 @@ export const ColorPickerInput = React.forwardRef<HTMLElement, ColorPickerInputPr
                 hasClear={hasClear}
                 autoFocus={autoFocus}
                 onFocus={onFocus}
+                onBlur={onBlur}
                 startContent={
                     <div className={b('preview-container')}>
                         {theme ? (
