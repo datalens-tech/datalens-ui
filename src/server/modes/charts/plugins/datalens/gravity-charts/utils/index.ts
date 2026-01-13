@@ -1,6 +1,11 @@
 import type {ChartData, ChartTitle, ChartYAxis} from '@gravity-ui/chartkit/gravity-charts';
 
-import {PlaceholderId, WizardVisualizationId, isDateField} from '../../../../../../../shared';
+import {
+    AxisAutoScaleModes,
+    PlaceholderId,
+    WizardVisualizationId,
+    isDateField,
+} from '../../../../../../../shared';
 import type {
     ServerCommonSharedExtraSettings,
     ServerPlaceholder,
@@ -36,9 +41,13 @@ export function getAxisLabelsRotationAngle(placeholderSettings?: ServerPlacehold
     return undefined;
 }
 
-function getAxisMinMax(
-    placeholderSettings?: ServerPlaceholderSettings,
-): [number | undefined, number | undefined] {
+function getAxisMinMax({
+    placeholderSettings,
+    dataMinValue,
+}: {
+    placeholderSettings?: ServerPlaceholderSettings;
+    dataMinValue?: number;
+}): [number | undefined, number | undefined] {
     if (placeholderSettings?.scale === 'manual') {
         if (!Array.isArray(placeholderSettings?.scaleValue)) {
             return [undefined, undefined];
@@ -50,8 +59,12 @@ function getAxisMinMax(
         return [Number.isNaN(min) ? undefined : min, Number.isNaN(max) ? undefined : max];
     }
 
-    if (placeholderSettings?.scaleValue === '0-max') {
+    if (placeholderSettings?.scaleValue === AxisAutoScaleModes.ZeroMax) {
         return [0, undefined];
+    }
+
+    if (placeholderSettings?.scaleValue === AxisAutoScaleModes.MinMax) {
+        return [dataMinValue, undefined];
     }
 
     return [undefined, undefined];
@@ -59,13 +72,15 @@ function getAxisMinMax(
 
 export function getYAxisBaseConfig({
     placeholder,
+    dataMinValue,
 }: {
     placeholder: ServerPlaceholder | undefined;
+    dataMinValue?: number;
 }): ChartYAxis {
     const placeholderSettings = placeholder?.settings || {};
     const yItem = placeholder?.items[0];
 
-    const [yMin, yMax] = getAxisMinMax(placeholderSettings);
+    const [yMin, yMax] = getAxisMinMax({placeholderSettings, dataMinValue});
 
     return {
         // todo: the axis type should depend on the type of field
@@ -156,7 +171,7 @@ export function getBaseChartConfig(args: {
 
     if (!visualizationWithoutAxis.includes(visualizationId)) {
         const yPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.Y);
-        const [xMin, xMax] = getAxisMinMax(xPlaceholderSettings);
+        const [xMin, xMax] = getAxisMinMax({placeholderSettings: xPlaceholderSettings});
 
         chartWidgetData = {
             ...chartWidgetData,
