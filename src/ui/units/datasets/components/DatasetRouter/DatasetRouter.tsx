@@ -108,7 +108,7 @@ const DatasetRouter = ({sdk, datasetKey, setCurrentPageEntry, resetDatasetState,
                     ) => {
                         const {datasetId, workbookId, collectionId} = props.match.params;
                         const bindedWorkbookId = new URLSearchParams(props.location.search).get(
-                            URL_QUERY.BINDED_WOKRBOOK,
+                            URL_QUERY.BINDED_WORKBOOK,
                         );
 
                         return (

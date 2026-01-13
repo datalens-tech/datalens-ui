@@ -7,6 +7,7 @@ import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
 
+// todo: remove along with GravityChartsForLineAreaAndBarX feature flag
 datalensTest.describe('Wizard - Coloring of combined charts', () => {
     datalensTest.beforeEach(async ({page}) => {
         const wizardPage = new WizardPage({page});

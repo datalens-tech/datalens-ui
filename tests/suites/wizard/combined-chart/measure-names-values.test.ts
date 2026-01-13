@@ -13,6 +13,7 @@ const checkMeasureNamesAndMeasureValuesInFieldsList = async (wizardPage: WizardP
     return texts.includes('Measure Names') && texts.includes('Measure Values');
 };
 
+// todo: remove along with GravityChartsForLineAreaAndBarX feature flag
 datalensTest.describe('Wizard - Measure Names/Measure Values in the Dataset section', () => {
     datalensTest.beforeEach(async ({page}) => {
         await openTestPage(page, RobotChartsWizardUrls.WizardForDatasetSampleCh);

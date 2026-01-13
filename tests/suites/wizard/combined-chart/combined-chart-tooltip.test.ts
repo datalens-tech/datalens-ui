@@ -10,6 +10,7 @@ import {openTestPage} from '../../../utils';
 
 const TIMEOUT = 3000;
 
+// todo: remove along with GravityChartsForLineAreaAndBarX feature flag
 datalensTest.describe('Wizard - Combined diagram. Tooltip', () => {
     datalensTest.beforeEach(async ({page}) => {
         const wizardPage = new WizardPage({page});

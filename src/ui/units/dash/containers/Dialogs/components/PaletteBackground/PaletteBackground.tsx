@@ -21,6 +21,7 @@ type PaletteBackgroundProps = Pick<ColorPickerInputProps, 'placeholder'> & {
     oldColor: string | undefined;
     onSelect: (color: ColorSettings | undefined) => void;
     onSelectOldColor: (color: string) => void;
+    onBlur?: () => void;
     enableCustomBgColorSelector?: boolean;
     theme?: RealTheme;
     enableSeparateThemeColorSelector?: boolean;
@@ -46,6 +47,7 @@ const PALETTE_OPTIONS = [
 export const PaletteBackground = ({
     onSelect,
     onSelectOldColor,
+    onBlur,
     color,
     oldColor,
     enableCustomBgColorSelector,
@@ -76,6 +78,7 @@ export const PaletteBackground = ({
                 placeholder={placeholder}
                 value={color ?? computeColorFromToken(oldColor)}
                 onUpdate={onSelect}
+                onBlur={onBlur}
                 isSingleColorSelector={!enableSeparateThemeColorSelector}
                 direction={direction}
                 mainPresetOptions={MAIN_PRESET_OPTIONS}
@@ -88,6 +91,7 @@ export const PaletteBackground = ({
     return (
         <ColorPicker
             onSelect={onSelectOldColor}
+            onBlur={onBlur}
             color={oldColor}
             enableCustomColorSelector={enableCustomBgColorSelector}
             mainPresetOptions={mainPresetOptions}

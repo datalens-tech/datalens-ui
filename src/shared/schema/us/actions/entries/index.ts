@@ -1,6 +1,11 @@
 import {omit, uniqBy} from 'lodash';
 
-import {TIMEOUT_60_SEC, TIMEOUT_90_SEC} from '../../../../constants';
+import {
+    DATASET_ID_HEADER,
+    TIMEOUT_60_SEC,
+    TIMEOUT_90_SEC,
+    WORKBOOK_ID_HEADER,
+} from '../../../../constants';
 import {getEntryNameByKey, normalizeDestination} from '../../../../modules';
 import {Feature} from '../../../../types/feature';
 import {createAction} from '../../../gateway-utils';
@@ -78,7 +83,13 @@ export const entriesActions = {
     getEntryMeta: createAction<GetEntryMetaResponse, GetEntryMetaArgs>({
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}/meta`,
-        params: (_, headers) => ({headers}),
+        params: ({bindedWorkbookId, bindedDatasetId}, headers) => ({
+            headers: {
+                ...headers,
+                ...(bindedWorkbookId ? {[WORKBOOK_ID_HEADER]: bindedWorkbookId} : {}),
+                ...(bindedDatasetId ? {[DATASET_ID_HEADER]: bindedDatasetId} : {}),
+            },
+        }),
     }),
     getRevisions: createAction<GetRevisionsOutput, GetRevisionsArgs, GetRevisionsResponse>({
         method: 'GET',
@@ -247,12 +258,15 @@ export const entriesActions = {
     >({
         method: 'GET',
         path: () => `${PATH_PREFIX}/entity-bindings`,
-        params: ({sourceId, targetId}, headers) => ({
+        params: ({sourceId, targetId, bindedWorkbookId}, headers) => ({
             query: {
                 sourceId,
                 targetId,
             },
-            headers,
+            headers: {
+                ...headers,
+                ...(bindedWorkbookId ? {[WORKBOOK_ID_HEADER]: bindedWorkbookId} : {}),
+            },
         }),
     }),
     createSharedEntryBinding: createAction<EntityBindingsResponse, EntityBindingsArgs>({
