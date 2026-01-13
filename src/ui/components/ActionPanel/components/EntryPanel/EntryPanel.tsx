@@ -10,13 +10,12 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import {ActionPanelQA, EntryScope, Feature} from 'shared';
+import {ActionPanelQA, EntryScope} from 'shared';
 import type {DatalensGlobalState, EntryDialogues} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
 import type {BreadcrumbsItem} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {
     addCollectionBreadcrumbs,
     addWorkbookInfo,
@@ -292,9 +291,7 @@ class EntryPanel extends React.Component<Props, State> {
 
         const items = [...additionalEntryItems];
 
-        const isNewAccessDialogEnabled = isEnabledFeature(Feature.EnableNewAccessDialog);
-
-        if (isAdmin && enablePublish && !disabled && !isNewAccessDialogEnabled) {
+        if (isAdmin && enablePublish && !disabled) {
             items.push({
                 icon: (
                     <Icon
