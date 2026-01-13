@@ -1,5 +1,7 @@
 /* eslint-disable camelcase */
 
+import type {WorkbookId} from 'shared';
+
 import type {ActionTypeNotification} from '../helpers/dataset-error-helpers';
 import type {ConnectionEntry} from '../store/types';
 
@@ -19,6 +21,8 @@ export interface UpdateDatasetByValidationProps {
     compareContent?: boolean;
     updatePreview?: boolean;
     validateEnabled?: boolean;
+    workbookId?: WorkbookId;
+    bindedWorkbookId?: WorkbookId;
 }
 
 export type ConnectionEntryWithDelegation = ConnectionEntry & {isDelegated?: boolean};

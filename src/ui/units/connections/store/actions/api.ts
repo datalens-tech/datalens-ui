@@ -37,15 +37,25 @@ import {ConverterErrorCode} from '../../constants';
 import type {FormDict} from '../../typings';
 import type {CheckData, UploadedFile} from '../typings';
 
-const fetchEntry = async (
-    entryId: string,
-): Promise<{
+type FetchEntryArgs = {
+    entryId: string;
+    bindedDatasetId?: string | null;
+    bindedWorkbookId?: string | null;
+};
+
+const fetchEntry = async ({
+    entryId,
+    bindedDatasetId,
+    bindedWorkbookId,
+}: FetchEntryArgs): Promise<{
     entry?: GetEntryResponse;
     error?: DataLensApiError;
 }> => {
     try {
         const entry = await getSdk().sdk.us.getEntry({
             entryId,
+            bindedDatasetId,
+            workbookId: bindedWorkbookId,
             includePermissionsInfo: true,
         });
         return {entry};
@@ -74,11 +84,19 @@ const fetchSharedEntryDelegation = async (
     }
 };
 
-const fetchConnectionData = async (
-    connectionId: string,
-    workbookId: string | null,
-    rev_id?: string,
-): Promise<{
+type FetchConnectionDataArgs = {
+    connectionId: string;
+    workbookId?: string | null;
+    revId?: string;
+    bindedDatasetId?: string | null;
+};
+
+const fetchConnectionData = async ({
+    connectionId,
+    workbookId,
+    revId,
+    bindedDatasetId,
+}: FetchConnectionDataArgs): Promise<{
     connectionData: ConnectionData;
     error?: DataLensApiError;
 }> => {
@@ -86,7 +104,8 @@ const fetchConnectionData = async (
         const connectionData = await getSdk().sdk.bi.getConnection({
             connectionId,
             workbookId,
-            rev_id,
+            bindedDatasetId,
+            rev_id: revId,
         });
         return {connectionData};
     } catch (error) {

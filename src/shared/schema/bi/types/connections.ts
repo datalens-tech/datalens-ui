@@ -78,6 +78,7 @@ export type GetConnectionResponse = ConnectionData;
 
 export type GetConnectionArgs = BaseArgs & {
     workbookId?: WorkbookId;
+    bindedDatasetId?: string | null;
     rev_id?: string;
 };
 

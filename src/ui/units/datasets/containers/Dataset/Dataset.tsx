@@ -19,7 +19,7 @@ import type {DataLensApiError, SDK} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import type {DialogUnlockProps} from 'ui/components/EntryDialogues/DialogUnlock';
 import {SharedEntryIcon} from 'ui/components/SharedEntryIcon/SharedEntryIcon';
-import {SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'ui/constants/common';
+import {DL, SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'ui/constants/common';
 import {HOTKEYS_SCOPES} from 'ui/constants/misc';
 import {withHotkeysContext} from 'ui/hoc/withHotkeysContext';
 import {
@@ -206,7 +206,12 @@ class Dataset extends React.Component<Props, State> {
         if (isCreationProcess) {
             initializeDataset({connectionId, collectionId, workbookId});
         } else if (datasetId) {
-            initialFetchDataset({datasetId, rev_id: revId, bindedWorkbookId});
+            initialFetchDataset({
+                datasetId,
+                rev_id: revId,
+                bindedWorkbookId,
+                workbookIdFromPath: workbookId,
+            });
         }
 
         this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.DATASETS);
@@ -218,6 +223,7 @@ class Dataset extends React.Component<Props, State> {
             datasetPreview: {view: prevView},
             ui: {isSourcesLoading: prevIsSourcesLoading},
             location: prevLocation,
+            bindedWorkbookId: prevBindedWorkbookId,
         } = prevProps;
         const {
             currentTab,
@@ -240,12 +246,13 @@ class Dataset extends React.Component<Props, State> {
         const prevRevId = prevSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
         const hasRevisionChanged = revId !== prevRevId;
         const isSavingUpdate = publishedId === currentRevId && !revId;
+        const isBindingChanged = bindedWorkbookId !== prevBindedWorkbookId;
 
         if (datasetId && prevDatasetId !== datasetId) {
             initialFetchDataset({datasetId, rev_id: revId, bindedWorkbookId});
         }
 
-        if (hasRevisionChanged && !isSavingUpdate) {
+        if ((hasRevisionChanged && !isSavingUpdate) || isBindingChanged) {
             initialFetchDataset({
                 datasetId,
                 rev_id: revId,
@@ -402,10 +409,12 @@ class Dataset extends React.Component<Props, State> {
                     return {
                         type: 'no-access',
                         title: i18n('label_error-403-title'),
-                        action: {
-                            text: i18n('button_ask-access-rights'),
-                            handler: this.askAccessRights,
-                        },
+                        action: !DL.IS_WORKBOOKS_ENABLED
+                            ? {
+                                  text: i18n('button_ask-access-rights'),
+                                  handler: this.askAccessRights,
+                              }
+                            : undefined,
                     };
                 }
             case 404:
@@ -682,6 +691,7 @@ class Dataset extends React.Component<Props, State> {
                         sdk={sdk}
                         datasetId={datasetId}
                         workbookId={this.getWorkbookId()}
+                        bindedWorkbookId={this.props.bindedWorkbookId}
                         collectionId={this.getCollectionId()}
                     />
                     <DatasetPreview closePreview={this.closeDatasetPreview} />

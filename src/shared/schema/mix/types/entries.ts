@@ -91,6 +91,8 @@ export type GetEntryMetaStatusResponse = {
 
 export type GetEntryMetaStatusArgs = {
     entryId: string;
+    bindedWorkbookId?: string;
+    bindedDatasetId?: string;
 };
 
 export type GetEntriesInFolderArgs = {

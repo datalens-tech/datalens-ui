@@ -158,9 +158,12 @@ const PageComponent = (props: PageProps) => {
     const collectionId = get(props.match?.params, 'collectionId');
     const queryType = get(props.match?.params, 'type', '');
     const currentSearchParams = new URLSearchParams(location.search);
-    const bindedWorkbookId = currentSearchParams.get(URL_QUERY.BINDED_WOKRBOOK);
+    const bindedWorkbookId = currentSearchParams.get(URL_QUERY.BINDED_WORKBOOK);
+    const bindedDatasetId = currentSearchParams.get(URL_QUERY.BINDED_DATASET);
     const isSharedConnection = getIsSharedConnection(originalEntry);
-    const isWorkbookSharedEntry = isSharedConnection && bindedWorkbookId;
+    const isWorkbookSharedEntry = isSharedConnection && bindedWorkbookId && !bindedDatasetId;
+    const isReadonly = isSharedConnection && (bindedWorkbookId || bindedDatasetId);
+
     const entry = isWorkbookSharedEntry
         ? {...originalEntry, workbookId: bindedWorkbookId, collectionId: null}
         : originalEntry;
@@ -184,6 +187,10 @@ const PageComponent = (props: PageProps) => {
         isShowCreateButtons = Boolean(entry.permissions?.edit);
     }
 
+    if (isSharedConnection && bindedDatasetId) {
+        isShowCreateButtons = false;
+    }
+
     React.useEffect(() => {
         return () => {
             actions.setInitialState();
@@ -203,8 +210,17 @@ const PageComponent = (props: PageProps) => {
             collectionId,
             rev_id: revId,
             bindedWorkbookId,
+            bindedDatasetId,
         });
-    }, [actions, extractedEntryId, workbookId, revId, collectionId, bindedWorkbookId]);
+    }, [
+        actions,
+        extractedEntryId,
+        workbookId,
+        revId,
+        collectionId,
+        bindedWorkbookId,
+        bindedDatasetId,
+    ]);
 
     const setActualVersion = React.useMemo(
         () =>
@@ -235,6 +251,7 @@ const PageComponent = (props: PageProps) => {
         entry: originalEntry,
         isFakeEntry,
         bindedWorkbookId,
+        bindedDatasetId,
     });
 
     const lastCrumbAdditionalContent = React.useMemo(
@@ -247,7 +264,7 @@ const PageComponent = (props: PageProps) => {
 
     const actionPanelCenterItems = React.useMemo(
         () =>
-            isWorkbookSharedEntry
+            isReadonly
                 ? [
                       <Button
                           key="workbook-shared-entry-original-link"
@@ -260,7 +277,7 @@ const PageComponent = (props: PageProps) => {
                       </Button>,
                   ]
                 : undefined,
-        [isWorkbookSharedEntry, history],
+        [isReadonly, history],
     );
 
     return (
@@ -275,7 +292,7 @@ const PageComponent = (props: PageProps) => {
             <div className={b()}>
                 {entry && (
                     <ActionPanel
-                        className={b('action-panel', {readonly: Boolean(isWorkbookSharedEntry)})}
+                        className={b('action-panel', {readonly: Boolean(isReadonly)})}
                         entry={entry}
                         lastCrumbAdditionalContent={lastCrumbAdditionalContent}
                         centerItems={actionPanelCenterItems}

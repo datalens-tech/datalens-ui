@@ -166,9 +166,9 @@ export const entriesActions = {
     getEntryMetaStatus: createAction<GetEntryMetaStatusResponse, GetEntryMetaStatusArgs>(
         async (api, args): Promise<GetEntryMetaStatusResponse> => {
             const typedApi = getTypedApi(api);
-            const {entryId} = args;
+            const {entryId, bindedWorkbookId, bindedDatasetId} = args;
             try {
-                await typedApi.us.getEntryMeta({entryId});
+                await typedApi.us.getEntryMeta({entryId, bindedWorkbookId, bindedDatasetId});
                 return {code: 'OK'};
             } catch (errorWrapper) {
                 return getEntryMetaStatusByError(errorWrapper);

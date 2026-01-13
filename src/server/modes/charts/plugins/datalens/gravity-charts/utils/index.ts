@@ -39,17 +39,22 @@ export function getAxisLabelsRotationAngle(placeholderSettings?: ServerPlacehold
 function getAxisMinMax(
     placeholderSettings?: ServerPlaceholderSettings,
 ): [number | undefined, number | undefined] {
-    if (
-        placeholderSettings?.scale !== 'manual' ||
-        !Array.isArray(placeholderSettings?.scaleValue)
-    ) {
-        return [undefined, undefined];
+    if (placeholderSettings?.scale === 'manual') {
+        if (!Array.isArray(placeholderSettings?.scaleValue)) {
+            return [undefined, undefined];
+        }
+
+        const min = Number(placeholderSettings.scaleValue[0]);
+        const max = Number(placeholderSettings.scaleValue[1]);
+
+        return [Number.isNaN(min) ? undefined : min, Number.isNaN(max) ? undefined : max];
     }
 
-    const min = Number(placeholderSettings.scaleValue[0]);
-    const max = Number(placeholderSettings.scaleValue[1]);
+    if (placeholderSettings?.scaleValue === '0-max') {
+        return [0, undefined];
+    }
 
-    return [Number.isNaN(min) ? undefined : min, Number.isNaN(max) ? undefined : max];
+    return [undefined, undefined];
 }
 
 export function getYAxisBaseConfig({
