@@ -106,11 +106,13 @@ export type GetState = () => DatalensGlobalState;
 type ValidateDatasetArgs = {
     compareContent?: boolean;
     initial?: boolean;
+    bindedWorkbookId?: WorkbookId;
+    workbookId?: WorkbookId;
 };
 
 type DispatchFetchPreviewParams = {
     datasetId: string;
-    workbookId: WorkbookId;
+    workbookId?: WorkbookId;
     resultSchema: DatasetField[];
     limit: number;
 };
@@ -1104,7 +1106,12 @@ export function updateFieldWithValidationByMultipleUpdates(
     };
 }
 
-export function validateDataset({compareContent, initial = false}: ValidateDatasetArgs = {}) {
+export function validateDataset({
+    compareContent,
+    workbookId: workbookIdFromPath,
+    bindedWorkbookId,
+    initial = false,
+}: ValidateDatasetArgs = {}) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
         let returnUpdates: Update[] | undefined;
 
@@ -1122,12 +1129,12 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
 
             returnUpdates = updates;
 
-            const workbookId = workbookIdSelector(getState());
+            const workbookId = workbookIdSelector(getState()) || workbookIdFromPath;
 
             const validation = await getSdk().sdk.bi.validateDataset(
                 {
                     datasetId,
-                    workbookId,
+                    workbookId: workbookId || bindedWorkbookId,
                     data: {
                         dataset: prevContent,
                         updates: prepareUpdates(updates),
@@ -1362,7 +1369,7 @@ export function setSourcesPagination(payload: Partial<SourcesPagination>): SetSo
     };
 }
 
-export function changeCurrentDbName(payload: string) {
+export function changeCurrentDbName(payload: string, bindedWorkbookId?: WorkbookId) {
     return (dispatch: DatasetDispatch, getState: GetState) => {
         const state = getState();
         const {sourcesPagination} = state.dataset;
@@ -1381,6 +1388,8 @@ export function changeCurrentDbName(payload: string) {
                 getSources({
                     connectionId: connection.entryId,
                     workbookId,
+                    bindedWorkbookId,
+                    isSharedConnection: Boolean(connection.collectionId),
                     currentDbName: payload,
                     limit: sourcesPagination.limit,
                     offset: 0,
@@ -1390,7 +1399,7 @@ export function changeCurrentDbName(payload: string) {
     };
 }
 
-export function searchSources(searchValue: string) {
+export function searchSources(searchValue: string, bindedWorkbookId?: WorkbookId) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
         const state = getState();
         const {sourcesPagination, currentDbName, errors} = state.dataset;
@@ -1417,6 +1426,8 @@ export function searchSources(searchValue: string) {
                 getSources({
                     connectionId: connection.entryId,
                     workbookId,
+                    bindedWorkbookId,
+                    isSharedConnection: Boolean(connection.collectionId),
                     currentDbName,
                     limit: sourcesPagination.limit,
                     offset: 0,
@@ -1438,7 +1449,7 @@ export function setCurrentDbName(payload: string): SetCurrentDbName {
     };
 }
 
-export function incrementSourcesPage() {
+export function incrementSourcesPage(bindedWorkbookId?: WorkbookId) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
         const state = getState();
         const connection = selectedConnectionSelector(state);
@@ -1459,6 +1470,8 @@ export function incrementSourcesPage() {
             getSources({
                 connectionId: connection.entryId,
                 workbookId,
+                bindedWorkbookId,
+                isSharedConnection: Boolean(connection.collectionId),
                 limit: sourcesPagination.limit,
                 offset: (sourcesPagination.page + 1) * sourcesPagination.limit,
                 currentDbName,
@@ -1484,12 +1497,14 @@ export function incrementSourcesPage() {
 
 interface GetSourcesProps {
     connectionId: string;
-    workbookId: string | null;
+    workbookId?: string | null;
     searchText?: string;
     offset?: number;
     currentDbName?: string;
     limit?: number;
     isSideEffect?: boolean;
+    bindedWorkbookId?: WorkbookId;
+    isSharedConnection?: boolean;
 }
 
 export function getSources({
@@ -1499,12 +1514,16 @@ export function getSources({
     offset,
     currentDbName,
     limit,
+    bindedWorkbookId,
     isSideEffect = false,
+    isSharedConnection = false,
 }: GetSourcesProps) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
         const {
+            id: datasetID,
             sourcesPagination,
             errors: {sourceListingOptionsError},
+            collectionId: datasetCollectionId,
         } = getState().dataset;
 
         if (sourceListingOptionsError) {
@@ -1518,10 +1537,15 @@ export function getSources({
         let sources: GetSourceResponse['sources'] = [];
         const currentLimit = limit ? limit + 1 : 10000;
         try {
+            const bindedDatasetId =
+                bindedWorkbookId || (datasetCollectionId && isSharedConnection)
+                    ? datasetID
+                    : undefined;
             const result = await getSdk().sdk.bi.getSources(
                 {
                     connectionId,
-                    workbookId,
+                    workbookId: bindedWorkbookId || workbookId,
+                    bindedDatasetId,
                     limit: currentLimit,
                     offset,
                     db_name: currentDbName,
@@ -1581,19 +1605,41 @@ export function getSources({
     };
 }
 
-export function getDbNames(connectionIds: string[]) {
+function getDbNames({
+    connectionIds,
+    workbookId,
+    bindedWorkbookId,
+    isSharedConnection = false,
+}: {
+    connectionIds: string[];
+    bindedWorkbookId?: WorkbookId;
+    workbookId?: WorkbookId;
+    isSharedConnection?: boolean;
+}) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
         dispatch(toggleSourcesListingOptionsLoader(true));
         try {
             if (connectionIds.length) {
                 const state = getState();
-                const {sourceListingOptions} = state.dataset;
+                const {
+                    sourceListingOptions,
+                    id: datasetId,
+                    collectionId: datasetCollectionId,
+                } = state.dataset;
                 const currentEntryId = selectedConnectionSelector(state)?.entryId;
                 const result = await Promise.all(
                     connectionIds.map((id) =>
                         getSdk()
                             .sdk.bi.getDbNames(
-                                {connectionId: id},
+                                {
+                                    connectionId: id,
+                                    workbookId: workbookId || bindedWorkbookId,
+                                    bindedDatasetId:
+                                        bindedWorkbookId ||
+                                        (datasetCollectionId && isSharedConnection)
+                                            ? datasetId
+                                            : undefined,
+                                },
                                 {concurrentId: 'getDbNames', retries: 2},
                             )
                             .then((res) => ({id, ...res})),
@@ -1846,6 +1892,8 @@ export function fetchFieldTypes() {
 }
 
 export function updateDatasetByValidation({
+    workbookId,
+    bindedWorkbookId,
     actionTypeNotification,
     compareContent = false,
     updatePreview = false,
@@ -1858,7 +1906,9 @@ export function updateDatasetByValidation({
         dispatch(setValidationState({validation: {isPending: false}}));
 
         if (validateEnabled) {
-            updates = await dispatch(validateDataset({compareContent}));
+            updates = await dispatch(
+                validateDataset({compareContent, workbookId, bindedWorkbookId}),
+            );
             fetchingPreviewEnabled = checkFetchingPreview({updatePreview, updates});
         }
 
@@ -1880,12 +1930,12 @@ export function updateDatasetByValidation({
             if (fieldErrors.length) {
                 dispatch(clearDatasetPreview());
             } else {
-                const workbookId = workbookIdSelector(getState());
-
+                const selectedWorkbookId = workbookIdSelector(getState());
+                const currentWorkbookId = selectedWorkbookId || bindedWorkbookId || workbookId;
                 dispatch(
                     fetchPreviewDataset({
                         datasetId: datasetId!,
-                        workbookId,
+                        workbookId: currentWorkbookId,
                         resultSchema: resultSchema!,
                         limit: amountPreviewRows!,
                     }),
@@ -1908,7 +1958,7 @@ export function updateDatasetByValidation({
     };
 }
 
-function setInitialSources(ids: string[]) {
+function setInitialSources(ids: string[], workbookId?: string | null, bindedDatasetId?: string) {
     return async (dispatch: DatasetDispatch) => {
         try {
             let initialConnections = [];
@@ -1918,6 +1968,8 @@ function setInitialSources(ids: string[]) {
                     ids.map((id) =>
                         getSdk().sdk.us.getEntry({
                             entryId: id,
+                            workbookId,
+                            bindedDatasetId,
                             includePermissionsInfo: true,
                         }),
                     ),
@@ -1972,7 +2024,7 @@ export function initializeDataset({
 }) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
         if (connectionId) {
-            await dispatch(setInitialSources([connectionId]));
+            await dispatch(setInitialSources([connectionId], workbookId));
         }
 
         const state = getState();
@@ -2010,7 +2062,7 @@ export function initializeDataset({
             }
         }
 
-        dispatch(_getSources());
+        dispatch(_getSources({workbookIdFromPath: workbookId}));
 
         dispatch({
             type: DATASET_ACTION_TYPES.INITIALIZE_DATASET,
@@ -2023,12 +2075,14 @@ export function initialFetchDataset({
     datasetId,
     rev_id,
     bindedWorkbookId,
+    workbookIdFromPath,
     isInitialFetch = true,
 }: {
     datasetId: string;
     bindedWorkbookId?: string | null;
     rev_id?: string;
     isInitialFetch?: boolean;
+    workbookIdFromPath?: WorkbookId;
 }) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
         try {
@@ -2044,12 +2098,12 @@ export function initialFetchDataset({
                 });
             }
 
-            const meta = await getSdk().sdk.us.getEntryMeta({entryId: datasetId});
+            const meta = await getSdk().sdk.us.getEntryMeta({entryId: datasetId, bindedWorkbookId});
             const workbookId = meta.workbookId ?? null;
 
             const dataset = await getSdk().sdk.bi.getDatasetByVersion({
                 datasetId,
-                workbookId,
+                workbookId: workbookId || bindedWorkbookId,
                 rev_id,
             });
 
@@ -2077,7 +2131,7 @@ export function initialFetchDataset({
             );
             const ids = Array.from(connectionsIds);
 
-            await dispatch(setInitialSources(ids));
+            await dispatch(setInitialSources(ids, workbookId || bindedWorkbookId, datasetId));
 
             const publishedId = meta.publishedId ?? null;
             const currentRevId = rev_id ?? publishedId;
@@ -2093,9 +2147,9 @@ export function initialFetchDataset({
                 },
             });
 
-            dispatch(_getSources());
+            dispatch(_getSources({workbookIdFromPath, bindedWorkbookId}));
 
-            dispatch(validateDataset({initial: true}));
+            dispatch(validateDataset({initial: true, bindedWorkbookId}));
             const state = getState();
             const {
                 dataset: {
@@ -2115,6 +2169,7 @@ export function initialFetchDataset({
                     getSharedConnectionDelegation({
                         targetId,
                         sourceId: selectedConnection.entryId,
+                        bindedWorkbookId,
                     }),
                 );
             }
@@ -2124,7 +2179,7 @@ export function initialFetchDataset({
                     dispatch(
                         fetchPreviewDataset({
                             datasetId,
-                            workbookId,
+                            workbookId: bindedWorkbookId || workbookId,
                             resultSchema: resultSchema!,
                             limit: amountPreviewRows!,
                         }),
@@ -2146,7 +2201,13 @@ export function initialFetchDataset({
     };
 }
 
-function _getSources() {
+function _getSources({
+    workbookIdFromPath,
+    bindedWorkbookId,
+}: {
+    workbookIdFromPath?: WorkbookId;
+    bindedWorkbookId?: WorkbookId;
+}) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
         const {
             dataset: {
@@ -2155,16 +2216,22 @@ function _getSources() {
                 ui: {selectedConnectionId},
             },
         } = getState();
-        const workbookId = workbookIdSelector(getState());
+        const workbookId = workbookIdSelector(getState()) || workbookIdFromPath;
 
         const selectedConnection = selectedConnections.find(
             ({entryId}) => entryId === selectedConnectionId,
         );
 
         if (selectedConnection && !selectedConnection.deleted) {
-            const {entryId} = selectedConnection;
+            const {entryId, collectionId: selectedConnCollectionId} = selectedConnection;
+            const isSharedConnection = Boolean(selectedConnCollectionId);
             const {currentDbName, sourceListing} = await dispatch(
-                getSourcesListingOptions(entryId),
+                getSourcesListingOptions({
+                    connectionId: entryId,
+                    isSharedConnection,
+                    bindedWorkbookId,
+                    workbookId,
+                }),
             );
             const {serverPagination, dbNameRequiredForSearch} =
                 getSourceListingValues(sourceListing);
@@ -2172,7 +2239,9 @@ function _getSources() {
             dispatch(
                 getSources({
                     connectionId: entryId,
-                    workbookId: workbookId,
+                    workbookId,
+                    bindedWorkbookId,
+                    isSharedConnection,
                     limit: serverPagination ? sourcesPagination.limit : undefined,
                     currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
                 }),
@@ -2181,13 +2250,32 @@ function _getSources() {
     };
 }
 
-export function getSourcesListingOptions(connectionId: string) {
+type GetSourcesListingOptionsProps = {
+    connectionId: string;
+    isSharedConnection?: boolean;
+    bindedWorkbookId?: WorkbookId;
+    workbookId?: WorkbookId;
+};
+
+export function getSourcesListingOptions({
+    connectionId,
+    bindedWorkbookId,
+    workbookId,
+    isSharedConnection = false,
+}: GetSourcesListingOptionsProps) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
         dispatch(toggleSourcesListingOptionsLoader(true));
         let sourceListing: SourceListingOptions['source_listing'] | undefined;
         try {
+            const {id: datasetId, collectionId} = getState().dataset;
+            const bindedDatasetId =
+                bindedWorkbookId || (collectionId && isSharedConnection) ? datasetId : undefined;
             const result = await getSdk().sdk.bi.getSourceListingOptions(
-                {connectionId},
+                {
+                    connectionId,
+                    bindedDatasetId,
+                    workbookId: workbookId || bindedWorkbookId,
+                },
                 {concurrentId: 'getSourceListingOptions', retries: 2},
             );
             sourceListing = result?.source_listing;
@@ -2201,7 +2289,14 @@ export function getSourcesListingOptions(connectionId: string) {
                 getSourceListingValues(sourceListing);
 
             if (dbNameRequiredForSearch || supportsDbNameListing) {
-                await dispatch(getDbNames([connectionId]));
+                await dispatch(
+                    getDbNames({
+                        connectionIds: [connectionId],
+                        bindedWorkbookId,
+                        workbookId,
+                        isSharedConnection,
+                    }),
+                );
             }
         } catch (error) {
             logger.logError('dataset: getSourcesListingOptions failed', error);
@@ -2237,6 +2332,7 @@ export function setSharedConnectionDelegation(
 export function getSharedConnectionDelegation({
     targetId,
     sourceId,
+    bindedWorkbookId,
 }: Omit<EntityBindingsArgs, 'delegation'>) {
     return async (dispatch: DatasetDispatch) => {
         let delegation;
@@ -2245,6 +2341,7 @@ export function getSharedConnectionDelegation({
                 {
                     targetId,
                     sourceId,
+                    bindedWorkbookId,
                 },
                 {concurrentId: 'getEntityBinding', retries: 2},
             );
