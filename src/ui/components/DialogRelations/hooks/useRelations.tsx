@@ -53,14 +53,14 @@ export const useRelations = ({
 
     const [isInited, setIsInited] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
-    const [isSilentFetching, setIsSilentFetching] = React.useState(false);
+    const silentFetchingWidgetsRef = React.useRef(new Set<string>());
 
     const [relations, setRelations] = React.useState<DashkitMetaDataItem[]>([]);
     const [currentWidgetMeta, setCurrentWidgetMeta] = React.useState<DashkitMetaDataItem | null>(
         null,
     );
     const [invalidAliases, setInvalidAliases] = React.useState<string[]>([]);
-    const [allUsedParams, setAllUsedParams] = React.useState<Set<string>>(new Set());
+    const [_, setAllUsedParams] = React.useState<Set<string>>(new Set());
 
     const [dashWidgetsMeta, setDashWidgetsMeta] = React.useState<
         Omit<DashkitMetaDataItem, 'relations'>[] | null
@@ -132,52 +132,70 @@ export const useRelations = ({
             subItemId: string | null;
             updatedMeta: Omit<DashkitMetaDataItemBase, 'defaultParams'> | {widgetId: string};
         }) => {
-            if (!dashWidgetsMeta || !datasets || !subItemId) {
+            if (!subItemId) {
                 return {};
             }
 
-            const updatedWidgetsMeta = dashWidgetsMeta.map((item) => {
-                if (item.widgetId === subItemId) {
-                    return {
-                        ...item,
-                        ...updatedMeta,
-                        isFetchFinished: true,
-                    };
+            let updatedWidgetsMeta: Omit<DashkitMetaDataItem, 'relations'>[] | null = null;
+            let updatedDatasets: DatasetsListData | null = null;
+
+            setDashWidgetsMeta((prevMeta) => {
+                if (!prevMeta) {
+                    return prevMeta;
                 }
-                return item;
-            });
-            const updatedDatasets = {...datasets};
-
-            setDashWidgetsMeta(updatedWidgetsMeta);
-
-            if ('datasets' in updatedMeta && updatedMeta.datasets?.length) {
-                updatedMeta.datasets.forEach((datasetItem: DatasetsData) => {
-                    if (datasetItem.id) {
-                        updatedDatasets[datasetItem.id] = {
-                            fields: datasetItem.fieldsList,
+                updatedWidgetsMeta = prevMeta.map((item) => {
+                    if (item.widgetId === subItemId) {
+                        return {
+                            ...item,
+                            ...updatedMeta,
+                            isFetchFinished: true,
                         };
                     }
+                    return item;
                 });
-                setDatasets(updatedDatasets);
-            }
 
-            const newUsedParams = new Set(allUsedParams);
-            if ('usedParams' in updatedMeta && updatedMeta.usedParams) {
-                updatedMeta.usedParams.forEach((param) => newUsedParams.add(param));
-            }
-            if ('widgetParams' in updatedMeta && updatedMeta.widgetParams) {
-                Object.keys(updatedMeta.widgetParams).forEach((param) => newUsedParams.add(param));
-            }
+                return updatedWidgetsMeta;
+            });
 
-            setAllUsedParams(newUsedParams);
+            setDatasets((prevDatasets) => {
+                if (!prevDatasets) {
+                    return prevDatasets;
+                }
+                updatedDatasets = {...prevDatasets};
+                if ('datasets' in updatedMeta && updatedMeta.datasets?.length) {
+                    updatedMeta.datasets.forEach((datasetItem: DatasetsData) => {
+                        if (datasetItem.id) {
+                            updatedDatasets![datasetItem.id] = {
+                                fields: datasetItem.fieldsList,
+                            };
+                        }
+                    });
+                }
 
-            // Recalculate invalid aliases with updated params
-            const newInvalidAliases = calculateInvalidAliasesFromParams(newUsedParams);
-            setInvalidAliases(newInvalidAliases);
+                return updatedDatasets;
+            });
+
+            setAllUsedParams((prevParams) => {
+                const newUsedParams = new Set(prevParams);
+                if ('usedParams' in updatedMeta && updatedMeta.usedParams) {
+                    updatedMeta.usedParams.forEach((param) => newUsedParams.add(param));
+                }
+                if ('widgetParams' in updatedMeta && updatedMeta.widgetParams) {
+                    Object.keys(updatedMeta.widgetParams).forEach((param) =>
+                        newUsedParams.add(param),
+                    );
+                }
+
+                // Recalculate invalid aliases with updated params
+                const newInvalidAliases = calculateInvalidAliasesFromParams(newUsedParams);
+                setInvalidAliases(newInvalidAliases);
+
+                return newUsedParams;
+            });
 
             return {updatedWidgetsMeta, updatedDatasets};
         },
-        [dashWidgetsMeta, datasets, allUsedParams, calculateInvalidAliasesFromParams],
+        [calculateInvalidAliasesFromParams],
     );
 
     const onLoadMeta = React.useCallback<OnLoadMetaType>(
@@ -186,7 +204,7 @@ export const useRelations = ({
                 return;
             }
 
-            const currentChartId = getChartId(widget);
+            const currentChartId = getChartId(widget, subItemId);
 
             if (currentChartId && silentRequestCancellationRef.current[currentChartId]) {
                 return;
@@ -196,6 +214,10 @@ export const useRelations = ({
 
             let updatedMeta;
 
+            const itemId = subItemId || widgetId;
+
+            silentFetchingWidgetsRef.current.add(itemId);
+
             try {
                 updatedMeta = await loadHiddenWidgetMeta({
                     widgetId,
@@ -203,7 +225,9 @@ export const useRelations = ({
                     silentRequestCancellationRef,
                 });
             } catch (error) {
-                updatedMeta = {widgetId: subItemId || widgetId, loadError: true};
+                updatedMeta = {widgetId: itemId, loadError: true};
+            } finally {
+                silentFetchingWidgetsRef.current.delete(itemId);
             }
 
             if (currentChartId && silentRequestCancellationRef.current[currentChartId]) {
@@ -370,16 +394,12 @@ export const useRelations = ({
                 !selectedWidgetMeta.loadError &&
                 !selectedWidgetMeta.isFetchFinished
             ) {
-                setIsSilentFetching(true);
                 onLoadMeta({
                     widget: newCurrentWidget,
                     subItemId: newSelectedSubItemId,
                     needChangeCurrent: true,
-                })?.finally(() => {
-                    setIsSilentFetching(false);
                 });
             } else {
-                setIsSilentFetching(false);
                 getCurrentWidgetInfo({
                     dashWidgetsMetaData: dashWidgetsMeta,
                     datasetsList: datasets,
@@ -398,7 +418,7 @@ export const useRelations = ({
         datasets,
         dashWidgetsMeta,
         invalidAliases,
-        isSilentFetching,
+        silentFetchingWidgets: silentFetchingWidgetsRef.current,
         setRelations,
         onLoadMeta,
         currentWidget,

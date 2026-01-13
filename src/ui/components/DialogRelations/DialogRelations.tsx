@@ -67,8 +67,8 @@ export type OpenDialogRelationsArgs = {
     props: DialogRelationsProps;
 };
 
-const renderOptions = (option: SelectOption, isSilentFetching?: boolean) => {
-    if (isSilentFetching) {
+const renderOptions = (option: SelectOption, silentFetchingWidgets?: Set<string>) => {
+    if (silentFetchingWidgets?.has(option.value)) {
         const icon = <Skeleton className={b('skeleton-option-icon')} />;
         return <SelectOptionWithIcon option={{...option, data: {...option.data, icon}}} />;
     }
@@ -119,7 +119,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
     const {
         isLoading,
-        isSilentFetching,
         currentWidgetMeta,
         relations,
         datasets,
@@ -130,6 +129,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
         currentWidget,
         onChangeCurrentWidget,
         setInvalidAliases,
+        silentFetchingWidgets,
     } = useRelations({
         dashKitRef,
         initialWidget: props.widget ?? null,
@@ -140,7 +140,10 @@ const DialogRelations = (props: DialogRelationsProps) => {
         silentRequestCancellationRef,
     });
 
-    const isContentLoading = isLoading || isSilentFetching;
+    const currentWidgetId = selectedSubItemId || currentWidgetMeta?.widgetId || '';
+
+    const isContentLoading =
+        isLoading || silentFetchingWidgets.has(selectedSubItemId || currentWidgetId);
 
     const widgetsIconMap = React.useMemo(() => {
         const iconsMap: Record<string, JSX.Element | null> = {};
@@ -156,7 +159,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
         return getWidgetsOptions({tabId, widgetsIconMap, widgets, showDebugInfo});
     }, [tabId, widgetsIconMap, widgets, showDebugInfo]);
 
-    const currentWidgetId = selectedSubItemId || currentWidgetMeta?.widgetId || '';
     const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>({});
 
     const {filteredRelations} = useFilteredRelations({
@@ -550,8 +552,8 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     onUpdate={handleItemChange}
                     filterable={true}
                     disabled={isLoading}
-                    renderOption={(option) => renderOptions(option)}
-                    renderSelectedOption={(option) => renderOptions(option, isSilentFetching)}
+                    renderOption={(option) => renderOptions(option, silentFetchingWidgets)}
+                    renderSelectedOption={(option) => renderOptions(option, silentFetchingWidgets)}
                     popupWidth="fit"
                 />
                 {currentWidget ? (
@@ -569,6 +571,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                             showDebugInfo={showDebugInfo}
                             widgetIcon={widgetsIconMap[currentWidgetMeta?.widgetId || '']}
                             onLoadMeta={onLoadMeta}
+                            silentFetchingWidgets={silentFetchingWidgets}
                         />
                     </React.Fragment>
                 ) : (

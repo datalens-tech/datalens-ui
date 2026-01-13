@@ -609,9 +609,14 @@ export const getChangedRelations = (
     });
 };
 
-export const getChartId = (widget: DashTabItem | DashkitMetaDataItem) => {
+export const getChartId = (
+    widget: DashTabItem | DashkitMetaDataItem,
+    selectedSubItemId: string | null,
+) => {
     if ('data' in widget) {
-        return widget.type === DashTabItemType.Widget ? widget.data.tabs[0].chartId : null;
+        return widget.type === DashTabItemType.Widget
+            ? widget.data.tabs.find((tab) => tab.id === selectedSubItemId)?.chartId
+            : null;
     }
 
     return widget.chartId;

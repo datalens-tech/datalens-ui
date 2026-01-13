@@ -34,6 +34,7 @@ type ContentProps = {
     showDebugInfo: boolean;
     widgetIcon: React.ReactNode;
     onLoadMeta?: OnLoadMetaType;
+    silentFetchingWidgets?: Set<string>;
 };
 
 export const Content = ({
@@ -45,6 +46,7 @@ export const Content = ({
     showDebugInfo,
     widgetIcon,
     onLoadMeta,
+    silentFetchingWidgets,
 }: ContentProps) => {
     if (isLoading) {
         return (
@@ -78,6 +80,7 @@ export const Content = ({
             showDebugInfo={showDebugInfo}
             widgetIcon={widgetIcon}
             onLoadMeta={onLoadMeta}
+            silentFetchingWidgets={silentFetchingWidgets}
         />
     ));
 

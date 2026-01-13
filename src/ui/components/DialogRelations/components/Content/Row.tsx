@@ -1,7 +1,16 @@
 import React from 'react';
 
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
-import {Button, DropdownMenu, Flex, Icon, Loader, Popover, spacing} from '@gravity-ui/uikit';
+import {
+    Button,
+    DropdownMenu,
+    Flex,
+    Icon,
+    Loader,
+    Popover,
+    Skeleton,
+    spacing,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DashCommonQa, DashRelationTypes} from 'shared';
@@ -56,6 +65,7 @@ type RowParams = {
     showDebugInfo: boolean;
     widgetIcon: React.ReactNode;
     onLoadMeta?: OnLoadMetaType;
+    silentFetchingWidgets?: Set<string>;
 };
 
 export const getTooltipInfo = ({
@@ -186,6 +196,7 @@ export const Row = ({
     showDebugInfo,
     widgetIcon,
     onLoadMeta,
+    silentFetchingWidgets,
 }: RowParams) => {
     const [isLoadingMeta, setIsLoadingMeta] = React.useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
@@ -213,7 +224,14 @@ export const Row = ({
         hasDataset,
     });
 
-    const icon = getRelationsIcon(data);
+    const icon = React.useMemo(() => {
+        const isWidgetLoading = silentFetchingWidgets?.has(data.widgetId);
+        return isWidgetLoading ? (
+            <Skeleton className={b('skeleton-icon')} />
+        ) : (
+            getRelationsIcon(data)
+        );
+    }, [silentFetchingWidgets, data, isLoadingMeta]);
 
     const handleAliasCLick = React.useCallback(() => {
         onAliasClick?.({
@@ -255,7 +273,14 @@ export const Row = ({
         async (open: boolean) => {
             setIsDropdownOpen(open);
 
-            if (open && onLoadMeta && !data.loaded && !data.loadError && !data.isFetchFinished) {
+            if (
+                open &&
+                onLoadMeta &&
+                !isLoadingMeta &&
+                !data.loaded &&
+                !data.loadError &&
+                !data.isFetchFinished
+            ) {
                 setIsLoadingMeta(true);
                 try {
                     await onLoadMeta({widget: data, subItemId: data.widgetId});
@@ -266,7 +291,7 @@ export const Row = ({
                 }
             }
         },
-        [data, onLoadMeta],
+        [data, isLoadingMeta, onLoadMeta],
     );
 
     if (!data || !widgetMeta) {

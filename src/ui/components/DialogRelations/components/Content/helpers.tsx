@@ -109,33 +109,35 @@ export const getRelationDetailsText = ({
     widget: string;
     row: string;
     withStrong?: boolean;
-}) => {
-    const widgetNameTextWrapped = withStrong ? <strong>{widget}</strong> : widget;
-    const rowNameTextWrapped = withStrong ? <strong>{row}</strong> : row;
+}): string | React.ReactElement => {
+    const formatOutput = (
+        widgetNameText: string,
+        rowNameText: string,
+    ): string | React.ReactElement => {
+        if (withStrong) {
+            return (
+                <React.Fragment>
+                    <strong>{widgetNameText}</strong> {text} <strong>{rowNameText}</strong>
+                </React.Fragment>
+            );
+        }
+        return `${widgetNameText} ${text} ${rowNameText}`;
+    };
+
     if (linkType === RELATION_TYPES.output) {
-        if (!rowNameTextWrapped) {
+        if (!row) {
             return '';
         }
-        return withStrong ? (
-            <React.Fragment>
-                {widgetNameTextWrapped} {text} {rowNameTextWrapped}
-            </React.Fragment>
-        ) : (
-            `${widgetNameTextWrapped} ${text} ${rowNameTextWrapped}`
-        );
+        return formatOutput(widget, row);
     }
+
     if (linkType === RELATION_TYPES.input) {
-        if (!widgetNameTextWrapped) {
+        if (!widget) {
             return '';
         }
-        return withStrong ? (
-            <React.Fragment>
-                {rowNameTextWrapped} {text} {widgetNameTextWrapped}
-            </React.Fragment>
-        ) : (
-            `${rowNameTextWrapped} ${text} ${widgetNameTextWrapped}`
-        );
+        return formatOutput(row, widget);
     }
+
     return text;
 };
 
