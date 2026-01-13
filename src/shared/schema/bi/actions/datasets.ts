@@ -1,5 +1,10 @@
 import {registry} from '../../../../server/registry';
-import {TIMEOUT_60_SEC, TIMEOUT_95_SEC, WORKBOOK_ID_HEADER} from '../../../constants';
+import {
+    DATASET_ID_HEADER,
+    TIMEOUT_60_SEC,
+    TIMEOUT_95_SEC,
+    WORKBOOK_ID_HEADER,
+} from '../../../constants';
 import {createAction, createTypedAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {
@@ -43,6 +48,7 @@ import type {
     GetPreviewArgs,
     GetPreviewResponse,
     GetSourceArgs,
+    GetSourceListingOptionsArgs,
     GetSourceListingOptionsResponse,
     GetSourceResponse,
     ImportDatasetArgs,
@@ -64,9 +70,13 @@ export const actions = {
         method: 'GET',
         path: ({connectionId}) =>
             `${API_V1}/connections/${filterUrlFragment(connectionId)}/info/sources`,
-        params: ({limit, offset, search_text, db_name, workbookId}, headers) => ({
+        params: ({limit, offset, search_text, db_name, workbookId, bindedDatasetId}, headers) => ({
             query: {limit, offset, db_name, search_text},
-            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+            headers: {
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                ...(bindedDatasetId ? {[DATASET_ID_HEADER]: bindedDatasetId} : {}),
+                ...headers,
+            },
         }),
         timeout: TIMEOUT_60_SEC,
     }),
@@ -87,20 +97,32 @@ export const actions = {
             }),
         },
     ),
-    getDbNames: createAction<GetDbNamesResponse, Pick<GetSourceArgs, 'connectionId'>>({
+    getDbNames: createAction<GetDbNamesResponse, GetSourceListingOptionsArgs>({
         method: 'GET',
         path: ({connectionId}) =>
             `${API_V1}/connections/${filterUrlFragment(connectionId)}/db_names`,
-        params: (_, headers) => ({headers}),
+        params: ({workbookId, bindedDatasetId}, headers) => ({
+            headers: {
+                ...headers,
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                ...(bindedDatasetId ? {[DATASET_ID_HEADER]: bindedDatasetId} : {}),
+            },
+        }),
     }),
     getSourceListingOptions: createAction<
         GetSourceListingOptionsResponse,
-        Pick<GetSourceArgs, 'connectionId'>
+        GetSourceListingOptionsArgs
     >({
         method: 'GET',
         path: ({connectionId}) =>
             `${API_V1}/connections/${filterUrlFragment(connectionId)}/info/source_listing_options`,
-        params: (_, headers) => ({headers}),
+        params: ({workbookId, bindedDatasetId}, headers) => ({
+            headers: {
+                ...headers,
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                ...(bindedDatasetId ? {[DATASET_ID_HEADER]: bindedDatasetId} : {}),
+            },
+        }),
     }),
     getFieldTypes: createAction<GetFieldTypesResponse>({
         method: 'GET',
@@ -188,12 +210,17 @@ export const actions = {
                           version,
                       )}/validators/schema`
                     : `${API_V1}/datasets/validators/dataset`,
-            params: ({data: {dataset, ...restData}, workbookId}, headers, {ctx}) => {
+            params: (
+                {data: {dataset, ...restData}, workbookId, bindedDatasetId},
+                headers,
+                {ctx},
+            ) => {
                 const resultDataset = prepareDatasetProperty(ctx, dataset);
                 return {
                     body: {...restData, dataset: resultDataset},
                     headers: {
                         ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                        ...(bindedDatasetId ? {[DATASET_ID_HEADER]: bindedDatasetId} : {}),
                         ...headers,
                     },
                 };

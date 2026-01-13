@@ -122,7 +122,15 @@ export type GetSourceArgs = {
     offset?: number;
     db_name?: string;
     search_text?: string;
-} & WorkbookIdArg;
+    bindedDatasetId?: string;
+    workbookId?: WorkbookId;
+};
+
+export type GetSourceListingOptionsArgs = {
+    connectionId: string;
+    bindedDatasetId?: string;
+    workbookId?: WorkbookId;
+};
 
 export type GetDatasetByVersionResponse = Dataset;
 
@@ -177,6 +185,7 @@ export type ValidateDatasetArgs = {
         updates: ValidateDatasetUpdate[];
     };
     workbookId?: WorkbookId;
+    bindedDatasetId?: string;
     rev_id?: string;
 } & DatasetId;
 
@@ -246,8 +255,8 @@ export type GetPreviewArgs = {
     dataset: Dataset['dataset'];
     version: DatasetVersion;
     limit?: number;
-} & DatasetId &
-    WorkbookIdArg;
+    workbookId?: WorkbookId;
+} & DatasetId;
 
 export type ValidateDatasetFormulaErrorResponse = {
     code: string;

@@ -82,10 +82,14 @@ interface GetConnectionDataRequestProps {
     entry?: GetEntryResponse;
     flattenConnectors: ConnectorItem[];
     rev_id?: string;
+    bindedWorkbookId?: string | null;
+    bindedDatasetId?: string | null;
 }
 
 async function getConnectionDataRequest({
     entry,
+    bindedWorkbookId,
+    bindedDatasetId,
     flattenConnectors,
     rev_id,
 }: GetConnectionDataRequestProps) {
@@ -98,11 +102,12 @@ async function getConnectionDataRequest({
         if (isRevisionsSupported) {
             revId = rev_id;
         }
-        ({connectionData, error: connectionError} = await api.fetchConnectionData(
-            entry.entryId,
-            entry?.workbookId ?? null,
+        ({connectionData, error: connectionError} = await api.fetchConnectionData({
+            connectionId: entry.entryId,
+            workbookId: entry?.workbookId || bindedWorkbookId,
+            bindedDatasetId,
             revId,
-        ));
+        }));
     }
     return {connectionData, connectionError};
 }
@@ -113,12 +118,14 @@ export function setPageData({
     collectionId,
     rev_id,
     bindedWorkbookId,
+    bindedDatasetId,
 }: {
     entryId?: string | null;
     workbookId?: string;
     collectionId?: string;
     rev_id?: string;
     bindedWorkbookId?: string | null;
+    bindedDatasetId?: string | null;
 }) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         dispatch(setPageLoading({pageLoading: true}));
@@ -131,15 +138,21 @@ export function setPageData({
         let connectionError: DataLensApiError | undefined;
 
         if (entryId) {
-            ({entry, error: entryError} = await api.fetchEntry(entryId));
+            ({entry, error: entryError} = await api.fetchEntry({
+                entryId,
+                bindedDatasetId,
+                bindedWorkbookId,
+            }));
             ({connectionData, connectionError} = await getConnectionDataRequest({
                 entry,
                 flattenConnectors,
+                bindedWorkbookId,
+                bindedDatasetId,
                 rev_id,
             }));
         }
 
-        if (entry?.collectionId && bindedWorkbookId) {
+        if (entry?.collectionId && bindedWorkbookId && !bindedDatasetId) {
             const {delegation, error: delegationError} = await api.fetchSharedEntryDelegation(
                 entry.entryId,
                 bindedWorkbookId,
@@ -485,7 +498,7 @@ function updateConnection() {
         );
         let updatedEntry: GetEntryResponse | undefined;
         if (!error && entry?.entryId) {
-            const response = await api.fetchEntry(entry.entryId);
+            const response = await api.fetchEntry({entryId: entry.entryId});
             updatedEntry = response.entry;
         }
         batch(() => {

@@ -52,6 +52,7 @@ interface ErrorContentProps {
         key: string;
         type: string;
         workbookId?: string;
+        collectionId?: string;
     };
     noControls?: boolean;
     showDebugInfo?: boolean;
@@ -213,8 +214,13 @@ class ErrorContent extends React.PureComponent<ErrorContentProps> {
 
     renderUnlock() {
         const {entryMeta, type} = this.props;
+        const isShowAccessRightsBtn =
+            type === ErrorContentTypes.NO_ENTRY_ACCESS &&
+            entryMeta &&
+            !entryMeta.workbookId &&
+            !entryMeta.collectionId;
 
-        if (type === ErrorContentTypes.NO_ENTRY_ACCESS && entryMeta && !entryMeta.workbookId) {
+        if (isShowAccessRightsBtn) {
             return (
                 <React.Fragment>
                     <Button
