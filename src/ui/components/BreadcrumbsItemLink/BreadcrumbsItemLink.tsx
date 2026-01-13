@@ -4,7 +4,7 @@ import type {BreadcrumbsItemProps} from '@gravity-ui/uikit';
 import {BreadcrumbsItem} from '@gravity-ui/uikit';
 import {useHistory} from 'react-router';
 
-interface BreadcrumbsItemLinkProps extends BreadcrumbsItemProps {
+interface BreadcrumbsItemLinkProps extends Omit<BreadcrumbsItemProps, 'href'> {
     to?: string;
 }
 

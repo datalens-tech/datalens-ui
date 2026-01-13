@@ -23,7 +23,7 @@ import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {selectCurrentTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
-import {isGroupItemVisibleOnTab} from 'ui/units/dash/utils/selectors';
+import {isGroupItemVisibleOnTab, isItemGlobal} from 'ui/units/dash/utils/selectors';
 
 import {TabItemWrapper} from './TabItemWrapper/TabItemWrapper';
 
@@ -92,6 +92,17 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
 
     const [defaultTabIndex, setDefaultTabIndex] = React.useState(selectorsGroup.group.length + 1);
 
+    const isGlobal = React.useMemo(() => {
+        return isItemGlobal({
+            type: DashTabItemType.GroupControl,
+            data: {
+                group: selectorsGroup.group,
+                impactType: selectorsGroup.impactType,
+                impactTabsIds: selectorsGroup.impactTabsIds,
+            },
+        });
+    }, [selectorsGroup.group, selectorsGroup.impactType, selectorsGroup.impactTabsIds]);
+
     const updateSelectorsList = React.useCallback(
         ({items, selectedItemIndex, action}: UpdateState<SelectorDialogState>) => {
             if (action === TabActionType.Skipped) {
@@ -140,6 +151,7 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
                 tabId: currentTabId,
                 groupImpactType: selectorsGroup.impactType,
                 groupImpactTabsIds: selectorsGroup.impactTabsIds,
+                isGlobal,
             });
             const impactType =
                 item.impactType === undefined || item.impactType === 'asGroup'
@@ -152,7 +164,7 @@ export const GroupControlSidebar: React.FC<GroupControlSidebarProps> = ({handleC
                 </TabItemWrapper>
             );
         },
-        [currentTabId, selectorsGroup.impactType, selectorsGroup.impactTabsIds],
+        [currentTabId, selectorsGroup.impactType, selectorsGroup.impactTabsIds, isGlobal],
     );
 
     return (

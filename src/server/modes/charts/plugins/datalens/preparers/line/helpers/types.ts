@@ -75,6 +75,7 @@ export interface GetLineKeyArgs {
     x2AxisValue: string | number | Date;
     isX2Axis: boolean;
     isMultiAxis: boolean;
+    isMultiLineWithShape?: boolean;
     shownTitle: string;
     segmentName: string | undefined | null;
 }

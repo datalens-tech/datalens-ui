@@ -13,14 +13,14 @@ export const getIsWorkbookItem = (item: StructureItem): item is ExtendedWorkbook
     }
 };
 
-export const getItemKey = (item: StructureItem) => {
+export const getItemId = (item: StructureItem) => {
     switch (item.entity) {
         case CollectionItemEntities.COLLECTION:
             return item.collectionId;
         case CollectionItemEntities.WORKBOOK:
             return item.workbookId;
         case CollectionItemEntities.ENTRY:
-            return item.key;
+            return item.entryId;
         default:
             return getIsWorkbookItem(item) ? item.workbookId : item.collectionId;
     }
@@ -49,3 +49,6 @@ export const getItemLink = (item: StructureItem) => {
                 : `${COLLECTIONS_PATH}/${item.collectionId}`;
     }
 };
+
+// TODO remove after CHARTS-11999
+export const getSharedEntryMockText = (..._: unknown[]) => '';

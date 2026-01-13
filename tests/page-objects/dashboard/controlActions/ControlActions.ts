@@ -1,4 +1,4 @@
-import {Page} from '@playwright/test';
+import {Page, expect} from '@playwright/test';
 
 import {
     ControlQA,
@@ -8,25 +8,27 @@ import {
     DialogQLParameterQA,
     NavigationInputQA,
     TabMenuQA,
-} from '../../../src/shared/constants';
-import DialogControl from '../../page-objects/common/DialogControl';
-import {clickGSelectOption, fillDatePicker, getControlByTitle, slct} from '../../utils';
+} from '../../../../src/shared/constants';
+import DialogControl from '../../common/DialogControl';
+import {clickGSelectOption, fillDatePicker, getControlByTitle, slct} from '../../../utils';
 
-import {BasePageProps} from '../BasePage';
+import {BasePageProps} from '../../BasePage';
 
 import {
     DashTabItemControlSourceType,
     DialogControlQa,
     TitlePlacement,
     TitlePlacements,
-} from '../../../src/shared';
+} from '../../../../src/shared';
+import type {ImpactType} from '../../../../src/shared/types/dash';
 
 import {
     DashboardAddWidgetQa,
     DashboardDialogControl,
     DashkitQa,
-} from '../../../src/shared/constants/qa/dash';
-import {DatasetParams, ListItemByParams} from '../../page-objects/types';
+} from '../../../../src/shared/constants/qa/dash';
+import {DatasetParams, ListItemByParams} from '../../types';
+import {IMPACT_TYPE_QA_BY_VALUE} from './constants';
 
 export enum SelectorElementType {
     List = 'list',
@@ -50,6 +52,9 @@ export type SelectorSettings = {
     items?: string[];
     defaultValue?: string;
     required?: boolean;
+    impactType?: ImpactType;
+    impactTabsIds?: string[];
+    impactTabsIndexes?: number[];
 };
 
 type GroupSelectorOptions = {
@@ -312,6 +317,42 @@ class ControlActions {
             await this.page
                 .locator(`${slct(DialogControlQa.valueInput)} input`)
                 .fill(setting.defaultValue);
+        }
+
+        // Handle impact type settings
+        if (setting.impactType) {
+            await this.dialogControl.impactTypeSelector.click();
+            await this.dialogControl.impactTypeSelector.selectListItemByQa(
+                slct(IMPACT_TYPE_QA_BY_VALUE[setting.impactType]),
+            );
+
+            // If impact type is "selectedTabs", select the specified tabs
+            if (
+                setting.impactType === 'selectedTabs' &&
+                (setting.impactTabsIds || setting.impactTabsIndexes)
+            ) {
+                await expect(this.dialogControl.impactTabsIdsSelector.getLocator()).toBeVisible();
+                await this.dialogControl.impactTabsIdsSelector.click();
+
+                if (setting.impactTabsIds) {
+                    // Select each tab from the list
+                    for (const tabId of setting.impactTabsIds) {
+                        await this.dialogControl.impactTabsIdsSelector.selectListItemByName(tabId);
+                    }
+                }
+
+                if (setting.impactTabsIndexes) {
+                    // Select each tab from the list
+                    for (const tabIndex of setting.impactTabsIndexes) {
+                        await this.dialogControl.impactTabsIdsSelector.selectListItemByIdx(
+                            tabIndex,
+                        );
+                    }
+                }
+
+                // Close the multi-select popup
+                await this.page.keyboard.press('Escape');
+            }
         }
     }
 

@@ -68,6 +68,9 @@ export const KeyCodes = {
 // and a DL structure with default values must be guaranteed to access, for example, DL.UserSettings.theme,
 // and not DL.USER_THEME (nevertheless, with frequent access, such a thing may be justified)
 export const DL = {
+    get IS_WORKBOOKS_ENABLED() {
+        return window.DL.tenantMode?.workbooksEnabled;
+    },
     get SERVICE_NAME() {
         return window.DL.serviceName;
     },
@@ -268,7 +271,9 @@ export const DATALENS_DARK_THEME_MONACO = 'vs-dark-datalens';
 export const DATALENS_DARK_HC_THEME_MONACO = 'vs-dark-hc-datalens';
 
 export const PRODUCT_NAME = 'DataLens';
+// TODO: remove CHARTS-11919
 export const REBRANDING_PRODUCT_NAME = `Yandex ${PRODUCT_NAME}`;
+export const FULL_PRODUCT_NAME = `Yandex ${PRODUCT_NAME}`;
 
 export const URL_OPTIONS = {
     THEME: '_theme',
@@ -335,7 +340,9 @@ export const URL_QUERY = {
     OPEN_DASH_INFO: '_opened_info',
     UNRELEASED: 'unreleased',
     LOCAL_CONFIG: '_use_local_config',
-    BINDED_WOKRBOOK: 'bindedWorkbookId',
+    BINDED_WORKBOOK: 'bindedWorkbookId',
+    BINDED_DATASET_WOKRBOOK_ID: 'bindedDatasetWorkbookId',
+    BINDED_DATASET: 'bindedDatasetId',
 };
 
 const GRADIENT_ICONS = {
