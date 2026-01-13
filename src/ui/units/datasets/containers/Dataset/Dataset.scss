@@ -57,4 +57,10 @@
     &__shared-entry-icon {
         margin-left: var(--g-spacing-2);
     }
+
+    &__action-panel {
+        &_readonly {
+            background-color: var(--g-color-base-misc-medium);
+        }
+    }
 }

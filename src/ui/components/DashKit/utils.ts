@@ -314,44 +314,59 @@ export function useTextColorStyles(oldTextColor?: string, textColorSettings?: Co
     }, [oldTextColor, textColorSettings, theme]);
 }
 
+export function useBorderRadiusStyles(borderRadius?: number, globalBorderRadius?: number) {
+    return React.useMemo(() => {
+        return {
+            borderRadius: borderRadius ?? globalBorderRadius,
+        };
+    }, [borderRadius, globalBorderRadius]);
+}
+
+interface WidgetVisualSettings {
+    background?: OldBackgroundSettings | undefined;
+    backgroundSettings?: BackgroundSettings | undefined;
+    borderRadius?: number | undefined;
+}
+
 export function usePreparedWrapSettings({
-    widgetBackground,
-    globalBackground,
-    widgetBackgroundSettings,
-    globalBackgroundSettings,
+    ownWidgetSettings,
+    globalWidgetSettings,
     additionalStyle,
     defaultOldColor,
 }: {
-    widgetBackground: OldBackgroundSettings | undefined;
-    globalBackground: OldBackgroundSettings | undefined;
-    widgetBackgroundSettings: BackgroundSettings | undefined;
-    globalBackgroundSettings: BackgroundSettings | undefined;
+    ownWidgetSettings: WidgetVisualSettings;
+    globalWidgetSettings: WidgetVisualSettings;
     additionalStyle?: CSSProperties;
     defaultOldColor: string;
 }) {
     const theme = useThemeType();
+    const borderRadiusStyles = useBorderRadiusStyles(
+        ownWidgetSettings.borderRadius,
+        globalWidgetSettings.borderRadius,
+    );
     return React.useMemo(() => {
         return getPreparedWrapSettings(
             getResultedBgColor(
-                widgetBackground,
+                ownWidgetSettings.background,
                 theme,
                 defaultOldColor,
-                widgetBackgroundSettings,
+                ownWidgetSettings.backgroundSettings,
             ) ??
                 getResultedBgColor(
-                    globalBackground,
+                    globalWidgetSettings.background,
                     theme,
                     defaultOldColor,
-                    globalBackgroundSettings,
+                    globalWidgetSettings.backgroundSettings,
                 ),
-            additionalStyle,
+            {...borderRadiusStyles, ...additionalStyle},
         );
     }, [
-        widgetBackground,
-        globalBackground,
-        widgetBackgroundSettings,
-        globalBackgroundSettings,
+        ownWidgetSettings.background,
+        globalWidgetSettings.background,
+        ownWidgetSettings.backgroundSettings,
+        globalWidgetSettings.backgroundSettings,
         additionalStyle,
+        borderRadiusStyles,
         defaultOldColor,
         theme,
     ]);

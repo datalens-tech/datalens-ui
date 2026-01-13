@@ -2,10 +2,6 @@
 
 .aside-header-logo-text {
     &__title {
-        @include text-body-2;
-    }
-
-    &__title_rebranding {
         @include text-subheader-2;
     }
 

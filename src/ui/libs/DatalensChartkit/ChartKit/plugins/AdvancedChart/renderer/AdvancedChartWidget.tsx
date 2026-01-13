@@ -20,7 +20,7 @@ import type {AdvancedChartWidgetProps, WidgetDimensions} from '../types';
 
 import {Tooltip} from './components/Tooltip/Tooltip';
 import type {PointPosition, TooltipState} from './types';
-import {IS_TOUCH_ENABLED} from './utils';
+import {IS_TOUCH_ENABLED, validateWidgetData} from './utils';
 
 import './AdvancedChartWidget.scss';
 
@@ -35,6 +35,8 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
         onChange,
         data: {data: originalData},
     } = props;
+
+    React.useMemo(() => validateWidgetData(originalData), [originalData]);
 
     const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [id]);
     Performance.mark(generatedId);

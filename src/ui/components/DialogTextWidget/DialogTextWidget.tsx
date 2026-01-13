@@ -4,7 +4,7 @@ import {FormRow} from '@gravity-ui/components';
 import type {RealTheme} from '@gravity-ui/uikit';
 import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {i18n} from 'i18n';
+import {I18n, i18n} from 'i18n';
 import type {DashTabItemText} from 'shared';
 import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA, Feature} from 'shared';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
@@ -13,15 +13,18 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
 import {TextEditor} from '../TextEditor/TextEditor';
+import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 
 import './DialogTextWidget.scss';
 
+const i18nCommon = I18n.keyset('dash.dashkit-plugin-common.view');
 const b = block('dialog-text');
 
 export interface DialogTextWidgetFeatureProps {
     enableAutoheight?: boolean;
     enableCustomBgColorSelector?: boolean;
     enableSeparateThemeColorSelector?: boolean;
+    enableBorderRadiusSelector?: boolean;
 }
 
 export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {
@@ -39,6 +42,7 @@ interface DialogTextWidgetState {
     text?: string;
     prevVisible?: boolean;
     autoHeight?: boolean;
+    borderRadius?: number;
 }
 
 const INPUT_TEXT_ID = 'widgetTextField';
@@ -67,6 +71,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         enableAutoheight = true,
         enableCustomBgColorSelector = false,
         enableSeparateThemeColorSelector = true,
+        enableBorderRadiusSelector = false,
         openedItemData = DEFAULT_OPENED_ITEM_DATA,
         dialogIsVisible,
         closeDialog,
@@ -79,6 +84,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
     const [state, setState] = React.useState<DialogTextWidgetState>({
         text: openedItemData.text,
         autoHeight: Boolean(openedItemData.autoHeight),
+        borderRadius: openedItemData.borderRadius,
     });
     const {
         oldBackgroundColor,
@@ -159,12 +165,13 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
     }, []);
 
     const onApply = React.useCallback(() => {
-        const {text, autoHeight} = state;
+        const {text, autoHeight, borderRadius} = state;
 
         setItemData({
             data: {
                 text,
                 autoHeight,
+                borderRadius,
                 ...resultedBackgroundSettings,
             },
         });
@@ -175,7 +182,11 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         setState((prevState) => ({...prevState, autoHeight: !prevState.autoHeight}));
     }, []);
 
-    const {text, autoHeight} = state;
+    const setBorderRadius = React.useCallback((value: number | undefined) => {
+        setState((prevState) => ({...prevState, borderRadius: value}));
+    }, []);
+
+    const {text, autoHeight, borderRadius} = state;
 
     return (
         <Dialog
@@ -198,23 +209,26 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
                         controlRef={textEditorRef}
                     />
                 </FormRow>
-                <FormRow
-                    className={b('row')}
-                    label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
-                >
+                <FormRow className={b('row')} label={i18nCommon('label_background-checkbox')}>
                     <PaletteBackground
                         oldColor={oldBackgroundColor}
                         onSelectOldColor={setOldBackgroundColor}
                         color={backgroundColorSettings}
                         onSelect={setBackgroundColorSettings}
                         enableCustomBgColorSelector={enableCustomBgColorSelector}
+                        enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
+                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                    <FormRow className={b('row')} label={i18nCommon('label_border-radius')}>
+                        <WidgetRoundingsInput value={borderRadius} onUpdate={setBorderRadius} />
+                    </FormRow>
+                )}
                 {enableAutoheight && (
                     <FormRow
                         className={b('row')}
                         fieldId={INPUT_AUTOHEIGHT_ID}
-                        label={i18n('dash.dashkit-plugin-common.view', 'label_autoheight-checkbox')}
+                        label={i18nCommon('label_autoheight-checkbox')}
                     >
                         <Checkbox
                             id={INPUT_AUTOHEIGHT_ID}

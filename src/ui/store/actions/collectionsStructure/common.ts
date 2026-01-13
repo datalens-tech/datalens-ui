@@ -37,6 +37,12 @@ import {
     MOVE_WORKBOOK_LOADING,
     MOVE_WORKBOOK_SUCCESS,
     MOVE_WORKBOOK_FAILED,
+    MOVE_SHARED_ENTRY_LOADING,
+    MOVE_SHARED_ENTRY_SUCCESS,
+    MOVE_SHARED_ENTRY_FAILED,
+    MOVE_SHARED_ENTRIES_LOADING,
+    MOVE_SHARED_ENTRIES_SUCCESS,
+    MOVE_SHARED_ENTRIES_FAILED,
     COPY_WORKBOOK_LOADING,
     COPY_WORKBOOK_SUCCESS,
     COPY_WORKBOOK_FAILED,
@@ -55,6 +61,9 @@ import {
     DELETE_WORKBOOKS_FAILED,
     DELETE_WORKBOOKS_LOADING,
     DELETE_WORKBOOKS_SUCCESS,
+    DELETE_SHARED_ENTRIES_FAILED,
+    DELETE_SHARED_ENTRIES_LOADING,
+    DELETE_SHARED_ENTRIES_SUCCESS,
     DELETE_COLLECTIONS_FAILED,
     DELETE_COLLECTIONS_LOADING,
     DELETE_COLLECTIONS_SUCCESS,
@@ -70,6 +79,9 @@ import type {
     MoveCollectionsResponse,
     MoveWorkbooksResponse,
     MoveWorkbookResponse,
+    MoveEntryResponse,
+    MoveSharedEntriesResponse,
+    DeleteSharedEntriesResponse,
     CollectionWithPermissions,
     CopyWorkbookResponse,
     CreateWorkbookResponse,
@@ -192,15 +204,6 @@ export const getCollectionBreadcrumbs = ({collectionId}: {collectionId: string})
             })
             .catch((error: Error) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
-
-                if (!isCanceled) {
-                    dispatch(
-                        showToast({
-                            title: error.message,
-                            error,
-                        }),
-                    );
-                }
 
                 dispatch({
                     type: GET_COLLECTION_BREADCRUMBS_FAILED,
@@ -629,6 +632,62 @@ export const deleteCollections = ({collectionIds}: {collectionIds: string[]}) =>
     };
 };
 
+type DeleteSharedEntriesLoadingAction = {
+    type: typeof DELETE_SHARED_ENTRIES_LOADING;
+};
+type DeleteSharedEntriesSuccessAction = {
+    type: typeof DELETE_SHARED_ENTRIES_SUCCESS;
+    data: DeleteSharedEntriesResponse;
+};
+type DeleteSharedEntriesFailedAction = {
+    type: typeof DELETE_SHARED_ENTRIES_FAILED;
+    error: Error | null;
+};
+export type DeleteSharedEntriesAction =
+    | DeleteSharedEntriesLoadingAction
+    | DeleteSharedEntriesSuccessAction
+    | DeleteSharedEntriesFailedAction;
+
+export const deleteSharedEntries = ({entryIds}: {entryIds: string[]}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: DELETE_SHARED_ENTRIES_LOADING,
+        });
+
+        return getSdk()
+            .sdk.us.deleteSharedEntries({
+                entryIds,
+            })
+            .then((data) => {
+                dispatch({
+                    type: DELETE_SHARED_ENTRIES_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().sdk.isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/deleteSharedEntries failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: DELETE_SHARED_ENTRIES_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
 type MoveCollectionsLoadingAction = {
     type: typeof MOVE_COLLECTIONS_LOADING;
 };
@@ -876,6 +935,133 @@ export const moveWorkbook = ({
 
                 dispatch({
                     type: MOVE_WORKBOOK_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
+type MoveSharedEntryLoadingAction = {
+    type: typeof MOVE_SHARED_ENTRY_LOADING;
+};
+type MoveSharedEntrySuccessAction = {
+    type: typeof MOVE_SHARED_ENTRY_SUCCESS;
+    data: MoveEntryResponse;
+};
+type MoveSharedEntryFailedAction = {
+    type: typeof MOVE_SHARED_ENTRY_FAILED;
+    error: Error | null;
+};
+export type MoveSharedEntryAction =
+    | MoveSharedEntryLoadingAction
+    | MoveSharedEntrySuccessAction
+    | MoveSharedEntryFailedAction;
+
+export const moveSharedEntry = ({
+    entryId,
+    collectionId,
+    name,
+}: {
+    entryId: string;
+    collectionId: string;
+    name?: string;
+}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: MOVE_SHARED_ENTRY_LOADING,
+        });
+        return getSdk()
+            .sdk.us.moveSharedEntry({
+                entryId,
+                collectionId: collectionId,
+                name,
+            })
+            .then((data) => {
+                dispatch({
+                    type: MOVE_SHARED_ENTRY_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().sdk.isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/moveSharedEntry failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: MOVE_SHARED_ENTRY_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
+type MoveEntriesLoadingAction = {
+    type: typeof MOVE_SHARED_ENTRIES_LOADING;
+};
+type MoveEntriesSuccessAction = {
+    type: typeof MOVE_SHARED_ENTRIES_SUCCESS;
+    data: MoveSharedEntriesResponse;
+};
+type MoveEntriesFailedAction = {
+    type: typeof MOVE_SHARED_ENTRIES_FAILED;
+    error: Error | null;
+};
+export type MoveEntriesAction =
+    | MoveEntriesLoadingAction
+    | MoveEntriesSuccessAction
+    | MoveEntriesFailedAction;
+
+export const moveSharedEntries = ({
+    entryIds,
+    collectionId,
+}: {
+    entryIds: string[];
+    collectionId: string;
+}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: MOVE_SHARED_ENTRIES_LOADING,
+        });
+        return getSdk()
+            .sdk.us.moveSharedEntries({
+                entryIds,
+                collectionId: collectionId,
+            })
+            .then((data) => {
+                dispatch({
+                    type: MOVE_SHARED_ENTRIES_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().sdk.isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/moveSharedEntries failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: MOVE_SHARED_ENTRIES_FAILED,
                     error: isCanceled ? null : error,
                 });
 

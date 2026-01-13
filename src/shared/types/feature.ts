@@ -79,16 +79,12 @@ export enum Feature {
     EnableExportSettings = 'EnableExportSettings',
     /** Enable updating dataset settings by action ('load_preview_by_default' | 'template_enabled' | 'data_export_forbidden') */
     EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
-    /** Enable new favicon, icon, theme, decorations and illustrations */
-    EnableDLRebranding = 'EnableDLRebranding',
     /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
     GravityChartsForPieAndTreemap = 'GravityChartsForPieAndTreemap',
     /** Use GravityUI Charts as the default library for some wizard visualizations(scatter and bar-y) */
     GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
     /** Use GravityUI Charts as the default library for some wizard visualizations(line, area and bar-x) */
     GravityChartsForLineAreaAndBarX = 'GravityChartsForLineAreaAndBarX',
-    /** Enable pagination in dataset sources table */
-    EnableDatasetSourcesPagination = 'EnableDatasetSourcesPagination',
     /** Enable shared connections and datasets */
     EnableSharedEntries = 'EnableSharedEntries',
 
@@ -104,8 +100,11 @@ export enum Feature {
     EnableDashColorPickersByTheme = 'EnableDashColorPickersByTheme',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
+
     /** Enable new access dialog (AccessDialog) */
     EnableNewAccessDialog = 'EnableNewAccessDialog',
+    /** Use axios instead of request-promise-native for HTTP requests in charts-engine */
+    UseAxiosRequest = 'UseAxiosRequest',
 }
 
 export type FeatureConfig = Record<string, boolean>;

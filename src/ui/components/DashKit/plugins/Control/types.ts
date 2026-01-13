@@ -13,6 +13,8 @@ import type {
     ResponseSuccessControls,
 } from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 
+import type {CommonGlobalWidgetSettings} from '../../DashKit';
+
 export type ControlType = 'select' | 'input' | 'datepicker' | 'range-datepicker' | 'checkbox';
 export type LoadStatus = 'pending' | 'success' | 'fail' | 'initial' | 'destroyed';
 
@@ -62,6 +64,7 @@ export type GetDistinctsOptions = {
 };
 
 export interface ControlSettings {
+    globalWidgetSettings?: Omit<CommonGlobalWidgetSettings, 'background' | 'backgroundSettings'>;
     getDistincts?: (
         params: GetDistinctsApiV2Args,
         headers?: GetDistinctsApiV2InfoHeadersArg,

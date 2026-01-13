@@ -5,19 +5,14 @@ import swaggerUi from 'swagger-ui-express';
 
 import {objectKeys} from '../../../../shared';
 import {registry} from '../../../registry';
-import {
-    OPEN_API_VERSION_HEADER_COMPONENT_NAME,
-    PUBLIC_API_LATEST_VERSION,
-    PUBLIC_API_VERSION_HEADER,
-} from '../constants';
+import {OPEN_API_VERSION_HEADER_COMPONENT_NAME, PUBLIC_API_VERSION_HEADER} from '../constants';
 
 export const initPublicApiSwagger = (app: ExpressKit) => {
     const {config} = app;
 
-    const installationText = `Installation – <b>${config.appInstallation}</b>`;
-    const envText = `Env – <b>${config.appEnv}</b>`;
-
     const {baseConfig, securitySchemes, biOpenapiSchemas} = registry.getPublicApiConfig();
+
+    const latestVersion = Math.max(...Object.keys(baseConfig).map(Number));
 
     setImmediate(() => {
         const versionToDocument = Object.entries(baseConfig).reduce<
@@ -54,7 +49,6 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                 info: {
                     version,
                     title: `DataLens API `,
-                    description: [installationText, envText].join('<br />'),
                 },
                 servers: [{url: '/'}],
             };
@@ -76,7 +70,7 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                 ...biOpenapiSchemas,
             };
             const versionPath = `/${version}/`;
-            const isLatest = version === PUBLIC_API_LATEST_VERSION;
+            const isLatest = version === latestVersion;
 
             const addSwaggerRoutes = (basePath: string) => {
                 const jsonPath = `${basePath}json/`;
@@ -90,26 +84,21 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                     return res.json(openApiDocument);
                 });
 
-                const swaggerOptions = {
-                    url: jsonPath,
-                    validatorUrl: null,
-                    tagsSorter: 'alpha',
-                    operationsSorter: 'alpha',
+                const options = {
+                    customfavIcon: config.faviconUrl,
+                    customSiteTitle: 'DataLens API',
+                    customCss: '.swagger-ui .topbar { display: none }',
+                    swaggerOptions: {
+                        url: jsonPath,
+                        validatorUrl: null,
+                        tagsSorter: 'alpha',
+                        operationsSorter: 'alpha',
+                    },
                 };
 
-                app.express.use(
-                    basePath,
-                    swaggerUi.serveFiles(undefined, {
-                        swaggerOptions,
-                    }),
-                );
+                app.express.use(basePath, swaggerUi.serveFiles(undefined, options));
 
-                app.express.get(
-                    basePath,
-                    swaggerUi.setup(null, {
-                        swaggerOptions,
-                    }),
-                );
+                app.express.get(basePath, swaggerUi.setup(null, options));
             };
 
             addSwaggerRoutes(versionPath);

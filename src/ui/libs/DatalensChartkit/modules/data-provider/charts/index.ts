@@ -622,11 +622,13 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         contextHeaders,
         requestId,
         requestCancellation,
+        widgetElement,
     }: {
         props: ChartsProps;
         contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
+        widgetElement?: Element;
     }) {
         const loaded = await this.load({
             data: props,
@@ -648,7 +650,11 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             }
 
             const processed = isResponseSuccessNode(loaded)
-                ? await processNode<ResponseSuccessNode, Widget>(loaded, this.settings.noJsonFn)
+                ? await processNode<ResponseSuccessNode, Widget>({
+                      loaded,
+                      noJsonFn: this.settings.noJsonFn,
+                      widgetElement,
+                  })
                 : // @ts-ignore Types from the js file are incorrect
                   processWizard(loaded);
 
@@ -744,7 +750,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         });
 
         if (loaded) {
-            return processNode<ResponseSuccessControls, ControlsOnlyWidget>(loaded);
+            return processNode<ResponseSuccessControls, ControlsOnlyWidget>({loaded});
         }
 
         return null;

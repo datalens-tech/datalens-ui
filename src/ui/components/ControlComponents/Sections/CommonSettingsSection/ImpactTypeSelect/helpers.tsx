@@ -9,9 +9,11 @@ import {IMPACT_TYPE_OPTION_VALUE} from './constants';
 export const getImpactTypeByValue = ({
     selectorImpactType,
     hasMultipleSelectors,
+    isGroupSettings,
 }: {
     selectorImpactType?: ImpactType;
     hasMultipleSelectors?: boolean;
+    isGroupSettings?: boolean;
 }) => {
     switch (selectorImpactType) {
         case IMPACT_TYPE_OPTION_VALUE.ALL_TABS:
@@ -19,10 +21,23 @@ export const getImpactTypeByValue = ({
         case IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB:
             return selectorImpactType;
         default:
-            return hasMultipleSelectors
+            return hasMultipleSelectors && !isGroupSettings
                 ? IMPACT_TYPE_OPTION_VALUE.AS_GROUP
                 : IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB;
     }
+};
+
+export const getCurrentImpactTabsIds = ({
+    selectorImpactTabsIds,
+    currentTabId,
+}: {
+    selectorImpactTabsIds?: ImpactTabsIds;
+    currentTabId?: string;
+}) => {
+    if (selectorImpactTabsIds) {
+        return selectorImpactTabsIds;
+    }
+    return currentTabId ? [currentTabId] : [];
 };
 
 export const getIconByImpactType = (impactType: ImpactType | string) => {
@@ -33,22 +48,6 @@ export const getIconByImpactType = (impactType: ImpactType | string) => {
         default:
             return undefined;
     }
-};
-
-export const getInitialImpactTabsIds = ({
-    isGroupSettings,
-    groupImpactTabsIds,
-    selectorImpactTabsIds,
-}: {
-    isGroupSettings?: boolean;
-    groupImpactTabsIds?: ImpactTabsIds;
-    selectorImpactTabsIds?: ImpactTabsIds;
-}) => {
-    if (isGroupSettings) {
-        return groupImpactTabsIds || [];
-    }
-
-    return selectorImpactTabsIds || [];
 };
 
 export const getImpactTypeValidation = ({
