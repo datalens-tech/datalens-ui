@@ -39,6 +39,7 @@ function colorStringToHex(color: string) {
 
 type ColorPaletteProps = {
     onSelect: (val: string) => void;
+    onBlur?: () => void;
     selectedColor: string;
     enableCustomBgColorSelector?: boolean;
     mainPresetOptions: string[];
@@ -52,6 +53,7 @@ export function ColorPalette(props: ColorPaletteProps) {
     const {
         selectedColor,
         onSelect,
+        onBlur,
         enableCustomBgColorSelector,
         mainPresetOptions,
         paletteOptions,
@@ -194,6 +196,7 @@ export function ColorPalette(props: ColorPaletteProps) {
                             onSelect(val);
                         }
                     }}
+                    onBlur={onBlur}
                     theme={theme}
                 />
             )}
