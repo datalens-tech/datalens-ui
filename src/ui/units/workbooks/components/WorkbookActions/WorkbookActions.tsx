@@ -211,8 +211,8 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
             openDialog({
                 id: DIALOG_ACCESS,
                 props: {
-                    workbookId: workbook?.workbookId ?? undefined,
-                    collectionId: workbook?.collectionId ?? undefined,
+                    workbookId: workbook.workbookId,
+                    collectionId: workbook.collectionId || undefined,
                     resourceTitle: workbook.title,
                     canUpdateAccessBindings: workbook.permissions.updateAccessBindings,
                     onClose: () => {

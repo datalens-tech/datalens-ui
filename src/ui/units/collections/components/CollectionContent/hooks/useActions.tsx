@@ -149,9 +149,9 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                     action: () => {
                         if (isNewAccessDialogEnabled) {
                             openAccessDialog(dispatch, {
-                                collectionId: item?.collectionId ?? undefined,
-                                resourceTitle: item?.title,
-                                canUpdateAccessBindings: item?.permissions.updateAccessBindings,
+                                collectionId: item.collectionId,
+                                resourceTitle: item.title,
+                                canUpdateAccessBindings: item.permissions.updateAccessBindings,
                             });
                         } else {
                             dispatch(
@@ -336,10 +336,10 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                     action: () => {
                         if (isNewAccessDialogEnabled) {
                             openAccessDialog(dispatch, {
-                                workbookId: item?.workbookId ?? undefined,
-                                collectionId: item?.collectionId ?? undefined,
-                                resourceTitle: item?.title,
-                                canUpdateAccessBindings: item?.permissions.updateAccessBindings,
+                                workbookId: item.workbookId,
+                                collectionId: item?.collectionId || undefined,
+                                resourceTitle: item.title,
+                                canUpdateAccessBindings: item.permissions.updateAccessBindings,
                             });
                         } else {
                             dispatch(
