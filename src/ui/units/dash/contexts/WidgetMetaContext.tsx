@@ -107,11 +107,11 @@ export const WidgetMetaProvider: React.FC<MetaCallbackProviderProps> = ({childre
     return <WidgetMetaContext.Provider value={contextValue}>{children}</WidgetMetaContext.Provider>;
 };
 
-export const useWidgetMetaContext = (): WidgetMetaContextValue => {
+export const useWidgetMetaContext = (): WidgetMetaContextValue | null => {
     const context = React.useContext(WidgetMetaContext);
 
     if (!context) {
-        throw new Error('useWidgetContext must be used within a WidgetMetaProvider');
+        return null;
     }
 
     return context;
