@@ -143,10 +143,12 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
             : undefined;
 
         let seriesName = graph.title;
-        if (graph.colorGuid) {
-            if (hasMultipleLayers) {
-                seriesName = `${graph.measureFieldTitle}: ${graph.title}`;
-            }
+        if (graph.colorGuid && hasMultipleLayers) {
+            seriesName = `${graph.measureFieldTitle}: ${graph.title}`;
+        }
+
+        if (graph.custom?.segmentTitle) {
+            seriesName = `${graph.custom.segmentTitle}: ${seriesName}`;
         }
 
         return {
