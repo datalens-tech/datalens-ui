@@ -48,16 +48,19 @@ export type WorkbookWithPermissions = Workbook & {
     permissions: WorkbookPermission;
 };
 
-export type WorkbookWithOptionalPermissions = Workbook & {
-    permissions?: WorkbookPermission;
-};
-
 export type ExtendedWorkbook = Workbook & {
     entity?: typeof CollectionItemEntities.WORKBOOK;
 };
 
-export type ExtendedWorkbookWithPermissions = WorkbookWithOptionalPermissions & {
+export type ExtendedWorkbookWithPermissions = WorkbookWithPermissions & {
     entity?: typeof CollectionItemEntities.WORKBOOK;
+};
+
+export type ExtendedWorkbookWithOptionalPermissions = Omit<
+    ExtendedWorkbookWithPermissions,
+    'permissions'
+> & {
+    permissions?: WorkbookPermission;
 };
 
 export type CreateWorkbookResponse = z.infer<typeof createWorkbookResultSchema>;
