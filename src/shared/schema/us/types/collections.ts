@@ -39,7 +39,6 @@ export type Collection = {
     title: string;
     description: string | null;
     parentId: string | null;
-    projectId: string | null;
     tenantId: string;
     createdBy: string;
     createdAt: string;
@@ -60,7 +59,7 @@ export type ExtendedCollection = Collection & {
     entity?: typeof CollectionItemEntities.COLLECTION;
 };
 
-export type ExtendedCollectionWithPermissions = CollectionWithPermissions & {
+export type ExtendedCollectionWithPermissions = CollectionWithOptionalPermissions & {
     entity?: typeof CollectionItemEntities.COLLECTION;
 };
 

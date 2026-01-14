@@ -36,7 +36,6 @@ export type Workbook = {
     title: string;
     description: string | null;
     tenantId: string;
-    projectId: string | null;
     meta: {importId?: string; [key: string]: unknown};
     createdBy: string;
     createdAt: string;
@@ -49,11 +48,15 @@ export type WorkbookWithPermissions = Workbook & {
     permissions: WorkbookPermission;
 };
 
+export type WorkbookWithOptionalPermissions = Workbook & {
+    permissions?: WorkbookPermission;
+};
+
 export type ExtendedWorkbook = Workbook & {
     entity?: typeof CollectionItemEntities.WORKBOOK;
 };
 
-export type ExtendedWorkbookWithPermissions = WorkbookWithPermissions & {
+export type ExtendedWorkbookWithPermissions = WorkbookWithOptionalPermissions & {
     entity?: typeof CollectionItemEntities.WORKBOOK;
 };
 

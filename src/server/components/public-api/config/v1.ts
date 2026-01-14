@@ -60,6 +60,14 @@ export const getPublicApiActionsV1 = <
             },
             features: [Feature.CollectionsEnabled],
         },
+        getCollectionContent: {
+            resolve: (api) => api.us.getStructureItems,
+            openApi: {
+                summary: 'Get collection content',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
         getRootCollectionPermissions: {
             resolve: (api) => api.us.getRootCollectionPermissions,
             openApi: {
