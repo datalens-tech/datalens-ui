@@ -30,6 +30,7 @@ import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {ICONS_MENU_DEFAULT_SIZE} from '../../../../libs/DatalensChartkit/menu/MenuItems';
 import navigateHelper from '../../../../libs/navigateHelper';
 import {isEmbeddedMode} from '../../../../utils/embedded';
+import {WidgetMetaContext} from '../../contexts/WidgetMetaContext';
 import {
     saveDashAsDraft,
     saveDashAsNewDash,
@@ -88,6 +89,10 @@ export type ActionPanelProps = OwnProps & StateProps & DispatchProps;
 type ActionPanelState = {};
 
 class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelState> {
+    static contextType = WidgetMetaContext;
+
+    declare context: React.ContextType<typeof WidgetMetaContext>;
+
     render() {
         const {entry, isEditMode} = this.props;
         const showHeader = !isEmbeddedMode();
@@ -183,7 +188,12 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     }
 
     openDialogSettings = () => this.props.openDialog(DIALOG_TYPE.SETTINGS);
-    openDialogConnections = () => this.props.openEmptyDialogRelations();
+
+    openDialogConnections = () =>
+        this.props.openEmptyDialogRelations({
+            loadHiddenWidgetMeta: this.context?.loadHiddenWidgetMeta,
+        });
+
     openDialogTabs = () => this.props.openDialog(DIALOG_TYPE.TABS);
 
     openDialogAccess = () => {
