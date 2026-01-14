@@ -14,7 +14,8 @@ import {closeDialog} from 'ui/store/actions/dialog';
 
 import logger from '../../libs/logger';
 import {AdaptiveDialog} from '../AdaptiveDialog/AdaptiveDialog';
-import {TextEditor} from '../TextEditor/TextEditor';
+import type {WysiwygEditorRef} from '../WysiwygEditor/WysiwygEditor';
+import {WysiwygEditor} from '../WysiwygEditor/WysiwygEditor';
 import {YfmWrapper} from '../YfmWrapper/YfmWrapper';
 
 import './DialogEntryDescription.scss';
@@ -43,6 +44,7 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
     const [text, setText] = React.useState(description || '');
     const [markdown, setMarkdown] = React.useState('');
     const [loading, setLoading] = React.useState(false);
+    const [isError, setIsError] = React.useState(false);
 
     React.useEffect(() => {
         if (!isEditable) {
@@ -82,6 +84,10 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
         setText('');
     }, []);
 
+    const handleMarkupChange = React.useCallback((editor: WysiwygEditorRef) => {
+        setText(editor.getValue());
+    }, []);
+
     const renderSymbolsCounter = maxLength
         ? `${text.length.toLocaleString('ru-RU')} / ${maxLength.toLocaleString('ru-RU')}`
         : null;
@@ -92,7 +98,7 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
               onClickButtonApply: handleApply,
               textButtonApply: i18n('button_save'),
               propsButtonApply: {
-                  disabled: isExceedLimit,
+                  disabled: isError || isExceedLimit,
                   qa: DialogEntryDescriptionQa.SaveButton,
               },
               onClickButtonCancel: handleClose,
@@ -103,7 +109,7 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
     const renderDialogFooter = () => {
         if (isEditable) {
             return (
-                <Button view="flat-danger" onClick={handleClear}>
+                <Button view="flat-danger" disabled={isError} onClick={handleClear}>
                     <Icon data={TrashBin} size={16} />
                     {i18n('button_clear')}
                 </Button>
@@ -145,7 +151,11 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
             {isEditable ? (
                 <React.Fragment>
                     {props.subTitle && <div className={b('subtitle')}>{props.subTitle}</div>}
-                    <TextEditor autofocus onTextUpdate={setText} text={text} />
+                    <WysiwygEditor
+                        onMarkupChange={handleMarkupChange}
+                        initial={{markup: text}}
+                        onError={() => setIsError(true)}
+                    />
                     {Boolean(maxLength) && (
                         <div
                             className={b('length-counter', {

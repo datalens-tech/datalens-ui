@@ -12,8 +12,9 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
-import {TextEditor} from '../TextEditor/TextEditor';
 import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
+import type {WysiwygEditorRef} from '../WysiwygEditor/WysiwygEditor';
+import {WysiwygEditor} from '../WysiwygEditor/WysiwygEditor';
 
 import './DialogTextWidget.scss';
 
@@ -43,6 +44,7 @@ interface DialogTextWidgetState {
     prevVisible?: boolean;
     autoHeight?: boolean;
     borderRadius?: number;
+    isError?: boolean;
 }
 
 const INPUT_TEXT_ID = 'widgetTextField';
@@ -86,6 +88,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         autoHeight: Boolean(openedItemData.autoHeight),
         borderRadius: openedItemData.borderRadius,
     });
+
     const {
         oldBackgroundColor,
         backgroundColorSettings,
@@ -100,6 +103,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         enableSeparateThemeColorSelector,
         isNewWidget,
     });
+
     const [prevDialogIsVisible, setPrevDialogIsVisible] = React.useState<boolean | undefined>();
 
     React.useEffect(() => {
@@ -129,39 +133,14 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         isNewWidget,
     ]);
 
-    const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+    const editorRef = React.useRef<WysiwygEditorRef>(null);
 
-    React.useEffect(() => {
-        return () => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-        };
+    const onMarkupChange = React.useCallback((editor: WysiwygEditorRef) => {
+        setState((prevState) => ({...prevState, text: editor.getValue()}));
     }, []);
 
-    const textEditorRef = React.useCallback(
-        (textEditor: HTMLTextAreaElement) => {
-            /**
-             * TODO try to remove and use "initialFocus={inputRef}" in Dialog props when switch to uikit7
-             * Don't forget test caret position
-             */
-            // delay is needed so that the autofocus of the dialog does not interrupt the focus on the input
-            if (textEditor) {
-                timeoutRef.current = setTimeout(() => {
-                    textEditor.focus();
-
-                    const inputValueLength = textEditor.textLength ?? 0;
-                    if (inputValueLength > 0) {
-                        textEditor.setSelectionRange(inputValueLength, inputValueLength);
-                    }
-                }, 0);
-            }
-        },
-        [timeoutRef],
-    );
-
-    const onTextUpdate = React.useCallback((text: string) => {
-        setState((prevState) => ({...prevState, text}));
+    const onError = React.useCallback(() => {
+        setState((prevState) => ({...prevState, isError: true}));
     }, []);
 
     const onApply = React.useCallback(() => {
@@ -186,7 +165,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         setState((prevState) => ({...prevState, borderRadius: value}));
     }, []);
 
-    const {text, autoHeight, borderRadius} = state;
+    const {text, autoHeight, borderRadius, isError} = state;
 
     return (
         <Dialog
@@ -202,11 +181,16 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
                     fieldId={INPUT_TEXT_ID}
                     label={i18n('dash.text-dialog.edit', 'label_text')}
                 >
-                    <TextEditor
-                        id={INPUT_TEXT_ID}
-                        onTextUpdate={onTextUpdate}
-                        text={text}
-                        controlRef={textEditorRef}
+                    <WysiwygEditor
+                        ref={editorRef}
+                        autofocus
+                        className={b('wysiwyg-editor')}
+                        initial={{
+                            markup: text,
+                        }}
+                        onMarkupChange={onMarkupChange}
+                        onError={onError}
+                        enableExtensions={true}
                     />
                 </FormRow>
                 <FormRow className={b('row')} label={i18nCommon('label_background-checkbox')}>
@@ -248,7 +232,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
                 }
                 onClickButtonCancel={closeDialog}
                 textButtonCancel={i18n('dash.text-dialog.edit', 'button_cancel')}
-                propsButtonApply={{qa: DialogDashWidgetQA.Apply}}
+                propsButtonApply={{disabled: isError, qa: DialogDashWidgetQA.Apply}}
                 propsButtonCancel={{qa: DialogDashWidgetQA.Cancel}}
             />
         </Dialog>

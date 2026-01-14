@@ -1,0 +1,47 @@
+import React from 'react';
+
+import {Loader} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
+// import {I18n} from 'i18n';
+
+import {ErrorBoundary} from '../ErrorBoundary/ErrorBoundary';
+
+import type {MarkdownEditorProps, MarkdownEditorRef} from './MarkdownEditorDefault';
+
+import './WysiwygEditor.scss';
+
+const b = block('wysiwyg-editor');
+// const i18n = I18n.keyset('component.wysiwyg-editor.view');
+
+export type WysiwygEditorRef = MarkdownEditorRef;
+type WysiwygEditorProps = MarkdownEditorProps & {onError?: (error: Error) => void};
+
+const MarkdownEditor = React.lazy(() => import('./MarkdownEditorDefault'));
+
+const Fallback: React.FC = () => (
+    <div className={b('fallback')}>
+        <div className={b('loader')}>
+            <Loader size="m" />
+        </div>
+    </div>
+);
+
+export const WysiwygEditor = React.forwardRef<MarkdownEditorRef, WysiwygEditorProps>(
+    ({className, ...props}, ref) => {
+        const renderError = React.useCallback(() => {
+            // return <div>{i18n('label_failed-to-load')}</div>;
+            return 'Не удалось загрузить редактор';
+        }, []);
+        return (
+            <ErrorBoundary renderError={renderError} onError={props.onError}>
+                <React.Suspense fallback={<Fallback />}>
+                    <div className={b('wrapper')}>
+                        <MarkdownEditor className={b('content', className)} ref={ref} {...props} />
+                    </div>
+                </React.Suspense>
+            </ErrorBoundary>
+        );
+    },
+);
+
+WysiwygEditor.displayName = 'TextEditor';
