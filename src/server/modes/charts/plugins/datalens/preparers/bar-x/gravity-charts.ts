@@ -128,9 +128,12 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                   seriesName: graph.title,
               })
             : undefined;
+        const seriesName = graph.custom?.segmentTitle
+            ? `${graph.custom.segmentTitle}: ${graph.title}`
+            : graph.title;
 
         return {
-            name: graph.title,
+            name: seriesName,
             type: 'bar-x',
             color: graph.color,
             stackId: graph.stack,
@@ -169,6 +172,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             ),
             legend: {
                 groupId: graph.id,
+                itemText: graph.legendTitle,
             },
             custom: {...graph.custom, colorValue: graph.colorValue, exportSettings},
             dataLabels: {
