@@ -34,7 +34,7 @@ type ContentProps = {
     showDebugInfo: boolean;
     widgetIcon: React.ReactNode;
     onLoadMeta?: OnLoadMetaType;
-    silentFetchingWidgets?: Set<string>;
+    silentFetchingWidgets: Set<string>;
 };
 
 export const Content = ({

@@ -65,7 +65,7 @@ type RowParams = {
     showDebugInfo: boolean;
     widgetIcon: React.ReactNode;
     onLoadMeta?: OnLoadMetaType;
-    silentFetchingWidgets?: Set<string>;
+    silentFetchingWidgets: Set<string>;
 };
 
 export const getTooltipInfo = ({
@@ -198,7 +198,6 @@ export const Row = ({
     onLoadMeta,
     silentFetchingWidgets,
 }: RowParams) => {
-    const [isLoadingMeta, setIsLoadingMeta] = React.useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
     const relations = data?.relations;
@@ -224,14 +223,11 @@ export const Row = ({
         hasDataset,
     });
 
+    const isLoadingMeta = silentFetchingWidgets.has(data.widgetId);
+
     const icon = React.useMemo(() => {
-        const isWidgetLoading = silentFetchingWidgets?.has(data.widgetId);
-        return isWidgetLoading ? (
-            <Skeleton className={b('skeleton-icon')} />
-        ) : (
-            getRelationsIcon(data)
-        );
-    }, [silentFetchingWidgets, data, isLoadingMeta]);
+        return isLoadingMeta ? <Skeleton className={b('skeleton-icon')} /> : getRelationsIcon(data);
+    }, [isLoadingMeta, data]);
 
     const handleAliasCLick = React.useCallback(() => {
         onAliasClick?.({
@@ -281,13 +277,11 @@ export const Row = ({
                 !data.loadError &&
                 !data.isFetchFinished
             ) {
-                setIsLoadingMeta(true);
                 try {
                     await onLoadMeta({widget: data, subItemId: data.widgetId});
                 } catch (error) {
                     logger.logError('Failed to load widget meta:', error);
                 } finally {
-                    setIsLoadingMeta(false);
                 }
             }
         },
@@ -365,7 +359,7 @@ export const Row = ({
                                 </Button>
                             )}
                         >
-                            {isLoadingMeta && (
+                            {silentFetchingWidgets.has(data.widgetId) && (
                                 <Flex
                                     justifyContent="center"
                                     alignItems="center"

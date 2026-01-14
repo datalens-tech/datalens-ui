@@ -21,7 +21,7 @@ import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import Loader from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
-import type {LoadHiddentWidgetMetaCallbackType} from '../../../units/dash/contexts/WidgetMetaContext';
+import type {LoadHiddenWidgetMetaCallbackType} from '../../../units/dash/contexts/WidgetMetaContext';
 import {useWidgetMetaContext} from '../../../units/dash/contexts/WidgetMetaContext';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
@@ -430,7 +430,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     }, [handleChange, chartkitParams]);
 
     React.useEffect(() => {
-        const loadHiddenWidgetMeta: LoadHiddentWidgetMetaCallbackType = async ({
+        const loadHiddenWidgetMeta: LoadHiddenWidgetMetaCallbackType = async ({
             subItemId,
             silentRequestCancellationRef,
         }) => {

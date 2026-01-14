@@ -4,7 +4,7 @@ import type {DashkitMetaDataItemBase} from 'ui/components/DashKit/plugins/types'
 import type {CurrentRequestState} from 'ui/components/Widgets/Chart/types';
 
 export type WidgetMetaContextValue = {
-    registerCallback: (widgetId: string, callback: LoadHiddentWidgetMetaCallbackType) => void;
+    registerCallback: (widgetId: string, callback: LoadHiddenWidgetMetaCallbackType) => void;
     loadHiddenWidgetMeta: LoadHiddenWidgetMetaType;
     unregisterCallback: (widgetId: string) => void;
     clearCallbacks: () => void;
@@ -22,7 +22,7 @@ export type LoadHiddenWidgetMetaType = ({
     silentRequestCancellationRef?: React.MutableRefObject<CurrentRequestState>;
 }) => Promise<Omit<DashkitMetaDataItemBase, 'defaultParams'> | null>;
 
-export type LoadHiddentWidgetMetaCallbackType = ({
+export type LoadHiddenWidgetMetaCallbackType = ({
     subItemId,
     silentRequestCancellationRef,
 }: {
@@ -37,10 +37,10 @@ export interface MetaCallbackProviderProps {
 }
 
 export const WidgetMetaProvider: React.FC<MetaCallbackProviderProps> = ({children}) => {
-    const callbacksRef = React.useRef<Map<string, LoadHiddentWidgetMetaCallbackType>>(new Map());
+    const callbacksRef = React.useRef<Map<string, LoadHiddenWidgetMetaCallbackType>>(new Map());
 
     const registerCallback = React.useCallback(
-        (widgetId: string, callback: LoadHiddentWidgetMetaCallbackType) => {
+        (widgetId: string, callback: LoadHiddenWidgetMetaCallbackType) => {
             callbacksRef.current.set(widgetId, callback);
         },
         [],

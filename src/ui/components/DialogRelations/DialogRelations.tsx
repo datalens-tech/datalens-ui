@@ -67,8 +67,8 @@ export type OpenDialogRelationsArgs = {
     props: DialogRelationsProps;
 };
 
-const renderOptions = (option: SelectOption, silentFetchingWidgets?: Set<string>) => {
-    if (silentFetchingWidgets?.has(option.value)) {
+const renderOptions = (option: SelectOption, silentFetchingWidgets: Set<string>) => {
+    if (silentFetchingWidgets.has(option.value)) {
         const icon = <Skeleton className={b('skeleton-option-icon')} />;
         return <SelectOptionWithIcon option={{...option, data: {...option.data, icon}}} />;
     }

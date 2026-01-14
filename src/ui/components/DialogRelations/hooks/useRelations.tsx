@@ -3,6 +3,7 @@ import React from 'react';
 import type {DashKit} from '@gravity-ui/dashkit';
 import isEmpty from 'lodash/isEmpty';
 import type {DashTabItem, WorkbookId} from 'shared';
+import {useMountedState} from 'ui/hooks';
 
 import type {GetEntriesDatasetsFieldsResponse} from '../../../../shared/schema';
 import {getSdk} from '../../../libs/schematic-sdk';
@@ -47,13 +48,16 @@ export const useRelations = ({
     loadHiddenWidgetMeta?: LoadHiddenWidgetMetaType;
     silentRequestCancellationRef: React.MutableRefObject<CurrentRequestState>;
 }) => {
+    const isMounted = useMountedState();
     const [currentWidget, setCurrentWidget] = React.useState<DashTabItem | null>(
         initialWidget ?? null,
     );
 
     const [isInited, setIsInited] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
-    const silentFetchingWidgetsRef = React.useRef(new Set<string>());
+    const [silentFetchingWidgets, setSilentFetchingWidgets] = React.useState<Set<string>>(
+        new Set(),
+    );
 
     const [relations, setRelations] = React.useState<DashkitMetaDataItem[]>([]);
     const [currentWidgetMeta, setCurrentWidgetMeta] = React.useState<DashkitMetaDataItem | null>(
@@ -216,7 +220,11 @@ export const useRelations = ({
 
             const itemId = subItemId || widgetId;
 
-            silentFetchingWidgetsRef.current.add(itemId);
+            setSilentFetchingWidgets((prevWidgets) => {
+                const newSet = new Set(prevWidgets);
+                newSet.add(itemId);
+                return newSet;
+            });
 
             try {
                 updatedMeta = await loadHiddenWidgetMeta({
@@ -227,14 +235,18 @@ export const useRelations = ({
             } catch (error) {
                 updatedMeta = {widgetId: itemId, loadError: true};
             } finally {
-                silentFetchingWidgetsRef.current.delete(itemId);
+                setSilentFetchingWidgets((prevWidgets) => {
+                    const newSet = new Set(prevWidgets);
+                    newSet.delete(itemId);
+                    return newSet;
+                });
             }
 
             if (currentChartId && silentRequestCancellationRef.current[currentChartId]) {
                 delete silentRequestCancellationRef.current[currentChartId];
             }
 
-            if (updatedMeta) {
+            if (updatedMeta && isMounted()) {
                 const {updatedWidgetsMeta, updatedDatasets} = updateMetaAndRelations({
                     subItemId,
                     updatedMeta,
@@ -256,6 +268,7 @@ export const useRelations = ({
         [
             currentWidget,
             getCurrentWidgetInfo,
+            isMounted,
             loadHiddenWidgetMeta,
             selectedSubItemId,
             silentRequestCancellationRef,
@@ -418,7 +431,7 @@ export const useRelations = ({
         datasets,
         dashWidgetsMeta,
         invalidAliases,
-        silentFetchingWidgets: silentFetchingWidgetsRef.current,
+        silentFetchingWidgets,
         setRelations,
         onLoadMeta,
         currentWidget,
