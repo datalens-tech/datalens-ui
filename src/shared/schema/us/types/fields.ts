@@ -99,6 +99,11 @@ export interface SharedEntryFieldsWithPermissions extends SharedEntryFields {
     permissions: SharedEntryPermissions;
 }
 
+export interface SharedEntryFieldsWithOptionalPermissions
+    extends Omit<SharedEntryFields, 'permissions'> {
+    permissions?: SharedEntryPermissions;
+}
+
 // corresponds to RETURN_FAVORITES_COLUMNS from US
 export interface EntryFavoriteFields {
     entryId: string;
