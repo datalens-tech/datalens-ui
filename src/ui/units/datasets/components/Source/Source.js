@@ -5,6 +5,7 @@ import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
+import {DatasetSourcesTableQa} from 'shared';
 
 import {MANAGED_BY} from '../../constants';
 import DatasetUtils from '../../helpers/utils';
@@ -97,7 +98,7 @@ function Source(props) {
                 drag_disabled: dragDisabled || isActive,
             })}
             style={position}
-            data-qa="ds-source"
+            data-qa={DatasetSourcesTableQa.Source}
         >
             <Icon className={b('icon-avatar')} data={iconAvatarTable} width={16} height={16} />
             <span title={avatarTitle} className={b('avatar-title')}>

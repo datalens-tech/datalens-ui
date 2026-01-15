@@ -10,7 +10,7 @@ import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportW
 import {DIALOG_SHARED_ENTRY_BINDINGS} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {CollectionItemEntities, Feature} from '../../../../../../shared';
+import {CollectionItemEntities, CollectionTableRowQa, Feature} from '../../../../../../shared';
 import type {
     CollectionWithPermissions,
     SharedEntryFieldsWithPermissions,
@@ -145,6 +145,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             if (item.permissions.delete) {
                 otherActions.push({
                     text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+                    qa: CollectionTableRowQa.EntryDropdownDeleteBtn,
                     action: () => {
                         dispatch(
                             openDialog({
@@ -297,6 +298,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
                 actions.push({
                     text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
+                    qa: CollectionTableRowQa.EntryDropdownDeleteBtn,
                     action: () => {
                         dispatch(
                             openDialog({
@@ -445,6 +447,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             if (item.permissions.delete) {
                 otherActions.push({
                     text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+                    qa: CollectionTableRowQa.EntryDropdownDeleteBtn,
                     action: () => {
                         dispatch(
                             openDialog({
