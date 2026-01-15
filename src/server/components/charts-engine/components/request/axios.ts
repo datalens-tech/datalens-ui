@@ -436,6 +436,11 @@ export class RequestAxios {
         };
     } {
         if (axios.isAxiosError(error)) {
+            // Serialize only primitive values from headers to avoid circular references
+            const safeHeaders = error.config?.headers
+                ? normalizeHeaders(error.config.headers as OutgoingHttpHeaders)
+                : undefined;
+
             const normalized = Object.assign(new Error(error.message), {
                 statusCode: error.response?.status,
                 code: error.code,
@@ -445,12 +450,8 @@ export class RequestAxios {
                           statusCode: error.response.status,
                           body: error.response.data,
                           headers: error.response.headers as Record<string, string>,
-                          req: error.config?.headers
-                              ? {headers: error.config.headers as Record<string, unknown>}
-                              : undefined,
-                          request: error.config?.headers
-                              ? {headers: error.config.headers as Record<string, unknown>}
-                              : undefined,
+                          req: safeHeaders ? {headers: safeHeaders} : undefined,
+                          request: safeHeaders ? {headers: safeHeaders} : undefined,
                       }
                     : undefined,
             });
