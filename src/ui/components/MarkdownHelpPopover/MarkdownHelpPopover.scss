@@ -1,14 +1,11 @@
 .markdown-help-popover {
+    margin-left: 4px;
+    vertical-align: top;
     align-self: center;
 
-    margin-left: 4px;
-
-    vertical-align: top;
-
     &__content {
-        overflow: hidden;
-
         max-height: calc(100vh - 34px);
+        overflow: hidden;
     }
 
     &__tooltip {

@@ -1,10 +1,8 @@
 .conn-column-filter {
     display: flex;
     align-items: center;
-
     height: var(--conn-column-filter-height);
     padding-right: 16px;
-
     border-bottom: 1px solid var(--g-color-line-generic);
 
     &__input {

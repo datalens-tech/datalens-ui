@@ -1,23 +1,19 @@
 %expand-by-parent-with-align {
-    overflow: initial;
-
     height: inherit;
-    padding: 0;
-
     vertical-align: middle;
+    padding: 0;
+    overflow: initial;
 }
 
 .dataset-table {
     $class: &;
     $rowClass: #{&}__row;
     $inputControlClass: '.g-text-input__content';
-    position: relative;
-
-    flex: 1;
-
     width: 100%;
-    min-width: 1000px;
+    flex: 1;
+    position: relative;
     margin-top: -24px;
+    min-width: 1000px;
 
     .data-table {
         &__table {
@@ -36,7 +32,6 @@
 
         tr.data-table__head-row {
             padding: 0;
-
             border-bottom: 1px solid var(--ds-color-divider);
         }
 
@@ -46,14 +41,12 @@
     }
 
     &__batch-actions {
+        flex-shrink: 0;
         position: sticky;
         bottom: 15px;
         left: 15px;
-
-        flex-shrink: 0;
-
-        min-width: 250px;
         margin: 0 15px 15px;
+        min-width: 250px;
     }
 
     &__sort-icon {
@@ -62,10 +55,9 @@
     }
 
     &__header {
+        height: 36px;
         display: flex;
         align-items: center;
-
-        height: 36px;
     }
 
     &__header-cast {
@@ -84,9 +76,8 @@
         @extend %expand-by-parent-with-align;
 
         .g-select-control {
-            padding-right: 8px;
-
             border: 1px solid transparent;
+            padding-right: 8px;
 
             &:before {
                 background-color: initial;
@@ -191,24 +182,22 @@
 
             #{$class} {
                 &__hidden {
-                    visibility: hidden;
-
                     opacity: 0.5;
+                    visibility: hidden;
 
                     &_unsupported {
                         visibility: visible;
                     }
 
                     &:hover {
-                        opacity: 1;
                         color: var(--ds-color-text-primary);
+                        opacity: 1;
                     }
 
                     &_hidden {
                         visibility: visible;
-
-                        opacity: 1;
                         color: var(--ds-color-text-primary);
+                        opacity: 1;
 
                         &:hover {
                             opacity: 0.5;
@@ -237,12 +226,11 @@
 
     &__select-cog {
         position: sticky;
-        z-index: 2;
         top: 6px;
         left: 100%;
-
         width: fit-content;
         margin-right: 10px;
+        z-index: 2;
     }
 
     &__more-dropdown {
@@ -263,22 +251,19 @@
         }
 
         #{$rowClass} &_error #{$inputControlClass} .g-text-input__control:not(:focus) {
-            font-style: italic;
-
             color: var(--g-color-line-danger);
+            font-style: italic;
         }
     }
 
     &__popup-more-row {
         height: 25px;
+        line-height: 25px;
         padding: 0 10px;
 
-        line-height: 25px;
-
         &:hover {
-            cursor: pointer;
-
             background: var(--ds-color-hover-area);
+            cursor: pointer;
         }
     }
 

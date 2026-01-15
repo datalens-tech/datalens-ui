@@ -6,7 +6,7 @@
     }
 
     &__installation-info {
-        width: fit-content;
         @include installation-info-font;
+        width: fit-content;
     }
 }

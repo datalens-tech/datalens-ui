@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     row-gap: 10px;
-
     width: 100%;
 
     &__add-button-wrapper {
@@ -26,12 +25,11 @@
 
     &__key-select {
         flex-shrink: 0;
-
         max-width: 40%;
     }
 
     &__value-input {
-        flex-basis: auto;
         flex-shrink: 1;
+        flex-basis: auto;
     }
 }

@@ -2,21 +2,20 @@
     $contentDesktopMaxWidth: 630px;
     $contentSmallScreenWidth: 300px;
 
-    $class: &;
-
     --g-tabs-item-gap: 20px;
+
+    $class: &;
 
     width: 100%;
     max-width: $contentDesktopMaxWidth;
 
     &__content {
-        display: flex;
-        flex-direction: column;
-
         width: $contentDesktopMaxWidth;
         max-width: 100%;
-        min-height: 400px;
         max-height: 80vh;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
 
         @media (max-width: 480px) {
             width: $contentSmallScreenWidth;
@@ -25,7 +24,6 @@
 
     &__header {
         max-width: 100%;
-
         word-break: break-word;
     }
 
@@ -38,8 +36,8 @@
     }
 
     &_mobile {
-        max-width: none;
         padding: 0 16px;
+        max-width: none;
 
         #{$class}__tab-navigation {
             margin-top: 8px;
@@ -54,14 +52,12 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-
             padding-bottom: 16px;
         }
 
         #{$class}__loader {
             display: flex;
             justify-content: center;
-
             padding: 16px 0;
         }
     }

@@ -3,42 +3,34 @@
 .dialog-color-palette {
     &__container {
         display: flex;
-
         height: calc(100%);
-
         border-top: 1px solid var(--g-color-line-generic);
     }
 
     &__value-color {
         flex: 0 0 20px;
-
         height: 14px;
         margin-right: 12px;
-
         border-radius: 2px;
 
         &_default {
+            background-color: var(--g-color-base-generic);
+            border: 1px solid var(--g-color-line-generic);
+            color: var(--g-color-text-hint);
+            font-size: 10px;
+            text-transform: uppercase;
             display: flex;
             justify-content: center;
             align-items: center;
-
-            font-size: 10px;
-            text-transform: uppercase;
-
-            color: var(--g-color-text-hint);
-            border: 1px solid var(--g-color-line-generic);
-            background-color: var(--g-color-base-generic);
         }
     }
 
     &__palette-container {
         position: relative;
-
-        overflow: hidden;
-        overflow-y: auto;
-
         width: 50%;
         height: 100%;
+        overflow: hidden;
+        overflow-y: auto;
     }
 
     &__palette-container &__row {
@@ -60,7 +52,6 @@
 
     &__label {
         display: inline-block;
-
         margin-right: 20px;
     }
 }

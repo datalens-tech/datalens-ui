@@ -1,20 +1,18 @@
 .dl-dialog-filter {
     display: flex;
     flex-direction: column;
-
     width: 680px;
     height: 560px;
-    min-height: 300px;
     max-height: 80vh;
+    min-height: 300px;
 
     &__divider {
         margin: 0;
     }
 
     &__body {
-        overflow-y: auto;
         flex: 1 1 auto;
-
+        overflow-y: auto;
         padding: 10px var(--_--side-padding);
 
         &_without-paddings {
@@ -32,26 +30,22 @@
 
     &__row {
         display: flex;
-
         margin-bottom: 10px;
     }
 
     &__label {
         width: 100px;
-
         line-height: 28px;
     }
 
     &__header-title-icon {
         flex-shrink: 0;
-
         margin-right: 5px;
     }
 
     &__operation {
         display: flex;
         align-items: center;
-
         margin: 0 0 10px 32px;
     }
 
@@ -66,24 +60,20 @@
     &__load-limit-reached-warn {
         position: absolute;
         top: -20px;
-
-        white-space: nowrap;
-
         color: var(--g-color-text-hint);
+        white-space: nowrap;
     }
 
     &__loader {
         display: flex;
-        justify-content: center;
-        align-items: center;
-
         height: 100%;
+        align-items: center;
+        justify-content: center;
     }
 
     // TODO: remove styles, when the Dialog.Header will contain them [DATAUI-359]
     & .g-dialog-header__caption {
         overflow: hidden;
-
         white-space: nowrap;
         text-overflow: ellipsis;
     }

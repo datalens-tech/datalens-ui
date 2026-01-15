@@ -1,26 +1,24 @@
 .source-editor-dialog {
-    $baseClass: &;
     width: 800px;
 
+    $baseClass: &;
+
     &__label {
+        height: 24px;
         display: inline-flex;
         align-items: center;
         gap: 5px;
-
-        height: 24px;
     }
 
     &__label-error {
         line-height: 20px;
-
         color: var(--g-color-text-danger);
     }
 
     &__params {
+        height: 280px;
         display: flex;
         flex-direction: column;
-
-        height: 280px;
     }
 
     &__param {
@@ -49,14 +47,12 @@
     }
 
     &__param-select-popup {
-        width: 320px;
-
         border-radius: var(--g-border-radius-m);
+        width: 320px;
     }
 
     &__param-select-filter {
         padding: 8px;
-
         border-bottom: 1px solid var(--g-color-line-generic);
 
         &_empty {
@@ -84,9 +80,8 @@
     }
 
     &__param-select-option-dropdown {
-        margin-left: auto;
-
         opacity: 0;
+        margin-left: auto;
     }
 
     &__param-select-empty-placeholder {
@@ -99,7 +94,6 @@
 
     &__select-form-item {
         display: flex;
-
         width: 200px;
     }
 
@@ -124,17 +118,15 @@
     }
 
     &__example-path {
+        margin-top: 3px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
-
-        margin-top: 3px;
+        justify-content: center;
         padding: 5px;
-
+        background-color: var(--g-color-base-info-light);
         border: 1px solid var(--g-color-base-info-light);
         border-radius: 4px;
-        background-color: var(--g-color-base-info-light);
     }
 
     &__example-row:not(:last-child) {
@@ -144,14 +136,12 @@
     &__code {
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
-
+        justify-content: center;
         padding: 2px 4px;
-
+        background-color: var(--g-color-base-info-light);
         border: 1px solid var(--g-color-base-info-light);
         border-radius: 4px;
-        background-color: var(--g-color-base-info-light);
 
         &_inline {
             display: inline-flex;
@@ -163,28 +153,24 @@
     }
 
     &__data-source-error-content {
-        overflow: auto;
-
+        font-family: var(--g-font-family-monospace);
         margin-top: 15px;
         padding: 15px;
-
-        font-family: var(--g-font-family-monospace);
         font-size: 13px;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-
         border-radius: 4px;
         background-color: var(--g-color-base-generic-ultralight);
+        overflow: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
     }
 
     &__monaco {
-        display: flex;
-        overflow: hidden;
-        justify-content: center;
-        align-items: center;
-
         border: 1px solid var(--g-color-line-generic);
         border-radius: 6px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         &:hover:not(#{&}_error) {
             border-color: var(--g-color-line-generic-hover);

@@ -1,9 +1,8 @@
 .dialog-aliases-list {
     &__row {
+        border-bottom: 1px solid var(--g-color-line-generic);
         display: flex;
         justify-content: space-between;
-
-        border-bottom: 1px solid var(--g-color-line-generic);
 
         &:last-child {
             border-bottom: none;
@@ -33,9 +32,8 @@
     }
 
     &__alias-icon-button {
-        margin: 7px 0 8px 8px;
-
         opacity: 0;
+        margin: 7px 0 8px 8px;
     }
 
     &__row &__alias-icon-button_active,
@@ -48,22 +46,17 @@
     }
 
     &__info {
-        overflow: hidden;
-
-        margin-left: 4px;
-
-        text-overflow: ellipsis;
-
         color: var(--g-color-text-hint);
+        margin-left: 4px;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     &__button-text {
-        display: flex;
         overflow: hidden;
-
-        max-width: 100%;
-
         text-overflow: ellipsis;
+        max-width: 100%;
+        display: flex;
 
         &_with-remove {
             max-width: calc(100% - 20px);
@@ -71,45 +64,36 @@
     }
 
     &__alias-button {
-        display: inline-block;
-        overflow: hidden;
-
-        max-width: 100%;
         margin: 7px 0 8px;
-
-        vertical-align: middle;
+        max-width: 100%;
+        overflow: hidden;
         text-overflow: ellipsis;
-
         background: none;
+        display: inline-block;
+        vertical-align: middle;
     }
 
     &__separator {
-        display: inline-block;
-
         padding: 0 12px;
-
+        display: inline-block;
         vertical-align: middle;
     }
 
     &__remove-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 4px;
         position: absolute;
         top: 50%;
         right: 4px;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
+        transform: translateY(-50%);
         width: 26px;
         height: 26px;
-        margin-left: 4px;
-
-        transform: translateY(-50%);
     }
 
     &__controls {
         margin-top: 10px;
-
         text-align: right;
     }
 

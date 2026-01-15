@@ -2,9 +2,8 @@
 @import '../../../../../styles/mixins';
 
 .visualization-container {
-    height: 100%;
-
     background: var(--g-color-base-background);
+    height: 100%;
 
     &.blank {
         background: var(--g-color-sfx-veil);
@@ -12,17 +11,13 @@
 
     .visualization-blank {
         padding: 20px;
-
         font-size: 15px;
-
         background: var(--g-color-sfx-veil);
     }
 
     .placeholders-wrapper {
-        overflow-y: auto;
-
         height: calc(100% - 47px);
-
+        overflow-y: auto;
         background: var(--g-color-base-background);
     }
 
@@ -42,7 +37,6 @@
 
         .item {
             padding: 6px 12px 4px;
-
             cursor: default;
 
             color: var(--g-color-text-secondary);
@@ -68,20 +62,20 @@
             }
 
             &:hover {
-                background: var(--dl-color-contrast-4);
                 .item-right-icon.cross-icon,
                 .item-right-icon.more-icon {
                     display: none;
                 }
+
+                background: var(--dl-color-contrast-4);
             }
 
             &.is-dragging,
             &:active,
             &:focus {
                 padding: 6px 12px 4px;
-
-                border: none;
                 background: var(--dl-color-contrast-4);
+                border: none;
             }
         }
     }
@@ -90,29 +84,24 @@
         border-bottom: 1px solid var(--g-color-line-generic);
 
         .subheader {
+            margin-bottom: var(--g-spacing-2);
             display: flex;
             align-items: center;
-
-            margin-bottom: var(--g-spacing-2);
-
             color: var(--g-color-text-complementary);
 
             .placeholder-icon {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-
-                width: 24px;
-                height: 24px;
                 margin-right: 8px;
+                height: 24px;
+                width: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .placeholder-tooltip-icon {
                 order: 1;
-
-                margin-left: 4px;
-
                 transform: scale(0.9);
+                margin-left: 4px;
             }
 
             .visualization-container__placeholder-actions {
@@ -121,7 +110,6 @@
 
             .visualization-container__placeholder-actions {
                 display: flex;
-
                 margin-left: auto;
             }
 
@@ -138,14 +126,12 @@
 
         .dnd-container {
             margin: 2px;
-            padding: var(--g-spacing-3) var(--g-spacing-3) var(--g-spacing-1);
-
-            border: solid 1px transparent;
             border-radius: 4px;
+            padding: var(--g-spacing-3) var(--g-spacing-3) var(--g-spacing-1);
+            border: solid 1px transparent;
 
             .item-icon {
                 display: inline-block;
-
                 margin-right: 8px;
             }
 
@@ -154,8 +140,8 @@
             }
 
             &__item_short {
-                display: flex;
                 align-items: center;
+                display: flex;
                 & > div:first-child {
                     width: 85%;
                 }
@@ -166,27 +152,24 @@
             }
 
             .drop-place {
-                position: relative;
-
-                display: none;
-
                 height: 2px;
-                margin: 0 0 -2px;
-
                 border-radius: 2px;
                 background-color: var(--g-color-line-generic);
+                position: relative;
+                margin: 0 0 -2px;
+                display: none;
             }
 
             &_cannot-drop {
+                background: var(--g-color-base-danger-light);
                 border: 1px dashed var(--g-color-line-danger);
                 border-radius: 4px;
-                background: var(--g-color-base-danger-light);
             }
 
             &_can-drop {
+                background: var(--g-color-base-generic);
                 border: 1px dashed var(--g-color-line-generic-active);
                 border-radius: 4px;
-                background: var(--g-color-base-generic);
             }
         }
 
@@ -202,9 +185,7 @@
     &__geotype-select {
         position: relative;
         top: 1px;
-
         display: inline-block;
-
         width: 100%;
         max-width: calc(100% - 68px);
     }
@@ -215,6 +196,6 @@
 }
 
 .placeholder-icon-tooltip-content {
-    width: 300px;
     padding: var(--g-spacing-4);
+    width: 300px;
 }

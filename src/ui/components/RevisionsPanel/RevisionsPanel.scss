@@ -3,28 +3,24 @@
 
 .revisions-panel {
     position: relative;
-
-    box-sizing: border-box;
     height: $revisionPanelHeight;
     min-height: $revisionPanelHeight;
+    box-sizing: border-box;
 
     &__text-container {
-        position: fixed;
-        z-index: 10;
-        top: var(--dl-revision-panel-top-offset);
-        right: 0;
-        left: 0;
-
         display: flex;
-        overflow: hidden;
-        justify-content: space-between;
         align-items: center;
-
-        box-sizing: border-box;
-        height: $revisionPanelHeight;
-        padding: 16px 20px;
-
+        justify-content: space-between;
+        overflow: hidden;
         background-color: var(--g-color-base-brand);
+        padding: 16px 20px;
+        box-sizing: border-box;
+        position: fixed;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        height: $revisionPanelHeight;
+        top: var(--dl-revision-panel-top-offset);
 
         .dl-header + div & {
             top: calc(#{$headerHeight} + var(--dl-revision-panel-top-offset));
@@ -36,18 +32,16 @@
     }
 
     &__text {
-        display: flex;
-
+        color: var(--g-color-text-light-primary);
         font-size: var(--g-text-body-2-font-size);
         line-height: var(--g-text-body-2-line-height);
-
-        color: var(--g-color-text-light-primary);
+        display: flex;
         @include overflow-ellipsis();
     }
 
     &__text-info {
-        margin-right: 3px;
         @include overflow-ellipsis();
+        margin-right: 3px;
     }
 
     &__controls {

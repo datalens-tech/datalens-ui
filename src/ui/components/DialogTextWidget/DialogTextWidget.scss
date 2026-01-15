@@ -4,10 +4,9 @@
     position: relative;
 
     &__hint {
-        margin-top: 10px;
-
-        color: var(--g-color-text-secondary);
         @include text-body-1();
+        color: var(--g-color-text-secondary);
+        margin-top: 10px;
     }
 
     &__checkbox {

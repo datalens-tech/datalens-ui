@@ -3,23 +3,19 @@
 @mixin flexReactGridLayout($minHeight: 44px) {
     & > .react-grid-layout {
         flex: 1;
-
-        min-height: $minHeight;
-
         transition: none;
+        min-height: $minHeight;
     }
 }
 
 @mixin dashedBorderPositioning {
     position: absolute;
-    top: var(--top-divider-offset, var(--dashed-border-offset));
-    right: var(--dashed-border-offset);
-    bottom: var(--bottom-divider-offset, var(--dashed-border-offset));
-    left: var(--dashed-border-offset);
-
     content: '';
     pointer-events: none;
-
+    left: var(--dashed-border-offset);
+    right: var(--dashed-border-offset);
+    top: var(--top-divider-offset, var(--dashed-border-offset));
+    bottom: var(--bottom-divider-offset, var(--dashed-border-offset));
     border-radius: var(--g-border-radius-xl);
 }
 
@@ -28,13 +24,13 @@
         position: relative;
 
         &::before {
-            border: var(--outline-dashed-style);
             @include dashedBorderPositioning;
+            border: var(--outline-dashed-style);
         }
 
         &::after {
-            border: var(--outline-font-color-style);
             @include dashedBorderPositioning;
+            border: var(--outline-font-color-style);
         }
     }
 }
@@ -42,7 +38,6 @@
 @mixin hiddenSection {
     &_hidden {
         display: none;
-
         margin: 0;
     }
 }
@@ -78,13 +73,13 @@
 
     &__wrapper {
         position: relative;
-
         background-color: var(--fixed-header-background);
 
         &_fixed {
             position: fixed;
-            z-index: 8;
             top: 40px;
+
+            z-index: 8;
 
             display: flex;
             flex-direction: row;
@@ -93,43 +88,41 @@
 
     &__content {
         display: flex;
-        flex: 1;
         flex-direction: column;
+        flex: 1;
     }
 
     &__scrollable-container {
+        padding-inline: var(--dash-inline-padding);
+
+        max-height: 70vh;
         overflow: auto;
         flex: 1;
 
-        max-height: 70vh;
-        padding-inline: var(--dash-inline-padding);
-
         #{$class}_edit-mode & {
-            overflow: initial;
-
             max-height: initial;
+            overflow: initial;
         }
     }
 
     &__controls-settings {
-        position: absolute;
         z-index: 9;
-        top: var(--fixed-header-block-spacing);
+        width: 36px;
+        position: absolute;
         right: calc(-1 * var(--btn-click-scale-compensantion));
+        top: var(--fixed-header-block-spacing);
 
         display: flex;
         justify-content: flex-end;
-
-        width: 36px;
 
         #{$class}_edit-mode & {
             top: var(--g-spacing-2);
         }
 
         #{$class}__controls-settings-wrapper {
-            overflow: hidden;
-
             width: calc(28px + var(--btn-click-scale-compensantion));
+
+            overflow: hidden;
 
             border-radius: var(--g-border-radius-xl) 0 0 var(--g-border-radius-xl);
             box-shadow: 0 0 15px var(--g-color-sfx-shadow);
@@ -143,8 +136,8 @@
     }
 
     &_edit-mode #{$class}__controls-settings-wrapper {
-        border-radius: var(--g-border-radius-m) 0 0 var(--g-border-radius-m);
         background-color: var(--g-color-base-float);
+        border-radius: var(--g-border-radius-m) 0 0 var(--g-border-radius-m);
     }
 
     &__controls {
@@ -171,8 +164,8 @@
         &::before,
         &::after {
             border-top: none;
-            border-top-left-radius: 0;
             border-top-right-radius: 0;
+            border-top-left-radius: 0;
         }
     }
 
@@ -194,29 +187,24 @@
 
         &_collapsed #{$class}__container {
             overflow: clip;
-
             min-height: 0;
             max-height: 0;
-            margin: 0;
             padding: 0;
+            margin: 0;
         }
     }
 
     &__empty {
         position: absolute;
-        top: 50%;
-        right: 0;
         left: 0;
-
+        right: 0;
+        transform: translateY(-50%);
+        top: 50%;
+        pointer-events: none;
+        color: var(--g-color-text-hint);
         display: flex;
         justify-content: center;
         align-items: center;
         gap: var(--g-spacing-1);
-
-        pointer-events: none;
-
-        color: var(--g-color-text-hint);
-
-        transform: translateY(-50%);
     }
 }

@@ -5,34 +5,27 @@ $labelMargin: 8px;
     $class: &;
 
     &__label {
+        display: inline-block;
+        vertical-align: top;
+        padding: 0 8px;
+        margin: 0 0 $labelMargin 20px;
+        box-sizing: border-box;
+        border: 1px solid transparent;
+        background-color: var(--g-color-base-background);
+        border-radius: 4px;
+        line-height: $labelHeight;
+        color: var(--g-color-text-secondary);
+        font-size: var(--g-text-body-1-font-size);
         position: relative;
 
-        display: inline-block;
-
-        box-sizing: border-box;
-        margin: 0 0 $labelMargin 20px;
-        padding: 0 8px;
-
-        font-size: var(--g-text-body-1-font-size);
-        line-height: $labelHeight;
-        vertical-align: top;
-
-        color: var(--g-color-text-secondary);
-        border: 1px solid transparent;
-        border-radius: 4px;
-        background-color: var(--g-color-base-background);
-
         &:after {
+            content: '';
             position: absolute;
-            top: calc(#{$labelHeight} + 1px);
-            left: 12px;
-
+            border-left: 1px solid var(--g-color-line-generic-accent);
             width: 0;
             height: $labelMargin;
-
-            content: '';
-
-            border-left: 1px solid var(--g-color-line-generic-accent);
+            top: calc(#{$labelHeight} + 1px);
+            left: 12px;
         }
     }
 
@@ -42,34 +35,26 @@ $labelMargin: 8px;
     }
 
     &__row {
+        list-style: none;
+        margin: 0;
+        padding: 8px 20px 8px 50px;
         position: relative;
-        z-index: 1;
-
         display: flex;
         justify-content: flex-start;
         align-items: flex-start;
-
-        margin: 0;
-        padding: 8px 20px 8px 50px;
-
-        list-style: none;
-
+        z-index: 1;
         cursor: pointer;
-
+        transition: background-color 0.21s ease-out;
         color: var(--g-color-text-complementary);
 
-        transition: background-color 0.21s ease-out;
-
         &:before {
+            content: '';
             position: absolute;
-            z-index: 1;
             top: 0;
             bottom: 0;
             left: 33px;
-
-            content: '';
-
             border-left: 1px solid var(--g-color-line-generic-accent);
+            z-index: 1;
         }
 
         &:hover {
@@ -77,8 +62,8 @@ $labelMargin: 8px;
         }
         &_disabled,
         &_disabled:hover {
-            opacity: 0.5;
             background-color: initial;
+            opacity: 0.5;
         }
 
         &_current,
@@ -88,9 +73,8 @@ $labelMargin: 8px;
     }
 
     &__row-actions {
-        visibility: hidden;
-
         margin-inline: auto 0;
+        visibility: hidden;
     }
 
     &__row:hover &__row-actions {
@@ -99,18 +83,16 @@ $labelMargin: 8px;
 
     &__row &__point-wrap {
         position: absolute;
-        z-index: 1;
-        top: 14px;
         left: 26px;
+        top: 14px;
+        z-index: 1;
     }
 
     &__text {
         margin-top: 6px;
-
+        color: var(--g-color-text-primary);
         font-size: var(--g-text-body-1-font-size);
         line-height: var(--g-text-body-1-line-height);
-
-        color: var(--g-color-text-primary);
     }
 
     &__block:last-child &__row:last-child {
@@ -125,16 +107,13 @@ $labelMargin: 8px;
         margin-top: $labelMargin;
 
         &:before {
+            content: '';
             position: absolute;
-            top: calc(-#{$labelMargin} - 1px);
-            left: 12px;
-
+            border-left: 1px solid var(--g-color-line-generic-accent);
             width: 0;
             height: $labelMargin;
-
-            content: '';
-
-            border-left: 1px solid var(--g-color-line-generic-accent);
+            top: calc(-#{$labelMargin} - 1px);
+            left: 12px;
         }
     }
 

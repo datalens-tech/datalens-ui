@@ -1,13 +1,11 @@
 .dataset-router {
+    height: 100%;
+    min-width: 1100px;
     display: flex;
     flex-direction: column;
 
-    min-width: 1100px;
-    height: 100%;
-
     & > header {
         flex-shrink: 0;
-
         background: var(--ds-color-base);
     }
 }

@@ -19,10 +19,9 @@
     }
 
     &__data-loader {
+        width: 100%;
         display: flex;
         justify-content: center;
-
-        width: 100%;
         margin-top: var(--g-spacing-6);
     }
 
@@ -45,10 +44,8 @@
     }
 
     &__login {
-        overflow: hidden;
-
         max-width: 150px;
-
+        overflow: hidden;
         text-overflow: ellipsis;
     }
 
@@ -59,7 +56,6 @@
     &__lazy-loader {
         display: flex;
         justify-content: center;
-
         width: 100%;
         padding-top: var(--g-spacing-2);
     }

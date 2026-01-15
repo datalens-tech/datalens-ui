@@ -2,17 +2,15 @@
     display: flex;
 
     &__change-role {
-        position: relative;
-
         display: flex;
         flex: 1;
+        position: relative;
     }
 
     &__change-role-loader {
         position: absolute;
         top: 50%;
         left: 50%;
-
         transform: translate(-50%, -50%);
     }
 

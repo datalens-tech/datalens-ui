@@ -4,13 +4,11 @@
     &__item {
         display: flex;
         align-items: center;
-
         cursor: pointer;
     }
 
     &__switcher {
         opacity: 1;
-
         transition: opacity 0.2s;
 
         .dashkit-grid-item:hover & {
@@ -41,8 +39,7 @@
     &__menu-item-hint {
         position: absolute;
         inset: 0;
-
-        cursor: pointer;
         pointer-events: auto;
+        cursor: pointer;
     }
 }

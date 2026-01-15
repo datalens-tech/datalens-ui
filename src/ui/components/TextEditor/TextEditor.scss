@@ -3,10 +3,9 @@
 
     &__textarea {
         display: block;
-        overflow: hidden;
-
         border: 1px solid var(--g-color-line-generic);
         border-radius: 8px;
+        overflow: hidden;
     }
 
     &__textarea-control {
@@ -14,19 +13,15 @@
         max-width: 80vw;
         min-height: 150px;
         max-height: 80vh;
-
         resize: both;
     }
 
     &__info {
         display: inline-flex;
         align-items: center;
-
-        margin-top: 4px;
-
-        line-height: 24px;
-
         color: var(--g-color-text-secondary);
+        line-height: 24px;
+        margin-top: 4px;
     }
 
     &__info-text {

@@ -1,12 +1,10 @@
 .section-container {
-    min-height: 115px;
-
     border-top: 1px solid var(--g-color-line-generic);
     background: var(--g-color-base-background);
+    min-height: 115px;
 
     &__title {
         padding: 16px 12px 0;
-
         font-weight: bold;
     }
 }

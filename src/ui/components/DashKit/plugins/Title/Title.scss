@@ -2,11 +2,10 @@
 
 .dashkit-plugin-title-container {
     $class: &;
+    height: fit-content;
     display: flex;
     align-items: center;
-
     max-width: 100%;
-    height: fit-content;
 
     &_relative {
         position: relative;
@@ -28,9 +27,8 @@
 
     &_with-color {
         .dashkit-plugin-title {
-            align-items: center;
-
             padding: 5px 10px;
+            align-items: center;
         }
 
         #{$class}__anchor {
@@ -55,12 +53,10 @@
     }
 
     &__extra-elements-container {
-        z-index: 1;
-        right: 0;
-
         display: flex;
-
         padding: 0 5px 5px;
+        right: 0;
+        z-index: 1;
 
         &_absolute {
             position: absolute;
@@ -68,16 +64,13 @@
     }
 
     &__anchor {
-        position: relative;
-        z-index: 1;
-
-        height: fit-content;
-        padding-left: 5px;
-
-        text-decoration: none;
-
         opacity: 0;
+        padding-left: 5px;
+        position: relative;
+        height: fit-content;
+        text-decoration: none;
         color: var(--g-color-text-link);
+        z-index: 1;
 
         &:focus-visible {
             opacity: 1;

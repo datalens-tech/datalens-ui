@@ -2,18 +2,16 @@
     width: 480px;
 
     &__title-icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        width: 24px;
-        height: 24px;
         margin: 0 4px 2px 0;
+        height: 24px;
+        width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     &__row {
         display: flex;
-
         height: 28px;
         margin-bottom: 40px;
 
@@ -25,7 +23,6 @@
     &__row-label {
         display: flex;
         align-items: center;
-
         width: 85px;
         margin-right: 20px;
     }

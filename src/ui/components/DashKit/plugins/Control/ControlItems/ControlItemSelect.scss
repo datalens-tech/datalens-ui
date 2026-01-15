@@ -5,17 +5,15 @@
 
     &__error {
         $errorClass: &;
-        padding: 0 6px;
-
         border-radius: 3px;
+        padding: 0 6px;
 
         &_inside {
             display: flex;
             flex-direction: column;
-            justify-content: space-around;
             align-items: flex-start;
+            justify-content: space-around;
             gap: 12px;
-
             padding: 6px;
         }
 
@@ -45,19 +43,16 @@
     }
 
     &__error-text {
-        overflow: hidden;
-
         width: 100%;
-
-        white-space: nowrap;
+        overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     &__buttons {
+        width: 100%;
         display: flex;
         align-items: center;
-
-        width: 100%;
 
         & > :first-child {
             margin-right: 7px;

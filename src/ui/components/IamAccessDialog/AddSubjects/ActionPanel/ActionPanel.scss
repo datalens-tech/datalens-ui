@@ -1,9 +1,7 @@
 .dl-iam-access-dialog-add-user-action-panel {
     display: flex;
     align-items: center;
-
     padding-bottom: 16px;
-
     border-bottom: 1px solid var(--g-color-line-generic);
 
     &__info {
@@ -11,7 +9,7 @@
     }
 
     &__change-role {
-        min-width: 170px;
         margin-left: 6px;
+        min-width: 170px;
     }
 }

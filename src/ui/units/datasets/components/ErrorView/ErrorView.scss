@@ -1,16 +1,14 @@
 .error-view {
-    display: flex;
+    height: 100%;
+    width: 100%;
     flex-grow: 1;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    width: 100%;
-    height: 100%;
-
     &__error-message {
-        margin-bottom: 10px;
-
         color: var(--ds-color-text-danger);
+        margin-bottom: 10px;
     }
 }

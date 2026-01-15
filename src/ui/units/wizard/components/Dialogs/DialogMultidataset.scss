@@ -1,66 +1,57 @@
 .dialog-multidataset {
     .g-dialog-body {
-        padding-top: 0;
-        padding-right: 0;
         padding-left: 0;
+        padding-right: 0;
+        padding-top: 0;
     }
 
     .g-dialog-footer {
-        float: right;
-
         width: 704px;
+        float: right;
     }
 
     &__left {
-        float: left;
-
         width: 256px;
         height: 720px;
-        padding: 28px 0 0;
-
+        float: left;
         background: var(--g-color-base-generic-ultralight);
 
-        &-header {
-            margin-bottom: 16px;
-            padding-left: 24px;
+        padding: 28px 0 0;
 
+        &-header {
+            padding-left: 24px;
             font-size: 18px;
+            margin-bottom: 16px;
         }
 
         &-dataset {
-            height: 32px;
             padding-left: 24px;
-
             line-height: 32px;
+            height: 32px;
             vertical-align: middle;
 
             &-icon {
-                display: flex;
                 float: left;
-                justify-content: center;
-                align-items: center;
-
-                width: 24px;
-                height: 24px;
-                margin-top: 4px;
                 margin-right: 8px;
-
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 24px;
+                width: 24px;
                 color: var(--g-color-base-positive-heavy);
+                margin-top: 4px;
             }
 
             &-title {
+                width: 150px;
                 display: inline-block;
                 overflow: hidden;
-
-                width: 150px;
-
-                white-space: nowrap;
                 text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             &-more {
                 float: right;
-
                 margin-right: 24px;
 
                 svg {
@@ -73,32 +64,30 @@
             }
 
             &-add-icon {
-                float: left;
-
                 margin-top: 7px;
+                float: left;
                 margin-right: 8px;
             }
 
             &:hover {
-                cursor: pointer;
-
                 background: var(--dl-color-contrast-4);
+                cursor: pointer;
             }
         }
     }
 
     &__right {
-        float: right;
-        overflow-y: auto;
-
         width: 704px;
         height: 628px;
+        float: right;
+
+        overflow-y: auto;
+
         padding: 32px 0 0 40px;
 
         &-header {
-            margin-bottom: 16px;
-
             font-size: 15px;
+            margin-bottom: 16px;
         }
 
         &-link {
@@ -110,12 +99,10 @@
 
             &-formula {
                 display: inline-block;
-
-                padding: 6px 12px;
-
+                background: var(--g-color-base-info-light);
                 border: 1px solid var(--g-color-base-info-light);
                 border-radius: 4px;
-                background: var(--g-color-base-info-light);
+                padding: 6px 12px;
 
                 span {
                     display: inline-block;
@@ -127,7 +114,6 @@
 
                 &-field {
                     margin: 0 0 0 4px;
-
                     opacity: 0.5;
                 }
 
@@ -141,7 +127,6 @@
 
                 &:hover {
                     cursor: pointer;
-
                     background: var(--g-color-base-info-light);
                 }
             }

@@ -2,20 +2,18 @@
 
 .dl-mobile-header-user-panel {
     &__user {
-        display: flex;
         align-items: center;
-
+        display: flex;
         padding: var(--g-spacing-3) var(--g-spacing-2);
     }
 
     &__user-info {
+        @include text-body-short;
         display: flex;
         flex: auto;
         flex-direction: column;
-
         min-width: 0;
         margin-left: var(--g-spacing-3);
-        @include text-body-short;
     }
 
     &__user-name {
@@ -23,8 +21,8 @@
     }
 
     &__user-description {
-        color: var(--g-color-text-secondary);
         @include overflow-ellipsis();
+        color: var(--g-color-text-secondary);
     }
 
     &__user-avatar {
@@ -32,13 +30,12 @@
     }
 
     & &__menu-item {
-        padding: var(--g-spacing-3) var(--g-spacing-5);
         @include text-body-2();
+        padding: var(--g-spacing-3) var(--g-spacing-5);
     }
 
     &__menu-icon {
-        margin-right: var(--g-spacing-4);
-
         color: var(--gn-aside-header-item-icon-color);
+        margin-right: var(--g-spacing-4);
     }
 }

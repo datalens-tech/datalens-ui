@@ -4,20 +4,17 @@
     &__loader {
         display: flex;
         justify-content: center;
-
         margin-top: 20px;
     }
 
     &__row {
+        margin-bottom: 16px;
         display: flex;
         align-items: center;
-
-        margin-bottom: 16px;
     }
 
     &__label {
         display: inline-block;
-
         width: 125px;
         margin-right: 16px;
     }

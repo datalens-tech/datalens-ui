@@ -7,11 +7,9 @@
     }
 
     &__path-text {
-        overflow: hidden;
         flex: 1 1 auto;
-
         margin: 0 8px;
-
+        overflow: hidden;
         text-overflow: ellipsis;
     }
 

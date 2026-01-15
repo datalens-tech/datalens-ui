@@ -3,7 +3,6 @@
 .aggregation-select {
     &__select-control {
         width: 100%;
-
         text-align: left;
 
         &_measure::before {
@@ -25,13 +24,11 @@
 
     &__selected-value {
         display: block;
-        overflow: hidden;
-
         width: 130px;
-        height: 20px;
-
-        white-space: nowrap;
+        overflow: hidden;
         text-overflow: ellipsis;
+        height: 20px;
+        white-space: nowrap;
     }
 
     &__select-option {

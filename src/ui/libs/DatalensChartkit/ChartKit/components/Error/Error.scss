@@ -1,27 +1,22 @@
 .chartkit-error {
     display: flex;
-    overflow: auto;
     flex-direction: column;
-
     width: 100%;
     height: 100%;
     padding: 16px;
+    overflow: auto;
 
     &__title {
         display: flex;
         align-items: center;
-
-        margin-bottom: 12px;
-
+        color: var(--g-color-text-primary);
         font-size: 13px;
         line-height: 16px;
-
-        color: var(--g-color-text-primary);
+        margin-bottom: 12px;
     }
 
     & &__icon {
-        margin-right: 8px;
-
         color: var(--g-color-text-danger);
+        margin-right: 8px;
     }
 }

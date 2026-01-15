@@ -5,19 +5,17 @@
     height: 100%;
 
     &__form-container {
+        background-color: var(--g-color-base-background);
+        border-radius: 32px;
         width: 440px;
         min-height: 200px;
         padding: 48px;
-
-        border-radius: 32px;
-        background-color: var(--g-color-base-background);
         box-shadow: 0 30px 100px 0 rgba(0, 0, 0, 0.25);
     }
 
     &__link {
-        text-decoration: none;
-
         color: var(--g-color-text-link);
+        text-decoration: none;
 
         &:visited {
             color: var(--g-color-text-link);

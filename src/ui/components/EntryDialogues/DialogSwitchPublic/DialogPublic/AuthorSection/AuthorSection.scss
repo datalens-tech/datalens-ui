@@ -1,27 +1,22 @@
 .dl-dialog-public-author-section {
-    flex-shrink: 0;
-
     width: 100%;
-    margin-top: 24px;
+    flex-shrink: 0;
     padding: 24px 0;
-
-    border-width: 1px 0;
     border-style: solid;
+    border-width: 1px 0;
     border-color: var(--g-color-line-generic-solid);
+    margin-top: 24px;
 
     &__title {
-        margin-bottom: 4px;
-
-        font-size: var(--g-text-body-2-font-size);
         font-weight: 500;
+        margin-bottom: 4px;
+        font-size: var(--g-text-body-2-font-size);
     }
 
     &__description {
         margin-top: 4px;
-
-        line-height: var(--g-text-caption-2-line-height);
-
         color: var(--g-color-text-secondary);
+        line-height: var(--g-text-caption-2-line-height);
     }
 
     &__form {

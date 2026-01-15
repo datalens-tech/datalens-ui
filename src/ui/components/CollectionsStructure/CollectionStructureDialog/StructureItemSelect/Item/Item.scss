@@ -1,13 +1,10 @@
 .dl-collections-structure-collection-select-item {
     display: flex;
     align-items: center;
-
-    margin-bottom: 4px;
     padding: 8px 6px;
-
-    cursor: pointer;
-
+    margin-bottom: 4px;
     border-radius: 8px;
+    cursor: pointer;
 
     &:last-child {
         margin-bottom: 0;
@@ -18,9 +15,8 @@
     }
 
     &_inactive {
-        cursor: not-allowed;
-
         opacity: 0.5;
+        cursor: not-allowed;
 
         &:hover {
             background-color: transparent;
@@ -33,7 +29,6 @@
 
     &__title {
         flex: 1;
-
         margin-left: 8px;
     }
 

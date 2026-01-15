@@ -1,29 +1,24 @@
 .dataset-select-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
     height: 40px;
-
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     cursor: default;
     user-select: none;
 
     &__icon-container {
         display: flex;
         align-items: center;
-
-        width: 24px;
-        height: 24px;
-
         color: var(--g-color-base-positive-heavy);
+        height: 24px;
+        width: 24px;
     }
 
     &__popover-content {
+        padding: var(--g-spacing-3);
         display: flex;
         flex-direction: column;
         gap: var(--g-spacing-3);
-
-        padding: var(--g-spacing-3);
     }
 
     &:hover {
@@ -40,17 +35,15 @@
 
     &_error {
         .dataset-select-item__label {
-            font-style: italic;
-
             color: var(--g-color-text-secondary);
+            font-style: italic;
         }
     }
 
     &__shared-icon {
-        flex-shrink: 0;
-
-        margin-right: var(--g-spacing-1);
         margin-left: var(--g-spacing-2);
+        margin-right: var(--g-spacing-1);
+        flex-shrink: 0;
     }
 }
 
@@ -73,13 +66,12 @@
 }
 
 .dataset-select-item__content {
-    display: flex;
     overflow: hidden;
+    height: 100%;
+    display: flex;
     align-items: center;
-
     width: 100%;
     min-width: 0;
-    height: 100%;
 
     .button2__text {
         margin: 0;
@@ -89,29 +81,24 @@
 .dataset-select-item__label {
     display: inline-block;
     overflow: hidden;
-
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: var(--g-text-body-1-font-size);
     vertical-align: bottom;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 }
 
 .dataset-select-item__description {
     display: inline-block;
     overflow: hidden;
-
+    text-overflow: ellipsis;
+    white-space: nowrap;
     margin-left: 8px;
-
+    color: var(--g-color-text-misc);
     font-size: var(--g-text-body-1-font-size);
     vertical-align: bottom;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-
-    color: var(--g-color-text-misc);
 }
 
 .dataset-select-item__more {
     visibility: hidden;
-
     margin-right: 6px;
 }

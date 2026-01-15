@@ -1,25 +1,25 @@
 @import '../../../../../../styles/mixins.scss';
 
 .ql-tab-params {
-    overflow-y: scroll;
-
-    height: calc(100% - 40px);
     padding: 0 0 8px;
+    height: calc(100% - 40px);
+    overflow-y: scroll;
 
     &__param-row-wrapper {
         display: flex;
-        flex-direction: column;
 
         padding: 10px 0 48px 20px;
 
         border-bottom: 1px solid var(--g-color-line-generic);
+
+        flex-direction: column;
     }
 
     &__param-row {
         display: flex;
-        align-items: center;
 
         line-height: 28px;
+        align-items: center;
     }
 
     &__param-row-applied {
@@ -28,11 +28,10 @@
 
     &__remove-param-btn {
         display: inline-flex;
-
-        width: 28px;
         height: 28px;
-        margin-right: 5px;
+        width: 28px;
         margin-left: 10px;
+        margin-right: 5px;
 
         .icon.button2__icon {
             display: inline-block;
@@ -48,21 +47,20 @@
     }
 
     &__default-value-add {
-        height: 0;
-
         text-align: center;
+
+        height: 0;
     }
 
     &__default-value-add-btn {
-        display: inline;
-
         width: 100%;
+        display: inline;
         height: 28px;
-        margin-top: 10px;
-        margin-bottom: 10px;
-
         line-height: 28px;
         text-align: center;
+
+        margin-top: 10px;
+        margin-bottom: 10px;
 
         .icon.button2__icon {
             display: inline-block;
@@ -75,55 +73,48 @@
 
     &__overriden-param-note {
         height: 20px;
-        margin-top: 4px;
-
         line-height: 20px;
         vertical-align: middle;
+        margin-top: 4px;
 
         &_label {
             display: inline-block;
-
             height: 20px;
-            margin-right: 5px;
-
             line-height: 20px;
             vertical-align: middle;
 
             color: var(--g-color-text-secondary);
+            margin-right: 5px;
         }
 
         &_value-wrapper {
             display: inline-block;
 
-            height: 20px;
-            margin-right: 10px;
-            padding: 1px 6px 1px 8px;
-
-            line-height: 18px;
-            vertical-align: middle;
-
             color: var(--g-color-text-complementary);
             background: var(--g-color-base-generic);
+            padding: 1px 6px 1px 8px;
+            margin-right: 10px;
+
+            height: 20px;
+            line-height: 18px;
+            vertical-align: middle;
         }
 
         &_value {
             display: inline-block;
-            overflow: hidden;
-
             height: 20px;
-
             line-height: 20px;
             vertical-align: middle;
-            white-space: nowrap;
+            overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         svg {
-            height: 20px;
             margin-left: 4px;
-
-            cursor: pointer;
+            height: 20px;
             vertical-align: middle;
+            cursor: pointer;
         }
     }
 
@@ -154,7 +145,6 @@
     &__default-value-array {
         display: flex;
         flex-direction: column;
-
         width: 100%;
     }
 
@@ -173,18 +163,15 @@
 
     &__remove-param-value-btn {
         display: inline-flex;
-        float: right;
-
-        width: 28px;
         height: 28px;
+        width: 28px;
+        float: right;
     }
 
     &__delimeter {
-        display: inline-flex;
-
-        margin-right: 8px;
         margin-left: 8px;
-
+        margin-right: 8px;
+        display: inline-flex;
         vertical-align: top;
     }
 
@@ -193,11 +180,9 @@
     }
 
     &__select {
-        display: inline-flex;
         flex: 0 0 82px;
-
-        margin-right: 12px;
-
         vertical-align: top;
+        margin-right: 12px;
+        display: inline-flex;
     }
 }

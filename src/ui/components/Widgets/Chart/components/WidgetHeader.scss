@@ -13,22 +13,20 @@
 
     &__icons {
         position: absolute;
-        z-index: 10;
-        top: 4px;
-        right: 44px;
-
         display: flex;
         flex-direction: row-reverse;
         align-items: center;
+        top: 4px;
+        right: 44px;
+        z-index: 10;
     }
 
     &__filters-controls {
-        margin-left: 8px;
-        padding: 2px;
-
-        border-radius: var(--g-border-radius-l);
         background-color: var(--g-color-base-background);
+        padding: 2px;
+        border-radius: var(--g-border-radius-l);
         box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.05);
+        margin-left: 8px;
     }
 
     &__icon-filter-clear {
@@ -45,9 +43,7 @@
 
     &__tabs {
         display: flex;
-
         padding: 0 65px 0 16px;
-
         font-size: 15px;
 
         &_no-controls {
@@ -71,17 +67,13 @@
     }
 
     &__tab {
-        position: relative;
-
         display: inline-flex;
-
         width: 100%;
         margin: 0 15px 0 0;
-
-        cursor: pointer;
-
-        opacity: 0.5;
         color: inherit;
+        cursor: pointer;
+        opacity: 0.5;
+        position: relative;
 
         &:hover,
         &_active {
@@ -90,18 +82,15 @@
     }
 
     &__mobile-title {
-        overflow: visible;
-
+        @include text-subheader-3();
+        color: var(--g-color-text-primary);
+        text-decoration: none;
         width: 100%;
         padding: 10px 50px 10px 16px;
-
+        overflow: visible;
         white-space: normal;
-        text-decoration: none;
         word-break: break-word;
         hyphens: auto;
-
-        color: var(--g-color-text-primary);
-        @include text-subheader-3();
 
         &_with-hint {
             display: flex;
@@ -136,17 +125,15 @@
 
     &_fullscreen {
         #{$class}__mobile-title {
-            height: $headerHeight;
-            padding: 0 50px 0 45px;
-
             line-height: $headerHeight;
+            padding: 0 50px 0 45px;
+            height: $headerHeight;
         }
 
         #{$class}__mobile-title-wrap {
-            overflow: hidden;
-
-            white-space: nowrap;
             text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         &#{$class}_btns-full #{$class}__mobile-title {

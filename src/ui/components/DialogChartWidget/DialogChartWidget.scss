@@ -1,33 +1,29 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
 .widget-item-dialog {
+    height: min(728px, 90vh);
+    min-height: 400px;
+    display: flex;
+
     $class: &;
 
     --_--sidebar-width: 276px;
 
     --dl-dropdown-navigation-width: 100%;
-    display: flex;
-
-    height: min(728px, 90vh);
-    min-height: 400px;
 
     &__body {
-        position: relative;
-
-        display: flex;
         overflow: hidden;
+        height: 100%;
+        position: relative;
+        display: flex;
         flex-direction: column;
 
-        height: 100%;
-
         &:after {
+            content: '';
             position: absolute;
-            right: var(--g-spacing-8);
             bottom: 0;
             left: var(--g-spacing-8);
-
-            content: '';
-
+            right: var(--g-spacing-8);
             border-top: 1px solid var(--g-color-base-generic);
         }
     }
@@ -35,8 +31,8 @@
     &__tab-panel {
         $tabs-height: 36px;
         $tab-top-margin: var(--g-spacing-4);
-        height: calc(100% - $tabs-height - $tab-top-margin);
         margin-block-start: $tab-top-margin;
+        height: calc(100% - $tabs-height - $tab-top-margin);
     }
 
     &__tab-content {
@@ -53,10 +49,9 @@
         --dl-tab-menu-items-width: calc(
             var(--_--sidebar-width) - var(--dl-tab-menu-scroll-compensation)
         );
-        overflow-y: hidden;
-
         width: var(--_--sidebar-width);
         height: fit-content;
+        overflow-y: hidden;
     }
 
     &__divider {
@@ -64,14 +59,13 @@
     }
 
     &__content-wrapper {
-        overflow-x: hidden;
-        overflow-y: auto;
-
         height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-inline-end: var(--g-spacing-4);
         margin-inline-end: calc(
             var(--g-spacing-4) * -1
         ); // scroll width compensation for avoiding form shrinking
-        padding-inline-end: var(--g-spacing-4);
     }
 
     &__content {
@@ -86,19 +80,18 @@
     }
 
     &__section-title {
-        display: flex;
-        align-items: center;
-
-        height: 28px;
-        margin-block-end: var(--g-spacing-3);
         @include text-subheader-2();
+        display: flex;
+        height: 28px;
+        align-items: center;
+        margin-block-end: var(--g-spacing-3);
     }
 
     &__navigation-input-container {
         display: grid;
-        align-items: center;
-        grid-template-columns: var(--dl-dropdown-navigation-width);
         grid-auto-rows: 40px;
+        grid-template-columns: var(--dl-dropdown-navigation-width);
+        align-items: center;
     }
 
     &__navigation-input-row {
@@ -106,9 +99,8 @@
     }
 
     &__textarea {
-        flex-grow: 1;
-
         height: 80px;
+        flex-grow: 1;
     }
 
     &__input {
@@ -120,13 +112,12 @@
     }
 
     &__settings-container {
+        width: var(--dl-dropdown-navigation-width);
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 8px;
-
-        width: var(--dl-dropdown-navigation-width);
         margin-bottom: 5px;
+        gap: 8px;
     }
 
     &__markdown-control {
@@ -135,21 +126,18 @@
 
     &__checkbox {
         flex-grow: 0;
-
         margin-block-start: var(--g-spacing-2);
     }
 
     .widget-item-dialog__line {
         display: grid;
         grid-template-columns: 140px auto;
-
         line-height: 40px;
     }
 
     .widget-item-dialog__line-caption {
         display: flex;
         align-items: flex-start;
-
         color: var(--g-color-text-primary);
     }
 
@@ -167,29 +155,26 @@
     }
 
     &__params {
+        min-height: 65px;
         display: flex;
         flex-wrap: wrap;
 
-        min-height: 65px;
-
         &_empty {
-            justify-content: center;
             align-items: center;
-
+            justify-content: center;
             color: var(--g-color-text-secondary);
         }
     }
 
     &__dialog-params {
-        display: grid;
-
         width: 550px;
+        display: grid;
         grid-row-gap: 15px;
 
         &-row {
             display: grid;
-            align-items: center;
             grid-template-columns: 15% auto;
+            align-items: center;
         }
     }
 
@@ -198,9 +183,8 @@
     }
 
     &__error {
-        padding: 10px;
-
         color: var(--g-color-text-danger);
+        padding: 10px;
     }
 
     &__beta {
@@ -208,10 +192,8 @@
     }
 
     &__info-comment {
-        margin: var(--g-spacing-2) 0 0 0;
-
-        line-height: var(--g-text-body-1-line-height);
-
         color: var(--g-color-text-secondary);
+        line-height: var(--g-text-body-1-line-height);
+        margin: var(--g-spacing-2) 0 0 0;
     }
 }

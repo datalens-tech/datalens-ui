@@ -2,10 +2,9 @@
 @import '../../styles/mixins.scss';
 
 .entry-panel-breadcrumbs {
-    overflow: hidden;
-    flex-grow: 1;
-    align-items: center;
-
-    height: 28px;
     margin-right: 5px;
+    flex-grow: 1;
+    overflow: hidden;
+    height: 28px;
+    align-items: center;
 }

@@ -11,30 +11,26 @@
     }
 
     &__palette-select {
-        display: inline-block;
-
-        width: var(--gc-form-row-label-width);
         padding-inline-end: var(--g-spacing-2);
+        width: var(--gc-form-row-label-width);
+        display: inline-block;
     }
 
     &__reverse-button {
         margin-left: var(--g-spacing-2);
-
         line-height: 24px;
         vertical-align: middle;
     }
 
     &__threshold-inputs-wrapper {
         display: flex;
-        justify-content: space-between;
-
         width: 395px;
         padding-right: 44px;
+        justify-content: space-between;
     }
 
     &__threshold-input {
         display: inline-block;
-
         width: 100px;
     }
 
@@ -45,10 +41,8 @@
     &__preview {
         width: 358px;
         height: 28px;
-
-        vertical-align: middle;
-
         background: #000000;
+        vertical-align: middle;
     }
 
     &__select {

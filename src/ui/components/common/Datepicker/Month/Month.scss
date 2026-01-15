@@ -1,25 +1,20 @@
 .dl-datepicker-month {
     display: grid;
-    justify-content: center;
     grid-template-columns: repeat(7, 36px);
     grid-auto-rows: 36px;
-
-    margin-bottom: 5px;
     grid-gap: 4px;
+    justify-content: center;
+    margin-bottom: 5px;
 
     &__day {
         position: relative;
-
         display: flex;
         justify-content: center;
         align-items: center;
-
         width: 100%;
         height: 100%;
-
-        cursor: pointer;
-
         border-radius: 4px;
+        cursor: pointer;
 
         .dl-datepicker_desktop &:hover {
             background-color: var(--g-color-base-simple-hover);
@@ -48,17 +43,13 @@
         }
 
         &_selected:not(&_left-edge)::before {
+            content: '';
             position: absolute;
             top: 0;
             left: -4px;
-
             display: block;
-
-            width: 4px;
             height: 36px;
-
-            content: '';
-
+            width: 4px;
             background-color: var(--g-color-base-selection);
         }
 
@@ -74,60 +65,48 @@
 
         &_selected + &:not(&_selected):not(&_left-edge) {
             &::before {
+                content: '';
                 position: absolute;
                 top: 0;
                 left: -8px;
-
                 display: block;
-
-                width: 4px;
                 height: 36px;
-
-                content: '';
-                pointer-events: none;
-
+                width: 4px;
                 background-color: var(--g-color-base-float);
+                pointer-events: none;
             }
 
             &::after {
+                content: '';
                 position: absolute;
                 top: 0;
                 left: -8px;
-
                 display: block;
-
-                width: 4px;
                 height: 36px;
-
-                content: '';
-                pointer-events: none;
-
+                width: 4px;
                 border-top-right-radius: 4px;
                 border-bottom-right-radius: 4px;
                 background-color: var(--g-color-base-selection);
+                pointer-events: none;
             }
         }
 
         &_disabled {
-            pointer-events: none;
-
             opacity: 0.3;
+            pointer-events: none;
         }
     }
 
     &__title {
-        align-self: center;
         grid-area: title;
-
+        align-self: center;
         font-size: 18px;
         line-height: 20px;
-
         color: var(--g-color-text-secondary);
 
         &_disabled {
-            pointer-events: none;
-
             opacity: 0.3;
+            pointer-events: none;
         }
     }
 }

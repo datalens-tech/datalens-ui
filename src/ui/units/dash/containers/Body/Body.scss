@@ -5,7 +5,6 @@ $contentMobilePadding: 16px;
 $actionPanelDefaultBottom: 20px;
 
 .dash-body {
-    $bodyClass: &;
     --dashkit-grid-item-edit-opacity: 0.99; // Chrome z-index opacity leaking
     --dashkit-overlay-color: var(--g-color-base-float);
     --dashkit-overlay-border-color: var(--g-color-base-float);
@@ -19,17 +18,16 @@ $actionPanelDefaultBottom: 20px;
     --dash-current-background: var(--_--dash-background);
 
     position: relative;
-
     display: flex;
-    overflow: clip;
-    flex: 1;
     flex-direction: row;
+    flex: 1;
+    overflow: clip;
     text-size-adjust: none;
+    $bodyClass: &;
 
     &_split-pane {
-        overflow-y: auto;
-
         height: 100%;
+        overflow-y: auto;
     }
 
     // redefining the style of the internal header at the dashboard level by design so that it looks the same with the headers
@@ -39,11 +37,9 @@ $actionPanelDefaultBottom: 20px;
 
     &__content {
         width: 100%;
-        padding: 20px #{$contentPadding} 48px;
-
-        background-color: var(--dash-current-background);
-
         transition: width 0.1s;
+        padding: 20px #{$contentPadding} 48px;
+        background-color: var(--dash-current-background);
 
         &_with-table-of-content:not(&_mobile) {
             width: calc(100% - 250px);
@@ -64,20 +60,18 @@ $actionPanelDefaultBottom: 20px;
         }
 
         &_with-edit-panel {
-            display: flex;
-            flex-direction: column;
-
             margin-bottom: 124px;
             padding-bottom: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         &_with-edit-panel > .dashkit,
         &_with-edit-panel > .dashkit > .react-grid-layout {
-            display: flex;
-            flex-grow: 1;
-            flex-direction: column;
-
             min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
 
         &_with-footer #{$bodyClass}__edit-panel {
@@ -95,11 +89,10 @@ $actionPanelDefaultBottom: 20px;
 
     &__content-wrapper {
         position: relative;
-
         display: flex;
-        overflow: clip;
-        flex: 1;
         flex-direction: column;
+        flex: 1;
+        overflow: clip;
         text-size-adjust: none;
 
         &_mobile {
@@ -107,13 +100,13 @@ $actionPanelDefaultBottom: 20px;
         }
 
         & {
-            border-top: var(--dl-dash-select-container-border-top-width) solid
-                var(--dl-dash-select-container-border-color);
             border-right: var(--dl-dash-select-container-border-right-width) solid
+                var(--dl-dash-select-container-border-color);
+            border-left: var(--dl-dash-select-container-border-left-width) solid
                 var(--dl-dash-select-container-border-color);
             border-bottom: var(--dl-dash-select-container-border-bottom-width) solid
                 var(--dl-dash-select-container-border-color);
-            border-left: var(--dl-dash-select-container-border-left-width) solid
+            border-top: var(--dl-dash-select-container-border-top-width) solid
                 var(--dl-dash-select-container-border-color);
         }
     }
@@ -124,14 +117,12 @@ $actionPanelDefaultBottom: 20px;
 
     &__content-container {
         position: relative;
-
         display: flex;
-        overflow: clip;
-        flex: 1;
         flex-direction: row;
-
-        background-color: var(--dash-current-background);
+        flex: 1;
+        overflow: clip;
         text-size-adjust: none;
+        background-color: var(--dash-current-background);
 
         &_mobile {
             overflow: hidden;
@@ -151,13 +142,11 @@ $actionPanelDefaultBottom: 20px;
     }
 
     &__entry-name {
-        padding: 16px 0 4px;
-
         font-size: var(--g-text-header-2-font-size);
-        font-weight: 500;
         line-height: var(--g-text-header-2-line-height);
-
+        font-weight: 500;
         background-color: var(--_--dash-background);
+        padding: 16px 0 4px;
     }
 
     &__tabs {

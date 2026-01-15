@@ -8,10 +8,9 @@
     }
 
     &__collapse-list-content {
+        max-height: 176px;
         overflow-x: hidden;
         overflow-y: auto;
-
-        max-height: 176px;
     }
 
     &__info {
@@ -32,13 +31,11 @@
 
     &__sub-header {
         margin-bottom: 16px;
-
         word-wrap: break-word;
     }
 
     &__label {
         margin-right: 4px;
-
         white-space: nowrap;
     }
 

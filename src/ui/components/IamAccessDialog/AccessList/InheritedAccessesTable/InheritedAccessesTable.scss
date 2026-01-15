@@ -12,11 +12,9 @@
     &__collection {
         display: flex;
         align-items: center;
-
         font-size: 14px;
-        text-decoration: none;
-
         color: var(--g-color-text-primary);
+        text-decoration: none;
     }
 
     &__collection-icon {

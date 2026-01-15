@@ -1,8 +1,6 @@
 .field-list-value-column {
     overflow: hidden;
-
-    white-space: nowrap;
     text-overflow: ellipsis;
-
+    white-space: nowrap;
     color: var(--g-color-text-secondary);
 }

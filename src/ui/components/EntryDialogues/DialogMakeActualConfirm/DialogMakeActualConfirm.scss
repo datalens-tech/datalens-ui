@@ -2,10 +2,9 @@
     width: 490px;
 
     &__controls {
+        width: 100%;
         display: flex;
         justify-content: flex-end;
-
-        width: 100%;
     }
 
     &__button + &__button {
@@ -25,7 +24,6 @@
 
     &__icon {
         margin-right: 5px;
-
         color: var(--g-color-text-warning);
     }
 

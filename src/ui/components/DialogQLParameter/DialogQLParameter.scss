@@ -1,11 +1,10 @@
 .dl-dialog-ql-parameter {
     display: flex;
     flex-direction: column;
-
     width: 595px;
     height: 370px;
-    min-height: 370px;
     max-height: 80vh;
+    min-height: 370px;
 
     &__divider {
         margin: 0;
@@ -27,19 +26,16 @@
 
     &__row {
         display: flex;
-
         margin-bottom: 10px;
     }
 
     &__label {
         width: 100px;
-
         line-height: 28px;
     }
 
     & .g-dialog-header__caption {
         overflow: hidden;
-
         white-space: nowrap;
         text-overflow: ellipsis;
     }

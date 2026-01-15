@@ -3,21 +3,16 @@
         display: flex;
         flex-flow: wrap;
         gap: 10px;
-
         width: 896px;
     }
 
     &__item {
         position: relative;
-
-        max-width: 141px;
         height: auto;
-        padding: 8px;
-
         cursor: pointer;
-
+        max-width: 141px;
+        padding: 8px;
         border-radius: 16px;
-
         transition: background-color 0.2s ease;
 
         &:hover {
@@ -27,7 +22,6 @@
 
     &__link {
         text-decoration: none;
-
         color: inherit;
 
         &_selection-mode {
@@ -37,19 +31,18 @@
 
     &__checkbox {
         position: absolute;
-        z-index: 9;
-        top: 22px;
         left: 22px;
+        top: 22px;
+        z-index: 9;
     }
 
     &__icon {
         .custom-entry-icon {
-            width: 125px;
             height: 125px;
+            width: 125px;
             .custom-color-box {
-                width: 125px;
                 height: 125px;
-
+                width: 125px;
                 border-radius: 12px;
                 .custom-icon {
                     width: 82px;
@@ -63,28 +56,24 @@
     }
 
     &__title {
-        overflow: hidden;
-
         height: 16px;
         margin-top: 8px;
-
         font-size: 13px;
         font-weight: 400;
+        overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
 
     &__info {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-
+        justify-content: space-between;
         margin-top: 4px;
     }
 
     &__date {
         overflow: hidden;
-
         white-space: nowrap;
         text-overflow: ellipsis;
     }

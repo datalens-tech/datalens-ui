@@ -1,14 +1,13 @@
 .query-editor {
     --query-editor-border-radius: 4px;
-    display: flex;
-    overflow: hidden;
-    justify-content: center;
-    align-items: center;
 
     height: 140px;
-
     border: 1px solid var(--g-color-line-generic);
     border-radius: var(--query-editor-border-radius);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &__code-editor {
         border: none;

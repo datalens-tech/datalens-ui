@@ -1,22 +1,19 @@
 .dialog-placeholder {
-    display: flex;
-    overflow-y: hidden;
-    flex-direction: column;
-
     width: 720px;
     max-height: 90vh;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
 
     &__body-container {
-        overflow-y: auto;
-
-        max-width: 100%;
         max-height: 100%;
+        max-width: 100%;
+        overflow-y: auto;
     }
 
     &__title-popover {
-        margin-left: 5px;
-
         vertical-align: middle;
+        margin-left: 5px;
     }
 
     &__min-input,
@@ -43,13 +40,12 @@
     }
 
     &__title-icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        width: 24px;
-        height: 24px;
         margin-right: 4px;
         margin-bottom: 2px;
+        height: 24px;
+        width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }

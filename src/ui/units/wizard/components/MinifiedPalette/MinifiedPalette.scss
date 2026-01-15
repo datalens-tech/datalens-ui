@@ -8,17 +8,15 @@ $paletteItemSizeM: 28px;
     }
 
     &__color-input-wrapper {
+        width: 128px;
         display: flex;
         align-items: center;
-
-        width: 128px;
         margin-top: 12px;
         margin-bottom: 5px;
     }
 
     &__palette {
         grid-gap: 8px;
-
         grid-template-columns: repeat(7, $paletteItemSizeM);
         grid-auto-rows: $paletteItemSizeM;
     }
@@ -29,11 +27,10 @@ $paletteItemSizeM: 28px;
         &.palette-item:hover,
         &.palette-item_selected {
             &::before {
-                width: $paletteItemSizeM + 6px;
-                height: $paletteItemSizeM + 6px;
-
                 border-width: 2px;
                 border-radius: 9px;
+                width: $paletteItemSizeM + 6px;
+                height: $paletteItemSizeM + 6px;
             }
         }
 

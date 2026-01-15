@@ -20,16 +20,13 @@
     &__modal {
         &-header {
             position: relative;
-
-            display: grid;
-            align-items: center;
-            grid-template-columns: auto 16px;
-
             padding: 20px 32px 10px;
-
+            line-height: 24px;
             font-size: 19px;
             font-weight: 700;
-            line-height: 24px;
+            display: grid;
+            grid-template-columns: auto 16px;
+            align-items: center;
         }
 
         &-title {
@@ -39,15 +36,13 @@
         }
 
         &-body {
-            width: 700px;
             padding: 10px 32px;
-
             font-size: 13px;
+            width: 700px;
         }
 
         &-footer {
             padding: 28px 32px;
-
             text-align: right;
         }
 
@@ -65,17 +60,14 @@
     }
 
     &__text {
-        overflow: auto;
-
         padding: 15px;
-
-        font-family: $fontFamilyMonospace;
         font-size: 13px;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-
         border-radius: 4px;
         background-color: rgba(0, 0, 0, 0.02);
+        overflow: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: $fontFamilyMonospace;
 
         &_modal {
             max-height: calc(100vh - 250px);
@@ -84,11 +76,9 @@
 
     &__opened {
         overflow: auto;
-
+        font-size: 14px;
         margin: 0;
         padding-left: 30px;
-
-        font-size: 14px;
 
         &-line {
             cursor: pointer;

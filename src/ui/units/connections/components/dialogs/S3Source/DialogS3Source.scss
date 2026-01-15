@@ -1,7 +1,6 @@
 .conn-dialog-s3-source {
     display: flex;
     flex-direction: column;
-
     height: 340px;
 
     &__list-container {
@@ -14,10 +13,8 @@
         flex-shrink: 0;
         align-items: center;
         gap: 12px;
-
         height: 42px;
         padding: 0 8px;
-
         border-bottom: 1px solid var(--g-color-line-generic);
     }
 
@@ -28,19 +25,16 @@
     &__list-header-clickable {
         display: flex;
         gap: 12px;
-
         cursor: pointer;
     }
 
     &__list-row {
         width: 100%;
-
         cursor: pointer;
 
         &_disabled {
-            cursor: default;
-
             background-color: var(--g-color-base-generic-accent-disabled);
+            cursor: default;
         }
 
         &_selected {

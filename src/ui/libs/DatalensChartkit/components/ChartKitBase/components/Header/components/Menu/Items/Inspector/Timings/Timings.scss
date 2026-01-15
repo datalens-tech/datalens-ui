@@ -15,17 +15,15 @@
     }
 
     &__metric-value {
-        margin-bottom: 4px;
-
         font-size: var(--g-text-header-1-font-size);
-        font-weight: 500;
         line-height: var(--g-text-header-1-line-height);
+        font-weight: 500;
+        margin-bottom: 4px;
     }
 
     &__metric-title {
+        color: var(--g-color-text-secondary);
         display: flex;
         gap: 5px;
-
-        color: var(--g-color-text-secondary);
     }
 }

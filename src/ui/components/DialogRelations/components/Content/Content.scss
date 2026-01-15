@@ -11,33 +11,28 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
     $class: &;
 
     overflow: hidden auto;
+    margin: 16px 0 0;
     flex-grow: 1;
 
-    margin: 16px 0 0;
-
     &_with-loader {
-        display: flex;
         justify-content: center;
         align-items: center;
+        display: flex;
     }
 
     &__loader-wrap {
-        display: flex;
         justify-content: center;
         align-items: center;
-
+        display: flex;
         height: 100%;
     }
 
     &__row {
         display: grid;
         grid-template-columns: minmax(0, 1fr) 176px;
-
         width: 100%;
-
-        border-bottom: 1px solid var(--g-color-line-generic);
-
         transition: background-color 0.2s ease;
+        border-bottom: 1px solid var(--g-color-line-generic);
 
         &:last-of-type {
             border-color: transparent;
@@ -49,8 +44,8 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
         padding: 7px 0 8px;
 
         &.top {
-            padding-top: 0;
             @include text-subheader-1();
+            padding-top: 0;
         }
     }
 
@@ -60,9 +55,7 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
 
     &__left:not(.top) {
         position: relative;
-
         display: flex;
-
         width: 100%;
     }
 
@@ -70,7 +63,6 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
-
         width: 100%;
         padding-right: $widgetAliasButtonMarginLeft + $buttonWidth;
     }
@@ -89,28 +81,24 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
     }
 
     &__text {
-        display: block;
-        overflow: hidden;
-
-        width: calc(100% - #{$textWidth});
-
         white-space: nowrap;
+        overflow: hidden;
         text-overflow: ellipsis;
+        display: block;
+        width: calc(100% - #{$textWidth});
     }
 
     &__icon {
-        display: flex;
-
         min-width: $widgetIconWidth;
         margin-right: $widgetIconMarginRight;
         margin-left: $widgetIconMarginLeft;
-
         color: var(--g-color-text-hint);
+        display: flex;
     }
 
     &__skeleton-icon {
-        width: $widgetIconWidth;
         height: $widgetIconWidth;
+        width: $widgetIconWidth;
     }
 
     &__button-link {
@@ -118,11 +106,9 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
     }
 
     &__button-link-icon-wrap {
-        display: inline-flex;
-
         margin-right: 8px;
-
         vertical-align: middle;
+        display: inline-flex;
     }
 
     &__icon-link {
@@ -145,12 +131,9 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
 
     &__icon-info {
         margin-left: 4px;
-
-        cursor: pointer;
-
-        opacity: 0;
         color: var(--g-color-text-secondary);
-
+        cursor: pointer;
+        opacity: 0;
         transition: opacity 0.1s ease;
 
         #{$class}__row:hover & {
@@ -159,13 +142,12 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
     }
 
     &__info-text {
-        color: var(--g-color-text-secondary);
         @include text-body-1();
+        color: var(--g-color-text-secondary);
     }
 
     &__list-row {
         align-items: flex-start;
-
         line-height: var(--g-text-body-1-line-height);
 
         #{$class}__icon-link {
@@ -178,14 +160,11 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
     }
 
     &__button-alias {
+        margin-left: 4px;
+        opacity: 0;
+        transition: opacity 0.1s ease;
         position: absolute;
         right: 4px;
-
-        margin-left: 4px;
-
-        opacity: 0;
-
-        transition: opacity 0.1s ease;
     }
 
     &__row:hover &__button-alias {
@@ -197,20 +176,16 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
     }
 
     &__empty-text {
-        margin-top: 26px;
-
         text-align: center;
-
+        margin-top: 26px;
         color: var(--g-color-text-secondary);
     }
 
     &__info {
-        display: inline-flex;
-
-        min-width: 30px;
-        margin-right: 5px;
-
         color: var(--g-color-text-hint);
+        margin-right: 5px;
+        display: inline-flex;
+        min-width: 30px;
     }
 
     &__popover-content {

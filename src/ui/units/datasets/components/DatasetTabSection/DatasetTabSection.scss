@@ -10,7 +10,6 @@
 
     &__title {
         margin-bottom: 5px;
-
         font-size: var(--g-text-subheader-3-font-size);
         line-height: var(--g-text-subheader-3-line-height);
     }
@@ -24,11 +23,10 @@
     }
 
     &__loader {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
         width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     &__list {

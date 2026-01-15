@@ -18,13 +18,11 @@
     }
 
     &__pseudosave-btn {
-        position: absolute;
-        right: 56px;
-
-        display: none;
-
         width: 128px;
         height: 36px;
+        position: absolute;
+        right: 56px;
+        display: none;
 
         &_active {
             display: block;

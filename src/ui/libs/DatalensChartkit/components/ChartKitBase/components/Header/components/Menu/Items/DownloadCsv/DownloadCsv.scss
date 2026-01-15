@@ -3,11 +3,10 @@
 }
 
 .download-csv-modal {
+    min-height: 340px;
+    width: 520px;
     display: flex;
     flex-direction: column;
-
-    width: 520px;
-    min-height: 340px;
 
     &__row {
         @include download-csv-modal-row;
@@ -15,19 +14,18 @@
 
     &__content {
         display: flex;
-        flex: 1;
-        flex-direction: column;
         justify-content: flex-start;
+        flex-direction: column;
+        flex: 1;
     }
 
     &__attention {
-        margin-block-end: var(--g-spacing-4);
         padding: var(--g-spacing-3) var(--g-spacing-4);
+        margin-block-end: var(--g-spacing-4);
     }
 
     &__radio-group-option {
-        align-items: center;
-
         line-height: inherit;
+        align-items: center;
     }
 }

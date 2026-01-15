@@ -3,20 +3,16 @@
 $avatarHeight: 32px;
 
 .source {
-    z-index: 2;
-
+    height: $avatarHeight;
+    width: 100%;
     display: flex;
     align-items: center;
-
-    width: 100%;
-    height: $avatarHeight;
     padding: 0 5px 0 20px;
-
     border: 1px solid transparent;
+    z-index: 2;
 
     &:hover {
         cursor: grab;
-
         background: var(--ds-color-avatar);
     }
 
@@ -34,19 +30,16 @@ $avatarHeight: 32px;
 
     &_active {
         position: relative;
-
         flex: 0 0 240px;
-
         width: 240px;
         height: 32px;
-        margin-bottom: 12px;
-
         border-radius: 4px;
         background: var(--ds-color-avatar);
+        margin-bottom: 12px;
 
         &:hover {
-            border: 1px solid var(--ds-color-border);
             background: var(--ds-color-avatar);
+            border: 1px solid var(--ds-color-border);
         }
     }
 
@@ -60,8 +53,8 @@ $avatarHeight: 32px;
 
     &__btn-menu-control {
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
     }
 
     &_drag_disabled {
@@ -69,9 +62,8 @@ $avatarHeight: 32px;
     }
 
     &__icon-avatar {
-        flex-shrink: 0;
-
         margin-right: 8px;
+        flex-shrink: 0;
     }
 
     &__avatar-title {

@@ -1,25 +1,20 @@
 .dl-datepicker-quarters {
     display: grid;
-    justify-content: center;
     grid-template-columns: 51px repeat(4, 53px);
     grid-template-rows: repeat(1, 40px);
-
-    margin-bottom: 4px;
     grid-gap: 4px;
+    justify-content: center;
+    margin-bottom: 4px;
 
     &__quarter {
         position: relative;
-
         display: flex;
         justify-content: center;
         align-items: center;
-
         width: 100%;
         height: 100%;
-
-        cursor: pointer;
-
         border-radius: 4px;
+        cursor: pointer;
 
         .dl-datepicker_desktop &:hover {
             background-color: var(--g-color-base-simple-hover);
@@ -49,39 +44,31 @@
         }
 
         &_selected:not(&_left-edge)::before {
+            content: '';
             position: absolute;
             top: 0;
             left: -4px;
-
             display: block;
-
-            width: 4px;
             height: 40px;
-
-            content: '';
-
+            width: 4px;
             background-color: var(--g-color-base-selection);
         }
 
         &_disabled {
-            pointer-events: none;
-
             opacity: 0.3;
+            pointer-events: none;
         }
     }
 
     &__title {
         align-self: center;
-
         font-size: 18px;
         line-height: 20px;
-
         color: var(--g-color-text-secondary);
 
         &_disabled {
-            pointer-events: none;
-
             opacity: 0.3;
+            pointer-events: none;
         }
     }
 }

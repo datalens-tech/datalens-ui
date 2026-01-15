@@ -1,33 +1,27 @@
 .charts-modal {
-    position: relative;
-
     display: flex;
-
     cursor: default;
+    position: relative;
 
     &__section {
         display: flex;
         flex-direction: column;
-
         padding: 25px 35px;
     }
 
     &__header {
-        margin-bottom: 15px;
-
         font-size: 22px;
         line-height: 42px;
+        margin-bottom: 15px;
     }
 
     &__body {
         height: 100%;
-
         font-size: 13px;
     }
 
     &__footer {
         margin-top: 25px;
-
         text-align: right;
     }
 

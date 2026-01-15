@@ -2,10 +2,9 @@
     $_: &;
 
     &_modal {
-        overflow: hidden;
-
-        width: 1024px;
         height: 90vh;
+        width: 1024px;
+        overflow: hidden;
     }
 
     &_aside {
@@ -32,7 +31,6 @@
 
         #{$_}__header {
             flex-basis: 64px;
-
             padding-top: 8px;
         }
 

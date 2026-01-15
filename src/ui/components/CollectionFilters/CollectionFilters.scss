@@ -6,8 +6,8 @@ $block: '.dl-collection-filters';
 
     &_compact-mode {
         flex-direction: column;
-        justify-content: center;
         align-items: flex-start;
+        justify-content: center;
 
         #{$block}__filters-block {
             width: 100%;
@@ -29,9 +29,8 @@ $block: '.dl-collection-filters';
     }
 
     &__filter-string-container {
-        display: flex;
-
         width: 100%;
+        display: flex;
     }
 
     &__filter-string {
@@ -39,13 +38,13 @@ $block: '.dl-collection-filters';
     }
 
     &__filter-by-type {
-        min-width: 150px;
         margin-left: 8px;
+        min-width: 150px;
     }
 
     &__sort {
-        min-width: 220px;
         margin-left: 8px;
+        min-width: 220px;
     }
 
     &__radio-button {

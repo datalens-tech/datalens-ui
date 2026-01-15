@@ -1,36 +1,31 @@
 .dl-core-navigation-favorites-alias {
     &__edit-favorites-alias-btn {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
+        margin-right: 5px;
         min-width: 28px;
         min-height: 28px;
-        margin-right: 5px;
-
+        display: flex;
+        align-items: center;
+        justify-content: center;
         cursor: pointer;
-
-        color: var(--g-color-text-secondary);
         border-radius: 4px;
 
         &:hover {
             background: var(--g-color-base-simple-hover);
         }
+
+        color: var(--g-color-text-secondary);
     }
 
     &__lock {
-        flex: 0 0 16px;
-
         margin: 2px 5px 0 10px;
-
+        flex: 0 0 16px;
         color: var(--g-color-text-hint);
     }
 
     &__name-line {
         display: flex;
-        overflow: hidden;
         flex: 1 1 auto;
-
         line-height: 20px;
+        overflow: hidden;
     }
 }

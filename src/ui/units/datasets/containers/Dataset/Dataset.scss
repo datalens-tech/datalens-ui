@@ -1,15 +1,14 @@
 .dataset {
-    display: flex;
     flex: 1;
+    display: flex;
     flex-direction: column;
-
     min-height: 0;
 
     &__loader {
-        display: flex;
         flex: 1;
-        justify-content: center;
+        display: flex;
         align-items: center;
+        justify-content: center;
     }
 
     &__tabs {
@@ -18,27 +17,24 @@
 
     &__panels {
         position: relative;
-
         height: 100%;
     }
 
     &__content-panel {
-        display: flex;
-        overflow: hidden auto;
         justify-content: center;
+        overflow: hidden auto;
+        display: flex;
 
         &_right {
-            overflow: auto;
             justify-content: left;
-
             height: 100%;
+            overflow: auto;
         }
     }
 
     &__preview-panel {
-        z-index: 3;
-
         max-height: 100%;
+        z-index: 3;
 
         &_right {
             overflow-x: auto;

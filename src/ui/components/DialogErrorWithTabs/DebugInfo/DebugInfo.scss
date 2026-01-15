@@ -2,25 +2,21 @@
 
 .debug-info {
     $class: &;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    height: 30px;
     margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    justify-content: space-between;
 
     &__value {
-        overflow: hidden;
-
-        margin: 0 auto 0 6px;
-
         white-space: nowrap;
         text-overflow: ellipsis;
+        overflow: hidden;
+        margin: 0 auto 0 6px;
     }
 
     &__caption {
         flex: 0 0 80px;
-
         font-weight: bold;
     }
 
@@ -28,10 +24,9 @@
         height: unset;
 
         #{$class}__info-values {
-            flex: 1;
-
-            margin-right: 12px;
             @include overflow-ellipsis;
+            margin-right: 12px;
+            flex: 1;
         }
 
         #{$class}__info-line {

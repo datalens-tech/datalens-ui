@@ -1,11 +1,9 @@
 .dataset-panel {
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-
     height: 56px;
     padding: 0 20px;
-
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
     border-bottom: 1px solid var(--ds-color-divider);
     background: var(--ds-color-base);
 
@@ -31,13 +29,11 @@
         position: absolute;
         top: 50%;
         right: 11px;
-
         transform: translateY(-50%);
     }
 
     &__preview-btn-tooltip-margin {
         display: inline-flex;
-
         width: 22px;
     }
 
@@ -49,27 +45,22 @@
         display: flex;
 
         &-ic {
-            position: relative;
-
+            height: inherit;
             display: flex;
             align-items: center;
-
-            height: inherit;
+            position: relative;
         }
     }
 
     &__btn-update-fields {
-        display: flex;
-
         margin-left: auto;
+        display: flex;
     }
 
     &__ic-sync {
-        position: relative;
-
+        height: inherit;
         display: flex;
         align-items: center;
-
-        height: inherit;
+        position: relative;
     }
 }

@@ -15,16 +15,14 @@ $titleHeight: 57px;
         width: 100%;
         height: #{$titleHeight};
         padding: 12px 20px;
-
-        border-bottom: 1px solid var(--g-color-line-generic);
         background-color: var(--g-color-base-generic-ultralight);
+        border-bottom: 1px solid var(--g-color-line-generic);
     }
 
     &__title-add {
         display: flex;
-        flex-grow: 1;
         justify-content: space-between;
-
+        flex-grow: 1;
         margin-left: 14px;
     }
 
@@ -45,10 +43,10 @@ $titleHeight: 57px;
     &__gauth-popover {
         --g-popover-max-width: 330px;
         --g-popup-border-color: var(--g-color-base-brand);
-        // So that the popover does not block navigation, it has 98
-        z-index: 97;
 
         padding-top: 15px;
+        // So that the popover does not block navigation, it has 98
+        z-index: 97;
 
         & .g-popover__tooltip-close {
             top: 12px;
@@ -57,16 +55,14 @@ $titleHeight: 57px;
 
     &__content {
         display: flex;
-
         height: calc(100vh - var(--container-height-offset));
     }
 
     &__list {
         display: flex;
-        overflow-y: auto;
-        flex: 0 0 256px;
         flex-direction: column;
-
+        flex: 0 0 256px;
+        overflow-y: auto;
         border-right: 1px solid var(--g-color-line-generic);
         background-color: var(--g-color-base-generic-ultralight);
     }
@@ -80,8 +76,8 @@ $titleHeight: 57px;
         grid-template:
             'a a' 1fr
             'b c' 1fr;
-        column-gap: 6px;
         row-gap: 8px;
+        column-gap: 6px;
     }
 
     &__add-section-controls-input {
@@ -98,25 +94,22 @@ $titleHeight: 57px;
 
     &__workspace {
         position: relative;
-
         display: flex;
-        overflow-x: auto;
-        flex-grow: 1;
         flex-direction: column;
+        flex-grow: 1;
+        overflow-x: auto;
 
         &_empty {
-            justify-content: center;
             align-items: center;
-
+            justify-content: center;
             height: 100%;
         }
     }
 
     &__workspace-loader {
         position: absolute;
-        top: 50%;
         left: 50%;
-
+        top: 50%;
         transform: translateX(-50%) translateY(-50%);
     }
 
@@ -128,23 +121,20 @@ $titleHeight: 57px;
     &__settings {
         display: flex;
         align-items: center;
-
         height: var(--settings-height);
         padding: 0 20px;
-
         border-bottom: 1px solid var(--g-color-line-generic);
     }
 
     &__type-icon {
         margin-right: 8px;
-
         opacity: 0.5;
     }
 
     &__gauth-btn {
-        transition: transform 0.1s ease-out;
-        transform: scale(1);
         @include mixins.button-reset();
+        transform: scale(1);
+        transition: transform 0.1s ease-out;
 
         &:active {
             transform: scale(0.96);

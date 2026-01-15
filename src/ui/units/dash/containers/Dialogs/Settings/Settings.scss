@@ -2,15 +2,14 @@
 @import '../../../../../styles/mixins.scss';
 
 .dialog-settings {
-    overflow-y: auto;
-
     width: 520px;
+    overflow-y: auto;
     @include dialog-max-height-scroll(94vh);
 
     &__row {
         display: grid;
-        align-items: center;
         grid-template-columns: 50% auto;
+        align-items: center;
 
         &_align-top {
             align-items: flex-start;
@@ -23,26 +22,25 @@
 
     &__sub-row {
         display: grid;
+        grid-auto-flow: column;
         align-items: center;
         grid-template-columns: repeat(auto-fill, minmax(140px, 0.5fr));
-        grid-auto-flow: column;
     }
 
     &__section-title {
-        font-weight: 500; // temporary redefinition until the style unification reaches uikit
         @include text-subheader-2();
+        font-weight: 500; // temporary redefinition until the style unification reaches uikit
     }
 
     &__title {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-
         padding-right: 15px;
+        display: flex;
+        gap: 5px;
+        align-items: center;
 
         &_strong {
-            font-weight: 500; // temporary redefinition until the style unification reaches uikit
             @include text-subheader-2();
+            font-weight: 500; // temporary redefinition until the style unification reaches uikit
         }
     }
 

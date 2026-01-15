@@ -2,36 +2,30 @@
 
 .palette-item {
     position: relative;
-
+    border-radius: 4px;
     display: flex;
     justify-content: center;
     align-items: center;
 
-    border-radius: 4px;
-
     &_default {
+        background-color: var(--g-color-base-generic);
+        border: 1px solid var(--g-color-base-generic-medium);
+        color: var(--g-color-text-hint);
+        font-size: 10px;
+        text-transform: uppercase;
         display: flex;
         justify-content: center;
         align-items: center;
-
-        font-size: 10px;
-        text-transform: uppercase;
-
-        color: var(--g-color-text-hint);
-        border: 1px solid var(--g-color-base-generic-medium);
-        background-color: var(--g-color-base-generic);
     }
 
     &_disabled {
         cursor: default;
-
         opacity: 50%;
     }
 
     &__lock-icon {
         width: 65%;
         height: 65%;
-
         opacity: 50%;
     }
 

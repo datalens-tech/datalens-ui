@@ -2,10 +2,9 @@
 @import '../../styles/variables';
 
 .wizard {
-    @include revision-panel-fix;
     &__error-content {
-        position: relative;
         top: calc(50% - 150px);
+        position: relative;
 
         &_is-mobile {
             top: auto;
@@ -29,16 +28,14 @@
     }
 
     &__loader {
+        height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-
-        height: 100%;
     }
 
     .columns {
         position: relative;
-
         height: calc(100vh - 70px - #{$actionPanelHeight});
 
         &_aside-true {
@@ -46,9 +43,9 @@
         }
 
         .column {
-            overflow-x: hidden;
-
             height: 100%;
+
+            background-color: var(--dl-color-contrast-4);
 
             font-size: 13px;
             font-style: normal;
@@ -56,32 +53,30 @@
             line-height: normal;
             letter-spacing: normal;
 
-            background-color: var(--dl-color-contrast-4);
+            overflow-x: hidden;
 
             .container {
                 .actions-container {
+                    border-bottom: 1px solid var(--g-color-line-generic);
+
                     font-weight: normal;
                     font-style: normal;
                     font-stretch: normal;
                     line-height: 1.13;
                     letter-spacing: normal;
 
-                    border-bottom: 1px solid var(--g-color-line-generic);
                     background: var(--g-color-base-background);
 
                     .dropdown-menu {
-                        position: relative;
-
-                        display: inline-block;
-
                         width: calc(100% - 39px);
-
+                        position: relative;
+                        display: inline-block;
                         vertical-align: bottom;
 
                         &__list {
+                            margin-left: -40px;
                             width: 272px;
                             margin-top: 9px;
-                            margin-left: -40px;
                         }
                     }
                 }
@@ -98,10 +93,11 @@
 
         .preview-column {
             width: 100%;
-
             border-right: none;
         }
     }
+
+    @include revision-panel-fix;
 }
 
 .fullscreen-mode {

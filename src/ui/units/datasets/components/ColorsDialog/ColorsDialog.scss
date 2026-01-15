@@ -7,24 +7,21 @@ $class: 'colors-dialog';
     max-height: 80vh;
 
     .#{$class} &__body {
-        display: flex;
-
         padding: 10px 0;
+        display: flex;
     }
 
     &__content {
         display: flex;
-
         min-height: 400px;
-
         border-top: 1px solid var(--g-color-line-generic);
         border-bottom: 1px solid var(--g-color-line-generic);
     }
 
     &__palette-container {
+        padding: 20px 32px;
         width: 50%;
         height: 100%;
-        padding: 20px 32px;
     }
 
     &__palette-select {
@@ -36,8 +33,9 @@ $class: 'colors-dialog';
     }
 
     &__palette {
-        --g-button-background-color: transparent;
         margin-top: 20px;
+
+        --g-button-background-color: transparent;
 
         &,
         .g-palette__row {
@@ -51,10 +49,9 @@ $class: 'colors-dialog';
     }
 
     &__footer {
+        width: 100%;
         display: flex;
         gap: 10px;
-
-        width: 100%;
     }
 
     &__btn-reset {
@@ -63,29 +60,24 @@ $class: 'colors-dialog';
 
     &__values-list {
         width: 50%;
-
         border-right: 1px solid var(--g-color-line-generic);
     }
 
     &__value-color {
         flex: 0 0 20px;
-
         height: 14px;
         margin-right: 12px;
-
         border-radius: 2px;
 
         &_default {
+            background-color: var(--g-color-base-generic);
+            border: 1px solid var(--g-color-line-generic);
+            color: var(--g-color-text-hint);
+            font-size: 10px;
+            text-transform: uppercase;
             display: flex;
             justify-content: center;
             align-items: center;
-
-            font-size: 10px;
-            text-transform: uppercase;
-
-            color: var(--g-color-text-hint);
-            border: 1px solid var(--g-color-line-generic);
-            background-color: var(--g-color-base-generic);
         }
     }
 }

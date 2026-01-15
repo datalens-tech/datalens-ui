@@ -21,13 +21,11 @@
 
     &__palette-item {
         display: flex;
-        justify-content: center;
         align-items: center;
-
-        padding: 5px;
-
-        border: 1px solid var(--g-color-line-generic);
+        justify-content: center;
         border-radius: 4px;
+        border: 1px solid var(--g-color-line-generic);
+        padding: 5px;
 
         &_type_lines.palette-item {
             &:not(.palette-item_selected):hover::before {
@@ -63,17 +61,14 @@
     }
 
     &__value-shape {
+        margin-right: 12px;
+        border-radius: 2px;
         display: flex;
 
-        margin-right: 12px;
-
-        border-radius: 2px;
-
         &_type_points {
+            width: 24px;
             flex-shrink: 0;
             justify-content: center;
-
-            width: 24px;
 
             &#{$class}__value-shape_default {
                 width: 24px;
@@ -81,18 +76,15 @@
         }
 
         &_default {
+            width: 40px;
+            background-color: var(--g-color-base-generic);
+            border: 1px solid var(--g-color-line-generic);
+            color: var(--g-color-text-hint);
+            font-size: 10px;
+            text-transform: uppercase;
             display: flex;
             justify-content: center;
             align-items: center;
-
-            width: 40px;
-
-            font-size: 10px;
-            text-transform: uppercase;
-
-            color: var(--g-color-text-hint);
-            border: 1px solid var(--g-color-line-generic);
-            background-color: var(--g-color-base-generic);
         }
     }
 }

@@ -2,11 +2,9 @@
     --gc-form-row-label-width: 140px;
 
     &__input {
-        display: inline-block;
-
         width: 170px;
         margin-left: 12px;
-
+        display: inline-block;
         vertical-align: top;
     }
 }

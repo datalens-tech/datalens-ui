@@ -1,35 +1,29 @@
 .wizard-dataset-item {
-    position: relative;
-
-    display: flex;
-    overflow: hidden;
-    align-items: center;
-
+    padding: 2px 8px;
     height: 32px;
     margin-bottom: 6px;
-    padding: 2px 8px;
-
-    font-size: 13px;
-    cursor: pointer;
-
     border-radius: 2px;
+    cursor: pointer;
+    font-size: 13px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    position: relative;
 
     &.item-error {
         cursor: default;
     }
 
     &__item-title {
-        overflow: hidden;
         flex: 1;
-
-        white-space: nowrap;
+        overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     &.pseudo-item {
-        font-style: italic;
-
         color: var(--g-color-text-secondary);
+        font-style: italic;
 
         .wizard-dataset-item__item-icon {
             &:hover {
@@ -52,14 +46,13 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        cursor: pointer;
 
         width: 24px;
         height: 24px;
-        margin-right: 8px;
-
-        cursor: pointer;
-
         border: 1px solid transparent;
+
+        margin-right: 8px;
 
         &:hover {
             border-color: var(--w-dataset-item-border-hover);
@@ -79,33 +72,30 @@
 
     &__item-formula-icon {
         display: none;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
 
         width: 24px;
         height: 24px;
+        border: 1px solid transparent;
+
         margin-right: 4px;
 
-        color: var(--g-color-text-secondary);
-        border: 1px solid transparent;
         border-radius: 2px;
+        color: var(--g-color-text-secondary);
     }
 
     &__item-link-icon {
+        vertical-align: middle;
         display: inline;
-
+        color: var(--g-color-text-secondary);
         margin-left: 8px;
         padding: 2px;
-
-        vertical-align: middle;
-
-        color: var(--g-color-text-secondary);
         border-radius: 2px;
 
         svg {
             width: 13px;
             height: 13px;
-
             vertical-align: sub;
         }
 
@@ -116,15 +106,15 @@
 
     &__item-more-icon {
         display: flex;
-        visibility: hidden;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
+
+        visibility: hidden;
     }
 
     &__item-right-icons-container {
         display: flex;
         align-items: center;
-
         margin-left: 6px;
     }
 
@@ -150,17 +140,13 @@
 
     &.local-item:before {
         position: absolute;
-        left: 0;
-
+        content: '';
         display: inline-block;
-
         width: 4px;
         height: 20px;
-
-        content: '';
-
-        border-top-right-radius: 5px;
+        left: 0;
         border-bottom-right-radius: 5px;
+        border-top-right-radius: 5px;
     }
 
     &.ignore-drag {
@@ -188,7 +174,6 @@
 
     &.item-error {
         font-style: italic;
-
         color: var(--g-color-base-danger-heavy);
     }
 

@@ -5,9 +5,9 @@
         $wrapper: &;
 
         display: flex;
-        overflow: hidden;
         flex: 1;
         align-items: center;
+        overflow: hidden;
 
         &_icon-on-hover {
             &#{$wrapper}_active #{$main}__controls,
@@ -19,37 +19,31 @@
 
     &__item {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        width: 100%;
         min-width: 0;
+        align-items: center;
         height: 36px;
-
+        width: 100%;
         cursor: pointer;
+        justify-content: space-between;
     }
 
     &__item-text {
-        overflow: hidden;
-
-        max-width: 160px;
-
-        white-space: nowrap;
         text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 160px;
     }
 
     &__item-content {
         display: flex;
         align-items: center;
-
         width: 100%;
     }
 
     &__controls {
         display: flex;
-        visibility: hidden;
-
         margin-left: 5px;
+        visibility: hidden;
     }
 
     &__delete-button {

@@ -1,15 +1,12 @@
 .dl-workbook-icon {
     display: flex;
-    justify-content: center;
     align-items: center;
-
-    text-transform: uppercase;
-
+    justify-content: center;
     background-color: var(--dl-color-base-workbook-icon);
+    text-transform: uppercase;
 
     &__letters {
         text-align: center;
-
         color: var(--dl-color-text-workbook-icon);
     }
 }

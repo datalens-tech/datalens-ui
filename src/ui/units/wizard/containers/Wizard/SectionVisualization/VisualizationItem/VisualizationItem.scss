@@ -8,8 +8,8 @@
             border-left: 5px solid var(--g-color-text-positive);
 
             &.conflict-item {
-                border-color: var(--g-color-line-generic);
                 border-left: 5px solid var(--g-color-line-generic);
+                border-color: var(--g-color-line-generic);
             }
 
             &.formula-item .item-right-icons-container {
@@ -31,8 +31,8 @@
             }
 
             &.drag-hovered-remove {
-                border: solid 1px $dragHoverRemoveRed;
                 background-color: $dragHoverRemoveLightRed;
+                border: solid 1px $dragHoverRemoveRed;
 
                 &.local-item {
                     border-left: 5px solid $dragHoverRemoveRed;
@@ -42,7 +42,6 @@
                 .item-right-icon.more-icon,
                 .item-right-icon.sort-icon {
                     display: flex;
-
                     color: var(--g-color-text-secondary);
                 }
             }
@@ -71,23 +70,21 @@
         &.is-dragging,
         &:active,
         &:focus {
-            border: solid 1px var(--g-color-base-positive-light);
             background-color: var(--g-color-base-positive-light);
+            border: solid 1px var(--g-color-base-positive-light);
 
             &.local-item {
                 border-left: 5px solid var(--g-color-text-positive);
             }
 
             &.conflict-item {
+                background: var(--g-color-base-danger-light);
+                border: none;
                 padding-left: 7px;
 
-                border: none;
-                background: var(--g-color-base-danger-light);
-
                 &.local-item {
-                    padding-left: 7px;
-
                     border-left: 5px solid var(--g-color-line-generic);
+                    padding-left: 7px;
                 }
             }
         }
@@ -122,8 +119,8 @@
             }
 
             &.drag-hovered-remove {
-                border: solid 1px $dragHoverRemoveRed;
                 background-color: $dragHoverRemoveLightRed;
+                border: solid 1px $dragHoverRemoveRed;
 
                 &.local-item {
                     border-left: 5px solid $dragHoverRemoveRed;
@@ -136,8 +133,8 @@
             }
 
             &.drag-hovered-swap {
-                border: solid 1px var(--g-color-base-info-light);
                 background-color: var(--g-color-base-info-light);
+                border: solid 1px var(--g-color-base-info-light);
 
                 &.local-item {
                     border-left: 5px solid var(--g-color-base-info-light);
@@ -160,8 +157,8 @@
         &.is-dragging,
         &:active,
         &:focus {
-            border: solid 1px var(--g-color-base-info-light);
             background-color: var(--g-color-base-info-light);
+            border: solid 1px var(--g-color-base-info-light);
 
             &.local-item {
                 border-left: 5px solid var(--g-color-text-info);
@@ -169,8 +166,8 @@
 
             &.conflict-item,
             &.disabled {
-                border: none;
                 background: var(--dl-color-contrast-4);
+                border: none;
             }
         }
     }
@@ -198,8 +195,8 @@
             }
 
             &.drag-hovered-remove {
-                border: solid 1px $dragHoverRemoveRed;
                 background-color: $dragHoverRemoveLightRed;
+                border: solid 1px $dragHoverRemoveRed;
 
                 &.local-item {
                     border-left: 5px solid $dragHoverRemoveRed;
@@ -209,14 +206,13 @@
                 .item-right-icon.more-icon,
                 .item-right-icon.sort-icon {
                     display: flex;
-
                     color: var(--g-color-text-secondary);
                 }
             }
 
             &.drag-hovered-swap {
-                border: solid 1px var(--g-color-base-info-light);
                 background-color: rgba(154, 50, 166, 0.08);
+                border: solid 1px var(--g-color-base-info-light);
 
                 &.local-item {
                     border-left: 5px solid var(--g-color-base-info-light);
@@ -235,8 +231,8 @@
         &.is-dragging,
         &:active,
         &:focus {
-            border: solid 1px rgba(154, 50, 166, 0.08);
             background-color: rgba(154, 50, 166, 0.08);
+            border: solid 1px rgba(154, 50, 166, 0.08);
 
             &.local-item {
                 border-left: 5px solid var(--g-color-text-info);
@@ -244,15 +240,14 @@
 
             &.conflict-item,
             &.disabled {
-                border: none;
                 background: var(--dl-color-contrast-4);
+                border: none;
             }
         }
     }
 
     &.sort-item {
         position: relative;
-
         width: 100%;
 
         .item-right-icon.cross-icon,
@@ -275,26 +270,22 @@
 
     &.item {
         display: flex;
-
-        height: 32px;
-        margin: 0 0 4px;
         padding: 5px 0 5px 12px;
-
-        line-height: 24px;
-        cursor: pointer;
-
-        color: var(--g-color-text-primary);
+        margin: 0 0 4px;
+        height: 32px;
         border-radius: 2px;
-        background-repeat: no-repeat;
+        cursor: pointer;
+        line-height: 24px;
+        color: var(--g-color-text-primary);
         background-position: 189px 50%;
+        background-repeat: no-repeat;
 
         .item-inline-edit {
             display: block;
-
             width: 215px;
-            height: 32px;
-            margin-top: -5px;
             margin-left: -12px;
+            margin-top: -5px;
+            height: 32px;
 
             .textinput {
                 height: 32px;
@@ -319,13 +310,12 @@
         }
 
         .item-title {
-            display: inline-block;
-            overflow: hidden;
             flex: 1;
-
-            vertical-align: middle;
-            white-space: nowrap;
+            overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+            vertical-align: middle;
 
             .aggregation-title {
                 color: var(--g-color-text-info);
@@ -333,9 +323,8 @@
         }
 
         &.pseudo-item {
-            font-style: italic;
-
             color: var(--g-color-text-secondary);
+            font-style: italic;
 
             .item-icon {
                 &:hover {
@@ -390,23 +379,22 @@
 
         &.conflict-item {
             .item-right-icon.sort-icon {
-                color: var(--g-color-line-generic);
                 background: transparent;
+                color: var(--g-color-line-generic);
             }
 
             .item-right-icon.error-icon {
-                position: relative;
-                top: 3px;
-                right: 2px;
-
                 display: inline-block;
+
+                position: relative;
+                right: 2px;
+                top: 3px;
 
                 color: var(--g-color-text-danger);
             }
 
             .item-right-icon.formula-icon {
                 margin-right: 0;
-
                 color: var(--g-color-text-secondary);
             }
 
@@ -427,10 +415,9 @@
         }
 
         .item-icon {
-            width: 24px;
             height: 24px;
+            width: 24px;
             padding: 0 3px;
-
             border: 1px solid transparent;
             border-radius: 3px;
 
@@ -440,7 +427,6 @@
 
             svg {
                 margin-top: -3px;
-
                 vertical-align: middle;
             }
         }
@@ -458,23 +444,22 @@
             display: none;
 
             height: 32px;
+
             margin-top: -5px;
             padding: 4px;
 
-            border-top-right-radius: 2px;
             border-bottom-right-radius: 2px;
+            border-top-right-radius: 2px;
         }
 
         .item-right-icon.formula-icon {
-            margin-right: 24px;
-
             color: var(--g-color-text-secondary);
+            margin-right: 24px;
         }
 
         &.formula-item .item-right-icon.formula-icon {
-            display: flex;
-
             color: var(--g-color-text-primary);
+            display: flex;
         }
 
         .item-right-icon.sort-icon {
@@ -485,11 +470,12 @@
 
         .item-right-icon.filter-counter {
             height: 32px;
+
             margin-top: -4px;
             padding: 4px 10px 4px 4px;
 
-            border-top-right-radius: 2px;
             border-bottom-right-radius: 2px;
+            border-top-right-radius: 2px;
         }
 
         .filter-counter {
@@ -508,17 +494,16 @@
             .item-right-icon.sort-icon,
             .item-right-icon.formula-icon {
                 display: flex;
-
                 margin-right: 0;
-
                 color: var(--g-color-text-secondary);
 
                 &:hover {
-                    color: var(--g-color-text-primary);
-                    background-color: var(--dl-color-contrast-4);
                     .more-icon-switcher::before {
                         content: none;
                     }
+
+                    background-color: var(--dl-color-contrast-4);
+                    color: var(--g-color-text-primary);
                 }
             }
 
@@ -550,14 +535,11 @@
         &:active:not(.editing-item),
         &:focus:not(.editing-item) {
             padding: 4px 0 3px 11px;
-
-            cursor: grabbing;
-
             border-right: none;
+            cursor: grabbing;
 
             &.local-item {
                 padding-left: 7px;
-
                 border-left: 5px solid var(--g-color-line-generic);
             }
 
@@ -575,11 +557,10 @@
 
             &.conflict-item {
                 padding: 5px 0 4px 12px;
-
                 cursor: pointer;
 
-                border: none;
                 background: var(--dl-color-contrast-4);
+                border: none;
             }
         }
     }

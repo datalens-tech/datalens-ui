@@ -25,7 +25,6 @@
 
     &__unit-select {
         margin-inline-end: -1px;
-
         border-inline-start: 1px solid var(--g-color-line-generic-accent);
     }
 
@@ -37,8 +36,7 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 8px;
-
         margin-bottom: 5px;
+        gap: 8px;
     }
 }

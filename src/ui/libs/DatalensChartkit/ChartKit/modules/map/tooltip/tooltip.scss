@@ -9,16 +9,21 @@ $rowPadding: 14px;
 }
 
 .chart-tooltip {
-    box-sizing: border-box;
-    padding: 10px $rowPadding;
-
-    font-size: 12px;
-
-    color: var(--highcharts-tooltip-text);
     border: 1px solid var(--highcharts-grid-line);
     border-radius: 5px;
     background: var(--highcharts-tooltip-bg);
+    padding: 10px $rowPadding;
+    color: var(--highcharts-tooltip-text);
+    font-size: 12px;
+    box-sizing: border-box;
     box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.15);
+
+    &_split-tooltip {
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding-bottom: 12px;
+    }
 
     // iPhone-specific indent with rounded corners
     // if the max css function is not supported - the style block will not be executed and the padding specified above will be applied
@@ -29,24 +34,14 @@ $rowPadding: 14px;
         }
     }
 
-    &_split-tooltip {
-        padding-bottom: 12px;
-
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
-    }
-
     &__header {
+        text-overflow: ellipsis;
         overflow: hidden;
-
         padding-right: 10px;
+        white-space: nowrap;
         padding-bottom: 8px;
-
         font-size: 13px;
         font-weight: 600;
-        white-space: nowrap;
-        text-overflow: ellipsis;
     }
 
     &__point-series {
@@ -59,25 +54,21 @@ $rowPadding: 14px;
 
     &__bubble-cell {
         display: inline-block;
-
         width: 12px;
         height: 6px;
-        margin-bottom: 1px;
         margin-left: 1px;
-
+        margin-bottom: 1px;
         border-radius: 1px;
     }
 
     &__value-cell {
-        padding-left: 5px;
-
         white-space: nowrap;
+        padding-left: 5px;
     }
 
     &__series-cell {
-        width: 100%;
-        padding-left: 10px;
-
         white-space: nowrap;
+        padding-left: 10px;
+        width: 100%;
     }
 }

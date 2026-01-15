@@ -22,10 +22,8 @@
     }
 
     &__add-color-disabled-label {
-        display: block;
-
         margin-top: 5px;
-
+        display: block;
         color: var(--g-color-text-secondary);
     }
 
@@ -36,30 +34,26 @@
     &__palette-editor {
         display: flex;
         justify-content: space-between;
-        column-gap: 10px;
-
         height: 35vh;
         min-height: 180px;
         max-height: 400px;
+        column-gap: 10px;
     }
 
     &__palette-charkit-preview {
         display: flex;
         column-gap: 10px;
-
         width: calc(100% - var(--palette-list-width));
     }
 
     &__palette-charkit-node {
         width: 50%;
-
         background: var(--g-color-base-background);
     }
 
     &__palette-colors-list {
-        overflow-y: auto;
-
         width: var(--palette-list-width);
+        overflow-y: auto;
     }
 
     &__name-setting {
@@ -68,8 +62,8 @@
     }
 
     &__palette-icon {
-        width: 20px;
         height: 16px;
+        width: 20px;
     }
 
     &__name-input {

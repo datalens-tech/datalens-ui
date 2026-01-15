@@ -22,13 +22,11 @@
 
         &.dashkit-grid-item_is-focused {
             z-index: 2;
-
             transition: none;
         }
 
         &.react-draggable-dragging {
             z-index: 3;
-
             transition: none;
         }
 
@@ -79,16 +77,14 @@
 
     .dashkit-plugin-widget {
         &__body {
-            flex: none;
-
             min-height: 40px;
+            flex: none;
         }
 
         &_fullscreen {
             .dashkit-plugin-widget__body {
-                flex: auto;
-
                 height: 100%;
+                flex: auto;
             }
 
             .chartkit-highcharts text {

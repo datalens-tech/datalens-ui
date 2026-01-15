@@ -1,11 +1,10 @@
 .dialog-color {
     display: flex;
     flex-direction: column;
-
     width: 680px;
     height: 560px;
-    min-height: 300px;
     max-height: 80vh;
+    min-height: 300px;
 
     &_palette-mode {
         height: 560px;
@@ -30,10 +29,9 @@
     }
 
     &_palette-mode .g-dialog-body {
-        overflow-y: auto;
-
         height: calc(80vh);
         padding: 0;
+        overflow-y: auto;
     }
 
     &_palette-mode .g-dialog-footer {
@@ -41,13 +39,12 @@
     }
 
     &__title-icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        width: 24px;
-        height: 24px;
-        margin-right: 4px;
         margin-bottom: 2px;
+        margin-right: 4px;
+        height: 24px;
+        width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }

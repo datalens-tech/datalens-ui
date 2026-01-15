@@ -1,12 +1,10 @@
 .select-list-controls {
     padding: 6px;
-
     border-bottom: 1px solid var(--g-color-line-generic);
 
     &__buttons {
         display: flex;
         justify-content: space-between;
-
         width: 100%;
         padding-top: 6px;
 

@@ -1,7 +1,7 @@
 .dl-entry-suggest {
     &__popup {
-        width: 392px;
         height: 347px;
+        width: 392px;
     }
 
     &__filter {
@@ -11,9 +11,8 @@
     }
 
     &__type-select {
-        flex-shrink: 0;
-
         width: 104px;
+        flex-shrink: 0;
     }
 
     &__entry-option {

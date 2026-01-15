@@ -1,10 +1,8 @@
 .dl-collections-structure-structure-item-select {
     display: flex;
-    overflow-y: auto;
     flex-direction: column;
-
     height: 400px;
-
+    overflow-y: auto;
     transition: opacity 0.2s;
 
     &_denied-and-empty {
@@ -12,9 +10,8 @@
     }
 
     &_disabled {
-        pointer-events: none;
-
         opacity: 0.7;
+        pointer-events: none;
     }
 
     &__breadcrumbs {
@@ -22,9 +19,8 @@
     }
 
     &__items {
-        overflow-y: auto;
-
         height: 100%;
+        overflow-y: auto;
     }
 
     &__denied-message-wrapper {
@@ -34,7 +30,6 @@
     &__denied-message {
         display: flex;
         align-items: center;
-
         padding: 12px;
     }
 
@@ -57,7 +52,6 @@
     &__page-loader {
         display: flex;
         align-self: center;
-
         padding: 20px;
     }
 }

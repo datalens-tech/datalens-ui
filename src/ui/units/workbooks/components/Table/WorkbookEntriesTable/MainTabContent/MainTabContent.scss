@@ -8,16 +8,13 @@
 
     &__table {
         display: table;
-
         width: 100%;
-
         table-layout: fixed;
     }
 
     &__header {
         display: flex;
         justify-content: space-between;
-
         height: 48px;
     }
 
@@ -34,8 +31,8 @@
     }
 
     &__table-header-cell {
-        box-sizing: content-box;
         padding: 0 10px;
+        box-sizing: content-box;
 
         &_author {
             width: 165px;
@@ -56,9 +53,8 @@
 
     &__title {
         display: flex;
-
-        font-weight: 500;
         font-style: normal;
+        font-weight: 500;
         cursor: pointer;
     }
 
@@ -71,9 +67,8 @@
     }
 
     &__no-objects {
-        margin-left: 20px;
-
         color: var(--g-color-text-secondary);
+        margin-left: 20px;
     }
 
     &__show-more-btn {
@@ -82,13 +77,12 @@
     }
 
     &__retry-btn {
-        max-width: 83px;
         margin-top: 16px;
+        max-width: 83px;
     }
 
     &__error-text {
         font-size: 15px;
-
         color: var(--g-color-text-danger);
     }
 

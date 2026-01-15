@@ -4,7 +4,6 @@
     &__body {
         display: flex;
         flex-direction: column;
-
         height: 100%;
         min-height: 320px;
 
@@ -14,13 +13,12 @@
     }
 
     &__list {
+        margin-top: var(--g-spacing-4);
+        width: 100%;
         display: flex;
-        overflow-y: auto;
         flex-direction: column;
         gap: var(--g-spacing-4);
-
-        width: 100%;
-        margin-top: var(--g-spacing-4);
+        overflow-y: auto;
     }
 
     &__current-row {
@@ -35,7 +33,6 @@
         display: flex;
         justify-content: center;
         align-items: center;
-
         width: 100%;
     }
 

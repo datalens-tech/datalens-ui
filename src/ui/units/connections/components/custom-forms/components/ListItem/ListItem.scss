@@ -1,15 +1,12 @@
 .conn-list-item {
     display: flex;
-
     width: 100%;
     padding: 6px 16px;
 
     &__icon {
         position: relative;
         top: 3px;
-
         flex: 0 0 16px;
-
         margin-right: 7px;
     }
 
@@ -19,21 +16,18 @@
 
     &__title {
         display: flex;
-
         line-height: 24px;
     }
 
     &__title-value {
-        overflow: hidden;
-
         white-space: nowrap;
         text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     &__title-actions {
         display: flex;
         align-items: center;
-
         margin-left: auto;
     }
 

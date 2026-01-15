@@ -1,9 +1,8 @@
 .dl-collection-page {
     $class: &;
     display: flex;
-    flex: 1;
     flex-direction: column;
-
+    flex: 1;
     max-width: 100%;
 
     &__filters {
@@ -12,9 +11,8 @@
 
     &__content {
         display: flex;
-        flex: 1;
         flex-direction: column;
-
+        flex: 1;
         margin-bottom: 16px;
     }
 
@@ -30,8 +28,8 @@
     &__error-block {
         display: flex;
         flex: 1;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
     }
 
     &__return-button {

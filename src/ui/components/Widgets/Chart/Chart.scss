@@ -6,7 +6,6 @@
 $fullscreenZIndex: 999;
 
 .dl-widget {
-    $class: &;
     --dl-dk-charts-padding: 0px;
     --dl-dk-table-padding: 16px;
     --dl-dk-metric-padding: 0px;
@@ -17,50 +16,44 @@ $fullscreenZIndex: 999;
     --dl-dk-metric-desc-padding: 8px;
     --dl-dk-map-desc-padding: 8px;
     --dl-dk-table-desc-padding: 16px;
-    position: relative;
+    @include yc-chartkit-theme-common;
 
-    display: flex;
-    flex-direction: column;
-
-    box-sizing: border-box;
+    $class: &;
     width: 100%;
     height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    position: relative;
     margin: 0;
     padding: 0;
-
-    border: none;
     border-radius: var(--dl-dk-charts-border-radius, 3px);
+    border: none;
     // fix for cases of chart with display: fixed style
     filter: opacity(1);
-    @include yc-chartkit-theme-common;
 
     &_fullscreen {
         position: fixed;
-        z-index: $fullscreenZIndex;
-        top: var(--fullscreen-widget-top, 0);
-        left: 0;
-
         width: 100vw;
         height: 100dvh;
-
+        left: 0;
+        top: var(--fullscreen-widget-top, 0);
         background-color: var(--g-color-base-float);
-
+        z-index: $fullscreenZIndex;
         transform: translateY(var(--fullscreen-widget-transform-y, 0));
     }
 
     &__description {
         display: flex;
         overflow: auto;
-
         padding: 0 var(--dl-dk-charts-desc-padding) var(--dl-dk-charts-desc-padding);
     }
 
     &__author {
-        margin-left: auto;
-        padding: 0 var(--dl-dk-charts-desc-padding) var(--dl-dk-charts-desc-padding);
-
-        color: var(--g-color-text-secondary);
         @include text-body-2();
+        color: var(--g-color-text-secondary);
+        padding: 0 var(--dl-dk-charts-desc-padding) var(--dl-dk-charts-desc-padding);
+        margin-left: auto;
 
         .g-link:not(:hover) {
             color: var(--g-color-text-secondary);
@@ -69,49 +62,41 @@ $fullscreenZIndex: 999;
 
     .chartkit {
         overflow: visible;
-
         min-height: 0;
     }
 
     &__container {
         position: relative;
-
         display: flex;
-        flex: 1 1;
-        justify-content: center;
         align-items: center;
-
-        width: 100%;
+        justify-content: center;
+        flex: 1 1;
         height: 100%;
+        width: 100%;
     }
 
     &__chart-header {
-        position: absolute;
         z-index: 2;
+        position: absolute;
         top: 8px;
         right: 8px;
-
         display: flex;
         flex-direction: row;
         align-items: center;
-
         cursor: pointer;
     }
 
     &__body {
-        position: absolute;
-        top: 0;
-
         display: flex;
         flex-direction: column;
-
-        width: 100%;
         height: 100%;
+        position: absolute;
+        width: 100%;
+        top: 0;
 
         &_hidden {
-            z-index: -1;
-
             opacity: 0;
+            z-index: -1;
         }
 
         &_d3 {
@@ -121,9 +106,8 @@ $fullscreenZIndex: 999;
 
     &__description {
         display: flex;
-        overflow: auto;
         align-items: center;
-
+        overflow: auto;
         padding: 0 var(--dl-dk-charts-desc-padding) var(--dl-dk-charts-desc-padding);
     }
 
@@ -145,13 +129,13 @@ $fullscreenZIndex: 999;
 
     // block below up to no_tabs: with tabs, maps and metrics
     & .chartkit-loader__loader_compact {
-        top: 0;
         right: 0;
+        top: 0;
     }
 
     & .chartkit-loader.chartkit-loader_widget .chartkit-loader__loader_compact {
-        top: 7px;
         right: 10px;
+        top: 7px;
     }
 
     // for widgets-metrics indentation should be different
@@ -161,13 +145,13 @@ $fullscreenZIndex: 999;
         // with tabs, not maps and not metrics
 
         & .chartkit-base__header {
-            top: calc(-1 * var(--dl-dk-charts-tabs-height) + var(--dl-dk-header-offset));
             right: calc(-1 * var(--dl-dk-charts-padding) + var(--dl-dk-header-offset));
+            top: calc(-1 * var(--dl-dk-charts-tabs-height) + var(--dl-dk-header-offset));
         }
 
         & .chartkit-loader__loader_compact:not(.chartkit-loader_widget) {
-            top: -44px;
             right: calc(-1 * var(--dl-dk-charts-padding));
+            top: -44px;
         }
     }
 
@@ -222,9 +206,8 @@ $fullscreenZIndex: 999;
     &_no-tabs {
         // On mobile devices to trigger intersection observer we need at least 1px of height
         &#{$class}_wait-for-init {
-            min-height: 1px;
-
             opacity: 0;
+            min-height: 1px;
         }
 
         .chartkit {

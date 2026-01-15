@@ -3,41 +3,38 @@
 
 .dl-entry-panel {
     $class: &;
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-
     height: inherit;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
     margin-right: auto;
 
     &__entry {
         &-title {
-            display: flex;
-            overflow: hidden;
-            flex-shrink: 1;
-            align-items: center;
-
             max-width: 50%;
             height: inherit;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            flex-shrink: 1;
 
             &-text {
-                font-weight: bold;
                 @include overflow-ellipsis();
+
+                font-weight: bold;
             }
         }
 
         &-actions {
             display: flex;
             align-items: center;
-
             margin-bottom: 2px;
-            margin-left: var(--g-spacing-2);
             padding-right: 5px;
+            margin-left: var(--g-spacing-2);
 
             #{$class}__action-btn {
-                margin-right: 5px;
-
                 color: var(--g-color-text-secondary);
+                margin-right: 5px;
 
                 &_active {
                     svg {
@@ -50,19 +47,15 @@
 
     &__project-title {
         position: relative;
-
         padding: 0 16px 0 8px;
 
         &::after {
+            content: '';
             position: absolute;
             top: -2px;
             right: 3px;
-
             width: 1px;
             height: 20px;
-
-            content: '';
-
             background-color: var(--g-color-line-generic);
         }
     }

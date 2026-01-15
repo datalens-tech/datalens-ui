@@ -6,8 +6,8 @@
     }
 
     &__title {
-        margin-bottom: 4px;
         @include text-subheader-1();
+        margin-bottom: 4px;
     }
 
     &__description {
@@ -15,15 +15,12 @@
     }
 
     &__list-item {
-        position: relative;
-
+        height: 100%;
+        width: 100%;
         display: flex;
         align-items: center;
-
-        width: 100%;
-        height: 100%;
-
         cursor: pointer;
+        position: relative;
     }
 
     &__palettes-list-item-icon {
@@ -38,8 +35,8 @@
     }
 
     &__add-palette-button_condensed {
-        margin-top: 0;
         margin-left: 0;
+        margin-top: 0;
     }
 
     &__list-items_condensed {
@@ -51,9 +48,8 @@
     }
 
     &__more-icon {
-        margin-left: auto;
-
         opacity: 0;
+        margin-left: auto;
     }
 
     &__default-icon {
@@ -65,19 +61,17 @@
     }
 
     &__list-item-content {
+        height: 100%;
+        width: 100%;
         display: flex;
         align-items: center;
-
-        width: 100%;
-        height: 100%;
     }
 
     &__list-item-actions {
         position: absolute;
         right: 8px;
-
-        display: flex;
         align-items: center;
+        display: flex;
     }
 
     &__tooltip-anchor {

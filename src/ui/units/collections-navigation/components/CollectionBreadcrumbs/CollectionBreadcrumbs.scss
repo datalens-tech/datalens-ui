@@ -1,13 +1,12 @@
 @import '../../../../styles/mixins.scss';
 
 .dl-collection-breadcrumbs {
+    margin-right: 5px;
     width: 100%;
     min-height: 24px;
-    margin-right: 5px;
 
     &__skeleton {
         display: block;
-
         width: 200px;
         height: 16px;
     }

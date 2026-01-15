@@ -2,14 +2,14 @@
 @import '../../styles/variables.scss';
 
 .service-settings {
-    width: 100%;
     min-height: 100vh;
     padding: var(--g-spacing-5) var(--g-spacing-6);
+    width: 100%;
 
     &_new {
+        padding: $settingsPagePadding;
         max-width: $pageMaxWidth;
         margin: 0 auto;
-        padding: $settingsPagePadding;
     }
 
     &__header {
@@ -25,18 +25,17 @@
         margin-top: var(--g-spacing-3);
 
         &_new {
+            padding-top: 30px;
             width: unset;
             margin-top: unset;
-            padding-top: 30px;
         }
     }
 
     &__loader {
-        display: flex;
-        justify-content: center;
-
         width: 100%;
         margin-top: var(--g-spacing-6);
+        display: flex;
+        justify-content: center;
     }
 
     &__tabs {

@@ -4,31 +4,25 @@
     }
 
     &__header {
-        display: flex;
-        align-items: center;
-
-        height: 56px;
-        padding: 10px 20px;
-
         font-size: 15px;
         font-weight: 500;
+        height: 56px;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
     }
 
     &__item {
         display: flex;
-        align-items: center;
-
         height: 40px;
         padding: 0 16px;
-
-        cursor: default;
-        text-decoration: none;
-
+        align-items: center;
         color: var(--g-color-text-complementary);
+        text-decoration: none;
+        cursor: default;
 
         &:hover:not(&_current) {
             cursor: pointer;
-
             color: var(--g-color-text-primary);
             background: var(--g-color-base-simple-hover);
         }
@@ -40,16 +34,14 @@
     }
 
     &__item-icon {
-        margin-right: 18px;
         margin-left: 7px;
+        margin-right: 18px;
     }
 
     &__quick-header {
         height: 32px;
         padding: 8px 20px 0;
-
         line-height: 24px;
-
         color: var(--g-color-text-hint);
     }
 }

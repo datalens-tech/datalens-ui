@@ -1,7 +1,8 @@
 .chartkit-alert {
     $block: &;
-    width: 100%;
+
     height: 100%;
+    width: 100%;
 
     &__container {
         display: flex;
@@ -14,13 +15,11 @@
         flex: 0 0 auto;
         flex-direction: column;
         justify-content: center;
-
-        box-sizing: border-box;
-        margin: 2px;
-
         text-decoration: none;
+        box-sizing: border-box;
 
         border-radius: 4px;
+        margin: 2px;
 
         &_status_OK {
             background-color: var(--g-color-base-positive-medium);
@@ -83,15 +82,14 @@
 
     &__alert-label,
     &__alert-annotation {
-        overflow: hidden;
-
         width: 100%;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
 
         line-height: 1.2;
         text-align: center;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-
         color: var(--g-color-text-dark-primary);
     }
 }

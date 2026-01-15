@@ -2,8 +2,8 @@
 
 .dialog-column-settings {
     &__subheader {
-        margin-right: 4px;
         @include text-subheader-2();
+        margin-right: 4px;
     }
 
     &__help-mark {

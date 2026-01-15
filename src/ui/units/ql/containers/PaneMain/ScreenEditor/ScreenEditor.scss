@@ -11,10 +11,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-
         width: 100%;
         height: 41px;
-
         line-height: 41px;
 
         border-bottom: 1px solid var(--g-color-line-generic);
@@ -24,54 +22,47 @@
         }
 
         &_connection-select-btn-wrapper {
+            height: 100%;
             display: flex;
-            flex-shrink: 3;
             align-items: center;
             gap: 10px;
-
+            flex-shrink: 3;
             min-width: 0;
-            height: 100%;
             button {
-                overflow: hidden;
-
-                height: 100%;
                 padding: 0 8px;
+                overflow: hidden;
+                height: 100%;
                 .g-button__text {
                     display: flex;
-                    overflow: hidden;
                     align-items: center;
-                    gap: 5px;
-
-                    width: 100%;
                     min-width: 0;
+                    width: 100%;
+                    overflow: hidden;
+                    gap: 5px;
                 }
             }
         }
 
         &_connection-select-btn-text {
+            white-space: nowrap;
             overflow: hidden;
-            flex-shrink: 1;
-
+            text-overflow: ellipsis;
             min-width: 0;
             max-width: 100%;
-
-            white-space: nowrap;
-            text-overflow: ellipsis;
+            flex-shrink: 1;
         }
 
         &_connection-label {
-            overflow: hidden;
-
             white-space: nowrap;
+            overflow: hidden;
             text-overflow: ellipsis;
         }
 
         &_connection-select-btn_more {
+            height: 100%;
+            min-width: 0;
             display: flex;
             flex-shrink: 3;
-
-            min-width: 0;
-            height: 100%;
         }
 
         &_connection-select-btn {
@@ -79,19 +70,16 @@
         }
 
         &_tabs {
-            flex-shrink: 0;
-
             width: 220px;
+            flex-shrink: 0;
             height: 40px;
             margin-left: 20px;
-
             box-shadow: none;
         }
     }
 
     &__run-btn {
         float: left;
-
         margin: 0 0 16px 22px;
     }
 }

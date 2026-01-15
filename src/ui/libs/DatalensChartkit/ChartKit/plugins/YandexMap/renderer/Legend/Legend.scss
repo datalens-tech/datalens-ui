@@ -2,19 +2,15 @@
     position: fixed;
     top: 44px;
     right: 8px;
-
     overflow: auto;
     overflow-x: hidden;
-
+    background: var(--g-color-base-background);
+    border-radius: 4px;
     width: 180px;
     max-height: calc(100% - 44px - 8px);
-
-    border-radius: 4px;
-    background: var(--g-color-base-background);
 }
 
 .dl-widget_ymap:has(.widget-header__tabs) .chartkit-ymap-legend {
-    top: 8px;
-
     max-height: calc(100% - 8px - 8px);
+    top: 8px;
 }

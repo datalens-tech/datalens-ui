@@ -1,8 +1,7 @@
 .dl-datepicker-presets {
-    display: flex;
     flex: 0 0 40px;
+    display: flex;
     align-items: center;
-
     color: var(--g-color-text-secondary);
     background-color: var(--g-color-base-generic);
 
@@ -12,7 +11,6 @@
 
     &__item {
         margin-left: 16px;
-
         cursor: pointer;
 
         .dl-datepicker_desktop &:hover {

@@ -1,11 +1,9 @@
 .chartkit-metric {
+    height: 100%;
     overflow: auto;
 
-    height: 100%;
-
     &__wrapper {
-        height: 200px;
-
         text-align: center;
+        height: 200px;
     }
 }

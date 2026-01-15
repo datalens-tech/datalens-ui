@@ -6,11 +6,12 @@
     }
 
     &__action {
+        position: absolute;
+        right: 0;
+
         --g-button-background-color: transparent;
         --g-button-background-color-hover: var(--g-color-base-misc-heavy-hover);
         --g-button-border-radius: 4px;
-        position: absolute;
-        right: 0;
 
         color: var(--g-color-text-misc);
 

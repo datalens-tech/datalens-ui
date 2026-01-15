@@ -4,29 +4,24 @@
     }
 
     &__content {
-        position: relative;
-
-        display: inline-block;
-
-        box-sizing: border-box;
         // without width content shifts to the left because of the long header
         width: 100%;
         max-width: 230px;
-        min-height: 167px;
+        display: inline-block;
+        white-space: nowrap;
+        position: relative;
         margin: 0 0 17px;
         padding: 8px 10px 0;
-
-        text-align: left;
-        white-space: nowrap;
+        min-height: 167px;
         text-decoration: none;
+        box-sizing: border-box;
+        text-align: left;
     }
 
     &__metric {
         margin-top: 3px;
-
         font-size: 65px;
         line-height: 1;
-
         color: #333333;
     }
 
@@ -39,23 +34,19 @@
     }
 
     &__current {
-        padding: 5px 0;
-
-        font-size: 14px;
-
         color: #808080;
+        font-size: 14px;
+        padding: 5px 0;
     }
 
     &__diff-container {
         position: absolute;
         top: -43px;
-
         font-size: 18px;
     }
 
     &_thin &__diff-container {
         top: -43px;
-
         font-size: 15px;
     }
 
@@ -68,42 +59,33 @@
     }
 
     &__title {
-        overflow: hidden;
-
         max-width: 100%;
-        padding: 5px 0;
-
-        font-size: 18px;
-        text-align: left;
-        text-overflow: ellipsis;
-
         color: #000000;
+        font-size: 18px;
+        padding: 5px 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
     }
 
     &__last {
+        color: #808080;
+        font-size: 14px;
         padding-top: 12px;
         padding-bottom: 7px;
-
-        font-size: 14px;
-
-        color: #808080;
     }
 
     &__last-value {
-        position: relative;
-
-        display: inline-block;
-
-        font-size: 24px;
-
         color: #000000;
+        font-size: 24px;
+        display: inline-block;
+        position: relative;
     }
 
     &__value {
-        margin-right: 0.25em;
-
-        font-weight: bold;
         vertical-align: top;
+        font-weight: bold;
+        margin-right: 0.25em;
     }
 
     &__unit {
@@ -111,52 +93,41 @@
     }
 
     &__chart {
-        position: absolute;
-        right: 9px;
-        bottom: -17px;
-
         display: inline-block;
-
+        position: absolute;
+        bottom: -17px;
+        right: 9px;
         width: 130px;
         height: 60px;
-
         opacity: 0.7;
     }
 
     &__chart-lite {
         display: inline-block;
-
+        opacity: 0.7;
         padding-top: 17px;
         padding-left: 5px;
-
-        opacity: 0.7;
     }
 
     &__aside {
-        position: relative;
-
         display: inline-block;
-
         font-size: 0.5em;
         text-align: left;
+        position: relative;
     }
 
     &__date {
         display: block;
-
         font-size: 11px;
-        text-align: right;
-
         color: #555;
+        text-align: right;
     }
 
     &__diff {
+        display: block;
+        font-size: 0.5em;
         position: relative;
         top: -0.5em;
-
-        display: block;
-
-        font-size: 0.5em;
     }
 
     &__diff_positive,

@@ -4,15 +4,12 @@
     $class: &;
 
     display: table-row;
-
+    color: inherit;
     text-decoration: none;
 
-    color: inherit;
-
     &:hover {
-        cursor: pointer;
-
         background-color: var(--g-color-base-simple-hover-solid);
+        cursor: pointer;
 
         #{$class}__btn-favorite {
             visibility: visible;
@@ -25,16 +22,14 @@
 
     &__content-cell,
     &__empty-cell {
+        @include overflow-ellipsis();
         display: table-cell;
-
         box-sizing: content-box;
         overflow-wrap: break-word;
-
         text-align: left;
         vertical-align: middle;
 
         border-bottom: 1px solid var(--g-color-line-generic);
-        @include overflow-ellipsis();
     }
 
     &__content-cell {
@@ -74,14 +69,14 @@
     }
 
     &__title-col-text {
-        margin-left: 12px;
         @include overflow-ellipsis();
+        margin-left: 12px;
     }
 
     &__author-text {
-        white-space: nowrap;
-        text-overflow: ellipsis;
         overflow-wrap: break-word;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     &__control-col {
@@ -90,10 +85,9 @@
     }
 
     &__btn-favorite {
-        visibility: hidden;
-
         color: var(--g-color-base-misc-heavy-hover);
         border-radius: 4px;
+        visibility: hidden;
 
         &_is-favorite {
             visibility: visible;
@@ -114,8 +108,8 @@
 
     &_mobile {
         #{$class}__content-cell {
-            padding: 0;
             @include text-body-2;
+            padding: 0;
         }
 
         #{$class}__title-col {

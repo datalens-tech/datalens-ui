@@ -1,38 +1,34 @@
 .dashkit-plugin-control {
     $class: &;
     display: flex;
-    justify-content: center; // in particular for the loader
     align-items: center;
-
-    width: 100%;
+    justify-content: center; // in particular for the loader
     height: 100%;
+    width: 100%;
     min-height: 44px;
 
-    border-radius: var(--dl-dk-controls-border-radius, var(--g-border-radius-xs));
     background-color: var(--dl-color-dashkit-control-background, var(--g-color-base-float));
+    border-radius: var(--dl-dk-controls-border-radius, var(--g-border-radius-xs));
 
     &_external {
-        display: block;
         align-items: normal;
+        display: block;
     }
 
     &__item {
-        overflow: hidden;
         flex: 1;
-
         padding: 0 15px;
+        overflow: hidden;
     }
 
     &__loader {
         position: absolute;
-        z-index: 3; // to overlay Datepicker
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
         width: 100%;
         height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3; // to overlay Datepicker
 
         &_silent {
             background-color: var(--g-color-sfx-fade);

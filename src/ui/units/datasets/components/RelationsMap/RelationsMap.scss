@@ -1,12 +1,9 @@
 .relations-map {
-    position: relative;
-
-    display: flex;
-    overflow: auto;
     flex-grow: 1;
-
+    display: flex;
+    position: relative;
+    overflow: auto;
     padding: 24px;
-
     border: 1px solid transparent;
 
     &_over {
@@ -25,25 +22,23 @@
         position: absolute;
         top: 0;
         left: 0;
-
         min-width: 100%;
     }
 
     &__tree-level {
-        display: flex;
         flex-grow: 1;
+        display: flex;
     }
 
     &__sub-tree {
         flex-grow: 1;
-
         margin-left: 100px;
     }
 
     &__join {
+        z-index: 3;
         --ds-join-stroke-color: var(--dl-color-border);
         --ds-join-stroke-dasharray: 0;
-        z-index: 3;
 
         &_error {
             --ds-join-stroke-color: var(--g-color-base-danger-heavy);
@@ -56,11 +51,10 @@
     }
 
     &__placeholder {
+        width: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
-
-        width: 100%;
+        justify-content: center;
     }
 }

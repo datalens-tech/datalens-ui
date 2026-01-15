@@ -2,21 +2,18 @@
 
 .dl-entry-title {
     display: inline-flex;
-    overflow: hidden;
     align-items: center;
-
-    width: 100%;
-
     color: var(--g-color-text-primary);
+    overflow: hidden;
+    width: 100%;
 
     &_pointer {
         cursor: pointer;
     }
 
     &__icon {
-        margin-right: 8px;
-
         line-height: 0;
+        margin-right: 8px;
     }
 
     &__name {
@@ -24,8 +21,8 @@
     }
 
     &__date {
-        color: var(--g-color-text-secondary);
         @include overflow-ellipsis();
+        color: var(--g-color-text-secondary);
         @include text-caption-2();
     }
 

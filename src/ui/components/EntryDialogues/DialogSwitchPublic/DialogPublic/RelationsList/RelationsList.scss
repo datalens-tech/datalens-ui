@@ -5,9 +5,8 @@
 
     &__main-title-text {
         margin-top: 24px;
-
-        font-size: var(--g-text-body-2-font-size);
         font-weight: 500;
+        font-size: var(--g-text-body-2-font-size);
     }
 
     &__group {
@@ -16,9 +15,8 @@
 
     &__group-title {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-
+        justify-content: space-between;
         margin-bottom: 8px;
     }
 
@@ -27,12 +25,11 @@
     }
 
     &__right-section {
-        display: flex;
         flex-shrink: 0;
-        align-items: center;
-
-        margin-right: 4px;
         margin-left: auto;
+        margin-right: 4px;
+        display: flex;
+        align-items: center;
     }
 
     &__alert {

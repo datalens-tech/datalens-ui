@@ -4,7 +4,6 @@
     &__actions {
         display: flex;
         align-items: center;
-
         margin-top: 20px;
     }
 
@@ -13,14 +12,13 @@
     }
 
     &__actions_mobile {
-        flex-direction: column;
-
-        width: 100%;
         margin-top: 0;
+        flex-direction: column;
+        width: 100%;
 
         #{$class}__btn-retry {
-            margin-right: 0;
             margin-bottom: 16px;
+            margin-right: 0;
         }
     }
 }

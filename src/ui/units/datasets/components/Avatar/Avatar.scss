@@ -3,17 +3,13 @@
 $avatarHeight: 32px;
 
 .avatar {
-    z-index: 2;
-
+    height: $avatarHeight;
     display: flex;
     align-items: center;
-
-    height: $avatarHeight;
-    padding: 0 30px 0 9px;
-
     cursor: pointer;
-
+    padding: 0 30px 0 9px;
     border: 1px solid transparent;
+    z-index: 2;
 
     &:hover {
         background: var(--ds-color-hover-area);
@@ -29,19 +25,16 @@ $avatarHeight: 32px;
 
     &_active {
         position: relative;
-
         flex: 0 0 240px;
-
         width: 240px;
         height: 32px;
-        margin-bottom: 12px;
-
         border-radius: 4px;
         background: var(--ds-color-avatar);
+        margin-bottom: 12px;
 
         &:hover {
-            border: 1px solid var(--g-color-line-generic);
             background: var(--ds-color-avatar);
+            border: 1px solid var(--g-color-line-generic);
         }
     }
 
@@ -58,9 +51,8 @@ $avatarHeight: 32px;
     }
 
     &__icon-avatar {
-        flex-shrink: 0;
-
         margin-right: 8px;
+        flex-shrink: 0;
     }
 
     &__avatar-title {
@@ -70,19 +62,16 @@ $avatarHeight: 32px;
 
     &__btn-edit {
         display: flex;
-        justify-content: center;
-
         width: 24px;
         height: 24px;
+        justify-content: center;
 
         &-icon {
-            position: relative;
-            left: 10px;
-
+            height: inherit;
             display: flex;
             align-items: center;
-
-            height: inherit;
+            left: 10px;
+            position: relative;
         }
     }
 
@@ -101,26 +90,21 @@ $avatarHeight: 32px;
     }
 
     &__replace-source-area {
-        position: absolute;
-        right: 2px;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
         width: 24px;
         height: 24px;
-
+        position: absolute;
+        right: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         color: var(--g-color-base-brand);
         border: 1px dashed var(--g-color-base-brand);
         border-radius: 4px;
 
         &_over {
-            right: 0;
-
             width: $avatarHeight;
             height: $avatarHeight;
-
+            right: 0;
             color: var(--g-color-base-background);
             background: var(--g-color-base-brand);
         }

@@ -2,21 +2,18 @@
     $borderWidth: 1px;
     $fullTabWidth: 250px;
     $bottomMargin: 28px;
-    position: relative;
 
     display: flex;
-    overflow: hidden;
-    flex: 1;
-
     background-color: var(--g-color-base-background);
+    position: relative;
+    flex: 1;
+    overflow: hidden;
 
     &__wrapper {
         position: relative;
-
-        width: 100%;
-        height: 100%;
-
         border-right: $borderWidth solid var(--g-color-line-generic);
+        height: 100%;
+        width: 100%;
     }
 
     &__sidebar {
@@ -24,18 +21,14 @@
         top: 0;
         bottom: 0;
         left: -250px;
-
         overflow: hidden;
-
+        padding: 24px 0 24px 8px;
         width: $fullTabWidth - $borderWidth;
         height: 100%;
-        padding: 24px 0 24px 8px;
 
         &_opened {
             position: fixed;
-
             display: block;
-
             height: auto;
         }
     }
@@ -43,16 +36,13 @@
     &__header {
         display: flex;
         align-items: center;
-
-        margin: 0 10px 15px;
-
         font-size: 18px;
         font-weight: bold;
+        margin: 0 10px 15px;
     }
 
     &__header-title {
         flex: 1;
-
         cursor: default;
     }
 
@@ -61,10 +51,9 @@
     }
 
     &__tabs {
-        overflow-x: hidden;
-        overflow-y: scroll;
-
         height: calc(100% - $bottomMargin);
+        overflow-y: scroll;
+        overflow-x: hidden;
     }
 
     &__tab-item {
@@ -73,22 +62,18 @@
 
     &__title {
         display: block;
-
-        padding: 10px;
-
-        font-size: 15px;
-        cursor: pointer;
         text-decoration: none;
-        word-break: break-word;
-        hyphens: auto;
-
         color: inherit;
+        font-size: 15px;
+        padding: 10px;
+        cursor: pointer;
         border-radius: 3px;
+        hyphens: auto;
+        word-break: break-word;
 
         &_item {
-            padding-left: 20px;
-
             opacity: 0.5;
+            padding-left: 20px;
         }
 
         &:hover {
@@ -102,7 +87,6 @@
 
     &__hint {
         display: inline;
-
         margin-left: 5px;
     }
 

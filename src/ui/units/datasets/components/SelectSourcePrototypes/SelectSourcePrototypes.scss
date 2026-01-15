@@ -4,52 +4,45 @@
     $class: &;
 
     display: flex;
-    flex-grow: 1;
     flex-direction: column;
-
+    flex-grow: 1;
     width: 100%;
     min-height: 200px;
-
     background: var(--ds-color-base-area);
 
     &__top-section {
-        position: sticky;
-        z-index: 1;
-        top: 0;
-
         padding: 16px 20px 8px;
-
         font-weight: bold;
-
+        position: sticky;
+        top: 0;
         background: var(--ds-color-base-area);
+        z-index: 1;
     }
 
     &__header {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
     }
 
     &__select-db-name {
-        width: 100%;
         margin-top: 8px;
         margin-bottom: 16px;
+        width: 100%;
     }
 
     &__input-search {
-        width: 100%;
         margin-top: 8px;
+        width: 100%;
     }
 
     &__connections {
-        overflow-x: hidden;
-        overflow-y: auto;
-        flex-shrink: 0;
-
-        min-height: 120px;
-        max-height: 50%;
-
         border-bottom: 1px solid var(--ds-color-divider);
+        max-height: 50%;
+        min-height: 120px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex-shrink: 0;
     }
 
     &__connection-wrap {
@@ -57,14 +50,12 @@
     }
 
     &__connection {
-        display: flex;
-        flex: 0 0 32px;
-        align-items: center;
-
         height: 32px;
-        padding: 0 25px 0 16px;
-
+        flex: 0 0 32px;
+        display: flex;
+        align-items: center;
         cursor: pointer;
+        padding: 0 25px 0 16px;
 
         &_active {
             background: var(--ds-color-selection);
@@ -90,11 +81,10 @@
     }
 
     &__connection-title-container {
-        display: flex;
         flex-grow: 1;
-        align-items: center;
+        display: flex;
         gap: var(--g-spacing-1);
-
+        align-items: center;
         min-width: 0;
         margin-right: var(--g-spacing-2);
     }
@@ -107,9 +97,8 @@
         @include overflow-ellipsis;
 
         &_deleted {
-            font-style: italic;
-
             color: var(--g-color-text-danger);
+            font-style: italic;
         }
     }
 
@@ -124,9 +113,7 @@
     &__bottom-section {
         position: sticky;
         bottom: 0;
-
         padding: 4px 8px;
-
         background: var(--ds-color-base-area);
     }
 
@@ -141,7 +128,6 @@
 
     &__btn-delete-connection {
         left: 20px;
-
         display: none;
     }
 
@@ -150,22 +136,18 @@
         position: absolute;
         top: 16px;
         right: 5px;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
         transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     &__sources {
-        position: relative;
-
         display: flex;
+        flex-direction: column;
         overflow-y: auto;
         flex-grow: 1;
-        flex-direction: column;
-
+        position: relative;
         min-height: 120px;
         // In Yandex.Browser and Firefox in some cases, an endless redrawing of the height begins
         // in the react-window container (which is used in the List component)
@@ -181,9 +163,8 @@
 
     &__sources-error {
         height: 100%;
-        padding: 16px 20px 6px;
-
         border-bottom: 1px solid var(--ds-color-divider);
+        padding: 16px 20px 6px;
     }
 
     &__sources-error-row {
@@ -200,9 +181,8 @@
     }
 
     &__sources-error-icon {
-        margin-right: 8px;
-
         color: var(--g-color-text-danger);
+        margin-right: 8px;
     }
 
     &__source-item {
@@ -212,10 +192,10 @@
     }
 
     &__loader-sources {
-        display: flex;
         flex: 0 2 100%;
-        justify-content: center;
+        display: flex;
         align-items: center;
+        justify-content: center;
     }
 
     &__active-sources {
