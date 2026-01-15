@@ -1,5 +1,7 @@
 @import '../WysiwygEditor/mixins.scss';
 
+$editorWidth: 656px;
+
 .dialog-entry-description {
     $class: &;
     position: relative;
@@ -21,7 +23,7 @@
 
     &__content {
         margin-top: 6px;
-        min-width: 656px;
+        min-width: $editorWidth;
         max-width: 736px;
     }
 
@@ -35,7 +37,7 @@
         }
     }
 
-    @include yfm-editor(656px);
+    @include yfm-editor($editorWidth);
 
     &__yfm-loader {
         height: 100%;

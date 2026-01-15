@@ -39,6 +39,8 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
     const isMounted = useMountedState();
     const dispatch = useDispatch();
 
+    const editorRef = React.useRef<WysiwygEditorRef>(null);
+
     const isEditable = canEdit && isEditMode;
 
     const [text, setText] = React.useState(description || '');
@@ -81,6 +83,7 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
     }, [onEdit, text]);
 
     const handleClear = React.useCallback(() => {
+        editorRef.current?.clear();
         setText('');
     }, []);
 
@@ -152,8 +155,12 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
                 <React.Fragment>
                     {props.subTitle && <div className={b('subtitle')}>{props.subTitle}</div>}
                     <WysiwygEditor
+                        ref={editorRef}
+                        autofocus={true}
                         onMarkupChange={handleMarkupChange}
-                        initial={{markup: text}}
+                        initial={{
+                            markup: text,
+                        }}
                         onError={() => setIsError(true)}
                     />
                     {Boolean(maxLength) && (
