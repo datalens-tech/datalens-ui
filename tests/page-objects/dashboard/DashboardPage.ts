@@ -370,19 +370,12 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddText));
     }
 
-    async addText(text: string, delay?: number) {
+    async addText(text: string, timeout?: number) {
         await this.clickAddText();
-        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
-        if (isEnabledCollections) {
-            await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
-        } else {
-            await this.page.type(
-                `${slct(DialogDashWidgetItemQA.Text)} [contenteditable=true]`,
-                text,
-                {delay},
-            );
-        }
+        await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} [contenteditable=true]`, text, {
+            timeout,
+        });
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
 
