@@ -6,7 +6,11 @@ import {Checkbox, DropdownMenu, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
-import {CollectionContentTableQa, DEFAULT_DATE_FORMAT} from 'shared/constants';
+import {
+    CollectionContentTableQa,
+    CollectionTableRowQa,
+    DEFAULT_DATE_FORMAT,
+} from 'shared/constants';
 import {DL} from 'ui/constants/common';
 import {selectDateTimeFormat} from 'ui/store/selectors/user';
 
@@ -191,6 +195,9 @@ export const CollectionContentTable = React.memo<Props>(
                                                     size="s"
                                                     items={actions}
                                                     disabled={isDeleting}
+                                                    defaultSwitcherProps={{
+                                                        qa: CollectionTableRowQa.EntryDropdownBtn,
+                                                    }}
                                                 />
                                             )}
                                         </div>

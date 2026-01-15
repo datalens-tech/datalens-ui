@@ -15,7 +15,7 @@ import {useHistory} from 'react-router-dom';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {Feature} from '../../../../../shared';
+import {CollectionActionsQa, Feature} from '../../../../../shared';
 import {registry} from '../../../../registry';
 import {selectCollection} from '../../store/selectors';
 
@@ -171,6 +171,7 @@ export const CollectionActions = React.memo<Props>(
                                 className={b('create')}
                                 onClick={onClick}
                                 onKeyDown={onKeyDown}
+                                qa={CollectionActionsQa.CreateActionBtn}
                             >
                                 {i18n('action_create')}
                                 <Icon data={ChevronDown} />
