@@ -11,7 +11,7 @@ import './MarkdownControl.scss';
 const b = block('markdown-control');
 
 export const MarkdownControl = (props: MarkdownControlProps) => {
-    const {value, onChange, enableExtensions, className} = props;
+    const {value, onChange, enableExtensions, disabled, className} = props;
 
     const handleMarkupChange = (editor: WysiwygEditorRef) => {
         onChange(editor.getValue());
@@ -27,6 +27,7 @@ export const MarkdownControl = (props: MarkdownControlProps) => {
                 }}
                 onMarkupChange={handleMarkupChange}
                 enableExtensions={enableExtensions}
+                disabled={disabled}
             />
         </div>
     );

@@ -30,7 +30,7 @@ const Fallback: React.FC = () => (
 );
 
 export const WysiwygEditor = React.forwardRef<MarkdownEditorRef, WysiwygEditorProps>(
-    ({className, ...props}, ref) => {
+    ({className, disabled, ...props}, ref) => {
         const renderError = React.useCallback(() => {
             // return <div>{i18n('label_failed-to-load')}</div>;
             return 'Не удалось загрузить редактор';
@@ -51,4 +51,4 @@ export const WysiwygEditor = React.forwardRef<MarkdownEditorRef, WysiwygEditorPr
     },
 );
 
-WysiwygEditor.displayName = 'TextEditor';
+WysiwygEditor.displayName = 'WysiwygEditor';
