@@ -8,6 +8,14 @@
         overflow: hidden;
     }
 
+    &__content {
+        &_disabled {
+            pointer-events: none;
+            color: var(--g-color-text-hint);
+            background-color: var(--g-color-base-generic-accent-disabled);
+        }
+    }
+
     &__fallback {
         display: flex;
         align-items: center;

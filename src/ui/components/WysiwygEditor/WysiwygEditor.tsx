@@ -14,7 +14,10 @@ const b = block('wysiwyg-editor');
 // const i18n = I18n.keyset('component.wysiwyg-editor.view');
 
 export type WysiwygEditorRef = MarkdownEditorRef;
-type WysiwygEditorProps = MarkdownEditorProps & {onError?: (error: Error) => void};
+type WysiwygEditorProps = MarkdownEditorProps & {
+    disabled?: boolean;
+    onError?: (error: Error) => void;
+};
 
 const MarkdownEditor = React.lazy(() => import('./MarkdownEditorDefault'));
 
@@ -36,7 +39,11 @@ export const WysiwygEditor = React.forwardRef<MarkdownEditorRef, WysiwygEditorPr
             <ErrorBoundary renderError={renderError} onError={props.onError}>
                 <React.Suspense fallback={<Fallback />}>
                     <div className={b('wrapper')}>
-                        <MarkdownEditor className={b('content', className)} ref={ref} {...props} />
+                        <MarkdownEditor
+                            className={b('content', {disabled}, className)}
+                            ref={ref}
+                            {...props}
+                        />
                     </div>
                 </React.Suspense>
             </ErrorBoundary>
