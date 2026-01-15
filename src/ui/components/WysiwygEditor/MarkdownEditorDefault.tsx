@@ -72,7 +72,7 @@ const MarkdownEditorDefault = React.forwardRef<MarkdownEditorRef, MarkdownEditor
         },
         ref,
     ) => {
-        const baseToolbarsPreset = customToolbarsPreset ?? TOOLBARS_PRESET;
+        const toolbarsPreset = customToolbarsPreset ?? TOOLBARS_PRESET;
 
         const {extendedCommandMenuActions, extendedToolbarsPreset} = React.useMemo(() => {
             if (enableExtensions)
@@ -81,9 +81,9 @@ const MarkdownEditorDefault = React.forwardRef<MarkdownEditorRef, MarkdownEditor
                         COMMAND_MENU_EXTENSIONS_ACTIONS,
                     ),
                     extendedToolbarsPreset: {
-                        ...baseToolbarsPreset,
+                        ...toolbarsPreset,
                         orders: {
-                            ...baseToolbarsPreset.orders,
+                            ...toolbarsPreset.orders,
                             wysiwygHidden: [getExtendedHiddenItems()],
                             markupHidden: [getExtendedHiddenItems()],
                         },
@@ -92,9 +92,9 @@ const MarkdownEditorDefault = React.forwardRef<MarkdownEditorRef, MarkdownEditor
 
             return {
                 extendedCommandMenuActions: COMMAND_MENU_ACTIONS,
-                extendedToolbarsPreset: baseToolbarsPreset,
+                extendedToolbarsPreset: toolbarsPreset,
             };
-        }, [enableExtensions, baseToolbarsPreset]);
+        }, [enableExtensions, toolbarsPreset]);
 
         const editor = useMarkdownEditor({
             wysiwygConfig: {
@@ -102,7 +102,10 @@ const MarkdownEditorDefault = React.forwardRef<MarkdownEditorRef, MarkdownEditor
                     commandMenu: {actions: extendedCommandMenuActions},
                     selectionContext: {config: SELECTION_MENU_ACTIONS},
                     clipboard: {
-                        // передача undefined не отключает функционал вставки файла по ctrl/cmd+v, необходимо передать пустую функцию
+                        /**
+                         * Passing undefined does not disable the file insertion functionality via ctrl/cmd+v,
+                         * you must pass an empty function
+                         */
                         pasteFileHandler: () => {},
                     },
                     ...customExtensionOptions,

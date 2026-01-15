@@ -1,6 +1,6 @@
 // @ts-nocheck
 import {wysiwygToolbarConfigs} from '@gravity-ui/markdown-editor';
-import type {ExtensionAuto} from '@gravity-ui/markdown-editor';
+import type {ExtensionAuto, ToolbarsPreset} from '@gravity-ui/markdown-editor';
 import {ActionName as BaseAction} from '@gravity-ui/markdown-editor/_/bundle/config/action-names';
 import {Math} from '@gravity-ui/markdown-editor/_/extensions/additional/Math';
 import {Mermaid} from '@gravity-ui/markdown-editor/_/extensions/additional/Mermaid';
@@ -19,7 +19,6 @@ import {
     mermaidItemWysiwyg,
 } from '@gravity-ui/markdown-editor/_/modules/toolbars/items';
 import {full} from '@gravity-ui/markdown-editor/_/modules/toolbars/presets';
-import type {ToolbarsPreset} from '@gravity-ui/markdown-editor/_/modules/toolbars/types';
 
 export const DATALENS_PRESET: ExtensionAuto = (builder) => {
     builder

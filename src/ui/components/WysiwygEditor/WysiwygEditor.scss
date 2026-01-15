@@ -17,15 +17,6 @@
     }
 
     &__fallback {
-        display: flex;
-        align-items: center;
-        justify-content: center;
         height: 100%;
-    }
-
-    &__loader {
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 }

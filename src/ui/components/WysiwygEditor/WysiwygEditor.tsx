@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Loader} from '@gravity-ui/uikit';
+import {Flex, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 // import {I18n} from 'i18n';
 
@@ -22,11 +22,11 @@ type WysiwygEditorProps = MarkdownEditorProps & {
 const MarkdownEditor = React.lazy(() => import('./MarkdownEditorDefault'));
 
 const Fallback: React.FC = () => (
-    <div className={b('fallback')}>
-        <div className={b('loader')}>
+    <Flex alignItems="center" justifyContent="center" className={b('fallback')}>
+        <Flex alignItems="center" justifyContent="center">
             <Loader size="m" />
-        </div>
-    </div>
+        </Flex>
+    </Flex>
 );
 
 export const WysiwygEditor = React.forwardRef<MarkdownEditorRef, WysiwygEditorProps>(
@@ -35,6 +35,7 @@ export const WysiwygEditor = React.forwardRef<MarkdownEditorRef, WysiwygEditorPr
             // return <div>{i18n('label_failed-to-load')}</div>;
             return 'Не удалось загрузить редактор';
         }, []);
+
         return (
             <ErrorBoundary renderError={renderError} onError={props.onError}>
                 <React.Suspense fallback={<Fallback />}>
