@@ -16,7 +16,6 @@ import {
     REQUEST_ID_HEADER,
     REQUEST_SOURCE_HEADER,
     RequestSourceHeaderValue,
-    SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
     US_MASTER_TOKEN_HEADER,
@@ -53,13 +52,6 @@ class Utils {
         return pick(headers, headersList);
     }
 
-    static pickZitadelHeaders(req: Request) {
-        return {
-            authorization: 'Bearer ' + req.user?.accessToken,
-            [SERVICE_USER_ACCESS_TOKEN_HEADER]: req.serviceUserAccessToken,
-        };
-    }
-
     static pickAuthHeaders(req: Request) {
         return {
             [AuthHeader.Authorization]: 'Bearer ' + req.ctx.get('user')?.accessToken,
@@ -84,7 +76,6 @@ class Utils {
             ...Utils.pickSuperuserHeaders(req.headers),
             ...Utils.pickDlContextHeaders(req.headers),
             ...Utils.pickForwardHeaders(req.headers),
-            ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
             ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
             [REQUEST_ID_HEADER]: req.id,
         };

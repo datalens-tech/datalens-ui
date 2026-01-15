@@ -2,7 +2,6 @@ import {createUikitPlugin} from '@gravity-ui/app-layout';
 import type {AppMiddleware} from '@gravity-ui/expresskit';
 import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {NodeKit} from '@gravity-ui/nodekit';
-import passport from 'passport';
 
 import {
     DASH_API_BASE_URL,
@@ -15,7 +14,6 @@ import {getAppLayoutSettings} from '../../components/app-layout/app-layout-setti
 import {createLayoutPlugin} from '../../components/app-layout/plugins/layout';
 import type {ChartsEngine} from '../../components/charts-engine';
 import {createAuthArgsMiddleware} from '../../components/gateway-auth-helpers';
-import {initZitadel} from '../../components/zitadel/init-zitadel';
 import {xlsxConverter} from '../../controllers/xlsx-converter';
 import {getExpressKit} from '../../expresskit';
 import {
@@ -40,10 +38,6 @@ export default function initApp(nodekit: NodeKit) {
 
     registry.setupXlsxConverter(xlsxConverter);
 
-    if (nodekit.config.isZitadelEnabled) {
-        initZitadel({nodekit, beforeAuth});
-    }
-
     if (isEnabledServerFeature(nodekit.ctx, Feature.UsDynamicMasterToken)) {
         beforeAuth.push(createAuthArgsMiddleware(nodekit.config));
     }
@@ -65,7 +59,6 @@ export default function initApp(nodekit: NodeKit) {
     const extendedRoutes = getRoutes({
         ctx: nodekit.ctx,
         chartsEngine,
-        passport,
         beforeAuth,
         afterAuth,
     });
@@ -108,10 +101,9 @@ function initChartsApp({
             configuredDashApiPlugin({
                 basePath: DASH_API_BASE_URL,
                 routeParams: {
-                    authPolicy:
-                        nodekit.config.isZitadelEnabled || nodekit.config.isAuthEnabled
-                            ? AuthPolicy.required
-                            : AuthPolicy.disabled,
+                    authPolicy: nodekit.config.isAuthEnabled
+                        ? AuthPolicy.required
+                        : AuthPolicy.disabled,
                 },
                 privatePath: PUBLIC_API_DASH_API_BASE_URL,
                 privateRouteParams: {
