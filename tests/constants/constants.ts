@@ -8,6 +8,7 @@ export const WorkbooksUrls = {
 
 export const CollectionIds = {
     E2ECollection: 'm45slvqc2k9q9',
+    E2ESharedEntriesCollection: 'yn9zyftbku4gi',
 };
 
 export const CollectionsUrls = {

@@ -15,6 +15,7 @@ import {BasePage} from '../BasePage';
 import type {BasePageProps} from '../BasePage';
 import type {ConsoleMessage, Request} from '@playwright/test';
 import Revisions from '../common/Revisions';
+import {CollectionIds} from '../../constants/constants';
 
 type ConnectionsPageProps = BasePageProps;
 type FillInputArgs = {name: string; value: string};
@@ -57,7 +58,10 @@ class ConnectionsPage extends BasePage {
         await this.fillCreateConnectionInFolder({name});
     }
 
-    async createConnectionInWorkbook({name = uuidv1()}: {name?: string} = {}) {
+    async createConnectionInWorkbook({
+        name = uuidv1(),
+        isSharedConnection = false,
+    }: {name?: string; isSharedConnection?: boolean} = {}) {
         const formSubmit = await this.page.waitForSelector(
             slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON),
         );
@@ -77,9 +81,16 @@ class ConnectionsPage extends BasePage {
         // create connection
         await dialogApplyButton.click();
         try {
-            await this.page.waitForURL(() => {
-                return this.page.url().includes(name);
-            });
+            if (isSharedConnection) {
+                await this.page.waitForURL(() => {
+                    return this.page.url().endsWith(CollectionIds.E2ESharedEntriesCollection);
+                });
+            } else {
+                await this.page.waitForURL(() => {
+                    return this.page.url().includes(name);
+                });
+            }
+            return name;
         } catch {
             throw new Error("Connection wasn't created");
         }

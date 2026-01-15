@@ -4,6 +4,7 @@ import DatasetPage from '../../../page-objects/dataset/DatasetPage';
 import {openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {RobotChartsDatasetUrls} from '../../../utils/constants';
+import {DatasetSourcesTableQa} from '../../../../src/shared';
 
 datalensTest.describe('Datasets - working with avatars', () => {
     datalensTest('Adding Avatar CH', async ({page}: {page: Page}) => {
@@ -11,7 +12,7 @@ datalensTest.describe('Datasets - working with avatars', () => {
 
         await openTestPage(page, RobotChartsDatasetUrls.NewDataset, {id: 'jbconcutsv1if'});
 
-        await datasetPage.waitForSelector(slct('ds-source'));
+        await datasetPage.waitForSelector(slct(DatasetSourcesTableQa.Source));
 
         await datasetPage.addAvatarByDragAndDrop();
 

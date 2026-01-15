@@ -61,3 +61,7 @@ export const DATASET_TAB = {
     SOURCES: 'sources',
     PARAMETERS: 'parameters',
 } as const;
+
+export const DatasetSourcesTableQa = {
+    Source: 'ds-source',
+} as const;
