@@ -32,7 +32,6 @@ export const navigationController = async (req: Request, res: Response): Promise
                 headers: {
                     ...req.headers,
                     [TENANT_ID_HEADER]: currentTenantId,
-                    ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
                     ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
                 },
                 requestId: req.id,
