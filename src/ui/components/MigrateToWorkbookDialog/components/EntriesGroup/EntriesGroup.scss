@@ -2,6 +2,7 @@
     &__header {
         display: flex;
         align-items: center;
+
         cursor: pointer;
     }
 
@@ -19,18 +20,23 @@
 
     &__count {
         margin-left: 12px;
+
         color: var(--g-color-text-secondary);
     }
 
     &__list {
-        margin-top: 6px;
-        max-height: 0;
-        opacity: 0;
         overflow: hidden;
+
+        max-height: 0;
+        margin-top: 6px;
+
+        opacity: 0;
+
         transition: all 0.3s ease-in-out;
 
         &_open {
             max-height: 5000px;
+
             opacity: 1;
         }
     }

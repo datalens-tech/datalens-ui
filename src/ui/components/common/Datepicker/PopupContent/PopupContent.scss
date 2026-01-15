@@ -4,11 +4,13 @@
 
     display: flex;
     flex-direction: column;
+
     height: 100%;
     max-height: 600px;
 
     &__tabs {
         flex: 0 0 40px;
+
         padding-left: 16px;
 
         & .g-tab-list {
@@ -25,12 +27,13 @@
     }
 
     &__calendar-container {
-        flex: 1 1 auto;
         overflow-y: auto;
+        flex: 1 1 auto;
     }
 
     &__apply-btn {
         flex: 0 0 40px;
+
         padding: 2px;
     }
 }

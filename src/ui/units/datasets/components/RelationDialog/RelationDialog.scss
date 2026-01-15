@@ -4,35 +4,39 @@
     $class: &;
     display: flex;
     flex-direction: column;
+
     width: 560px;
 
     &__select-type {
         flex: 0 0 auto;
+
         margin: 0 16px;
     }
 
     &__join-type {
-        width: 100%;
         display: flex;
         justify-content: space-between;
+
+        width: 100%;
         margin-bottom: 10px;
         padding-right: 28px;
     }
 
     &__left-source {
-        flex: 1;
         display: flex;
+        flex: 1;
         align-items: center;
     }
 
     &__right-source {
-        flex: 1;
         display: flex;
+        flex: 1;
         align-items: center;
     }
 
     &__icon-table {
         flex: 0 0 auto;
+
         margin-right: 10px;
     }
 
@@ -43,7 +47,9 @@
 
     &__divider {
         flex-grow: 1;
+
         height: 1px;
+
         border-top: 1px solid var(--ds-color-relation-line);
 
         &_invalid {
@@ -65,8 +71,9 @@
     }
 
     &__join-condition {
-        display: flex;
         position: relative;
+
+        display: flex;
 
         &:not(:first-child) {
             margin-top: 10px;
@@ -96,8 +103,8 @@
     }
 
     &__ic-join-type {
-        transform: scale(0.7);
         --ds-join-stroke-color: var(--dl-color-border);
+        transform: scale(0.7);
 
         &_disabled {
             opacity: 0.5;
@@ -107,15 +114,18 @@
     &__btn-add-condition {
         display: flex;
         justify-content: center;
+
         width: 150px;
         margin-top: 20px;
 
         &-ic {
-            height: inherit;
+            position: relative;
+            left: 10px;
+
             display: flex;
             align-items: center;
-            left: 10px;
-            position: relative;
+
+            height: inherit;
         }
     }
 
@@ -131,6 +141,7 @@
     &__option-icon {
         display: flex;
         align-items: center;
+
         margin-right: 5px;
     }
 

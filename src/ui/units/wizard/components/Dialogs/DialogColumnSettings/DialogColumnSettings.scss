@@ -1,11 +1,13 @@
 .dialog-column-settings {
-    width: 560px;
-    height: 600px;
     display: flex;
     flex-direction: column;
 
+    width: 560px;
+    height: 600px;
+
     &__content {
         overflow: auto;
+
         padding-top: 0;
 
         & .dl-collapse__panel,
@@ -35,6 +37,7 @@
         font-size: 13px;
         font-weight: 400;
         line-height: 18px;
+
         color: var(--g-color-text-secondary);
     }
 

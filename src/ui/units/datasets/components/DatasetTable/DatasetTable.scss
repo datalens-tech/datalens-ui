@@ -1,19 +1,23 @@
 %expand-by-parent-with-align {
-    height: inherit;
-    vertical-align: middle;
-    padding: 0;
     overflow: initial;
+
+    height: inherit;
+    padding: 0;
+
+    vertical-align: middle;
 }
 
 .dataset-table {
     $class: &;
     $rowClass: #{&}__row;
     $inputControlClass: '.g-text-input__content';
-    width: 100%;
-    flex: 1;
     position: relative;
-    margin-top: -24px;
+
+    flex: 1;
+
+    width: 100%;
     min-width: 1000px;
+    margin-top: -24px;
 
     .data-table {
         &__table {
@@ -32,6 +36,7 @@
 
         tr.data-table__head-row {
             padding: 0;
+
             border-bottom: 1px solid var(--ds-color-divider);
         }
 
@@ -41,12 +46,14 @@
     }
 
     &__batch-actions {
-        flex-shrink: 0;
         position: sticky;
         bottom: 15px;
         left: 15px;
-        margin: 0 15px 15px;
+
+        flex-shrink: 0;
+
         min-width: 250px;
+        margin: 0 15px 15px;
     }
 
     &__sort-icon {
@@ -55,9 +62,10 @@
     }
 
     &__header {
-        height: 36px;
         display: flex;
         align-items: center;
+
+        height: 36px;
     }
 
     &__header-cast {
@@ -76,8 +84,9 @@
         @extend %expand-by-parent-with-align;
 
         .g-select-control {
-            border: 1px solid transparent;
             padding-right: 8px;
+
+            border: 1px solid transparent;
 
             &:before {
                 background-color: initial;
@@ -182,22 +191,24 @@
 
             #{$class} {
                 &__hidden {
-                    opacity: 0.5;
                     visibility: hidden;
+
+                    opacity: 0.5;
 
                     &_unsupported {
                         visibility: visible;
                     }
 
                     &:hover {
-                        color: var(--ds-color-text-primary);
                         opacity: 1;
+                        color: var(--ds-color-text-primary);
                     }
 
                     &_hidden {
                         visibility: visible;
-                        color: var(--ds-color-text-primary);
+
                         opacity: 1;
+                        color: var(--ds-color-text-primary);
 
                         &:hover {
                             opacity: 0.5;
@@ -226,11 +237,12 @@
 
     &__select-cog {
         position: sticky;
+        z-index: 2;
         top: 6px;
         left: 100%;
+
         width: fit-content;
         margin-right: 10px;
-        z-index: 2;
     }
 
     &__more-dropdown {
@@ -251,19 +263,22 @@
         }
 
         #{$rowClass} &_error #{$inputControlClass} .g-text-input__control:not(:focus) {
-            color: var(--g-color-line-danger);
             font-style: italic;
+
+            color: var(--g-color-line-danger);
         }
     }
 
     &__popup-more-row {
         height: 25px;
-        line-height: 25px;
         padding: 0 10px;
 
+        line-height: 25px;
+
         &:hover {
-            background: var(--ds-color-hover-area);
             cursor: pointer;
+
+            background: var(--ds-color-hover-area);
         }
     }
 

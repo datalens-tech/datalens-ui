@@ -11,9 +11,10 @@
     }
 
     &__inputs-range-place {
-        padding-top: 15px;
         display: grid;
         grid-auto-flow: column;
+
+        padding-top: 15px;
         grid-column-gap: 10px;
     }
 

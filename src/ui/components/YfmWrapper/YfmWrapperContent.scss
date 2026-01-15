@@ -47,8 +47,9 @@ $rootClass: '.app-root.g-root';
     }
 
     p.yfm-latex {
-        text-align: center;
         display: inline-block;
+
+        text-align: center;
 
         & > span:last-child {
             margin: 0;
@@ -74,6 +75,7 @@ $rootClass: '.app-root.g-root';
         p:has(.MagicLink),
         p:has(.yfm-latex) {
             display: table;
+
             padding: 0.3em 0;
         }
     }
@@ -91,13 +93,25 @@ $rootClass: '.app-root.g-root';
 }
 
 #{$rootClass} .yfm:not(.yfm_only-light) {
-    color: var(--g-color-text-primary);
+    $backgroundColors: (
+        yfm-accent-info: var(--g-color-base-info-light),
+        yfm-accent-tip: var(--g-color-base-positive-light),
+        yfm-accent-alert: var(--g-color-base-danger-light),
+        yfm-accent-warning: var(--g-color-base-warning-light),
+    );
 
     --yfm-color-hljs-background: var(--g-color-base-background);
     --yfm-color-hljs-subst: var(--g-color-text-complementary);
     --yfm-color-hljs-comment: var(--g-color-text-secondary);
     --yfm-color-hljs-deletion: var(--g-color-text-danger);
     --yfm-color-hljs-section: var(--g-color-text-danger);
+    color: var(--g-color-text-primary);
+
+    @each $type, $color in $backgroundColors {
+        &.#{$type} {
+            background: $color;
+        }
+    }
 
     a {
         color: var(--g-color-text-link);
@@ -124,27 +138,14 @@ $rootClass: '.app-root.g-root';
         background-color: var(--g-color-base-background);
     }
 
-    $backgroundColors: (
-        yfm-accent-info: var(--g-color-base-info-light),
-        yfm-accent-tip: var(--g-color-base-positive-light),
-        yfm-accent-alert: var(--g-color-base-danger-light),
-        yfm-accent-warning: var(--g-color-base-warning-light),
-    );
-
-    @each $type, $color in $backgroundColors {
-        &.#{$type} {
-            background: $color;
-        }
-    }
-
     code {
-        background: var(--yfm-code-background);
         color: var(--yfm-code-color);
+        background: var(--yfm-code-background);
     }
 
     pre > code {
-        background: var(--yfm-pre-code-background);
         color: var(--yfm-pre-code-color);
+        background: var(--yfm-pre-code-background);
     }
 
     table {
@@ -210,12 +211,12 @@ $rootClass: '.app-root.g-root';
         'violet': '--g-color-text-utility',
     );
 
+    // for already colored to black text
+    --yfm-colorify-black: var(--g-color-text-primary);
+
     @each $name, $value in $colors {
         --yfm-color-text-#{$name}: var(#{$value});
     }
-
-    // for already colored to black text
-    --yfm-colorify-black: var(--g-color-text-primary);
 
     @each $name, $value in $colors {
         --yfm-colorify-#{$name}: var(--yfm-color-text-#{$name});

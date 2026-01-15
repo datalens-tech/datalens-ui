@@ -4,18 +4,23 @@
     &__row {
         display: grid;
         grid-template-columns: 164px auto 28px;
-        width: 100%;
-        transition: background-color 0.2s ease;
-        padding: 0 10px 0 4px;
-        box-sizing: border-box;
         column-gap: 28px;
+
+        box-sizing: border-box;
+        width: 100%;
+        padding: 0 10px 0 4px;
+
         border-bottom: 1px solid var(--g-color-line-generic);
+
+        transition: background-color 0.2s ease;
 
         &.top {
             align-items: center;
+
             height: 35px;
-            @include text-subheader-1();
+
             font-weight: 500;
+            @include text-subheader-1();
         }
     }
 
@@ -31,8 +36,8 @@
 
     &__center {
         display: flex;
-        justify-content: flex-start;
         flex-wrap: wrap;
+        justify-content: flex-start;
         gap: 4px;
     }
 
@@ -69,6 +74,7 @@
     &__controls {
         display: flex;
         justify-content: space-between;
+
         padding-top: 6px;
     }
 }

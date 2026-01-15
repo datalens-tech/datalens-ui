@@ -3,6 +3,7 @@
 .add-field {
     &__option {
         display: flex;
+
         width: 100%;
     }
 
@@ -15,8 +16,8 @@
     }
 
     &__popup {
-        @include dl-select-popup;
         min-width: 170px;
+        @include dl-select-popup;
     }
 }
 

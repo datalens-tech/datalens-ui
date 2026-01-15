@@ -1,18 +1,22 @@
 .min-max-inputs {
-    display: flex;
-    justify-content: space-between;
     position: relative;
 
+    display: flex;
+    justify-content: space-between;
+
     &__input-label {
-        margin-top: 5px;
         display: inline-block;
+
+        margin-top: 5px;
+
         color: var(--g-color-text-secondary);
     }
 
     &__input {
+        align-items: center;
+
         width: 84px;
         margin-right: 5px;
-        align-items: center;
 
         &:not(:first-child) {
             margin-left: auto;

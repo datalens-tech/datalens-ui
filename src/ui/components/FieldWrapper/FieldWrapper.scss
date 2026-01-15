@@ -2,7 +2,9 @@
 
 .dl-field-wrapper {
     display: inline-block;
+
     width: 100%;
+
     vertical-align: top;
 
     & > * {
@@ -10,14 +12,17 @@
     }
 
     &__error-text {
-        @include text-body-1;
-        color: var(--g-color-text-danger);
-        margin-top: 2px;
         display: box;
-        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
         overflow: hidden;
+
+        margin-top: 2px;
+
         text-overflow: ellipsis;
+
+        color: var(--g-color-text-danger);
+        @include text-body-1;
     }
 
     &_state_error {

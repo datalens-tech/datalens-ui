@@ -7,14 +7,15 @@
     $controlDefaultHeight: 28px;
     $buttonSmallHeight: 24px;
     $checkboxHeight: 15px;
-
-    padding: 0 5px $yc-control-bottom-padding;
-    width: 100%;
     position: relative;
-    box-sizing: border-box;
-    min-height: 40px;
     z-index: 0;
+
     overflow: auto;
+
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 40px;
+    padding: 0 5px $yc-control-bottom-padding;
 
     &_line-breaks_wrap {
         white-space: normal;
@@ -36,23 +37,25 @@
     }
 
     &:not(&_standalone) {
+        flex: none;
+
+        max-height: 50%;
         //border-bottom: 1px solid #e6e6e6;
         background-color: var(--ck-controls-backgound);
-        max-height: 50%;
-        flex: none;
     }
 
     &__loader {
         position: absolute;
         top: 50%;
         left: 50%;
+
         transform: translate(-50%, -50%);
     }
 
     &__item {
-        margin-top: 5px;
-        max-width: 100%;
         width: var(--control-custom-width, 'auto');
+        max-width: 100%;
+        margin-top: 5px;
 
         // TODO: move styles to Items.scss after removing old selectors code
         &_button {
@@ -72,12 +75,14 @@
         display: flex;
         align-items: center;
         gap: 5px;
+
         padding: 10px 16px 6px;
     }
 
     &__error-icon {
-        color: var(--g-color-text-danger);
         flex: 0 0 auto;
+
+        color: var(--g-color-text-danger);
     }
 
     &_mobile {
@@ -86,12 +91,13 @@
         #{$class}__controls {
             display: flex;
             flex-direction: column;
+
             padding-bottom: 6px;
         }
 
         #{$class}__item {
-            margin-right: 0;
             margin-top: 10px;
+            margin-right: 0;
         }
 
         #{$class}__error {

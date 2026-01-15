@@ -1,11 +1,11 @@
 .tree-cell {
     &__btn {
-        margin-right: 4px;
-        height: 16px;
-        width: 16px;
-        line-height: 16px;
-
         --g-button-height: 16px;
         --g-button-width: 12px;
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+
+        line-height: 16px;
     }
 }

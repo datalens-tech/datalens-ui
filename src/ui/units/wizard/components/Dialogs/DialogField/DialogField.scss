@@ -23,9 +23,11 @@
     }
 
     .g-dialog-header__caption {
-        margin-left: 7px;
-        text-overflow: ellipsis;
         overflow: hidden;
+
+        margin-left: 7px;
+
         white-space: nowrap;
+        text-overflow: ellipsis;
     }
 }

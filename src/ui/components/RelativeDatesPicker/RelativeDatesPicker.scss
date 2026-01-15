@@ -5,6 +5,7 @@
     &__presets {
         display: flex;
         align-items: center;
+
         margin-bottom: 20px;
     }
 
@@ -18,28 +19,34 @@
 
     &__controls {
         display: flex;
+
         width: 100%;
     }
 
     &__control {
         position: relative;
+
         flex-basis: 100%;
+
         min-width: 270px;
 
         & .g-radio {
             display: flex;
             align-items: center;
+
             margin-bottom: 10px;
         }
     }
 
     &__control-title {
         margin-bottom: 10px;
+
         font-size: var(--g-text-body-2-font-size);
     }
 
     &__radiobox-item {
         position: relative;
+
         display: flex;
         /* .radiobox_size_n sets line-height: 36px for everything,
         that breaks the vertical centering of the calendar */
@@ -48,15 +55,18 @@
 
     &__radiobox-item-label {
         flex: 0 0 auto;
+
         margin-right: 12px;
     }
 
     &__absolute-calendar {
-        display: flex;
         // fix for Safari CHARTS-2155
         position: absolute;
         top: 26px;
         left: 110px;
+
+        display: flex;
+
         width: 174px;
     }
 
@@ -67,6 +77,7 @@
 
     &__relative-calendar-row {
         display: flex;
+
         width: 100%;
 
         &:not(:first-child) {
@@ -76,6 +87,7 @@
 
     &__relative-calendar-date {
         margin-left: 28px;
+
         color: var(--g-color-text-secondary);
 
         &_error {
@@ -104,16 +116,19 @@
     &__error-label {
         display: flex;
         align-items: center;
+
         margin-top: 15px;
     }
 
     &__error-label-icon {
         margin-right: 4px;
+
         color: var(--g-color-text-danger);
     }
 
     &__help-icon {
         margin-left: var(--g-spacing-1);
+
         vertical-align: middle;
     }
 

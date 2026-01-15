@@ -1,9 +1,10 @@
 .rls-dialog {
     &__field-name {
-        margin-bottom: 5px;
-        background: var(--ds-color-gray);
         width: 500px;
+        margin-bottom: 5px;
         padding: 5px;
+
         border-radius: 3px;
+        background: var(--ds-color-gray);
     }
 }

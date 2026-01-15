@@ -4,29 +4,35 @@
 
     &__icon {
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
+
         width: 24px;
         height: 24px;
     }
 
     &__name {
-        margin-left: 8px;
         overflow: hidden;
+
+        margin-left: 8px;
+
         white-space: nowrap;
-        text-overflow: ellipsis;
-        color: var(--g-color-text-primary);
         text-decoration: none;
+        text-overflow: ellipsis;
+
+        color: var(--g-color-text-primary);
     }
 
     &__warning {
         display: flex;
         align-items: center;
+
         margin-left: 8px;
     }
 
     &__warning-text {
         margin-left: 8px;
+
         white-space: nowrap;
     }
 }

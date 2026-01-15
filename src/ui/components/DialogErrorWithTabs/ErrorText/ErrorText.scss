@@ -5,17 +5,21 @@
     $class: &;
 
     &__content {
+        position: relative;
+
+        overflow: auto;
+
+        max-height: 365px;
         margin-top: 30px;
         padding: 15px;
+
+        font-family: $monospaceFontFamily;
         font-size: 13px;
-        border-radius: 4px;
-        background-color: var(--g-color-base-generic-ultralight);
-        overflow: auto;
         white-space: pre-wrap;
         word-wrap: break-word;
-        font-family: $monospaceFontFamily;
-        max-height: 365px;
-        position: relative;
+
+        border-radius: 4px;
+        background-color: var(--g-color-base-generic-ultralight);
 
         &:hover {
             #{$class}__clipboard {
@@ -24,9 +28,10 @@
         }
 
         &_mobile {
-            @include text-code-2;
             margin: 0 0 12px;
+
             border-radius: 12px;
+            @include text-code-2;
         }
     }
 
@@ -35,10 +40,12 @@
     }
 
     &__clipboard {
-        visibility: hidden;
         position: absolute;
         top: var(--g-spacing-2);
         right: var(--g-spacing-3);
+
+        visibility: hidden;
+
         color: var(--g-color-text-secondary);
     }
 }

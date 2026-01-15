@@ -52,28 +52,16 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 }
 
 ._tooltip {
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+    font-size: 12px;
+
+    color: var(--highcharts-tooltip-text);
     border-radius: 5px;
     background: var(--highcharts-tooltip-bg);
-    color: var(--highcharts-tooltip-text);
-    font-size: 12px;
-    overflow: hidden;
-    box-sizing: border-box;
     box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.15);
-
-    &_split-tooltip {
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
-        padding-bottom: 12px;
-
-        table {
-            table-layout: fixed;
-        }
-
-        ._tooltip-rows__table tbody {
-            display: table-row-group;
-        }
-    }
 
     // iPhone-specific indent with rounded corners
     // if the max css function is not supported - the style block will not be executed and the padding specified above will be applied
@@ -81,6 +69,22 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
     @supports (padding: max(0px)) {
         &_split-tooltip {
             padding-bottom: Max(12px, env(safe-area-inset-bottom));
+        }
+    }
+
+    &_split-tooltip {
+        padding-bottom: 12px;
+
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+
+        table {
+            table-layout: fixed;
+        }
+
+        ._tooltip-rows__table tbody {
+            display: table-row-group;
         }
     }
 
@@ -152,13 +156,15 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
     }
 
     &-date {
-        padding: 10px $rowPadding 4px;
-        max-width: 450px;
         overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+
+        max-width: 450px;
+        padding: 10px $rowPadding 4px;
+
         font-size: 13px;
         font-weight: bold;
+        white-space: nowrap;
+        text-overflow: ellipsis;
 
         &-dayofweek {
             display: inline-block;
@@ -171,33 +177,38 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 
     &-rows {
         &__table {
-            border-spacing: 0;
             width: 10px;
+
+            border-spacing: 0;
 
             &-footer {
                 display: table;
+
                 width: 100%;
             }
 
             thead {
                 display: table;
+
                 width: 100%;
 
                 &._tooltip-header tr:not(._tooltip-fake-row):first-child td {
                     padding-top: 6px;
                     padding-bottom: 6px;
+
                     border-bottom: 1px solid var(--highcharts-grid-line);
                 }
             }
 
             tbody {
                 display: block;
-                overflow-y: auto;
                 overflow-x: hidden;
+                overflow-y: auto;
 
                 &._tooltip-footer {
-                    width: 100%;
                     display: table;
+
+                    width: 100%;
                 }
 
                 &._tooltip-list {
@@ -220,8 +231,9 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
                 }
 
                 td._hidden-rows-number {
-                    text-align: left;
                     padding-right: 20px;
+
+                    text-align: left;
                 }
 
                 td._hidden-rows-value {
@@ -233,18 +245,21 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         &__bubble {
             &-div {
                 display: inline-block;
+
                 width: 12px;
                 height: 6px;
-                margin-left: 1px;
                 margin-bottom: 1px;
+                margin-left: 1px;
+
                 border-radius: 1px;
             }
         }
 
         &__shape-div {
-            width: 38px;
             display: flex;
             align-items: center;
+
+            width: 38px;
             height: 100%;
         }
 
@@ -253,18 +268,18 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         }
 
         &__percent-td {
-            @include monospaceFont;
-
             padding-left: $valuePaddingLeft;
+
             white-space: nowrap;
+            @include monospaceFont;
         }
 
         &__diff-td {
-            @include monospaceFont;
-
-            padding-left: 3px;
             padding-right: 3px;
+            padding-left: 3px;
+
             white-space: nowrap;
+            @include monospaceFont;
         }
 
         &__comment-left {
@@ -273,24 +288,28 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
             }
 
             &-div {
-                left: 2px;
                 position: absolute;
                 top: -7px;
                 bottom: 6px;
+                left: 2px;
+
                 width: 10px;
             }
         }
 
         &__comment-div {
             position: relative;
-            padding-left: 14px;
-            text-align: left;
-            font-size: 10px;
+
             width: auto;
-            white-space: normal;
-            letter-spacing: 0.2px;
+            padding-left: 14px;
+
+            font-size: 10px;
             font-weight: normal;
             line-height: 1.3;
+            text-align: left;
+            white-space: normal;
+            letter-spacing: 0.2px;
+
             color: #aaaaaa;
         }
 
@@ -299,10 +318,10 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         }
 
         &__value-td {
-            @include monospaceFont;
+            padding-left: $valuePaddingLeft;
 
             white-space: nowrap;
-            padding-left: $valuePaddingLeft;
+            @include monospaceFont;
 
             &_selected {
                 text-decoration: underline;
@@ -310,11 +329,13 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         }
 
         &__name-td {
+            overflow: hidden;
+
+            max-width: 400px;
+            padding-left: 10px;
+
             text-align: left;
             white-space: nowrap;
-            padding-left: 10px;
-            max-width: 400px;
-            overflow: hidden;
             text-overflow: ellipsis;
 
             &_selected {
@@ -324,8 +345,10 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 
         &__summ-td {
             padding: 6px 0 6px 3px;
-            color: var(--highcharts-tooltip-text-complementary);
+
             font-size: 12px;
+
+            color: var(--highcharts-tooltip-text-complementary);
             border-top: 1px solid var(--highcharts-grid-line);
 
             &-value {
@@ -334,11 +357,13 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 
             &:first-child {
                 padding-left: 15px;
+
                 text-align: left;
             }
 
             &:last-child {
                 padding-right: $lastTDRightPadding;
+
                 text-align: right;
             }
         }
@@ -352,22 +377,27 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 
     &-right {
         &__td {
-            vertical-align: top;
-            opacity: 0.9;
-            border-left: 1px solid var(--highcharts-grid-line);
-            white-space: normal;
-            font-size: 8pt;
             position: relative;
+
             min-width: 120px;
             max-width: 150px;
             padding-left: 10px;
+
+            font-size: 8pt;
+            vertical-align: top;
+            white-space: normal;
+
+            opacity: 0.9;
+            border-left: 1px solid var(--highcharts-grid-line);
         }
 
         &__holiday {
             &-div {
-                padding-bottom: 5px;
                 display: flex;
                 align-items: center;
+
+                padding-bottom: 5px;
+
                 text-align: left;
             }
 
@@ -376,34 +406,40 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
             }
 
             &-region {
-                color: #ffffff;
-                letter-spacing: 1px;
                 display: inline-block;
+
                 padding-left: 5px;
+
+                letter-spacing: 1px;
+
+                color: #ffffff;
             }
         }
 
         &__traf-div {
-            text-align: left;
-            border-top: 3px solid;
+            margin-top: 9px;
             padding-top: 3px;
+            padding-bottom: 10px;
+
             font-size: 10px;
             line-height: 1.3;
+            text-align: left;
             white-space: pre-line;
-            padding-bottom: 10px;
-            margin-top: 9px;
             word-break: break-word;
 
+            border-top: 3px solid;
+
             &_for-split-tooltip {
-                color: var(--g-color-text-secondary);
-                padding-left: 8px;
-                border-top: none;
-                border-left: 2px solid;
-                margin-left: 6px;
                 margin-top: 0;
+                margin-bottom: 5px;
+                margin-left: 6px;
                 padding-top: 0;
                 padding-bottom: 0;
-                margin-bottom: 5px;
+                padding-left: 8px;
+
+                color: var(--g-color-text-secondary);
+                border-top: none;
+                border-left: 2px solid;
             }
 
             &:not(:first-child) {

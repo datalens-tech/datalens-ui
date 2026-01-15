@@ -1,4 +1,9 @@
 .chartkit-ymap-legend-layer {
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+    padding: 6px 8px 5px;
+
     color: var(--g-color-text-primary);
 
     &:not(:last-child) {
@@ -13,36 +18,36 @@
         border-bottom: 3px solid var(--g-color-base-background);
     }
 
-    padding: 6px 8px 5px;
-
-    overflow-y: hidden;
-    overflow-x: hidden;
-
     &_hidden {
         max-height: 43px;
     }
 
     &__header {
         display: flex;
-        font-weight: 500;
-        margin-bottom: 0;
-        line-height: 28px;
+
         height: 28px;
+        margin-bottom: 0;
+
+        font-weight: 500;
+        line-height: 28px;
     }
 
     &__layer-title {
-        width: 120px;
         display: inline-block;
         overflow: hidden;
-        text-overflow: ellipsis;
+
+        width: 120px;
+
         white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     &__visibility-button {
-        opacity: 0;
-        height: 28px;
         width: 28px;
+        height: 28px;
         margin-left: auto;
+
+        opacity: 0;
 
         path {
             color: var(--g-color-text-hint);
@@ -59,11 +64,12 @@
     }
 
     &__color-title {
+        overflow: hidden;
+
         margin-top: 5px;
 
-        overflow: hidden;
-        text-overflow: ellipsis;
         white-space: nowrap;
+        text-overflow: ellipsis;
 
         color: var(--g-color-text-secondary);
     }
@@ -71,11 +77,13 @@
     &__color-preview {
         width: 164px;
         height: 8px;
-        background: #000000;
-        border-radius: 2px;
-        vertical-align: middle;
-        margin-bottom: 8px;
         margin-top: 8px;
+        margin-bottom: 8px;
+
+        vertical-align: middle;
+
+        border-radius: 2px;
+        background: #000000;
     }
 
     &__preview-legend {
@@ -88,39 +96,46 @@
     }
 
     &__row {
-        text-align: left;
         margin-bottom: 6px;
+
+        text-align: left;
+
         color: var(--g-color-text-primary);
 
         &_action {
-            color: var(--g-color-text-info);
             cursor: pointer;
+
+            color: var(--g-color-text-info);
         }
     }
 
     &__color,
     &__value {
         display: inline-block;
+
         vertical-align: middle;
     }
 
     &__color {
         width: 8px;
         height: 8px;
-        border-radius: 50%;
         margin-right: 4px;
+
+        border-radius: 50%;
     }
 
     &__value {
+        overflow: hidden;
+
         width: 120px;
 
-        overflow: hidden;
-        text-overflow: ellipsis;
         white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     &__size-title {
         margin-top: 5px;
+
         color: var(--g-color-text-secondary);
     }
 }

@@ -4,8 +4,8 @@
     margin-top: 12px;
 
     &__title {
-        @include text-subheader-2();
         font-weight: 500;
+        @include text-subheader-2();
     }
     &__tag {
         max-width: 160px;

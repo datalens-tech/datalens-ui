@@ -1,8 +1,9 @@
 .dialog-edit-query {
-    max-height: 775px;
+    overflow-y: scroll;
+
     width: 800px;
     min-height: 323px;
-    overflow-y: scroll;
+    max-height: 775px;
 
     &__content {
         gap: 15px;

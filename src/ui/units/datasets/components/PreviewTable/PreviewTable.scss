@@ -1,8 +1,9 @@
 .preview-table {
-    width: 100%;
-    flex: 1;
-    overflow: auto;
     display: flex;
+    overflow: auto;
+    flex: 1;
+
+    width: 100%;
     padding-left: 12px;
 
     & .data-table {
@@ -19,17 +20,18 @@
     }
 
     &_align-center {
-        align-items: center;
         justify-content: center;
+        align-items: center;
     }
 
     &__loader,
     &__error {
-        width: 100%;
-        flex: 1;
         display: flex;
-        align-items: center;
+        flex: 1;
         justify-content: center;
+        align-items: center;
+
+        width: 100%;
     }
 
     &__error-msg-text {
@@ -37,9 +39,10 @@
     }
 
     &__header {
-        height: 32px;
         display: flex;
         align-items: center;
+
+        height: 32px;
     }
 
     &__column {
@@ -48,6 +51,7 @@
 
     &__row {
         height: 32px;
+
         border-bottom: 1px solid var(--ds-color-divider);
     }
 

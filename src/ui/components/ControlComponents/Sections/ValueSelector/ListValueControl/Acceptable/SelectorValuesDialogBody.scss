@@ -1,19 +1,22 @@
 .control-select-acceptable {
     &__header {
         display: grid;
+        align-items: center;
         grid-template-columns: 70% auto;
         grid-column-gap: 10px;
-        align-items: center;
     }
 
     &__items {
-        margin-top: 10px;
         overflow: auto;
+
         min-height: 20px;
+        margin-top: 10px;
 
         &_empty {
-            text-align: center;
             margin-top: 20px;
+
+            text-align: center;
+
             color: var(--g-color-text-secondary);
         }
     }
@@ -24,11 +27,12 @@
 
     &__item {
         display: grid;
-        grid-template-columns: 94% auto;
         align-items: center;
-        padding: 5px 0 5px 5px;
-        min-height: 34px;
+        grid-template-columns: 94% auto;
+
         width: 100%;
+        min-height: 34px;
+        padding: 5px 0 5px 5px;
 
         &:not(:last-child) {
             margin-bottom: 5px;
@@ -37,6 +41,7 @@
 
     &__remove {
         display: none;
+
         cursor: pointer;
     }
 

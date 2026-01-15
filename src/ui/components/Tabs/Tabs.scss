@@ -18,6 +18,7 @@ $adaptiveTabsClass: '.gc-adaptive-tabs';
 
     #{$adaptiveTabsClass} {
         overflow: hidden;
+
         font-weight: 400;
 
         &__tab {
@@ -26,6 +27,7 @@ $adaptiveTabsClass: '.gc-adaptive-tabs';
 
         &__tab-container {
             margin: 0;
+
             line-height: 0;
 
             &_switcher-tab {
@@ -36,22 +38,23 @@ $adaptiveTabsClass: '.gc-adaptive-tabs';
     }
 
     &__tab {
+        display: inline-block;
+        overflow: hidden;
+
+        box-sizing: content-box;
         width: 100%;
 
         // Users often use emojis in tab titles,
         // so we have to set min-width for correct  ellipsis
         min-width: 40px;
-
-        display: inline-block;
-        border-bottom: var(--gc-tabs-border-width) solid transparent;
         height: calc(#{var(--gc-tabs-height)} - 2px);
         padding: var(--gc-tabs-border-width) 1px 0;
-        box-sizing: content-box;
-        overflow: hidden;
+
+        border-bottom: var(--gc-tabs-border-width) solid transparent;
 
         &_active {
-            border-bottom-color: var(--gc-tabs-color-border-active);
             color: var(--gc-tabs-color-text-active);
+            border-bottom-color: var(--gc-tabs-color-border-active);
         }
     }
 

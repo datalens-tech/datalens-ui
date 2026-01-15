@@ -7,6 +7,7 @@
 
     &__button {
         flex-shrink: 0;
+
         margin-right: var(--g-spacing-2);
     }
 
@@ -14,6 +15,7 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+
         padding: var(--g-spacing-2) var(--g-spacing-1) var(--g-spacing-2) var(--g-spacing-2);
 
         #{$class}__item {
@@ -22,11 +24,12 @@
     }
 
     &__popup-content {
-        max-height: 200px;
-        overflow-y: auto;
         display: flex;
-        gap: var(--g-spacing-2);
+        overflow-y: auto;
         flex-direction: column;
+        gap: var(--g-spacing-2);
+
+        max-height: 200px;
         padding-right: var(--g-spacing-1);
     }
 }

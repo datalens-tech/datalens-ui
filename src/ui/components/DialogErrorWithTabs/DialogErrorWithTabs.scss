@@ -2,20 +2,21 @@
     $contentDesktopMaxWidth: 630px;
     $contentSmallScreenWidth: 300px;
 
-    --g-tabs-item-gap: 20px;
-
     $class: &;
+
+    --g-tabs-item-gap: 20px;
 
     width: 100%;
     max-width: $contentDesktopMaxWidth;
 
     &__content {
-        width: $contentDesktopMaxWidth;
-        max-width: 100%;
-        max-height: 80vh;
-        min-height: 400px;
         display: flex;
         flex-direction: column;
+
+        width: $contentDesktopMaxWidth;
+        max-width: 100%;
+        min-height: 400px;
+        max-height: 80vh;
 
         @media (max-width: 480px) {
             width: $contentSmallScreenWidth;
@@ -24,6 +25,7 @@
 
     &__header {
         max-width: 100%;
+
         word-break: break-word;
     }
 
@@ -36,8 +38,8 @@
     }
 
     &_mobile {
-        padding: 0 16px;
         max-width: none;
+        padding: 0 16px;
 
         #{$class}__tab-navigation {
             margin-top: 8px;
@@ -52,12 +54,14 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+
             padding-bottom: 16px;
         }
 
         #{$class}__loader {
             display: flex;
             justify-content: center;
+
             padding: 16px 0;
         }
     }

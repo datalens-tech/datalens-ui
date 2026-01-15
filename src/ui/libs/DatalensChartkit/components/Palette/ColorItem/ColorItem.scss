@@ -1,12 +1,15 @@
 .color-item {
     display: flex;
     align-items: center;
+
     padding-bottom: 8px;
 
     &__code {
         display: inline-block;
-        vertical-align: middle;
+
         padding-left: 8px;
+
+        vertical-align: middle;
     }
 
     &__input {
@@ -14,9 +17,11 @@
     }
 
     &__preview {
+        display: inline-block;
+
         width: 18px;
         height: 18px;
-        display: inline-block;
+
         border-radius: 4px;
     }
 }

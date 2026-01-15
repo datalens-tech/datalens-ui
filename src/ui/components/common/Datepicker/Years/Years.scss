@@ -1,19 +1,23 @@
 .dl-datepicker-years {
     display: grid;
+    justify-content: center;
     grid-template-columns: repeat(4, 60px);
     grid-auto-rows: 40px;
     grid-gap: 6px;
-    justify-content: center;
 
     &__year {
         position: relative;
+
         display: flex;
         justify-content: center;
         align-items: center;
+
         width: 100%;
         height: 100%;
-        border-radius: 4px;
+
         cursor: pointer;
+
+        border-radius: 4px;
 
         .dl-datepicker_desktop &:hover {
             background-color: var(--g-color-base-simple-hover);
@@ -43,19 +47,24 @@
         }
 
         &_selected:not(&_left-edge)::before {
-            content: '';
             position: absolute;
             top: 0;
             left: -6px;
+
             display: block;
-            height: 40px;
+
             width: 6px;
+            height: 40px;
+
+            content: '';
+
             background-color: var(--g-color-base-selection);
         }
 
         &_disabled {
-            opacity: 0.3;
             pointer-events: none;
+
+            opacity: 0.3;
         }
     }
 }

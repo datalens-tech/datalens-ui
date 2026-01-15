@@ -7,12 +7,14 @@
         display: grid;
         grid-template-columns: repeat(1, 100%);
         row-gap: 16px;
+
         margin-top: 20px;
     }
 
     &__actions {
         display: flex;
         justify-content: flex-end;
+
         margin-top: 20px;
     }
 }

@@ -3,10 +3,13 @@
 
 .ql-app {
     display: flex;
-    min-height: 100%;
     flex: 1;
-    min-width: 1100px;
     flex-direction: column;
+
+    min-width: 1100px;
+    min-height: 100%;
+
+    @include revision-panel-fix;
 
     &_mobile {
         min-width: 320px;
@@ -17,10 +20,8 @@
     }
 
     &__content {
-        flex-grow: 1;
         display: flex;
+        flex-grow: 1;
         flex-direction: column;
     }
-
-    @include revision-panel-fix;
 }

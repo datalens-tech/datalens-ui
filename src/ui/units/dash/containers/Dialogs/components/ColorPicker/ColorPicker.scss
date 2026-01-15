@@ -2,13 +2,16 @@
 
 .dl-color-picker {
     $class: &;
-    display: inline-block;
-    position: relative;
-    line-height: 0;
-    width: fit-content;
-    vertical-align: text-top;
 
     $color-item-size: 28px;
+    position: relative;
+
+    display: inline-block;
+
+    width: fit-content;
+
+    line-height: 0;
+    vertical-align: text-top;
 
     &__palette-trigger {
         width: $color-item-size;

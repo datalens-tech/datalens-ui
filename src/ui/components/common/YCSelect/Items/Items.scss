@@ -56,12 +56,15 @@ $APPLY_BUTTON_HEIGHT: 38px;
     }
 
     &__group-title {
-        padding: 5px 0 0 16px;
-        text-overflow: ellipsis;
-        white-space: nowrap;
         overflow: hidden;
-        color: var(--g-color-text-hint);
+
         box-sizing: border-box;
+        padding: 5px 0 0 16px;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        color: var(--g-color-text-hint);
 
         &:first-child {
             padding-top: 5px;
@@ -78,11 +81,13 @@ $APPLY_BUTTON_HEIGHT: 38px;
 
     &__prompt {
         padding: 10px 16px;
+
         color: var(--g-color-text-secondary);
     }
 
     &__prompt-button {
         display: flex;
+
         margin: 8px 0 2px;
         &_retry {
             margin-right: 10px;
@@ -92,6 +97,7 @@ $APPLY_BUTTON_HEIGHT: 38px;
     &__show-more-link {
         display: flex;
         align-items: center;
+
         padding-left: 12px;
     }
 
@@ -99,6 +105,7 @@ $APPLY_BUTTON_HEIGHT: 38px;
         display: flex;
         justify-content: center;
         align-items: center;
+
         padding: 8px 0;
     }
 

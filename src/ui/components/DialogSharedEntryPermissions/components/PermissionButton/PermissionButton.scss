@@ -4,7 +4,9 @@
     &__content-container {
         display: flex;
         gap: var(--g-spacing-3);
+
         padding: var(--g-spacing-4);
+
         border-radius: var(--g-border-radius-l);
 
         &_disabled {
@@ -20,11 +22,12 @@
     }
 
     &__status-icon-container {
-        display: flex;
-        gap: var(--g-spacing-1);
         position: absolute;
         top: 6px;
         right: 6px;
+
+        display: flex;
+        gap: var(--g-spacing-1);
     }
 
     &__check-icon {

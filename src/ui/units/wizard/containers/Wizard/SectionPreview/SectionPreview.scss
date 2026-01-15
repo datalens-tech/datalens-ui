@@ -10,11 +10,12 @@
 
     .preview-chartkit {
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
 
         height: 100%;
         padding: 20px;
+
         background: var(--g-color-base-background);
 
         .chartkit {
@@ -34,8 +35,10 @@
 
     span {
         display: block;
-        font-size: 15px;
+
         margin-top: 20px;
+
+        font-size: 15px;
     }
 }
 

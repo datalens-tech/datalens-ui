@@ -3,16 +3,16 @@ $entityIconClassName: '.entity-icon';
 #{$entityIconClassName} {
     &__container {
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
 
         &_size_s {
-            height: 24px;
             width: 24px;
+            height: 24px;
 
             #{$entityIconClassName}__color-box {
-                height: 18px;
                 width: 18px;
+                height: 18px;
             }
         }
 
@@ -21,8 +21,8 @@ $entityIconClassName: '.entity-icon';
             height: 28px;
 
             #{$entityIconClassName}__color-box {
-                height: 20px;
                 width: 20px;
+                height: 20px;
             }
         }
 
@@ -31,8 +31,8 @@ $entityIconClassName: '.entity-icon';
             height: 32px;
 
             #{$entityIconClassName}__color-box {
-                height: 22px;
                 width: 22px;
+                height: 22px;
             }
         }
 
@@ -41,16 +41,18 @@ $entityIconClassName: '.entity-icon';
             height: 36px;
 
             #{$entityIconClassName}__color-box {
-                height: 28px;
                 width: 28px;
+                height: 28px;
+
                 border-radius: 6px;
             }
         }
 
         &_view_round {
             #{$entityIconClassName}__color-box {
-                height: 100%;
                 width: 100%;
+                height: 100%;
+
                 border-radius: 50%;
             }
         }
@@ -58,10 +60,11 @@ $entityIconClassName: '.entity-icon';
 
     &__color-box {
         display: flex;
-        align-items: center;
-        border-radius: 4px;
         justify-content: center;
+        align-items: center;
+
         color: var(--g-color-text-light-primary);
+        border-radius: 4px;
 
         &_type_dataset {
             background-color: var(--dl-color-entity-dataset);

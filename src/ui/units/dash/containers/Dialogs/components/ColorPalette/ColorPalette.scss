@@ -11,9 +11,10 @@
     padding: var(--g-spacing-4);
 
     &__hint {
-        @include text-body-1();
-        color: var(--g-color-text-secondary);
         margin-top: var(--g-spacing-2);
+
+        color: var(--g-color-text-secondary);
+        @include text-body-1();
     }
 
     &__custom-palette-bg-btn,
@@ -33,22 +34,25 @@
 
     &__preset {
         display: grid;
-        grid-template-columns: repeat(auto-fit, $color-item-size);
-        margin-block-end: var(--g-spacing-2);
-        gap: var(--g-spacing-2);
         flex-shrink: 0;
+        grid-template-columns: repeat(auto-fit, $color-item-size);
+        gap: var(--g-spacing-2);
+
+        margin-block-end: var(--g-spacing-2);
     }
 
     &__palette {
-        margin-block-start: var(--g-spacing-5);
         flex-shrink: 0;
+
+        margin-block-start: var(--g-spacing-5);
     }
 
     &__color-picker {
         display: block;
+        flex-shrink: 0;
+
         width: 140px;
         min-width: 100%;
-        flex-shrink: 0;
     }
 
     &__highlight-wrapper {
@@ -66,9 +70,11 @@
         }
 
         &::before {
-            content: '';
             position: absolute;
             inset: 0;
+
+            content: '';
+
             border: 1px solid var(--_--color-item-border-color);
             border-radius: 6px;
         }
@@ -82,17 +88,21 @@
         }
 
         &:not(&_selected):hover::before {
-            content: '';
             position: absolute;
             inset: -3px;
+
+            content: '';
+
             border: 2px solid var(--g-color-line-generic-hover);
             border-radius: 9px;
         }
 
         &_selected::before {
-            content: '';
             position: absolute;
             inset: -3px;
+
+            content: '';
+
             border: 2px solid var(--g-color-line-brand);
             border-radius: 9px;
         }
@@ -100,7 +110,7 @@
 
     &__tooltip-trigger {
         position: absolute;
-        inset: 0;
         z-index: 1000;
+        inset: 0;
     }
 }

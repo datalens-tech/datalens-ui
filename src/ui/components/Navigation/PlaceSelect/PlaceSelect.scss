@@ -1,7 +1,8 @@
 .dl-navigation-minimal-place-select {
-    flex: 0 0 auto;
-    padding: 0 20px 8px;
     display: flex;
+    flex: 0 0 auto;
+
+    padding: 0 20px 8px;
 
     &__option {
         display: flex;

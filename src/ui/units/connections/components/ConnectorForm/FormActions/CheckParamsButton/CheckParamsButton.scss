@@ -1,6 +1,7 @@
 .conn-form-check-params-button {
     display: flex;
     align-items: center;
+
     margin-right: auto;
 
     &__icon {
@@ -16,9 +17,10 @@
     }
 
     &__tooltip-content {
-        padding: 10px;
         display: flex;
         flex-direction: column;
         gap: 18px;
+
+        padding: 10px;
     }
 }

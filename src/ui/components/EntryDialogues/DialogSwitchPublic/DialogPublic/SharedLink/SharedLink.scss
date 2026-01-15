@@ -1,14 +1,16 @@
 .dl-dialog-public-shared-link {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
 
     &__input-place {
-        min-width: 280px;
         position: relative;
+
         display: flex;
         align-items: center;
+
         width: 100%;
+        min-width: 280px;
     }
 
     &__input-link_active > input {
@@ -18,6 +20,7 @@
     &__clipboard-button {
         display: flex;
         align-items: center;
+
         margin-left: 16px;
     }
 }

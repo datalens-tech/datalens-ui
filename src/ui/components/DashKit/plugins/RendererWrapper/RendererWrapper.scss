@@ -3,20 +3,23 @@
 .dashkit-plugin-container {
     &__wrapper {
         height: 100%;
-        background-color: var(--dl-color-widget-background);
+
         border-radius: var(--dl-widget-border-radius);
+        background-color: var(--dl-color-widget-background);
 
         &_widget {
-            width: 100%;
             position: relative;
+
+            width: 100%;
         }
 
         &_title {
-            scroll-margin-left: calc(24px + var(--gn-aside-header-size, 0px));
-            overflow: clip;
             display: flex;
+            overflow: clip;
             align-items: center;
+
             max-height: 100%;
+            scroll-margin-left: calc(24px + var(--gn-aside-header-size, 0px));
 
             &:hover {
                 .dashkit-plugin-title-container__anchor {

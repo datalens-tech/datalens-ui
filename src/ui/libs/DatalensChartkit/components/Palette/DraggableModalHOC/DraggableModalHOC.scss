@@ -1,29 +1,35 @@
 .draggable-modal {
     position: fixed;
-    right: 0;
-    top: 0;
-    background: #ffffff;
-    border: 1px solid #eee;
-    box-shadow: 2px 2px 8px 1px rgba(0, 0, 0, 0.2);
     z-index: 100;
+    top: 0;
+    right: 0;
+
+    border: 1px solid #eee;
+    background: #ffffff;
+    box-shadow: 2px 2px 8px 1px rgba(0, 0, 0, 0.2);
 
     &__draggable-node {
         display: flex;
-        color: #000000;
+        justify-content: space-between;
+        align-items: center;
+
         margin: 0;
         padding: 15px 32px;
-        cursor: move;
-        align-items: center;
-        border-bottom: 1px solid #eee;
+
         font-size: 19px;
         font-weight: bold;
-        justify-content: space-between;
+        cursor: move;
+
+        color: #000000;
+        border-bottom: 1px solid #eee;
     }
 
     &__close-icon {
-        padding: 6px;
-        cursor: pointer;
         display: inline-block;
         float: right;
+
+        padding: 6px;
+
+        cursor: pointer;
     }
 }

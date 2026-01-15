@@ -3,6 +3,7 @@
 .dl-select-option-with-icon {
     display: flex;
     align-items: center;
+
     width: 100%;
 
     &_disabled {
@@ -16,6 +17,7 @@
     &__icon {
         display: flex;
         align-items: center;
+
         margin-right: 6px;
         &_disabled {
             opacity: 0.5;

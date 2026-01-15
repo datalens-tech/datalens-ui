@@ -1,55 +1,66 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
 .dl-core-workbook-navigation-minimal {
-    width: 416px;
-    height: 540px;
+    position: relative;
+
     display: flex;
     flex-direction: column;
-    position: relative;
-    max-height: 70vh;
+
+    width: 416px;
     max-width: 80vw;
+    height: 540px;
+    max-height: 70vh;
 
     &__row {
-        cursor: pointer;
-        height: 40px;
         display: flex;
         align-items: center;
-        padding: 0 20px;
+
         width: 100%;
+        height: 40px;
+        padding: 0 20px;
+
+        cursor: pointer;
     }
 
     &__row_inactive {
-        opacity: 0.5;
         cursor: initial;
+
+        opacity: 0.5;
     }
 
     &__info {
-        padding-right: 0;
         display: flex;
-        width: 100%;
         overflow: hidden;
+
+        width: 100%;
+        padding-right: 0;
     }
 
     &__popup {
-        border-radius: 4px;
         overflow: hidden;
+
+        border-radius: 4px;
         background-color: var(--g-color-base-float);
     }
 
     &__icon {
-        margin-right: 12px;
         position: relative;
         bottom: 2px;
-        flex: 0 0 auto;
+
         display: flex;
+        flex: 0 0 auto;
+
+        margin-right: 12px;
     }
 
     &__name {
-        flex: 3 1 30%;
         display: flex;
-        align-items: center;
         overflow: hidden;
+        flex: 3 1 30%;
+        align-items: center;
+
         min-width: 100px;
+
         color: var(--g-color-text-primary);
 
         span {
@@ -64,6 +75,7 @@
 
     &__date {
         flex: 0 0 60px;
+
         min-width: auto;
     }
 
@@ -72,10 +84,12 @@
     }
 
     &__empty-entries {
-        height: 100%;
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
+
+        height: 100%;
+
         font-size: 20px;
     }
 
@@ -85,6 +99,7 @@
         flex-wrap: nowrap;
         align-items: flex-start;
         gap: 8px;
+
         padding: 8px 20px;
     }
 
@@ -98,9 +113,9 @@
 
     &__items {
         display: flex;
-        gap: var(--g-spacing-4);
-        flex-direction: column;
         overflow-y: auto;
+        flex-direction: column;
+        gap: var(--g-spacing-4);
     }
 
     &__items-box {

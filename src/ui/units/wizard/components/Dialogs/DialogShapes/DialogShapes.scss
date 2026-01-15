@@ -1,25 +1,29 @@
 .dialog-shapes {
-    max-height: 80vh;
-    min-height: 300px;
-    width: 680px;
     display: flex;
     flex-direction: column;
+
+    width: 680px;
     height: 560px;
+    min-height: 300px;
+    max-height: 80vh;
 
     &__title-icon {
-        margin-right: 4px;
-        height: 24px;
-        width: 24px;
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
+
+        width: 24px;
+        height: 24px;
+        margin-right: 4px;
     }
 
     & .g-dialog-body {
         display: flex;
-        padding: 0;
         overflow-y: auto;
+
         height: calc(80vh - 153px);
+        padding: 0;
+
         border-top: 1px solid var(--g-color-line-generic);
         border-bottom: 1px solid var(--g-color-line-generic);
     }

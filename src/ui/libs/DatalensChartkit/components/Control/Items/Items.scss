@@ -6,18 +6,20 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
     $class: &;
 
     &__control {
-        display: inline-flex;
-        vertical-align: bottom;
-        align-items: center;
         position: relative;
 
+        display: inline-flex;
+        align-items: center;
+
+        vertical-align: bottom;
+
         &_mobile {
-            align-items: flex-start;
             flex-direction: column;
+            align-items: flex-start;
 
             #{$class}__title {
-                @include text-subheader-2();
                 margin-bottom: 5px;
+                @include text-subheader-2();
             }
 
             #{$class}__yc-select {
@@ -42,11 +44,13 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
     }
 
     &__title {
+        display: flex;
+
         margin-right: 8px;
+
         font-size: 13px;
         font-weight: 500;
         white-space: nowrap;
-        display: flex;
 
         &_vertical {
             max-width: 100%;
@@ -59,8 +63,8 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 
     &__component,
     &__yc-select {
-        flex-grow: 1;
         overflow: hidden;
+        flex-grow: 1;
     }
 
     &__component {
@@ -77,11 +81,12 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 
     &__overlay {
         position: absolute;
+        z-index: 1;
+        top: 0;
+        left: 0;
+
         width: 100%;
         height: 100%;
-        left: 0;
-        top: 0;
-        z-index: 1;
 
         &_move {
             cursor: move;

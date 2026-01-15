@@ -1,12 +1,13 @@
 .preview-header {
     $class: &;
+    position: relative;
+
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
 
     height: 48px;
     padding: 8px 20px;
-    flex-shrink: 0;
-    position: relative;
-    display: flex;
-    align-items: center;
 
     &__label {
         &_bold {
@@ -16,6 +17,7 @@
 
     &__resize-panel {
         display: flex;
+
         margin-left: auto;
 
         #{$class}__preview-switcher-btn:not(:last-child) {
@@ -26,6 +28,7 @@
     &__amount-preview-rows {
         display: flex;
         align-items: center;
+
         margin: 0 20px 0 40px;
 
         #{$class}__fade-text {

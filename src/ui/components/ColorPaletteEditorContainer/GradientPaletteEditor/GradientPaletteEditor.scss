@@ -5,8 +5,9 @@
 
     &__palette-preview {
         height: 28px;
-        border-radius: 4px;
         margin: 8px 0;
+
+        border-radius: 4px;
     }
 
     &__color-inputs {
@@ -17,14 +18,16 @@
     &__palette-charkit-preview {
         display: flex;
         justify-content: space-between;
+        column-gap: 10px;
+
         height: 35vh;
         min-height: 180px;
         max-height: 400px;
-        column-gap: 10px;
     }
 
     &__palette-charkit-node {
         width: 50%;
+
         background: var(--g-color-base-background);
     }
 
@@ -34,8 +37,8 @@
     }
 
     &__palette-icon {
-        height: 16px;
         width: 20px;
+        height: 16px;
     }
 
     &__name-input {

@@ -1,57 +1,66 @@
 .dialog-multidataset {
     .g-dialog-body {
-        padding-left: 0;
-        padding-right: 0;
         padding-top: 0;
+        padding-right: 0;
+        padding-left: 0;
     }
 
     .g-dialog-footer {
-        width: 704px;
         float: right;
+
+        width: 704px;
     }
 
     &__left {
+        float: left;
+
         width: 256px;
         height: 720px;
-        float: left;
-        background: var(--g-color-base-generic-ultralight);
-
         padding: 28px 0 0;
 
+        background: var(--g-color-base-generic-ultralight);
+
         &-header {
-            padding-left: 24px;
-            font-size: 18px;
             margin-bottom: 16px;
+            padding-left: 24px;
+
+            font-size: 18px;
         }
 
         &-dataset {
-            padding-left: 24px;
-            line-height: 32px;
             height: 32px;
+            padding-left: 24px;
+
+            line-height: 32px;
             vertical-align: middle;
 
             &-icon {
-                float: left;
-                margin-right: 8px;
                 display: flex;
-                align-items: center;
+                float: left;
                 justify-content: center;
-                height: 24px;
+                align-items: center;
+
                 width: 24px;
-                color: var(--g-color-base-positive-heavy);
+                height: 24px;
                 margin-top: 4px;
+                margin-right: 8px;
+
+                color: var(--g-color-base-positive-heavy);
             }
 
             &-title {
-                width: 150px;
                 display: inline-block;
                 overflow: hidden;
-                text-overflow: ellipsis;
+
+                width: 150px;
+
                 white-space: nowrap;
+                text-overflow: ellipsis;
             }
 
             &-more {
                 float: right;
+
                 margin-right: 24px;
 
                 svg {
@@ -64,30 +73,32 @@
             }
 
             &-add-icon {
-                margin-top: 7px;
                 float: left;
+
+                margin-top: 7px;
                 margin-right: 8px;
             }
 
             &:hover {
-                background: var(--dl-color-contrast-4);
                 cursor: pointer;
+
+                background: var(--dl-color-contrast-4);
             }
         }
     }
 
     &__right {
-        width: 704px;
-        height: 628px;
         float: right;
-
         overflow-y: auto;
 
+        width: 704px;
+        height: 628px;
         padding: 32px 0 0 40px;
 
         &-header {
-            font-size: 15px;
             margin-bottom: 16px;
+
+            font-size: 15px;
         }
 
         &-link {
@@ -99,10 +110,12 @@
 
             &-formula {
                 display: inline-block;
-                background: var(--g-color-base-info-light);
+
+                padding: 6px 12px;
+
                 border: 1px solid var(--g-color-base-info-light);
                 border-radius: 4px;
-                padding: 6px 12px;
+                background: var(--g-color-base-info-light);
 
                 span {
                     display: inline-block;
@@ -114,6 +127,7 @@
 
                 &-field {
                     margin: 0 0 0 4px;
+
                     opacity: 0.5;
                 }
 
@@ -127,6 +141,7 @@
 
                 &:hover {
                     cursor: pointer;
+
                     background: var(--g-color-base-info-light);
                 }
             }

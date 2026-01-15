@@ -1,13 +1,15 @@
 .ds-field-inspector {
     &__body {
-        max-height: 70vh;
         overflow: auto;
+
+        max-height: 70vh;
 
         & pre {
             margin-top: 0;
             padding: 5px;
-            border-radius: 5px;
+
             color: var(--g-color-text-complementary);
+            border-radius: 5px;
             background-color: var(--g-color-base-misc-light);
         }
     }

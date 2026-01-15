@@ -1,12 +1,14 @@
 $filterBaseWidth: 220px;
 
 .service-settings-users-list-filters {
-    padding-right: var(--g-spacing-2);
     gap: var(--g-spacing-2);
+
+    padding-right: var(--g-spacing-2);
 
     &_new {
         flex: 1;
         gap: 10px;
+
         padding-right: unset;
     }
 
@@ -23,6 +25,7 @@ $filterBaseWidth: 220px;
 
         &_new {
             flex: 1;
+
             width: unset;
         }
     }

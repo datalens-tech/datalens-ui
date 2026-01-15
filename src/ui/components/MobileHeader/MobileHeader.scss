@@ -1,14 +1,16 @@
 .mobile-header {
     position: relative;
     z-index: 100;
+
     display: grid;
-    grid-template-rows: var(--mobile-header-size) auto;
     grid-template-columns: 100%;
+    grid-template-rows: var(--mobile-header-size) auto;
 
     &__content {
-        min-height: calc(100vh - var(--mobile-header-size));
         overflow-x: auto;
+
         height: 0;
+        min-height: calc(100vh - var(--mobile-header-size));
     }
 
     &__logo {
@@ -16,18 +18,22 @@
     }
 
     &__link {
-        text-decoration: none;
-        outline: none;
-        color: inherit;
         display: block;
-        height: 100%;
         flex: 1 1 auto;
+
+        height: 100%;
+
+        text-decoration: none;
+
+        color: inherit;
+        outline: none;
     }
 
     &__logo-icon {
-        height: auto;
         width: auto;
+        height: auto;
         padding-left: var(--g-spacing-2);
+
         color: var(--g-color-base-brand);
     }
 

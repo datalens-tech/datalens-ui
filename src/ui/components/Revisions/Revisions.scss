@@ -3,12 +3,14 @@
 .revisions {
     $class: &;
     overflow: auto;
+
     width: 100%;
     height: 100%;
 
     &__spin-wrap {
         display: flex;
         justify-content: center;
+
         height: 20px;
         margin: 20px 0;
     }
@@ -26,23 +28,27 @@
     }
 
     & &__btn-diff {
-        margin-left: 32px;
-        margin-bottom: 20px;
-        width: max-content;
         flex-shrink: 0;
+
+        width: max-content;
+        margin-bottom: 20px;
+        margin-left: 32px;
     }
 
     &__item {
         display: flex;
-        align-items: center;
-        vertical-align: top;
-        height: 40px;
         flex-shrink: 0;
+        align-items: center;
+
+        height: 40px;
         padding-left: 12px;
 
+        vertical-align: top;
+
         &:hover:not(#{$class}__item_current) {
-            background-color: var(--g-color-base-simple-hover);
             cursor: pointer;
+
+            background-color: var(--g-color-base-simple-hover);
         }
 
         &_current {
@@ -51,33 +57,38 @@
     }
 
     &__release-status {
-        flex-shrink: 0;
-        width: 20px;
         display: flex;
-        align-items: center;
+        flex-shrink: 0;
         justify-content: center;
+        align-items: center;
+
+        width: 20px;
         height: 100%;
     }
 
     &__release-mark {
         width: 8px;
         height: 8px;
+
         border-radius: 50%;
         background-color: var(--g-color-text-info);
     }
 
     &__time-version {
-        flex: 1 0 124px;
         display: flex;
         overflow: hidden;
+        flex: 1 0 124px;
+
         padding-left: 4px;
     }
 
     &__user {
-        flex: 2 1 25%;
         display: flex;
         overflow: hidden;
+        flex: 2 1 25%;
+
         margin: 0 5px 0 15px;
+
         white-space: nowrap;
     }
 
@@ -86,35 +97,39 @@
     }
 
     &__user-card::first-letter {
-        color: var(--g-color-text-danger);
         overflow: hidden;
+
         text-overflow: hidden;
+
+        color: var(--g-color-text-danger);
     }
 
     &__user-link {
         display: block;
-        text-overflow: ellipsis;
         overflow: hidden;
+
+        text-overflow: ellipsis;
     }
 
     &__publish-status {
-        flex: 1 0 120px;
         display: flex;
         overflow: hidden;
+        flex: 1 0 120px;
         justify-content: center;
     }
 
     &__actions {
-        flex: 0 0 120px;
         display: flex;
-        align-items: center;
         overflow: hidden;
+        flex: 0 0 120px;
+        align-items: center;
+
         min-width: 120px;
     }
 
     &__dropdown {
-        margin-left: auto;
         margin-right: 32px;
+        margin-left: auto;
     }
 
     &__progress-status {

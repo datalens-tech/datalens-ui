@@ -3,6 +3,7 @@
 .field-info {
     display: flex;
     align-items: center;
+
     margin-right: 16px;
 
     &__container {
@@ -12,13 +13,15 @@
     }
 
     &__title {
-        text-overflow: ellipsis;
         overflow: hidden;
+
+        text-overflow: ellipsis;
     }
 
     &__icon {
-        margin-right: 5px;
         flex-shrink: 0;
+
+        margin-right: 5px;
 
         &_parameter {
             color: var(--g-color-text-utility);

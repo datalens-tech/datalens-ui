@@ -1,12 +1,14 @@
 .custom-loader-container {
     display: flex;
-    width: 100%;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+
+    width: 100%;
 }
 
 .custom-option {
-    white-space: nowrap;
     overflow: hidden;
+
+    white-space: nowrap;
     text-overflow: ellipsis;
 }

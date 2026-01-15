@@ -2,10 +2,11 @@
     width: 432px;
 
     &__row {
-        margin-top: 16px;
         display: flex;
         flex-direction: row;
         align-items: flex-start;
+
+        margin-top: 16px;
     }
 
     &__title {

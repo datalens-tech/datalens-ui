@@ -1,6 +1,8 @@
 .button-spin-react {
     position: relative;
+
     display: inline-block;
+
     vertical-align: top;
 
     &__text {
@@ -11,7 +13,7 @@
 
     &__spin {
         position: absolute;
-        left: calc(50% - 12px);
         top: calc(50% - 12px);
+        left: calc(50% - 12px);
     }
 }

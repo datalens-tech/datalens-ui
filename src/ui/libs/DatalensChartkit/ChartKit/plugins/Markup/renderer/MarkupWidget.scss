@@ -1,5 +1,6 @@
 .chartkit-markup {
     overflow: auto;
+
     padding: 15px;
 
     .markup-metric {
@@ -40,16 +41,20 @@
 
     .markup-metric-title {
         display: block;
-        color: var(--g-color-text-primary);
+
+        padding-bottom: 0.125em;
+
         font-weight: 500;
         line-height: 1.2;
-        padding-bottom: 0.125em;
+
+        color: var(--g-color-text-primary);
     }
 
     .markup-metric-value {
         display: block;
-        white-space: nowrap;
+
         font-weight: 500;
         line-height: 1.2;
+        white-space: nowrap;
     }
 }

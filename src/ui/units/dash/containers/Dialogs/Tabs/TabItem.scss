@@ -2,11 +2,14 @@
     &__row {
         display: flex;
         align-items: center;
-        padding: 10px 15px 10px 0;
-        border-radius: 3px;
-        font-size: 15px;
+
         width: 100%;
         height: 40px;
+        padding: 10px 15px 10px 0;
+
+        font-size: 15px;
+
+        border-radius: 3px;
 
         &:not(:last-child) {
             margin-bottom: 10px;
@@ -30,16 +33,18 @@
     }
 
     &__title {
+        overflow: hidden;
         flex: 1;
+
         white-space: nowrap;
         text-overflow: ellipsis;
-        overflow: hidden;
     }
 
     &__controls {
         display: flex;
-        margin-left: 5px;
         visibility: hidden;
+
+        margin-left: 5px;
 
         &:hover {
             visibility: visible;
@@ -48,6 +53,7 @@
 
     &__control {
         cursor: pointer;
+
         fill: rgba(0, 0, 0, 0.5);
 
         &:not(:last-child) {

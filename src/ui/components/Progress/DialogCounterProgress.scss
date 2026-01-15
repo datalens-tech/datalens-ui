@@ -4,7 +4,8 @@
     }
 
     &__text-progress {
-        color: var(--g-color-text-complementary);
         margin-top: var(--g-spacing-1);
+
+        color: var(--g-color-text-complementary);
     }
 }

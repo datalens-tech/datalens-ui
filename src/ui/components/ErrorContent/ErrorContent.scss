@@ -3,22 +3,25 @@
 .error-content {
     $class: &;
     display: flex;
+    flex-grow: 1;
     justify-content: center;
     align-items: center;
-    flex-grow: 1;
 
     &_mobile {
         flex-direction: column;
 
         #{$class}__content {
-            padding: 0 16px;
-            width: 100%;
-            text-align: center;
             align-items: center;
+
+            width: 100%;
+            padding: 0 16px;
+
+            text-align: center;
         }
 
         #{$class}__title {
             width: 100%;
+
             text-align: center;
 
             a {
@@ -39,15 +42,16 @@
         }
 
         #{$class}__action-btn {
-            margin-top: 0;
             width: 100%;
+            margin-top: 0;
         }
 
         #{$class}__illustration-container {
-            flex: 1;
             display: flex;
+            flex: 1;
             flex-direction: column;
             justify-content: center;
+
             width: 100%;
         }
     }
@@ -65,12 +69,13 @@
 
     &_no-controls {
         display: block;
+
         padding: 20px 0;
     }
 
     &__title {
-        font-weight: 500;
         font-size: var(--g-text-header-1-font-size);
+        font-weight: 500;
         line-height: var(--g-text-header-1-line-height);
 
         a {
@@ -85,9 +90,9 @@
     &__content {
         display: flex;
         flex-direction: column;
+        flex-shrink: 0;
         justify-content: center;
         align-items: flex-start;
-        flex-shrink: 0;
 
         width: 350px;
     }
@@ -111,6 +116,7 @@
     &__debug-info {
         width: 500px;
         margin-top: 20px;
+
         color: var(--g-color-text-hint);
     }
 
@@ -135,8 +141,10 @@
             flex-direction: column;
 
             #{$class}__content {
-                width: 400px;
                 align-items: center;
+
+                width: 400px;
+
                 text-align: center;
             }
         }
@@ -144,6 +152,7 @@
 
     &__yfm {
         margin-top: 10px;
+
         font-size: var(--g-text-body-1-font-size);
 
         &_without-title {

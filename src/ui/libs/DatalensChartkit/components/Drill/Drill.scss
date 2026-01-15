@@ -1,46 +1,55 @@
 .chartkit-drill {
     display: flex;
-    margin: 4px 0;
-    margin-left: 16px;
-    height: 24px;
     align-items: center;
 
+    height: 24px;
+    margin: 4px 0;
+    margin-left: 16px;
+
     &__controls {
-        height: 100%;
         display: flex;
         align-items: center;
+
+        height: 100%;
     }
 
     &__drill-action {
-        cursor: pointer;
         display: inline-block;
+
         min-width: 16px;
+
+        cursor: pointer;
 
         &_left {
             transform: rotate(-90deg);
         }
 
         &_right {
-            transform: rotate(90deg);
             margin-left: 12px;
+
+            transform: rotate(90deg);
         }
 
         &_disabled {
             cursor: default;
+
             fill: var(--g-color-text-secondary);
         }
     }
 
     &__breadcrumbs {
-        width: calc(100% - 120px);
         align-items: center;
+
+        width: calc(100% - 120px);
     }
 
     &__separator {
-        width: 1px;
         display: inline-block;
+
+        width: 1px;
         height: 24px;
         margin: 0 12px;
+
         background-color: var(--g-color-line-generic);
     }
 }

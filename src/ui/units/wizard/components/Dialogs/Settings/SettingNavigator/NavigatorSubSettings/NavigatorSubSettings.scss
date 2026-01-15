@@ -1,14 +1,16 @@
 .sub-navigator-settings {
     display: flex;
+    flex: 1;
     flex-direction: column;
     justify-content: space-between;
-    margin-left: 40px;
+
     max-width: 399px;
-    flex: 1;
+    margin-left: 40px;
     & > * {
         display: flex;
         justify-content: space-between;
         align-items: center;
+
         margin-bottom: 20px;
     }
 

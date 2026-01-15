@@ -1,29 +1,36 @@
 .chartkit-table-bar {
     position: relative;
-    left: calc(-1 * var(--chartkit-bg-bar-offset-width) / 2);
-    margin-right: calc(-1 * var(--chartkit-bg-bar-offset-width));
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    width: calc(100% + var(--chartkit-bg-bar-offset-width));
-    padding-right: 5px;
     z-index: 0;
+    left: calc(-1 * var(--chartkit-bg-bar-offset-width) / 2);
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    width: calc(100% + var(--chartkit-bg-bar-offset-width));
+    margin-right: calc(-1 * var(--chartkit-bg-bar-offset-width));
+    padding-right: 5px;
 
     &__block {
         position: absolute;
         z-index: -1;
         left: 0;
-        text-align: left;
+
         height: var(--dl-table-cell-bar-height, 19px);
+
+        text-align: left;
     }
 
     &__separator {
         position: absolute;
+
         display: inline-block;
+
         width: 0;
         height: 130%;
-        border-right: 1px solid var(--g-color-text-complementary);
         margin-top: calc(-0.15 * var(--dl-table-cell-bar-height, 19px));
+
+        border-right: 1px solid var(--g-color-text-complementary);
     }
 }
 

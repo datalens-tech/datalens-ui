@@ -2,8 +2,8 @@
 
 .dialog-aliases-detail {
     &__subtitle {
-        @include text-subheader-1();
         margin-bottom: 8px;
+        @include text-subheader-1();
     }
 
     &__row {
@@ -15,9 +15,10 @@
     }
 
     &__content {
-        margin-bottom: 16px;
-        max-height: 160px;
         overflow: hidden auto;
+
+        max-height: 160px;
+        margin-bottom: 16px;
     }
 
     &__error {

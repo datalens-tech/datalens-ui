@@ -2,28 +2,32 @@
 @import '../../styles/variables.scss';
 
 .dl-user-profile-page {
-    min-height: 100vh;
     display: grid;
     grid-template-rows: auto 1fr;
+
+    min-height: 100vh;
 
     &__content {
         display: flex;
         justify-content: center;
+
         padding: var(--g-spacing-5);
 
         &_new {
             display: unset;
-            max-width: $pageMaxWidth;
-            padding: $settingsPagePadding;
-            margin: 0 auto;
+
             width: 100%;
+            max-width: $pageMaxWidth;
+            margin: 0 auto;
+            padding: $settingsPagePadding;
         }
     }
 
     &__breadcrumbs {
-        flex-grow: 1;
-        text-overflow: ellipsis;
         overflow: hidden;
+        flex-grow: 1;
+
+        text-overflow: ellipsis;
     }
 
     &__breadcrumbs-item {

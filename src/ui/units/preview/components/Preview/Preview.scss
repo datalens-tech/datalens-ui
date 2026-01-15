@@ -1,6 +1,7 @@
 .preview {
     display: flex;
     flex: 1;
+
     height: 100%;
 
     .datalens-chartkit-error {
@@ -8,8 +9,9 @@
     }
 
     &_mobile {
-        flex-direction: column;
         position: relative;
+
+        flex-direction: column;
 
         .dl-widget__container .dl-widget__chart-header {
             top: -40px;

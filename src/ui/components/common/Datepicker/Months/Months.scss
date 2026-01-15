@@ -1,20 +1,25 @@
 .dl-datepicker-months {
     display: grid;
+    justify-content: center;
     grid-template-columns: 51px repeat(3, 72px);
     grid-template-rows: repeat(4, 40px);
-    grid-gap: 4px;
-    justify-content: center;
+
     margin-bottom: 20px;
+    grid-gap: 4px;
 
     &__month {
         position: relative;
+
         display: flex;
         justify-content: center;
         align-items: center;
+
         width: 100%;
         height: 100%;
-        border-radius: 4px;
+
         cursor: pointer;
+
+        border-radius: 4px;
 
         .dl-datepicker_desktop &:hover {
             background-color: var(--g-color-base-simple-hover);
@@ -44,32 +49,40 @@
         }
 
         &_selected:not(&_left-edge)::before {
-            content: '';
             position: absolute;
             top: 0;
             left: -4px;
+
             display: block;
-            height: 40px;
+
             width: 4px;
+            height: 40px;
+
+            content: '';
+
             background-color: var(--g-color-base-selection);
         }
 
         &_disabled {
-            opacity: 0.3;
             pointer-events: none;
+
+            opacity: 0.3;
         }
     }
 
     &__title {
         align-self: center;
+
         font-size: 18px;
         line-height: 20px;
-        color: var(--g-color-text-secondary);
         cursor: pointer;
 
+        color: var(--g-color-text-secondary);
+
         &_disabled {
-            opacity: 0.3;
             pointer-events: none;
+
+            opacity: 0.3;
         }
     }
 }

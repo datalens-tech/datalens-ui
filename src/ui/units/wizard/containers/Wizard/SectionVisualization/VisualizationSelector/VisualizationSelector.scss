@@ -2,7 +2,8 @@
     --settings-btn-width: 46px;
 
     position: relative;
-    border-bottom: 1px solid var(--g-color-line-generic);
+
+    height: 41px;
 
     font-weight: normal;
     font-style: normal;
@@ -10,8 +11,8 @@
     line-height: 1.13;
     letter-spacing: normal;
 
+    border-bottom: 1px solid var(--g-color-line-generic);
     background: var(--g-color-base-background);
-    height: 41px;
 
     .icon {
         float: left;
@@ -25,15 +26,15 @@
     &__dropdown {
         width: 100%;
         height: 100%;
-
         padding-inline-end: var(--settings-btn-width);
     }
 
     &__dropdown-btn {
-        width: 100%;
-        height: 100%;
         justify-content: flex-start;
         align-items: center;
+
+        width: 100%;
+        height: 100%;
 
         &:active {
             transform: scale(1);
@@ -41,19 +42,24 @@
     }
 
     &__dropdown-btn-text {
-        display: block;
         position: relative;
+
+        display: block;
         overflow: hidden;
-        text-overflow: ellipsis;
+
         white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     &__dropdown-btn-content {
-        text-align: left;
-        margin: 0 8px;
         display: flex;
         align-items: center;
+
+        margin: 0 8px;
+
         line-height: 1;
+        text-align: left;
+
         color: var(--g-color-text-complementary);
 
         .icon {
@@ -63,15 +69,15 @@
 
     &__popup {
         display: block !important; // stylelint-disable-line declaration-no-important
-        background: var(--g-color-base-float);
-        border-radius: 5px;
         overflow-y: auto;
 
+        border-radius: 5px;
+        background: var(--g-color-base-float);
         box-shadow: 0 2px 4px 0 var(--g-color-sfx-shadow-heavy);
 
         &:before {
-            box-shadow: none !important; // stylelint-disable-line declaration-no-important
             border-radius: 5px;
+            box-shadow: none !important; // stylelint-disable-line declaration-no-important
         }
     }
 
@@ -79,11 +85,13 @@
         margin: 4px 0;
 
         .visualization-item {
-            align-items: center;
             display: flex;
-            cursor: pointer;
-            height: 28px;
+            align-items: center;
+
             width: 100%;
+            height: 28px;
+
+            cursor: pointer;
 
             svg {
                 width: 20px;
@@ -98,14 +106,16 @@
     }
 
     &__wrapper-settings-btn {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
         position: absolute;
-        right: 0;
-        height: 100%;
         top: 0;
+        right: 0;
+
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
         width: var(--settings-btn-width);
+        height: 100%;
     }
 
     &__settings-btn {

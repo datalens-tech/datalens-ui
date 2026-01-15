@@ -1,13 +1,13 @@
 .dl-color-item {
     --color-item-size: 28px;
-
-    background-clip: padding-box;
-    background-color: var(--g-color-base-float);
-    width: var(--color-item-size);
-    height: var(--color-item-size);
     overflow: hidden;
 
+    width: var(--color-item-size);
+    height: var(--color-item-size);
+
     border-radius: 6px;
+    background-color: var(--g-color-base-float);
+    background-clip: padding-box;
 
     &_size_max {
         --color-item-size: 100%;
@@ -19,8 +19,10 @@
 
     &__bg-item {
         display: inline-block;
+
         width: 100%;
         height: 100%;
+
         background-clip: padding-box;
 
         &_transparent {

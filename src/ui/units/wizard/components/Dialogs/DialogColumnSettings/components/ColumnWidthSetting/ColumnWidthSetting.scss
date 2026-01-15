@@ -12,9 +12,10 @@
             position: static;
 
             &__error {
-                margin-left: -15px;
-                width: 120px;
                 position: absolute;
+
+                width: 120px;
+                margin-left: -15px;
             }
         }
     }

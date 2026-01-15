@@ -1,9 +1,10 @@
 .chartkit-base {
     &__header {
-        z-index: 2;
         position: absolute;
+        z-index: 2;
         top: -4px;
         right: 3px;
+
         display: flex;
         flex-direction: row;
         align-items: center;

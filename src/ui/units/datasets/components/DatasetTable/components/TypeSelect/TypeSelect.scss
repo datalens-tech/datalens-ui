@@ -3,8 +3,10 @@
 .type-select {
     &__type {
         display: flex;
-        opacity: 0.5;
+
         margin-right: 5px;
+
+        opacity: 0.5;
     }
 
     &__select-item {
@@ -12,8 +14,8 @@
         align-items: center;
 
         &_option {
-            padding-left: 8px;
             width: unset;
+            padding-left: 8px;
         }
 
         &_disabled {
@@ -22,7 +24,8 @@
     }
 
     &__select-control {
-        width: 180px;
         justify-content: start;
+
+        width: 180px;
     }
 }

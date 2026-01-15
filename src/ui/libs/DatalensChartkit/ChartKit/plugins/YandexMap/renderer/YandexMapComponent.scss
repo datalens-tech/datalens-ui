@@ -3,6 +3,7 @@
 
     &__wrapper {
         position: relative;
+
         width: 100%;
         height: 100%;
 
@@ -17,14 +18,14 @@
         }
 
         & [class$='balloon__content'] {
-            padding: 0;
             margin: 0;
+            padding: 0;
         }
 
         & [class$='balloon__tail'],
         & [class$='balloon__tail']:after {
-            background-color: #000000;
             opacity: 0.8;
+            background-color: #000000;
         }
 
         & [class$='balloon__close'] {
@@ -33,14 +34,16 @@
     }
 
     & .chartkit-yandex-map-chips {
-        border-radius: 100%;
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
+
         color: var(--g-color-text-light-primary);
+        border-radius: 100%;
 
         &.active {
             border: 2px solid var(--g-color-text-light-primary);
+
             transform: translate(-2px, -2px);
         }
 
@@ -51,10 +54,12 @@
 
     &__tooltip-container {
         .chartkit-tooltip {
+            position: initial;
+
             width: 100%;
+
             border: none;
             box-shadow: none;
-            position: initial;
 
             &__cell_yandex-map {
                 white-space: initial;

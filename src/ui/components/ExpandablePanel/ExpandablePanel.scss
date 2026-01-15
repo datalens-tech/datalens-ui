@@ -6,10 +6,12 @@ $titleLineHeight: calc(var(--g-text-body-1-line-height) * 1.15);
 
 .expandable-panel {
     $class: &;
-    padding: 0;
     z-index: 100;
-    width: 246px;
+
     box-sizing: border-box;
+    width: 246px;
+    padding: 0;
+
     pointer-events: none;
 
     &_collapsed {
@@ -33,29 +35,35 @@ $titleLineHeight: calc(var(--g-text-body-1-line-height) * 1.15);
     }
 
     &__container {
-        width: 100%;
         display: flex;
         flex-direction: column;
+
+        width: 100%;
         height: inherit;
     }
 
     &__header {
         padding: $topPadding $leftPadding;
+
         border-radius: 8px 8px 0 0;
     }
 
     &__content {
-        padding: 0;
-        overflow: hidden;
-        border-radius: 0 0 8px 8px;
         position: relative;
+
+        overflow: hidden;
+
+        padding: 0;
+
+        border-radius: 0 0 8px 8px;
     }
 
     &__header,
     &__content {
+        pointer-events: initial;
+
         background-color: var(--g-color-base-background);
         box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
-        pointer-events: initial;
     }
 
     &__shadow-putty {
@@ -63,11 +71,14 @@ $titleLineHeight: calc(var(--g-text-body-1-line-height) * 1.15);
         z-index: 2;
 
         &:before {
-            content: '';
             position: absolute;
-            height: 6px;
-            width: 100%;
             top: -3px;
+
+            width: 100%;
+            height: 6px;
+
+            content: '';
+
             background-color: var(--g-color-base-background);
         }
     }
@@ -77,12 +88,15 @@ $titleLineHeight: calc(var(--g-text-body-1-line-height) * 1.15);
     }
 
     &__title {
-        font-weight: 500;
-        color: var(--g-color-text-primary);
-        font-size: var(--g-text-body-1-font-size);
-        line-height: $titleLineHeight;
         position: relative;
+
         padding-right: 42px;
+
+        font-size: var(--g-text-body-1-font-size);
+        font-weight: 500;
+        line-height: $titleLineHeight;
+
+        color: var(--g-color-text-primary);
         @include overflow-ellipsis();
     }
 
@@ -92,19 +106,22 @@ $titleLineHeight: calc(var(--g-text-body-1-line-height) * 1.15);
 
     &__close,
     &__arrow {
-        @include button-reset();
         position: absolute;
-        right: -4px;
         top: 50%;
-        transform: translateY(-50%);
+        right: -4px;
+
         cursor: pointer;
+
         color: var(--g-color-text-primary);
+
+        transform: translateY(-50%);
+        @include button-reset();
 
         &:hover,
         &:before,
         &:hover:before {
-            background: none;
             color: var(--g-color-text-primary);
+            background: none;
         }
     }
 
@@ -114,6 +131,7 @@ $titleLineHeight: calc(var(--g-text-body-1-line-height) * 1.15);
 
     &__arrow {
         right: 20px;
+
         transition: transform 0.1s ease-out;
 
         &:active {

@@ -4,32 +4,35 @@
 .dialog-related-entities {
     $class: &;
     width: 720px;
-    max-height: 95vh;
     min-height: 590px;
+    max-height: 95vh;
 
     &__body {
         display: flex;
         flex-direction: column;
-        gap: var(--g-spacing-5);
         align-items: flex-start;
+        gap: var(--g-spacing-5);
+
         padding: 0 var(--g-spacing-3) 0 var(--g-spacing-8);
     }
 
     &__loader {
-        width: 100%;
-        height: 100%;
         display: flex;
+        flex: 1;
         justify-content: center;
         align-items: center;
-        flex: 1;
+
+        width: 100%;
+        height: 100%;
     }
 
     &__list {
-        width: 100%;
         display: flex;
+        flex: 1;
         flex-direction: column;
         gap: var(--g-spacing-6);
-        flex: 1;
+
+        width: 100%;
     }
 
     &__empty-state,
@@ -37,22 +40,25 @@
         display: flex;
         justify-content: center;
         align-items: center;
+
         width: 100%;
     }
 
     &__direction-row {
         display: flex;
-        gap: 8px;
         align-items: center;
+        gap: 8px;
     }
 
     &__relations-count {
-        @include text-subheader-1;
         position: sticky;
         bottom: 0;
-        background-color: var(--g-color-base-modal);
-        padding: var(--g-spacing-3) 0 var(--g-spacing-8) 0;
+
         width: 100%;
+        padding: var(--g-spacing-3) 0 var(--g-spacing-8) 0;
+
+        background-color: var(--g-color-base-modal);
+        @include text-subheader-1;
     }
 
     &__relations-title {
@@ -62,24 +68,27 @@
     &__current-row {
         position: sticky;
         top: 0;
-        background-color: var(--g-color-base-modal);
+
         padding-top: var(--g-spacing-3);
         padding-bottom: var(--g-spacing-1);
+
+        background-color: var(--g-color-base-modal);
     }
 
     &__entry-menu {
         margin-left: auto;
         padding-right: var(--g-spacing-1);
+
         opacity: 0;
+
         transition: opacity 0.2s ease-in-out;
     }
 
     &__entity-row {
+        padding-left: var(--g-spacing-half);
         &:hover #{$class}__entry-menu {
             opacity: 1;
         }
-
-        padding-left: var(--g-spacing-half);
     }
 
     &__button-retry {

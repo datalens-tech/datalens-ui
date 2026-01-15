@@ -4,9 +4,10 @@
     }
 
     &__settings > * {
-        margin-bottom: 30px;
         display: flex;
         align-items: flex-start;
+
+        margin-bottom: 30px;
     }
 
     &__widget-size {
@@ -24,6 +25,7 @@
     &__loader {
         display: flex;
         justify-content: center;
+
         margin-top: 20px;
     }
 
@@ -38,6 +40,7 @@
 
     &__label {
         display: inline-block;
+
         width: 125px;
         margin-right: 16px;
     }

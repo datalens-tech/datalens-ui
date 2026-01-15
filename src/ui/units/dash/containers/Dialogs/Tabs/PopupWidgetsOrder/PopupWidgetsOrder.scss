@@ -4,9 +4,9 @@
     }
 
     &__body {
-        padding: 10px 32px;
         box-sizing: border-box;
         min-width: 350px;
+        padding: 10px 32px;
 
         & + .g-dialog-footer {
             padding: 28px 32px;
@@ -14,8 +14,9 @@
     }
 
     &__list {
-        max-height: 320px;
         overflow: auto;
+
+        max-height: 320px;
     }
 
     &__group-list {
@@ -41,8 +42,9 @@
     }
 
     &__widget-title {
+        overflow: hidden;
+
         white-space: nowrap;
         text-overflow: ellipsis;
-        overflow: hidden;
     }
 }

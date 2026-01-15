@@ -1,10 +1,13 @@
 .dataset-tab-field-list-row {
-    width: 100%;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid var(--g-color-line-generic);
+
+    width: 100%;
     padding-right: 5px;
+
     cursor: pointer;
+
+    border-bottom: 1px solid var(--g-color-line-generic);
 
     &_readonly {
         cursor: default;
@@ -13,7 +16,9 @@
     &__control-item {
         display: flex;
         flex: 0 0 24px;
+
         margin-left: auto;
+
         opacity: 0;
     }
 
@@ -25,18 +30,21 @@
 
     &_header {
         padding: 0;
+
         cursor: default;
     }
 
     &_invalid * {
-        color: var(--g-color-text-danger);
         font-style: italic;
+
+        color: var(--g-color-text-danger);
     }
 
     &__row-content {
-        text-overflow: ellipsis;
         overflow: hidden;
+
         white-space: nowrap;
+        text-overflow: ellipsis;
 
         &_header {
             font-weight: 500;

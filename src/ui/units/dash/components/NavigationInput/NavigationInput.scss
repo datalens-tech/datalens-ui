@@ -1,9 +1,9 @@
 .navigation-input {
     &__row {
         display: grid;
+        align-items: center;
         grid-template-columns: var(--dl-dropdown-navigation-width) auto;
         grid-column-gap: var(--g-spacing-2);
-        align-items: center;
     }
 
     &__button {

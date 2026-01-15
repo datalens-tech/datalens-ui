@@ -63,10 +63,10 @@
     }
 
     &__empty-state-title {
-        @include text-body-1;
         font-weight: normal;
 
         opacity: 0.5;
+        @include text-body-1;
     }
 
     &_collapsed &__content {

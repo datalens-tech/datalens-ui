@@ -1,19 +1,23 @@
 .dl-dataset-field-list {
     display: flex;
+
     height: 100%;
 
     &__field {
         display: flex;
         align-items: center;
+
         width: 100%;
         height: 100%;
         padding-inline: var(--dl-dataset-field-list-item-padding-inline);
+
         cursor: pointer;
     }
 
     &__field-title {
-        flex-grow: 1;
         overflow: hidden;
+        flex-grow: 1;
+
         white-space: nowrap;
         text-overflow: ellipsis;
     }
@@ -28,8 +32,9 @@
     }
 
     &__formula-icon {
-        color: var(--g-color-text-secondary);
         margin-right: 5px;
+
+        color: var(--g-color-text-secondary);
     }
 
     & .g-list .g-list__filter {

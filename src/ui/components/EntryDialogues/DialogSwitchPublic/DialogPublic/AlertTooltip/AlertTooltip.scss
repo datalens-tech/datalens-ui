@@ -1,12 +1,14 @@
 .dl-dialog-public-alert-tooltip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     width: 24px;
     height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
     &__icon {
-        color: var(--g-color-text-danger);
         vertical-align: middle;
+
+        color: var(--g-color-text-danger);
     }
 }

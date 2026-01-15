@@ -1,11 +1,13 @@
 .sub-dialog-control {
     width: 700px;
+
     font-size: 13px;
 
     &__body {
         display: flex;
-        flex-direction: column;
-        height: 320px;
         overflow: auto;
+        flex-direction: column;
+
+        height: 320px;
     }
 }

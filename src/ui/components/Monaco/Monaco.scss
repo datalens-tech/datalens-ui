@@ -1,11 +1,14 @@
 .dl-monaco-editor {
-    height: 100%;
-    width: 100%;
-    border-radius: 6px;
-    transition: border-color 0.1s linear;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 6px;
+
+    transition: border-color 0.1s linear;
 
     & .monaco-editor,
     .monaco-editor-background,

@@ -21,8 +21,8 @@
     }
 
     &__body-container_warning {
-        padding: 16px 0;
         width: auto;
+        padding: 16px 0;
     }
 
     &__body {
@@ -38,6 +38,7 @@
 
     &__message {
         padding: 0 12px;
+
         line-height: 26px;
     }
 
@@ -52,6 +53,7 @@
     &__footer {
         display: flex;
         align-items: center;
+
         margin-top: 8px;
     }
 
@@ -61,18 +63,21 @@
 
     &__icon_warning {
         margin-right: 5px;
+
         color: var(--g-color-text-warning);
     }
 
     &__button {
         display: flex;
-        align-items: center;
         flex: 0 0 50%;
+        align-items: center;
+
         padding: 0 2px 4px;
     }
 
     &__button_warning {
         flex: 0;
+
         margin-left: 10px;
     }
 

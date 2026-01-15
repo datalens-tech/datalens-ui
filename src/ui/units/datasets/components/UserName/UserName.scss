@@ -1,12 +1,15 @@
 .user-name-block {
-    width: 100%;
     display: flex;
 
+    width: 100%;
+
     &__name {
-        min-width: 0;
         overflow: hidden;
-        text-overflow: ellipsis;
+
+        min-width: 0;
+
         white-space: nowrap;
+        text-overflow: ellipsis;
 
         &:first-letter {
             color: var(--ds-color-error);
@@ -16,6 +19,7 @@
 
 .user-name-inline {
     display: inline-block;
+
     margin-left: -20px;
 
     &:first-letter {

@@ -6,6 +6,7 @@
 
 .chartkit-scrollable-node {
     overflow: auto;
+
     max-height: 100%;
 
     .chartkit-metric & {
@@ -14,17 +15,16 @@
 }
 
 .chartkit {
-    height: 100%;
     width: 100%;
+    height: 100%;
 
     &_mobile {
+        --ck-split-pane-background: var(--dl-color-widget-background, var(--g-color-base-float));
         // here transfer the remaining styles with redefinition while refactor and transfer of spreadsheet and yfm styles
 
         .chartkit-scrollable-node {
             max-height: 3000px;
         }
-
-        --ck-split-pane-background: var(--dl-color-widget-background, var(--g-color-base-float));
     }
 }
 
@@ -46,11 +46,13 @@
 }
 
 .dl-chart-tooltip-content {
-    font-size: 13px;
     padding: 0 14px;
+
+    font-size: 13px;
 
     &_mobile {
         padding: var(--g-spacing-3);
+
         font-size: 13px;
     }
 
@@ -59,19 +61,23 @@
     }
 
     &__color {
-        align-self: center;
-        border-radius: 1px;
         display: inline-block;
-        height: 6px;
+        align-self: center;
+
         width: 12px;
+        height: 6px;
+
+        border-radius: 1px;
     }
 
     &__block {
         display: flex;
-        padding: 0 4px;
-        max-width: 400px;
         overflow: hidden;
-        text-overflow: ellipsis;
+
+        max-width: 400px;
+        padding: 0 4px;
+
         white-space: nowrap;
+        text-overflow: ellipsis;
     }
 }

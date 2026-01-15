@@ -1,9 +1,11 @@
 .dropdown-navigation {
     position: relative;
+
     display: flex;
+    overflow: hidden; // ellipsis for long dataset names in the Selector dialog
+
     width: 100%;
     height: 28px;
-    overflow: hidden; // ellipsis for long dataset names in the Selector dialog
 
     &__button {
         justify-content: flex-start;

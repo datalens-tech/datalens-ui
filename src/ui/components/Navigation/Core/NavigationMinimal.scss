@@ -1,11 +1,13 @@
 .dl-core-navigation-minimal {
-    width: 440px;
-    height: 556px;
+    position: relative;
+
     display: flex;
     flex-direction: column;
-    position: relative;
-    max-height: 70vh;
+
+    width: 440px;
     max-width: 80vw;
+    height: 556px;
+    max-height: 70vh;
     padding-top: 16px;
 
     .dl-core-navigation {
@@ -23,22 +25,25 @@
 
     &__header {
         display: flex;
-        align-items: center;
-        padding: 0 20px 8px 12px;
         flex: 0 0 auto;
+        align-items: center;
+
+        padding: 0 20px 8px 12px;
     }
 
     &__controls {
         display: flex;
         align-items: center;
+
         width: 100%;
     }
 
     &__footer {
-        padding: 8px 16px 16px;
         display: flex;
         flex: 1 0 auto;
         gap: 16px;
+
+        padding: 8px 16px 16px;
     }
 
     &__footer-navigation-actions {
@@ -53,8 +58,9 @@
     }
 
     &__popup {
-        border-radius: 4px;
         overflow: hidden;
+
+        border-radius: 4px;
         background-color: var(--g-color-base-float);
     }
 }

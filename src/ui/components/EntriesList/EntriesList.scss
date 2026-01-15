@@ -6,6 +6,7 @@
     &__item {
         display: flex;
         align-items: center;
+
         width: 100%;
         padding: 0 4px;
     }
@@ -15,21 +16,24 @@
     }
 
     &__action-place {
-        flex: 1 0;
-        margin-left: 4px;
         display: flex;
+        flex: 1 0;
         justify-content: flex-end;
+
+        margin-left: 4px;
     }
 
     &__name {
-        @include overflow-ellipsis();
         flex: 1 0;
+
         margin-left: 8px;
+        @include overflow-ellipsis();
     }
 
     &__login {
         overflow: hidden;
         flex: 1 0;
+
         margin: 0 8px;
     }
 }

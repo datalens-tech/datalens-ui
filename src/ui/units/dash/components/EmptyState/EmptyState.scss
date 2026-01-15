@@ -1,8 +1,9 @@
 .dash-empty-state {
-    height: 100%;
+    display: flex;
     justify-content: center;
     align-items: center;
-    display: flex;
+
+    height: 100%;
 
     &__action {
         margin-top: 20px;

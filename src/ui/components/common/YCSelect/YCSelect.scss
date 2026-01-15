@@ -2,58 +2,70 @@
 
 .yc-select-control {
     $block: &;
-
-    box-sizing: border-box;
     position: relative;
+
     display: inline-flex;
     align-items: center;
+
+    box-sizing: border-box;
     padding-left: 8px;
+
+    cursor: pointer;
+    user-select: none;
+
+    color: var(--g-color-text-primary);
     border: 1px solid var(--g-color-line-generic);
     border-radius: 3px;
-    user-select: none;
+    outline: none;
+    background-color: var(--yc-select-background-color, 'none');
+
     transition:
         border-color 0.1s linear,
         background-color 0.1s linear;
-    cursor: pointer;
-    outline: none;
-    color: var(--g-color-text-primary);
-    background-color: var(--yc-select-background-color, 'none');
 
     &_size {
         &_xs {
             height: 24px;
-            line-height: 24px;
+
             font-size: 13px;
+            line-height: 24px;
+
             border-radius: var(--g-border-radius-s);
         }
 
         &_s {
             height: 28px;
-            line-height: 28px;
+
             font-size: 13px;
+            line-height: 28px;
+
             border-radius: var(--g-border-radius-m);
         }
 
         &_m {
             height: 32px;
-            line-height: 36px;
+
             font-size: 13px;
+            line-height: 36px;
+
             border-radius: var(--g-border-radius-l);
         }
 
         &_n {
             height: 36px;
-            line-height: 36px;
+
             font-size: 13px;
+            line-height: 36px;
+
             border-radius: var(--g-border-radius-xl);
         }
 
         &_promo {
             height: 44px;
-            line-height: 44px;
-            font-size: 15px;
-
             padding-left: 12px;
+
+            font-size: 15px;
+            line-height: 44px;
 
             #{$block}__tokens-text {
                 padding-right: 12px;
@@ -68,21 +80,26 @@
     }
 
     &_stretched {
-        width: 100%;
         overflow: hidden;
+
+        width: 100%;
     }
 
     &_disabled {
-        color: var(--g-color-text-hint);
         pointer-events: none;
 
+        color: var(--g-color-text-hint);
+
         &::before {
-            content: '';
             position: absolute;
             top: 0;
             left: 0;
+
             width: 100%;
             height: 100%;
+
+            content: '';
+
             background-color: var(
                 --yc-select-background-color-disabled,
                 var(--g-color-base-generic-accent-disabled)
@@ -108,35 +125,42 @@
     }
 
     &__label {
-        @include text-accent;
         display: flex;
         justify-content: center;
         align-items: center;
+
         padding-right: 6px;
+
         white-space: nowrap;
+        @include text-accent;
 
         &_limited {
-            max-width: 50%;
-            overflow: hidden;
-            text-overflow: ellipsis;
             display: block;
+            overflow: hidden;
+
+            max-width: 50%;
+
+            text-overflow: ellipsis;
         }
     }
 
     &__tokens {
         display: flex;
-        align-items: center;
-        line-height: 26px;
-        flex: 1 1 auto;
-        white-space: nowrap;
         overflow: hidden;
+        flex: 1 1 auto;
+        align-items: center;
+
+        line-height: 26px;
+        white-space: nowrap;
     }
 
     &__tokens-text {
-        padding-right: 8px;
-        text-overflow: ellipsis;
-        white-space: nowrap;
         overflow: hidden;
+
+        padding-right: 8px;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
 
         &_empty {
             color: var(--g-color-text-hint);
@@ -148,6 +172,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+
         width: 16px;
         height: 16px;
         margin-right: 5px;
@@ -156,15 +181,18 @@
     &__badge {
         display: flex;
         align-items: center;
+
         height: 20px;
         padding: 0 6px;
-        background-color: var(--yc-select-badge-color, var(--g-color-base-selection));
+
         border-radius: 4px;
+        background-color: var(--yc-select-badge-color, var(--g-color-base-selection));
+
         transition: background-color 0.1s linear;
 
         &_clicked {
-            background-color: var(--g-color-base-brand);
             color: var(--g-color-text-light-primary);
+            background-color: var(--g-color-base-brand);
         }
 
         &_without-arrow {
@@ -174,8 +202,9 @@
 
     &__arrow {
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
+
         min-width: 30px;
         height: 100%;
 
@@ -185,9 +214,11 @@
     }
 
     &__loader {
-        display: flex;
         position: absolute;
         left: 50%;
+
+        display: flex;
+
         transform: translateX(-50%);
     }
 }
@@ -197,8 +228,10 @@
 }
 
 .yc-select-popup {
-    max-width: 400px;
     overflow: hidden;
+
+    max-width: 400px;
+
     color: var(--g-color-text-primary);
 
     &_multi {
@@ -214,15 +247,16 @@
     }
 
     &__select-title {
-        @include text-accent;
         padding: 12px 0 4px 16px;
+        @include text-accent;
     }
 
     &__loader {
-        padding: 16px;
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
+
+        padding: 16px;
 
         &_mobile {
             padding: 35px;

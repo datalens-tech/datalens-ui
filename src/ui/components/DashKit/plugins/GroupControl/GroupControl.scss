@@ -4,19 +4,21 @@
     $class: &;
 
     display: block;
-    height: 100%;
+
     width: 100%;
+    height: 100%;
     min-height: 44px;
-    background-color: var(--dl-color-dashkit-control-background, var(--g-color-base-float));
+
     border-radius: var(--dl-dk-controls-border-radius, var(--g-border-radius-xs));
+    background-color: var(--dl-color-dashkit-control-background, var(--g-color-base-float));
 
     &_pulsate &__container {
         @include loading-pulsate-animation-style();
     }
 
     &__header {
-        margin-top: 8px;
         width: 100%;
+        margin-top: 8px;
     }
 
     &_static {
@@ -34,48 +36,56 @@
 
     &__locked {
         position: absolute;
+        z-index: 3; // to overlay Datepicker
+        top: 0;
+        left: 0;
+
         width: 100%;
         height: 100%;
-        left: 0;
-        top: 0;
+
         background-color: transparent;
-        z-index: 3; // to overlay Datepicker
     }
 
     &__loader {
         position: absolute;
+        z-index: 3; // to overlay Datepicker
+        top: 0;
+        left: 0;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
         width: 100%;
         height: 100%;
-        left: 0;
-        top: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 3; // to overlay Datepicker
+
         background-color: var(--g-color-sfx-fade);
     }
 
     &__controls {
         display: flex;
         flex-wrap: wrap;
-        padding-bottom: 8px;
         align-items: flex-end;
+
+        padding-bottom: 8px;
     }
 
     &__controls-title {
         display: block;
+
         width: 100%;
     }
 
     &__control-container {
-        display: contents;
         position: relative;
+
+        display: contents;
     }
 
     &__item,
     &__item-stub {
-        margin-top: 8px;
         max-width: 100%;
+        margin-top: 8px;
         padding: 0;
         padding-right: 10px;
     }
@@ -89,10 +99,12 @@
     }
 
     &__item-stub {
-        height: 28px;
         display: inline-flex;
-        vertical-align: middle;
         justify-content: center;
+
+        height: 28px;
+
+        vertical-align: middle;
 
         &_error {
             max-width: unset;
@@ -100,8 +112,9 @@
     }
 
     &__item-label {
-        max-width: 50%;
         flex-shrink: 0;
+
+        max-width: 50%;
 
         &_vertical {
             max-width: 100%;
@@ -119,8 +132,8 @@
         }
 
         #{$class}__item {
-            padding-right: 0;
             margin-top: 10px;
+            padding-right: 0;
         }
 
         #{$class}__item_checkbox {

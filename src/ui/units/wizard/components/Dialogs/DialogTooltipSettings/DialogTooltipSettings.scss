@@ -2,19 +2,21 @@
     width: 680px;
 
     &__title-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 24px;
+        height: 24px;
         margin-right: 4px;
         margin-bottom: 2px;
-        height: 24px;
-        width: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 
     &__row {
-        margin-top: 16px;
         display: flex;
         flex-direction: row;
         align-items: flex-start;
+
+        margin-top: 16px;
     }
 }

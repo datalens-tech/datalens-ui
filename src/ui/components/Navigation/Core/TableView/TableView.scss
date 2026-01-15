@@ -4,23 +4,28 @@
     $class: &;
     $checkboxWidth: 30px;
 
+    $rowBtnsWidth: 86px;
+    position: relative;
+
     width: 100%;
     height: 100%;
-    position: relative;
 
     &__row-link-wrap {
         display: flex;
         align-items: center;
+
         width: 100%;
     }
 
     &__row {
         display: flex;
         align-items: center;
+
         padding: 0 20px;
 
         &:hover {
             cursor: pointer;
+
             background: var(--g-color-base-simple-hover);
         }
 
@@ -71,42 +76,48 @@
     }
 
     &__row_header {
-        height: 40px;
-        background: var(--g-color-base-background);
         position: sticky;
         z-index: 2;
         top: 0;
         left: 0;
+
         width: 100%;
+        height: 40px;
+
+        background: var(--g-color-base-background);
 
         &:hover {
-            background: var(--g-color-base-background);
             cursor: initial;
+
+            background: var(--g-color-base-background);
         }
 
         #{$class}__name {
-            @include text-subheader-1();
             margin-right: 12px;
             padding-left: 2px;
+            @include text-subheader-1();
         }
 
         #{$class}__createdBy {
-            @include text-subheader-1();
-            opacity: initial;
             padding: 0 10px 0 18px;
+
+            opacity: initial;
+            @include text-subheader-1();
         }
 
         #{$class}__date {
-            @include text-subheader-1();
-            opacity: initial;
             padding-right: 2px;
+
+            opacity: initial;
             color: var(--g-color-text-primary);
+            @include text-subheader-1();
         }
     }
 
     &__row_mode_modal#{$class}__row_header {
         #{$class}__date {
             justify-content: flex-start;
+
             padding-left: 20px;
         }
     }
@@ -154,6 +165,7 @@
 
         #{$class}__date {
             flex: 0 0 60px;
+
             min-width: auto;
         }
     }
@@ -161,55 +173,64 @@
     &__row_mode_modal {
         #{$class}__date {
             flex: 0 0 70px;
+
             min-width: auto;
         }
     }
 
     &__row-loader-more {
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
+
         height: 100%;
     }
 
     &__icon {
-        margin-right: 12px;
         position: relative;
+
         flex: 0 0 auto;
+
+        margin-right: 12px;
     }
 
-    $rowBtnsWidth: 86px;
-
     &__info {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        min-height: 40px;
         position: relative;
-        padding-right: $rowBtnsWidth;
+
+        display: flex;
         overflow: hidden;
+        align-items: center;
+
+        width: 100%;
+        min-height: 40px;
+        padding-right: $rowBtnsWidth;
     }
 
     &__row-btns {
         position: absolute;
-        right: 0;
         top: 0;
+        right: 0;
         bottom: 0;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
         width: $rowBtnsWidth;
         padding-left: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
     }
 
     &__row-btn {
+        display: flex;
         visibility: hidden;
+        justify-content: center;
+        align-items: center;
+
         width: 28px;
         height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+
         cursor: pointer;
+
         border-radius: 4px;
 
         #{$class}__row:hover &,
@@ -229,6 +250,7 @@
 
     &__btn-change-favorite {
         visibility: hidden;
+
         color: var(--g-color-base-misc-heavy-hover);
 
         &_isFavorite {
@@ -269,17 +291,21 @@
     }
 
     #{$class} &__lock {
-        margin: 2px 5px 0 10px;
         flex: 0 0 16px;
+
+        margin: 2px 5px 0 10px;
+
         color: var(--g-color-text-hint);
     }
 
     &__name {
-        flex: 3 1 30%;
         display: flex;
-        align-items: center;
         overflow: hidden;
+        flex: 3 1 30%;
+        align-items: center;
+
         min-width: 100px;
+
         color: var(--g-color-text-primary);
 
         span,
@@ -289,21 +315,24 @@
     }
 
     &__createdBy {
-        flex: 1 0 20%;
         display: flex;
-        min-width: 100px;
         overflow: hidden;
+        flex: 1 0 20%;
+
+        min-width: 100px;
         padding: 0 10px;
     }
 
     &__date {
-        flex: 0 0 140px;
         display: flex;
-        justify-content: flex-end;
-        color: var(--g-color-text-secondary);
-        align-items: center;
-        min-width: 100px;
         overflow: hidden;
+        flex: 0 0 140px;
+        justify-content: flex-end;
+        align-items: center;
+
+        min-width: 100px;
+
+        color: var(--g-color-text-secondary);
 
         > span {
             @include overflow-ellipsis();
@@ -319,8 +348,9 @@
         &:visited,
         &:focus {
             text-decoration: none;
-            outline: none;
+
             color: inherit;
+            outline: none;
         }
     }
 
@@ -334,24 +364,29 @@
 
     &__name-line {
         display: flex;
-        flex: 1 1 auto;
-        line-height: 20px;
         overflow: hidden;
+        flex: 1 1 auto;
+
+        line-height: 20px;
     }
 
     &__parent-folder {
-        height: 20px;
         display: flex;
-        align-items: center;
-        flex: 0 0 50%;
-        font-size: 13px;
         overflow: hidden;
+        flex: 0 0 50%;
+        align-items: center;
+
+        height: 20px;
+
+        font-size: 13px;
     }
 
     &__folder-inline {
         flex: 0 0 16px;
-        color: var(--g-color-text-hint);
+
         margin-right: 2px;
+
+        color: var(--g-color-text-hint);
     }
 
     &__parent-folder-name {
@@ -363,17 +398,19 @@
     }
 
     &__selection-checkbox {
-        padding-right: 14px;
         display: flex;
         align-items: center;
         align-self: stretch;
+
+        padding-right: 14px;
     }
 
     &__batch-panel {
         position: absolute;
-        width: calc(100% - 44px);
         bottom: 8px;
         left: 22px;
+
+        width: calc(100% - 44px);
     }
 
     &_mobile {

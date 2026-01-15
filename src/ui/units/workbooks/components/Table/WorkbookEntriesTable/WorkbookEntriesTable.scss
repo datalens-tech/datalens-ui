@@ -3,8 +3,10 @@
 .dl-workbook-entries-table {
     &__table {
         display: table;
+
         width: 100%;
         max-width: 100%;
+
         table-layout: fixed;
     }
 
@@ -22,15 +24,18 @@
 
     &__header-cell {
         display: table-cell;
-        box-sizing: content-box;
         overflow: hidden;
-        overflow-wrap: break-word;
-        text-align: left;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        vertical-align: middle;
+
+        box-sizing: content-box;
         padding: 0 10px;
+
+        text-align: left;
+        vertical-align: middle;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
         border-bottom: 1px solid var(--g-color-line-generic);
+        overflow-wrap: break-word;
 
         &_author {
             width: 165px;
@@ -46,7 +51,7 @@
     }
 
     &__header-cell {
-        @include text-subheader-1();
         color: var(--g-color-text-secondary);
+        @include text-subheader-1();
     }
 }

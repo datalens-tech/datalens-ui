@@ -1,10 +1,11 @@
 .dl-scrollable-with-shadow {
     --dl-scrollable-shadow-size: 40px;
+    position: relative;
+
+    overflow: auto;
 
     width: 100%;
     height: 100%;
-    overflow: auto;
-    position: relative;
 
     &[data-show-top] > &__shadow_top,
     &[data-show-bottom] > &__shadow_bottom,
@@ -15,16 +16,21 @@
 
     &__shadow {
         position: sticky;
-        width: 100%;
         z-index: 1;
+
+        width: 100%;
+
         opacity: 0;
+
         transition: opacity 0.1s ease-in-out;
 
         &::before {
-            content: '';
             position: absolute;
+
             width: 100%;
             height: var(--dl-scrollable-shadow-size);
+
+            content: '';
             pointer-events: none;
         }
 
@@ -71,6 +77,7 @@
 
         &_right::before {
             left: calc(100% - var(--dl-scrollable-shadow-size));
+
             background: linear-gradient(to left, var(--g-color-base-background), transparent)
                 no-repeat;
         }

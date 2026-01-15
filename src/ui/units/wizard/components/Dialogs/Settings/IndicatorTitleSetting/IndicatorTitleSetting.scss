@@ -1,19 +1,22 @@
 .indicator-title-setting {
-    margin-bottom: 30px;
     display: flex;
     flex-direction: column;
 
+    margin-bottom: 30px;
+
     &__row {
-        margin-bottom: 16px;
         display: flex;
         flex-direction: row;
         align-items: center;
+
         width: 100%;
+        margin-bottom: 16px;
     }
 
     &__title {
+        flex-shrink: 0;
+
         width: 125px;
         margin-right: 16px;
-        flex-shrink: 0;
     }
 }

@@ -6,19 +6,21 @@
 
 @mixin width($class, $size) {
     #{$class}__width_#{$size} {
-        width: #{$size}px;
         flex: 0 0 #{$size}px;
+
+        width: #{$size}px;
     }
 }
 
 @mixin flex-grow-vertically {
     display: flex;
-    flex-direction: column;
     flex-grow: 1;
+    flex-direction: column;
 }
 
 @mixin overflow-ellipsis() {
-    white-space: nowrap;
     overflow: hidden;
+
+    white-space: nowrap;
     text-overflow: ellipsis;
 }

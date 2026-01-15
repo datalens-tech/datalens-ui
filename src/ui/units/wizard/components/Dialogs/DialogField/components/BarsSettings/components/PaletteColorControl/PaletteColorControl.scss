@@ -17,8 +17,9 @@
     }
 
     &__palette {
+        padding: var(--g-spacing-4);
+
         border-radius: 8px;
         background-color: var(--g-color-base-background);
-        padding: var(--g-spacing-4);
     }
 }

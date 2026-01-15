@@ -1,21 +1,25 @@
 .ql-view-setup {
     &__form {
         width: 480px;
-        border: 1px solid var(--g-color-line-generic);
-        border-radius: 8px;
         margin: 20px;
         padding: 20px;
+
+        border: 1px solid var(--g-color-line-generic);
+        border-radius: 8px;
     }
 
     &__form-header {
-        font-size: 17px;
-        margin-bottom: 20px;
         display: inline-block;
+
+        margin-bottom: 20px;
+
+        font-size: 17px;
     }
 
     &__form-row {
         display: flex;
         align-items: center;
+
         margin-bottom: 12px;
     }
 
@@ -24,9 +28,10 @@
     }
 
     &__form-label {
+        display: inline-block;
+
         width: 90px;
         margin-right: 20px;
-        display: inline-block;
     }
 
     &__connection-select-btn {
@@ -39,6 +44,7 @@
 
     &__connection-select-btn-wrapper {
         display: inline-block;
+
         max-width: 240px;
         &_error {
             width: 250px;
@@ -50,8 +56,7 @@
     }
 
     &__entry-icon {
-        margin-right: 7px;
-
         height: 28px;
+        margin-right: 7px;
     }
 }

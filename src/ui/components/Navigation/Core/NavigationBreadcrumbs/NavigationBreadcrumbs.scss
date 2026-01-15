@@ -1,29 +1,33 @@
 @import '../../../../styles/mixins';
 
 .dl-core-navigation-breadcrumbs {
-    flex: 1 1 0;
     position: relative;
+
+    flex: 1 1 0;
+
     height: var(--dl-navigation-breadcrumbs-height);
 
     &__wrapper {
         position: absolute;
         inset: 0;
 
+        display: flex;
+
         line-height: var(--dl-navigation-breadcrumbs-height);
         vertical-align: middle;
-        display: flex;
     }
 
     &__line {
-        width: 100%;
         display: flex;
         align-items: center;
+
+        width: 100%;
     }
 
     &__component {
-        padding: 0 10px;
         max-width: 100%;
         min-height: var(--dl-navigation-breadcrumbs-height);
+        padding: 0 10px;
 
         &_showMenu {
             max-width: calc(100% - 40px);

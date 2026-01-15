@@ -1,17 +1,21 @@
 .debug-info-tool {
     &__label {
-        background: var(--g-color-base-background);
-        border: 1px dotted var(--g-color-line-misc);
-        padding: 0 3px;
-        z-index: 96;
-        display: inline-block;
-        width: fit-content;
         position: absolute;
-        opacity: 0.4;
+        z-index: 96;
+
+        display: inline-block;
+
+        width: fit-content;
+        padding: 0 3px;
+
         font-size: 10px;
-        border-radius: 3px;
         line-height: 1;
         pointer-events: none;
+
+        opacity: 0.4;
+        border: 1px dotted var(--g-color-line-misc);
+        border-radius: 3px;
+        background: var(--g-color-base-background);
 
         &_top {
             top: -8px;

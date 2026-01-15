@@ -3,20 +3,24 @@
 @import '../../../../styles/variables.scss';
 
 .wrapped-loader {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     height: 100vh;
 
     &_with-height-offset {
-        height: calc(100vh - $headerHeight);
         top: math.div(-$headerHeight, 2);
+
+        height: calc(100vh - $headerHeight);
     }
 
     &_with-height-offset#{&}_with-aside-header {
-        height: calc(100vh - $actionPanelHeight);
         // A slight asymmetry helps to remove the loader "jump" when the actions panel appears
         top: math.div(-$actionPanelHeight, 2);
+
+        height: calc(100vh - $actionPanelHeight);
     }
 }

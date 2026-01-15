@@ -1,29 +1,35 @@
 .wizard-dataset-item {
-    padding: 2px 8px;
+    position: relative;
+
+    display: flex;
+    overflow: hidden;
+    align-items: center;
+
     height: 32px;
     margin-bottom: 6px;
-    border-radius: 2px;
-    cursor: pointer;
+    padding: 2px 8px;
+
     font-size: 13px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    position: relative;
+    cursor: pointer;
+
+    border-radius: 2px;
 
     &.item-error {
         cursor: default;
     }
 
     &__item-title {
-        flex: 1;
         overflow: hidden;
-        text-overflow: ellipsis;
+        flex: 1;
+
         white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     &.pseudo-item {
-        color: var(--g-color-text-secondary);
         font-style: italic;
+
+        color: var(--g-color-text-secondary);
 
         .wizard-dataset-item__item-icon {
             &:hover {
@@ -46,13 +52,14 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        cursor: pointer;
 
         width: 24px;
         height: 24px;
-        border: 1px solid transparent;
-
         margin-right: 8px;
+
+        cursor: pointer;
+
+        border: 1px solid transparent;
 
         &:hover {
             border-color: var(--w-dataset-item-border-hover);
@@ -72,30 +79,33 @@
 
     &__item-formula-icon {
         display: none;
-        align-items: center;
         justify-content: center;
+        align-items: center;
 
         width: 24px;
         height: 24px;
-        border: 1px solid transparent;
-
         margin-right: 4px;
 
-        border-radius: 2px;
         color: var(--g-color-text-secondary);
+        border: 1px solid transparent;
+        border-radius: 2px;
     }
 
     &__item-link-icon {
-        vertical-align: middle;
         display: inline;
-        color: var(--g-color-text-secondary);
+
         margin-left: 8px;
         padding: 2px;
+
+        vertical-align: middle;
+
+        color: var(--g-color-text-secondary);
         border-radius: 2px;
 
         svg {
             width: 13px;
             height: 13px;
+
             vertical-align: sub;
         }
 
@@ -106,15 +116,15 @@
 
     &__item-more-icon {
         display: flex;
-        align-items: center;
-        justify-content: center;
-
         visibility: hidden;
+        justify-content: center;
+        align-items: center;
     }
 
     &__item-right-icons-container {
         display: flex;
         align-items: center;
+
         margin-left: 6px;
     }
 
@@ -140,13 +150,17 @@
 
     &.local-item:before {
         position: absolute;
-        content: '';
+        left: 0;
+
         display: inline-block;
+
         width: 4px;
         height: 20px;
-        left: 0;
-        border-bottom-right-radius: 5px;
+
+        content: '';
+
         border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
     }
 
     &.ignore-drag {
@@ -174,6 +188,7 @@
 
     &.item-error {
         font-style: italic;
+
         color: var(--g-color-base-danger-heavy);
     }
 

@@ -1,7 +1,9 @@
 .dl-public-alert-dialog {
-    box-sizing: border-box;
     position: relative;
+
     display: flex;
     flex-direction: column;
+
+    box-sizing: border-box;
     width: 480px;
 }

@@ -2,15 +2,18 @@
 
 .color-picker-input-with-preset {
     $class: &;
-    display: inline-block;
-    position: relative;
-    width: 100%;
 
     $color-item-size: 28px;
+    position: relative;
+
+    display: inline-block;
+
+    width: 100%;
 
     &__palette-list {
         display: flex;
         flex-direction: column;
+
         padding: var(--g-spacing-4);
     }
 
@@ -24,16 +27,18 @@
 
     &__color-picker {
         display: block;
+
         width: 140px;
         min-width: 100%;
     }
 
     &__custom-palette-bg-btn,
     &__highlight-wrapper {
-        width: $color-item-size;
-        height: $color-item-size;
         flex-grow: 0;
         flex-shrink: 0;
+
+        width: $color-item-size;
+        height: $color-item-size;
     }
 
     &__custom-palette-bg-btn,
@@ -52,6 +57,7 @@
     &__highlight-wrapper {
         --_--color-item-border-color: transparent;
         position: relative;
+
         border-radius: 6px;
 
         &_with-border {
@@ -59,9 +65,11 @@
         }
 
         &::before {
-            content: '';
             position: absolute;
             inset: 0;
+
+            content: '';
+
             border: 1px solid var(--_--color-item-border-color);
             border-radius: 6px;
         }
@@ -72,17 +80,21 @@
         }
 
         &:not(&_selected):hover::before {
-            content: '';
             position: absolute;
             inset: -3px;
+
+            content: '';
+
             border: 2px solid var(--g-color-line-generic-hover);
             border-radius: 9px;
         }
 
         &_selected::before {
-            content: '';
             position: absolute;
             inset: -3px;
+
+            content: '';
+
             border: 2px solid var(--g-color-line-brand);
             border-radius: 9px;
         }
@@ -90,16 +102,18 @@
 
     &__color-item {
         display: inline-block;
+
         width: $color-item-size;
         height: $color-item-size;
+
         background-clip: padding-box;
 
         &_transparent {
+            border: 1px solid transparent;
             background-image: repeating-conic-gradient(
                 var(--g-color-base-generic) 0 25%,
                 var(--g-color-base-background) 0 50%
             );
-            border: 1px solid transparent;
         }
 
         &_widget-bg {
@@ -108,11 +122,13 @@
     }
 
     &__theme {
-        background-clip: padding-box;
-        background-color: var(--g-color-base-float);
+        overflow: hidden;
+
         width: $color-item-size;
         height: $color-item-size;
-        overflow: hidden;
+
+        background-color: var(--g-color-base-float);
+        background-clip: padding-box;
     }
 
     &__theme,

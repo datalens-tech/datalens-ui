@@ -20,18 +20,22 @@
 
     &__dropdown-text {
         margin-left: 8px;
+
         line-height: 24px;
     }
 
     &__dropdown-hint {
         max-width: 200px;
-        line-height: normal;
         padding-bottom: 4px;
+
+        line-height: normal;
+
         color: var(--g-color-text-hint);
     }
 
     &__notice {
         margin: 4px -4px 8px;
+
         cursor: initial;
         &:hover {
             background-color: initial;

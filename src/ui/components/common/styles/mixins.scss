@@ -6,19 +6,24 @@
 }
 
 @mixin accessible-hidden() {
-    opacity: 0;
     position: absolute;
+
     clip: rect(0 0 0 0);
+
     width: 1px;
     height: 1px;
     margin: -1px;
+
+    opacity: 0;
 }
 
 @mixin substrate($color: var(--g-color-base-background)) {
     &::before {
-        content: '';
-        @include stretch();
-        background-color: $color;
         z-index: -1;
+
+        content: '';
+
+        background-color: $color;
+        @include stretch();
     }
 }

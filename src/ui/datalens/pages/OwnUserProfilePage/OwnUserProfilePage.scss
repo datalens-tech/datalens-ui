@@ -1,7 +1,8 @@
 .dl-own-user-profile-page {
-    min-height: 100vh;
     display: grid;
     grid-template-rows: auto 1fr;
+
+    min-height: 100vh;
 
     &__content {
         padding: var(--g-spacing-5);

@@ -5,40 +5,44 @@
 
     &__container {
         display: flex;
+        overflow: visible;
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
         row-gap: 20px;
-        overflow: visible;
     }
 
     &__line {
         display: flex;
         align-items: center;
-        width: 100%;
         column-gap: 16px;
+
+        width: 100%;
         min-height: 28px;
     }
 
     &__line-title {
         flex: 0 0 180px;
+
         line-height: 18px;
 
         &_vertical-align-start {
             margin-bottom: auto;
+
             transform: translateY(5px);
         }
     }
 
     &__line-content {
         display: flex;
-        flex-direction: column;
         flex-grow: 1;
+        flex-direction: column;
     }
 
     &__switch-template {
         display: flex;
         align-items: center;
+
         height: 28px;
         margin-right: auto;
     }
@@ -49,16 +53,19 @@
 
     &__validation-hint {
         margin-top: 4px;
+
         color: var(--g-color-text-hint);
     }
 
     &__template-warning {
         margin-top: 8px;
+
         color: var(--g-color-text-warning-heavy);
     }
 
     &__title-tooltip {
         margin-left: var(--g-spacing-1);
+
         vertical-align: middle;
 
         .yfm {
@@ -68,8 +75,9 @@
 
     &__loader {
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
+
         height: 100%;
     }
 

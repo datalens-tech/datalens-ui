@@ -1,7 +1,9 @@
 .conn-form-radio-group {
     &__hint .yfm p {
         max-width: 500px;
+
         line-height: 16px;
+
         color: var(--g-color-text-secondary);
     }
 
@@ -12,13 +14,15 @@
     &__text {
         display: inline-flex;
         align-items: center;
+
         white-space: nowrap;
     }
 
     &__icon {
         &_end {
-            margin-left: 4px;
             display: inline-flex;
+
+            margin-left: 4px;
         }
 
         &_view_error {

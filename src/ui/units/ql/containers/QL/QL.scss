@@ -1,23 +1,29 @@
 .ql {
     &__content-overlay {
-        display: flex;
         position: absolute;
-        left: 0;
+        z-index: 10;
         right: 0;
-        height: calc(100% - 56px);
         bottom: 0;
+        left: 0;
+
+        display: flex;
         justify-content: center;
         align-items: center;
+
+        height: calc(100% - 56px);
+
         font-size: var(--g-text-display-3-font-size);
         line-height: var(--g-text-display-3-line-height);
+
         background: var(--g-color-base-generic);
-        z-index: 10;
     }
 
     &__content {
-        flex-grow: 1;
-        display: block;
         position: relative;
+
+        display: block;
+        flex-grow: 1;
+
         width: 100%;
         height: calc(100% - 56px);
     }

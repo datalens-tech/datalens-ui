@@ -2,25 +2,28 @@
 @use '../../mixins' as connMixins;
 
 .conn-form-chyt {
-    @include connMixins.form-layout();
-
     display: flex;
     flex-direction: column;
     gap: 20px;
+    @include connMixins.form-layout();
 
     &__card-wrap {
-        border-radius: 8px;
         text-decoration: none;
+
+        border-radius: 8px;
     }
 
     &__card {
         display: flex;
         flex-direction: column;
         gap: 8px;
+
         padding: 16px 16px 24px;
+
+        cursor: pointer;
+
         border: 1px solid var(--g-color-line-generic);
         border-radius: 8px;
-        cursor: pointer;
 
         &:hover {
             border-color: var(--g-color-line-generic-hover);
@@ -33,14 +36,15 @@
     }
 
     &__card-title-content {
-        @include mixins.text-subheader-2();
         color: var(--g-color-text-primary);
+        @include mixins.text-subheader-2();
     }
 
     &__card-title-additional {
         display: flex;
         flex-grow: 1;
         justify-content: flex-end;
+
         color: var(--g-color-text-secondary);
     }
 
@@ -52,7 +56,9 @@
         display: flex;
         align-items: center;
         gap: 8px;
+
         padding: 16px;
+
         border-radius: 8px;
         background-color: var(--g-color-base-info-light);
     }

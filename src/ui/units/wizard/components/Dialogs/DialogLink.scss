@@ -4,32 +4,38 @@
     width: 480px;
 
     &__dataset {
-        line-height: 28px;
         margin-bottom: 16px;
+
+        line-height: 28px;
         vertical-align: middle;
 
         &-icon {
-            float: left;
-            margin-right: 8px;
             display: flex;
-            align-items: center;
+            float: left;
             justify-content: center;
-            color: var(--g-color-base-positive-heavy);
-            height: 24px;
+            align-items: center;
+
             width: 24px;
+            height: 24px;
             margin-top: 2px;
+            margin-right: 8px;
+
+            color: var(--g-color-base-positive-heavy);
         }
 
         &-title {
-            width: 130px;
             display: inline-block;
             overflow: hidden;
-            text-overflow: ellipsis;
+
+            width: 130px;
+
             white-space: nowrap;
+            text-overflow: ellipsis;
         }
 
         &-fields {
             float: right;
+
             width: 238px;
         }
     }

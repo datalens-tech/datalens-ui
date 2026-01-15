@@ -1,9 +1,10 @@
 .dl-core-navigation-error {
     display: flex;
+    flex-grow: 1;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
-    flex-grow: 1;
+
     height: 100%;
 
     &__button-retry {

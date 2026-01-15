@@ -1,7 +1,8 @@
 .chartkit-modal-footer {
     display: grid;
-    grid-template-columns: auto auto;
-    grid-column-gap: 10px;
     justify-content: end;
+    grid-template-columns: auto auto;
+
     margin-top: 25px;
+    grid-column-gap: 10px;
 }

@@ -1,11 +1,14 @@
 .dl-animate-block {
     position: relative;
     top: 6px;
+
     opacity: 0;
 
     &_animate {
         top: 0;
+
         opacity: 1;
+
         transition:
             top 0.2s,
             opacity 0.2s;

@@ -4,8 +4,8 @@
     &_theme {
         &_error {
             &.popup2_theme_normal {
-                background: #c62828;
                 color: #fff;
+                background: #c62828;
 
                 &:before {
                     background: transparent;
@@ -20,8 +20,8 @@
 
         &_normal {
             &.popup2_theme_normal {
-                background: #333;
                 color: #fff;
+                background: #333;
 
                 &:before {
                     background: transparent;
@@ -55,6 +55,7 @@
         &_s {
             .popup-message__content {
                 padding: 10px;
+
                 font-size: 13px;
                 line-height: 12px;
             }
@@ -67,7 +68,8 @@
     }
 
     &__content {
-        color: #000000;
         padding: 10px;
+
+        color: #000000;
     }
 }

@@ -1,19 +1,22 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
 .export-loading {
-    @include text-body-2();
     color: var(--g-color-text-complementary);
     background-color: var(--g-color-base-background);
+    @include text-body-2();
 
     &::before {
-        content: '';
         position: absolute;
+        z-index: -1;
         top: 0;
         left: 0;
+
         width: 100%;
         height: 100%;
+
+        content: '';
         pointer-events: none;
-        z-index: -1;
+
         background-color: var(--dl-color-export-loading-toast);
     }
 
@@ -24,8 +27,10 @@
 
     &__success-icon {
         display: flex;
-        width: 25px;
         justify-content: center;
+
+        width: 25px;
+
         color: var(--g-color-text-positive);
     }
 
@@ -38,12 +43,16 @@
     }
 
     &_reference {
-        width: 312px;
-        visibility: hidden;
-        opacity: 0;
         position: absolute;
         right: 0;
         bottom: 0;
+
+        visibility: hidden;
+
+        width: 312px;
+
         white-space: nowrap;
+
+        opacity: 0;
     }
 }

@@ -2,12 +2,14 @@
 
 .entry-row {
     $class: &;
+    display: flex;
+    align-items: center;
+
     width: 100%;
     height: 40px;
-    align-items: center;
-    display: flex;
-    transition: background ease-in-out 0.2s;
     padding-left: 4px;
+
+    transition: background ease-in-out 0.2s;
 
     &_hoverable:hover {
         background: var(--g-color-base-simple-hover);
@@ -18,24 +20,24 @@
     }
 
     &__text-block {
-        @include overflow-ellipsis;
-        overflow: hidden;
         display: flex;
+        overflow: hidden;
         align-items: center;
+        @include overflow-ellipsis;
     }
 
     &__name {
+        margin-left: 10px;
         @include text-body-1;
         @include overflow-ellipsis;
-        margin-left: 10px;
     }
 
     &__entry {
-        margin-right: 10px;
-
-        overflow: hidden;
         display: flex;
+        overflow: hidden;
         align-items: center;
+
+        margin-right: 10px;
     }
 
     &__icon {
@@ -48,8 +50,9 @@
 
     &__locked-label {
         display: flex;
-        gap: 8px;
-        margin-left: 8px;
         flex-shrink: 0;
+        gap: 8px;
+
+        margin-left: 8px;
     }
 }

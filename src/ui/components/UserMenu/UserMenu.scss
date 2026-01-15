@@ -1,23 +1,27 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
 .dl-user-menu {
-    background-color: var(--g-color-base-float);
-    padding: var(--g-spacing-2);
     box-sizing: border-box;
-    max-height: calc(100vh - 100px);
     width: 300px;
+    max-height: calc(100vh - 100px);
+    padding: var(--g-spacing-2);
+
+    background-color: var(--g-color-base-float);
 
     &__entry {
-        box-sizing: border-box;
         display: flex;
-        align-items: flex-start;
         justify-content: space-between;
+        align-items: flex-start;
+
+        box-sizing: border-box;
         padding: var(--g-spacing-2);
+
         text-decoration: none;
     }
 
     &__entry-content {
         flex: auto;
+
         min-width: 0;
     }
 
@@ -34,20 +38,21 @@
     }
 
     &__user-info {
-        @include text-body-short;
         display: flex;
         flex: auto;
         flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+
         min-width: 0;
         margin-left: var(--g-spacing-3);
-        align-items: flex-start;
-        justify-content: center;
+        @include text-body-short;
     }
 
     &__user-name,
     &__user-description {
-        @include overflow-ellipsis();
         max-width: 100%;
+        @include overflow-ellipsis();
     }
 
     &__user-description {
@@ -59,8 +64,8 @@
     }
 
     &__user-label {
-        margin-top: var(--g-spacing-1);
         width: auto;
         max-width: 100%;
+        margin-top: var(--g-spacing-1);
     }
 }

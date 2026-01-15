@@ -9,9 +9,10 @@
     }
 
     &__actions {
-        padding: 15px;
         display: flex;
         flex-direction: row-reverse;
+
+        padding: 15px;
     }
 
     &__action {

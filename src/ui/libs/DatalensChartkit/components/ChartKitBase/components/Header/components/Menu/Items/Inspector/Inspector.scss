@@ -3,11 +3,14 @@
 
 .chartkit-inspector {
     &__body {
-        max-height: 65vh;
         overflow: auto;
-        color: var(--g-color-text-primary);
+
+        max-height: 65vh;
+
         font-size: var(--g-text-body-1-font-size);
         line-height: var(--g-text-body-1-line-height);
+
+        color: var(--g-color-text-primary);
     }
 
     &__divider {
@@ -20,7 +23,7 @@
     }
 
     &__label {
-        @include text-code-1();
         margin-left: 5px;
+        @include text-code-1();
     }
 }

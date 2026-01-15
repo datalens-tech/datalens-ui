@@ -1,8 +1,9 @@
 @import './variables';
 
 @mixin overflow-ellipsis() {
-    white-space: nowrap;
     overflow: hidden;
+
+    white-space: nowrap;
     text-overflow: ellipsis;
 }
 
@@ -12,9 +13,9 @@
 
     font-size: inherit;
     font-weight: 400;
+    cursor: pointer;
 
-    background: none;
     border: none;
     outline: none;
-    cursor: pointer;
+    background: none;
 }

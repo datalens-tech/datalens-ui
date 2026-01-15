@@ -1,8 +1,9 @@
 .service-settings-container {
     &__loader {
-        width: 100%;
-        height: 100%;
         display: flex;
         justify-content: center;
+
+        width: 100%;
+        height: 100%;
     }
 }

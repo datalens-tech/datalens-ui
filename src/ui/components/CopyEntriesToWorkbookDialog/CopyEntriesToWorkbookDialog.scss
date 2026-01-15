@@ -1,14 +1,17 @@
 .dl-copy-entries-workbook-dialog {
     position: relative;
+
     display: flex;
     flex-direction: column;
+
     max-height: calc(100vh - 32px);
 
     &__body {
         display: flex;
-        flex-direction: column;
-        padding-bottom: 32px;
         overflow-y: auto;
+        flex-direction: column;
+
+        padding-bottom: 32px;
     }
 
     &__error-block {
@@ -23,6 +26,7 @@
         flex: 1;
         align-self: center;
         justify-self: center;
+
         margin: 20px;
     }
 }

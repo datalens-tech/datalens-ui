@@ -1,10 +1,10 @@
 .group-control-dialog {
     $sidebarWidth: 260px;
     $tabListHeight: 62px;
+    display: flex;
 
     height: min(728px, 90vh);
     min-height: 400px;
-    display: flex;
 
     &__body {
         padding-top: 0;
@@ -12,8 +12,9 @@
     }
 
     &__selectors-list {
-        height: fit-content;
         overflow-y: auto;
+
+        height: fit-content;
     }
 
     &__divider {
@@ -22,6 +23,7 @@
 
     &__row {
         display: flex;
+
         width: 100%;
         margin-block-end: var(--g-spacing-2);
 
@@ -30,45 +32,52 @@
         }
 
         &_add {
-            opacity: 0.5;
             cursor: pointer;
+
+            opacity: 0.5;
         }
     }
 
     &__tab-list {
         position: sticky;
-        background-color: var(--g-color-base-background);
         z-index: 1;
         top: 0;
-        padding-top: 10px;
+
         margin-bottom: var(--g-spacing-4);
+        padding-top: 10px;
+
+        background-color: var(--g-color-base-background);
     }
 
     &__tab-selectors {
         display: grid;
         grid-template-columns: $sidebarWidth 33px 1fr;
+
         height: calc(100% - $tabListHeight);
     }
 
     &__tab-group {
         overflow-y: auto;
+
         height: calc(100% - $tabListHeight);
     }
 
     &__selector-settings {
-        overflow-y: auto;
         overflow-x: hidden;
+        overflow-y: auto;
     }
 
     &__footer {
         position: relative;
 
         &:before {
-            content: '';
             position: absolute;
             top: 0;
-            left: var(--g-spacing-8);
             right: var(--g-spacing-8);
+            left: var(--g-spacing-8);
+
+            content: '';
+
             border-top: 1px solid var(--g-color-line-generic);
         }
     }

@@ -3,11 +3,14 @@
 .visualization-layers-control {
     display: flex;
     flex-direction: column;
+
     padding: 16px 16px 18px;
+
     border-bottom: 1px solid var(--g-color-line-generic);
 
     &__row {
         display: flex;
+
         width: 100%;
 
         &:not(:last-child) {

@@ -3,16 +3,18 @@ $fontFamilyMonospace: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', 'Ubuntu Mono', '
 
 .chartkit-error {
     display: flex;
-    flex-direction: column;
     overflow: auto;
+    flex-direction: column;
+
     width: 100%;
     height: 100%;
     padding: 16px;
 
     &__title {
+        margin-bottom: 12px;
+
         font-size: 13px;
         line-height: 16px;
-        margin-bottom: 12px;
     }
 
     &__actions {
@@ -26,19 +28,23 @@ $fontFamilyMonospace: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', 'Ubuntu Mono', '
     }
 
     &__request-id {
-        color: #999999;
-        letter-spacing: 1px;
         font-size: 11px;
+        letter-spacing: 1px;
+
+        color: #999999;
     }
 
     &__more {
-        font-family: $fontFamilyMonospace;
         overflow: auto;
+
+        margin-bottom: 12px;
+        padding: 10px;
+
+        font-family: $fontFamilyMonospace;
+        font-size: 13px;
         white-space: pre-wrap;
         word-wrap: break-word;
-        padding: 10px;
-        font-size: 13px;
+
         border-radius: 4px;
-        margin-bottom: 12px;
     }
 }

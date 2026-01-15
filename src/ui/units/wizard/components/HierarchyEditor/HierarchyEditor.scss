@@ -2,6 +2,7 @@
     &__item {
         display: flex;
         align-items: center;
+
         width: 100%;
 
         &_error {
@@ -18,8 +19,9 @@
     }
 
     &__item-icon {
-        color: var(--g-color-text-positive);
         margin-right: 8px;
+
+        color: var(--g-color-text-positive);
 
         &_error {
             color: var(--g-color-base-danger-heavy);
@@ -28,6 +30,7 @@
 
     &__help-icon {
         margin-left: var(--g-spacing-1);
+
         vertical-align: middle;
     }
 
@@ -37,8 +40,8 @@
 
     &__hierarchy-name-input-wrapper {
         width: 295px;
-        margin-left: 32px;
         margin-bottom: 12px;
+        margin-left: 32px;
     }
 
     &__body {

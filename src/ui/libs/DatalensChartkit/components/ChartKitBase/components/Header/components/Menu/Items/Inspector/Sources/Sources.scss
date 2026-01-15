@@ -3,8 +3,8 @@
 
     &__title {
         font-size: var(--g-text-body-3-font-size);
-        line-height: var(--g-text-body-3-line-height);
         font-weight: 500;
+        line-height: var(--g-text-body-3-line-height);
     }
 
     &__body {
@@ -16,13 +16,15 @@
 
     &__source {
         display: grid;
-        grid-template-columns: auto 70px 70px;
-        padding: 10px 0;
         align-items: center;
+        grid-template-columns: auto 70px 70px;
+
         min-height: 42px;
+        padding: 10px 0;
 
         &_collapsible {
             grid-template-columns: auto 70px 70px 15px;
+
             cursor: pointer;
 
             #{$class}__metric {
@@ -40,8 +42,9 @@
     }
 
     &__metric {
-        color: var(--g-color-text-secondary);
         text-align: right;
+
+        color: var(--g-color-text-secondary);
 
         &_warning {
             color: var(--g-color-text-warning);

@@ -25,16 +25,19 @@
     max-width: 90vw;
 
     &__caption {
-        word-break: break-word;
-        max-width: 100%;
         position: relative;
+
+        max-width: 100%;
+
+        word-break: break-word;
     }
 
     &__beta {
-        margin-left: 4px;
         position: absolute;
-        right: 4px;
         top: 20px;
+        right: 4px;
+
+        margin-left: 4px;
     }
 
     &__relations-icon {
@@ -42,10 +45,11 @@
     }
 
     &__container {
-        min-height: 353px;
-        max-height: 70vh;
         display: flex;
         flex-direction: column;
+
+        min-height: 353px;
+        max-height: 70vh;
         padding-bottom: 0;
     }
 
@@ -55,8 +59,9 @@
 
     &__loader {
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
+
         height: 100%;
     }
 
@@ -69,8 +74,8 @@
     }
 
     &__warn-content {
-        padding: 20px 16px;
         max-width: calc(100% - 100px);
+        padding: 20px 16px;
     }
 
     &__warn-title {
@@ -85,8 +90,9 @@
         max-width: 650px;
 
         & .dialog-aliases-list__invalid-list-items {
-            max-height: 300px;
             overflow: auto;
+
+            max-height: 300px;
         }
     }
 
@@ -99,8 +105,9 @@
     }
 
     &__item-select {
-        padding-bottom: 10px;
         margin-bottom: 10px;
+        padding-bottom: 10px;
+
         border-bottom: 1px solid var(--g-color-line-generic);
     }
 
@@ -113,7 +120,7 @@
     }
 
     &__skeleton-option-icon {
-        height: $optionIconSize;
         width: $optionIconSize;
+        height: $optionIconSize;
     }
 }

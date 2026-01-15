@@ -7,14 +7,15 @@
     }
 
     &__title {
+        flex-shrink: 0;
+
         width: 264px;
         padding-right: var(--g-spacing-7);
-        flex-shrink: 0;
     }
 
     &__header {
-        @include text-subheader-2;
         margin: 0;
+        @include text-subheader-2;
     }
 
     &__content {

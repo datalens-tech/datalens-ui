@@ -3,31 +3,35 @@
 .dl-core-navigation {
     &__sidebar {
         flex: 0 0 256px;
+
         background-color: var(--g-color-base-generic-ultralight);
     }
 
     &__content {
         display: flex;
-        flex-direction: column;
         flex: 1 1 auto;
+        flex-direction: column;
+
         background-color: var(--g-color-base-background);
     }
 
     &__entries {
         display: flex;
-        flex-direction: column;
-        flex: 1 1 100%;
         overflow: hidden;
+        flex: 1 1 100%;
+        flex-direction: column;
     }
 
     &__entries-header {
-        flex: 0 0 auto;
-        padding: 0 20px 8px;
         display: flex;
+        flex: 0 0 auto;
+
+        padding: 0 20px 8px;
     }
 
     &__search {
         flex: 0 1 400px;
+
         margin-right: 8px;
     }
 
@@ -52,23 +56,25 @@
     }
 
     &__spinner {
-        height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
+
+        height: 100%;
     }
 
     &__empty-entries {
-        height: 100%;
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
+
+        height: 100%;
     }
 
     &__filters {
         display: flex;
-        align-items: center;
         flex-shrink: 0;
+        align-items: center;
     }
 
     &__filters-item {
@@ -80,12 +86,14 @@
     }
 
     &__mobile-filters {
-        padding: 21px 23px;
         display: flex;
 
+        padding: 21px 23px;
+
         &_mobile {
-            padding: 8px 16px 19px;
             display: block;
+
+            padding: 8px 16px 19px;
         }
     }
 }
