@@ -1,17 +1,20 @@
 import React from 'react';
 
 import {MermaidRuntime} from '@diplodoc/mermaid-extension/react';
-import type {
-    Lang,
-    MarkdownEditorMode,
-    MarkdownEditorViewProps,
-    UseMarkdownEditorProps,
-} from '@gravity-ui/markdown-editor';
 import {
     MarkdownEditorView,
     configure as configureMarkdownEditor,
     useMarkdownEditor,
     wysiwygToolbarConfigs,
+} from '@gravity-ui/markdown-editor';
+import type {
+    ExtensionAuto,
+    Lang,
+    MarkdownEditorMode,
+    MarkdownEditorViewProps,
+    MarkdownEditorWysiwygConfig,
+    ToolbarsPreset,
+    UseMarkdownEditorProps,
 } from '@gravity-ui/markdown-editor';
 import {DL} from 'ui/constants/common';
 
@@ -47,6 +50,9 @@ type MarkdownEditorProps = {
     onCancel?: (editor: MarkdownEditorRef) => void;
     onMarkupChange?: (editor: MarkdownEditorRef, type: MarkdownEditorMode) => void;
     enableExtensions?: boolean;
+    customPreset?: ExtensionAuto;
+    customToolbarsPreset?: ToolbarsPreset;
+    customExtensionOptions?: MarkdownEditorWysiwygConfig['extensionOptions'];
 } & UseMarkdownEditorProps;
 
 const MarkdownEditorDefault = React.forwardRef<MarkdownEditorRef, MarkdownEditorProps>(
@@ -59,10 +65,15 @@ const MarkdownEditorDefault = React.forwardRef<MarkdownEditorRef, MarkdownEditor
             onCancel,
             onSubmit,
             enableExtensions,
+            customPreset,
+            customToolbarsPreset,
+            customExtensionOptions,
             ...props
         },
         ref,
     ) => {
+        const baseToolbarsPreset = customToolbarsPreset ?? TOOLBARS_PRESET;
+
         const {extendedCommandMenuActions, extendedToolbarsPreset} = React.useMemo(() => {
             if (enableExtensions)
                 return {
@@ -70,9 +81,9 @@ const MarkdownEditorDefault = React.forwardRef<MarkdownEditorRef, MarkdownEditor
                         COMMAND_MENU_EXTENSIONS_ACTIONS,
                     ),
                     extendedToolbarsPreset: {
-                        ...TOOLBARS_PRESET,
+                        ...baseToolbarsPreset,
                         orders: {
-                            ...TOOLBARS_PRESET.orders,
+                            ...baseToolbarsPreset.orders,
                             wysiwygHidden: [getExtendedHiddenItems()],
                             markupHidden: [getExtendedHiddenItems()],
                         },
@@ -81,9 +92,9 @@ const MarkdownEditorDefault = React.forwardRef<MarkdownEditorRef, MarkdownEditor
 
             return {
                 extendedCommandMenuActions: COMMAND_MENU_ACTIONS,
-                extendedToolbarsPreset: TOOLBARS_PRESET,
+                extendedToolbarsPreset: baseToolbarsPreset,
             };
-        }, [enableExtensions]);
+        }, [enableExtensions, baseToolbarsPreset]);
 
         const editor = useMarkdownEditor({
             wysiwygConfig: {
@@ -94,8 +105,9 @@ const MarkdownEditorDefault = React.forwardRef<MarkdownEditorRef, MarkdownEditor
                         // передача undefined не отключает функционал вставки файла по ctrl/cmd+v, необходимо передать пустую функцию
                         pasteFileHandler: () => {},
                     },
+                    ...customExtensionOptions,
                 },
-                extensions: DATALENS_PRESET,
+                extensions: customPreset ?? DATALENS_PRESET,
             },
             md: {html: false, breaks: false, ...props.md},
             initial: {toolbarVisible: true, mode: INITIAL_EDITOR_MODE},
