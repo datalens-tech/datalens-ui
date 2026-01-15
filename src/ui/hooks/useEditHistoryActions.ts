@@ -17,6 +17,7 @@ export interface UseEditHistoryActionsOptions {
     canGoBackSelector?: (state: DatalensGlobalState) => boolean;
     canGoForwardSelector?: (state: DatalensGlobalState) => boolean;
     iconSize?: number;
+    disabled?: boolean;
 }
 
 const ACTION_PANEL_ICON_SIZE = 16;
@@ -29,19 +30,19 @@ export function useEditHistoryActions(options: UseEditHistoryActionsOptions) {
         canGoBackSelector: customCanGoBackSelector,
         canGoForwardSelector: customCanGoForwardSelector,
         iconSize = ACTION_PANEL_ICON_SIZE,
+        disabled = false,
     } = options;
 
     const dispatch = useDispatch();
 
-    // Default selectors
     const defaultCanGoBackSelector = React.useCallback(
-        (state: DatalensGlobalState) => selectCanGoBack(state, {unitId}),
-        [unitId],
+        (state: DatalensGlobalState) => !disabled && selectCanGoBack(state, {unitId}),
+        [disabled, unitId],
     );
 
     const defaultCanGoForwardSelector = React.useCallback(
-        (state: DatalensGlobalState) => selectCanGoForward(state, {unitId}),
-        [unitId],
+        (state: DatalensGlobalState) => !disabled && selectCanGoForward(state, {unitId}),
+        [disabled, unitId],
     );
 
     const canGoBack = useSelector(customCanGoBackSelector || defaultCanGoBackSelector);
@@ -87,14 +88,18 @@ export function useEditHistoryActions(options: UseEditHistoryActionsOptions) {
     useBindHotkey({
         key: UNDO_HOTKEY,
         handler: handleGoBack,
-        options: {enabled: canGoBack, scopes: hotkeyScope},
+        options: {enabled: !disabled && canGoBack, scopes: hotkeyScope},
     });
 
     useBindHotkey({
         key: REDO_HOTKEY,
         handler: handleGoForward,
-        options: {enabled: canGoForward, scopes: hotkeyScope},
+        options: {enabled: !disabled && canGoForward, scopes: hotkeyScope},
     });
+
+    if (disabled) {
+        return null;
+    }
 
     return actions;
 }
