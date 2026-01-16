@@ -145,7 +145,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             if (item.permissions.delete) {
                 otherActions.push({
                     text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
-                    qa: CollectionTableRowQa.EntryDropdownDeleteBtn,
+                    qa: CollectionTableRowQa.CollectionDropdownMenuDeleteBtn,
                     action: () => {
                         dispatch(
                             openDialog({
@@ -195,6 +195,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
 
             const deleteAction: DropdownMenuItem = {
                 text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+                qa: CollectionTableRowQa.CollectionDropdownMenuDeleteBtn,
                 action: () => {
                     dispatch(
                         openDialog({
@@ -298,7 +299,6 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
                 actions.push({
                     text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
-                    qa: CollectionTableRowQa.EntryDropdownDeleteBtn,
                     action: () => {
                         dispatch(
                             openDialog({
@@ -447,7 +447,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             if (item.permissions.delete) {
                 otherActions.push({
                     text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
-                    qa: CollectionTableRowQa.EntryDropdownDeleteBtn,
+                    qa: CollectionTableRowQa.CollectionDropdownMenuDeleteBtn,
                     action: () => {
                         dispatch(
                             openDialog({

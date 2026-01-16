@@ -3,7 +3,9 @@ import type {BasePageProps} from '../BasePage';
 import {BasePage} from '../BasePage';
 import {ContentTablePO} from './ContentTable';
 import {EmptyStatePO} from './EmptyState';
-import {slct} from '../../utils';
+import {createSharedEntry, slct} from '../../utils';
+import {v1 as uuidv1} from 'uuid';
+import {DialogWorkbook} from '../workbook/DialogWorkbook';
 
 type CollectionsPageProps = BasePageProps;
 
@@ -19,27 +21,26 @@ export class CollectionsPagePO extends BasePage {
             slct(CollectionActionsQa.CreateActionBtn),
         );
         await createBtn.click();
-        const sharedObjectsMenuItem = this.page.locator(
-            slct(CollectionActionsQa.SharedObjectsMenuItem),
-        );
-        await sharedObjectsMenuItem.hover();
+        await createSharedEntry({page: this.page, scope});
+    }
 
-        switch (scope) {
-            case EntryScope.Connection: {
-                const sharedConnectionCreateBtn = this.page.locator(
-                    slct(CollectionActionsQa.SharedConnectionCreateBtn),
-                );
-                await sharedConnectionCreateBtn.click();
-                break;
-            }
-            case EntryScope.Dataset: {
-                const sharedDatasetCreateBtn = this.page.locator(
-                    slct(CollectionActionsQa.SharedDatasetCreateBtn),
-                );
-                await sharedDatasetCreateBtn.click();
-                break;
-            }
-        }
+    async createWorkbook({name = uuidv1()}: {name?: string} = {}) {
+        const createBtn = await this.page.waitForSelector(
+            slct(CollectionActionsQa.CreateActionBtn),
+        );
+        await createBtn.click();
+        const createWbBtn = await this.page.waitForSelector(
+            slct(CollectionActionsQa.CreateWorkbookMenuItem),
+        );
+        await createWbBtn.click();
+        const dialogWb = new DialogWorkbook(this.page);
+        await dialogWb.fillTitle(name);
+        await dialogWb.apply();
+        await this.page.waitForURL(() => {
+            //TODO
+            return this.page.url().includes('workbook');
+        });
+        return name;
     }
 
     get emptyState() {
