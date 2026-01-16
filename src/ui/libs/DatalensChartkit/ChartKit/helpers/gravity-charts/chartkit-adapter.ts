@@ -120,7 +120,11 @@ export function getGravityChartsChartKitData(args: {
     const hideComments = get(loadedData, 'config.hideComments', false);
     const comments = hideComments ? [] : get(loadedData, 'comments', []);
     const {plotBands, plotLines} = convertChartCommentsToPlotBandsAndLines({comments});
-    const holidaysPlotBands = convertHolidaysToPlotBands({holidays: chartkitHolidays, loadedData});
+
+    const hideHolidaysBands = get(loadedData, 'config.hideHolidaysBands', false);
+    const holidaysPlotBands = hideHolidaysBands
+        ? []
+        : convertHolidaysToPlotBands({holidays: chartkitHolidays, loadedData});
 
     if (shouldUseCommentsOnYAxis(result)) {
         set(result, 'yAxis[0].plotBands', [...(result.yAxis?.[0]?.plotBands ?? []), ...plotBands]);

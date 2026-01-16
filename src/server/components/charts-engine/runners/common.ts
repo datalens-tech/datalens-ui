@@ -183,13 +183,6 @@ export const getSerializableProcessorParams = ({
 
     const isEmbed = req.headers[DL_EMBED_TOKEN_HEADER] !== undefined;
 
-    const zitadelParams = ctx.config.isZitadelEnabled
-        ? {
-              accessToken: req.user?.accessToken,
-              serviceUserAccessToken: req.serviceUserAccessToken,
-          }
-        : undefined;
-
     const authParams = ctx.config.isAuthEnabled
         ? {
               accessToken: req.ctx.get('user')?.accessToken,
@@ -237,7 +230,6 @@ export const getSerializableProcessorParams = ({
         revId: localConfig?.revId,
         disableJSONFnByCookie,
         isEmbed,
-        zitadelParams,
         authParams,
         originalReqHeaders,
         adapterContext,

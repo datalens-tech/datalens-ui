@@ -108,8 +108,14 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
     const shouldUsePercentStacking = visualizationId === WizardVisualizationId.Area100p;
     const seriesData: ExtendedLineSeries[] = preparedData.graphs.map<AreaSeries>((graph: any) => {
+        let seriesName = graph.title;
+
+        if (graph.custom?.segmentTitle) {
+            seriesName = `${graph.custom.segmentTitle}: ${seriesName}`;
+        }
+
         return {
-            name: graph.title,
+            name: seriesName,
             type: 'area',
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
@@ -144,6 +150,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
             }, []),
             legend: {
                 groupId: graph.id,
+                itemText: graph.legendTitle,
             },
             dataLabels: {
                 enabled: isDataLabelsEnabled,

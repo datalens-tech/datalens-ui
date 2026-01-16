@@ -293,7 +293,7 @@ export const AsideHeaderAdapter = ({
                         );
                     }}
                 />
-                {(DL.ZITADEL_ENABLED || DL.AUTH_ENABLED) && (
+                {DL.AUTH_ENABLED && (
                     <FooterItem
                         compact={isCompact}
                         item={{
