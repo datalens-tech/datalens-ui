@@ -20,7 +20,7 @@ datalensTest.describe('Dashboards. Text widget.', () => {
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.createDashboard({
-            editDash: async () => await dashboardPage.addText(katex, 20),
+            editDash: async () => await dashboardPage.addText(katex, 20, true),
         });
         const textWidget = page.locator(slct(DashkitQa.GRID_ITEM)).first();
 

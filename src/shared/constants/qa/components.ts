@@ -208,4 +208,6 @@ export enum UikitListQa {
 
 export enum WysiwygEditorQa {
     Editor = 'wysiwyg-editor',
+    SettingsButton = 'g-md-settings-button',
+    ModeMarkupItemMenu = 'g-md-settings-mode-markup',
 }

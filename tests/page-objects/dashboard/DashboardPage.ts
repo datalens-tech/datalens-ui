@@ -371,11 +371,20 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddText));
     }
 
-    async addText(text: string, timeout?: number) {
+    async chooseMarkupText() {
+        await this.page.click(slct(WysiwygEditorQa.SettingsButton));
+        await this.page.click(slct(WysiwygEditorQa.ModeMarkupItemMenu));
+    }
+
+    async addText(text: string, timeout?: number, markup?: boolean) {
         await this.clickAddText();
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
+
         if (isEnabledCollections) {
+            if (markup) {
+                await this.chooseMarkupText();
+            }
             await this.page.fill(`${slct(WysiwygEditorQa.Editor)} [contenteditable=true]`, text);
         } else {
             await this.page.fill(
