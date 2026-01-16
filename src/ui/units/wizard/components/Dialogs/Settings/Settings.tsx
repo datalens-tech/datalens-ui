@@ -314,9 +314,19 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     }
 
     componentDidUpdate(prevProps: Readonly<InnerProps>) {
-        if (
+        const isHighchartsSeriesUpdated =
             typeof prevProps.highchartsWidget?.series === 'undefined' &&
-            typeof this.props.highchartsWidget?.series !== 'undefined' &&
+            typeof this.props.highchartsWidget?.series !== 'undefined';
+
+        const prevChartData = (prevProps.highchartsWidget as unknown as Widget)?.data as ChartData;
+        const currentChartData = (this.props.highchartsWidget as unknown as Widget)
+            ?.data as ChartData;
+        const isGravityChartSeriesUpdated =
+            typeof prevChartData?.series === 'undefined' &&
+            typeof currentChartData?.series !== 'undefined';
+
+        if (
+            (isHighchartsSeriesUpdated || isGravityChartSeriesUpdated) &&
             this.state.navigatorSettings.isNavigatorAvailable
         ) {
             const navigatorSeries = this.prepareNavigatorSeries(
