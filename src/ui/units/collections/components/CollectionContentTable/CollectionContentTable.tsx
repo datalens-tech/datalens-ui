@@ -196,7 +196,7 @@ export const CollectionContentTable = React.memo<Props>(
                                                     items={actions}
                                                     disabled={isDeleting}
                                                     defaultSwitcherProps={{
-                                                        qa: CollectionTableRowQa.EntryDropdownBtn,
+                                                        qa: CollectionTableRowQa.CollectionRowDropdownMenuBtn,
                                                     }}
                                                 />
                                             )}

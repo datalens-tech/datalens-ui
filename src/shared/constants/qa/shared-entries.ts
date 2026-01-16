@@ -7,3 +7,12 @@ export const SharedEntriesPermissionsDialogQa = {
 export const SharedEntriesBindingsDialogQa = {
     ApplyDeleteBtn: 'shared-entries-bindings-dialog-apply-delete',
 } as const;
+
+export const SharedEntriesSelectDialogQa = {
+    PastLinkToEntryBtn: 'shared-entries-select-dialog-past-link-btn',
+} as const;
+
+export const SharedEntriesAddFromLinkDialogQa = {
+    LintTextInput: 'shared-entries-add-from-link-dialog-text-input',
+    ApplyBtn: 'shared-entries-add-from-link-dialog-apply',
+} as const;

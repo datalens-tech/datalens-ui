@@ -13,4 +13,10 @@ export const CollectionIds = {
 
 export const CollectionsUrls = {
     E2ECollection: `/collections/${CollectionIds.E2ECollection}`,
+    E2ESharedEntriesCollection: `/collections/${CollectionIds.E2ESharedEntriesCollection}`,
 };
+
+export const SharedEntryIds = {
+    connection: '0qouuqzxk3ick',
+    dataset: 'c2069elywgg4w',
+} as const;

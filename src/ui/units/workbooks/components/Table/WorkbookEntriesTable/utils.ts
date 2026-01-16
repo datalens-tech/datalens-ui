@@ -1,10 +1,12 @@
-import {EntryScope} from 'shared';
 import type {WorkbookPermission} from 'shared/schema';
 import type {GetWorkbookEntryUrl} from 'ui/registry/units/workbooks/types/functions/getWorkbookEntryUrl';
 import {getIsRestrictedSharedEntry} from 'ui/utils';
 
 import navigateHelper from '../../../../../libs/navigateHelper';
 import type {WorkbookUnionEntry} from '../../../types';
+
+import {EntryScope, WorkbookPageQa} from 'shared';
+import type {EntryChunkItem, WorkbookEntry} from '../../../types';
 
 export const getWorkbookEntryForExtractUrl = (workbookEntry: WorkbookUnionEntry) => {
     const isRestricted = getIsRestrictedSharedEntry(workbookEntry);
@@ -43,4 +45,12 @@ export const getIsCanUpdateSharedEntryBindings = <T extends WorkbookUnionEntry>(
         entry.fullPermissions?.createLimitedEntryBinding ||
         undefined
     );
+};
+
+export const getChunkScopeQa = <T extends WorkbookEntry>(item: EntryChunkItem<T>) => {
+    if (item.item.collectionId) {
+        return `${WorkbookPageQa.ChunkSharedEntryScope}${item.item.scope}`;
+    } else {
+        return `${WorkbookPageQa.ChunkScope}${item.item.scope}`;
+    }
 };

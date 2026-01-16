@@ -81,6 +81,7 @@ export const CollectionActions = React.memo<Props>(
                     text: i18n('action_create-workbook'),
                     hint: i18n('action_create-workbook-hint'),
                 }),
+                qa: CollectionActionsQa.CreateWorkbookMenuItem,
                 action: onCreateWorkbookClick,
             });
         }

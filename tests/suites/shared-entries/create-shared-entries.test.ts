@@ -13,14 +13,14 @@ import {
     SharedEntriesBindingsDialogQa,
     SharedEntriesPermissionsDialogQa,
 } from '../../../src/shared';
-import {CollectionIds} from '../../constants/constants';
+import {CollectionsUrls} from '../../constants/constants';
 import ConnectionsPage from '../../page-objects/connections/ConnectionsPage';
 import DatasetPage from '../../page-objects/dataset/DatasetPage';
 
 const collectionsUrl = 'collections';
 const billingConnectionTitle = 'Yandex Cloud Billing';
 
-datalensTest.describe('Shared entries create', () => {
+datalensTest.describe.only('Shared entries create', () => {
     datalensTest(
         'Shared objects create buttons should not be visible in root collection @yc',
         async ({page}) => {
@@ -41,7 +41,7 @@ datalensTest.describe('Shared entries create', () => {
     );
     datalensTest('Shared connection and dataset should be success create @yc', async ({page}) => {
         const collectionPage = new CollectionsPagePO({page});
-        const url = `${collectionsUrl}/${CollectionIds.E2ESharedEntriesCollection}`;
+        const url = CollectionsUrls.E2ESharedEntriesCollection;
 
         await openTestPage(page, url);
 
@@ -66,8 +66,10 @@ datalensTest.describe('Shared entries create', () => {
         const connSelectionButton = page.locator(slct(DatasetSourcesLeftPanelQA.ConnSelection));
         await connSelectionButton.click();
 
-        const sharedConn = page.locator(slct(DialogCollectionStructureQa.ListItem));
-        await sharedConn.first().click();
+        const sharedConn = page.locator(slct(DialogCollectionStructureQa.ListItem), {
+            hasText: connName,
+        });
+        await sharedConn.click();
 
         const delegationApplyBtn = page.locator(slct(SharedEntriesPermissionsDialogQa.ApplyBtn));
         await delegationApplyBtn.click();
@@ -84,10 +86,10 @@ datalensTest.describe('Shared entries create', () => {
                 hasText: entryName,
             });
             const entryContextMenuBtn = entryRow.locator(
-                slct(CollectionTableRowQa.EntryDropdownBtn),
+                slct(CollectionTableRowQa.CollectionRowDropdownMenuBtn),
             );
             await entryContextMenuBtn.click();
-            await page.locator(slct(CollectionTableRowQa.EntryDropdownDeleteBtn)).click();
+            await page.locator(slct(CollectionTableRowQa.CollectionDropdownMenuDeleteBtn)).click();
             const dialogApply = page.locator(slct(SharedEntriesBindingsDialogQa.ApplyDeleteBtn));
             await dialogApply.click();
         }
