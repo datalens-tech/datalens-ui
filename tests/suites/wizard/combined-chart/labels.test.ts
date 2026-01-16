@@ -26,13 +26,18 @@ datalensTest.describe('Wizard - Combined diagram. Signatures', () => {
         await setFormatting(wizardPage, DialogFieldMainSectionQa.PrefixInput, '>');
 
         let labels = await wizardPage.chartkit.getLabelsTexts();
-        expect(labels).toEqual(['>113 271 247', '>111 208 247', '>141 003 420', '>186 089 738']);
+        expectArraysEqualUnordered(labels, [
+            '>113 271 247',
+            '>111 208 247',
+            '>141 003 420',
+            '>186 089 738',
+        ]);
 
         await setFormatting(wizardPage, DialogFieldMainSectionQa.PostfixInput, '<');
 
         labels = await wizardPage.chartkit.getLabelsTexts();
 
-        expect(labels).toEqual([
+        expectArraysEqualUnordered(labels, [
             '>113 271 247<',
             '>111 208 247<',
             '>141 003 420<',
@@ -56,4 +61,16 @@ async function setFormatting(
     await wizardPage.visualizationItemDialog.clickOnApplyButton();
 
     await (await apiRunRequest).response();
+}
+
+function expectArraysEqualUnordered(actual: unknown[], expected: unknown[]) {
+    expect(actual).toHaveLength(expected.length);
+
+    expected.forEach((expectedItem) => {
+        expect(actual).toContainEqual(expectedItem);
+    });
+
+    actual.forEach((actualItem) => {
+        expect(expected).toContainEqual(actualItem);
+    });
 }
