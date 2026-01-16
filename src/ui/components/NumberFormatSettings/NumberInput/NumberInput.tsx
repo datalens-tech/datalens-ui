@@ -11,6 +11,9 @@ interface NumberInputProps {
     min?: number;
     onChange: (value: number) => void;
     qa?: string;
+    className?: string;
+    buttonClassName?: string;
+    inputClassName?: string;
 }
 
 const b = block('wizard-number-input');
@@ -21,6 +24,9 @@ const NumberInput: React.FC<NumberInputProps> = ({
     onChange,
     max = Infinity,
     min = -Infinity,
+    className,
+    buttonClassName,
+    inputClassName,
     qa,
 }) => {
     const onBlur = React.useCallback(() => {
@@ -41,11 +47,20 @@ const NumberInput: React.FC<NumberInputProps> = ({
         onChange(newValue);
     }, [min, onChange, value]);
 
-    const memorizedInputAttrs = React.useMemo(() => ({min, max}), [min, max]);
+    const memorizedInputAttrs: React.InputHTMLAttributes<HTMLInputElement> = React.useMemo(
+        () => ({min, max, style: {textAlign: 'center'}}),
+        [min, max],
+    );
 
     return (
-        <div className={b()}>
-            <Button pin="round-brick" onClick={onMinus}>
+        <div className={b({}, className)}>
+            <Button
+                className={b('button', buttonClassName)}
+                view="outlined"
+                pin="round-brick"
+                disabled={value === min}
+                onClick={onMinus}
+            >
                 -
             </Button>
             <TextInput
@@ -56,8 +71,15 @@ const NumberInput: React.FC<NumberInputProps> = ({
                 value={String(value)}
                 onBlur={onBlur}
                 onUpdate={onInput}
+                className={b('text-input', inputClassName)}
             />
-            <Button pin="brick-round" onClick={onPlus}>
+            <Button
+                className={b('button', buttonClassName)}
+                view="outlined"
+                pin="brick-round"
+                disabled={value === max}
+                onClick={onPlus}
+            >
                 +
             </Button>
         </div>

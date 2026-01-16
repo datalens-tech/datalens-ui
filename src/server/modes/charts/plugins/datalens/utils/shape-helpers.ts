@@ -47,5 +47,21 @@ export const mapAndShapeGraph = ({
 
             graph.dashStyle = SHAPES_IN_ORDER[shapeIndex % SHAPES_IN_ORDER.length];
         }
+
+        if (
+            shapesConfig &&
+            shapesConfig.mountedShapesLineWidths &&
+            title &&
+            shapesConfig.mountedShapesLineWidths[title]
+        ) {
+            const lineWidth = shapesConfig.mountedShapesLineWidths?.[title] as number;
+
+            graph.lineWidth = lineWidth;
+            graph.states = {
+                hover: {
+                    lineWidth: lineWidth + 2,
+                },
+            };
+        }
     });
 };

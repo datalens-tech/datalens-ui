@@ -1,0 +1,25 @@
+.dl-line-width-select {
+    &__control {
+        height: 28px;
+        padding: 6px;
+        inset: 0;
+        border: 1px solid var(--g-color-line-generic);
+        border-radius: var(--g-border-radius-m);
+        transition: transform 0.1s ease-out;
+    }
+
+    &__control:hover {
+        cursor: pointer;
+        background-color: var(--g-color-base-simple-hover);
+        border-color: var(--g-color-line-generic-hover);
+    }
+
+    &__control:active {
+        transform: scale(0.96);
+    }
+
+    &__option-line {
+        width: 100%;
+        background-color: var(--g-color-text-primary);
+    }
+}

@@ -15,4 +15,8 @@
         -moz-appearance: textfield;
     }
     /* stylelint-enable */
+    &__text-input > span {
+        border-left: none;
+        border-right: none;
+    }
 }

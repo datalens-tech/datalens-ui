@@ -1,15 +1,18 @@
 import React from 'react';
 
 import {Shapes4} from '@gravity-ui/icons';
-import {Button, Dialog, Icon} from '@gravity-ui/uikit';
+import {Button, Dialog, Flex, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import type {DatasetOptions, Field, FilterField, ShapesConfig, Update} from 'shared';
+import {LINE_WIDTH_DEFAULT_VALUE} from 'ui/units/wizard/constants/shapes';
 
 import type {PaletteTypes} from '../../../constants';
 
+import {DialogLineWidth} from './DialogLineWidth/DialogLineWidth';
 import DialogShapesPalette from './DialogShapesPalette/DialogShapesPalette';
+import {DialogValueList} from './DialogValueList/DialogValueList';
 
 import './DialogShapes.scss';
 
@@ -40,6 +43,7 @@ export type OpenDialogShapesArgs = {
 
 export type ShapesState = {
     mountedShapes: Record<string, string>;
+    mountedShapesLineWidths: Record<string, number>;
     selectedValue: string | null;
 };
 
@@ -58,12 +62,22 @@ const DialogShapes: React.FC<Props> = ({
     onCancel,
     paletteType,
 }: Props) => {
-    const [shapesState, setShapesState] = React.useState<ShapesState>({
-        selectedValue: null,
-        mountedShapes:
+    const [shapesState, setShapesState] = React.useState<ShapesState>(() => {
+        const mountedShapes =
             shapesConfig.mountedShapes && Object.keys(shapesConfig.mountedShapes)
                 ? shapesConfig.mountedShapes
-                : {},
+                : {};
+        const mountedShapesLineWidths = Object.keys(mountedShapes).reduce((acc, shapeKey) => {
+            const shapeLineWidth = shapesConfig.mountedShapesLineWidths?.[shapeKey];
+
+            return {...acc, [shapeKey]: shapeLineWidth || LINE_WIDTH_DEFAULT_VALUE};
+        }, {});
+
+        return {
+            selectedValue: null,
+            mountedShapes,
+            mountedShapesLineWidths,
+        };
     });
 
     const onPaletteItemClick = React.useCallback(
@@ -75,17 +89,31 @@ const DialogShapes: React.FC<Props> = ({
             }
 
             const mountedShapes = {...shapesState.mountedShapes};
+            const mountedShapesLineWidths = {...shapesState.mountedShapesLineWidths};
             const isDefaultValue = shape === 'auto';
             if (isDefaultValue) {
                 delete mountedShapes[selectedValue];
             } else {
                 mountedShapes[selectedValue] = shape;
+                mountedShapesLineWidths[selectedValue] =
+                    mountedShapesLineWidths[selectedValue] || LINE_WIDTH_DEFAULT_VALUE;
             }
 
-            setShapesState((prevState) => ({...prevState, mountedShapes}));
+            setShapesState((prevState) => ({...prevState, mountedShapes, mountedShapesLineWidths}));
         },
         [shapesState],
     );
+
+    const onLineWidthChange = React.useCallback((nextLineWidth: number) => {
+        setShapesState((prevState) => ({
+            ...prevState,
+            lineWidth: nextLineWidth,
+            mountedShapesLineWidths: {
+                ...prevState.mountedShapesLineWidths,
+                ...(prevState.selectedValue ? {[prevState.selectedValue]: nextLineWidth} : {}),
+            },
+        }));
+    }, []);
 
     const onReset = React.useCallback(() => {
         setShapesState((prevState) => ({...prevState, mountedShapes: {}}));
@@ -102,11 +130,23 @@ const DialogShapes: React.FC<Props> = ({
     const onApplyButtonClick = React.useCallback(() => {
         const shapesConfig: ShapesConfig = {
             mountedShapes: shapesState.mountedShapes,
+            mountedShapesLineWidths: shapesState.mountedShapesLineWidths,
             fieldGuid: item.guid,
         };
         onApply(shapesConfig);
         onClose();
-    }, [item.guid, onApply, onClose, shapesState.mountedShapes]);
+    }, [
+        item.guid,
+        onApply,
+        onClose,
+        shapesState.mountedShapes,
+        shapesState.mountedShapesLineWidths,
+    ]);
+
+    const selectedShapeLineWidth =
+        shapesState.selectedValue && shapesState.mountedShapesLineWidths[shapesState.selectedValue]
+            ? shapesState.mountedShapesLineWidths[shapesState.selectedValue]
+            : LINE_WIDTH_DEFAULT_VALUE;
 
     return (
         <Dialog onClose={onClose} open={true}>
@@ -120,23 +160,33 @@ const DialogShapes: React.FC<Props> = ({
                     caption={i18n('wizard', 'label_shapes-settings')}
                 />
                 <Dialog.Body>
-                    <DialogShapesPalette
+                    <DialogValueList
+                        item={item}
+                        items={items}
+                        distincts={distincts}
+                        filters={filters}
                         parameters={parameters}
                         dashboardParameters={dashboardParameters}
+                        updates={updates}
+                        options={options}
+                        datasetId={datasetId}
                         shapesState={shapesState}
+                        paletteType={paletteType}
                         setShapesState={(state) =>
                             setShapesState((prevState) => ({...prevState, ...state}))
                         }
-                        onPaletteItemClick={onPaletteItemClick}
-                        distincts={distincts}
-                        items={items}
-                        item={item}
-                        datasetId={datasetId}
-                        updates={updates}
-                        filters={filters}
-                        options={options}
-                        paletteType={paletteType}
                     />
+                    <Flex direction="column" gap={4} spacing={{py: '5', px: '6'}}>
+                        <DialogLineWidth
+                            value={selectedShapeLineWidth}
+                            onChange={onLineWidthChange}
+                        />
+                        <DialogShapesPalette
+                            shapesState={shapesState}
+                            onPaletteItemClick={onPaletteItemClick}
+                            paletteType={paletteType}
+                        />
+                    </Flex>
                 </Dialog.Body>
                 <Dialog.Footer
                     preset="default"

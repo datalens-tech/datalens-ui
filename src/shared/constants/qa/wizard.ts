@@ -195,3 +195,7 @@ export const enum ChartSettingsDialogQA {
     IndicatorTitleMode = 'indicator-title-mode',
     PreserveWhiteSpace = 'preserve-white-space',
 }
+
+export const enum LineWidthSelectQa {
+    Option = 'line-width-select-option',
+}
