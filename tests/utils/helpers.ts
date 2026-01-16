@@ -26,25 +26,29 @@ export const mapColorsAndShapes = (colors: string[], shapes: string[]) => {
 
 export const getXAxisValues = async (page: Page): Promise<(string | null)[]> => {
     return await page.evaluate(() => {
+        let xAxisLabelNodes = [];
+
         const xAxisValues = document.querySelector('.highcharts-xaxis-labels');
         if (xAxisValues) {
-            const childrenElements = Array.from(xAxisValues.children);
-            return childrenElements
-                .sort((a, b) => {
-                    const firstElAttributes = a.attributes;
-                    const secondElAttributes = b.attributes;
-
-                    const firstElValue = firstElAttributes.getNamedItem('x')?.value || '';
-                    const secondElValue = secondElAttributes.getNamedItem('x')?.value || '';
-
-                    const parsedFirstValue = parseFloat(firstElValue);
-                    const parsedSecondValue = parseFloat(secondElValue);
-
-                    return parsedFirstValue - parsedSecondValue;
-                })
-                .map((el) => el.textContent);
+            xAxisLabelNodes = Array.from(xAxisValues.children);
+        } else {
+            xAxisLabelNodes = Array.from(document.getElementsByClassName('gcharts-x-axis__label'));
         }
-        return [];
+
+        return xAxisLabelNodes
+            .sort((a, b) => {
+                const firstElAttributes = a.attributes;
+                const secondElAttributes = b.attributes;
+
+                const firstElValue = firstElAttributes.getNamedItem('x')?.value || '';
+                const secondElValue = secondElAttributes.getNamedItem('x')?.value || '';
+
+                const parsedFirstValue = parseFloat(firstElValue);
+                const parsedSecondValue = parseFloat(secondElValue);
+
+                return parsedFirstValue - parsedSecondValue;
+            })
+            .map((el) => el.textContent);
     });
 };
 
