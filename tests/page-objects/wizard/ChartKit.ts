@@ -39,7 +39,8 @@ export default class ChartKit {
     private paginatorSelector = '.chartkit-table-paginator';
     private tableHeadCellSelector = '.data-table__head-cell';
     private layerLegendSelector = '.chartkit .chartkit-ymap-legend-layer';
-    private labelsSelector = '.highcharts-data-labels .highcharts-data-label, .gcharts-line__label';
+    private labelsSelector =
+        '.highcharts-data-labels .highcharts-data-label, .gcharts-line__label, .gcharts-bar-x__label';
     private chartkitSeriesRect =
         '.chartkit-highcharts rect.highcharts-point, .gcharts-bar-x__segment';
 
