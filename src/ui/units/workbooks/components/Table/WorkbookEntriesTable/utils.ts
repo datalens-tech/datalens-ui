@@ -1,8 +1,8 @@
-import {EntryScope} from 'shared';
+import {EntryScope, WorkbookPageQa} from 'shared';
 import type {WorkbookPermission, WorkbookWithPermissions} from 'shared/schema';
 
 import navigateHelper from '../../../../../libs/navigateHelper';
-import type {WorkbookEntry} from '../../../types';
+import type {EntryChunkItem, WorkbookEntry} from '../../../types';
 
 export const getWorkbookEntryUrl = (
     workbookEntry: WorkbookEntry,
@@ -37,4 +37,12 @@ export const getIsCanUpdateSharedEntryBindings = <T extends WorkbookEntry>(entry
         entry.fullPermissions?.createLimitedEntryBinding ||
         undefined
     );
+};
+
+export const getChunkScopeQa = <T extends WorkbookEntry>(item: EntryChunkItem<T>) => {
+    if (item.item.collectionId) {
+        return `${WorkbookPageQa.ChunkSharedEntryScope}${item.item.scope}`;
+    } else {
+        return `${WorkbookPageQa.ChunkScope}${item.item.scope}`;
+    }
 };
