@@ -205,3 +205,7 @@ export enum DatalensHeaderQa {
 export enum UikitListQa {
     ACTIVE_ITEM = 'list-active-item',
 }
+
+export enum WysiwygEditorQa {
+    Editor = 'wysiwyg-editor',
+}

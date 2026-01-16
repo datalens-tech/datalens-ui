@@ -13,6 +13,7 @@ import {
     EntryDialogQA,
     LOADED_DASH_CLASS,
     SelectQa,
+    WysiwygEditorQa,
     YfmQa,
 } from '../../../src/shared/constants';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -372,10 +373,17 @@ class DashboardPage extends BasePage {
 
     async addText(text: string, timeout?: number) {
         await this.clickAddText();
+        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
-        await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} [contenteditable=true]`, text, {
-            timeout,
-        });
+        if (isEnabledCollections) {
+            await this.page.fill(`${slct(WysiwygEditorQa.Editor)} textarea`, text);
+        } else {
+            await this.page.fill(
+                `${slct(DialogDashWidgetItemQA.Text)} [contenteditable=true]`,
+                text,
+                {timeout},
+            );
+        }
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
 

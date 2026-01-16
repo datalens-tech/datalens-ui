@@ -16,6 +16,7 @@ import type {
     ToolbarsPreset,
     UseMarkdownEditorProps,
 } from '@gravity-ui/markdown-editor';
+import {WysiwygEditorQa} from 'shared';
 import {DL} from 'ui/constants/common';
 
 import {
@@ -186,6 +187,7 @@ const MarkdownEditorDefault = React.forwardRef<MarkdownEditorRef, MarkdownEditor
                     className={className}
                     stickyToolbar={true}
                     toolbarsPreset={extendedToolbarsPreset}
+                    qa={WysiwygEditorQa.Editor}
                 />
                 <MermaidRuntime />
             </React.Fragment>
