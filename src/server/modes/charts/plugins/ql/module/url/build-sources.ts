@@ -39,7 +39,7 @@ const prepareDefaultDate = (date: string) => {
 };
 
 export function buildSources(args: BuildSourcesArgs) {
-    const {shared, ChartEditor, palettes, qlConnectionTypeMap} = args;
+    const {shared, ChartEditor, palettes, qlConnectionTypeMap, features} = args;
     const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
 
     const urlParams = ChartEditor.getParams();
@@ -191,6 +191,7 @@ export function buildSources(args: BuildSourcesArgs) {
                         params: localParams,
                         paramsDescription: localParamsDescription,
                         qlConnectionTypeMap,
+                        features,
                     });
 
                     sources[`ql_${i}`] = source;
@@ -210,6 +211,7 @@ export function buildSources(args: BuildSourcesArgs) {
                     params,
                     paramsDescription: config.params,
                     qlConnectionTypeMap,
+                    features,
                 }),
             };
         }

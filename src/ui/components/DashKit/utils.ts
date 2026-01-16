@@ -1,8 +1,17 @@
-import type React from 'react';
+import React from 'react';
+import type {CSSProperties} from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
-import type {DashTabItemControlElement} from 'shared';
-import {CustomPaletteBgColors} from 'shared/constants/widgets';
+import type {ThemeType} from '@gravity-ui/uikit';
+import {useThemeType} from '@gravity-ui/uikit';
+import type {
+    BackgroundSettings,
+    ColorSettings,
+    DashTabItemControlElement,
+    OldBackgroundSettings,
+} from 'shared';
+import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared/constants/widgets';
+import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
 
 import {DL} from '../../constants';
 import {
@@ -269,20 +278,108 @@ export function getControlHint(source: DashTabItemControlElement) {
     return source.showHint ? source.hint : undefined;
 }
 
-export function getPreparedWrapSettings(showBgColor: boolean, color?: string) {
-    const wrapperClassMod =
-        (showBgColor &&
-            (color === CustomPaletteBgColors.LIKE_CHART ? 'with-default-color' : 'with-color')) ||
-        '';
+function getPreparedWrapSettings(
+    backgroundColor: string | undefined,
+    additionalStyle?: CSSProperties,
+) {
+    const hasBgColor = Boolean(backgroundColor) && backgroundColor !== CustomPaletteBgColors.NONE;
 
-    const style = showBgColor
-        ? {
-              backgroundColor: color === CustomPaletteBgColors.LIKE_CHART ? undefined : color,
-          }
-        : {};
+    const newBackgroundColor =
+        backgroundColor === CustomPaletteBgColors.LIKE_CHART
+            ? LIKE_CHART_COLOR_TOKEN
+            : backgroundColor;
 
-    return {
-        classMod: wrapperClassMod,
-        style,
+    const style: CSSProperties = {
+        ...additionalStyle,
+        backgroundColor:
+            hasBgColor || backgroundColor === CustomPaletteBgColors.NONE
+                ? newBackgroundColor
+                : undefined,
     };
+    return {
+        style,
+        hasBgColor,
+    };
+}
+
+export function useTextColorStyles(oldTextColor?: string, textColorSettings?: ColorSettings) {
+    const theme = useThemeType();
+    return React.useMemo(() => {
+        const resultedNewTextColor =
+            typeof textColorSettings === 'string' ? textColorSettings : textColorSettings?.[theme];
+
+        return {
+            color: typeof oldTextColor === 'string' ? oldTextColor : resultedNewTextColor,
+        };
+    }, [oldTextColor, textColorSettings, theme]);
+}
+
+export function useBorderRadiusStyles(borderRadius?: number, globalBorderRadius?: number) {
+    return React.useMemo(() => {
+        return {
+            borderRadius: borderRadius ?? globalBorderRadius,
+        };
+    }, [borderRadius, globalBorderRadius]);
+}
+
+interface WidgetVisualSettings {
+    background?: OldBackgroundSettings | undefined;
+    backgroundSettings?: BackgroundSettings | undefined;
+    borderRadius?: number | undefined;
+}
+
+export function usePreparedWrapSettings({
+    ownWidgetSettings,
+    globalWidgetSettings,
+    additionalStyle,
+    defaultOldColor,
+}: {
+    ownWidgetSettings: WidgetVisualSettings;
+    globalWidgetSettings: WidgetVisualSettings;
+    additionalStyle?: CSSProperties;
+    defaultOldColor: string;
+}) {
+    const theme = useThemeType();
+    const borderRadiusStyles = useBorderRadiusStyles(
+        ownWidgetSettings.borderRadius,
+        globalWidgetSettings.borderRadius,
+    );
+    return React.useMemo(() => {
+        return getPreparedWrapSettings(
+            getResultedBgColor(
+                ownWidgetSettings.background,
+                theme,
+                defaultOldColor,
+                ownWidgetSettings.backgroundSettings,
+            ) ??
+                getResultedBgColor(
+                    globalWidgetSettings.background,
+                    theme,
+                    defaultOldColor,
+                    globalWidgetSettings.backgroundSettings,
+                ),
+            {...borderRadiusStyles, ...additionalStyle},
+        );
+    }, [
+        ownWidgetSettings.background,
+        globalWidgetSettings.background,
+        ownWidgetSettings.backgroundSettings,
+        globalWidgetSettings.backgroundSettings,
+        additionalStyle,
+        borderRadiusStyles,
+        defaultOldColor,
+        theme,
+    ]);
+}
+
+export function getResultedBgColor(
+    oldBgColor: OldBackgroundSettings | undefined,
+    theme: ThemeType,
+    defaultColor: string,
+    newBgColor: BackgroundSettings | undefined,
+): string | undefined {
+    if (newBgColor?.color) {
+        return typeof newBgColor.color === 'string' ? newBgColor.color : newBgColor.color?.[theme];
+    }
+    return getResultedOldBgColor(oldBgColor, defaultColor);
 }

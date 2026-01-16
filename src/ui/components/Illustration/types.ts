@@ -7,17 +7,22 @@ export type IllustrationName =
     | 'successOperation'
     | 'project'
     | 'notFound'
+    | 'notFoundError'
     | 'identity'
     | 'emptyDirectory'
-    | 'badRequest';
+    | 'badRequest'
+    | 'noAccounts';
 
-export type IllustrationProps = {
-    name: IllustrationName;
+export type CreateIllustrationProps = {
+    name: IllustrationName | 'barchar' | 'logo' | 'logoShort' | 'logoInit' | 'galleryHeader';
     illustrationStore: IllustrationStore;
     showSkeleton?: boolean;
-    [prop: string]: unknown;
+    skeletonClassName?: string;
+    skeletonTimeout?: number;
+    className?: string;
+    alt?: string;
+    role?: string;
+    'aria-hidden'?: boolean;
 };
 
-export type CreateIllustrationProps = Omit<IllustrationProps, 'name'> & {
-    name: IllustrationName | 'barchar' | 'logo' | 'logoShort' | 'logoInit' | 'galleryHeader';
-};
+export type IllustrationComponent = Omit<CreateIllustrationProps, 'illustrationStore'>;

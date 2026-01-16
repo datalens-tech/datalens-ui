@@ -3,6 +3,8 @@ import React from 'react';
 import {ArrowDownToLine, Picture} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import flatMap from 'lodash/flatMap';
+import uniq from 'lodash/uniq';
 import type {ExportFormatsType} from 'shared';
 import {EXPORT_FORMATS, Feature, MenuItemsIds} from 'shared';
 import {URL_OPTIONS} from 'ui/constants/common';
@@ -10,11 +12,7 @@ import type {MenuItemConfig, MenuItemModalProps} from 'ui/libs/DatalensChartkit/
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {
-    ICONS_MENU_DEFAULT_CLASSNAME,
-    ICONS_MENU_DEFAULT_SIZE,
-    type MenuItemArgs,
-} from '../../../../../../../../menu/MenuItems';
+import {ICONS_MENU_DEFAULT_SIZE, type MenuItemArgs} from '../../../../../../../../menu/MenuItems';
 import type {ChartKitDataProvider} from '../../../../../../types';
 
 import {csvExportAction} from './CsvExport/CsvExport';
@@ -23,7 +21,7 @@ import {copyData, downloadData, isExportVisible} from './utils';
 
 const i18n = I18n.keyset('chartkit.menu.export');
 
-const directExportAction = (
+export const directExportAction = (
     format: ExportFormatsType,
     onExportLoading?: ExportChartArgs['onExportLoading'],
 ) => {
@@ -100,6 +98,10 @@ const getSubItems = ({
         customConfig?.items?.find((item) => item.id === MenuItemsIds.EXPORT_CSV)?.action ??
         csvExportAction(chartsDataProvider, onExportLoading);
 
+    const xlsxAction =
+        customConfig?.items?.find((item) => item.id === MenuItemsIds.EXPORT_XLSX)?.action ??
+        directExportAction(EXPORT_FORMATS.XLSX, onExportLoading);
+
     if (customConfig?.actionWrapper) {
         csvAction = customConfig.actionWrapper(csvAction);
     }
@@ -111,7 +113,7 @@ const getSubItems = ({
             isVisible: ({loadedData, error}: MenuItemArgs) =>
                 isEnabledFeature(Feature.XlsxChartExportEnabled) &&
                 isExportVisible({loadedData, error}),
-            action: directExportAction(EXPORT_FORMATS.XLSX, onExportLoading),
+            action: xlsxAction,
         },
         {
             id: MenuItemsIds.EXPORT_CSV,
@@ -144,12 +146,36 @@ const getSubItems = ({
     return submenuItems;
 };
 
+export function isExportItemDisabled() {
+    return ({loadedData}: MenuItemArgs) => {
+        const forbiddenExportFromExtra = loadedData?.extra.dataExportForbidden
+            ? i18n('label_data-export-forbidden')
+            : false;
+        const dataExports = loadedData?.dataExport
+            ? Object.values(loadedData.dataExport).filter(Boolean)
+            : [];
+
+        if (dataExports.length > 0) {
+            if (dataExports.every((exp) => !exp || exp.basic.allowed)) {
+                return forbiddenExportFromExtra;
+            }
+
+            const uniqDisableReasons = uniq(flatMap(dataExports, (exp) => exp?.basic.reason || []));
+            const reason = uniqDisableReasons[0]
+                ? i18n(`label_export-forbidden.${uniqDisableReasons[0]}`)
+                : undefined;
+
+            return reason ?? i18n('label_data-export-forbidden');
+        }
+        return forbiddenExportFromExtra;
+    };
+}
+
 export const getExportItem = ({
     showWiki,
     showScreenshot,
     chartsDataProvider,
     customConfig,
-    extraOptions,
 }: {
     showWiki?: boolean;
     showScreenshot?: boolean;
@@ -163,13 +189,7 @@ export const getExportItem = ({
     },
     icon: ({loadedData, error}: MenuItemArgs) => {
         const iconData = isExportVisible({loadedData, error}) && !error ? ArrowDownToLine : Picture;
-        return (
-            <Icon
-                size={ICONS_MENU_DEFAULT_SIZE}
-                data={iconData}
-                className={ICONS_MENU_DEFAULT_CLASSNAME}
-            />
-        );
+        return <Icon size={ICONS_MENU_DEFAULT_SIZE} data={iconData} />;
     },
     items: getSubItems({
         showWiki,
@@ -177,21 +197,9 @@ export const getExportItem = ({
         chartsDataProvider,
         customConfig,
     }),
-    isDisabled: ({loadedData}: MenuItemArgs) => {
-        const exportForbiddenResult =
-            extraOptions &&
-            'exportForbiddenResult' in extraOptions &&
-            extraOptions.exportForbiddenResult;
-
-        const isExportDisabled =
-            loadedData?.extra.dataExportForbidden || Boolean(exportForbiddenResult);
-
-        let disabledReason = i18n('label_data-export-forbidden');
-        if (isExportDisabled && typeof exportForbiddenResult === 'string') {
-            disabledReason = exportForbiddenResult;
-        }
-
-        return isExportDisabled ? disabledReason : false;
+    isDisabled: (args) => {
+        const customIsDisabled = customConfig?.isDisabled?.(args) ?? false;
+        return customIsDisabled || isExportItemDisabled()(args);
     },
     isVisible: ({loadedData, error}: MenuItemArgs) => {
         const isScreenshotVisible = loadedData?.data && showScreenshot;

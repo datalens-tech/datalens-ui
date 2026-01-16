@@ -1,3 +1,7 @@
+// TODO: Remove CHARTS-11919
+$rebrandingRoot: '.dl-root_rebranding';
+$customThemeRoot: '.dl-root_custom-theme';
+
 $backgroundMenu: #fbfbfb;
 
 // Sizes
@@ -13,6 +17,7 @@ $groupOperationsHeight: 73px;
 $menuIconSize: 16px;
 $menuIconMarginRight: 4px;
 $footerHeight: 40px;
+$pageMaxWidth: 936px;
 
 // Layers
 $primaryLayoutLayer: 100;
@@ -26,6 +31,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 
 .g-root {
     --dl-navigation-breadcrumbs-height: 28px;
+    --dl-revision-panel-top-offset: #{$actionPanelHeight};
 
     --dl-color-border: var(--g-color-line-generic);
     --dl-color-border-solid: var(--g-color-line-generic-solid);
@@ -46,9 +52,18 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
     --dl-color-entity-dataset: #0abe05;
     --dl-color-entity-dashboard: #ff8c3c;
 
+    --dl-color-widget-background: var(--g-color-base-float);
+    --dl-widget-border-radius: 20px;
+
     --dl-color-text-workbook-icon: var(--g-color-text-dark-primary);
 
+    --dl-viz-icon-main-color: #3d97f2;
+    --dl-viz-icon-secondary-color: #ff6a59;
+
     &_theme_light {
+        // this color now is used only in light theme
+        --g-color-private-cool-grey-20-solid: rgb(245, 246, 247);
+
         --ds-color-relation-line: #d9d9d9;
         --ds-color-avatar: #ededed;
         --w-local-item-border: rgba(0, 0, 0, 0.5);
@@ -60,6 +75,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --dl-filter-ymap-heatmap: none;
         --dl-color-ymap-background: #fafafa;
         --dl-filter-zoom-control: none;
+        --dl-color-dashboard-background: var(--g-color-private-cool-grey-20-solid);
         --dl-color-fixed-header-background: var(--g-color-private-cool-grey-100-solid);
     }
 
@@ -75,10 +91,13 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --dl-filter-ymap-heatmap: none;
         --dl-color-ymap-background: #fafafa;
         --dl-filter-zoom-control: none;
+        --dl-color-dashboard-background: var(--g-color-private-cool-grey-50-solid);
         --dl-color-fixed-header-background: var(--g-color-private-cool-grey-150-solid);
     }
 
     &_theme_dark {
+        --g-color-private-white-20-solid: rgb(49, 48, 55);
+
         --ds-color-relation-line: #4c4b51;
         --ds-color-avatar: #3b3a41;
         --w-local-item-border: rgba(255, 255, 255, 0.5);
@@ -90,10 +109,13 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --dl-filter-ymap-heatmap: invert(0.9) saturate(0.4) hue-rotate(-30deg);
         --dl-color-ymap-background: transparent;
         --dl-filter-zoom-control: invert(1);
+        --dl-color-dashboard-background: var(--g-color-private-white-20-solid);
         --dl-color-fixed-header-background: var(--g-color-base-background);
     }
 
     &_theme_dark-hc {
+        --g-color-private-white-20-solid: rgb(38, 39, 42);
+
         --ds-color-relation-line: #4c4b51;
         --ds-color-avatar: #3b3a41;
         --w-local-item-border: rgba(255, 255, 255, 0.5);
@@ -105,6 +127,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --dl-filter-ymap-heatmap: invert(0.95) saturate(0.4) hue-rotate(-30deg);
         --dl-color-ymap-background: transparent;
         --dl-filter-zoom-control: invert(1);
+        --dl-color-dashboard-background: var(--g-color-private-white-20-solid);
         --dl-color-fixed-header-background: var(--g-color-base-background);
     }
 }

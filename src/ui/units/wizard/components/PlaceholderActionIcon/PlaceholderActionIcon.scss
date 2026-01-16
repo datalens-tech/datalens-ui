@@ -4,4 +4,8 @@
     &_first {
         margin-inline-start: auto;
     }
+
+    &__popover-content {
+        padding: var(--g-spacing-3) var(--g-spacing-4);
+    }
 }

@@ -10,6 +10,7 @@ import {
     GradientNullModes,
     IS_NULL_FILTER_TEMPLATE,
     MINIMUM_FRACTION_DIGITS,
+    getFormatOptions,
     isDateField,
     isDateType,
     isMarkupDataType,
@@ -17,7 +18,6 @@ import {
     isTreeDataType,
     isUnsupportedDataType,
 } from '../../../../../../../shared';
-import type {Config} from '../../config/types';
 import {getTreeState} from '../../url/helpers';
 import {mapAndColorizeTableCells} from '../../utils/color-helpers';
 import {
@@ -53,6 +53,7 @@ function prepareFlatTable({
     shared,
     ChartEditor,
     fields,
+    defaultColorPaletteId,
 }: PrepareFunctionArgs) {
     const {drillDownData} = shared.sharedData;
     const widgetConfig = ChartEditor.getWidgetConfig();
@@ -132,18 +133,19 @@ function prepareFlatTable({
             } else {
                 // TODO: in theory, this is not necessary, because you need to look at the dataType
                 if (isNumberField(item)) {
-                    if (item.formatting) {
+                    const formatting = getFormatOptions(item);
+                    if (formatting) {
                         numberHeadCell.formatter = {
-                            format: item.formatting.format,
-                            suffix: item.formatting.postfix,
-                            prefix: item.formatting.prefix,
-                            showRankDelimiter: item.formatting.showRankDelimiter,
-                            unit: item.formatting.unit,
+                            format: formatting.format,
+                            suffix: formatting.postfix,
+                            prefix: formatting.prefix,
+                            showRankDelimiter: formatting.showRankDelimiter,
+                            unit: formatting.unit,
                         };
 
                         if (dataType === DATASET_FIELD_TYPES.FLOAT) {
                             numberHeadCell.formatter.precision =
-                                item.formatting.precision ?? MINIMUM_FRACTION_DIGITS;
+                                formatting.precision ?? MINIMUM_FRACTION_DIGITS;
                         }
                     } else {
                         numberHeadCell.precision =
@@ -234,7 +236,9 @@ function prepareFlatTable({
                         field: item,
                         columnValues,
                         isTotalCell: false,
+                        availablePalettes: colorsConfig.availablePalettes,
                         loadedColorPalettes: colorsConfig.loadedColorPalettes,
+                        defaultColorPaletteId,
                     });
 
                     cell.value = barCellProperties.value;
@@ -294,6 +298,7 @@ function prepareFlatTable({
                     idToDataType,
                     loadedColorPalettes: colorsConfig.loadedColorPalettes,
                     availablePalettes: colorsConfig.availablePalettes,
+                    defaultColorPaletteId,
                 });
             }
 
@@ -333,9 +338,6 @@ function prepareFlatTable({
     // Disable the paginator if all the data came initially
     // Disabling the paginator enables front-end sorting (when clicking on the column header)
     const shouldDisablePaginator = page === 1 && limit && limit > data.length;
-    if (shouldDisablePaginator) {
-        ChartEditor.updateConfig({paginator: {enabled: false}} as Config);
-    }
 
     let footer;
 
@@ -352,6 +354,7 @@ function prepareFlatTable({
             order,
             columnValuesByColumn,
             colorsConfig,
+            defaultColorPaletteId,
         });
     }
 

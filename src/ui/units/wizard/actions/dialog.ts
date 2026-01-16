@@ -69,6 +69,7 @@ export function openDialogPlaceholder({placeholder, onApply}: OpenDialogPlacehol
         const sort = selectSort(state);
         const drillDownLevel = selectDrillDownLevel(state);
         const chartConfig = state.wizard.visualization as Partial<ServerChartsConfig>;
+        const qlChartType = getChartType(state);
 
         if (visualization) {
             dispatch(
@@ -77,6 +78,7 @@ export function openDialogPlaceholder({placeholder, onApply}: OpenDialogPlacehol
                     props: {
                         chartConfig,
                         visualizationId: visualization.id as WizardVisualizationId,
+                        qlChartType,
                         drillDownLevel,
                         segments,
                         sort,
@@ -134,9 +136,10 @@ export function openDialogPlaceholder({placeholder, onApply}: OpenDialogPlacehol
 
 type OpenDialogMetricArguments = {
     extraSettings: CommonSharedExtraSettings | undefined;
+    onApply?: () => void;
 };
 
-export function openDialogMetric({extraSettings}: OpenDialogMetricArguments) {
+export function openDialogMetric({extraSettings, onApply}: OpenDialogMetricArguments) {
     return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const colorPalettes = selectColorPalettes(getState());
         if (!colorPalettes.length) {
@@ -147,17 +150,35 @@ export function openDialogMetric({extraSettings}: OpenDialogMetricArguments) {
             openDialog({
                 id: DIALOG_METRIC_SETTINGS,
                 props: {
-                    onSave: ({size, palette, color}) => {
-                        const updatedExtraSettings = {
-                            ...extraSettings,
+                    onSave: ({size, palette, color, colorIndex}) => {
+                        // TODO: use either index or color
+                        // const metricSettins =
+                        //     typeof colorIndex === 'number'
+                        //         ? {
+                        //               metricFontColorIndex: colorIndex,
+                        //               metricFontSize: size,
+                        //               metricFontColorPalette: palette,
+                        //               metricFontColor: undefined,
+                        //           }
+                        //         : {
+                        //               metricFontSize: size,
+                        //               metricFontColor: color,
+                        //               metricFontColorPalette: palette,
+                        //               metricFontColorIndex: undefined,
+                        //           };
+
+                        const metricSettins = {
+                            metricFontColorIndex: colorIndex,
                             metricFontSize: size,
-                            metricFontColor: color,
                             metricFontColorPalette: palette,
+                            metricFontColor: color,
                         };
 
-                        dispatch(setExtraSettings(updatedExtraSettings));
+                        dispatch(setExtraSettings({...extraSettings, ...metricSettins}));
 
                         dispatch(updatePreviewAndClientChartsConfig({}));
+
+                        onApply?.();
                     },
                 },
             }),
@@ -169,21 +190,20 @@ type OpenDialogPointsSizeArguments = {
     geopointsConfig: PointSizeConfig;
     placeholder: Placeholder;
     visualization: Shared['visualization'];
+    onApply?: () => void;
 };
 
 export function openDialogPointsSize({
     geopointsConfig,
     placeholder,
     visualization,
+    onApply,
 }: OpenDialogPointsSizeArguments) {
     return function (dispatch: WizardDispatch) {
         const visualizationId = visualization.id;
 
         const pointType =
-            visualizationId === WizardVisualizationId.Scatter ||
-            visualizationId === WizardVisualizationId.ScatterD3
-                ? 'scatter'
-                : 'geopoint';
+            visualizationId === WizardVisualizationId.Scatter ? 'scatter' : 'geopoint';
 
         dispatch(
             openDialog({
@@ -199,6 +219,8 @@ export function openDialogPointsSize({
                         dispatch(closeDialog());
 
                         dispatch(updatePreviewAndClientChartsConfig({}));
+
+                        onApply?.();
                     },
                 },
             }),

@@ -1,13 +1,18 @@
+import type z from 'zod';
+
 import type {
     Dataset,
     DatasetField,
     DatasetFieldCalcMode,
     DatasetFieldError,
+    SourceListingOptions,
     TransferIdMapping,
     TransferNotification,
+    WorkbookId,
 } from '../../../types';
 import type {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
 import type {EntryFieldData} from '../../types';
+import type {deleteDatasetResultSchema} from '../schemas';
 
 import type {WorkbookIdArg} from './common';
 
@@ -22,9 +27,60 @@ export type ValidateDatasetUpdate = {
     field: Partial<DatasetField>;
 };
 
-type DatasetSource = {
+type FieldDocKey =
+    | 'CHYT_TABLE/table_name'
+    | 'CHYT_TABLE_LIST/table_names'
+    | 'CHYT_TABLE_LIST/title'
+    | 'CHYT_TABLE_RANGE/title'
+    | 'CHYT_USER_AUTH_TABLE_LIST/title'
+    | 'CHYT_USER_AUTH_TABLE_RANGE/title'
+    | 'CHYT_USER_AUTH_TABLE/table_name'
+    | 'CHYT_USER_AUTH_TABLE/table_names'
+    | 'CHYT_TABLE_RANGE/directory_path'
+    | 'CHYDB_TABLE/table_name'
+    | 'CHYDB_TABLE/ydb_database'
+    | 'ANY_SUBSELECT/subsql'
+    | 'CHYT_SUBSELECT/subsql'
+    | 'MSSQL_SUBSELECT/subsql'
+    | 'PG_SUBSELECT/subsql'
+    | 'YTsaurus/CHYT_TABLE/table_name'
+    | 'CHYT_YTSAURUS_TABLE_LIST/title'
+    | 'YTsaurus/CHYT_TABLE_LIST/table_names'
+    | 'CHYT_YTSAURUS_TABLE_RANGE/title'
+    | 'YTsaurus/CHYT_TABLE_RANGE/directory_path'
+    | 'YTsaurus/CHYT_SUBSELECT/subsql';
+
+type BaseOptions = {
+    name: string;
+    default: string;
+    title: string;
+    required?: boolean;
+    field_doc_key?: FieldDocKey;
+    template_enabled?: boolean;
+};
+
+export type TextFormOptions = {input_type: 'text'} & BaseOptions;
+
+export type TextareaFormOptions = {input_type: 'textarea'} & BaseOptions;
+
+type SqlFormOptions = {input_type: 'sql'} & BaseOptions;
+
+export type SelectFormOptions = {
+    input_type: 'select';
+    select_options: string[];
+    select_allow_user_input: boolean;
+} & BaseOptions;
+
+export type FormOptions =
+    | TextFormOptions
+    | TextareaFormOptions
+    | SqlFormOptions
+    | SelectFormOptions;
+
+export type BaseSource = {
     connection_id: string;
-    form: Record<string, string>[] | null;
+    form: FormOptions[];
+    disabled: boolean;
     group: string[];
     is_ref: boolean;
     parameter_hash: string;
@@ -32,7 +88,9 @@ type DatasetSource = {
     ref_source_id: string | null;
     source_type: string;
     title: string;
-} & Id;
+    managed_by?: 'user';
+    tab_title: string;
+};
 
 type DatasetWithOptions = {
     dataset: Dataset['dataset'];
@@ -54,22 +112,35 @@ export type DatasetDistinctWhere = {
 };
 
 export type GetSourceResponse = {
-    freeform_sources: DatasetSource[];
-    sources: DatasetSource[];
+    freeform_sources: BaseSource[];
+    sources: BaseSource[];
 };
 
 export type GetSourceArgs = {
     connectionId: string;
     limit?: number;
-} & WorkbookIdArg;
+    offset?: number;
+    db_name?: string;
+    search_text?: string;
+    bindedDatasetId?: string;
+    workbookId?: WorkbookId;
+};
 
-export type DeleteDatasetResponse = unknown;
-
-export type DeleteDatasetArgs = DatasetId;
+export type GetSourceListingOptionsArgs = {
+    connectionId: string;
+    bindedDatasetId?: string;
+    workbookId?: WorkbookId;
+};
 
 export type GetDatasetByVersionResponse = Dataset;
 
-export type GetDatasetByVersionArgs = {version: string} & DatasetId & WorkbookIdArg;
+export type GetDatasetByVersionArgs = DatasetId & {
+    version?: DatasetVersion;
+    workbookId?: WorkbookId;
+    rev_id?: string;
+};
+
+export type DeleteDatasetResponse = z.infer<typeof deleteDatasetResultSchema>;
 
 export type CheckDatasetsForPublicationResponse = {
     result: {
@@ -108,11 +179,15 @@ export type ValidateDatasetResponse = {
 } & DatasetWithOptions;
 
 export type ValidateDatasetArgs = {
-    dataset: Partial<Dataset['dataset']>;
-    updates: ValidateDatasetUpdate[];
-    version: DatasetVersion;
-} & DatasetId &
-    WorkbookIdArg;
+    version?: DatasetVersion;
+    data: {
+        dataset: Partial<Dataset['dataset']>;
+        updates: ValidateDatasetUpdate[];
+    };
+    workbookId?: WorkbookId;
+    bindedDatasetId?: string;
+    rev_id?: string;
+} & DatasetId;
 
 export type GetFieldTypesResponse = {
     types: {
@@ -128,6 +203,7 @@ export type PartialDatasetField = {
     title: string;
     type: string;
     calc_mode: DatasetFieldCalcMode;
+    ui_settings?: string;
 };
 
 export type GetDataSetFieldsByIdResponse = {
@@ -139,31 +215,38 @@ export type GetDataSetFieldsByIdArgs = WorkbookIdArg & {
     dataSetId: string;
 };
 
-export type CreateDatasetResponse = Id & DatasetWithOptions;
-
 type CreateDatasetBaseArgs = {
-    dataset: Dataset['dataset'];
-    multisource: boolean;
+    dataset: Partial<Dataset['dataset']>;
     name: string;
     created_via?: string;
 };
 
-type CreateDirDatasetArgs = CreateDatasetBaseArgs & {
+export type CreateDirDatasetArgs = CreateDatasetBaseArgs & {
     dir_path: string;
 };
 
-type CreateWorkbookDatsetArgs = CreateDatasetBaseArgs & {
+export type CreateWorkbookDatasetArgs = CreateDatasetBaseArgs & {
     workbook_id: string;
 };
 
-export type CreateDatasetArgs = CreateDirDatasetArgs | CreateWorkbookDatsetArgs;
+export type CreateCollectionDatasetArgs = CreateDatasetBaseArgs & {
+    collection_id: string;
+};
+
+export type CreateDatasetArgs =
+    | CreateDirDatasetArgs
+    | CreateWorkbookDatasetArgs
+    | CreateCollectionDatasetArgs;
+
+export type CreateDatasetResponse = Id & DatasetWithOptions;
 
 export type UpdateDatasetResponse = DatasetWithOptions;
 
 export type UpdateDatasetArgs = {
-    dataset: Dataset['dataset'];
-    version: DatasetVersion;
-    multisource: boolean;
+    version?: DatasetVersion;
+    data: {
+        dataset: Partial<Dataset['dataset']>;
+    };
 } & DatasetId;
 
 export type GetPreviewResponse = Partial<DistinctResult & DistinctRegularResult>;
@@ -172,8 +255,8 @@ export type GetPreviewArgs = {
     dataset: Dataset['dataset'];
     version: DatasetVersion;
     limit?: number;
-} & DatasetId &
-    WorkbookIdArg;
+    workbookId?: WorkbookId;
+} & DatasetId;
 
 export type ValidateDatasetFormulaErrorResponse = {
     code: string;
@@ -224,7 +307,6 @@ export type ExportDatasetResponse = {
 };
 
 export type ExportDatasetArgs = {
-    usMasterToken: string;
     datasetId: string;
     idMapping: TransferIdMapping;
     workbookId?: string | null;
@@ -236,8 +318,13 @@ export type ImportDatasetResponse = {
 };
 
 export type ImportDatasetArgs = {
-    usMasterToken: string;
     workbookId: string;
     dataset: EntryFieldData;
     idMapping: TransferIdMapping;
 };
+
+export type GetDbNamesResponse = {
+    db_names: string[];
+};
+
+export type GetSourceListingOptionsResponse = SourceListingOptions;

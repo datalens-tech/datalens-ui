@@ -56,7 +56,8 @@ export const LEGACY_EDITOR_TYPE = {
     MANAGER: 'manager',
     TEXT: 'text',
     METRIC: 'metric',
-};
+} as const;
+
 export const EDITOR_TYPE = {
     MODULE: 'module',
     GRAPH_NODE: 'graph_node',
@@ -74,7 +75,7 @@ export const EDITOR_TYPE = {
 
     // deprecated
     BLANK_CHART_NODE: 'blank-chart_node',
-};
+} as const;
 
 export type EditorTypes = (typeof EDITOR_TYPE)[keyof typeof EDITOR_TYPE];
 

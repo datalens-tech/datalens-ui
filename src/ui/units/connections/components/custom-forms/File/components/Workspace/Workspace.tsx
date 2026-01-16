@@ -1,13 +1,13 @@
 import React from 'react';
 
-import DataTable from '@gravity-ui/react-data-table';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {get} from 'lodash';
+import get from 'lodash/get';
 import type {NonNullableBy} from 'shared';
 import {ConnectionsWorkspaceQA} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
+import TableWidget from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/TableWidget';
 
 import {Interpolate} from '../../../../../../../components/Interpolate';
 import {Veil} from '../../../../../../../components/Veil/Veil';
@@ -19,7 +19,8 @@ import type {
     UploadedFile,
 } from '../../../../../store';
 import {ErrorView} from '../../../../ErrorView/ErrorView';
-import {getColumnsWithTypeIcons} from '../../../utils/render';
+import {useFileSourceTableWidgetData} from '../../../hooks/useFileSourceTableWidgetData';
+import {getFileSourcePreviewTableColumns} from '../../../utils/render';
 import {useFileContext} from '../../context';
 import {getAcceptedExtensions, getCreatingSourceColumns} from '../../utils';
 
@@ -83,16 +84,24 @@ const SourceWorkspace = ({item, columnFilter}: {item: FileSourceItem; columnFilt
     const {handleFileSourceUpdate, handleFileColumnFilterUpdate, handleSourceSettingsApply} =
         useFileContext();
     const preview = get(item, ['source', 'preview']);
-    const columns = item.options
-        ? getCreatingSourceColumns({
-              handleFileSourceUpdate,
-              item: item as NonNullableBy<FileSourceItem, 'options'>,
-              filter: columnFilter,
-          })
-        : getColumnsWithTypeIcons({schema: item.source.raw_schema, filter: columnFilter});
+    const tableWidgetData = useFileSourceTableWidgetData({
+        fileSourcePreview: preview,
+        getColumns: () => {
+            return item.options
+                ? getCreatingSourceColumns({
+                      handleFileSourceUpdate,
+                      item: item as NonNullableBy<FileSourceItem, 'options'>,
+                      filter: columnFilter,
+                  })
+                : getFileSourcePreviewTableColumns({
+                      schema: item.source.raw_schema,
+                      filter: columnFilter,
+                  });
+        },
+    });
 
     return (
-        <React.Fragment>
+        <>
             <FileSettings item={item} onUpdate={handleSourceSettingsApply} />
             <ColumnFilter value={columnFilter} onUpdate={handleFileColumnFilterUpdate} />
             {item.error ? (
@@ -102,20 +111,14 @@ const SourceWorkspace = ({item, columnFilter}: {item: FileSourceItem; columnFilt
                     title={i18n('label_settings-update-failure')}
                 />
             ) : (
-                // @ts-ignore theme is required value but has default - https://github.com/gravity-ui/react-data-table/blob/71c52e923a98ff38af6107754bb73490b396e71b/src/lib/DataTable.tsx#L985 */}
-                <DataTable
+                <TableWidget
+                    id="source-workspace-table"
                     emptyDataMessage={i18n('label_no-preview-data')}
-                    columns={columns}
-                    data={preview}
-                    settings={{
-                        stickyHead: 'fixed',
-                        syncHeadOnResize: true,
-                        highlightRows: true,
-                        displayIndices: false,
-                    }}
+                    data={tableWidgetData}
+                    className={b('preview-table')}
                 />
             )}
-        </React.Fragment>
+        </>
     );
 };
 
@@ -128,24 +131,22 @@ const StandaloneSourceWorkspace = ({
 }) => {
     const {handleFileColumnFilterUpdate} = useFileContext();
     const preview = get(item, ['preview']);
-    const columns = getColumnsWithTypeIcons({schema: item.raw_schema, filter: columnFilter});
+    const tableWidgetData = useFileSourceTableWidgetData({
+        fileSourcePreview: preview,
+        fileSourceSchema: item.raw_schema,
+        columnFilterValue: columnFilter,
+    });
 
     return (
-        <React.Fragment>
+        <>
             <ColumnFilter value={columnFilter} onUpdate={handleFileColumnFilterUpdate} />
-            {/* @ts-ignore theme is required value but has default - https://github.com/gravity-ui/react-data-table/blob/71c52e923a98ff38af6107754bb73490b396e71b/src/lib/DataTable.tsx#L985 */}
-            <DataTable
+            <TableWidget
+                id="standalone-source-workspace-table"
                 emptyDataMessage={i18n('label_no-preview-data')}
-                columns={columns}
-                data={preview}
-                settings={{
-                    stickyHead: 'fixed',
-                    syncHeadOnResize: true,
-                    highlightRows: true,
-                    displayIndices: false,
-                }}
+                data={tableWidgetData}
+                className={b('preview-table')}
             />
-        </React.Fragment>
+        </>
     );
 };
 

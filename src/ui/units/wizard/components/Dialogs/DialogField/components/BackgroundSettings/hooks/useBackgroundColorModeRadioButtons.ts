@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {RadioButtonOption} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import type {Field, NestedPartial, TableFieldBackgroundSettings} from 'shared';
 import {
@@ -26,7 +26,7 @@ type UseBackgroundSettingsModeArgs = {
 };
 
 type UseBackgroundSettingsMode = {
-    radioButtonOptions: RadioButtonOption[];
+    radioButtonOptions: SegmentedRadioGroupOptionProps[];
     selectedRadioButton: string | undefined;
     handleModeRadioButtonsUpdate: (mode: string) => void;
 };
@@ -36,7 +36,7 @@ export const enum BackgroundColorMode {
     Gradient = 'gradient',
 }
 
-const BACKGROUND_COLOR_MODE_RADIO_BUTTONS: RadioButtonOption[] = [
+const BACKGROUND_COLOR_MODE_RADIO_BUTTONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: BackgroundColorMode.Palette,
         content: i18n('wizard', 'label_palette'),

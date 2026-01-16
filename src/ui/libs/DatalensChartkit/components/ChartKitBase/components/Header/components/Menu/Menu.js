@@ -14,9 +14,8 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
 import PropTypes from 'prop-types';
-import {ChartkitMenuDialogsQA, Feature, MenuItemsIds} from 'shared';
+import {ChartkitMenuDialogsQA, MenuItemsIds} from 'shared';
 import {DL, SHEET_IDS} from 'ui/constants';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {getVisibleItems} from '../../../../helpers';
 
@@ -27,16 +26,8 @@ const i18n = I18n.keyset('chartkit.menu');
 const b = block('chartkit-menu');
 
 const SwitcherButton = (props) => {
-    const showFlatControls = isEnabledFeature(Feature.DashFloatControls);
-    const buttonSize = showFlatControls ? 'm' : 'l';
-
     return (
-        <Button
-            {...props}
-            view="flat-secondary"
-            size={buttonSize}
-            className={b('switcher', {flat: showFlatControls})}
-        >
+        <Button {...props} view="flat-secondary" size="m" className={b('switcher')}>
             <Icon data={Ellipsis} size={16} />
         </Button>
     );
@@ -52,6 +43,7 @@ export class Menu extends React.PureComponent {
         widget: PropTypes.object,
         widgetDataRef: PropTypes.object,
         loadedData: PropTypes.object,
+        chartRevIdRef: PropTypes.object,
         error: PropTypes.object,
         propsData: PropTypes.object.isRequired,
         requestId: PropTypes.string.isRequired,
@@ -118,7 +110,7 @@ export class Menu extends React.PureComponent {
                 this.setState({modal: component});
             },
             disabled,
-            children: (
+            text: (
                 <div className={b('menu-item-content')}>
                     {titleStr}
                     {typeof disabledHint === 'string' ? (
@@ -129,7 +121,7 @@ export class Menu extends React.PureComponent {
                 </div>
             ),
             items: disabled ? undefined : subItems,
-            icon: itemIcon,
+            iconStart: itemIcon,
             className: b('popup-item', {disabled}),
         };
     };
@@ -234,7 +226,7 @@ export class Menu extends React.PureComponent {
                                     ? this.handleFullscreenOpen(item.action)
                                     : item.action
                             }
-                            iconStart={item.icon}
+                            iconStart={item.iconStart}
                         >
                             {item.text}
                         </ListMenu.Item>
@@ -250,6 +242,7 @@ export class Menu extends React.PureComponent {
             widget,
             widgetDataRef,
             loadedData,
+            chartRevIdRef,
             requestId,
             widgetRendering,
             yandexMapAPIWaiting,
@@ -271,6 +264,7 @@ export class Menu extends React.PureComponent {
             widget,
             widgetDataRef,
             loadedData,
+            chartRevIdRef,
             propsData,
             requestId,
             widgetRendering,

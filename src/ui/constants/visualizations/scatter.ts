@@ -1,8 +1,9 @@
 import {ArrowRight, ArrowUp, ChevronsExpandUpRight, Circles5Random} from '@gravity-ui/icons';
 
 import type {Field, GraphShared, Placeholder, Shared} from '../../../shared';
-import {WizardVisualizationId} from '../../../shared';
+import {AxisAutoScaleModes, WizardVisualizationId} from '../../../shared';
 import {
+    DEFAULT_DATE_FORMAT,
     ITEM_TYPES,
     PRIMITIVE_DATA_TYPES,
     PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
@@ -51,7 +52,7 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
             capacity: 1,
             settings: {
                 scale: 'auto',
-                scaleValue: 'min-max',
+                scaleValue: AxisAutoScaleModes.Auto,
                 title: 'off',
                 titleValue: '',
                 type: 'linear',
@@ -61,6 +62,8 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
                 hideLabels: 'no',
                 labelsView: 'auto',
                 holidays: 'off',
+                axisLabelDateFormat: DEFAULT_DATE_FORMAT,
+                axisLabelFormating: {},
                 axisFormatMode: 'auto',
                 axisModeMap: {},
                 axisVisibility: 'show',
@@ -79,7 +82,7 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
             capacity: 1,
             settings: {
                 scale: 'auto',
-                scaleValue: 'min-max',
+                scaleValue: AxisAutoScaleModes.Auto,
                 title: 'off',
                 titleValue: '',
                 type: 'linear',
@@ -88,6 +91,8 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
                 gridStepValue: 50,
                 hideLabels: 'no',
                 labelsView: 'auto',
+                axisLabelDateFormat: DEFAULT_DATE_FORMAT,
+                axisLabelFormating: {},
                 axisFormatMode: 'auto',
                 axisVisibility: 'show',
             },
@@ -116,10 +121,4 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
             transform: prepareFieldToMeasureTransformation,
         },
     ] as Placeholder[],
-};
-
-export const SCATTER_D3_VISUALIZATION: GraphShared['visualization'] = {
-    ...SCATTER_VISUALIZATION,
-    id: WizardVisualizationId.ScatterD3,
-    allowComments: false,
 };

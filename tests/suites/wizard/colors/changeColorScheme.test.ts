@@ -7,10 +7,10 @@ import {openTestPage, slct} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
-import defaultPalette from '../../../../src/shared/constants/colors/default';
+import classic from '../../../../src/shared/constants/colors/common/classic-20';
 import testPalette from '../../../../src/shared/constants/colors/common/datalens';
 
-const defaultPaletteColorScheme = defaultPalette.scheme.slice(0, 3);
+const defaultPaletteColorScheme = classic.scheme.slice(0, 3);
 
 const testPaletteId = testPalette.id;
 const testPaletteColorScheme = testPalette.scheme.slice(0, 3);
@@ -25,7 +25,10 @@ const getColumnWithColorSelector = (color: string) => `//*[@fill='${color}']`;
 
 const waitForColorsInChartkit = async (page: Page, colors: string[]) => {
     return Promise.all(
-        colors.map((color) => page.waitForSelector(getColumnWithColorSelector(color))),
+        colors.map((color) => {
+            const locator = page.locator(getColumnWithColorSelector(color)).first();
+            return locator.waitFor({state: 'attached'});
+        }),
     );
 };
 

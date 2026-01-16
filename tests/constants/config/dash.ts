@@ -12,6 +12,7 @@ export const dash: DashParametrizationConfig = {
         DashboardWithErrorChart: DashUrls.DashboardWithErrorChart,
         DashboardWithAPIErrorChart: DashUrls.DashboardWithAPIErrorChart,
         DashboardWithDifferentWidgets: DashUrls.DashboardWithDifferentWidgets,
+        DashboardWithWidgetsBackgrounds: DashUrls.DashboardWithWidgetsBackgrounds,
     },
     charts: {
         ChartCityPie: ChartsParams.ChartCityPie,

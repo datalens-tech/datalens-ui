@@ -5,17 +5,14 @@ import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {WorkbookId} from '../../../../shared';
 import type {CacheClient} from '../../../components/cache-client';
-import type {
-    AuthParams,
-    ZitadelParams,
-} from '../../../components/charts-engine/components/processor/data-fetcher';
+import type {AuthParams} from '../../../components/charts-engine/components/processor/data-fetcher';
 
 import type {
     CHARTS_MIDDLEWARE_URL_TYPE,
     CONTROL_MIDDLEWARE_URL_TYPE,
     REQUEST_WITH_DATASET_SOURCE_NAME,
 } from './constants/middleware-urls';
-import type {SourcesArgs} from './datalens/url/build-sources/types';
+import type {SourcesArgs} from './datalens/url/types';
 
 export interface SourceAdapterRequestSettings {
     useCaching: boolean;
@@ -60,7 +57,6 @@ export interface MiddlewareSourceAdapterArgs {
     cacheClient: CacheClient;
     userId: string | null;
     rejectFetchingSource: (reason: any) => void;
-    zitadelParams: ZitadelParams | undefined;
     authParams: AuthParams | undefined;
     requestHeaders: OutgoingHttpHeaders;
 }

@@ -4,16 +4,21 @@ import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import ChartKit from 'libs/DatalensChartkit';
 import {batch, useDispatch, useSelector} from 'react-redux';
+import {Feature} from 'shared';
 import {DashboardDialogSettingsQa} from 'shared/constants/qa/dash';
-import {DEFAULT_DASH_MARGINS} from 'ui/components/DashKit/constants';
+import {
+    DEFAULT_DASH_MARGINS,
+    OLD_DEFAULT_WIDGET_BORDER_RADIUS,
+} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
+import {openDialog} from 'ui/store/actions/dialog';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {DatalensGlobalState} from '../../../../..';
-import {EntryDialogName} from '../../../../..';
 import {i18n} from '../../../../../../i18n';
 import type {DashSettings, DashSettingsGlobalParams} from '../../../../../../shared';
-import {DashLoadPriority, Feature} from '../../../../../../shared';
+import {DashLoadPriority} from '../../../../../../shared';
+import {DIALOG_ENTRY_DESCRIPTION} from '../../../../../components/DialogEntryDescription';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {DIALOG_TYPE} from '../../../../../constants/dialogs';
 import {validateParamTitle} from '../../../components/ParamsSettings/helpers';
@@ -22,6 +27,7 @@ import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
     selectDashAccessDescription,
     selectDashSupportDescription,
+    selectEntryId,
     selectIsDialogVisible,
     selectSettings,
 } from '../../../store/selectors/dashTypedSelectors';
@@ -38,6 +44,7 @@ const b = block('dialog-settings');
 const Settings = () => {
     const dispatch = useDispatch();
 
+    const isNew = !useSelector(selectEntryId);
     const settings = useSelector(selectSettings);
     const visible = useSelector((state: DatalensGlobalState) =>
         selectIsDialogVisible(state, DIALOG_TYPE.SETTINGS),
@@ -73,9 +80,16 @@ const Settings = () => {
     const [accessDescription, setAccessDesc] = React.useState(accessDesc);
     const [supportDescription, setSupportDesc] = React.useState(supportDesc);
     const [margins, setMargins] = React.useState(settings.margins || DEFAULT_DASH_MARGINS);
+    const [borderRadius, setBorderRadius] = React.useState(
+        settings.borderRadius ??
+            (!isNew && isEnabledFeature(Feature.EnableNewDashSettings)
+                ? OLD_DEFAULT_WIDGET_BORDER_RADIUS
+                : undefined),
+    );
     const [otherSettinsState, setOtherSettingsState] = React.useState<Partial<DashSettings>>({});
 
     const entryDialoguesRef = React.useRef<EntryDialogues>(null);
+    const [isDescriptionOpened, setIsDescriptionOpened] = React.useState(false);
 
     const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
 
@@ -121,6 +135,7 @@ const Settings = () => {
         ) {
             const newSettings = {
                 ...settings,
+                borderRadius,
                 autoupdateInterval:
                     (typeof autoupdateInterval === 'string'
                         ? parseInt(autoupdateInterval)
@@ -169,30 +184,38 @@ const Settings = () => {
     };
 
     const handleButtonSetupAccessDescription = React.useCallback(() => {
-        entryDialoguesRef?.current?.open?.({
-            dialog: EntryDialogName.DashMeta,
-            dialogProps: {
-                title: i18n('dash.settings-dialog.edit', 'label_access-description'),
-                text: accessDescription || '',
-                canEdit: true,
-                isEditMode: true,
-                onApply: (text: string) => setAccessDesc(text),
-            },
-        });
-    }, [entryDialoguesRef, accessDescription]);
+        setIsDescriptionOpened(true);
+        dispatch(
+            openDialog({
+                id: DIALOG_ENTRY_DESCRIPTION,
+                props: {
+                    title: i18n('dash.settings-dialog.edit', 'label_access-description'),
+                    description: accessDescription || '',
+                    canEdit: true,
+                    isEditMode: true,
+                    onApply: (text: string) => setAccessDesc(text),
+                    onCloseCallback: () => setIsDescriptionOpened(false),
+                },
+            }),
+        );
+    }, [dispatch, accessDescription]);
 
     const handleButtonSetupSupportDescription = React.useCallback(() => {
-        entryDialoguesRef?.current?.open?.({
-            dialog: EntryDialogName.DashMeta,
-            dialogProps: {
-                title: i18n('dash.settings-dialog.edit', 'label_support-description'),
-                text: supportDescription || '',
-                canEdit: true,
-                isEditMode: true,
-                onApply: (text: string) => setSupportDesc(text),
-            },
-        });
-    }, [entryDialoguesRef, supportDescription]);
+        setIsDescriptionOpened(true);
+        dispatch(
+            openDialog({
+                id: DIALOG_ENTRY_DESCRIPTION,
+                props: {
+                    title: i18n('dash.settings-dialog.edit', 'label_support-description'),
+                    description: supportDescription || '',
+                    canEdit: true,
+                    isEditMode: true,
+                    onApply: (text: string) => setSupportDesc(text),
+                    onCloseCallback: () => setIsDescriptionOpened(false),
+                },
+            }),
+        );
+    }, [dispatch, supportDescription]);
 
     const handleChangeGlobalParams = React.useCallback((params: DashSettingsGlobalParams) => {
         setIsGlobalParamsError(
@@ -215,30 +238,29 @@ const Settings = () => {
         <Dialog
             open={visible}
             onClose={() => dispatch(closeDialog())}
-            disableFocusTrap={true}
             disableEscapeKeyDown={true}
+            disableHeightTransition={true}
             qa={DashboardDialogSettingsQa.DialogRoot}
+            disableOutsideClick={isDescriptionOpened}
         >
             <Dialog.Header caption={i18n('dash.settings-dialog.edit', 'label_settings')} />
             <Dialog.Body className={b()}>
-                {isEnabledFeature(Feature.DashAutorefresh) && (
-                    <AutoRefresh
-                        autoUpdateValue={autoupdate}
-                        onChangeAutoUpdate={() => {
-                            const newValue = !autoupdate;
-                            setAutoupdate(newValue);
-                            setSilentLoading(false);
-                            setAutoupdateInterval(newValue ? getMinAutoupdateInterval() : '');
-                        }}
-                        intervalDisabled={!autoupdate}
-                        intervalValue={String(autoupdateInterval)}
-                        onUpdateInterval={handleAutoUpdateIntervalInputChange}
-                        onBlurInterval={() => isValidAutoupdateInterval()}
-                        silentLoadingValue={silentLoading}
-                        silentLoadingDisabled={!autoupdate}
-                        onChangeSilentLoading={() => setSilentLoading(!silentLoading)}
-                    />
-                )}
+                <AutoRefresh
+                    autoUpdateValue={autoupdate}
+                    onChangeAutoUpdate={() => {
+                        const newValue = !autoupdate;
+                        setAutoupdate(newValue);
+                        setSilentLoading(false);
+                        setAutoupdateInterval(newValue ? getMinAutoupdateInterval() : '');
+                    }}
+                    intervalDisabled={!autoupdate}
+                    intervalValue={String(autoupdateInterval)}
+                    onUpdateInterval={handleAutoUpdateIntervalInputChange}
+                    onBlurInterval={() => isValidAutoupdateInterval()}
+                    silentLoadingValue={silentLoading}
+                    silentLoadingDisabled={!autoupdate}
+                    onChangeSilentLoading={() => setSilentLoading(!silentLoading)}
+                />
                 <Display
                     margins={margins}
                     onChangeMargins={handleMarginsChange}
@@ -248,6 +270,8 @@ const Settings = () => {
                     onChangeHideDashTitle={() => setHideTitle(!hideDashTitle)}
                     expandTOCValue={expandTOC}
                     onChangeExpandTOC={() => setExpandTOC(!expandTOC)}
+                    borderRadius={borderRadius}
+                    onChangeBorderRadius={setBorderRadius}
                 />
                 <OtherSettings
                     showDependentSelectors={showDependentSelectors}

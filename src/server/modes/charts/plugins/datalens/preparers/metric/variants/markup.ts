@@ -6,7 +6,13 @@ import type {
     ServerCommonSharedExtraSettings,
     ServerField,
 } from '../../../../../../../../shared';
-import {MINIMUM_FRACTION_DIGITS, formatNumber, isDateField} from '../../../../../../../../shared';
+import {
+    MINIMUM_FRACTION_DIGITS,
+    formatNumber,
+    getFormatOptions,
+    isDateField,
+} from '../../../../../../../../shared';
+import {getColorByColorSettings} from '../../../../../../../../shared/utils/palettes';
 import {prepareMetricObject} from '../../../utils/markup-helpers';
 import {isFloatDataType, isNumericalDataType} from '../../../utils/misc-helpers';
 import {getTitle} from '../utils';
@@ -15,10 +21,12 @@ export const prepareMarkupMetricVariant = ({
     measure,
     value,
     extraSettings,
+    currentPalette,
 }: {
     measure: ServerField;
     value: string | MarkupItem | null;
     extraSettings: ServerCommonSharedExtraSettings | undefined;
+    currentPalette: string[];
 }) => {
     if (!measure) {
         return {};
@@ -50,16 +58,19 @@ export const prepareMarkupMetricVariant = ({
         }
     } else {
         const size = (extraSettings && extraSettings.metricFontSize) || 'm';
-        const color = (extraSettings && extraSettings.metricFontColor) || 'rgb(77, 162, 241)';
+
+        const color = getColorByColorSettings({
+            currentColors: currentPalette,
+            colorIndex: extraSettings?.metricFontColorIndex,
+            color: extraSettings?.metricFontColor,
+        });
 
         const formatOptions: CommonNumberFormattingOptions = {};
 
         let formattedValue = String(value);
 
         if (isNumericalDataType(measure.data_type)) {
-            const measureFormatting = measure.formatting as
-                | CommonNumberFormattingOptions
-                | undefined;
+            const measureFormatting = getFormatOptions(measure);
 
             if (measureFormatting) {
                 formatOptions.format = measureFormatting.format;

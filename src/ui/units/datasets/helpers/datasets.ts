@@ -23,8 +23,8 @@ const getCurrentPath = () => {
 
 const shapeYTPath = () => getCurrentPath() || `${DL.USER_FOLDER}${YT_FOLDER_NAME}`;
 
-export const getAutoCreatedYTDatasetKey = (ytPath: string) => {
-    const entryName = ytPath.split('/').pop()?.replace(DISALLOWED_SYMBOLS, '');
+export const getAutoCreatedYTDatasetKey = (ytPath?: string) => {
+    const entryName = ytPath?.split('/').pop()?.replace(DISALLOWED_SYMBOLS, '');
     const postfix = _random(1000, 9999);
 
     return `${shapeYTPath()}/${entryName}_${postfix}`;

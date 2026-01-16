@@ -9,9 +9,10 @@ import {IconById} from '../IconById/IconById';
 type CollectionIconType = {
     size?: number;
     isIconBig?: boolean;
+    className?: string;
 };
 
-const CollectionIcon: React.FC<CollectionIconType> = ({size = 32, isIconBig}) => {
+const CollectionIcon: React.FC<CollectionIconType> = ({size = 32, isIconBig, className}) => {
     const theme = useThemeType();
 
     const collectionIcons: Record<ThemeType, IconId> = {
@@ -19,7 +20,7 @@ const CollectionIcon: React.FC<CollectionIconType> = ({size = 32, isIconBig}) =>
         dark: isIconBig ? 'collectionColoredBigDark' : 'collectionColoredDark',
     };
 
-    return <IconById id={collectionIcons[theme]} size={size} />;
+    return <IconById className={className} id={collectionIcons[theme]} size={size} />;
 };
 
 export {CollectionIcon};

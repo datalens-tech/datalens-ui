@@ -2,9 +2,9 @@ import type {Link, Meta} from '@gravity-ui/app-layout';
 import type {Request, Response} from '@gravity-ui/expresskit';
 
 import type {CtxUser} from '../server/components/auth/types/user';
-import type {RedisConfig} from '../server/components/cache-client';
 import type {ChartTemplates} from '../server/components/charts-engine/components/chart-generator';
 import type {SourceConfig} from '../server/components/charts-engine/types';
+import type {RedisConfig} from '../server/utils/redis';
 import type {AppEnvironment, LandingPageSettings} from '../shared';
 import type {UserRole} from '../shared/components/auth/constants/role';
 import type {FeatureConfig} from '../shared/types';
@@ -15,6 +15,7 @@ export interface SharedAppConfig {
     metrika: MetrikaCounter;
 
     usMasterToken?: string;
+    usDynamicMasterTokenPrivateKey?: string;
 
     regionalEnvConfig?: {allowLanguages?: string[]; defaultLang?: string; langRegion?: string};
 
@@ -24,6 +25,7 @@ export interface SharedAppConfig {
     meta?: Meta[];
 
     chartkitSettings?: ChartkitGlobalSettings;
+    defaultColorPaletteId?: string;
     serviceName: string;
     // CHARTS ENGINE -- START
     usEndpoint: string;
@@ -63,6 +65,8 @@ export interface SharedAppConfig {
                 editor: string;
                 viewer: string;
                 limitedViewer?: string;
+                entryBindingCreator?: string;
+                limitedEntryBindingCreator?: string;
             };
         };
         workbook: {
@@ -73,33 +77,32 @@ export interface SharedAppConfig {
                 limitedViewer?: string;
             };
         };
+        sharedEntry: {
+            roles: {
+                admin: string;
+                editor: string;
+                viewer: string;
+                limitedViewer?: string;
+                entryBindingCreator?: string;
+                limitedEntryBindingCreator?: string;
+            };
+        };
     };
-
-    // sorted roles from the role with the most rights to the role with the least
-    orderedAuthRoles?: `${UserRole}`[];
-
-    // zitadel
-    isZitadelEnabled: boolean;
-    clientId?: string;
-    clientSecret?: string;
-    zitadelProjectId?: string;
-    zitadelUri?: string;
-    zitadelInternalUri?: string;
-    appHostUri?: string;
-    zitadelCookieSecret?: string;
-    serviceClientId?: string;
-    serviceClientSecret?: string;
 
     // auth
     isAuthEnabled: boolean;
     authTokenPublicKey?: string;
     authManageLocalUsersDisabled?: boolean;
+    authSignupDisabled?: boolean;
+    // sorted roles from the role with the most rights to the role with the least
+    orderedAuthRoles?: `${UserRole}`[];
 
     chartTemplates: Partial<Record<keyof ChartTemplates, unknown>>;
     redis: RedisConfig | null;
     apiPrefix: string;
     preloadList?: string[];
     releaseVersion?: string;
+    docsUrl?: string;
 }
 
 export interface SharedAppDynamicConfig {
@@ -133,6 +136,8 @@ export interface SharedAppContextParams {
     tenantId?: string;
 
     user?: CtxUser;
+
+    usDynamicMasterToken?: string;
 
     isEnabledServerFeature: (feature: string) => boolean;
 }

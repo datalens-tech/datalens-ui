@@ -1,9 +1,9 @@
 import React from 'react';
 
 import {type Plugin, type PluginWidgetProps, type SettingsProps} from '@gravity-ui/dashkit';
-import type {Config, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
+import type {Config, ItemParams, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import {getItemsParams, pluginGroupControlBaseDL} from '@gravity-ui/dashkit/helpers';
-import {Loader, Text} from '@gravity-ui/uikit';
+import {Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
@@ -23,10 +23,16 @@ import {
     CLICK_ACTION_TYPE,
     CONTROL_TYPE,
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
+import {
+    isGlobalWidgetVisibleByMainSetting,
+    isGroupItemVisibleOnTab,
+    isItemGlobal,
+} from 'ui/units/dash/utils/selectors';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
+import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
 import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout} from '../../utils';
@@ -40,7 +46,6 @@ import type {
     ExtendedLoadedData,
     GroupControlLocalMeta,
     PluginGroupControlState,
-    ResolveMetaResult,
 } from './types';
 import {addItemToLocalQueue, filterSignificantParams} from './utils';
 
@@ -51,6 +56,7 @@ const GROUP_CONTROL_LOADING_EMULATION_TIMEOUT = 100;
 
 type OwnProps = ControlSettings &
     ContextProps &
+    Omit<CommonPluginProps, 'background' | 'backgroundSettings'> &
     PluginWidgetProps<Record<string, StringParams>> & {
         settings: SettingsProps & {
             dependentSelectors?: boolean;
@@ -60,6 +66,7 @@ type OwnProps = ControlSettings &
 type PluginGroupControlProps = OwnProps;
 
 type PluginGroupControl = Plugin<PluginGroupControlProps, Record<string, StringParams>> & {
+    globalWidgetSettings?: CommonPluginSettings['globalWidgetSettings'];
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: ControlSettings['getDistincts'];
 };
@@ -70,14 +77,21 @@ const LOCAL_META_VERSION = 2;
 
 const GroupControlWrapper = React.forwardRef<
     HTMLDivElement,
-    {id: string; autoHeight: boolean; children: React.ReactNode; pulsate?: boolean}
+    {
+        id: string;
+        autoHeight: boolean;
+        children: React.ReactNode;
+        pulsate?: boolean;
+        style?: React.CSSProperties;
+    }
 >(function GroupControlWrapper(props, nodeRef) {
-    useWidgetContext(props.id, nodeRef as React.RefObject<HTMLElement>);
+    useWidgetContext({id: props.id, elementRef: nodeRef as React.RefObject<HTMLElement>});
 
     return (
         <div
             ref={nodeRef}
             className={b({mobile: DL.IS_MOBILE, static: !props.autoHeight, pulsate: props.pulsate})}
+            style={props.style}
         >
             {props.children}
         </div>
@@ -115,12 +129,12 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     constructor(props: PluginGroupControlProps) {
         super(props);
-        const controlData = this.propsControlData;
+        const memoGroupItems = this.getVisibleGroupItems();
 
         this._onRedraw = debounce(this.props.onBeforeLoad(), DEBOUNCE_RENDER_TIMEOUT);
 
-        this.controlsProgressCount = controlData?.group?.length || 0;
-        controlData.group?.forEach((item) => {
+        this.controlsProgressCount = memoGroupItems.length || 0;
+        memoGroupItems.forEach((item) => {
             this.controlsStatus[item.id] = LOAD_STATUS.INITIAL;
             this.controlsData[item.id] = null;
         });
@@ -136,6 +150,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             localUpdateLoader: false,
             quickActionLoader: false,
             disableButtons: true,
+            memoGroupItems,
         };
     }
 
@@ -157,6 +172,18 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const hasDataChanged = !isEqual(this.props.data, prevProps.data);
         const hasParamsChanged = !isEqual(this.props.params, prevProps.params);
 
+        const hasTabChanged = this.props.context.currentTabId !== prevProps.context.currentTabId;
+
+        let memoGroupItems = this.state.memoGroupItems;
+
+        if (hasDataChanged || hasTabChanged) {
+            const updatedMemoGroupItems = this.getVisibleGroupItems();
+            memoGroupItems = updatedMemoGroupItems;
+            this.setState({
+                memoGroupItems,
+            });
+        }
+
         if (hasDataChanged) {
             this.setState({
                 status: LOAD_STATUS.PENDING,
@@ -175,7 +202,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
             const updatedStateParams: Record<string, StringParams> = {};
             const updatedItemsIds: string[] = [];
-            this.props.data.group?.forEach((groupItem) => {
+            memoGroupItems?.forEach((groupItem) => {
                 const newPropsParams = filterSignificantParams({
                     params: this.props.params[groupItem.id],
                     loadedData: this.controlsData[groupItem.id],
@@ -238,21 +265,23 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     }
 
     render() {
-        const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
         const isLoading =
             (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
             this.state.quickActionLoader ||
             this.state.localUpdateLoader;
 
-        const showSpinner = isLoading && !showFloatControls;
-        const pulsate = isLoading && showFloatControls;
+        const {borderRadius, globalWidgetSettings} = this.props;
+        const resultedBorderRadius = borderRadius ?? globalWidgetSettings?.borderRadius;
+
+        const style = resultedBorderRadius ? {borderRadius: resultedBorderRadius} : undefined;
 
         return (
             <GroupControlWrapper
                 ref={this.rootNode}
                 id={this.props.id}
                 autoHeight={(this.props.data.autoHeight as boolean) ?? false}
-                pulsate={pulsate}
+                pulsate={isLoading}
+                style={style}
             >
                 <div
                     className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}
@@ -264,12 +293,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         modType="bottom-right-corner"
                     />
                     {this.renderControls()}
-                    {showSpinner && (
-                        <div className={b('loader')}>
-                            <Loader size="s" qa={ControlQA.groupCommonLoader} />
-                        </div>
-                    )}
-                    {pulsate && (
+                    {isLoading && (
                         <div className={b('locked')} data-qa={ControlQA.groupCommonLockedBlock} />
                     )}
                 </div>
@@ -304,6 +328,43 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return this.props.data as unknown as DashTabItemGroupControlData;
     }
 
+    private getVisibleGroupItems() {
+        const controlData = this.propsControlData;
+        const currentTabId = this.props.context.currentTabId;
+
+        if (
+            !isEnabledFeature(Feature.EnableGlobalSelectors) ||
+            !currentTabId ||
+            !isItemGlobal({
+                data: controlData,
+                type: DashTabItemType.GroupControl,
+            })
+        ) {
+            return controlData.group;
+        }
+
+        const isGroupSettingPrevailing = controlData.group.every(
+            (item) => item.impactType === undefined || item.impactType === 'asGroup',
+        );
+        const isGroupAvailableOnTab = isGlobalWidgetVisibleByMainSetting(
+            currentTabId,
+            controlData.impactType,
+            controlData.impactTabsIds,
+        );
+
+        if (isGroupSettingPrevailing && isGroupAvailableOnTab) {
+            return controlData.group;
+        }
+
+        return controlData.group.filter((item) =>
+            isGroupItemVisibleOnTab({
+                item,
+                tabId: currentTabId,
+                isVisibleByMainSetting: isGroupAvailableOnTab,
+            }),
+        );
+    }
+
     private get dependentSelectors() {
         return this.props.settings.dependentSelectors ?? false;
     }
@@ -311,7 +372,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     private fillQueueWithInitial = (checkByProps?: boolean) => {
         const initialQueue: string[] = [];
 
-        for (const groupItem of this.props.data.group || []) {
+        for (const groupItem of this.state.memoGroupItems || []) {
             if (!groupItem.defaults) {
                 continue;
             }
@@ -356,7 +417,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         data: DashTabItemGroupControlData;
         controlId?: string;
     }) => {
-        let controlIdOrder = data.group.map(({id}) => id);
+        let controlIdOrder = this.state.memoGroupItems.map(({id}) => id);
 
         if (!data.buttonApply || controlId) {
             return controlId ? [controlId] : controlIdOrder;
@@ -365,7 +426,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         // processing alias params so that the param from the alias that was entered last is applied
         // to all params from that alias
 
-        const paramsInGroup = data.group.map(
+        const paramsInGroup = this.state.memoGroupItems.map(
             (groupItem) => Object.keys(groupItem.defaults || {})[0],
         );
 
@@ -448,7 +509,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         callChangeByClick,
         controlId,
     }: {
-        params: StringParams | Record<string, StringParams>;
+        params: ItemParams;
         callChangeByClick?: boolean;
         controlId?: string;
     }) => {
@@ -458,11 +519,19 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         // 1. 'Apply button' is clicked
         // 2. 'Apply button' isn't enabled
         if (!controlData.buttonApply || callChangeByClick) {
-            this.props.onStateAndParamsChange(
-                {params},
-                {groupItemIds: this.getControlsIds({data: controlData, controlId})},
-            );
+            const appliedControlsIds = this.getControlsIds({data: controlData, controlId});
+            this.props.onStateAndParamsChange({params}, {groupItemIds: appliedControlsIds});
             this.localMeta.queue = [];
+
+            this.context?.updateTabsWithGlobalState?.({
+                params,
+                selectorItem: {
+                    type: DashTabItemType.GroupControl,
+                    data: controlData,
+                    id: this.props.id,
+                },
+                appliedSelectorsIds: appliedControlsIds,
+            });
             return;
         }
 
@@ -570,7 +639,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             label = loadedData.uiScheme.controls[0].label;
         }
 
-        const currentItem = this.propsControlData.group?.find((item) => item.id === id);
+        const currentItem = this.state.memoGroupItems?.find((item) => item.id === id);
 
         const widgetMetaInfo = {
             layoutId: this.props.id,
@@ -601,37 +670,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return widgetMetaInfo;
     };
 
-    private resolveMeta = (loadedData: ExtendedLoadedData | null) => {
-        if (!loadedData) {
-            return null;
-        }
-
-        const {id, extra, usedParams, sourceType} = loadedData;
-        let result: ResolveMetaResult = {id};
-        if (extra) {
-            result = {
-                id,
-                usedParams: usedParams
-                    ? Object.keys(
-                          filterSignificantParams({
-                              params: usedParams,
-                              loadedData,
-                              dependentSelectors: this.dependentSelectors,
-                          }),
-                      )
-                    : null,
-                datasets: extra.datasets,
-                // deprecated
-                datasetId: extra.datasetId,
-                datasetFields: extra.datasetFields,
-                type: 'control',
-                sourceType,
-            };
-        }
-
-        return result;
-    };
-
     private resolveMetaInControl = () => {
         if (!this.resolve) {
             return;
@@ -640,11 +678,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const result = [];
 
         for (const [id, data] of Object.entries(this.controlsData)) {
-            if (this.context?.isNewRelations) {
-                result.push(this.getCurrentWidgetResolvedMetaInfo(id, data));
-            } else {
-                result.push(this.resolveMeta(data));
-            }
+            result.push(this.getCurrentWidgetResolvedMetaInfo(id, data));
         }
 
         this.resolve(result);
@@ -728,13 +762,14 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         if (this.props.getDistincts) {
             this._getDistinctsMemo =
                 this._getDistinctsMemo ||
-                ((params) => {
+                ((params, _, options) => {
                     const {getDistincts} = this.props;
                     const headers = this?.context?.dataProviderContextGetter?.(this.props.id);
 
                     return (getDistincts as Exclude<ControlSettings['getDistincts'], void>)?.(
                         params,
                         headers,
+                        options,
                     );
                 });
         } else {
@@ -785,7 +820,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 break;
             case CLICK_ACTION_TYPE.SET_INITIAL_PARAMS: {
                 const defaultParams =
-                    this.props.data?.group?.reduce(
+                    this.state.memoGroupItems?.reduce(
                         (paramsState: Record<string, StringParams>, data) => {
                             paramsState[data.id] = data.defaults || {};
                             return paramsState;
@@ -891,12 +926,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     }
 
     private renderControls() {
-        const controlData = this.propsControlData;
-
         return (
             <div className={b('controls')}>
                 {this.renderSubHeader()}
-                {controlData.group?.map((item: DashTabItemControlSingle) =>
+                {this.state.memoGroupItems?.map((item: DashTabItemControlSingle) =>
                     this.renderControl(item),
                 )}
                 {this.renderButtons()}
@@ -952,7 +985,7 @@ const plugin: PluginGroupControl = {
 
         // TODO: remove this. use basic ChartKit abilities
         plugin.getDistincts = getDistincts;
-
+        plugin.globalWidgetSettings = settings.globalWidgetSettings;
         return plugin;
     },
     renderer(props, forwardedRef) {
@@ -964,6 +997,7 @@ const plugin: PluginGroupControl = {
                 getDistincts={plugin.getDistincts}
                 workbookId={workbookId}
                 ref={forwardedRef}
+                globalWidgetSettings={plugin.globalWidgetSettings}
             />
         );
     },

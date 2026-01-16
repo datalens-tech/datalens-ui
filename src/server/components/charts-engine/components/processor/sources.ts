@@ -9,6 +9,7 @@ import {
     DATASET_ID_PLACEHOLDER,
     DATASET_RESULT_URL,
 } from '../../../../modes/charts/plugins/control/url/constants';
+import {config as configConstants} from '../../constants';
 import type {
     APIConnectorParams,
     Source,
@@ -167,3 +168,43 @@ export const prepareSource = (source: Source): Source => {
 
     return source;
 };
+
+const {
+    DEFAULT_SOURCE_FETCHING_ERROR_STATUS_400,
+    DEFAULT_SOURCE_FETCHING_ERROR_STATUS_500,
+    DEFAULT_SOURCE_FETCHING_LIMIT_EXCEEDED_STATUS,
+    REQUEST_SIZE_LIMIT_EXCEEDED,
+    ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
+} = configConstants;
+
+export function getSourcesErrorStatusCode(error: object) {
+    let maybe400 = false;
+    let maybe500 = false;
+    let requestSizeLimitExceeded = false;
+    Object.values(error).forEach((sourceResult) => {
+        const possibleStatus = sourceResult?.status;
+
+        if (399 < possibleStatus && possibleStatus < 500) {
+            maybe400 = true;
+        } else {
+            maybe500 = true;
+        }
+
+        if (
+            sourceResult.code === REQUEST_SIZE_LIMIT_EXCEEDED ||
+            sourceResult.code === ALL_REQUESTS_SIZE_LIMIT_EXCEEDED
+        ) {
+            requestSizeLimitExceeded = true;
+        }
+    });
+
+    if (maybe400 && !maybe500) {
+        return DEFAULT_SOURCE_FETCHING_ERROR_STATUS_400;
+    }
+
+    if (requestSizeLimitExceeded) {
+        return DEFAULT_SOURCE_FETCHING_LIMIT_EXCEEDED_STATUS;
+    }
+
+    return DEFAULT_SOURCE_FETCHING_ERROR_STATUS_500;
+}

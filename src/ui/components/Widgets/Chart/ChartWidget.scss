@@ -5,14 +5,7 @@ $dashPublicContainerClassName: '.dash';
 
 $hintOffset: 3px;
 
-$widgetBgColor: var(--g-color-base-float);
-
 .dl-widget {
-    #{$dashContainerClassName} &,
-    #{$dashPublicContainerClassName} & {
-        background-color: $widgetBgColor;
-    }
-
     &__overlay {
         position: absolute;
         width: 100%;
@@ -43,37 +36,17 @@ $widgetBgColor: var(--g-color-base-float);
         align-items: center;
     }
 
-    &__chart-title-hint {
-        margin-left: $hintOffset;
-        display: inline-flex;
-
-        & > * {
-            display: inline-flex;
-        }
-    }
-
     // hide in sheet only
     .g-sheet__sheet &__chart-title-hint {
         display: none;
     }
 
-    &__chart-title-hint-button {
+    &__chart-title-hint {
+        margin-left: $hintOffset;
         display: inline-flex;
     }
 
     // styles for widgets with tabs below
-
-    #{$dashPublicContainerClassName} &__container &__chart-header:not(&__chart-header_float),
-    #{$dashContainerClassName} &__container &__chart-header:not(&__chart-header_float) {
-        top: -40px;
-        right: 8px;
-    }
-
-    #{$dashPublicContainerClassName} &__container_table &__chart-header:not(&__chart-header_float),
-    #{$dashContainerClassName} &__container_table &__chart-header:not(&__chart-header_float) {
-        top: -46px;
-        right: 8px;
-    }
 
     #{$dashPublicContainerClassName} &__container &__body_table,
     #{$dashContainerClassName} &__container &__body_table {
@@ -91,23 +64,6 @@ $widgetBgColor: var(--g-color-base-float);
         right: 35px;
     }
 
-    // styles for widgets without tabs below
-
-    #{$dashPublicContainerClassName}
-        &_no-tabs
-        &__container
-        &__chart-header:not(&__chart-header_float),
-    #{$dashContainerClassName} &_no-tabs &__container &__chart-header:not(&__chart-header_float) {
-        top: -4px;
-    }
-
-    // styles for mobile dash widgets chart header
-    // for supporting full display of titles
-    #{$dashPublicContainerClassName} &_default-mobile &__chart-header:not(&__chart-header_float),
-    #{$dashContainerClassName} &_default-mobile &__chart-header:not(&__chart-header_float) {
-        top: 2px;
-    }
-
     // style for widgets with auto height
 
     // Resetting height 100% for errors
@@ -119,7 +75,7 @@ $widgetBgColor: var(--g-color-base-float);
 
     /** styles for flat controls */
     &__controls-corner-wrapper {
-        background-color: $widgetBgColor;
+        background-color: var(--g-color-base-float);
         border-radius: var(--g-border-radius-m);
         margin-left: 8px;
         padding: 0px;
@@ -133,12 +89,12 @@ $widgetBgColor: var(--g-color-base-float);
         }
     }
 
-    & .chartkit-menu__switcher_flat {
+    & .chartkit-menu__switcher {
         display: none;
     }
 
     &:hover &__controls-corner-wrapper {
-        background-color: $widgetBgColor;
+        background-color: var(--g-color-base-float);
 
         & .chartkit-insights__button {
             opacity: 1;
@@ -148,32 +104,32 @@ $widgetBgColor: var(--g-color-base-float);
             opacity: 1;
         }
 
-        & .chartkit-menu__switcher_flat {
+        & .chartkit-menu__switcher {
             display: block;
         }
     }
 
     &__controls-corner-wrapper:has(.chartkit-menu__switcher-button_opened)
-        .chartkit-menu__switcher_flat {
+        .chartkit-menu__switcher {
         display: block;
     }
 
     .widget-header_mobile &__controls-corner-wrapper {
-        background-color: $widgetBgColor;
+        background-color: var(--g-color-base-float);
 
         & .chartkit-insights__button,
         & .dl-widget__filter-button {
             opacity: 1;
         }
 
-        & .chartkit-menu__switcher_flat {
+        & .chartkit-menu__switcher {
             display: block;
         }
     }
 
     #{$dashPublicContainerClassName} &_pulsate &__container,
     #{$dashContainerClassName} &_pulsate &__container {
-        background-color: $widgetBgColor;
+        background-color: var(--dl-color-widget-background);
         @include loading-pulsate-animation-style();
     }
 

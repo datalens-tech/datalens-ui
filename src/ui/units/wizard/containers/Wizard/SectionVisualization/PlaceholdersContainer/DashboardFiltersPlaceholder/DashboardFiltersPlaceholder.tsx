@@ -50,7 +50,6 @@ class DashboardFiltersPlaceholder extends React.Component<Props> {
                 hasSettings={false}
                 onItemClick={this.onFilterItemClick}
                 checkAllowed={() => false}
-                isDashboardPlaceholder={true}
                 customPlaceholderActions={this.customDashboardFiltersActions}
             />
         );

@@ -1,5 +1,6 @@
 import 'i18n';
-import {MobileProvider, ThemeProvider} from '@gravity-ui/uikit';
+import {MobileProvider, ThemeProvider, ToasterComponent, ToasterProvider} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router} from 'react-router-dom';
@@ -8,7 +9,7 @@ import {HotkeysProvider} from 'react-hotkeys-hook';
 
 import DialogManager from 'components/DialogManager/DialogManagerContainer';
 import {registerSDKDispatch} from 'libs/schematic-sdk/parse-error';
-import {Utils, DL} from 'ui';
+import {Utils, DL, APP_ROOT_CLASS} from 'ui';
 
 import DatalensPage from '../datalens';
 import {renderDatalens} from '../datalens/render';
@@ -26,26 +27,37 @@ import 'ui/styles/base.scss';
 import 'ui/styles/variables.scss';
 import 'ui/styles/split-pane-resizer.scss';
 import 'ui/styles/theme.scss';
+import 'ui/styles/overrides.scss';
+import {ScrollableContainerContextProvider} from 'ui/utils/scrollableContainerContext';
 
 const Content = () => {
     const userTheme = useSelector(selectTheme);
     const theme = getOverridedTheme(userTheme);
     const themeSettings = useSelector(selectThemeSettings);
 
+    Utils.addBodyClass('dl-root_new-palette');
+
     return (
         <ThemeProvider
             theme={theme}
+            layout={{fixBreakpoints: true}}
             systemLightTheme={themeSettings?.systemLightTheme}
             systemDarkTheme={themeSettings?.systemDarkTheme}
+            rootClassName={APP_ROOT_CLASS}
         >
-            <MobileProvider mobile={DL.IS_MOBILE}>
-                <HotkeysProvider initiallyActiveScopes={[HOTKEYS_SCOPES.GLOBAL]}>
-                    <React.Fragment>
-                        <DialogManager />
-                        <DatalensPage />
-                    </React.Fragment>
-                </HotkeysProvider>
-            </MobileProvider>
+            <ToasterProvider toaster={toaster}>
+                <MobileProvider mobile={DL.IS_MOBILE}>
+                    <HotkeysProvider initiallyActiveScopes={[HOTKEYS_SCOPES.GLOBAL]}>
+                        <ScrollableContainerContextProvider>
+                            <React.Fragment>
+                                <DialogManager />
+                                <DatalensPage />
+                            </React.Fragment>
+                        </ScrollableContainerContextProvider>
+                    </HotkeysProvider>
+                </MobileProvider>
+                <ToasterComponent />
+            </ToasterProvider>
         </ThemeProvider>
     );
 };

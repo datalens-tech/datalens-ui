@@ -24,7 +24,6 @@ import type {
 import {
     getPreparedConstants,
     getWidgetMeta,
-    getWidgetMetaOld,
     isWidgetTypeWithAutoHeight,
     pushStats,
     updateImmediateLayout,
@@ -129,7 +128,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const mutationObserver = React.useRef<MutationObserver | null>(null);
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
-    const isNewRelations = extDashkitContext?.isNewRelations || false;
     const dataProviderContextGetter = extDashkitContext?.dataProviderContextGetter || undefined;
 
     const history = useHistory();
@@ -239,6 +237,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         isInit,
         isWidgetMenuDataChanged,
         dataProps,
+        runActivity,
+        silentLoadChartData,
     } = useLoadingChart({
         dataProvider,
         requestHeadersGetter,
@@ -497,32 +497,15 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 loadData,
                 savedData: loadedData,
                 error,
+                widgetDataRef,
+                currentTabChartId: currentTab.chartId,
             });
 
             if (resolveMetaDataRef.current) {
                 resolveMetaDataRef.current(meta);
             }
         },
-        [tabs, tabIndex, resolveMetaDataRef.current, loadedData, error, widgetId],
-    );
-
-    /**
-     * get dash widget meta data (current relations)
-     */
-    const resolveMeta = React.useCallback(
-        (loadData: LoadedWidgetData<ChartsData>) => {
-            const meta = getWidgetMetaOld({
-                // @ts-expect-error
-                tabs: data.tabs,
-                tabIndex,
-                loadData,
-            });
-
-            if (resolveMetaDataRef.current) {
-                resolveMetaDataRef.current(meta);
-            }
-        },
-        [tabs, tabIndex, resolveMetaDataRef.current],
+        [data.tabs, widgetId, loadedData, error, widgetDataRef, currentTab.chartId],
     );
 
     /**
@@ -532,11 +515,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         (argResolve) => {
             resolveMetaDataRef.current = argResolve;
             resolveWidgetDataRef.current = (resolvingData: LoadedWidgetData<ChartsData>) => {
-                if (isNewRelations) {
-                    getCurrentWidgetResolvedMetaInfo(resolvingData);
-                } else {
-                    resolveMeta(resolvingData);
-                }
+                getCurrentWidgetResolvedMetaInfo(resolvingData);
             };
             if (!isInit) {
                 // initializing chart loading if it was not inited yet (ex. was not in viewport
@@ -555,10 +534,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         [
             error,
             loadedData,
-            isNewRelations,
             setCanBeLoaded,
             isInit,
-            resolveMeta,
             getCurrentWidgetResolvedMetaInfo,
             resolveMetaDataRef,
             resolveWidgetDataRef,
@@ -734,5 +711,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         isWidgetMenuDataChanged,
         dataProps,
         noControls,
+        runActivity,
+        silentLoadChartData,
     };
 };

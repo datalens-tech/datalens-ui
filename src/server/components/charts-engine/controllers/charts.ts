@@ -88,7 +88,6 @@ export function prepareChartData({data, template, type}: ChartDataOptions, req: 
 const getHeaders = (req: Request) => {
     const headers = {
         ...req.headers,
-        ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
         ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
     };
 
@@ -100,7 +99,7 @@ export const prepareCreateParams = async (
     req: Request,
 ) => {
     const {chart, type, links, template} = chartData;
-    const {key, name, workbookId} = req.body;
+    const {key, name, workbookId, description = '', annotation} = req.body;
 
     // If we save editor script
     if (typeof template === 'undefined') {
@@ -122,6 +121,9 @@ export const prepareCreateParams = async (
         scope: 'widget',
         headers: getHeaders(req),
         includePermissionsInfo: true,
+        annotation: {
+            description: annotation?.description ?? description,
+        },
     };
 
     if (links) {
@@ -208,7 +210,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
 
             const entryId = req.params.entryId;
 
-            const {mode} = req.body;
+            const {mode, annotation, description = ''} = req.body;
 
             const updateParams: ProviderUpdateParams = {
                 entryId,
@@ -216,6 +218,9 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 type,
                 data: chart,
                 headers: getHeaders(req),
+                annotation: {
+                    description: annotation?.description ?? description,
+                },
             };
 
             if (links) {

@@ -20,6 +20,7 @@ const getDiscreteBackgroundColorStyle = (args: GetDiscreteBackgroundColorStyle) 
         idToDataType,
         loadedColorPalettes,
         availablePalettes,
+        defaultColorPaletteId,
     } = args;
 
     const {settings, colorFieldGuid} = backgroundSettings;
@@ -31,10 +32,11 @@ const getDiscreteBackgroundColorStyle = (args: GetDiscreteBackgroundColorStyle) 
 
     const rawValue = values[valueIndex] as number | string | null | MarkupItem;
 
-    let value: number | string | null;
-
+    let value: number | string | null = null;
     if (colorFieldDataType === 'markup') {
-        value = markupToRawString(rawValue as MarkupItem);
+        if (rawValue) {
+            value = markupToRawString(rawValue as MarkupItem);
+        }
     } else {
         value = getDistinctValue(rawValue);
     }
@@ -56,6 +58,7 @@ const getDiscreteBackgroundColorStyle = (args: GetDiscreteBackgroundColorStyle) 
         colors = selectServerPalette({
             palette: paletteSettings.palette,
             availablePalettes,
+            defaultColorPaletteId,
         });
     }
 
@@ -101,6 +104,7 @@ export const getFlatTableBackgroundStyles = (
         idToDataType,
         loadedColorPalettes,
         availablePalettes,
+        defaultColorPaletteId,
     } = args;
 
     const backgroundSettings = column.backgroundSettings;
@@ -130,5 +134,6 @@ export const getFlatTableBackgroundStyles = (
         idToDataType,
         loadedColorPalettes,
         availablePalettes,
+        defaultColorPaletteId,
     });
 };

@@ -17,11 +17,9 @@ import type {
     TableShared,
     Update,
     VisualizationWithLayersShared,
-    WizardVisualizationId,
 } from 'shared';
 import {
     WizardType,
-    isD3Visualization,
     isDimensionField,
     isMeasureField,
     isPseudoField,
@@ -31,6 +29,7 @@ import {
 import type {ResetWizardStoreAction} from '../actions';
 import type {HighchartsWidget, PreviewAction} from '../actions/preview';
 import {
+    SET_DESCRIPTION,
     SET_HIGHCHARTS_WIDGET,
     SET_UPDATES,
     UPDATE_CLIENT_CHARTS_CONFIG,
@@ -71,6 +70,7 @@ export interface PreviewState {
     segments: Field[];
     shapesConfig: ShapesConfig;
     initialPreviewHash: string;
+    description?: string;
 }
 
 export type ConfigDataState = Pick<
@@ -270,11 +270,7 @@ function mutateAndValidateVisualization({
     return everythingIsOk;
 }
 
-const getChartTypeByVisualizationId = (visualizationId: string): WizardType => {
-    if (isD3Visualization(visualizationId as WizardVisualizationId)) {
-        return WizardType.GravityChartsWizardNode;
-    }
-
+export const getChartTypeByVisualizationId = (visualizationId: string): WizardType => {
     switch (visualizationId) {
         case VISUALIZATION_IDS.FLAT_TABLE:
         case VISUALIZATION_IDS.PIVOT_TABLE: {
@@ -555,6 +551,13 @@ export function preview(
                 ...state,
                 isLoading: false,
                 highchartsWidget,
+            };
+        }
+
+        case SET_DESCRIPTION: {
+            return {
+                ...state,
+                description: action.payload,
             };
         }
 

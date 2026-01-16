@@ -1,14 +1,14 @@
 import type {PLACE} from '../../../constants';
 import type {
     EntriesCommonArgs,
-    GetEntriesEntryWithPermissions,
+    GetEntriesEntryWithExcludedLockedAndPermissions,
     GetFavoritesEntryWithPermissions,
     ListDirectoryBreadCrumb,
     ListDirectoryEntryWithPermissions,
 } from '../../us/types';
 
 export type NavigationEntry =
-    | GetEntriesEntryWithPermissions
+    | GetEntriesEntryWithExcludedLockedAndPermissions
     | ListDirectoryEntryWithPermissions
     | GetFavoritesEntryWithPermissions;
 

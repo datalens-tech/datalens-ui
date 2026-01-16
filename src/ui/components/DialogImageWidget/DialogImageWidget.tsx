@@ -1,35 +1,54 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
+import {FormRow} from '@gravity-ui/components';
 import type {RealTheme} from '@gravity-ui/uikit';
-import {Checkbox, Dialog, Flex, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, Flex, HelpMark, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {i18n} from 'i18n';
+import {I18n, i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
-import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
+import omit from 'lodash/omit';
+import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA, Feature} from 'shared';
 import type {DashTabItemImage, EntryScope, RecursivePartial} from 'shared';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {PaletteBackground} from '../..//units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
+import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 
 import './DialogImageWidget.scss';
 
+const i18nCommon = I18n.keyset('dash.dashkit-plugin-common.view');
 const b = block('dialog-image');
 const INPUT_SRC_ID = 'dialog-image-input-src';
 const INPUT_ALT_ID = 'dialog-image-input-alt';
 const INPUT_PRESERVE_ASPECT_RATIO_ID = 'dialog-image-input-preserve-aspect-ratio';
+
+const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
+
 const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
     src: '',
     alt: '',
-    background: {
-        color: 'transparent',
-    },
+    ...(isDashColorPickersByThemeEnabled
+        ? {
+              backgroundSettings: {
+                  color: undefined,
+              },
+          }
+        : {
+              background: {
+                  color: CustomPaletteBgColors.NONE,
+              },
+          }),
     preserveAspectRatio: true,
 };
 
-export type DialogImageWidgetFeatureProps = {};
+export type DialogImageWidgetFeatureProps = {
+    enableSeparateThemeColorSelector?: boolean;
+    enableBorderRadiusSelector?: boolean;
+};
 
 type Props = {
     openedItemId: string | null;
@@ -59,14 +78,34 @@ export function DialogImageWidget(props: Props) {
         onClose,
         onApply,
         scope,
+        theme,
+        enableSeparateThemeColorSelector = true,
+        enableBorderRadiusSelector = false,
     } = props;
-    const [data, setData] = React.useState(openedItemData);
+    const isNewWidget = !props.openedItemData;
+    const [data, setData] = React.useState(
+        omit(openedItemData, 'background', 'backgroundSettings'),
+    );
     const [validationErrors, setValidationErrors] = React.useState<Record<string, string>>({});
     const {DialogImageWidgetLinkHint} = registry.common.components.getAll();
     const updateData = (updates: RecursivePartial<DashTabItemImage['data']>) => {
         const resultData = merge(cloneDeep(data), updates);
         setData(resultData);
     };
+
+    const {
+        oldBackgroundColor,
+        backgroundColorSettings,
+        setOldBackgroundColor,
+        setBackgroundColorSettings,
+        resultedBackgroundSettings,
+    } = useBackgroundColorSettings({
+        background: openedItemData.background,
+        backgroundSettings: openedItemData.backgroundSettings,
+        defaultOldColor: CustomPaletteBgColors.NONE,
+        enableSeparateThemeColorSelector,
+        isNewWidget,
+    });
 
     const handleSrcUpdate = (nextSrc: string) => {
         setValidationErrors({
@@ -77,14 +116,18 @@ export function DialogImageWidget(props: Props) {
     };
 
     const handleApply = () => {
-        const nextValidationErrors = getValidationErrors(data);
+        const newData = {
+            ...data,
+            ...resultedBackgroundSettings,
+        };
+        const nextValidationErrors = getValidationErrors(newData);
 
         if (Object.keys(nextValidationErrors).length) {
             setValidationErrors(nextValidationErrors);
             return;
         }
 
-        onApply({data});
+        onApply({data: newData});
         onClose();
     };
 
@@ -123,12 +166,9 @@ export function DialogImageWidget(props: Props) {
                     label={
                         <Flex gap={1}>
                             {i18n('dash.image-dialog.edit', 'label_alt-text')}
-                            <HelpPopover
-                                content={i18n(
-                                    'dash.image-dialog.edit',
-                                    'label_alt-text-description',
-                                )}
-                            />
+                            <HelpMark>
+                                {i18n('dash.image-dialog.edit', 'label_alt-text-description')}
+                            </HelpMark>
                         </Flex>
                     }
                 >
@@ -149,16 +189,25 @@ export function DialogImageWidget(props: Props) {
                         onUpdate={(preserveAspectRatio) => updateData({preserveAspectRatio})}
                     />
                 </FormRow>
-                <FormRow
-                    className={b('row')}
-                    label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
-                >
+                <FormRow className={b('row')} label={i18nCommon('label_background-checkbox')}>
                     <PaletteBackground
-                        color={data.background?.color}
-                        onSelect={(color) => updateData({background: {color}})}
+                        color={backgroundColorSettings}
+                        oldColor={oldBackgroundColor}
+                        theme={theme}
+                        onSelect={setBackgroundColorSettings}
+                        onSelectOldColor={setOldBackgroundColor}
                         enableCustomBgColorSelector
+                        enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
+                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                    <FormRow className={b('row')} label={i18nCommon('label_border-radius')}>
+                        <WidgetRoundingsInput
+                            value={data.borderRadius}
+                            onUpdate={(borderRadius) => updateData({borderRadius})}
+                        />
+                    </FormRow>
+                )}
             </Dialog.Body>
             <Dialog.Footer
                 onClickButtonApply={handleApply}

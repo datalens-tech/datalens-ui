@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {ConfigLayout} from '@gravity-ui/dashkit';
-import {Link} from '@gravity-ui/uikit';
+import {Link, type ThemeType} from '@gravity-ui/uikit';
 import {AccessRightsUrlOpen} from 'components/AccessRights/AccessRightsUrlOpen';
 import {I18n} from 'i18n';
 import logger from 'libs/logger';
@@ -34,6 +34,7 @@ import {
 } from '../../../../store/actions/entryContent';
 import {selectEntryContentRevId, selectLockToken} from '../../../../store/selectors/entryContent';
 import {RevisionsListMode, RevisionsMode} from '../../../../store/typings/entryContent';
+import {WidgetMetaProvider} from '../../contexts/WidgetMetaContext';
 import {LOCK_DURATION, LOCK_EXTEND_TIMEOUT} from '../../modules/constants';
 import type {CopiedConfigData} from '../../modules/helpers';
 import {getDashkitSettings, getTabTitleById, isItemPasteAllowed} from '../../modules/helpers';
@@ -59,7 +60,6 @@ import {
 } from '../../store/selectors/dashTypedSelectors';
 import {getTabId} from '../../utils/getTabId';
 import {getUrlGlobalParams} from '../../utils/url';
-import Body from '../Body/Body';
 import {DashHotkeys} from '../DashHotkes/DashHotkeys';
 import Dialogs from '../Dialogs/Dialogs';
 import Header from '../Header/Header';
@@ -70,7 +70,9 @@ const AUTH_UPDATE_TIMEOUT = 40 * 60 * 1000;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
-type OwnProps = {};
+type OwnProps = {
+    themeType?: ThemeType;
+};
 
 type DashProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
 
@@ -264,33 +266,37 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             this.props;
         const subtitle = getTabTitleById({tabs, tabId});
 
+        const {DashBody} = registry.dash.components.getAll();
+
         return (
-            <DashHotkeys>
-                <PageTitle entry={entry} extraSettings={{subtitle}} />
-                <SlugifyUrl
-                    entryId={entry ? entry.entryId : null}
-                    name={entry ? Utils.getEntryNameFromKey(entry.key) : null}
-                    history={history}
-                />
-                <AccessRightsUrlOpen history={history} />
-                <Header
-                    entryDialoguesRef={this.entryDialoguesRef}
-                    handlerEditClick={this.handlerEditClick}
-                    history={history}
-                    location={location}
-                    isEditModeLoading={this.state.isEditModeLoading}
-                />
-                <Body
-                    onRetry={this.handleRetry}
-                    handlerEditClick={this.handlerEditClick}
-                    isEditModeLoading={this.state.isEditModeLoading}
-                    onPasteItem={this.onPasteItem}
-                    globalParams={getUrlGlobalParams(location.search, dashGlobalDefaultParams)}
-                    dashkitSettings={this.getDashkitSettings(settings)}
-                    onlyView={DL.IS_MOBILE}
-                />
-                <Dialogs />
-            </DashHotkeys>
+            <WidgetMetaProvider>
+                <DashHotkeys>
+                    <PageTitle entry={entry} extraSettings={{subtitle}} />
+                    <SlugifyUrl
+                        entryId={entry ? entry.entryId : null}
+                        name={entry ? Utils.getEntryNameFromKey(entry.key) : null}
+                        history={history}
+                    />
+                    <AccessRightsUrlOpen history={history} />
+                    <Header
+                        entryDialoguesRef={this.entryDialoguesRef}
+                        handlerEditClick={this.handlerEditClick}
+                        history={history}
+                        location={location}
+                        isEditModeLoading={this.state.isEditModeLoading}
+                    />
+                    <DashBody
+                        onRetry={this.handleRetry}
+                        handlerEditClick={this.handlerEditClick}
+                        isEditModeLoading={this.state.isEditModeLoading}
+                        onPasteItem={this.onPasteItem}
+                        globalParams={getUrlGlobalParams(location.search, dashGlobalDefaultParams)}
+                        dashkitSettings={this.getDashkitSettings(settings)}
+                        onlyView={DL.IS_MOBILE}
+                    />
+                    <Dialogs />
+                </DashHotkeys>
+            </WidgetMetaProvider>
         );
     }
 
@@ -303,22 +309,26 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         this.props.setRevisionsListMode?.(RevisionsListMode.Expanded);
     };
 
-    private setEditMode = async () => {
+    private setEditMode = async (successCallback?: () => void) => {
         try {
             this.setState({isEditModeLoading: true});
-            await this.props.setEditMode();
+            await this.props.setEditMode(successCallback);
         } catch (error) {
             logger.logError('dash Header: setEditMode failed', error);
         }
         this.setState({isEditModeLoading: false});
     };
 
-    private setEditDash = () => {
+    private setEditDash = (successCallback?: () => void) => {
         this.props.setRevisionsMode?.(RevisionsMode.Closed);
-        this.setEditMode();
+        this.setEditMode(successCallback);
     };
 
-    private handlerEditClick = () => {
+    private handlerEditClick = (onConfirmCallback?: () => void, onCancelCallback?: () => void) => {
+        if (this.state.isEditModeLoading) {
+            return;
+        }
+
         const {savedId, publishedId, revId} = this.props.entry;
         const hasLatestUnpublishedVersion = savedId !== publishedId && savedId !== revId;
 
@@ -326,14 +336,19 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             this.entryDialoguesRef.current?.open({
                 dialog: EntryDialogName.EditWarning,
                 dialogProps: {
-                    onEditClick: this.setEditDash,
-                    onShowHistoryClick: this.setExpandedRevisions,
+                    onEditClick: () => {
+                        this.setEditDash(onConfirmCallback);
+                    },
+                    onShowHistoryClick: () => {
+                        onCancelCallback?.();
+                        this.setExpandedRevisions();
+                    },
                 },
             });
             return;
         }
 
-        this.setEditDash();
+        this.setEditDash(onConfirmCallback);
     };
 
     private handleRetry = () => {
@@ -408,6 +423,9 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             context: itemData.copyContext,
             options: {
                 updateLayout,
+            },
+            dashVisualSettings: {
+                themeType: this.props.themeType,
             },
         });
     };

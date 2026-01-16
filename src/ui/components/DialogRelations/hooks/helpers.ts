@@ -10,6 +10,7 @@ import {
     DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES,
     DASH_FILTERING_CHARTS_WIDGET_TYPES,
 } from 'ui/units/dash/modules/constants';
+import {getAllTabItems} from 'ui/units/dash/utils/selectors';
 
 import type {FiltersTypes} from '../components/Filters/Filters';
 import {DEFAULT_FILTERS} from '../components/Filters/Filters';
@@ -52,7 +53,8 @@ export const getPreparedMetaData = (
 
     const config = dashkitData.props.config;
     const configItems: Record<string, string> = {};
-    config.items.forEach((item) => {
+    const allItems = getAllTabItems(config);
+    allItems.forEach((item) => {
         configItems[item.id] = item.namespace;
     });
 
@@ -112,7 +114,9 @@ export const getMetaDataWithDatasetInfo = ({
         Boolean(item.datasetFields?.length),
     );
 
-    const res = (metaData || []).map((item) => {
+    const fetchedWidgetsIds: string[] = [];
+
+    const res: Omit<DashkitMetaDataItem, 'relations'>[] = (metaData || []).map((item) => {
         const itemWithDataset = {...item};
         const entryWithDataset = entriesWithDatasetsFields.find(
             (entryItem) => entryItem.entryId === itemWithDataset.entryId,
@@ -166,6 +170,10 @@ export const getMetaDataWithDatasetInfo = ({
             ) as Array<DatasetsData>; // TODO for multi-datasets, this did not work, you need to support in API to return a different format
             itemWithDataset.type = item.type || type; // TODO order from US type for graph
             itemWithDataset.enableFiltering = item.enableFiltering || false;
+
+            fetchedWidgetsIds.push(itemWithDataset.widgetId);
+
+            itemWithDataset.isFetchFinished = true;
         }
 
         if (visualizationType) {
@@ -174,7 +182,8 @@ export const getMetaDataWithDatasetInfo = ({
 
         return itemWithDataset;
     });
-    return res;
+
+    return {updatedMetaData: res, fetchedWidgetsIds};
 };
 
 export const showInRelation = (
@@ -526,21 +535,26 @@ export const getCurrentWidgetMeta = ({
     metaData,
     dashkitData,
     widget,
-    itemId,
-    tabId,
+    selectedSubItemId,
 }: {
     metaData: DashMetaDataNoRelations;
     dashkitData: DashKit | null;
     widget: DashTabItem;
     // current item id for widgets with multiple items
-    itemId: string | null;
-    tabId?: string | null;
+    selectedSubItemId: string | null;
 }): DashkitMetaDataItem => {
-    if (itemId) {
-        return (metaData?.find((item) => item.itemId === itemId) || {}) as DashkitMetaDataItem;
+    if (widget.type === DashTabItemType.GroupControl && selectedSubItemId) {
+        return (metaData?.find((item) => item.itemId === selectedSubItemId) ||
+            {}) as DashkitMetaDataItem;
     }
 
-    const tabInfo = getCurrentWidgetTabShortInfo(dashkitData, widget, tabId);
+    // for no active tab of chart widget
+    if (widget.type === DashTabItemType.Widget && selectedSubItemId) {
+        return (metaData?.find((item) => item.widgetId === selectedSubItemId) ||
+            {}) as DashkitMetaDataItem;
+    }
+
+    const tabInfo = getCurrentWidgetTabShortInfo(dashkitData, widget, selectedSubItemId);
     return (metaData?.find((item) => item.widgetId === tabInfo?.id) || {}) as DashkitMetaDataItem;
 };
 
@@ -594,3 +608,19 @@ export const getChangedRelations = (
         return newItem;
     });
 };
+
+export const getChartId = (
+    widget: DashTabItem | DashkitMetaDataItem,
+    selectedSubItemId: string | null,
+) => {
+    if ('data' in widget) {
+        return widget.type === DashTabItemType.Widget
+            ? widget.data.tabs.find((tab) => tab.id === selectedSubItemId)?.chartId
+            : null;
+    }
+
+    return widget.chartId;
+};
+
+export const isTabItem = (widget: DashTabItem | DashkitMetaDataItem): widget is DashTabItem =>
+    'id' in widget;

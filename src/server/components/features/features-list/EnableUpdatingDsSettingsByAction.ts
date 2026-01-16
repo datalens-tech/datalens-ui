@@ -5,6 +5,6 @@ export default createFeatureConfig({
     name: Feature.EnableUpdatingDsSettingsByAction,
     state: {
         development: true,
-        production: false,
+        production: true,
     },
 });

@@ -3,8 +3,8 @@ import React from 'react';
 import {TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import type {TextFormOptions, TextareaFormOptions} from 'shared/schema';
 
-import type {TextFormOptions, TextareaFormOptions} from '../../../store/types';
 import type {OnSourceUpdate} from '../types';
 import {getTranslate} from '../utils';
 

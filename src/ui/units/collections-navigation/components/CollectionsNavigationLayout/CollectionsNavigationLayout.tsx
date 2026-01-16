@@ -64,9 +64,9 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                     !DL.IS_MOBILE && (
                         <ActionBar>
                             <ActionBar.Section type="primary">
-                                <ActionBar.Group pull="left">
+                                <ActionBar.Group pull="left" className={b('action-bar-group-left')}>
                                     {layout.actionsPanelLeftBlock && (
-                                        <ActionBar.Item>
+                                        <ActionBar.Item className={b('action-bar-group-item')}>
                                             {layout.actionsPanelLeftBlock.isLoading ? (
                                                 <Skeleton
                                                     style={

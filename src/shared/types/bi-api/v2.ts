@@ -18,10 +18,33 @@ export type ApiV2ResultData = {
     blocks: {
         query: string;
     }[];
+    data_export?: ApiV2DataExportField;
     data_export_forbidden?: boolean;
     pivot_data?: unknown;
     notifications?: unknown[];
 };
+
+export type ApiV2DataExportField = {
+    background: ApiV2DataExport;
+    basic: ApiV2DataExport;
+};
+export type ApiV2DataExport = {
+    reason: null | ApiV2DataExportForbiddenReason[];
+    allowed: boolean;
+};
+
+const API_V2_DATA_EXPORT_FORBIDDEN_REASONS = [
+    'DISABLED_EXPORT_DATASET',
+    'DISABLED_EXPORT_CONNECTION',
+    'DISABLED_EXPORT_TENANT',
+    'PROHIBITED_EXPORT_TENANT',
+    'PROHIBITED_EXPORT_CONNECTION',
+    'PROHIBITED_EXPORT_PIVOT_TABLE',
+    'PROHIBITED_EXPORT_QL_CHART',
+    'PROHIBITED_EXPORT_TYPED_QUERY',
+] as const;
+
+type ApiV2DataExportForbiddenReason = (typeof API_V2_DATA_EXPORT_FORBIDDEN_REASONS)[number];
 
 export type ApiV2ResultField = {
     data_type: string;

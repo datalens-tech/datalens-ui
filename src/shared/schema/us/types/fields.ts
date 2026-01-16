@@ -1,12 +1,14 @@
-import type {WorkbookId} from '../../../types';
+import type {CollectionItemEntities} from '../../../constants';
+import type {CollectionId, EntryAnnotation, SharedScope, WorkbookId} from '../../../types';
 
 export type EntryFieldData<T = Record<string, unknown>> = null | T;
 export type EntryFieldLinks = null | Record<string, string>;
 export type EntryFieldMeta<T = Record<string, unknown>> = null | T;
-type EntryFieldPublishedId = null | string;
+export type EntryFieldPublishedId = null | string;
 
 // corresponds to RETURN_COLUMNS from US
 export interface EntryFields {
+    version?: number | null;
     displayAlias?: string | null;
     createdAt: string;
     createdBy: string;
@@ -27,6 +29,8 @@ export interface EntryFields {
     updatedBy: string;
     unversionedData?: unknown;
     workbookId: WorkbookId;
+    collectionId?: CollectionId;
+    annotation?: EntryAnnotation | null;
 }
 
 // corresponds to RETURN_META_COLUMNS from US
@@ -40,6 +44,7 @@ export interface EntryMetaFields {
     publishedId: EntryFieldPublishedId;
     tenantId: string;
     workbookId: WorkbookId;
+    collectionId: CollectionId;
     accessDescription?: string;
     supportDescription?: string;
 }
@@ -64,6 +69,41 @@ export interface EntryNavigationFields {
     workbookTitle?: string | null;
 }
 
+export interface SharedEntryPermissions {
+    copy: boolean;
+    createEntryBinding: boolean;
+    createLimitedEntryBinding: boolean;
+    delete: boolean;
+    limitedView: boolean;
+    listAccessBindings: boolean;
+    move: boolean;
+    update: boolean;
+    updateAccessBindings: boolean;
+    view: boolean;
+}
+
+export interface SharedEntryFields {
+    collectionId: string;
+    updatedAt: string;
+    workbookId: string;
+    scope: SharedScope;
+    type: string;
+    key: string;
+    entryId: string;
+    entity: typeof CollectionItemEntities.ENTRY;
+    displayKey: string;
+    title: string;
+}
+
+export interface SharedEntryFieldsWithPermissions extends SharedEntryFields {
+    permissions: SharedEntryPermissions;
+}
+
+export interface SharedEntryFieldsWithOptionalPermissions
+    extends Omit<SharedEntryFields, 'permissions'> {
+    permissions?: SharedEntryPermissions;
+}
+
 // corresponds to RETURN_FAVORITES_COLUMNS from US
 export interface EntryFavoriteFields {
     entryId: string;
@@ -78,6 +118,8 @@ export interface EntryFavoriteFields {
     hidden: boolean;
     workbookId: WorkbookId;
     workbookTitle?: string | null;
+    collectionId: CollectionId;
+    collectionTitle?: string | null;
 }
 
 // corresponds to RETURN_RELATION_COLUMNS from US
@@ -87,9 +129,27 @@ export interface EntryRelationFields {
     type: string;
     key: string;
     meta: EntryFieldMeta;
+    links: EntryFieldLinks;
     depth: number;
     tenantId: string;
     public: boolean;
     workbookId: WorkbookId;
     isLocked: boolean;
+}
+
+export type SharedEntryRelationFields = Omit<EntryRelationFields, 'isLocked'> & {
+    collectionId: string;
+    createdAt: string;
+};
+
+export interface TenantSettings {
+    defaultColorPaletteId?: string;
+}
+
+export interface TenantFields {
+    tenantId: string;
+    createdAt: string;
+    enabled: boolean;
+    deleting: boolean;
+    settings: TenantSettings;
 }

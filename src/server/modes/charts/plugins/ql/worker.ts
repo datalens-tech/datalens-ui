@@ -3,7 +3,7 @@ import {workerData} from 'worker_threads';
 import workerPool from 'workerpool';
 
 import type {QlConfig, QlExtendedConfig} from '../../../../../shared';
-import {WizardVisualizationId, isD3Visualization} from '../../../../../shared';
+import {WizardVisualizationId, isGravityChartsVisualization} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {Console} from '../../../../components/charts-engine';
 import type {GetChartApiContextArgs} from '../../../../components/charts-engine/components/processor/chart-api-context';
@@ -44,7 +44,7 @@ const worker: WizardWorker = {
     },
 
     buildSources: async (args: BuildSourceArgs) => {
-        const {shared, params, actionParams, widgetConfig, userLang, palettes} = args;
+        const {shared, params, actionParams, widgetConfig, userLang, palettes, features} = args;
         const context = getChartApiContext({
             name: 'Sources',
             shared,
@@ -64,6 +64,7 @@ const worker: WizardWorker = {
                 ChartEditor: context.ChartEditor,
                 palettes,
                 qlConnectionTypeMap,
+                features,
             }),
             runtimeMetadata: context.__runtimeMetadata,
             logs: console.getLogs(),
@@ -92,11 +93,8 @@ const worker: WizardWorker = {
                 break;
             }
             default: {
-                if (isD3Visualization(visualizationId as WizardVisualizationId)) {
-                    result = qlModule.buildD3Config({
-                        shared: serverChartConfig,
-                        ChartEditor: context.ChartEditor,
-                    });
+                if (isGravityChartsVisualization({id: visualizationId, features})) {
+                    result = {};
                 } else {
                     result = qlModule.buildLibraryConfig({
                         shared: serverChartConfig,
@@ -141,8 +139,17 @@ const worker: WizardWorker = {
     },
 
     buildChart: async (args: BuildChartArgs) => {
-        const {shared, params, actionParams, widgetConfig, userLang, data, palettes, features} =
-            args;
+        const {
+            shared,
+            params,
+            actionParams,
+            widgetConfig,
+            userLang,
+            data,
+            palettes,
+            features,
+            defaultColorPaletteId,
+        } = args;
         const context = getChartApiContext({
             name: 'Prepare',
             shared,
@@ -157,12 +164,20 @@ const worker: WizardWorker = {
         qlModule.setConsole(console);
 
         const {qlConnectionTypeMap} = getQLAdditionalData();
+        const serverChartConfig = shared as QlConfig;
+        const shouldUseGravityCharts = isGravityChartsVisualization({
+            features,
+            id: serverChartConfig?.visualization?.id,
+        });
+        const plugin = shouldUseGravityCharts ? 'gravity-charts' : undefined;
         const result = qlModule.buildGraph({
-            shared: shared as QlConfig,
+            shared: serverChartConfig,
             ChartEditor: context.ChartEditor,
             palettes,
             features,
             qlConnectionTypeMap,
+            plugin,
+            defaultColorPaletteId,
         });
 
         return {

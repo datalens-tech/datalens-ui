@@ -4,6 +4,7 @@ import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsSQLEditorUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {RevisionsPanelQa} from '../../../../src/shared';
+import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 
 const sqlScript = `
 select built_year, AVG(iznos::float)
@@ -41,7 +42,7 @@ datalensTest.describe('QL - saving when versioning charts', () => {
 
         await qlPage.runScript();
 
-        const chart = qlPage.page.locator('.chartkit-graph');
+        const chart = qlPage.page.locator(COMMON_CHARTKIT_SELECTORS.chart);
         await expect(chart).toBeVisible({timeout: CHART_RENDER_TIMEOUT});
 
         const entryName = 'ql-revision-e2e-test-chart';
@@ -231,7 +232,7 @@ datalensTest.describe('QL - saving when versioning charts', () => {
 
         await openTestPage(secondPage, `/ql/${initialChartEntryId}`);
 
-        const chart = qlPage.page.locator('.chartkit-graph');
+        const chart = qlPage.page.locator(COMMON_CHARTKIT_SELECTORS.chart);
         await expect(chart).toBeVisible({timeout: CHART_RENDER_TIMEOUT});
     });
 });

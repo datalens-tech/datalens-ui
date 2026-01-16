@@ -1,13 +1,13 @@
 import React from 'react';
 
-import DataTable from '@gravity-ui/react-data-table';
 import type {ListItemData} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {clone, get} from 'lodash';
+import TableWidget from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/TableWidget';
 
 import type {ApplySourceSettings, GSheetSource} from '../../../../../store';
 import {ColumnFilter, ColumnsHeaderSwitcher} from '../../../components';
-import {getColumnsWithTypeIcons} from '../../../utils/render';
+import {useFileSourceTableWidgetData} from '../../../hooks/useFileSourceTableWidgetData';
 import type {UpdateColumnFilter} from '../../types';
 
 import {getGSheetSourceWorkspaceData} from './utils';
@@ -24,7 +24,6 @@ type GSheeteSourceWorkspaceProps = {
 export const GSheetSourceWorkspace = (props: GSheeteSourceWorkspaceProps) => {
     const {item, columnFilter, updateColumnFilter, updateSourceSettings} = props;
     const {preview, schema, firstLineIsHeader} = getGSheetSourceWorkspaceData(item);
-    const columns = getColumnsWithTypeIcons({schema, filter: columnFilter});
 
     const updateColumnsHeaderSwitcher = React.useCallback(
         (value: boolean) => {
@@ -36,6 +35,11 @@ export const GSheetSourceWorkspace = (props: GSheeteSourceWorkspaceProps) => {
         },
         [item, updateSourceSettings],
     );
+    const tableWidgetData = useFileSourceTableWidgetData({
+        fileSourcePreview: preview,
+        fileSourceSchema: schema,
+        columnFilterValue: columnFilter,
+    });
 
     return (
         <React.Fragment>
@@ -48,16 +52,10 @@ export const GSheetSourceWorkspace = (props: GSheeteSourceWorkspaceProps) => {
                 </div>
             )}
             <ColumnFilter value={columnFilter} onUpdate={updateColumnFilter} />
-            {/* @ts-ignore theme is required value but has default - https://github.com/gravity-ui/react-data-table/blob/71c52e923a98ff38af6107754bb73490b396e71b/src/lib/DataTable.tsx#L985 */}
-            <DataTable
-                columns={columns}
-                data={preview}
-                settings={{
-                    stickyHead: 'fixed',
-                    syncHeadOnResize: true,
-                    highlightRows: true,
-                    displayIndices: false,
-                }}
+            <TableWidget
+                id="standalone-source-workspace-table"
+                data={tableWidgetData}
+                className={b('preview-table')}
             />
         </React.Fragment>
     );

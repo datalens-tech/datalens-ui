@@ -5,12 +5,7 @@ import {i18n} from 'i18n';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
 import type {ColorPalette} from 'shared';
-import {
-    DEFAULT_PALETTE,
-    GradientType,
-    ServiceSettingsQA,
-    selectAvailableGradientsColors,
-} from 'shared';
+import {Feature, GradientType, ServiceSettingsQA, selectAvailableGradientsColors} from 'shared';
 import {
     deleteColorPalette,
     fetchColorPalettes,
@@ -20,15 +15,19 @@ import {
 } from 'store/actions/colorPaletteEditor';
 import {selectColorPalettes, selectCurrentColorPalette} from 'store/selectors/colorPaletteEditor';
 import type {DatalensGlobalState} from 'ui';
-import {selectDefaultClientGradient} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+
+import {
+    getAvailableClientPalettesMap,
+    getDefaultColorPaletteId,
+    selectDefaultClientGradient,
+} from '../../constants/common';
 
 import ColorPalettesCard from './ColorPalettesCard/ColorPalettesCard';
 import GradientColorPaletteEditor from './GradientPaletteEditor/GradientPaletteEditor';
 import ColorPaletteEditor from './PaletteEditor/PaletteEditor';
 
 import './ColorPaletteEditorContainer.scss';
-
-const IS_FAVORITES_ENABLED = false;
 
 const b = block('color-palette-editor-container');
 
@@ -40,6 +39,8 @@ type ColorPaletteEditorProps = StateProps &
     DispatchProps & {
         condensed?: boolean;
         hasEditRights?: boolean;
+        // ToDo: remove
+        enableDefaultColorPalette?: boolean;
     };
 
 class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProps> {
@@ -57,7 +58,6 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
         return (
             <div className={b()}>
                 <ColorPalettesCard
-                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
                     title={i18n('component.color-palette-editor', 'label_gradient-palette-title')}
                     description={i18n(
                         'component.color-palette-editor',
@@ -66,13 +66,14 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     handleCreateColorPalette={this.handleCreateGradientColorPalette}
                     handleItemClick={this.handleItemClick}
                     handleRemoveColorPaletteClick={this.handlDeleteColorPalette}
-                    className={b('color-palettes-card')}
+                    className={b('color-palettes-card', {
+                        new: isEnabledFeature(Feature.EnableNewServiceSettings),
+                    })}
                     colorPalettes={colorPalettes.filter((item) => item.isGradient)}
                     condensed={condensed}
                     hasEditRights={hasEditRights}
                 />
                 <ColorPalettesCard
-                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
                     title={i18n('component.color-palette-editor', 'label_palette-title')}
                     description={i18n(
                         'component.color-palette-editor',
@@ -81,20 +82,17 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     handleCreateColorPalette={this.handleCreateColorPalette}
                     handleItemClick={this.handleItemClick}
                     handleRemoveColorPaletteClick={this.handlDeleteColorPalette}
-                    className={b('color-palettes-card')}
+                    className={b('color-palettes-card', {
+                        new: isEnabledFeature(Feature.EnableNewServiceSettings),
+                    })}
                     colorPalettes={colorPalettes.filter((item) => !item.isGradient)}
                     condensed={condensed}
                     qa={ServiceSettingsQA.ColorPalettes}
                     hasEditRights={hasEditRights}
+                    hasDefaultPalette={true}
                 />
-                <ColorPaletteEditor
-                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
-                    hasEditRights={hasEditRights}
-                />
-                <GradientColorPaletteEditor
-                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
-                    hasEditRights={hasEditRights}
-                />
+                <ColorPaletteEditor hasEditRights={hasEditRights} />
+                <GradientColorPaletteEditor hasEditRights={hasEditRights} />
             </div>
         );
     }
@@ -116,7 +114,8 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
     };
 
     private handleCreateColorPalette = () => {
-        const colors = DEFAULT_PALETTE.scheme;
+        const defaultColorPaletteId = getDefaultColorPaletteId();
+        const colors = getAvailableClientPalettesMap()[defaultColorPaletteId]?.scheme ?? [];
 
         const colorPalette: ColorPalette = {
             colorPaletteId: '',

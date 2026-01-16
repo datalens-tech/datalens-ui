@@ -1,7 +1,20 @@
 import _get from 'lodash/get';
-import type {DatasetField, DatasetSource, DatasetSourceAvatar, Feature, WorkbookId} from 'shared';
+import type {
+    DatasetField,
+    DatasetSource,
+    DatasetSourceAvatar,
+    Feature,
+    SourceListingOptions,
+    WorkbookId,
+} from 'shared';
 import {DL} from 'ui';
+import type {EntryContextMenuItem} from 'ui/components/EntryContextMenu/helpers';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+
+import {
+    SharedDatasetHiddenContextMenuItems,
+    SharedWorkbookDatasetHiddenContextMenuItems,
+} from '../constants';
 
 export default class DatasetUtils {
     static sortObjectBy(sortParameter: string) {
@@ -153,3 +166,39 @@ export function isCreationProcess(pathname = '') {
     const lastPathnamePart = pathname.split('/').filter(Boolean).slice(-1)[0];
     return lastPathnamePart === 'new';
 }
+
+export function getSourceListingValues(sourceListing?: SourceListingOptions['source_listing']) {
+    const serverPagination = sourceListing?.supports_source_pagination;
+    const serverSearch = sourceListing?.supports_source_search;
+    const supportsDbNameListing = sourceListing?.supports_db_name_listing;
+    const parentLabel = sourceListing?.db_name_label;
+    const dbNameRequiredForSearch = sourceListing?.db_name_required_for_search;
+
+    return {
+        serverSearch,
+        serverPagination,
+        supportsDbNameListing,
+        parentLabel,
+        dbNameRequiredForSearch,
+    };
+}
+
+export const filterContextMenuItems = ({
+    items,
+    isSharedDataset,
+    isWorkbookSharedDataset,
+}: {
+    items: EntryContextMenuItem[];
+    isSharedDataset: boolean;
+    isWorkbookSharedDataset: boolean;
+}) => {
+    return items.filter((item) => {
+        if (isWorkbookSharedDataset && SharedWorkbookDatasetHiddenContextMenuItems.has(item.id)) {
+            return false;
+        }
+        if (isSharedDataset && SharedDatasetHiddenContextMenuItems.has(item.id)) {
+            return false;
+        }
+        return true;
+    });
+};

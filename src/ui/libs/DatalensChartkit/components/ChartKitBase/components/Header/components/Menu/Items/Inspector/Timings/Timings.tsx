@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
+import {HelpMark} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {ChartkitMenuDialogsQA} from 'shared';
@@ -217,10 +217,10 @@ const Timings: React.FC<
                 <div className={b('metric-title')}>
                     {i18n('chartkit.menu.inspector', 'label_data-fetching')}
                     {dataFetchingWarning && !dataFetchingDanger && (
-                        <HelpPopover content={BASELINE.DATA_FETCHING.WARNING.message()} />
+                        <HelpMark>{BASELINE.DATA_FETCHING.WARNING.message()}</HelpMark>
                     )}
                     {dataFetchingDanger && (
-                        <HelpPopover content={BASELINE.DATA_FETCHING.DANGER.message()} />
+                        <HelpMark>{BASELINE.DATA_FETCHING.DANGER.message()}</HelpMark>
                     )}
                 </div>
             </div>
@@ -229,10 +229,10 @@ const Timings: React.FC<
                 <div className={b('metric-title')}>
                     {i18n('chartkit.menu.inspector', 'label_js-execution')}
                     {jsExecutionWarning && !jsExecutionDanger && (
-                        <HelpPopover content={BASELINE.JS_EXECUTION.WARNING.message()} />
+                        <HelpMark>{BASELINE.JS_EXECUTION.WARNING.message()}</HelpMark>
                     )}
                     {jsExecutionDanger && (
-                        <HelpPopover content={BASELINE.JS_EXECUTION.DANGER.message()} />
+                        <HelpMark>{BASELINE.JS_EXECUTION.DANGER.message()}</HelpMark>
                     )}
                 </div>
             </div>
@@ -291,12 +291,10 @@ const Timings: React.FC<
                     <div className={b('metric-title')}>
                         {inspectorLabelApiWaitingText ??
                             i18n('chartkit.menu.inspector', 'label_api-waiting')}
-                        <HelpPopover
-                            content={
-                                inspectorLabelApiWaitingHintText ??
-                                i18n('chartkit.menu.inspector', 'label_api-waiting-hint')
-                            }
-                        />
+                        <HelpMark>
+                            {inspectorLabelApiWaitingHintText ??
+                                i18n('chartkit.menu.inspector', 'label_api-waiting-hint')}
+                        </HelpMark>
                     </div>
                 </div>
             )}

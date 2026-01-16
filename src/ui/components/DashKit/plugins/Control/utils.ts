@@ -1,12 +1,25 @@
 import {I18n} from 'i18n';
 import type {
+    ApiV2Filter,
+    ApiV2Parameter,
     DATASET_FIELD_TYPES,
     DashTabItemControlDataset,
     DashTabItemControlExternal,
     DashTabItemControlSingle,
-    DatasetFieldType,
+    StringParams,
 } from 'shared';
-import {DATASET_IGNORED_DATA_TYPES, DashTabItemControlSourceType} from 'shared';
+import {
+    DATASET_IGNORED_DATA_TYPES,
+    DashTabItemControlSourceType,
+    DatasetFieldType,
+    Operations,
+    resolveIntervalDate,
+    resolveOperation,
+    resolveRelativeDate,
+    splitParamsToParametersAndFilters,
+    transformParamsToUrlParams,
+    transformUrlParamsToParams,
+} from 'shared';
 import type {
     ChartsData,
     DatasetFieldsListItem,
@@ -16,7 +29,7 @@ import type {
 } from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 
 import {LOAD_STATUS} from './constants';
-import type {ErrorData, LoadStatus, ValidationErrorData} from './types';
+import type {DatasetSourceInfo, ErrorData, LoadStatus, ValidationErrorData} from './types';
 
 const i18nError = I18n.keyset('dash.dashkit-control.error');
 
@@ -70,7 +83,7 @@ export const getDatasetSourceInfo = <
     currentLoadedData?: T;
     data: DashTabItemControlDataset;
     actualLoadedData: null | ResponseSuccessControls;
-}) => {
+}): DatasetSourceInfo => {
     const {datasetFieldId, datasetId} = data.source;
     let datasetFieldType = null;
 
@@ -197,3 +210,100 @@ export const prepareSelectorError = (data: ErrorData['data'], requestId?: string
 
 export const isExternalControl = (data: any): data is DashTabItemControlExternal =>
     data.sourceType === DashTabItemControlSourceType.External;
+
+export const processParamsForGetDistincts = ({
+    params,
+    datasetSourceInfo,
+    searchPattern,
+}: {
+    params: StringParams;
+    datasetSourceInfo: DatasetSourceInfo;
+    searchPattern: string;
+}) => {
+    const {datasetFields, datasetFieldId, datasetFieldsMap} = datasetSourceInfo;
+    const splitParams = splitParamsToParametersAndFilters(
+        transformParamsToUrlParams(params),
+        datasetFields,
+    );
+
+    const filtersParams = transformUrlParamsToParams(splitParams.filtersParams);
+
+    const where = Object.entries(filtersParams).reduce(
+        (result, [key, rawValue]) => {
+            // ignoring the values of the current field when filtering,
+            // because it is enabled by default with operation: 'ICONTAINS',
+            // otherwise, we will search among the selected
+            if (key === datasetFieldId) {
+                return result;
+            }
+
+            const valuesWithOperation = (Array.isArray(rawValue) ? rawValue : [rawValue]).map(
+                (item) => resolveOperation(item),
+            );
+
+            if (valuesWithOperation.length > 0 && valuesWithOperation[0]?.value) {
+                const value = valuesWithOperation[0]?.value;
+                let operation = valuesWithOperation[0]?.operation;
+                let values = valuesWithOperation.map((item) => item?.value!);
+
+                if (valuesWithOperation.length === 1 && value.indexOf('__interval_') === 0) {
+                    const resolvedInterval = resolveIntervalDate(value);
+
+                    if (resolvedInterval) {
+                        values = [resolvedInterval.from, resolvedInterval.to];
+                        operation = Operations.BETWEEN;
+                    }
+                }
+
+                if (valuesWithOperation.length === 1 && value.indexOf('__relative_') === 0) {
+                    const resolvedRelative = resolveRelativeDate(value);
+
+                    if (resolvedRelative) {
+                        values = [resolvedRelative];
+                    }
+                }
+
+                result.push({
+                    column: key,
+                    operation,
+                    values,
+                });
+            }
+
+            return result;
+        },
+        [
+            {
+                column: datasetFieldId,
+                operation: 'ICONTAINS',
+                values: [searchPattern],
+            },
+        ],
+    );
+
+    const filters: ApiV2Filter[] = where
+        .filter((el) => {
+            return datasetFieldsMap[el.column]?.fieldType !== DatasetFieldType.Measure;
+        })
+        .map<ApiV2Filter>((filter) => {
+            return {
+                ref: {type: 'id', id: filter.column},
+                operation: filter.operation,
+                values: filter.values,
+            };
+        });
+
+    const parameter_values: ApiV2Parameter[] = splitParams.parametersParams.map<ApiV2Parameter>(
+        ([key, value]) => {
+            return {
+                ref: {type: 'id', id: key},
+                value,
+            };
+        },
+    );
+
+    return {
+        filters,
+        parameter_values,
+    };
+};

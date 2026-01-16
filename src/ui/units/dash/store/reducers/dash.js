@@ -3,26 +3,28 @@ import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
-import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'shared/constants/widgets';
+import {getDefaultDashWidgetBgColorByType} from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
-import {getUpdatedConnections} from 'ui/utils/copyItems';
+import {
+    getUpdatedBackgroundData,
+    getUpdatedConnections,
+    getUpdatedTextData,
+} from 'ui/utils/copyItems';
 
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
+import {getAllTabItems, isItemGlobal} from '../../utils/selectors';
 import * as actionTypes from '../constants/dashActionTypes';
 
+import {
+    TAB_PROPERTIES,
+    addGlobalItemToTab,
+    getCreatedItem,
+    getGlobalItemsToCopy,
+    getStateForControlWithGlobalLogic,
+} from './dashHelpers';
 import {dashTypedReducer} from './dashTypedReducer';
-
-export const TAB_PROPERTIES = [
-    'id',
-    'title',
-    'items',
-    'layout',
-    'connections',
-    'aliases',
-    'settings',
-];
 
 const initialState = {
     mode: Mode.Loading,
@@ -75,12 +77,18 @@ function dash(state = initialState, action) {
             const salt = data.salt;
             const dashDataUniqIds = getUniqIdsFromDashData(data);
 
+            // Get global items with 'allTabs' impact to copy from the first existing tab
+            const firstExistingTab = data.tabs.length > 0 ? data.tabs[0] : null;
+            const {globalItems: globalItemsToCopy, layout} = getGlobalItemsToCopy(firstExistingTab);
+
             const newTabs = action.payload.map((tab) => {
                 let tabItem = null;
                 const idsMapper = {};
 
+                // tab is exist
                 if (tab.id) {
                     tabItem = tab;
+                    // tab is duplicated
                 } else if (tab.duplicatedFrom) {
                     const tabForDuplication = state.data.tabs.find(
                         ({id}) => id === tab.duplicatedFrom,
@@ -179,11 +187,26 @@ function dash(state = initialState, action) {
                             })),
                         items,
                     };
+                    // new tab
                 } else {
                     const uniqTabIdData = generateUniqId({salt, counter, ids: dashDataUniqIds});
                     counter = uniqTabIdData.counter;
 
-                    tabItem = {id: uniqTabIdData.id, ...tab};
+                    tabItem = {
+                        id: uniqTabIdData.id,
+                        ...tab,
+                    };
+
+                    // Copy global items to new tab if they exist
+                    if (globalItemsToCopy.length > 0) {
+                        globalItemsToCopy.forEach((globalItem) => {
+                            tabItem = addGlobalItemToTab({
+                                tab: tabItem,
+                                item: globalItem,
+                                layoutItem: layout[globalItem.id],
+                            });
+                        });
+                    }
                 }
 
                 return tabItem;
@@ -233,18 +256,30 @@ function dash(state = initialState, action) {
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
             const itemData = action.payload.item.data;
+
+            const textData =
+                action.payload.item.type === DashTabItemType.Title
+                    ? getUpdatedTextData({
+                          textColor: itemData.textColor,
+                          textSettings: itemData.textSettings,
+                          allowCustomValues: false,
+                          enableSeparateThemeColorSelector: true,
+                          themeType: action.payload.dashVisualSettings?.themeType,
+                      })
+                    : {};
+
+            const defaultBgColorValue = getDefaultDashWidgetBgColorByType(itemData.type);
             const backgroundData =
-                'background' in itemData
-                    ? {
-                          background: {
-                              color:
-                                  itemData.background?.color &&
-                                  itemData.background.enabled !== false &&
-                                  WIDGET_BG_COLORS_PRESET.includes(itemData.background.color)
-                                      ? itemData.background.color
-                                      : CustomPaletteBgColors.NONE,
-                          },
-                      }
+                action.payload.item.type !== DashTabItemType.Control &&
+                action.payload.item.type !== DashTabItemType.GroupControl
+                    ? getUpdatedBackgroundData({
+                          background: itemData.background,
+                          backgroundSettings: itemData.backgroundSettings,
+                          allowCustomValues: false,
+                          enableSeparateThemeColorSelector: true,
+                          defaultOldColor: defaultBgColorValue,
+                          themeType: action.payload.dashVisualSettings?.themeType,
+                      })
                     : {};
             const newItem = {
                 ...action.payload.item,
@@ -256,8 +291,16 @@ function dash(state = initialState, action) {
                             ? DashTabItemTitleSizes.XL
                             : itemData.size,
                     ...backgroundData,
+                    ...textData,
                 },
             };
+
+            const itemType = action.payload.item.type;
+
+            const isGlobal =
+                itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control
+                    ? isItemGlobal(action.payload.item)
+                    : false;
 
             const tabData = DashKit.setItem({
                 item: newItem,
@@ -265,6 +308,7 @@ function dash(state = initialState, action) {
                 options: {
                     ...action.payload.options,
                     excludeIds: getUniqIdsFromDashData(data),
+                    ...(isGlobal ? {useGlobalItems: true} : {}),
                 },
             });
 
@@ -276,7 +320,11 @@ function dash(state = initialState, action) {
                 state.entry.entryId === targetEntryId &&
                 targetIds?.length
             ) {
-                const copiedItem = tabData.items[tabData.items.length - 1];
+                const copiedItem = getCreatedItem({
+                    isGlobal,
+                    items: tabData.items,
+                    globalItems: tabData.globalItems,
+                });
 
                 const updatedConnections = getUpdatedConnections({
                     connections: tabData.connections,
@@ -285,6 +333,24 @@ function dash(state = initialState, action) {
                 });
 
                 tabData.connections = updatedConnections;
+            }
+
+            // Handle global control items (GroupControl and Control types)
+            if (itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control) {
+                const updatedState = getStateForControlWithGlobalLogic({
+                    state,
+                    data,
+                    tabData,
+                    tabIndex,
+                    itemType,
+                    itemData,
+                    isGlobal,
+                });
+
+                // If the function returned a state, return it
+                if (updatedState) {
+                    return updatedState;
+                }
             }
 
             return {
@@ -298,6 +364,14 @@ function dash(state = initialState, action) {
             };
         }
         case actionTypes.SET_ITEM_DATA: {
+            const itemType = action.payload.type;
+            const itemData = action.payload.data;
+
+            const isGlobal =
+                itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control
+                    ? isItemGlobal(action.payload)
+                    : false;
+
             const tabData = DashKit.setItem({
                 item: {
                     id: state.openedItemId,
@@ -311,8 +385,11 @@ function dash(state = initialState, action) {
                 options: {
                     excludeIds: getUniqIdsFromDashData(data),
                     updateLayout: state.dragOperationProps?.newLayout,
+                    ...(isGlobal ? {useGlobalItems: true} : {}),
                 },
             });
+
+            const allTabItems = getAllTabItems(tabData);
 
             // migration of connections if old selector becomes a group selector
             // 1. state.openedItemId existance means that widget already exist
@@ -325,7 +402,7 @@ function dash(state = initialState, action) {
                 tabData.connections = migrateConnectionsForGroupControl({
                     openedItemId: state.openedItemId,
                     currentTab: tab,
-                    tabDataItems: tabData.items,
+                    tabDataItems: allTabItems,
                 });
             }
 
@@ -342,8 +419,12 @@ function dash(state = initialState, action) {
                 });
 
                 const item = state.openedItemId
-                    ? tabData.items.find((tabItem) => tabItem.id === state.openedItemId)
-                    : tabData.items[tabData.items.length - 1];
+                    ? allTabItems.find((tabItem) => tabItem.id === state.openedItemId)
+                    : getCreatedItem({
+                          isGlobal,
+                          items: tabData.items,
+                          globalItems: tabData.globalItems,
+                      });
 
                 const updatedConnections = getUpdatedConnections({
                     connections: tabData.connections,
@@ -352,6 +433,27 @@ function dash(state = initialState, action) {
                 });
 
                 tabData.connections = updatedConnections;
+            }
+
+            // Handle global control items (GroupControl and Control types)
+            if (itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control) {
+                const connectionsUpdaters = state.connectionsUpdaters;
+
+                const updatedState = getStateForControlWithGlobalLogic({
+                    state,
+                    data,
+                    tabData,
+                    tabIndex,
+                    itemType,
+                    itemData,
+                    isGlobal,
+                    connectionsUpdaters,
+                });
+
+                // If the function returned a state, return it
+                if (updatedState) {
+                    return updatedState;
+                }
             }
 
             const modifiedItem = tabData.layout[tabData.layout.length - 1];

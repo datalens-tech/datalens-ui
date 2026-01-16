@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import type {SelectOption} from '@gravity-ui/uikit';
-import {Button, Dialog, Loader, Select, TextInput} from '@gravity-ui/uikit';
+import {Button, Dialog, HelpMark, Loader, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqualWith from 'lodash/isEqualWith';
@@ -187,12 +186,15 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
                         <div className={b('line')}>
                             <span className={b('line-title')}>
                                 <span>{i18n('parameter_name')}</span>
-                                <HelpPopover
-                                    size="s"
-                                    content={tooltipText}
+                                <HelpMark
+                                    popoverProps={{
+                                        placement: 'right',
+                                        style: {maxWidth: 280},
+                                    }}
                                     className={b('title-tooltip')}
-                                    placement="right"
-                                />
+                                >
+                                    {tooltipText}
+                                </HelpMark>
                             </span>
                             <TextInput
                                 disabled={isEditDefaultValueDialog}
@@ -204,11 +206,9 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
                                     validationErrors.name ? (
                                         <React.Fragment>
                                             {validationErrors.name}
-                                            <HelpPopover
-                                                size="s"
-                                                content={tooltipText}
-                                                className={b('title-tooltip')}
-                                            />
+                                            <HelpMark iconSize="s" className={b('title-tooltip')}>
+                                                {tooltipText}
+                                            </HelpMark>
                                         </React.Fragment>
                                     ) : undefined
                                 }

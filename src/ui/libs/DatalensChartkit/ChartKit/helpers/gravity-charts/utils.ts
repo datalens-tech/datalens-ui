@@ -1,4 +1,4 @@
-import type {ChartSeries, ChartSeriesData} from '@gravity-ui/chartkit/d3';
+import type {ChartSeries, ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
 import get from 'lodash/get';
 import set from 'lodash/set';
 

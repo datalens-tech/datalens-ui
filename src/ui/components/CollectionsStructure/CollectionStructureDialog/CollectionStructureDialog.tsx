@@ -1,29 +1,16 @@
 import React from 'react';
 
-import type {CancellablePromise} from '@gravity-ui/sdk';
 import {Button, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {WorkbookId} from 'shared';
-import type {
-    GetStructureItemsArgs,
-    GetStructureItemsMode,
-    GetStructureItemsResponse,
-    OrderBasicField,
-    OrderDirection,
-    WorkbookWithPermissions,
-} from 'shared/schema';
+import {DialogCollectionStructureQa} from 'shared/constants/qa/collections';
+import type {WorkbookWithPermissions} from 'shared/schema';
 import type {CollectionsStructureDispatch} from 'store/actions/collectionsStructure';
 import {
     createCollection,
     createWorkbook,
-    getCollection,
-    getCollectionBreadcrumbs,
-    getRootCollectionPermissions,
-    getStructureItems,
-    resetCollectionBreadcrumbs,
-    resetState,
     resetStructureItems,
 } from 'store/actions/collectionsStructure';
 import {
@@ -33,15 +20,15 @@ import {
     selectCollectionIsLoading,
     selectCreateCollectionIsLoading,
     selectCreateWorkbookIsLoading,
+    selectFilteredStructureItems,
     selectNextPageToken,
     selectRootPermissionsData,
-    selectStructureItems,
     selectStructureItemsError,
     selectStructureItemsIsLoading,
 } from 'store/selectors/collectionsStructure';
 
-import type {StructureItemsFilters} from '../../CollectionFilters';
 import {CollectionFilters} from '../../CollectionFilters';
+import {useCollectionStructureDialogState} from '../hooks/useCollectionStructureDialogState';
 
 import {CreateEntityDialog} from './CreateEntityDialog/CreateEntityDialog';
 import {NewTitleDialog} from './NewTitleDialog/NewTitleDialog';
@@ -54,20 +41,6 @@ const i18n = I18n.keyset('component.collections-structure');
 const b = block('dl-collection-structure-dialog');
 
 const PAGE_SIZE = 50;
-
-const DEFAULT_FILTERS: {
-    filterString?: string;
-    orderField: OrderBasicField;
-    orderDirection: OrderDirection;
-    mode: GetStructureItemsMode;
-    onlyMy: boolean;
-} = {
-    filterString: undefined,
-    orderField: 'createdAt',
-    orderDirection: 'desc',
-    mode: 'all',
-    onlyMy: false,
-};
 
 export enum ResourceType {
     Collection = 'collection',
@@ -99,6 +72,7 @@ export type Props = {
     }) => Promise<unknown>;
     onClose: (structureChanged: boolean) => void;
     additionalButtons?: React.ReactNode;
+    useCustomDialog?: boolean;
 };
 
 export const CollectionStructureDialog = React.memo<Props>(
@@ -119,7 +93,22 @@ export const CollectionStructureDialog = React.memo<Props>(
         onApply,
         onClose,
         additionalButtons,
+        useCustomDialog,
     }) => {
+        const {
+            targetCollectionId,
+            filters,
+            setFilters,
+            getStructureItemsRecursively,
+            handleChangeCollection,
+            targetWorkbookId,
+            handleChangeWorkbook,
+        } = useCollectionStructureDialogState({
+            open,
+            initialCollectionId,
+            includePermissionsInfo: workbookSelectionMode,
+        });
+
         const dispatch = useDispatch<CollectionsStructureDispatch>();
 
         const rootPermissionsData = useSelector(selectRootPermissionsData);
@@ -128,20 +117,15 @@ export const CollectionStructureDialog = React.memo<Props>(
         const collectionData = useSelector(selectCollectionData);
 
         const breadcrumbsIsLoading = useSelector(selectBreadcrumbsIsLoading);
-        const breadcrumbs = useSelector(selectBreadcrumbs) ?? [];
+        const breadcrumbs = useSelector(selectBreadcrumbs);
 
-        const structureItems = useSelector(selectStructureItems) ?? [];
+        const structureItems = useSelector(selectFilteredStructureItems);
         const structureItemsIsLoading = useSelector(selectStructureItemsIsLoading);
         const structureItemsError = useSelector(selectStructureItemsError);
         const nextPageToken = useSelector(selectNextPageToken);
 
         const createCollectionIsLoading = useSelector(selectCreateCollectionIsLoading);
         const createWorkbookIsLoading = useSelector(selectCreateWorkbookIsLoading);
-
-        const [targetCollectionId, setTargetCollectionId] = React.useState(initialCollectionId);
-        const [targetWorkbookId, setTargetWorkbookId] = React.useState<string | null>(null);
-
-        const [filters, setFilters] = React.useState<StructureItemsFilters>(DEFAULT_FILTERS);
 
         const [createCollectionDialogIsOpen, setCreateCollectionDialogIsOpen] =
             React.useState(false);
@@ -155,55 +139,6 @@ export const CollectionStructureDialog = React.memo<Props>(
         const handleClose = React.useCallback(() => {
             onClose(structureChanged);
         }, [structureChanged, onClose]);
-
-        const includePermissionsInfo = workbookSelectionMode;
-
-        const getStructureItemsRecursively = React.useCallback(
-            (args: GetStructureItemsArgs): CancellablePromise<GetStructureItemsResponse | null> => {
-                let curPage = args.page;
-
-                return dispatch(getStructureItems({...args, includePermissionsInfo})).then(
-                    (result) => {
-                        if (result?.items.length === 0 && result.nextPageToken !== null) {
-                            curPage = result.nextPageToken;
-
-                            return getStructureItemsRecursively({
-                                ...args,
-                                includePermissionsInfo,
-                                page: curPage,
-                            });
-                        } else {
-                            return result;
-                        }
-                    },
-                );
-            },
-            [dispatch, includePermissionsInfo],
-        );
-
-        const fetchData = React.useCallback(() => {
-            const promises: CancellablePromise<unknown>[] = [];
-
-            dispatch(resetStructureItems());
-            promises.push(
-                getStructureItemsRecursively({
-                    collectionId: targetCollectionId,
-                    pageSize: PAGE_SIZE,
-                    ...filters,
-                }),
-            );
-
-            if (targetCollectionId) {
-                promises.push(dispatch(getCollection({collectionId: targetCollectionId})));
-                promises.push(
-                    dispatch(getCollectionBreadcrumbs({collectionId: targetCollectionId})),
-                );
-            } else {
-                dispatch(resetCollectionBreadcrumbs());
-            }
-
-            return promises;
-        }, [dispatch, filters, getStructureItemsRecursively, targetCollectionId]);
 
         const canCreateCollection = React.useMemo(() => {
             if (targetCollectionId) {
@@ -279,30 +214,23 @@ export const CollectionStructureDialog = React.memo<Props>(
                             handleClose();
                         }
                     });
+                } else if (useCustomDialog) {
+                    onApply({targetCollectionId, targetWorkbookId});
                 } else {
                     setNewTitleDialogIsOpen(true);
                 }
             }
         }, [
-            massMoveMode,
             applyButtonDisabled,
-            closeDialogAfterSuccessfulApply,
             workbookSelectionMode,
+            massMoveMode,
+            useCustomDialog,
             onApply,
-            targetCollectionId,
             targetWorkbookId,
+            closeDialogAfterSuccessfulApply,
             handleClose,
+            targetCollectionId,
         ]);
-
-        const handleChangeCollection = React.useCallback((newValue: string | null) => {
-            setTargetCollectionId(newValue);
-            setTargetWorkbookId(null);
-            setFilters((prevFilters) => ({...prevFilters, filterString: undefined}));
-        }, []);
-
-        const handleChangeWorkbook = React.useCallback((newValue: string | null) => {
-            setTargetWorkbookId(newValue);
-        }, []);
 
         const handleApply = React.useCallback(
             (targetTitle: string) => {
@@ -321,39 +249,6 @@ export const CollectionStructureDialog = React.memo<Props>(
             ],
         );
 
-        React.useEffect(() => {
-            setTargetCollectionId(initialCollectionId);
-        }, [initialCollectionId]);
-
-        React.useEffect(() => {
-            const promises: CancellablePromise<unknown>[] = [];
-
-            if (open) {
-                dispatch(resetState());
-                promises.push(dispatch(getRootCollectionPermissions()));
-            }
-
-            return () => {
-                promises.forEach((promise) => {
-                    promise.cancel();
-                });
-            };
-        }, [dispatch, open]);
-
-        React.useEffect(() => {
-            const promises: CancellablePromise<unknown>[] = [];
-
-            if (open) {
-                promises.push(...fetchData());
-            }
-
-            return () => {
-                promises.forEach((promise) => {
-                    promise.cancel();
-                });
-            };
-        }, [fetchData, open]);
-
         return (
             <React.Fragment>
                 <Dialog
@@ -362,6 +257,7 @@ export const CollectionStructureDialog = React.memo<Props>(
                     open={open}
                     onClose={handleClose}
                     onEnterKeyDown={handleClickApplyButton}
+                    disableHeightTransition={true}
                 >
                     <Dialog.Header caption={caption} />
                     <Dialog.Body>
@@ -395,6 +291,7 @@ export const CollectionStructureDialog = React.memo<Props>(
                         textButtonApply={textButtonApply}
                         propsButtonApply={{
                             disabled: applyButtonDisabled,
+                            qa: DialogCollectionStructureQa.ApplyButton,
                         }}
                         textButtonCancel={i18n('action_cancel')}
                         loading={applyIsLoading}

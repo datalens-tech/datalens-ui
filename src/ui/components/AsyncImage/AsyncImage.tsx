@@ -9,11 +9,26 @@ export type AsyncImageProps = Omit<
 > & {
     src: string | (() => Promise<{default: string}>);
     showSkeleton?: boolean;
+    onLoad?: () => void;
+    // if you need to separate the skeleton styles from the image
+    skeletonClassName?: string;
+    // makes it possible not to show skeletons for fast-loading images
+    skeletonTimeout?: number;
 };
 
-export function AsyncImage({src, alt, style, showSkeleton, ...restProps}: AsyncImageProps) {
+export function AsyncImage({
+    src,
+    alt,
+    style,
+    showSkeleton,
+    onLoad,
+    skeletonClassName,
+    skeletonTimeout,
+    ...restProps
+}: AsyncImageProps) {
     const [finalSrc, setFinalSrc] = React.useState(typeof src === 'string' ? src : undefined);
-    const [loading, setLoading] = React.useState(showSkeleton);
+    const [loading, setLoading] = React.useState(showSkeleton && !skeletonTimeout);
+    const [isImgReady, setIsImgReady] = React.useState(false);
 
     React.useEffect(() => {
         let isCancelled = false;
@@ -38,9 +53,33 @@ export function AsyncImage({src, alt, style, showSkeleton, ...restProps}: AsyncI
         return () => {
             isCancelled = true;
         };
-    }, [src]);
+    }, [src, skeletonTimeout]);
 
-    const skeleton = loading ? <Skeleton className={restProps.className} style={style} /> : null;
+    React.useEffect(() => {
+        let skeletonTimer: number;
+
+        if (skeletonTimeout && !loading && !isImgReady) {
+            skeletonTimer = window.setTimeout(() => {
+                if (!isImgReady) {
+                    setLoading(true);
+                }
+            }, skeletonTimeout);
+        }
+
+        return () => {
+            clearTimeout(skeletonTimer);
+        };
+    }, [isImgReady, loading, skeletonTimeout]);
+
+    const handleLoad = React.useCallback(() => {
+        setLoading(false);
+        setIsImgReady(true);
+        onLoad?.();
+    }, [onLoad]);
+
+    const skeleton = loading ? (
+        <Skeleton className={skeletonClassName || restProps.className} style={style} />
+    ) : null;
 
     return isNil(finalSrc) ? (
         skeleton
@@ -54,7 +93,7 @@ export function AsyncImage({src, alt, style, showSkeleton, ...restProps}: AsyncI
                     ...(loading && {display: 'none'}),
                 }}
                 {...restProps}
-                onLoad={loading ? () => setLoading(false) : undefined}
+                onLoad={handleLoad}
                 onError={() => setLoading(false)}
             />
             {skeleton}

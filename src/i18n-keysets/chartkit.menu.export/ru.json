@@ -8,6 +8,14 @@
   "format_wiki": "Wiki",
   "format_xlsx": "XLSX",
   "label_data-export-forbidden": "Владелец подключения или датасета запретил экспорт данных",
+  "label_export-forbidden.DISABLED_EXPORT_CONNECTION": "Владелец подключения запретил экспорт данных",
+  "label_export-forbidden.DISABLED_EXPORT_DATASET": "Владелец датасета запретил экспорт данных",
+  "label_export-forbidden.DISABLED_EXPORT_TENANT": "Администратор организации запретил экспорт данных",
+  "label_export-forbidden.PROHIBITED_EXPORT_CONNECTION": "Экспорт данных недоступен в подключении данного типа",
+  "label_export-forbidden.PROHIBITED_EXPORT_PIVOT_TABLE": "Экспорт данных недоступен для данного типа чарта",
+  "label_export-forbidden.PROHIBITED_EXPORT_QL_CHART": "Экспорт данных недоступен для данного типа чарта",
+  "label_export-forbidden.PROHIBITED_EXPORT_TENANT": "Экспорт данных недоступен в данной организации",
+  "label_export-forbidden.PROHIBITED_EXPORT_TYPED_QUERY": "Экспорт данных недоступен для данного типа чарта",
   "menu-export": "Сохранить как",
   "menu-screenshot": "Сохранить как изображение"
 }

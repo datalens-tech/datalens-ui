@@ -9,6 +9,7 @@ import type {
     ApplySourceSettingsArgs,
     DownloadPresignedUrlArgs,
     DownloadPresignedUrlResponse,
+    EntityBindingsResponse,
     FormSchema,
     GetConnectorSchemaArgs,
     GetConnectorsResponse,
@@ -36,15 +37,25 @@ import {ConverterErrorCode} from '../../constants';
 import type {FormDict} from '../../typings';
 import type {CheckData, UploadedFile} from '../typings';
 
-const fetchEntry = async (
-    entryId: string,
-): Promise<{
+type FetchEntryArgs = {
+    entryId: string;
+    bindedDatasetId?: string | null;
+    bindedWorkbookId?: string | null;
+};
+
+const fetchEntry = async ({
+    entryId,
+    bindedDatasetId,
+    bindedWorkbookId,
+}: FetchEntryArgs): Promise<{
     entry?: GetEntryResponse;
     error?: DataLensApiError;
 }> => {
     try {
         const entry = await getSdk().sdk.us.getEntry({
             entryId,
+            bindedDatasetId,
+            workbookId: bindedWorkbookId,
             includePermissionsInfo: true,
         });
         return {entry};
@@ -54,15 +65,48 @@ const fetchEntry = async (
     }
 };
 
-const fetchConnectionData = async (
-    connectionId: string,
-    workbookId: string | null,
+const fetchSharedEntryDelegation = async (
+    entryId: string,
+    workbookId: string,
 ): Promise<{
+    delegation?: EntityBindingsResponse;
+    error?: DataLensApiError;
+}> => {
+    try {
+        const delegation = await getSdk().sdk.us.getSharedEntryDelegation({
+            sourceId: entryId,
+            targetId: workbookId,
+        });
+        return {delegation};
+    } catch (error) {
+        logger.logError('Redux actions (conn): fetchSharedEntryDelegation failed', error);
+        return {delegation: undefined, error};
+    }
+};
+
+type FetchConnectionDataArgs = {
+    connectionId: string;
+    workbookId?: string | null;
+    revId?: string;
+    bindedDatasetId?: string | null;
+};
+
+const fetchConnectionData = async ({
+    connectionId,
+    workbookId,
+    revId,
+    bindedDatasetId,
+}: FetchConnectionDataArgs): Promise<{
     connectionData: ConnectionData;
     error?: DataLensApiError;
 }> => {
     try {
-        const connectionData = await getSdk().sdk.bi.getConnection({connectionId, workbookId});
+        const connectionData = await getSdk().sdk.bi.getConnection({
+            connectionId,
+            workbookId,
+            bindedDatasetId,
+            rev_id: revId,
+        });
         return {connectionData};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchConnectionData failed', error);
@@ -86,12 +130,17 @@ const fetchConnectors = async (): Promise<
 const fetchConnectorSchema = async ({
     type,
     mode,
+    connectionId,
 }: GetConnectorSchemaArgs): Promise<{
     schema?: FormSchema;
     error?: DataLensApiError;
 }> => {
     try {
-        const {form: schema} = await getSdk().sdk.bi.getConnectorSchema({type, mode});
+        const {form: schema} = await getSdk().sdk.bi.getConnectorSchema({
+            type,
+            mode,
+            connectionId,
+        });
         return {schema};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchConnectorForm failed', error);
@@ -132,7 +181,7 @@ const updateConnection = async (
     dbType: string,
 ): Promise<{error?: DataLensApiError}> => {
     try {
-        await getSdk().sdk.bi.updateConnection({...form, connectionId});
+        await getSdk().sdk.bi.updateConnection({data: form, connectionId});
         reachMetricaGoal(CounterName.Main, GoalId.ConnectionEditSubmit, {
             type: dbType,
         });
@@ -460,4 +509,5 @@ export const api = {
     getPresignedUrl,
     uploadFileToS3,
     downloadPresignedUrl,
+    fetchSharedEntryDelegation,
 };

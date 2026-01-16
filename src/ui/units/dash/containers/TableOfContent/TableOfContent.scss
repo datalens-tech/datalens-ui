@@ -84,4 +84,14 @@
             background-color: var(--g-color-base-selection);
         }
     }
+
+    &__hint {
+        display: inline;
+        margin-left: 5px;
+    }
+
+    &__sheet {
+        // for hint tooltip to be visible
+        z-index: 1000;
+    }
 }

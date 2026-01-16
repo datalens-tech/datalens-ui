@@ -7,10 +7,16 @@ import get from 'lodash/get';
 import isObject from 'lodash/isObject';
 
 import type {ChartsEngine} from '..';
-import type {DashTabItemControlData} from '../../../../shared';
+import type {
+    DashTab,
+    DashTabItemControlData,
+    DashTabItemControlDataset,
+    DashTabItemControlManual,
+} from '../../../../shared';
 import {
     ControlType,
     DL_EMBED_TOKEN_HEADER,
+    DashTabItemControlSourceType,
     DashTabItemType,
     EntryScope,
     ErrorCode,
@@ -21,7 +27,38 @@ import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/st
 import type {EmbeddingInfo, ReducedResolvedConfig} from '../components/storage/types';
 import {getDuration, isDashEntry} from '../components/utils';
 
-import {getValidatedSignedParams} from './utils';
+const isControlDisabled = (
+    controlData: DashTabItemControlData,
+    embeddingInfo: EmbeddingInfo,
+    controlTab: DashTab,
+): boolean => {
+    if (
+        (controlData.sourceType !== DashTabItemControlSourceType.Dataset &&
+            controlData.sourceType !== DashTabItemControlSourceType.Manual) ||
+        // dash doesn't support publicParamsMode
+        embeddingInfo.embed.publicParamsMode
+    ) {
+        return false;
+    }
+    const controlSource = controlData.source as
+        | DashTabItemControlDataset['source']
+        | DashTabItemControlManual['source'];
+
+    const controlParam =
+        'datasetFieldId' in controlSource ? controlSource.datasetFieldId : controlSource.fieldName;
+
+    const tabAliases = controlTab.aliases[controlData.namespace];
+
+    const aliasesParamsList = tabAliases?.find((alias) => alias.includes(controlParam));
+
+    const forbiddenParams = embeddingInfo.embed.privateParams.concat(
+        embeddingInfo.token.params ? Object.keys(embeddingInfo.token.params) : [],
+    );
+
+    return aliasesParamsList
+        ? aliasesParamsList.some((alias) => forbiddenParams.includes(alias))
+        : forbiddenParams.includes(controlParam);
+};
 
 const isResponseError = (error: unknown): error is AxiosError<{code: string}> => {
     return Boolean(isObject(error) && 'response' in error && error.response);
@@ -43,7 +80,6 @@ function validateEmbedToken(
             extra: {
                 message: 'You must provide embedToken',
                 hideRetry: true,
-                hideDebugInfo: true,
             },
         });
         return null;
@@ -55,7 +91,7 @@ function validateEmbedToken(
         ctx.log('CHARTS_ENGINE_WRONG_TOKEN');
         res.status(400).send({
             code: ErrorCode.InvalidToken,
-            extra: {message: 'Wrong token format', hideRetry: true, hideDebugInfo: true},
+            extra: {message: 'Wrong token format', hideRetry: true},
         });
         return null;
     }
@@ -89,7 +125,6 @@ function handleError(
             extra: {
                 message: 'Dependencies of embed are outdated',
                 hideRetry: true,
-                hideDebugInfo: true,
             },
         });
         return;
@@ -114,7 +149,6 @@ function handleError(
             },
             extra: {
                 hideRetry: false,
-                hideDebugInfo: true,
             },
         },
     });
@@ -133,11 +167,12 @@ function processControlWidget(
         return null;
     }
 
+    const controlTab = controlData?.tabId
+        ? embeddingInfo.entry.data.tabs.find((tab) => tab.id === controlData?.tabId)
+        : null;
+
     // Support group and old single selectors
     const controlWidgetId = controlData.widgetId || controlData.id;
-    const controlTab = embeddingInfo.entry.data.tabs.find(
-        ({id}: {id: string}) => id === controlData.tabId,
-    );
 
     const controlWidgetConfig = controlTab?.items.find(
         ({id}: {id: string}) => id === controlWidgetId,
@@ -156,7 +191,7 @@ function processControlWidget(
         return null;
     }
 
-    const sharedData: DashTabItemControlData | undefined =
+    const sharedData: (DashTabItemControlData & {disabled?: boolean}) | undefined =
         controlWidgetConfig.type === DashTabItemType.GroupControl
             ? controlWidgetConfig.data.group.find(({id}: {id: string}) => id === controlData.id)
             : controlWidgetConfig.data;
@@ -167,6 +202,8 @@ function processControlWidget(
         });
         return null;
     }
+
+    sharedData.disabled = isControlDisabled(sharedData, embeddingInfo, controlTab);
 
     return {
         data: {shared: sharedData},
@@ -199,17 +236,20 @@ function processEntry(
         extra: {
             message: 'Invalid token',
             hideRetry: true,
-            hideDebugInfo: true,
         },
     });
     return null;
 }
 
-function filterParams(
-    params: Record<string, unknown> = {},
-    embeddingInfo: EmbeddingInfo,
-    ctx: AppContext,
-): {params: Record<string, unknown>; privateParams?: Set<string>} {
+async function filterParams({
+    params = {},
+    embeddingInfo,
+    ctx,
+}: {
+    params: Record<string, unknown>;
+    embeddingInfo: EmbeddingInfo;
+    ctx: AppContext;
+}): Promise<{params: Record<string, unknown>; privateParams?: Set<string>}> {
     if (!params || Object.keys(params).length === 0) {
         return {params: {...embeddingInfo.token.params}};
     }
@@ -218,7 +258,9 @@ function filterParams(
 
     let forbiddenParamsSet: Set<string> | undefined;
 
-    if (embeddingInfo.embed.publicParamsMode && embeddingInfo.embed.unsignedParams.length > 0) {
+    if (embeddingInfo.embed.publicParamsMode && embeddingInfo.embed.unsignedParams?.length > 0) {
+        // public params mode is enabled
+
         const unsignedParamsSet = new Set(embeddingInfo.embed.unsignedParams);
 
         Object.keys(params).forEach((key) => {
@@ -226,56 +268,43 @@ function filterParams(
                 filteredParams[key] = params[key];
             }
         });
-    } else if (!embeddingInfo.embed.publicParamsMode) {
-        if (embeddingInfo.embed.privateParams.length === 0) {
-            Object.assign(filteredParams, params);
-        } else {
-            const fillingForbiddenParamsSet = new Set(embeddingInfo.embed.privateParams);
+    } else if (
+        !embeddingInfo.embed.publicParamsMode &&
+        embeddingInfo.embed.privateParams?.length === 0
+    ) {
+        // privateParams mode is enabled, but params are not added
 
-            if (isDashEntry(embeddingInfo.entry)) {
-                embeddingInfo.entry.data.tabs.forEach((entryTab) => {
-                    if (entryTab.aliases) {
-                        Object.keys(entryTab.aliases).forEach((namespace) => {
-                            entryTab.aliases[namespace].forEach((alias) => {
-                                const hasPrivateParam = alias.some((item) =>
-                                    fillingForbiddenParamsSet.has(item),
-                                );
+        Object.assign(filteredParams, params);
+    } else if (
+        !embeddingInfo.embed.publicParamsMode &&
+        embeddingInfo.embed.privateParams?.length > 0
+    ) {
+        const fillingForbiddenParamsSet = new Set(embeddingInfo.embed.privateParams);
 
-                                if (hasPrivateParam) {
-                                    // Add all items in alias to forbidden set
-                                    for (const item of alias) {
-                                        fillingForbiddenParamsSet.add(item);
-                                    }
-                                }
-                            });
-                        });
-                    }
-                });
+        for (const [key, value] of Object.entries(params)) {
+            if (!fillingForbiddenParamsSet.has(key)) {
+                filteredParams[key] = value;
             }
-
-            for (const [key, value] of Object.entries(params)) {
-                if (!fillingForbiddenParamsSet.has(key)) {
-                    filteredParams[key] = value;
-                }
-            }
-
-            forbiddenParamsSet = fillingForbiddenParamsSet;
         }
+
+        forbiddenParamsSet = fillingForbiddenParamsSet;
+    }
+
+    if (embeddingInfo.token.params) {
+        Object.keys(embeddingInfo.token.params).forEach((param) => forbiddenParamsSet?.add(param));
     }
 
     let finalParams;
     const isSecureParamsV2Enabled = ctx.get('isEnabledServerFeature')(Feature.EnableSecureParamsV2);
 
     if (isSecureParamsV2Enabled) {
-        const validatedParams = getValidatedSignedParams(embeddingInfo.token.params);
         finalParams = {
-            ...validatedParams,
+            // params from token are considered as constant
+            // they have the most priority over incoming params
             ...filteredParams,
+            ...embeddingInfo.token.params,
         };
     } else {
-        // token params is written in globalParams and usually applied by dashkit
-        // we use them again after filtering the user parameters from the chart/dashboard
-        // in case there are forbidden parameters among them.
         finalParams = {
             ...embeddingInfo.token.params,
             ...filteredParams,
@@ -288,7 +317,7 @@ function filterParams(
     };
 }
 
-function findAndExecuteRunner(
+async function findAndExecuteRunner(
     entry: ReducedResolvedConfig,
     chartsEngine: ChartsEngine,
     ctx: AppContext,
@@ -311,7 +340,7 @@ function findAndExecuteRunner(
         res.status(400).send({
             error: `Unknown config type ${configType}`,
         });
-        return Promise.resolve(null);
+        return null;
     }
 
     const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
@@ -320,7 +349,7 @@ function findAndExecuteRunner(
         res.status(400).send({
             error: 'Editor is disabled',
         });
-        return Promise.resolve(null);
+        return null;
     }
 
     req.body.config = entry;
@@ -331,7 +360,7 @@ function findAndExecuteRunner(
         enableExport: embeddingInfo.embed.settings?.enableExport === true,
     };
 
-    return runnerFound.handler(ctx, {
+    return await runnerFound.handler(ctx, {
         chartsEngine,
         req,
         res,
@@ -382,6 +411,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
             },
             includeServicePlan: true,
             includeTenantFeatures: true,
+            includeTenantSettings: true,
         };
 
         // 1. it's embedded chart, id is not used, chart is resolved by token
@@ -410,7 +440,12 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     return null;
                 }
 
-                const {params, privateParams} = filterParams(req.body.params, embeddingInfo, ctx);
+                const {params, privateParams} = await filterParams({
+                    params: req.body.params,
+                    embeddingInfo,
+                    ctx,
+                });
+
                 req.body.params = params;
 
                 const entry = processEntry(controlData, embeddingInfo, res);

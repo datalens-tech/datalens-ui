@@ -7,8 +7,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {SuggestBatchListMembersArgs} from 'ui/store/typings/iamAccessDialog';
 
-import type {SubjectClaims} from '../../../../../shared/schema/extensions/types';
-import {ClaimsSubjectType} from '../../../../../shared/schema/extensions/types';
+import type {ClaimsSubjectType, SubjectClaims} from '../../../../../shared/schema/extensions/types';
 import {registry} from '../../../../registry';
 import type {IamAccessDialogDispatch} from '../../../../store/actions/iamAccessDialog';
 import {suggestBatchListMembers} from '../../../../store/actions/iamAccessDialog';
@@ -44,7 +43,11 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
     }, [directAccessBindings]);
 
     const suggestRef = React.useRef<HTMLElement>(null);
-    const [suggestOpen, setSuggestOpen] = React.useState(true);
+    const [suggestOpen, setSuggestOpen] = React.useState(false);
+
+    React.useLayoutEffect(() => {
+        setSuggestOpen(true);
+    }, []);
 
     const handleAddSubject = React.useCallback(
         (subject) => {
@@ -61,25 +64,6 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
         },
         [subjects, onUpdateSubjects],
     );
-
-    const availableSubjectGroups = React.useMemo(() => {
-        const result = [
-            {
-                id: ClaimsSubjectType.UserAccount,
-                name: i18n('label_user-accounts'),
-            },
-            {
-                id: ClaimsSubjectType.Group,
-                name: i18n('label_groups'),
-            },
-            {
-                id: ClaimsSubjectType.Invitee,
-                name: i18n('label_invitee'),
-            },
-        ];
-
-        return result;
-    }, []);
 
     const {AclSubject, AclSubjectSuggest} = registry.common.components.getAll();
     const useSubjectsListId = registry.common.functions.get('useSubjectsListId');
@@ -157,21 +141,25 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
                 <Icon data={Plus} height={12} width={12} />
                 {i18n('action_choose-user')}
             </Button>
-
             <Popup
-                anchorRef={suggestRef}
+                anchorElement={suggestRef.current}
                 open={suggestOpen}
-                onClose={() => setSuggestOpen(false)}
-                contentClassName={b('acl-popup-content')}
-            >
-                <AclSubjectSuggest
-                    availableGroups={availableSubjectGroups}
-                    fetchSubjects={fetchSubjects}
-                    onSubjectChange={(subject) => {
-                        handleAddSubject(subject);
+                onOpenChange={(open) => {
+                    if (!open) {
                         setSuggestOpen(false);
-                    }}
-                />
+                    }
+                }}
+                placement={'bottom-start'}
+            >
+                <div className={b('acl-popup-content')}>
+                    <AclSubjectSuggest
+                        fetchSubjects={fetchSubjects}
+                        onSubjectChange={(subject) => {
+                            handleAddSubject(subject);
+                            setSuggestOpen(false);
+                        }}
+                    />
+                </div>
             </Popup>
 
             {subjects.length > 0 && (

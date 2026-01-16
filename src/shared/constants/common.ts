@@ -12,6 +12,7 @@ export enum AppEnvironment {
     Development = 'development',
     Staging = 'staging',
     Prod = 'prod',
+    CI = 'ci',
 }
 
 export enum AppMode {
@@ -19,6 +20,7 @@ export enum AppMode {
     Datalens = 'datalens',
     Charts = 'charts',
     Api = 'api',
+    PublicApi = 'public-api',
 }
 
 export enum Language {
@@ -78,6 +80,7 @@ export const QL_CHART_NODE = {
     table_ql_node: 'table',
     markup_ql_node: 'config',
     metric2_ql_node: 'statface_graph',
+    d3_ql_node: 'd3_ql_node',
 };
 
 export const EDITOR_CHART_NODE = {

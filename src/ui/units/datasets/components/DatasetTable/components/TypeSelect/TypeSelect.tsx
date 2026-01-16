@@ -22,11 +22,12 @@ interface Props extends StateProps {
     types: DATASET_FIELD_TYPES[];
     field: DatasetField;
     onSelect: (row: DatasetField, value: DATASET_FIELD_TYPES) => void;
+    disabled?: boolean;
 }
 
 class TypeSelectComponent extends React.Component<Props> {
     render() {
-        const {selectedType} = this.props;
+        const {selectedType, disabled} = this.props;
 
         const selectedOption: string[] = [selectedType];
 
@@ -35,6 +36,7 @@ class TypeSelectComponent extends React.Component<Props> {
                 value={selectedOption}
                 onUpdate={(values) => this.onSelect(values as [DATASET_FIELD_TYPES])}
                 options={this.typeList}
+                disabled={disabled}
                 renderControl={this.renderSelectControl}
                 renderOption={(options) => {
                     return this.renderSelectOption(options, true);
@@ -84,7 +86,7 @@ class TypeSelectComponent extends React.Component<Props> {
         );
     };
 
-    private renderSelectControl = ({onClick, ref, onKeyDown}: SelectRenderControlProps) => {
+    private renderSelectControl = ({ref, triggerProps}: SelectRenderControlProps) => {
         const {selectedType} = this.props;
         const selectedValue = getSelectedValueForSelect([selectedType], this.props.types);
 
@@ -92,9 +94,8 @@ class TypeSelectComponent extends React.Component<Props> {
 
         return (
             <Button
-                onClick={onClick}
-                ref={ref}
-                extraProps={{onKeyDown}}
+                {...triggerProps}
+                ref={ref as React.Ref<HTMLButtonElement>}
                 view="flat"
                 className={b('select-control')}
             >

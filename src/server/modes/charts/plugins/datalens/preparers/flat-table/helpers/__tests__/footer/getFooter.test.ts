@@ -1,3 +1,4 @@
+import {PALETTE_ID} from '../../../../../../../../../../shared';
 import {getFooter} from '../../footer';
 import * as footerHelpersModule from '../../footer';
 import {
@@ -55,6 +56,7 @@ describe('getFooter', () => {
             columnValuesByColumn: {},
             ChartEditor: ChartEditorMock,
             colorsConfig,
+            defaultColorPaletteId: PALETTE_ID.CLASSIC_20,
         });
 
         expect(footer[0].cells).toHaveLength(2);
@@ -78,6 +80,7 @@ describe('getFooter', () => {
             columnValuesByColumn: {},
             ChartEditor: ChartEditorMock,
             colorsConfig,
+            defaultColorPaletteId: PALETTE_ID.CLASSIC_20,
         });
 
         footer[0].cells.forEach((cell) => {
@@ -95,6 +98,7 @@ describe('getFooter', () => {
             columnValuesByColumn: {},
             ChartEditor: ChartEditorMock,
             colorsConfig,
+            defaultColorPaletteId: PALETTE_ID.CLASSIC_20,
         });
 
         expect(footer[0].cells).toHaveLength(2);
@@ -113,6 +117,7 @@ describe('getFooter', () => {
             columnValuesByColumn: {},
             ChartEditor: ChartEditorMock,
             colorsConfig,
+            defaultColorPaletteId: PALETTE_ID.CLASSIC_20,
         });
 
         expect(footer[0].cells).toHaveLength(4);
@@ -134,6 +139,7 @@ describe('getFooter', () => {
             columnValuesByColumn: {},
             ChartEditor: ChartEditorMock,
             colorsConfig,
+            defaultColorPaletteId: PALETTE_ID.CLASSIC_20,
         });
 
         expect(footer[0].cells).toHaveLength(4);

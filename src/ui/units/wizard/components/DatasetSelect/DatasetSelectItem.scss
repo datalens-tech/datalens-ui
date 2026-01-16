@@ -14,6 +14,13 @@
         width: 24px;
     }
 
+    &__popover-content {
+        padding: var(--g-spacing-3);
+        display: flex;
+        flex-direction: column;
+        gap: var(--g-spacing-3);
+    }
+
     &:hover {
         background-color: var(--g-color-base-simple-hover);
     }
@@ -31,6 +38,12 @@
             color: var(--g-color-text-secondary);
             font-style: italic;
         }
+    }
+
+    &__shared-icon {
+        margin-left: var(--g-spacing-2);
+        margin-right: var(--g-spacing-1);
+        flex-shrink: 0;
     }
 }
 
@@ -58,6 +71,7 @@
     display: flex;
     align-items: center;
     width: 100%;
+    min-width: 0;
 
     .button2__text {
         margin: 0;
@@ -69,11 +83,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 75%;
     font-size: var(--g-text-body-1-font-size);
     vertical-align: bottom;
-
-    flex-shrink: 0;
 }
 
 .dataset-select-item__description {

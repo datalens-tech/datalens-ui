@@ -1,5 +1,15 @@
 .dialog-placeholder {
     width: 720px;
+    max-height: 90vh;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+
+    &__body-container {
+        max-height: 100%;
+        max-width: 100%;
+        overflow-y: auto;
+    }
 
     &__title-popover {
         vertical-align: middle;

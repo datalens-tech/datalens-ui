@@ -10,6 +10,7 @@ import {openTestPage} from '../../../utils';
 
 const TIMEOUT = 3000;
 
+// todo: remove along with GravityChartsForLineAreaAndBarX feature flag
 datalensTest.describe('Wizard - Combined diagram. Tooltip', () => {
     datalensTest.beforeEach(async ({page}) => {
         const wizardPage = new WizardPage({page});
@@ -38,7 +39,7 @@ datalensTest.describe('Wizard - Combined diagram. Tooltip', () => {
 
             await (await apiRunRequest).response();
 
-            const graph = page.locator(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+            const graph = page.locator(COMMON_CHARTKIT_SELECTORS.chart);
             await graph.waitFor({state: 'visible', timeout: TIMEOUT});
 
             let attempts = 3;
@@ -56,12 +57,12 @@ datalensTest.describe('Wizard - Combined diagram. Tooltip', () => {
             await graph.hover();
             await page.mouse.move(box.x + box.width / 4, box.y + box.height / 4);
 
-            await page.waitForSelector(`.${COMMON_CHARTKIT_SELECTORS.tooltipContainer}`, {
+            await page.waitForSelector(COMMON_CHARTKIT_SELECTORS.tooltipContainer, {
                 timeout: TIMEOUT,
             });
 
             const titles = await page
-                .locator(`.${COMMON_CHARTKIT_SELECTORS.tooltipNameColumn}`)
+                .locator(COMMON_CHARTKIT_SELECTORS.tooltipNameColumn)
                 .allTextContents();
 
             expect(titles.map((text) => text.trim())).toEqual([

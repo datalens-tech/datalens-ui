@@ -19,7 +19,8 @@
         position: relative;
 
         &_tab_filters,
-        &_tab_sources {
+        &_tab_sources,
+        &_readonly {
             margin-left: auto;
         }
     }

@@ -1,4 +1,4 @@
-import {AxisMode} from '../../../../../../../../../shared';
+import {AxisMode, COMMON_PALETTE_ID} from '../../../../../../../../../shared';
 
 const chartEditorMock = {
     getLang: () => {
@@ -347,7 +347,7 @@ export const barXColoringDimensionByPaletteArgs = {
             '2016': '14',
             '2017': '15',
         },
-        palette: 'default-palette',
+        palette: COMMON_PALETTE_ID.CLASSIC_20,
         polygonBorders: 'show',
     },
 };

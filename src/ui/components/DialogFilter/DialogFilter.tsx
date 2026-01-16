@@ -15,14 +15,12 @@ import type {
     WorkbookId,
 } from 'shared';
 import {
-    Feature,
     Operations,
     TIMEOUT_90_SEC,
     getFieldsApiV2RequestSection,
     getParametersApiV2RequestSection,
 } from 'shared';
 import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {NO_SELECTED_VALUES_OPERATION} from '../../constants/operations';
 import {withHiddenUnmount} from '../../hoc';
@@ -153,7 +151,6 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
         let availableOperations = getAvailableOperations(field, filterOperations);
 
         if (
-            isEnabledFeature(Feature.EmptySelector) &&
             'unsaved' in field &&
             field.unsaved &&
             filter?.operation === Operations.NO_SELECTED_VALUES
@@ -291,7 +288,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
             <React.Fragment>
                 {this.renderOperationSection()}
                 <Dialog.Divider />
-                <Dialog.Body className={b('body', mods)}>
+                <div className={b('body', mods)}>
                     {fetching && operation.selectable ? (
                         <div className={b('loader')}>
                             <Loader size="m" />
@@ -299,7 +296,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
                     ) : (
                         this.renderFilterSection()
                     )}
-                </Dialog.Body>
+                </div>
             </React.Fragment>
         );
     }

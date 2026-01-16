@@ -2,7 +2,6 @@ import type {SchemasByScope} from '@gravity-ui/gateway';
 import type {ApiByScope, SdkActionOptions, SdkConfig} from '@gravity-ui/sdk';
 import sdkFactory from '@gravity-ui/sdk';
 import type {Lang} from '@gravity-ui/sdk/build/constants';
-import type {AxiosError} from 'axios';
 import {v4 as uuidv4} from 'uuid';
 
 import {
@@ -14,7 +13,7 @@ import {
     TENANT_ID_HEADER,
     TIMEZONE_OFFSET_HEADER,
 } from '../../../shared';
-import type {WithRequired, anonymousSchema, authSchema, schema} from '../../../shared';
+import type {WithRequired, authSchema, schema} from '../../../shared';
 import {DL} from '../../constants';
 import {registry} from '../../registry';
 import Utils from '../../utils';
@@ -42,15 +41,6 @@ export type DatalensSdk<TSchema extends SchemasByScope> = (<T>(
 
 const sdkConfig: SdkConfig = {
     csrfToken: Utils.getCSRFToken() || '',
-    axiosConfig: {
-        'axios-retry': {
-            retries: 3,
-            retryDelay: () => 1000,
-            retryCondition: (error: AxiosError<unknown, unknown>) => {
-                return error?.response?.status === 498;
-            },
-        },
-    },
     endpoint: '/gateway',
     handleRequestError,
     prepareRequestOptions(_scope, _service, _action, options) {
@@ -72,7 +62,6 @@ const sdkConfig: SdkConfig = {
 export type TypedSchema = {
     root: typeof schema;
     auth: typeof authSchema;
-    anonymous: typeof anonymousSchema;
 };
 
 export const initSdk = () => {

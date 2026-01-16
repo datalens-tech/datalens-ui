@@ -1,14 +1,15 @@
-import {MapCenterMode, ZoomMode, mapStringToCoordinates} from '../../../../../../shared';
-import type {RGBGradient, ServerChartsConfig} from '../../../../../../shared';
+import {
+    MapCenterMode,
+    ZoomMode,
+    getSortedData,
+    mapStringToCoordinates,
+} from '../../../../../../shared';
+import type {RGBGradient, ServerChartsConfig, ServerField} from '../../../../../../shared';
+import {getColorsSettings} from '../../helpers/color-palettes';
 import type {ChartColorsConfig} from '../types';
 
-import {
-    getCurrentGradient,
-    getRgbColors,
-    mapAndColorizeCoordinatesByDimension,
-    mapAndColorizeHashTableByGradient,
-} from './color-helpers';
-import {LAT, LONG} from './constants';
+import {getCurrentGradient, getRgbColors, mapAndColorizeHashTableByGradient} from './color-helpers';
+import {LAT, LONG, getColor, getMountedColor} from './constants';
 
 export type Coordinate = [number, number];
 
@@ -133,8 +134,18 @@ function colorizeGeoByGradient(data: GeoData, colorsConfig: ChartColorsConfig): 
     return mapAndColorizeHashTableByGradient(preparedData, colorsConfig);
 }
 
-function colorizeGeoByPalette(data: GeoData, colorsConfig: ChartColorsConfig, colorGuid: string) {
-    const preparedData = Object.entries(data).reduce((acc, [, points]) => {
+export function colorizeGeoByPalette({
+    data,
+    colorsConfig,
+    colorField,
+    defaultColorPaletteId,
+}: {
+    data: GeoData;
+    colorsConfig: ChartColorsConfig;
+    colorField: ServerField;
+    defaultColorPaletteId: string;
+}) {
+    const preparedData: Record<string, string> = Object.entries(data).reduce((acc, [, points]) => {
         points.forEach((point) => {
             if (typeof point === 'object' && point !== null) {
                 Object.assign(acc, point);
@@ -144,7 +155,48 @@ function colorizeGeoByPalette(data: GeoData, colorsConfig: ChartColorsConfig, co
         return acc;
     }, {});
 
-    return mapAndColorizeCoordinatesByDimension(preparedData, colorsConfig, colorGuid);
+    const knownValues: {point: string; value: string; backgroundColor?: string}[] = [];
+
+    const colorData: Record<string, {backgroundColor?: string; colorIndex?: number}> = {};
+    const colorDictionary: Record<string, string> = {};
+
+    const {mountedColors, colors} = getColorsSettings({
+        field: colorField,
+        colorsConfig,
+        defaultColorPaletteId,
+        availablePalettes: colorsConfig.availablePalettes,
+        customColorPalettes: colorsConfig.loadedColorPalettes,
+    });
+
+    // eslint-disable-next-line guard-for-in
+    for (const point in preparedData) {
+        const value = preparedData[point];
+        colorData[point] = {};
+        let colorIndex = knownValues.findIndex(({value: knownValue}) => knownValue === value);
+
+        if (colorIndex === -1) {
+            knownValues.push({point, value});
+            colorIndex = knownValues.length - 1;
+
+            let color;
+
+            if (mountedColors && mountedColors[value]) {
+                color = getMountedColor({mountedColors, colors, value});
+            } else {
+                color = getColor(colorIndex, colors);
+            }
+            knownValues[knownValues.length - 1].backgroundColor = color;
+            colorData[point].backgroundColor = color;
+
+            colorDictionary[value] = color;
+        } else {
+            colorData[point].backgroundColor = knownValues[colorIndex].backgroundColor;
+        }
+
+        colorData[point].colorIndex = colorIndex;
+    }
+
+    return {colorData, colorDictionary: getSortedData(colorDictionary)};
 }
 
 function getLayerAlpha(layerSettings: {alpha: number}) {
@@ -207,7 +259,6 @@ export {
     getExtremeValues,
     getFlattenCoordinates,
     colorizeGeoByGradient,
-    colorizeGeoByPalette,
     getLayerAlpha,
     getGradientMapOptions,
 };

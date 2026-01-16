@@ -3,6 +3,7 @@ import type {IncomingHttpHeaders} from 'http';
 import type {HighchartsComment} from '@gravity-ui/chartkit/highcharts';
 import type {AxiosRequestConfig} from 'axios';
 import type {
+    ApiV2DataExportField,
     ChartsInsightsItem,
     DashLoadPriority,
     DashTabItemControlSourceType,
@@ -169,6 +170,7 @@ export interface ChartsData extends DashWidgetConfig {
     isNewWizard: boolean;
     isOldWizard: boolean;
     isQL?: boolean;
+    isEditor?: boolean;
     extra: {
         exportFilename?: string;
         dataExportForbidden?: boolean;
@@ -335,9 +337,11 @@ export interface ResponseSuccessNodeBase extends DashWidgetConfig {
     id: string;
     revId?: string;
     sources: {fields?: {datasetId?: string}} | ResponseSourcesSuccess;
+    dataExport?: Record<string, ApiV2DataExportField | undefined>;
     extra: {
         exportFilename?: string;
         dataExportForbidden?: boolean;
+        colors?: string[];
     };
     timings: Timings;
 
@@ -578,3 +582,11 @@ type ResponseErrorNode =
 // TODO@types wizard
 
 export type ResponseError = ResponseErrorNode;
+
+/**
+ * Config value to check. It could have any type.
+ *
+ * Each method in this module that uses such a value performs a typing check in runtime.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TargetValue = any;

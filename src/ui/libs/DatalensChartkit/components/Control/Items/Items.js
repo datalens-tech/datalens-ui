@@ -492,7 +492,7 @@ BaseControlRangeDatepicker.propTypes = {
     accentType: PropTypes.string,
 };
 
-function BaseControlButton({label, theme, onChange, qa, disabled}) {
+function BaseControlButton({label, theme, onChange, qa, disabled, loading}) {
     const buttonTheme = theme in legoThemeNameMapper ? legoThemeNameMapper[theme] : theme;
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 's';
@@ -510,6 +510,7 @@ function BaseControlButton({label, theme, onChange, qa, disabled}) {
             onClick={handleClick}
             disabled={disabled}
             qa={qa}
+            loading={loading}
         >
             {label || i18n('chartkit.control.items', 'apply')}
         </Button>
@@ -521,6 +522,7 @@ BaseControlButton.propTypes = {
     theme: PropTypes.string,
     onChange: PropTypes.func.isRequired,
     qa: PropTypes.string,
+    loading: PropTypes.bool,
 };
 
 function BaseControlCheckbox({label, value, onChange, disabled}) {

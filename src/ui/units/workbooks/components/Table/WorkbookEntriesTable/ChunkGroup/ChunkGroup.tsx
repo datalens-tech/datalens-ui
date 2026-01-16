@@ -2,7 +2,8 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useInView} from 'react-intersection-observer';
-import type {ChunkItem} from 'ui/units/workbooks/types';
+import {WorkbookPageQa} from 'shared/constants';
+import type {ChunkItem, WorkbookEntry} from 'ui/units/workbooks/types';
 
 import {EmptyRow, Row} from '../Row/Row';
 import {ROW_HEIGHT, options} from '../constants';
@@ -10,13 +11,13 @@ import type {WorkbookEntriesTableProps} from '../types';
 
 import './ChunkGroup.scss';
 
-interface ChunkGroupProps extends WorkbookEntriesTableProps {
-    chunk: ChunkItem[];
+interface ChunkGroupProps<T extends WorkbookEntry> extends WorkbookEntriesTableProps<T> {
+    chunk: ChunkItem<T>[];
 }
 
 const b = block('dl-workbook-entries-chunk-group');
 
-export function ChunkGroup({
+export function ChunkGroup<T extends WorkbookEntry>({
     chunk,
     workbook,
     onRenameEntry,
@@ -25,10 +26,16 @@ export function ChunkGroup({
     onCopyEntry,
     onShowRelatedClick,
     onCopyId,
-}: ChunkGroupProps) {
+    onUpdateSharedEntryBindings,
+}: ChunkGroupProps<T>) {
     const {ref, inView} = useInView(options);
 
     const height = chunk.length * ROW_HEIGHT;
+
+    const chunkScopeQa =
+        chunk[0]?.type === 'entry'
+            ? `${WorkbookPageQa.ChunkScope}${chunk[0].item.scope}`
+            : undefined;
 
     const renderContent = () =>
         chunk.map((chunkItem) => {
@@ -44,6 +51,7 @@ export function ChunkGroup({
                             onDuplicateEntry={onDuplicateEntry}
                             onCopyEntry={onCopyEntry}
                             onShowRelatedClick={onShowRelatedClick}
+                            onUpdateSharedEntryBindings={onUpdateSharedEntryBindings}
                             onCopyId={onCopyId}
                         />
                     );
@@ -55,7 +63,7 @@ export function ChunkGroup({
         });
 
     return (
-        <div ref={ref} className={b()}>
+        <div ref={ref} className={b()} data-qa={chunkScopeQa}>
             {inView ? renderContent() : <div className={b('hidden-row')} style={{height}} />}
         </div>
     );

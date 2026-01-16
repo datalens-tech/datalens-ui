@@ -8,6 +8,7 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {SectionDatasetQA} from 'shared';
 import type {DataLensApiError} from 'ui';
+import {SharedEntryIcon} from 'ui/components/SharedEntryIcon/SharedEntryIcon';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 
 import iconError from 'ui/assets/icons/error.svg';
@@ -26,6 +27,7 @@ interface DatasetSelectItemProps {
     selected?: boolean;
     qaRole?: string;
     error?: DataLensApiError;
+    sharedDatasetDelegation?: boolean;
 }
 
 const b = block('dataset-select-item');
@@ -47,6 +49,10 @@ const CurrentItemContent: React.FC<DatasetSelectItemProps> = (props) => {
     );
 };
 
+const getIsShowDelegation = (delegation?: boolean): delegation is boolean => {
+    return typeof delegation === 'boolean';
+};
+
 const SecondaryItemContent: React.FC<DatasetSelectItemProps> = (props) => {
     return (
         <div className={b('content')} onClick={props.onClick} data-qa={props.qaRole}>
@@ -54,6 +60,12 @@ const SecondaryItemContent: React.FC<DatasetSelectItemProps> = (props) => {
             <div className={b('label')} title={props.label}>
                 {props.label}
             </div>
+            {getIsShowDelegation(props.sharedDatasetDelegation) && (
+                <SharedEntryIcon
+                    className={b('shared-icon')}
+                    isDelegated={props.sharedDatasetDelegation}
+                />
+            )}
         </div>
     );
 };
@@ -71,11 +83,15 @@ const ErrorIcon: React.FC<DatasetSelectItemProps> = (props) => {
 
     return (
         <Popover
-            content={i18n('tooltip_dataset-fetch-failed')}
-            tooltipActionButton={{
-                text: i18n('tooltip_dataset-fetch-failed-details-label'),
-                onClick: handleClickDetails,
-            }}
+            hasArrow={true}
+            content={
+                <div className={b('popover-content')}>
+                    {i18n('tooltip_dataset-fetch-failed')}
+                    <Button onClick={handleClickDetails}>
+                        {i18n('tooltip_dataset-fetch-failed-details-label')}
+                    </Button>
+                </div>
+            }
         >
             <Icon
                 qa="dataset-error-icon"
@@ -88,7 +104,7 @@ const ErrorIcon: React.FC<DatasetSelectItemProps> = (props) => {
     );
 };
 
-const DatasetSelectItem: React.FC<DatasetSelectItemProps> = (props) => {
+const DatasetSelectItem = (props: DatasetSelectItemProps) => {
     return (
         <div
             className={b({
@@ -112,11 +128,16 @@ const DatasetSelectItem: React.FC<DatasetSelectItemProps> = (props) => {
                         popupProps={{
                             qa: SectionDatasetQA.DatasetSelectMoreMenu,
                         }}
-                        switcher={
-                            <Button view="flat-secondary" qa={SectionDatasetQA.DatasetSelectMore}>
+                        renderSwitcher={({onClick, onKeyDown}) => (
+                            <Button
+                                view="flat-secondary"
+                                qa={SectionDatasetQA.DatasetSelectMore}
+                                onClick={onClick}
+                                onKeyDown={onKeyDown}
+                            >
                                 <Icon data={Ellipsis} size={16} />
                             </Button>
-                        }
+                        )}
                         items={props.items}
                     />
                 </div>

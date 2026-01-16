@@ -2,19 +2,22 @@ import React from 'react';
 
 import type {MobileHeaderProps} from '@gravity-ui/navigation';
 import {MobileHeader, getMobileHeaderCustomEvent} from '@gravity-ui/navigation';
+import {mergeRefs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {PRODUCT_NAME} from 'ui/constants';
+import {LogoText} from 'ui/components/AsideHeaderAdapter/LogoText/LogoText';
 import type {MobileHeaderComponentProps} from 'ui/registry/units/common/types/components/MobileHeaderComponent';
+import {useScrollableContainerContext} from 'ui/utils/scrollableContainerContext';
 
 import {DL} from '../../../constants/common';
 import {UserAvatar} from '../../UserMenu/UserAvatar';
+import {MOBILE_HEADER_LOGO_ICON_SIZE} from '../constants';
 
 import {BurgerMenuFooter} from './BurgerMenuFooter/BurgerMenuFooter';
 import {UserPanel} from './UserPanel/UserPanel';
 
-import defaultLogoIcon from 'ui/assets/icons/logo.svg';
 import iconCollection from 'ui/assets/icons/mono-collection.svg';
+import defaultLogoIcon from 'ui/assets/icons/os-logo.svg';
 
 import '../MobileHeader.scss';
 
@@ -35,9 +38,14 @@ const menuItems = [
 enum Panel {
     User = 'user',
 }
+const CONTENT_CLASSNAME = b('content');
 
-export const MobileHeaderComponent = ({renderContent, logoIcon}: MobileHeaderComponentProps) => {
-    const ref = React.useRef<HTMLDivElement>(null);
+export const MobileHeaderComponent = ({
+    renderContent,
+    logoIcon,
+    logoTextProps,
+}: MobileHeaderComponentProps) => {
+    const ref = React.useRef<HTMLDivElement>();
 
     const sideItem = (
         <div
@@ -51,7 +59,7 @@ export const MobileHeaderComponent = ({renderContent, logoIcon}: MobileHeaderCom
         </div>
     );
 
-    const panelItems: MobileHeaderProps['panelItems'] = DL.ZITADEL_ENABLED
+    const panelItems: MobileHeaderProps['panelItems'] = DL.AUTH_ENABLED
         ? [
               {
                   id: Panel.User,
@@ -61,19 +69,36 @@ export const MobileHeaderComponent = ({renderContent, logoIcon}: MobileHeaderCom
           ]
         : undefined;
 
+    const {scrollableContainerRef} = useScrollableContainerContext();
+
+    const contentRef = React.useRef<HTMLDivElement>();
+
+    const setupRefs = React.useCallback(
+        (container: HTMLDivElement) => {
+            ref.current = container;
+            const scrollableContainer = document.querySelector<HTMLDivElement>(
+                `.${CONTENT_CLASSNAME}`,
+            );
+            mergeRefs(scrollableContainerRef, contentRef)(scrollableContainer);
+        },
+        [scrollableContainerRef],
+    );
+
     return (
         <MobileHeader
-            ref={ref}
+            ref={setupRefs}
             logo={{
                 icon: logoIcon ?? defaultLogoIcon,
-                text: PRODUCT_NAME,
+                text: () => <LogoText {...logoTextProps} />,
                 iconClassName: b('logo-icon'),
+                className: b('logo'),
+                iconSize: MOBILE_HEADER_LOGO_ICON_SIZE,
             }}
             burgerMenu={{items: menuItems, renderFooter: () => <BurgerMenuFooter />}}
-            contentClassName={b('content')}
-            className={b('container')}
+            contentClassName={CONTENT_CLASSNAME}
+            className={b()}
             renderContent={renderContent}
-            sideItemRenderContent={() => sideItem}
+            sideItemRenderContent={DL.AUTH_ENABLED ? () => sideItem : undefined}
             panelItems={panelItems}
         />
     );

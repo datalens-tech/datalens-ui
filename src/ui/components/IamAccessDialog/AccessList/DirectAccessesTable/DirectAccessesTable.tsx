@@ -5,6 +5,7 @@ import {Dialog, Table} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
+import type {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 
 import type {SubjectDetails} from '../../../../../shared/schema/extensions/types';
 import {
@@ -12,10 +13,7 @@ import {
     ClaimsSubjectType,
 } from '../../../../../shared/schema/extensions/types';
 import {registry} from '../../../../registry';
-import type {
-    IamAccessDialogDispatch,
-    ResourceType,
-} from '../../../../store/actions/iamAccessDialog';
+import type {IamAccessDialogDispatch} from '../../../../store/actions/iamAccessDialog';
 import {updateAccessBindings} from '../../../../store/actions/iamAccessDialog';
 import {CLOSE_DELETE_TIMEOUT} from '../../constants';
 import {filterByUser, getAccessSubjectType, getResourceRoles} from '../../utils';

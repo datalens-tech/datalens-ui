@@ -3,9 +3,9 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import ActionPanelHelpers from 'components/ActionPanel/ActionPanelHelpers';
 import type {DashEntry} from 'shared';
+import {registry} from 'ui/registry';
 
 import {isEmbeddedMode} from '../../../../utils/embedded';
-import {ShareButton} from '../ShareButton/ShareButton';
 
 import './DashActionPanelMobile.scss';
 
@@ -38,6 +38,8 @@ export class DashActionPanelMobile extends React.PureComponent<Props> {
     }
 
     renderControls(entryId: string) {
+        const {ShareButton} = registry.common.components.getAll();
+
         return (
             <ShareButton
                 dialogShareProps={{

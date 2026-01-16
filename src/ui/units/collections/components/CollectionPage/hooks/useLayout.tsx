@@ -12,9 +12,8 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../../shared';
 import type {
-    CollectionWithPermissions,
     CreateCollectionResponse,
-    WorkbookWithPermissions,
+    StructureItemWithPermissions,
 } from '../../../../../../shared/schema';
 import type {StructureItemsFilters} from '../../../../../components/CollectionFilters';
 import {CollectionPageViewMode} from '../../../../../components/CollectionFilters';
@@ -60,7 +59,7 @@ type UseLayoutArgs = {
     curCollectionId: string | null;
     filters: StructureItemsFilters;
     selectedMap: SelectedMap;
-    itemsAvailableForSelection: (CollectionWithPermissions | WorkbookWithPermissions)[];
+    itemsAvailableForSelection: StructureItemWithPermissions[];
     viewMode: CollectionPageViewMode;
     isOpenSelectionMode: boolean;
     openSelectionMode: () => void;
@@ -137,9 +136,7 @@ export const useLayout = ({
                             collections={preparedBreadcrumbs}
                             workbook={null}
                             onItemClick={({isCurrent, id}) => {
-                                if (isCurrent) {
-                                    fetchStructureItems();
-                                } else if (id !== null) {
+                                if (!isCurrent && id !== null) {
                                     batch(() => {
                                         const newBreadcrumbs = cutBreadcrumbs(
                                             id,

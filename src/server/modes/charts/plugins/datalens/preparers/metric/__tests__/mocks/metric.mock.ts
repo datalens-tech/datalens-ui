@@ -1,4 +1,5 @@
-import type {IChartEditor} from '../../../../../../../../../shared';
+import {COMMON_PALETTE_ID, type IChartEditor, PALETTE_ID} from '../../../../../../../../../shared';
+import classic20 from '../../../../../../../../../shared/constants/colors/common/classic-20';
 
 export const metricPrepareForQLArgs = {
     placeholders: [
@@ -55,6 +56,7 @@ export const metricPrepareForQLArgs = {
         ],
         gradientColors: ['#0044A3', '#8CCBFF'],
         loadedColorPalettes: {},
+        availablePalettes: {[COMMON_PALETTE_ID.CLASSIC_20]: classic20},
     },
     sort: [],
     visualizationId: 'metric',
@@ -78,13 +80,14 @@ export const metricPrepareForQLArgs = {
     shapesConfig: {},
     segments: [],
     disableDefaultSorting: false,
+    defaultColorPaletteId: PALETTE_ID.CLASSIC_20,
 };
 
 export const metricPrepareForQLResult = [
     {
         content: {current: {value: 71.09428467192288, precision: 2}},
         size: '',
-        color: '',
+        color: classic20.scheme[0],
         title: 'avg',
     },
 ];

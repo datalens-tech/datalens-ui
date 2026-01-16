@@ -1,4 +1,5 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import type {ToastTheme} from '@gravity-ui/uikit';
 
 import type {WRAPPED_HTML_KEY} from '../constants';
 import type {WidgetSize} from '../constants/charts';
@@ -261,6 +262,7 @@ export interface ChartsStats extends Timings {
     scope: 'dash' | 'preview' | 'snapter' | null;
     entryId: string;
     query: string;
+    chartKind: 'editor' | 'wizard' | 'ql' | 'unknown';
     type: string;
     // type: 'graph' | 'table'
     widgetRendering: number | null;
@@ -283,3 +285,36 @@ export const MARKUP_TYPE = {
 };
 
 export type MarkupType = (typeof MARKUP_TYPE)[keyof typeof MARKUP_TYPE];
+
+type ChartActivityToastResult = {
+    action: 'toast';
+    title?: string;
+    type?: ToastTheme;
+    content?: string;
+};
+
+type ChartActivityPopupResult = {
+    action: 'popup';
+    title: string;
+    content: string;
+};
+
+type ChartActivitySetParamsResult = {
+    action: 'setParams';
+    params: StringParams;
+};
+
+export type ChartActivityResponseData = {
+    data?: ChartActivityToastResult | ChartActivitySetParamsResult | ChartActivityPopupResult;
+    error?: {
+        code?: string;
+        message: string;
+        details?: {
+            stackTrace?: string;
+        };
+    };
+    settings?: {logError: 'toast' | 'ignore'};
+    logs_v2?: string;
+    requestId?: string;
+    traceId?: string;
+};

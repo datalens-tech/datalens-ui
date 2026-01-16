@@ -1,9 +1,21 @@
 .wizard-dialog-field {
-    width: 520px;
+    width: 536px;
     max-height: 580px;
 
-    &__body {
-        overflow: auto;
+    &_dimension {
+        .g-dialog-header {
+            svg {
+                color: var(--g-color-text-positive);
+            }
+        }
+    }
+
+    &_measure {
+        .g-dialog-header {
+            svg {
+                color: var(--g-color-text-info);
+            }
+        }
     }
 
     &__divider {
@@ -15,27 +27,5 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
-    }
-
-    &__dimension {
-        display: flex;
-        flex-direction: column;
-        max-height: 580px;
-        .g-dialog-header {
-            svg {
-                color: var(--g-color-text-positive);
-            }
-        }
-    }
-
-    &__measure {
-        display: flex;
-        flex-direction: column;
-        max-height: 580px;
-        .g-dialog-header {
-            svg {
-                color: var(--g-color-text-info);
-            }
-        }
     }
 }

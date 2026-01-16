@@ -9,12 +9,13 @@ import {
     DL_EMBED_TOKEN_HEADER,
     Feature,
 } from '../../../../shared';
+import {registry} from '../../../registry';
 import type {ProcessorParams, SerializableProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
 import {ProcessorHooks} from '../components/processor/hooks';
 import type {ChartBuilder} from '../components/processor/types';
 import type {ResolvedConfig} from '../components/storage/types';
-import {getDuration} from '../components/utils';
+import {getDefaultColorPaletteId, getDuration} from '../components/utils';
 import type {ChartsEngine} from '../index';
 import type {ChartStorageType} from '../types';
 
@@ -182,13 +183,6 @@ export const getSerializableProcessorParams = ({
 
     const isEmbed = req.headers[DL_EMBED_TOKEN_HEADER] !== undefined;
 
-    const zitadelParams = ctx.config.isZitadelEnabled
-        ? {
-              accessToken: req.user?.accessToken,
-              serviceUserAccessToken: req.serviceUserAccessToken,
-          }
-        : undefined;
-
     const authParams = ctx.config.isAuthEnabled
         ? {
               accessToken: req.ctx.get('user')?.accessToken,
@@ -215,6 +209,8 @@ export const getSerializableProcessorParams = ({
         },
     };
 
+    const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
+
     const processorParams: SerializableProcessorParams = {
         paramsOverride: params,
         actionParamsOverride: actionParams,
@@ -234,12 +230,16 @@ export const getSerializableProcessorParams = ({
         revId: localConfig?.revId,
         disableJSONFnByCookie,
         isEmbed,
-        zitadelParams,
         authParams,
         originalReqHeaders,
         adapterContext,
         hooksContext,
         configOverride: generatedConfig,
+        defaultColorPaletteId: getDefaultColorPaletteId({
+            ctx,
+            tenantSettings: localConfig?.tenantSettings,
+        }),
+        systemPalettes: getAvailablePalettesMap(),
     };
 
     const configWorkbook = workbookId ?? localConfig?.workbookId;
@@ -309,7 +309,7 @@ export function commonRunner({
     subrequestHeadersKind?: string;
     forbiddenFields?: ProcessorParams['forbiddenFields'];
     secureConfig?: ProcessorParams['secureConfig'];
-}) {
+}): Promise<void> {
     const telemetryCallbacks = chartsEngine.telemetryCallbacks;
     const cacheClient = chartsEngine.cacheClient;
     const sourcesConfig = chartsEngine.sources;

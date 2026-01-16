@@ -1,6 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {ENTRY_TYPES, TENANT_ID_HEADER, isEntryId} from '../../shared';
+import {TENANT_ID_HEADER, isEntryId} from '../../shared';
+import {isEditorEntryType} from '../../shared/utils/entry';
 import {registry} from '../registry';
 import type {DatalensGatewaySchemas} from '../types/gateway';
 import Utils from '../utils';
@@ -29,16 +30,17 @@ export const navigateController = async (req: Request, res: Response) => {
 
         const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
-        const {responseData: entryMeta} = await gatewayApi.us._getEntryMeta({
+        const {getAuthArgsUSPrivate} = registry.common.auth.getAll();
+
+        const {responseData: entryMeta} = await gatewayApi.usPrivate._getEntryMeta({
             ctx: req.ctx,
             headers: {
                 ...req.headers,
                 [TENANT_ID_HEADER]: res.locals.currentTenantId,
-                ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
                 ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
             },
             requestId: req.id,
-            authArgs: {iamToken: res.locals.iamToken},
+            authArgs: getAuthArgsUSPrivate(req, res),
             args: {entryId: possibleEntryId},
         });
 
@@ -56,7 +58,7 @@ export const navigateController = async (req: Request, res: Response) => {
                 req.ctx.log('Navigate to wizard', {wizardUrl});
 
                 return res.redirect(302, wizardUrl);
-            } else if (ENTRY_TYPES.editor.includes(type)) {
+            } else if (isEditorEntryType(type)) {
                 const editorUrl = reqUrl.replace('navigate', 'editor');
 
                 req.ctx.log('Navigate to editor', {editorUrl});

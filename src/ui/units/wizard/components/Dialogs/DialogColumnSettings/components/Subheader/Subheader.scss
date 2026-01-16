@@ -5,4 +5,8 @@
         @include text-subheader-2();
         margin-right: 4px;
     }
+
+    &__help-mark {
+        vertical-align: text-bottom;
+    }
 }

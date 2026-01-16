@@ -139,7 +139,7 @@ class InputLink extends React.PureComponent {
                     onKeyUp={this.onKeyUp}
                     onUpdate={(value) => this.setState({value})}
                 />
-                <div>
+                <div className={b('buttons-container')}>
                     <Button
                         view="action"
                         className={b('button')}
@@ -162,10 +162,14 @@ class InputLink extends React.PureComponent {
                 </div>
                 <Popup
                     hasArrow={true}
-                    anchorRef={this.applyButtonRef}
+                    anchorElement={this.applyButtonRef.current}
                     open={Boolean(this.state.error)}
                     placement="bottom"
-                    onClose={() => this.setState({error: null})}
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            this.setState({error: null});
+                        }
+                    }}
                 >
                     <div className={b('error')}>
                         {this.state.error && ERROR[this.state.error].text}

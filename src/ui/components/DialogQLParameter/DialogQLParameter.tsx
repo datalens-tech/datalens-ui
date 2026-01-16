@@ -3,7 +3,6 @@ import React from 'react';
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import _ from 'lodash';
 
 import {DialogQLParameterQA, QLParamType} from '../../../shared';
 import DialogManager from '../DialogManager/DialogManager';

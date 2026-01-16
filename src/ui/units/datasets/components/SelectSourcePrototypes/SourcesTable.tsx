@@ -1,19 +1,36 @@
 import React from 'react';
 
 import {TriangleExclamation} from '@gravity-ui/icons';
-import {Button, Icon, List, Loader} from '@gravity-ui/uikit';
+import {Button, Icon, List, Loader, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {useDispatch} from 'react-redux';
+import debounce from 'lodash/debounce';
+import {useDispatch, useSelector} from 'react-redux';
+import type {BaseSource} from 'shared/schema';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
+import {usePrevious} from 'ui';
 
 import {I18n} from '../../../../../i18n';
-import type {DatasetSource} from '../../../../../shared/types';
+import type {DatasetSource, WorkbookId} from '../../../../../shared/types';
 import type {DataLensApiError} from '../../../../typings';
-import DatasetUtils from '../../helpers/utils';
+import DatasetUtils, {getSourceListingValues} from '../../helpers/utils';
+import {
+    changeCurrentDbName,
+    incrementSourcesPage,
+    searchSources,
+} from '../../store/actions/creators';
+import {
+    currentDbNameSelector,
+    currentDbNamesSelector,
+    sourceListingOptionsSelector,
+    sourcePrototypesSelector,
+    sourcesErrorSelector,
+    sourcesPaginationSelector,
+    sourcesSearchLoadingSelector,
+} from '../../store/selectors';
 import Source from '../Source/Source';
 import {withDragging} from '../hoc/AvatarDnD';
 
-import {ICON_PLUS_SIZE} from './constants';
+import {ICON_PLUS_SIZE, LIST_ITEM_HEIGHT, SEARCH_DELAY} from './constants';
 
 import iconPlus from 'ui/assets/icons/plus.svg';
 
@@ -28,9 +45,9 @@ type ErrorViewProps = {
 };
 
 type SourcesTableProps = {
-    onEdit: (source: DatasetSource) => void;
+    onEdit: (source: BaseSource) => void;
     onAdd: () => void;
-    onDelete: () => void;
+    onDelete: (props: {id: string}) => void;
     onRetry: () => void;
     sources: DatasetSource[];
     error?: DataLensApiError;
@@ -38,6 +55,8 @@ type SourcesTableProps = {
     dragDisabled?: boolean;
     dropDisabled?: boolean;
     allowAddSource?: boolean;
+    readonly: boolean;
+    bindedWorkbookId?: WorkbookId;
 };
 
 const b = block('select-sources-prototypes');
@@ -107,44 +126,162 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
     onAdd,
     onDelete,
     onRetry,
+    readonly,
+    bindedWorkbookId,
 }) => {
-    if (loading) {
-        return (
-            <div className={b('loader-sources')}>
-                <Loader size="s" />
-            </div>
-        );
-    }
+    const [search, setSearch] = React.useState('');
+    const searchInputRef = React.useRef<HTMLInputElement>(null);
+    const dispatch = useDispatch();
+    const sourceListing = useSelector(sourceListingOptionsSelector);
+    const currentDbName = useSelector(currentDbNameSelector);
+    const sourcesPagination = useSelector(sourcesPaginationSelector);
+    const sourcePrototypes = useSelector(sourcePrototypesSelector);
+    const sourcesSearchLoading = useSelector(sourcesSearchLoadingSelector);
+    const sourcesError = useSelector(sourcesErrorSelector);
+    const dbNames = useSelector(currentDbNamesSelector);
+
+    const prevLoading = usePrevious(sourcesSearchLoading);
+
+    React.useEffect(() => {
+        if (
+            !sourcesSearchLoading &&
+            prevLoading !== undefined &&
+            sourcesSearchLoading !== prevLoading
+        ) {
+            searchInputRef.current?.focus?.();
+        }
+    }, [sourcesSearchLoading, prevLoading]);
+
+    const {
+        serverSearch,
+        serverPagination,
+        supportsDbNameListing,
+        parentLabel = '',
+    } = getSourceListingValues(sourceListing);
+
+    React.useEffect(() => {
+        setSearch(sourcesPagination.searchValue);
+    }, [sourcesPagination.searchValue]);
+
+    const onChangeDbName = React.useCallback(
+        (value) => {
+            dispatch(changeCurrentDbName(value[0], bindedWorkbookId));
+        },
+        [dispatch, bindedWorkbookId],
+    );
+
+    const onLoadMore = React.useCallback(() => {
+        if (
+            !sourcesPagination.isFetchingNextPage &&
+            !loading &&
+            !sourcesPagination.isFinished &&
+            !sourcesError &&
+            sourcePrototypes.length > 0
+        ) {
+            dispatch(incrementSourcesPage(bindedWorkbookId));
+        }
+    }, [
+        dispatch,
+        loading,
+        sourcesPagination,
+        sourcesError,
+        bindedWorkbookId,
+        sourcePrototypes.length,
+    ]);
+
+    const debouncedSearch = React.useMemo(
+        () =>
+            debounce((value: string) => {
+                dispatch(searchSources(value, bindedWorkbookId));
+            }, SEARCH_DELAY),
+        [dispatch, bindedWorkbookId],
+    );
+
+    React.useEffect(() => {
+        return () => {
+            debouncedSearch.cancel();
+        };
+    }, [debouncedSearch]);
+
+    const onSearch = React.useCallback(
+        (value: string) => {
+            setSearch(value);
+            debouncedSearch(value);
+        },
+        [debouncedSearch],
+    );
 
     return (
         <div className={b('sources')}>
-            {error ? <ErrorView onRetry={onRetry} error={error} /> : null}
             <div className={b('top-section')}>
+                {supportsDbNameListing && (
+                    <>
+                        <div className={b('header')}>
+                            <span>{parentLabel}</span>
+                        </div>
+                        <Select
+                            disabled={loading}
+                            className={b('select-db-name')}
+                            value={[currentDbName ? currentDbName : '']}
+                            onUpdate={onChangeDbName}
+                        >
+                            {dbNames?.map((name: string) => (
+                                <Select.Option key={name} value={name}>
+                                    {name}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </>
+                )}
                 <div className={b('header')}>
                     <span>{i18n('label_tables')}</span>
                 </div>
-            </div>
-            <List
-                className={b('list')}
-                items={sources}
-                itemClassName={b('source-item')}
-                itemHeight={32}
-                selectedItemIndex={-1}
-                filterPlaceholder={i18n('field_placeholder-title')}
-                filterable={sources.length >= 10}
-                virtualized={true}
-                filterItem={filterItem}
-                renderItem={(source) => (
-                    <SourceWithDragging
-                        dragDisabled={dragDisabled}
-                        dropDisabled={dropDisabled}
-                        avatar={source}
-                        onClickEditBtn={onEdit}
-                        onDeleteSource={onDelete}
+                {serverSearch && (
+                    <TextInput
+                        className={b('input-search')}
+                        placeholder={i18n('field_placeholder-title')}
+                        value={search}
+                        hasClear={true}
+                        onUpdate={onSearch}
+                        disabled={loading || sourcesError}
+                        controlRef={searchInputRef}
                     />
                 )}
-            />
-            {allowAddSource && <AddSourceButton disabled={dragDisabled} onClick={onAdd} />}
+            </div>
+            {loading ? (
+                <div className={b('loader-sources')}>
+                    <Loader size="s" />
+                </div>
+            ) : (
+                <>
+                    <List
+                        className={b('list')}
+                        items={sources}
+                        itemClassName={b('source-item')}
+                        itemHeight={LIST_ITEM_HEIGHT}
+                        itemsHeight={error ? sources.length * LIST_ITEM_HEIGHT : undefined}
+                        selectedItemIndex={-1}
+                        filterPlaceholder={i18n('field_placeholder-title')}
+                        filterable={!serverSearch && sources.length >= 10}
+                        virtualized={true}
+                        filterItem={filterItem}
+                        onLoadMore={serverPagination ? onLoadMore : undefined}
+                        loading={serverPagination && !sourcesPagination.isFinished && !sourcesError}
+                        renderItem={(source) => (
+                            <SourceWithDragging
+                                readonly={readonly}
+                                dragDisabled={dragDisabled || readonly}
+                                dropDisabled={dropDisabled || readonly}
+                                avatar={source}
+                                onClickEditBtn={onEdit}
+                                onDeleteSource={onDelete}
+                            />
+                        )}
+                    />
+                    {allowAddSource && <AddSourceButton disabled={dragDisabled} onClick={onAdd} />}
+                </>
+            )}
+            {error ? <ErrorView onRetry={onRetry} error={error} /> : null}
         </div>
     );
 };

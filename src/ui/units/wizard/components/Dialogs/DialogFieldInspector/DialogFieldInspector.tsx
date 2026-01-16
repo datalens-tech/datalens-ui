@@ -1,6 +1,14 @@
 import React from 'react';
 
-import {ClipboardButton, Dialog, Label, Tabs, TextArea} from '@gravity-ui/uikit';
+import {
+    ClipboardButton,
+    Dialog,
+    Label,
+    Tab,
+    TabList,
+    TabProvider,
+    TextArea,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {connect} from 'react-redux';
@@ -79,15 +87,22 @@ class DialogFieldInspector extends React.Component<Props, State> {
 
         return (
             <div>
-                <Tabs
-                    items={tabs}
-                    activeTab={this.state.activeTab}
-                    onSelectTab={(nextActiveTab) => {
+                <TabProvider
+                    value={this.state.activeTab}
+                    onUpdate={(nextActiveTab) => {
                         this.setState({
                             activeTab: nextActiveTab as InspectorTabs,
                         });
                     }}
-                />
+                >
+                    <TabList>
+                        {tabs.map((item) => (
+                            <Tab key={item.id} value={item.id}>
+                                {item.title}
+                            </Tab>
+                        ))}
+                    </TabList>
+                </TabProvider>
                 {activeTab === InspectorTabs.Field ? this.getFieldData() : this.getAllData()}
             </div>
         );

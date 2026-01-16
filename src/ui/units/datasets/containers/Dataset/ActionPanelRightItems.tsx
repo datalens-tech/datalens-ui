@@ -10,6 +10,7 @@ import {DatasetActionQA, Feature, RAW_SQL_LEVEL} from 'shared';
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
+import {DescriptionButton} from '../../components/DescriptionButton/DescriptionButton';
 import {
     toggleLoadPreviewByDefault,
     toggletDataExportEnabled,
@@ -39,7 +40,6 @@ const ITEM_SHOW_PREVIEW_BY_DEFAULT = 'showPreviewByDefault';
 const ITEM_TEMPLATE_ENABLED = 'templateEnabled';
 const ITEM_DATA_EXPORT_ENABLED = 'dataExportEnabled';
 const RAW_SQL_LEVELS_ALLOW_TEMPLATING: string[] = [RAW_SQL_LEVEL.TEMPLATE, RAW_SQL_LEVEL.DASHSQL];
-const isTemplateParamsFeatureEnabled = isEnabledFeature(Feature.EnableDsTemplateParams);
 const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
 const isUpdatingDsSettingsByActionFeatureEnabled = isEnabledFeature(
     Feature.EnableUpdatingDsSettingsByAction,
@@ -49,10 +49,18 @@ type Props = {
     isCreationProcess?: boolean;
     onClickCreateWidgetButton: () => void;
     onClickSaveDatasetButton: () => void;
+    canCreateWidget: boolean;
+    readonly: boolean;
 };
 
 export function ActionPanelRightItems(props: Props) {
-    const {isCreationProcess, onClickCreateWidgetButton, onClickSaveDatasetButton} = props;
+    const {
+        isCreationProcess,
+        onClickCreateWidgetButton,
+        onClickSaveDatasetButton,
+        canCreateWidget,
+        readonly,
+    } = props;
     const dispatch = useDispatch();
     const isDatasetRevisionMismatch = useSelector(isDatasetRevisionMismatchSelector);
     const isLoadPreviewByDefault = useSelector(isLoadPreviewByDefaultSelector);
@@ -65,7 +73,7 @@ export function ActionPanelRightItems(props: Props) {
     const isValidationLoading = useSelector(datasetValidationSelector).isLoading;
     const rawSqlLevel = useSelector(rawSqlLevelSelector);
     const historyActions = useHistoryActions();
-    const isSaveButtonDisabled = isSavingDatasetDisabled || isDatasetRevisionMismatch;
+    const isSaveButtonDisabled = isSavingDatasetDisabled || isDatasetRevisionMismatch || readonly;
     const isRawSqlLevelEnableTemplating = RAW_SQL_LEVELS_ALLOW_TEMPLATING.includes(rawSqlLevel);
     const settingsValue = React.useMemo(() => {
         const nextValue: string[] = [];
@@ -109,7 +117,7 @@ export function ActionPanelRightItems(props: Props) {
                 }
             }
 
-            if (dataExportEnabled !== nextDataExportEnabled) {
+            if (dataExportEnabled !== nextDataExportEnabled && isExportSettingsFeatureEnabled) {
                 if (isUpdatingDsSettingsByActionFeatureEnabled) {
                     dispatch(updateSetting('data_export_forbidden', !nextDataExportEnabled));
                 } else {
@@ -124,17 +132,20 @@ export function ActionPanelRightItems(props: Props) {
         const {ref, triggerProps} = args;
 
         return (
-            <Button
-                ref={ref}
-                view="flat"
-                extraProps={{onKeyDown: triggerProps.onKeyDown}}
-                {...triggerProps}
-            >
+            <Button ref={ref as React.Ref<HTMLButtonElement>} view="flat" {...triggerProps}>
                 <Icon data={Gear} size={ACTION_PANEL_ICON_SIZE} />
             </Button>
         );
     }, []);
 
+    const templateParamsOptionContent = (
+        <div style={{display: 'flex', height: '100%'}}>
+            {i18n('label_enable-templating')}
+            <HelpMark className={b('settings-hint')}>
+                {i18n('label_enable-templating-hint')}
+            </HelpMark>
+        </div>
+    );
     const settingsSelectOptions = [
         <Select.Option
             key={ITEM_SHOW_PREVIEW_BY_DEFAULT}
@@ -143,37 +154,24 @@ export function ActionPanelRightItems(props: Props) {
         >
             {i18n('label_load_preview_by_default')}
         </Select.Option>,
+        <Select.Option
+            key={ITEM_TEMPLATE_ENABLED}
+            value={ITEM_TEMPLATE_ENABLED}
+            disabled={isLoadingDataset || !isRawSqlLevelEnableTemplating || isValidationLoading}
+        >
+            {isRawSqlLevelEnableTemplating ? (
+                templateParamsOptionContent
+            ) : (
+                <ActionTooltip
+                    className={b('settings-templating-disable-hint')}
+                    title={i18n('label_enable-templating-disabled-hint')}
+                    placement="left"
+                >
+                    {templateParamsOptionContent}
+                </ActionTooltip>
+            )}
+        </Select.Option>,
     ];
-
-    if (isTemplateParamsFeatureEnabled) {
-        const optionContent = (
-            <div style={{display: 'flex', height: '100%'}}>
-                {i18n('label_enable-templating')}
-                <HelpMark className={b('settings-hint')}>
-                    {i18n('label_enable-templating-hint')}
-                </HelpMark>
-            </div>
-        );
-        settingsSelectOptions.push(
-            <Select.Option
-                key={ITEM_TEMPLATE_ENABLED}
-                value={ITEM_TEMPLATE_ENABLED}
-                disabled={isLoadingDataset || !isRawSqlLevelEnableTemplating || isValidationLoading}
-            >
-                {isRawSqlLevelEnableTemplating ? (
-                    optionContent
-                ) : (
-                    <ActionTooltip
-                        className={b('settings-templating-disable-hint')}
-                        title={i18n('label_enable-templating-disabled-hint')}
-                        placement="left"
-                    >
-                        {optionContent}
-                    </ActionTooltip>
-                )}
-            </Select.Option>,
-        );
-    }
 
     if (isExportSettingsFeatureEnabled) {
         settingsSelectOptions.push(
@@ -203,10 +201,11 @@ export function ActionPanelRightItems(props: Props) {
             >
                 {settingsSelectOptions}
             </Select>
+            <DescriptionButton readonly={readonly} />
             <Button
                 view="normal"
                 size="m"
-                disabled={isCreationProcess}
+                disabled={isCreationProcess || !canCreateWidget}
                 onClick={onClickCreateWidgetButton}
             >
                 {i18n('button_create-widget')}

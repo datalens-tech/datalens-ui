@@ -1,4 +1,4 @@
-import _isEmpty from 'lodash/isEmpty';
+import isEmpty from 'lodash/isEmpty';
 
 import type {
     HighchartsSeriesCustomObject,
@@ -12,6 +12,7 @@ import {
     AxisNullsMode,
     PlaceholderId,
     getFakeTitleOrTitle,
+    getFormatOptions,
     getXAxisMode,
     isDateField,
     isDimensionField,
@@ -70,6 +71,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         usedColors,
         ChartEditor,
         disableDefaultSorting = false,
+        defaultColorPaletteId,
     } = args;
     const {data, order} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
@@ -123,7 +125,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const segmentField = segments[0];
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
     const segmentsMap = getSegmentMap(args);
-    const isSegmentsExists = !_isEmpty(segmentsMap);
+    const isSegmentsExists = !isEmpty(segmentsMap);
     const isHtmlSegment = isHtmlField(segmentField);
     const segmentTitleFormatter = getSeriesTitleFormatter({fields: [segmentField]});
 
@@ -389,11 +391,17 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
                                 point.x = pointX;
 
-                                if (x && isNumericalDataType(x.data_type) && x.formatting) {
-                                    point.xFormatted = chartKitFormatNumberWrapper(Number(pointX), {
-                                        lang: 'ru',
-                                        ...x.formatting,
-                                    });
+                                if (x && isNumericalDataType(x.data_type)) {
+                                    const formatting = getFormatOptions(x);
+                                    if (!isEmpty(formatting)) {
+                                        point.xFormatted = chartKitFormatNumberWrapper(
+                                            Number(pointX),
+                                            {
+                                                lang: 'ru',
+                                                ...formatting,
+                                            },
+                                        );
+                                    }
                                 }
                             }
 
@@ -490,6 +498,8 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 isColorsItemExists: isColorItemExist,
                 isSegmentsExists: isSegmentsExists,
                 usedColors,
+                colorField: colorItem,
+                defaultColorPaletteId,
             });
         }
 

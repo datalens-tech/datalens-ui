@@ -4,10 +4,12 @@ import {Flex, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
+import {Feature} from 'shared';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import {registry} from 'ui/registry';
 import {getUsersRoles} from 'ui/units/auth/utils/getUsersRoles';
 import {getRoleByKey} from 'ui/units/auth/utils/userProfile';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {BASE_USER_FILTERS} from '../constants';
 
@@ -31,6 +33,8 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
     const [search, setSearch] = React.useState('');
     const [roles, setRole] = React.useState<UserRole[]>([]);
 
+    const newServiceSettingsEnabled = isEnabledFeature(Feature.EnableNewServiceSettings);
+
     const {AdditionalUsersFilters} = registry.auth.components.getAll();
 
     const sendUpdatedFilters = React.useMemo(
@@ -49,13 +53,15 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
     };
 
     return (
-        <Flex gap={2} className={b()}>
+        <Flex className={b({new: newServiceSettingsEnabled})}>
             <TextInput
+                type="search"
                 value={search}
                 onUpdate={handleSearchChange}
                 hasClear={true}
                 placeholder={i18n('label_search-placeholder')}
-                className={b('filter')}
+                className={b('search', {new: newServiceSettingsEnabled})}
+                size={newServiceSettingsEnabled ? 'l' : 'm'}
             />
             <Select
                 options={ROLES_OPTIONS}
@@ -63,9 +69,13 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
                 hasClear={true}
                 onUpdate={handleRoleChange}
                 label={i18n('label_field-roles')}
-                className={b('filter')}
+                className={b('filter', {new: newServiceSettingsEnabled})}
+                size={newServiceSettingsEnabled ? 'l' : 'm'}
             />
-            <AdditionalUsersFilters onChange={onChange} className={b('filter')} />
+            <AdditionalUsersFilters
+                onChange={onChange}
+                className={b('filter', {new: newServiceSettingsEnabled})}
+            />
         </Flex>
     );
 };

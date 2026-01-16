@@ -2,14 +2,12 @@ import React from 'react';
 
 import type {HotkeysContextType} from 'react-hotkeys-hook/dist/HotkeysProvider';
 import {useDispatch, useSelector} from 'react-redux';
-import {Feature} from 'shared';
 import {HOTKEYS_SCOPES, REDO_HOTKEY, UNDO_HOTKEY} from 'ui/constants/misc';
 import {withHotkeysContext} from 'ui/hoc/withHotkeysContext';
 import {useBindHotkey} from 'ui/hooks/useBindHotkey';
 import type {DatalensGlobalState} from 'ui/index';
 import {goBack, goForward} from 'ui/store/actions/editHistory';
 import {selectCanGoBack, selectCanGoForward} from 'ui/store/selectors/editHistory';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../../store/constants';
 import {selectHasOpenedDialog} from '../../store/selectors/dashTypedSelectors';
@@ -54,7 +52,7 @@ export const DashHotkeysWrapper = function DashHotkeys(props: {
         handler: onClickGoBack,
         options: {
             scopes: HOTKEYS_SCOPES.DASH,
-            enabled: !hasOpenedDialog && isEnabledFeature(Feature.EnableDashUndoRedo),
+            enabled: !hasOpenedDialog,
         },
     });
 
@@ -63,7 +61,7 @@ export const DashHotkeysWrapper = function DashHotkeys(props: {
         handler: onClickGoForward,
         options: {
             scopes: HOTKEYS_SCOPES.DASH,
-            enabled: !hasOpenedDialog && isEnabledFeature(Feature.EnableDashUndoRedo),
+            enabled: !hasOpenedDialog,
         },
     });
 

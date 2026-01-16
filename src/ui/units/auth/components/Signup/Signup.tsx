@@ -32,7 +32,7 @@ export const Signup = () => {
 
     const [errorMessage, setErrorMessage] = React.useState<null | string>(null);
 
-    const handleSubmit = (event: React.FormEvent<string>) => {
+    const handleSubmit: React.FormEventHandler<'form'> = (event) => {
         event.preventDefault();
 
         dispatch(

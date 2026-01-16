@@ -2,7 +2,8 @@ import React from 'react';
 
 import {Gear} from '@gravity-ui/icons';
 import type {SelectRenderControl} from '@gravity-ui/uikit';
-import {Button, HelpMark, Icon, Select, spacing} from '@gravity-ui/uikit';
+import {Button, HelpMark, Icon, Select} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {registry} from 'ui/registry';
@@ -11,6 +12,8 @@ import {changeForm, formSelector} from '../../../store';
 
 const ITEM_DATA_EXPORT_ENABLED = 'dataExportEnabled';
 const i18nExport = I18n.keyset('exports.enable-data-export-settings');
+
+const b = block('conn-panel-actions');
 
 export function ConnSettings({
     connectionId,
@@ -44,12 +47,7 @@ export function ConnSettings({
         const {ref, triggerProps} = args;
 
         return (
-            <Button
-                ref={ref}
-                view="flat"
-                extraProps={{onKeyDown: triggerProps.onKeyDown}}
-                {...triggerProps}
-            >
+            <Button ref={ref as React.Ref<HTMLButtonElement>} view="flat" {...triggerProps}>
                 <Icon data={Gear} size={18} />
             </Button>
         );
@@ -58,7 +56,7 @@ export function ConnSettings({
     const settingsSelectOptions = [
         <Select.Option key={ITEM_DATA_EXPORT_ENABLED} value={ITEM_DATA_EXPORT_ENABLED}>
             {i18nExport('label_enable-data-export')}
-            <HelpMark className={spacing({ml: 2})}>{i18nExport('label_data-export-info')}</HelpMark>
+            <HelpMark className={b('help-btn')}>{i18nExport('label_data-export-info')}</HelpMark>
         </Select.Option>,
     ];
 

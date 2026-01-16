@@ -1,15 +1,17 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import type {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {Feature} from '../../../../../shared';
+import {Feature, isMarkupItem} from '../../../../../shared';
 import {DL} from '../../../../constants/common';
 import type {GraphWidget, LoadedWidgetData} from '../../types';
 import type {ChartKitAdapterProps} from '../types';
 
 import {
     applyGoToEvents,
+    applyRunActivityEvent,
     applySetActionParamsEvents,
     applyTreemapLabelFormatter,
     fixPieTotals,
@@ -42,7 +44,11 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
         // - then, simple 'metric2' was created specifically for Wizard
         // - 'metric2' go to opensource with more common name for such charts in the BI community - 'indicator'
         case 'metric2': {
-            chartkitType = 'indicator';
+            if (isMarkupItem(get(data?.data, 'value'))) {
+                chartkitType = 'markup';
+            } else {
+                chartkitType = 'indicator';
+            }
 
             break;
         }
@@ -78,7 +84,7 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
         }
 
         case 'd3': {
-            chartkitType = 'd3';
+            chartkitType = 'gravity-charts';
 
             break;
         }
@@ -109,10 +115,14 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
     type,
     loadedData,
     onChange,
+    runActivity,
+    chartkitHolidays,
 }: {
     type: T;
     loadedData: ChartKitAdapterProps['loadedData'];
     onChange?: ChartKitAdapterProps['onChange'];
+    runActivity?: ChartKitAdapterProps['runActivity'];
+    chartkitHolidays: ChartKitHolidays | undefined;
 }) => {
     switch (type) {
         case 'indicator': {
@@ -183,6 +193,14 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
                             }
                             case 'goTo': {
                                 applyGoToEvents({data, target: handler.target});
+                                break;
+                            }
+                            case 'runActivity': {
+                                if (runActivity) {
+                                    applyRunActivityEvent({data, runActivity});
+                                }
+
+                                break;
                             }
                         }
                     });
@@ -203,11 +221,13 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
 
             return data;
         }
-        case 'd3': {
+        case 'gravity-charts': {
             const data = cloneDeep(loadedData) as GraphWidget;
             return getGravityChartsChartKitData({
                 loadedData: data,
                 onChange,
+                runActivity,
+                chartkitHolidays,
             });
         }
         default: {
@@ -216,14 +236,37 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
     }
 };
 
-export const getAdditionalProps = <T extends ChartKitType>(type: T) => {
+export const getAdditionalProps = <T extends ChartKitType>({
+    type,
+    loadedData,
+    splitTooltip,
+}: {
+    type: T;
+    loadedData?: LoadedWidgetData;
+    splitTooltip?: boolean;
+}): Partial<ChartKitProps<ChartKitType>> | undefined => {
     switch (type) {
         case 'highcharts': {
-            const props: Partial<ChartKitProps<'highcharts'>> = {
+            return {
                 hoistConfigError: false,
-            };
+            } as Partial<ChartKitProps<ChartKitType>>;
+        }
+        case 'gravity-charts': {
+            const withoutLineLimit =
+                loadedData?.config &&
+                'withoutLineLimit' in loadedData.config &&
+                loadedData.config.withoutLineLimit;
+            const seriesCountLimit =
+                loadedData?.config &&
+                'linesLimit' in loadedData.config &&
+                loadedData.config.linesLimit;
 
-            return props;
+            return {
+                tooltip: {splitted: splitTooltip},
+                validation: {
+                    seriesCountLimit: withoutLineLimit ? undefined : seriesCountLimit,
+                },
+            } as Partial<ChartKitProps<ChartKitType>>;
         }
         default: {
             return undefined;

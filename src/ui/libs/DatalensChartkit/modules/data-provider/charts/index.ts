@@ -1,4 +1,4 @@
-import type {ChartData} from '@gravity-ui/chartkit/d3';
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import type {AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
 import axios from 'axios';
 import type {Series as HighchartSeries} from 'highcharts';
@@ -11,6 +11,7 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {stringify} from 'qs';
 import type {
+    ChartActivityResponseData,
     ChartsStats,
     DashChartRequestContext,
     StringParams,
@@ -56,6 +57,7 @@ import DatalensChartkitCustomError, {
     ERROR_CODE,
 } from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import URI from '../../uri/uri';
+import {getChartKind} from '../helpers';
 
 import {getGraph} from './get-graph/get-graph';
 import processNode from './node';
@@ -407,6 +409,29 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             }
         }
 
+        if (processed.type === WidgetKind.GravityCharts) {
+            const newConfig: GraphWidget['config'] = {
+                hideComments:
+                    denormalizedParams[URL_OPTIONS.HIDE_COMMENTS] === '1' ||
+                    (processed.config?.hideComments &&
+                        denormalizedParams[URL_OPTIONS.HIDE_COMMENTS] !== '0'),
+                hideHolidays: denormalizedParams[URL_OPTIONS.HIDE_HOLIDAYS] === '1',
+            };
+            const withoutLineLimit = denormalizedParams[URL_OPTIONS.WITHOUT_LINE_LIMIT];
+
+            if (withoutLineLimit !== undefined) {
+                newConfig.withoutLineLimit = Boolean(withoutLineLimit);
+            }
+
+            return {
+                ...processed,
+                config: {
+                    ...processed.config,
+                    ...newConfig,
+                },
+            };
+        }
+
         if (processed.type === 'graph') {
             const newConfig: GraphWidget['config'] = {
                 hideComments:
@@ -477,6 +502,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             configResolving: null,
             dataFetching: null,
             jsExecution: null,
+            chartKind: getChartKind(loadedData),
         };
 
         if (loadedData.timings) {
@@ -596,17 +622,24 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         contextHeaders,
         requestId,
         requestCancellation,
+        widgetElement,
+        responseOptions,
     }: {
         props: ChartsProps;
         contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
+        responseOptions?: {
+            includeConfig?: boolean;
+        };
+        widgetElement?: Element;
     }) {
         const loaded = await this.load({
             data: props,
             contextHeaders,
             requestId,
             requestCancellation,
+            includeConfig: responseOptions?.includeConfig,
         });
 
         if (loaded) {
@@ -622,7 +655,11 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             }
 
             const processed = isResponseSuccessNode(loaded)
-                ? await processNode<ResponseSuccessNode, Widget>(loaded, this.settings.noJsonFn)
+                ? await processNode<ResponseSuccessNode, Widget>({
+                      loaded,
+                      noJsonFn: this.settings.noJsonFn,
+                      widgetElement,
+                  })
                 : // @ts-ignore Types from the js file are incorrect
                   processWizard(loaded);
 
@@ -632,7 +669,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return null;
     }
 
-    async runAction({
+    async makeActivityRequest({
         props,
         contextHeaders,
         requestId,
@@ -655,7 +692,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
         try {
             const result = await this.makeRequest({
-                url: `${this.requestEndpoint}${DL.API_PREFIX}/run-action`,
+                url: `${this.requestEndpoint}${DL.API_PREFIX}/run-activity`,
                 data: {
                     id,
                     key,
@@ -676,11 +713,19 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 },
                 headers: this.getLoadHeaders(requestId, contextHeaders),
             });
-            const responseData: ResponseSuccess = result.data;
+            const responseData: ChartActivityResponseData = result.data;
             const headers = result.headers;
 
             return this.getExtendedResponse({responseData, headers, includeLogs});
         } catch (error) {
+            if (error.response?.data) {
+                return this.getExtendedResponse({
+                    responseData: error.response.data,
+                    headers: error.response.headers,
+                    includeLogs,
+                });
+            }
+
             return this.processError({
                 error,
                 requestId,
@@ -710,7 +755,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         });
 
         if (loaded) {
-            return processNode<ResponseSuccessControls, ControlsOnlyWidget>(loaded);
+            return processNode<ResponseSuccessControls, ControlsOnlyWidget>({loaded});
         }
 
         return null;
@@ -830,11 +875,9 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return url + query;
     }
 
-    private getExtendedResponse<T extends ResponseSuccess | ResponseSuccessControls>(args: {
-        responseData: T;
-        headers: AxiosResponse<any, any>['headers'];
-        includeLogs: boolean;
-    }) {
+    private getExtendedResponse<
+        T extends ResponseSuccess | ResponseSuccessControls | ChartActivityResponseData,
+    >(args: {responseData: T; headers: AxiosResponse<any, any>['headers']; includeLogs: boolean}) {
         const {responseData, headers, includeLogs} = args;
 
         // TODO: return output when receiving onLoad
@@ -933,12 +976,14 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         requestId,
         requestCancellation,
         onlyControls = false,
+        includeConfig = true,
     }: {
         data: ChartsProps;
         contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
         onlyControls?: boolean;
+        includeConfig?: boolean;
     }) {
         const {
             id,
@@ -966,11 +1011,15 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                           data: configData,
                           createdAt: createdAt,
                           meta: {stype: type},
+                          tenantSettings: {
+                              defaultColorPaletteId:
+                                  window.DL.tenantSettings?.defaultColorPaletteId,
+                          },
                       }
                     : undefined,
                 responseOptions: {
                     // relevant for graph_wizard and metric_wizard
-                    includeConfig: true,
+                    includeConfig,
                     includeLogs,
                 },
                 uiOnly: onlyControls || undefined,

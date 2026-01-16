@@ -28,7 +28,7 @@ import {
 } from 'shared';
 import {closeDialog, openDialog, openDialogParameter} from 'store/actions/dialog';
 import type {DatalensGlobalState} from 'ui';
-import {DL, EntryDialogName, NavigationMinimal} from 'ui';
+import {DL, EntryDialogName, NavigationMinimal, URL_QUERY} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {selectDebugMode} from 'ui/store/selectors/user';
 import {matchDatasetFieldFilter} from 'ui/utils/helpers';
@@ -48,7 +48,7 @@ import {
     selectMeasures,
 } from 'units/wizard/selectors/dataset';
 import {selectUpdates} from 'units/wizard/selectors/preview';
-import {selectDefaultPath, selectIsNavigationVisible} from 'units/wizard/selectors/settings';
+import {selectIsNavigationVisible} from 'units/wizard/selectors/settings';
 import {selectHierarchies, selectVisualization} from 'units/wizard/selectors/visualization';
 import {selectWidget} from 'units/wizard/selectors/widget';
 import {v1 as uuidv1} from 'uuid';
@@ -452,8 +452,12 @@ class SectionDataset extends React.Component<Props, State> {
         this.props.toggleNavigation();
     };
 
-    onOpenDatasetClick = (id: string) => {
-        window.open(`${DL.ENDPOINTS.dataset}/${id}`);
+    onOpenDatasetClick = (id: string, isSharedDataset: boolean) => {
+        const url = new URL(`${DL.ENDPOINTS.dataset}/${id}`, window.location.origin);
+        if (isSharedDataset && this.props.workbookId) {
+            url.searchParams.set(URL_QUERY.BINDED_WORKBOOK, this.props.workbookId);
+        }
+        window.open(url);
     };
 
     onAddDatasetClick = () => {
@@ -950,17 +954,19 @@ class SectionDataset extends React.Component<Props, State> {
             <DropdownMenu
                 size="s"
                 switcherWrapperClassName="add-param-btn-wrapper"
-                switcher={
+                renderSwitcher={({onClick, onKeyDown}) => (
                     <Button
                         className="add-param-btn"
                         view="outlined"
                         size="m"
                         loading={this.state.fieldEditorLoading}
                         qa="add-param"
+                        onClick={onClick}
+                        onKeyDown={onKeyDown}
                     >
                         <Icon data={iconPlus} size={15} />
                     </Button>
-                }
+                )}
                 items={this.getDropdownItems()}
             />
         );
@@ -972,7 +978,6 @@ class SectionDataset extends React.Component<Props, State> {
             dataset,
             datasets,
             datasetApiErrors,
-            defaultPath,
             datasetLoading,
             isNavigationVisible,
             datasetLoaded,
@@ -980,6 +985,8 @@ class SectionDataset extends React.Component<Props, State> {
         } = this.props;
 
         const workbookId = widget.workbookId as string;
+
+        const startFrom = widget?.key.replace(/[^/]+$/, '');
 
         const {getPlaceSelectParameters} = registry.common.functions.getAll();
 
@@ -1030,8 +1037,9 @@ class SectionDataset extends React.Component<Props, State> {
                                     onEntryClick={this.onNavigationClick}
                                     clickableScope="dataset"
                                     scope="dataset"
-                                    startFrom={defaultPath}
+                                    startFrom={startFrom}
                                     ignoreWorkbookEntries={true}
+                                    ignoreSharedEntries={true}
                                     placeSelectParameters={getPlaceSelectParameters([
                                         PLACE.ROOT,
                                         PLACE.FAVORITES,
@@ -1151,7 +1159,6 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
         datasetError: selectDatasetError(state),
         measures: selectMeasures(state),
         dimensions: selectDimensions(state),
-        defaultPath: selectDefaultPath(state),
         visualization: selectVisualization(state),
         hierarchies: selectHierarchies(state),
         widget,

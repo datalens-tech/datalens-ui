@@ -10,6 +10,8 @@ import type {
     MoveCollectionsAction,
     MoveWorkbookAction,
     MoveWorkbooksAction,
+    MoveSharedEntryAction,
+    MoveEntriesAction,
     ResetCollectionBreadcrumbsAction,
     ResetStateAction,
     ResetStructureItemsAction,
@@ -20,6 +22,7 @@ import type {
     UpdateCollectionAction,
     DeleteCollectionAction,
     DeleteWorkbookAction,
+    DeleteSharedEntriesAction,
 } from './common';
 import type {
     ExportWorkbookAction,
@@ -46,8 +49,11 @@ export type CollectionsStructureAction =
     | MoveWorkbookAction
     | MoveCollectionsAction
     | MoveWorkbooksAction
+    | MoveSharedEntryAction
+    | MoveEntriesAction
     | DeleteCollectionsAction
     | DeleteWorkbooksAction
+    | DeleteSharedEntriesAction
     | CopyWorkbookAction
     | UpdateWorkbookAction
     | UpdateCollectionAction

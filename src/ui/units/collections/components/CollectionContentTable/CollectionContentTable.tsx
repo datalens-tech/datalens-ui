@@ -10,13 +10,12 @@ import {CollectionContentTableQa, DEFAULT_DATE_FORMAT} from 'shared/constants';
 import {DL} from 'ui/constants/common';
 import {selectDateTimeFormat} from 'ui/store/selectors/user';
 
-import type {
-    CollectionWithPermissions,
-    WorkbookWithPermissions,
-} from '../../../../../shared/schema';
+import type {StructureItemWithPermissions} from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
+import {useRefreshPageAfterImport} from '../../hooks/useRefreshPageAfterImport';
 import {selectStructureItems} from '../../store/selectors';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
+import {getItemId} from '../helpers';
 
 import {CollectionCheckboxCell} from './TableComponents/CollectionCheckboxCell';
 import {CollectionLinkRow} from './TableComponents/CollectionLinkRow';
@@ -32,12 +31,10 @@ const b = block('dl-collection-content-table');
 type Props = {
     selectedMap: SelectedMap;
     itemsAvailableForSelectionCount: number;
-    getWorkbookActions: (
-        item: WorkbookWithPermissions,
+    getItemActions: (
+        item: StructureItemWithPermissions,
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
-    getCollectionActions: (
-        item: CollectionWithPermissions,
-    ) => (DropdownMenuItem[] | DropdownMenuItem)[];
+    refreshPage: () => void;
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
     onUpdateAllCheckboxesClick: (checked: boolean) => void;
 };
@@ -46,8 +43,8 @@ export const CollectionContentTable = React.memo<Props>(
     ({
         selectedMap,
         itemsAvailableForSelectionCount,
-        getWorkbookActions,
-        getCollectionActions,
+        getItemActions,
+        refreshPage,
         onUpdateCheckboxClick,
         onUpdateAllCheckboxesClick,
     }) => {
@@ -73,6 +70,8 @@ export const CollectionContentTable = React.memo<Props>(
 
         const dateTimeFormat = useSelector(selectDateTimeFormat);
 
+        const {refreshPageAfterImport} = useRefreshPageAfterImport({refreshPage});
+
         if (DL.IS_MOBILE) {
             return (
                 <div className={b({mobile: true})} data-qa={CollectionContentTableQa.Table}>
@@ -80,24 +79,17 @@ export const CollectionContentTable = React.memo<Props>(
                         <div className={b('table')}>
                             <div className={b('content')}>
                                 {items.map((item) => {
-                                    const {status, isDisabled} = getItemParams(item);
+                                    const {isCreating, isDeleting} = getItemParams(item);
 
                                     return (
                                         <CollectionLinkRow
-                                            key={
-                                                'workbookId' in item
-                                                    ? item.workbookId
-                                                    : item.collectionId
-                                            }
+                                            key={getItemId(item)}
                                             item={item}
-                                            isDisabled={isDisabled}
+                                            isDisabled={isCreating || isDeleting}
+                                            refreshPageAfterImport={refreshPageAfterImport}
                                         >
-                                            <CollectionTitleCell
-                                                isWorkbook={'workbookId' in item}
-                                                title={item.title}
-                                                collectionId={item.collectionId}
-                                                status={status}
-                                            />
+                                            <CollectionTitleCell item={item} />
+
                                             <div className={b('content-cell', {date: true})}>
                                                 {dateTime({
                                                     input: item.updatedAt,
@@ -145,38 +137,29 @@ export const CollectionContentTable = React.memo<Props>(
 
                         <div className={b('content')}>
                             {items.map((item) => {
-                                const isWorkbookItem = 'workbookId' in item;
-                                const {status, isDisabled} = getItemParams(item);
+                                const {isCreating, isDeleting} = getItemParams(item);
 
-                                const actions = isWorkbookItem
-                                    ? getWorkbookActions(item)
-                                    : getCollectionActions(item);
+                                const nonInteractive = isCreating || isDeleting;
+
+                                const actions = getItemActions(item);
 
                                 return (
                                     <CollectionLinkRow
-                                        key={
-                                            'workbookId' in item
-                                                ? item.workbookId
-                                                : item.collectionId
-                                        }
+                                        key={getItemId(item)}
                                         item={item}
-                                        isDisabled={isDisabled}
+                                        isDisabled={nonInteractive}
+                                        refreshPageAfterImport={refreshPageAfterImport}
                                     >
                                         <CollectionCheckboxCell
                                             item={item}
                                             onUpdateCheckboxClick={onUpdateCheckboxClick}
                                             selectedMap={selectedMap}
-                                            disabled={isDisabled}
+                                            disabled={nonInteractive}
                                         />
-                                        <CollectionTitleCell
-                                            isWorkbook={'workbookId' in item}
-                                            title={item.title}
-                                            collectionId={item.collectionId}
-                                            status={status}
-                                        />
+                                        <CollectionTitleCell item={item} />
 
                                         <div className={b('content-cell', {date: true})}>
-                                            {!isDisabled && (
+                                            {!nonInteractive && (
                                                 <Tooltip
                                                     content={dateTime({
                                                         input: item.updatedAt,
@@ -194,7 +177,7 @@ export const CollectionContentTable = React.memo<Props>(
                                         <div
                                             className={b('content-cell', {
                                                 control: true,
-                                                import: isDisabled,
+                                                import: isDeleting,
                                             })}
                                             onClick={(e) => {
                                                 if (actions.length > 0) {
@@ -207,7 +190,7 @@ export const CollectionContentTable = React.memo<Props>(
                                                 <DropdownMenu
                                                     size="s"
                                                     items={actions}
-                                                    disabled={isDisabled}
+                                                    disabled={isDeleting}
                                                 />
                                             )}
                                         </div>

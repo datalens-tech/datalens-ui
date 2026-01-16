@@ -10,7 +10,7 @@ const SELECTORS = {
     SELECTOR_TITLE: 'chartkit-control-title',
     SELECTOR_ITEMS: '.yc-select-items > .yc-select-item-wrap',
 
-    CHART_MOBILE_GRAPH: '.chartkit_mobile .chartkit-graph',
+    CHART_MOBILE_GRAPH: '.chartkit_mobile .chartkit-graph, .chartkit_mobile .gcharts-chart',
     CHART_BASE_KEY: '.chartkit-theme_common',
     CHART_OVERLAY_FOR_CLICK: '[data-qa=chart-widget-overlay]',
     CHART_BAR_RECT: 'g.highcharts-column-series > rect',

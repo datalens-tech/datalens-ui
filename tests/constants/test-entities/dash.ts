@@ -7,4 +7,6 @@ export enum DashUrls {
     DashboardWithErrorChart = '/2rzei9dbn9mcq',
     DashboardWithAPIErrorChart = '/yn3ikt4znjyom',
     DashboardWithDifferentWidgets = '/em7qhqruwprq1',
+    DashboardWithInvalidSelector = '/kkhvho2o035y5',
+    DashboardWithWidgetsBackgrounds = '/cvqu4jhwrwrux',
 }

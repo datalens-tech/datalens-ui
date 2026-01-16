@@ -4,5 +4,6 @@
   "button_switch-public": "Public access",
   "button_undo": "Undo",
   "label_history-changes": "Change history",
-  "label_history-changes-date-limit": "You can view the history for the past three months"
+  "label_history-changes-date-limit": "You can view the history for the past three months",
+  "label_history-changes-date-limit-dataset": "You can view the history since"
 }

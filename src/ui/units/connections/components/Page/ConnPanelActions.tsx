@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useSelector} from 'react-redux';
-import type {WorkbookId} from 'shared';
+import {type WorkbookId} from 'shared';
 import {registry} from 'ui/registry';
 
 import {schemaLoadingSelector, uiSchemaSelector} from '../../store';
@@ -37,7 +37,11 @@ const ConnPanelActions = ({
                 <CreateEditorChartButton entryId={entryId} workbookId={workbookId} />
             )}
             <CreateQlChartButton entryId={entryId} workbookId={workbookId} />
-            <CreateDatasetButton entryId={entryId} entryKey={entryKey} />
+            <CreateDatasetButton
+                entryId={entryId}
+                entryKey={entryKey}
+                externalWorkbookId={workbookId}
+            />
             {s3BasedFormOpened && <S3BasedConnButton />}
         </div>
     );

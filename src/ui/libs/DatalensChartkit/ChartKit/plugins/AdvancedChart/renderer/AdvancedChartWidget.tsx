@@ -20,7 +20,7 @@ import type {AdvancedChartWidgetProps, WidgetDimensions} from '../types';
 
 import {Tooltip} from './components/Tooltip/Tooltip';
 import type {PointPosition, TooltipState} from './types';
-import {IS_TOUCH_ENABLED} from './utils';
+import {IS_TOUCH_ENABLED, validateWidgetData} from './utils';
 
 import './AdvancedChartWidget.scss';
 
@@ -36,10 +36,13 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
         data: {data: originalData},
     } = props;
 
+    React.useMemo(() => validateWidgetData(originalData), [originalData]);
+
     const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [id]);
     Performance.mark(generatedId);
 
     const ref = React.useRef<HTMLDivElement | null>(null);
+    const tooltipRef = React.useRef<HTMLDivElement | null>(null);
     const contentRef = React.useRef<HTMLDivElement | null>(null);
     const [dimensions, setDimensions] = React.useState<WidgetDimensions | undefined>();
     const handleResize = React.useCallback(() => {
@@ -179,6 +182,22 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
             return;
         }
 
+        if (tooltipRef.current) {
+            const tooltipContentRect = tooltipRef.current.getBoundingClientRect();
+            const offset = ref.current?.getBoundingClientRect();
+            const currentXPosition = pointerX + (offset?.left ?? 0);
+            const currentYPosition = pointerY + (offset?.top ?? 0);
+
+            const isInsideTooltipBounds =
+                currentXPosition > tooltipContentRect.left &&
+                currentXPosition < tooltipContentRect.right &&
+                currentYPosition > tooltipContentRect.top &&
+                currentYPosition < tooltipContentRect.bottom;
+            if (isInsideTooltipBounds) {
+                return;
+            }
+        }
+
         if (originalData?.tooltip?.renderer) {
             const context = chartStorage.get(generatedId);
             context.__innerHTML = ref.current?.innerHTML;
@@ -232,6 +251,7 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
                 <Loader />
             </div>
             <Tooltip
+                ref={tooltipRef}
                 pointerPosition={tooltipState?.position}
                 content={tooltipState?.content}
                 widgetContainer={ref.current}
