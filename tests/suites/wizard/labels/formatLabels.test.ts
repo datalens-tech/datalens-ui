@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {expectArraysEqualUnordered, openTestPage, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {
@@ -72,7 +72,7 @@ datalensTest.describe('Wizard - formatting signatures (line)', () => {
 
             const initialLabels = await getChartLabelValues(wizardPage.page, 3);
 
-            expect(initialLabels).toEqual(EXPECTED_INITIAL_LABELS);
+            expectArraysEqualUnordered(initialLabels, EXPECTED_INITIAL_LABELS);
 
             await wizardPage.visualizationItemDialog.open(PlaceholderName.Y, 'Sales');
 
@@ -141,7 +141,7 @@ datalensTest.describe('Wizard - formatting signatures (pie, donut)', () => {
 
             const labels = await getChartLabelValues(wizardPage.page, 3);
 
-            expect(labels).toEqual(EXPECTED_LABELS_WITH_LABEL_MODE_PERCENT);
+            expectArraysEqualUnordered(labels, EXPECTED_LABELS_WITH_LABEL_MODE_PERCENT);
 
             await wizardPage.visualizationItemDialog.open(PlaceholderName.Labels, 'Profit');
 

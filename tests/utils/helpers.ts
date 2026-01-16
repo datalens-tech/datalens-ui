@@ -100,3 +100,15 @@ export async function isEnabledFeature(page: Page, featureName: string) {
     const isFeature = await page.evaluate(`window.DL.features?.${featureName}`);
     return Boolean(typeof isDynamicFeature === 'undefined' ? isFeature : isDynamicFeature);
 }
+
+export function expectArraysEqualUnordered(actual: unknown[], expected: unknown[]) {
+    expect(actual).toHaveLength(expected.length);
+
+    expected.forEach((expectedItem) => {
+        expect(actual).toContainEqual(expectedItem);
+    });
+
+    actual.forEach((actualItem) => {
+        expect(expected).toContainEqual(actualItem);
+    });
+}

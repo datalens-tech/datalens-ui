@@ -6,7 +6,7 @@ import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage} from '../../../utils';
+import {expectArraysEqualUnordered, openTestPage} from '../../../utils';
 
 // todo: remove along with GravityChartsForLineAreaAndBarX feature flag
 datalensTest.describe('Wizard - Combined diagram. Signatures', () => {
@@ -61,16 +61,4 @@ async function setFormatting(
     await wizardPage.visualizationItemDialog.clickOnApplyButton();
 
     await (await apiRunRequest).response();
-}
-
-function expectArraysEqualUnordered(actual: unknown[], expected: unknown[]) {
-    expect(actual).toHaveLength(expected.length);
-
-    expected.forEach((expectedItem) => {
-        expect(actual).toContainEqual(expectedItem);
-    });
-
-    actual.forEach((actualItem) => {
-        expect(expected).toContainEqual(actualItem);
-    });
 }
