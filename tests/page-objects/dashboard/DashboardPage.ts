@@ -386,9 +386,7 @@ class DashboardPage extends BasePage {
         }
 
         if (isEnabledCollections) {
-            await this.page.fill(`${slct(WysiwygEditorQa.Editor)} [contenteditable=true]`, text, {
-                timeout,
-            });
+            await this.page.fill(`${slct(WysiwygEditorQa.Editor)} [contenteditable=true]`, text);
         } else {
             await this.page.fill(
                 `${slct(DialogDashWidgetItemQA.Text)} [contenteditable=true]`,
