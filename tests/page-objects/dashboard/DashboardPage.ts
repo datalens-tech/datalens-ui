@@ -376,7 +376,7 @@ class DashboardPage extends BasePage {
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
         if (isEnabledCollections) {
-            await this.page.fill(`${slct(WysiwygEditorQa.Editor)} textarea`, text);
+            await this.page.fill(`${slct(WysiwygEditorQa.Editor)} [contenteditable=true]`, text);
         } else {
             await this.page.fill(
                 `${slct(DialogDashWidgetItemQA.Text)} [contenteditable=true]`,
