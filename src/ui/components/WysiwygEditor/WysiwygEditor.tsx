@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Flex, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-// import {I18n} from 'i18n';
+import {I18n} from 'i18n';
 
 import {ErrorBoundary} from '../ErrorBoundary/ErrorBoundary';
 
@@ -11,7 +11,7 @@ import type {MarkdownEditorProps, MarkdownEditorRef} from './MarkdownEditorDefau
 import './WysiwygEditor.scss';
 
 const b = block('wysiwyg-editor');
-// const i18n = I18n.keyset('component.wysiwyg-editor.view');
+const i18n = I18n.keyset('component.wysiwyg-editor.view');
 
 export type WysiwygEditorRef = MarkdownEditorRef;
 type WysiwygEditorProps = MarkdownEditorProps & {
@@ -32,8 +32,7 @@ const Fallback: React.FC = () => (
 export const WysiwygEditor = React.forwardRef<MarkdownEditorRef, WysiwygEditorProps>(
     ({className, disabled, ...props}, ref) => {
         const renderError = React.useCallback(() => {
-            // return <div>{i18n('label_failed-to-load')}</div>;
-            return 'Не удалось загрузить редактор';
+            return <div>{i18n('label_failed-to-load')}</div>;
         }, []);
 
         return (
