@@ -122,11 +122,13 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         );
     }
 
-    const isGradient = isGradientMode({
-        colorField: colorItem,
-        colorFieldDataType: colorItem.data_type,
-        colorsConfig,
-    });
+    const isGradient =
+        Boolean(colorItem) &&
+        isGradientMode({
+            colorField: colorItem,
+            colorFieldDataType: colorItem.data_type,
+            colorsConfig,
+        });
 
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
