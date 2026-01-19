@@ -35,7 +35,8 @@ type ExtendedPieSeries = Omit<PieSeries, 'data'> & {
 };
 
 export function prepareD3Pie(args: PrepareFunctionArgs) {
-    const {shared, labels, visualizationId, ChartEditor, colorsConfig, idToDataType} = args;
+    const {shared, labels, visualizationId, placeholders, ChartEditor, colorsConfig, idToDataType} =
+        args;
     const {graphs, label, measure, totals, color, dimension} = preparePieData(args);
     const isLabelsEnabled = Boolean(labels?.length && label && measure?.hideLabelMode !== 'hide');
 
@@ -126,7 +127,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
         }
     }
 
-    return merge(getBaseChartConfig(shared), {
+    return merge(getBaseChartConfig({shared, visualization: {placeholders, id: visualizationId}}), {
         chart: {
             margin: {top: 20, left: 12, right: 12, bottom: 20},
             zoom: {enabled: false},

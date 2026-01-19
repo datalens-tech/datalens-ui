@@ -251,5 +251,8 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
         legend,
     };
 
-    return merge(getBaseChartConfig(shared), config);
+    return merge(
+        getBaseChartConfig({shared, visualization: {placeholders, id: visualizationId}}),
+        config,
+    );
 }
