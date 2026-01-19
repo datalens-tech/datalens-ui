@@ -131,7 +131,13 @@ const getSectionFields = (
             return visualizationState.dashboardParameters;
         }
         case PlaceholderId.LayerFilters: {
-            return visualizationState.filters.filter((item) => item.unsaved);
+            if (isVisualizationWithLayers(visualization)) {
+                return (
+                    getSelectedLayer(visualization)?.commonPlaceholders?.filters?.filter(
+                        (item) => !item.unsaved,
+                    ) || []
+                );
+            }
         }
     }
 
