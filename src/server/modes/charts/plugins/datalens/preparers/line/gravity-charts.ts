@@ -155,9 +155,10 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
             name: seriesName,
             type: 'line',
             color: graph.color,
+            nullMode: graph.connectNulls ? 'connect' : 'skip',
             data: graph.data.reduce((acc: ExtendedLineSeriesData[], item: any, index: number) => {
                 const dataItem: ExtendedLineSeriesData = {
-                    y: item?.y || 0,
+                    y: item?.y ?? null,
                     custom: item.custom,
                 };
 
@@ -332,7 +333,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
 
     return merge(
         getBaseChartConfig({
-            extraSettings: shared.extraSettings,
+            shared,
             visualization: {placeholders, id: visualizationId},
         }),
         config,

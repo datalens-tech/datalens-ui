@@ -51,6 +51,7 @@ type ExtendedTreemapSeries = TreemapSeries & {
 
 export function prepareD3Treemap({
     shared,
+    visualizationId,
     placeholders,
     resultData,
     colors,
@@ -276,7 +277,7 @@ export function prepareD3Treemap({
         },
     };
 
-    return merge(getBaseChartConfig(shared), {
+    return merge(getBaseChartConfig({shared, visualization: {placeholders, id: visualizationId}}), {
         series: {
             data: [series],
         },
