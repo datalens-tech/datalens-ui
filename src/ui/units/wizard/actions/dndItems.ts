@@ -133,7 +133,7 @@ const getSectionFields = (
         case PlaceholderId.LayerFilters: {
             if (isVisualizationWithLayers(visualization)) {
                 return (
-                    getSelectedLayer(visualization)?.commonPlaceholders?.filters?.filter(
+                    getSelectedLayer(visualization)?.commonPlaceholders.filters.filter(
                         (item) => !item.unsaved,
                     ) || []
                 );
