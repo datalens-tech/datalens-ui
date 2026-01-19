@@ -70,7 +70,11 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
     }, [props.data.header?.rows]);
 
     React.useEffect(() => {
-        setMinSizes();
+        // On initial mount, the Portal may not be ready yet, so we need to
+        // schedule measurement after the next frame to ensure DOM is available
+        requestAnimationFrame(() => {
+            setMinSizes();
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.data]);
 

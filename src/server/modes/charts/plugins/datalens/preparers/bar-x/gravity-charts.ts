@@ -11,25 +11,30 @@ import sortBy from 'lodash/sortBy';
 import type {SeriesExportSettings, ServerField, WrappedMarkdown} from '../../../../../../../shared';
 import {
     AxisMode,
+    GradientType,
     LabelsPositions,
     PERCENT_VISUALIZATIONS,
     PlaceholderId,
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
+    getRgbColorValue,
     getXAxisMode,
     isDateField,
     isHtmlField,
     isMarkdownField,
     isMarkupField,
     isNumberField,
+    transformHexToRgb,
 } from '../../../../../../../shared';
 import type {WrappedHTML} from '../../../../../../../shared/types/charts';
 import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slider';
+import {getRgbColors} from '../../utils/color-helpers';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
+import {isGradientMode} from '../../utils/misc-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import {getSegmentMap} from '../helpers/segments';
@@ -117,6 +122,14 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         );
     }
 
+    const isGradient =
+        Boolean(colorItem) &&
+        isGradientMode({
+            colorField: colorItem,
+            colorFieldDataType: colorItem.data_type,
+            colorsConfig,
+        });
+
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
     const shouldUsePercentStacking = PERCENT_VISUALIZATIONS.has(visualizationId);
@@ -132,10 +145,28 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             ? `${graph.custom.segmentTitle}: ${graph.title}`
             : graph.title;
 
+        let seriesColor = graph.color;
+        if (!seriesColor && isGradient) {
+            const points = preparedData.graphs
+                .map((graph) =>
+                    (graph.data ?? []).map((d: OldBarXDataItem) => ({colorValue: d?.colorValue})),
+                )
+                .flat(2);
+            const colorScale = getLegendColorScale({
+                colorsConfig,
+                points,
+            });
+            const gradientColors = getRgbColors(colorScale.colors.map(transformHexToRgb), false);
+            seriesColor = getRgbColorValue(0.5, GradientType.TWO_POINT, 0.5, [
+                gradientColors[0],
+                gradientColors[gradientColors.length - 1],
+            ]);
+        }
+
         return {
             name: seriesName,
             type: 'bar-x',
-            color: graph.color,
+            color: seriesColor,
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             data: graph.data.reduce(
@@ -316,7 +347,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
 
     return merge(
         getBaseChartConfig({
-            extraSettings: shared.extraSettings,
+            shared,
             visualization: {placeholders, id: visualizationId},
         }),
         config,

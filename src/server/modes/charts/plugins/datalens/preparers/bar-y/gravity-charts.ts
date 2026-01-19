@@ -264,5 +264,8 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         ];
     }
 
-    return merge(getBaseChartConfig(shared), config);
+    return merge(
+        getBaseChartConfig({shared, visualization: {placeholders, id: visualizationId}}),
+        config,
+    );
 }

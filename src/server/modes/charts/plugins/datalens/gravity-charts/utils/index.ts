@@ -1,7 +1,18 @@
-import type {ChartData, ChartTitle, ChartYAxis} from '@gravity-ui/chartkit/gravity-charts';
-
-import {PlaceholderId, WizardVisualizationId, isDateField} from '../../../../../../../shared';
 import type {
+    ChartData,
+    ChartTitle,
+    ChartTooltip,
+    ChartYAxis,
+} from '@gravity-ui/chartkit/gravity-charts';
+
+import {
+    PlaceholderId,
+    WizardVisualizationId,
+    isDateField,
+    isTooltipSumEnabled,
+} from '../../../../../../../shared';
+import type {
+    ServerChartsConfig,
     ServerCommonSharedExtraSettings,
     ServerPlaceholder,
     ServerPlaceholderSettings,
@@ -91,24 +102,30 @@ export function getYAxisBaseConfig({
 }
 
 export function getBaseChartConfig(args: {
-    extraSettings?: ServerCommonSharedExtraSettings;
+    shared: ServerChartsConfig;
     visualization: {id: string; placeholders: ServerPlaceholder[]};
 }) {
-    const {extraSettings, visualization} = args;
+    const {shared, visualization} = args;
+    const extraSettings = shared.extraSettings;
     const isLegendEnabled = extraSettings?.legendMode !== 'hide';
 
     const xPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.X);
     const xItem = xPlaceholder?.items[0];
     const xPlaceholderSettings = xPlaceholder?.settings || {};
 
+    const tooltip: ChartTooltip = {
+        enabled: extraSettings?.tooltip !== 'hide',
+    };
+
+    if (isTooltipSumEnabled({visualizationId: shared.visualization.id})) {
+        tooltip.totals = {
+            enabled: extraSettings?.tooltipSum !== 'off',
+        };
+    }
+
     let chartWidgetData: Partial<ChartData> = {
         title: getChartTitle(extraSettings),
-        tooltip: {
-            enabled: extraSettings?.tooltip !== 'hide',
-            totals: {
-                enabled: extraSettings?.tooltipSum !== 'off',
-            },
-        },
+        tooltip,
         legend: {enabled: isLegendEnabled},
         series: {
             data: [],
@@ -123,6 +140,9 @@ export function getBaseChartConfig(args: {
                     },
                 },
                 line: {
+                    lineWidth: 2,
+                },
+                area: {
                     lineWidth: 2,
                 },
             },

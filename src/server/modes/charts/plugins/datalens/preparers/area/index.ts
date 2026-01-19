@@ -120,9 +120,10 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             color: graph.color,
+            nullMode: graph.connectNulls ? 'connect' : 'skip',
             data: graph.data.reduce((acc: ExtendedLineSeriesData[], item: any, index: number) => {
                 const dataItem: ExtendedLineSeriesData = {
-                    y: item?.y || 0,
+                    y: item?.y ?? null,
                     custom: item.custom,
                 };
 
@@ -254,7 +255,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
 
     return merge(
         getBaseChartConfig({
-            extraSettings: shared.extraSettings,
+            shared,
             visualization: {placeholders, id: visualizationId},
         }),
         config,
