@@ -38,7 +38,6 @@ import {Tabs} from '../../../Tabs/Tabs';
 import {DashkitWrapper} from '../DashkitWrapper/DashkitWrapper';
 
 import {useCopiedData} from './hooks/useCopiedData';
-import {useWrapperBounds} from './hooks/useWrapperBounds';
 
 const b = block('dash-body');
 
@@ -137,7 +136,7 @@ const Content = ({
         [dispatch],
     );
 
-    const {wrapperCallbackRef, bottomOffset: wrapperBottomOffset} = useWrapperBounds();
+    const wrapperRef = React.useRef<HTMLDivElement | null>(null);
 
     const isEditMode = mode === Mode.Edit;
 
@@ -160,7 +159,7 @@ const Content = ({
     return (
         <DashKitDnDWrapper onDragStart={onDragStart} onDragEnd={onDragEnd}>
             <div
-                ref={wrapperCallbackRef}
+                ref={wrapperRef}
                 data-qa={DashBodyQa.ContentWrapper}
                 className={b('content-wrapper', {mobile: DL.IS_MOBILE, mode}, loadedMixin)}
             >
@@ -175,7 +174,7 @@ const Content = ({
                 >
                     <TableOfContent
                         disableHashNavigation={disableHashNavigation}
-                        minBottomOffset={wrapperBottomOffset}
+                        wrapperRef={wrapperRef}
                         onItemClick={onItemClick}
                     />
                     <div

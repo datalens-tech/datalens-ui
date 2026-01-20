@@ -30,6 +30,7 @@ import {
 import {setPageTab, toggleTableOfContent} from '../../store/actions/dashTyped';
 
 import {getUpdatedOffsets} from './helpers';
+import {useWrapperBounds} from './hooks/useWrapperBounds';
 
 import './TableOfContent.scss';
 
@@ -59,11 +60,11 @@ const getHash = ({
 const TableOfContent = React.memo(
     ({
         disableHashNavigation,
-        minBottomOffset,
+        wrapperRef,
         onItemClick,
     }: {
         disableHashNavigation?: boolean;
-        minBottomOffset: number;
+        wrapperRef: React.MutableRefObject<HTMLDivElement | null>;
         onItemClick: (itemTitle: string) => void;
     }) => {
         const dispatch = useDispatch();
@@ -128,8 +129,12 @@ const TableOfContent = React.memo(
             [disableHashNavigation, hashStates, isSelectedTab, location],
         );
 
+        const {bottomOffset: wrapperBottomOffset} = useWrapperBounds(wrapperRef);
+
         const setUpdatedOffsets = React.useCallback(() => {
-            const updatedOffsets = getUpdatedOffsets(containerRef, {minBottomOffset});
+            const updatedOffsets = getUpdatedOffsets(containerRef, {
+                minBottomOffset: wrapperBottomOffset,
+            });
             if (!updatedOffsets) {
                 return;
             }
@@ -146,7 +151,7 @@ const TableOfContent = React.memo(
 
                 return state;
             });
-        }, [minBottomOffset]);
+        }, [wrapperBottomOffset]);
 
         React.useEffect(() => {
             // to recalculate ReactGridLayout
