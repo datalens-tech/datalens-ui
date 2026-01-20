@@ -59,9 +59,11 @@ const getHash = ({
 const TableOfContent = React.memo(
     ({
         disableHashNavigation,
+        minBottomOffset,
         onItemClick,
     }: {
         disableHashNavigation?: boolean;
+        minBottomOffset: number;
         onItemClick: (itemTitle: string) => void;
     }) => {
         const dispatch = useDispatch();
@@ -127,7 +129,7 @@ const TableOfContent = React.memo(
         );
 
         const setUpdatedOffsets = React.useCallback(() => {
-            const updatedOffsets = getUpdatedOffsets(containerRef);
+            const updatedOffsets = getUpdatedOffsets(containerRef, {minBottomOffset});
             if (!updatedOffsets) {
                 return;
             }
@@ -144,7 +146,7 @@ const TableOfContent = React.memo(
 
                 return state;
             });
-        }, []);
+        }, [minBottomOffset]);
 
         React.useEffect(() => {
             // to recalculate ReactGridLayout

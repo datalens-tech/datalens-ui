@@ -10,7 +10,10 @@ const findScrollableElement = (element: Element | null): Element | null => {
     return findScrollableElement(element.parentElement);
 };
 
-export const getUpdatedOffsets = (containerRef: React.MutableRefObject<HTMLDivElement | null>) => {
+export const getUpdatedOffsets = (
+    containerRef: React.MutableRefObject<HTMLDivElement | null>,
+    options?: {minBottomOffset: number},
+) => {
     const containerEl = containerRef.current;
 
     if (!containerEl) {
@@ -23,7 +26,7 @@ export const getUpdatedOffsets = (containerRef: React.MutableRefObject<HTMLDivEl
     const leftOffset = `${containerRect.left}px`;
     const scrollableElement = findScrollableElement(containerEl);
     const topOffset = `${containerRect.top + (scrollableElement?.scrollTop ?? document.documentElement.scrollTop)}px`;
-    const bottomOffset = `${Math.max(0, windowHeight - containerRect.bottom)}px`;
+    const bottomOffset = `${Math.max(options?.minBottomOffset ?? 0, windowHeight - containerRect.bottom)}px`;
 
     return {topOffset, bottomOffset, leftOffset};
 };
