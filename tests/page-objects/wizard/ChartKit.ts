@@ -83,11 +83,11 @@ export default class ChartKit {
 
     async getComments() {
         // while in the tests we take into account only comments-lines, for areas and so on, the logic may be different
-        return await this.page.$$(`path${this.commentsSelector}`);
-    }
+        const locator = this.page
+            .locator(`path${this.commentsSelector}`)
+            .or(this.page.locator(slct(ChartQa.CommentLabel)));
 
-    async getCommentByText(commentText: string) {
-        return await this.page.$$(`text${this.commentsSelector} >> ${commentText}`);
+        return await locator.all();
     }
 
     async openScreenshotDialog() {
