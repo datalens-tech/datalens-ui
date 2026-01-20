@@ -17,6 +17,7 @@ import {
     updateDashboardParameters,
     updateFilters,
     updateLabels,
+    updateLayerFilters,
     updateSegments,
     updateShapes,
     updateSort,
@@ -57,7 +58,7 @@ export const placeholderIdToReduxActionMap = {
     [PlaceholderId.Size]: updateVisualizationPlaceholderItems,
     [PlaceholderId.Polyline]: updateVisualizationPlaceholderItems,
     [PlaceholderId.Points]: updateVisualizationPlaceholderItems,
-    [PlaceholderId.LayerFilters]: updateVisualizationPlaceholderItems,
+    [PlaceholderId.LayerFilters]: updateLayerFilters,
 };
 
 export const getFieldsFromVisualization = (
@@ -128,6 +129,15 @@ const getSectionFields = (
         }
         case PlaceholderId.DashboardParameters: {
             return visualizationState.dashboardParameters;
+        }
+        case PlaceholderId.LayerFilters: {
+            if (isVisualizationWithLayers(visualization)) {
+                return (
+                    getSelectedLayer(visualization)?.commonPlaceholders.filters.filter(
+                        (item) => !item.unsaved,
+                    ) || []
+                );
+            }
         }
     }
 
