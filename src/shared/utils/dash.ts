@@ -50,3 +50,11 @@ export function isBackgroundSettings(value: unknown): value is BackgroundSetting
 export function isTextSettings(value: unknown): value is TitleTextSettings {
     return isSettingsWithColor(value);
 }
+
+export const getAllTabItems = <T>(tab?: {items: T[]; globalItems?: T[]} | null) => {
+    if (!tab) {
+        return [];
+    }
+
+    return tab.items.concat(tab.globalItems || []);
+};

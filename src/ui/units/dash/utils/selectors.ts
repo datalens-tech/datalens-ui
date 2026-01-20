@@ -79,10 +79,6 @@ export const isGroupItemVisibleOnTab = ({
     );
 };
 
-export const getAllTabItems = <T>(tab: {items: T[]; globalItems?: T[]}) => {
-    return tab.items.concat(tab.globalItems || []);
-};
-
 function isControlGlobal(impactType?: ImpactType, impactTabsIds?: ImpactTabsIds): boolean {
     return (
         impactType === 'allTabs' ||

@@ -3,6 +3,7 @@ import intersection from 'lodash/intersection';
 import type {DashTabItem, DashTabItemWidgetTab} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
 import type {GetEntriesDatasetsFieldsResponse} from 'shared/schema';
+import {getAllTabItems} from 'shared/utils/dash';
 import type {DatasetsData} from 'ui/components/DashKit/plugins/types';
 import type {FilteringWidgetType} from 'ui/units/dash/modules/constants';
 import {
@@ -10,7 +11,6 @@ import {
     DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES,
     DASH_FILTERING_CHARTS_WIDGET_TYPES,
 } from 'ui/units/dash/modules/constants';
-import {getAllTabItems} from 'ui/units/dash/utils/selectors';
 
 import type {FiltersTypes} from '../components/Filters/Filters';
 import {DEFAULT_FILTERS} from '../components/Filters/Filters';
