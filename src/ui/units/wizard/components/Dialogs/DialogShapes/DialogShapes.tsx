@@ -8,7 +8,7 @@ import {i18n} from 'i18n';
 import type {DatasetOptions, Field, FilterField, ShapesConfig, Update} from 'shared';
 import {LINE_WIDTH_DEFAULT_VALUE} from 'ui/units/wizard/constants/shapes';
 
-import type {PaletteTypes} from '../../../constants';
+import {PaletteTypes} from '../../../constants';
 
 import {DialogLineWidth} from './DialogLineWidth/DialogLineWidth';
 import DialogShapesPalette from './DialogShapesPalette/DialogShapesPalette';
@@ -67,11 +67,11 @@ const DialogShapes: React.FC<Props> = ({
             shapesConfig.mountedShapes && Object.keys(shapesConfig.mountedShapes)
                 ? shapesConfig.mountedShapes
                 : {};
-        const mountedShapesLineWidths = Object.keys(mountedShapes).reduce((acc, shapeKey) => {
-            const shapeLineWidth = shapesConfig.mountedShapesLineWidths?.[shapeKey];
-
-            return {...acc, [shapeKey]: shapeLineWidth || LINE_WIDTH_DEFAULT_VALUE};
-        }, {});
+        const mountedShapesLineWidths =
+            shapesConfig.mountedShapesLineWidths &&
+            Object.keys(shapesConfig.mountedShapesLineWidths)
+                ? shapesConfig.mountedShapesLineWidths
+                : {};
 
         return {
             selectedValue: null,
@@ -177,10 +177,12 @@ const DialogShapes: React.FC<Props> = ({
                         }
                     />
                     <Flex direction="column" gap={4} spacing={{py: '5', px: '6'}}>
-                        <DialogLineWidth
-                            value={selectedShapeLineWidth}
-                            onChange={onLineWidthChange}
-                        />
+                        {paletteType === PaletteTypes.Lines && (
+                            <DialogLineWidth
+                                value={selectedShapeLineWidth}
+                                onChange={onLineWidthChange}
+                            />
+                        )}
                         <DialogShapesPalette
                             shapesState={shapesState}
                             onPaletteItemClick={onPaletteItemClick}
