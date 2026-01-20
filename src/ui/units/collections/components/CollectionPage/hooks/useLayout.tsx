@@ -268,7 +268,9 @@ export const useLayout = ({
                                             openDialog({
                                                 id: DIALOG_ACCESS,
                                                 props: {
-                                                    collectionId: collection.collectionId,
+                                                    resourceId: collection.collectionId,
+                                                    resourceType: ResourceType.Collection,
+                                                    parentId: collection.parentId,
                                                     resourceTitle: collection.title,
                                                     canUpdateAccessBindings: Boolean(
                                                         collection.permissions

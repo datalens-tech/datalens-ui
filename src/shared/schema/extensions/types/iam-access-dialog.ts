@@ -182,6 +182,7 @@ export type BatchListAccessBindingsArgs = {
 export enum ResourceType {
     Collection = 'collection',
     Workbook = 'workbook',
+    SharedEntry = 'sharedEntry',
 }
 
 export type UpdateAccessBindingsRequest = {

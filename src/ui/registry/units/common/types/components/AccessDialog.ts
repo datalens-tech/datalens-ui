@@ -1,6 +1,9 @@
+import type {ResourceType} from './IamAccessDialog';
+
 export type AccessDialogProps = {
-    workbookId?: string;
-    collectionId?: string;
+    resourceId: string;
+    parentId?: string | null;
+    resourceType: ResourceType;
     resourceTitle?: string;
     canUpdateAccessBindings: boolean;
     onClose?: () => void;

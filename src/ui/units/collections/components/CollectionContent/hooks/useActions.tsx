@@ -55,8 +55,9 @@ type UseActionsArgs = {
 const openAccessDialog = (
     dispatch: AppDispatch,
     params: {
-        collectionId?: string;
-        workbookId?: string;
+        parentId?: string | null;
+        resourceId: string;
+        resourceType: ResourceType;
         resourceTitle?: string;
         canUpdateAccessBindings?: boolean;
     },
@@ -65,8 +66,9 @@ const openAccessDialog = (
         openDialog({
             id: DIALOG_ACCESS,
             props: {
-                collectionId: params.collectionId,
-                workbookId: params.workbookId,
+                parentId: params.parentId,
+                resourceId: params.resourceId,
+                resourceType: params.resourceType,
                 resourceTitle: params.resourceTitle,
                 canUpdateAccessBindings: params.canUpdateAccessBindings ?? false,
                 onClose: () => {
@@ -149,7 +151,9 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                     action: () => {
                         if (isNewAccessDialogEnabled) {
                             openAccessDialog(dispatch, {
-                                collectionId: item.collectionId,
+                                resourceId: item.collectionId,
+                                parentId: item.parentId,
+                                resourceType: ResourceType.Collection,
                                 resourceTitle: item.title,
                                 canUpdateAccessBindings: item.permissions.updateAccessBindings,
                             });
@@ -336,8 +340,9 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                     action: () => {
                         if (isNewAccessDialogEnabled) {
                             openAccessDialog(dispatch, {
-                                workbookId: item.workbookId,
-                                collectionId: item?.collectionId || undefined,
+                                resourceId: item.workbookId,
+                                resourceType: ResourceType.Workbook,
+                                parentId: item.collectionId,
                                 resourceTitle: item.title,
                                 canUpdateAccessBindings: item.permissions.updateAccessBindings,
                             });
