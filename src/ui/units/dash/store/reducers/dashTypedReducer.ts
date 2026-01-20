@@ -191,7 +191,7 @@ export function dashTypedReducer(
 
         case SET_TAB_HASH_STATE: {
             const newHashStates = {
-                [action.payload.tabId]: {},
+                [action.payload.tabId]: state.hashStates?.[action.payload.tabId] ?? {},
             } as TabsHashStates;
             if (action.payload.stateHashId && action.payload.hashStates) {
                 newHashStates[action.payload.tabId] =
