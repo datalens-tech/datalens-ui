@@ -818,7 +818,6 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                                         key={`md-hint-tab-${tabIndex}`}
                                         value={hint || ''}
                                         onChange={handleUpdateHint}
-                                        disabled={!enableHint}
                                     />
                                 )}
                             </div>

@@ -1,7 +1,10 @@
 @import '~@gravity-ui/uikit/styles/mixins';
+@import '../WysiwygEditor/mixins.scss';
 
 .dialog-text {
     position: relative;
+
+    @include yfm-editor(586px, calc(90vh - 270px));
 
     &__hint {
         @include text-body-1();

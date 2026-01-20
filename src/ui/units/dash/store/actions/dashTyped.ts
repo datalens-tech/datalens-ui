@@ -390,13 +390,14 @@ export type SetTabHashStateAction = {
         entryId: string | null;
         stateHashId?: string;
         hashStates?: TabsHashStates;
+        disableUrlState?: boolean;
     };
 };
 
 export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'hashStates'>) {
     return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
         const {hashStates} = getState().dash;
-        const {entryId, stateHashId, tabId} = data;
+        const {entryId, stateHashId, tabId, disableUrlState} = data;
         const newData: SetTabHashStateAction['payload'] = {...data};
 
         let hashId: string | undefined = stateHashId;
@@ -457,6 +458,7 @@ export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'ha
             payload: {
                 ...newData,
                 stateHashId: hashId,
+                disableUrlState,
             },
         });
     };

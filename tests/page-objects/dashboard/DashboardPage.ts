@@ -13,6 +13,7 @@ import {
     EntryDialogQA,
     LOADED_DASH_CLASS,
     SelectQa,
+    WysiwygEditorQa,
     YfmQa,
 } from '../../../src/shared/constants';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -370,19 +371,30 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddText));
     }
 
-    async addText(text: string, delay?: number) {
+    async chooseMarkupText() {
+        await this.page.click(slct(WysiwygEditorQa.SettingsButton));
+        await this.page.click(slct(WysiwygEditorQa.ModeMarkupItemMenu));
+    }
+
+    async addText({text, timeout, markup}: {text: string; timeout?: number; markup?: boolean}) {
         await this.clickAddText();
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
+
+        if (markup) {
+            await this.chooseMarkupText();
+        }
+
         if (isEnabledCollections) {
-            await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+            await this.page.fill(`${slct(WysiwygEditorQa.Editor)} [contenteditable=true]`, text);
         } else {
-            await this.page.type(
+            await this.page.fill(
                 `${slct(DialogDashWidgetItemQA.Text)} [contenteditable=true]`,
                 text,
-                {delay},
+                {timeout},
             );
         }
+
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
 

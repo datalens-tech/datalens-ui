@@ -18,11 +18,11 @@ type Props = {
     className?: string;
 };
 
-const DEFAILT_SIZE = 20;
+const DEFAULT_SIZE = 20;
 export const MAX_ENTRY_DESCRIPTION_LENGTH = 36_000;
 
 export const EntryAnnotationDescriptionButton = (props: Props) => {
-    const {description, isEditMode, onClick, size = DEFAILT_SIZE, className} = props;
+    const {description, isEditMode, onClick, size = DEFAULT_SIZE, className} = props;
 
     if (!isEditMode && !description) {
         return null;
