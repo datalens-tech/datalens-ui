@@ -5,6 +5,13 @@ import type {
     ConnectionQueryContent,
     ConnectionQueryTypeOptions,
     DATASET_FIELD_TYPES,
+    DashItemControlConnectionBaseSource,
+    DashItemControlDatasetBaseSource,
+    DashItemControlExternalBaseSource,
+    DashItemControlManualBaseSource,
+    DashTabItemControlElementBase,
+    DashTabItemControlElementSelectBase,
+    DashTabItemControlElementDateBase,
     DashTabItemControlSourceType,
     DashTabItemType,
     Dataset,
@@ -12,7 +19,7 @@ import type {
     ImpactTabsIds,
     StringParams,
     TitlePlacement,
-    TitlePlacementOption,
+    UniversalDefaultValue,
 } from 'shared/types';
 
 import type {DialogTitleWidgetFeatureProps} from 'ui/components/DialogTitleWidget/DialogTitleWidget';
@@ -73,30 +80,13 @@ export type SelectorSourceType =
     | DashTabItemControlSourceType.Connection;
 
 export type ItemDataSource = {
-    chartId?: string;
-    showTitle?: boolean;
-    titlePlacement?: TitlePlacementOption;
-    accentType?: AccentTypeValue;
-    elementType?: string;
-    defaultValue?: string | string[];
-    datasetId?: string;
-    datasetFieldId?: string;
-    fieldName?: string;
-    fieldType?: DATASET_FIELD_TYPES;
-    datasetFieldType?: DatasetFieldType;
-    acceptableValues?: Array<Record<string, any>>;
-    isRange?: boolean;
-    multiselectable?: boolean;
-    operation?: Operations;
-    showInnerTitle?: boolean;
-    innerTitle?: string;
-    required?: boolean;
-    connectionId?: string;
-    connectionQueryType?: ConnectionQueryTypeValues;
-    connectionQueryContent?: ConnectionQueryContent;
-    showHint?: boolean;
-    hint?: string;
-};
+    defaultValue?: UniversalDefaultValue;
+} & Partial<DashTabItemControlElementBase> &
+    Partial<DashTabItemControlElementSelectBase & DashTabItemControlElementDateBase> &
+    Partial<DashItemControlManualBaseSource> &
+    Partial<DashItemControlConnectionBaseSource> &
+    Partial<DashItemControlDatasetBaseSource> &
+    Partial<DashItemControlExternalBaseSource>;
 
 export type AcceptableValue = {
     title: string;

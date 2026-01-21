@@ -43,7 +43,7 @@ import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
 import type {RealTheme} from '@gravity-ui/uikit';
 import {getPreparedCopyItemOptions, type CopiedConfigContext} from 'ui/units/dash/modules/helpers';
 import type {
-    SetItemDataArgs,
+    SetItemDataPayload,
     SetItemDataExternalControl,
     SetItemDataGroupControl,
     TabsHashStates,
@@ -238,7 +238,7 @@ export const applyGroupControlDialog = ({
     groupTabError,
 }: {
     closeDialog: () => void;
-    setItemData: (newItemData: SetItemDataArgs) => void;
+    setItemData: (newItemData: SetItemDataPayload) => void;
     groupTabError: boolean;
 }) => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
@@ -361,7 +361,7 @@ export const applyGroupControlDialog = ({
                 ? selectorsGroup.updateControlsOnChange
                 : false;
 
-        const contextList: SetItemDataArgs['contextList'] = [];
+        const contextList: SetItemDataPayload['item']['contextList'] = [];
 
         selectorsGroup.group.forEach((selector, index) => {
             if (isSelectorWithContext(selector)) {
@@ -438,7 +438,7 @@ export const applyGroupControlDialog = ({
             getExtendedItemData({data, type: DashTabItemType.GroupControl, contextList}),
         );
 
-        setItemData(itemData);
+        setItemData({item: itemData});
 
         closeDialog();
     };
@@ -537,7 +537,7 @@ export const applyExternalControlDialog = ({
     setItemData,
 }: {
     closeDialog: () => void;
-    setItemData: (newItemData: SetItemDataArgs) => void;
+    setItemData: (newItemData: SetItemDataPayload) => void;
 }) => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
@@ -586,7 +586,7 @@ export const applyExternalControlDialog = ({
             getExtendedItemData({data, defaults, type: DashTabItemType.Control}),
         );
 
-        setItemData(itemData);
+        setItemData({item: itemData});
         closeDialog();
     };
 };

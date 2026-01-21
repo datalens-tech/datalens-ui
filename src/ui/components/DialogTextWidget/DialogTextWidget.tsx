@@ -10,7 +10,7 @@ import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA, Featu
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import type {SetItemDataPayload} from '../../units/dash/store/actions/dashTyped';
 import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
 import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 import type {WysiwygEditorRef} from '../WysiwygEditor/WysiwygEditor';
@@ -34,7 +34,7 @@ export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {
     dialogIsVisible: boolean;
 
     closeDialog: () => void;
-    setItemData: (newItemData: SetItemDataArgs) => void;
+    setItemData: (newItemData: SetItemDataPayload) => void;
 
     theme?: RealTheme;
 }
@@ -147,11 +147,13 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         const {text, autoHeight, borderRadius} = state;
 
         setItemData({
-            data: {
-                text,
-                autoHeight,
-                borderRadius,
-                ...resultedBackgroundSettings,
+            item: {
+                data: {
+                    text,
+                    autoHeight,
+                    borderRadius,
+                    ...resultedBackgroundSettings,
+                },
             },
         });
         closeDialog();

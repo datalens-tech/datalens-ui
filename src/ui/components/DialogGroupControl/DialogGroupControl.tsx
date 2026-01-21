@@ -13,7 +13,7 @@ import {
 } from 'ui/store/actions/controlDialog/controlDialog';
 import {SELECTOR_DIALOG_TABS} from 'ui/store/constants/controlDialog';
 import {selectControlDialogActiveTab, selectSelectorDialog} from 'ui/store/selectors/controlDialog';
-import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
+import type {SetItemDataPayload} from 'ui/units/dash/store/actions/dashTyped';
 
 import {GroupControlBody} from './GroupControlBody/GroupControlBody';
 import {GroupControlFooter} from './GroupControlFooter/GroupControlFooter';
@@ -36,7 +36,7 @@ export type DialogGroupControlProps = {
     openedItemData: DashTabItemGroupControl['data'];
     dialogIsVisible: boolean;
     closeDialog: () => void;
-    setItemData: (newItemData: SetItemDataArgs) => void;
+    setItemData: (newItemData: SetItemDataPayload) => void;
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
     selectorsGroupTitlePlaceholder?: string;

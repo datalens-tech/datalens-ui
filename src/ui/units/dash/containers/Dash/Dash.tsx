@@ -428,6 +428,9 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                 themeType: this.props.themeType,
             },
         });
+
+        console.log(updateLayout, 'updateLayout');
+        console.log(migratedItemData?.layout, 'migratedItemData?.layout');
     };
 
     private updateLock = (prevIsEditMode: boolean, isEditMode: boolean) => {

@@ -1,6 +1,7 @@
 import type {ItemDropProps} from '@gravity-ui/dashkit';
 import type {ThemeType} from '@gravity-ui/uikit';
 
+import type {ConnectionQueryTypeValues} from '../constants/connections';
 import type {Operations} from '../modules';
 
 export type ImpactType = 'allTabs' | 'currentTab' | 'selectedTabs' | 'asGroup';
@@ -8,6 +9,8 @@ export type ImpactTabsIds = string[] | null | undefined;
 
 import type {
     ClientChartsConfig,
+    ConnectionQueryContent,
+    DatasetFieldType,
     Dictionary,
     Entry,
     EntryScope,
@@ -254,31 +257,47 @@ export interface DashTabItemControlData extends DashTabItemControlBaseData {
 
 export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
 
+export type DashItemControlConnectionBaseSource = {
+    connectionId?: string;
+    connectionQueryType?: ConnectionQueryTypeValues;
+    connectionQueryContent?: ConnectionQueryContent;
+};
+
+export interface DashTabItemControlConnection extends DashTabItemControlBaseData {
+    sourceType: DashTabItemControlSourceType.Connection;
+    source: DashItemControlConnectionBaseSource & DashTabItemControlElement;
+}
+
+export type DashItemControlDatasetBaseSource = {
+    datasetId: string;
+    datasetFieldId: string;
+    datasetFieldType?: DatasetFieldType;
+};
+
 export interface DashTabItemControlDataset extends DashTabItemControlData {
     sourceType: DashTabItemControlSourceType.Dataset;
-    source: {
-        datasetId: string;
-        datasetFieldId: string;
-    } & DashTabItemControlElement;
+    source: DashItemControlDatasetBaseSource & DashTabItemControlElement;
 }
+
+export type DashItemControlManualBaseSource = {
+    fieldName: string;
+    fieldType: string;
+    acceptableValues:
+        | {
+              // elementType: select
+              value: string;
+              title: string;
+          }[]
+        | {
+              // elementType: date
+              from: string;
+              to: string;
+          };
+};
 
 export interface DashTabItemControlManual extends DashTabItemControlData {
     sourceType: DashTabItemControlSourceType.Manual;
-    source: {
-        fieldName: string;
-        fieldType: string;
-        acceptableValues:
-            | {
-                  // elementType: select
-                  value: string;
-                  title: string;
-              }[]
-            | {
-                  // elementType: date
-                  from: string;
-                  to: string;
-              };
-    } & DashTabItemControlElement;
+    source: DashItemControlManualBaseSource & DashTabItemControlElement;
 }
 
 export type DashTabItemControlElement =
@@ -305,7 +324,7 @@ export type AccentTypeValue = 'info' | null;
 export interface DashTabItemControlElementBase {
     showTitle: boolean;
     titlePlacement?: TitlePlacementOption;
-    elementType: DashTabItemControlElementType;
+    elementType: 'select' | 'input' | 'date' | 'checkbox';
     operation?: Operations;
     showInnerTitle?: boolean;
     innerTitle?: string;
@@ -316,33 +335,48 @@ export interface DashTabItemControlElementBase {
     accentType?: AccentTypeValue;
 }
 
-export interface DashTabItemControlElementSelect extends DashTabItemControlElementBase {
-    elementType: DashTabItemControlElementType.Select;
+export type UniversalDefaultValue = StringDefaultValue | string[];
+export type StringDefaultValue = string;
+
+export interface DashTabItemControlElementSelectBase {
     multiselectable: boolean;
-    defaultValue: string | string[];
+}
+
+export interface DashTabItemControlElementSelect
+    extends DashTabItemControlElementBase,
+        DashTabItemControlElementSelectBase {
+    defaultValue: UniversalDefaultValue;
+    elementType: 'select';
 }
 
 export interface DashTabItemControlElementInput extends DashTabItemControlElementBase {
-    elementType: DashTabItemControlElementType.Input;
-    defaultValue: string;
+    defaultValue: StringDefaultValue;
+    elementType: 'input';
 }
 
-export interface DashTabItemControlElementDate extends DashTabItemControlElementBase {
-    elementType: DashTabItemControlElementType.Date;
+export interface DashTabItemControlElementDateBase {
     isRange: boolean;
-    defaultValue: string;
+}
+
+export interface DashTabItemControlElementDate
+    extends DashTabItemControlElementBase,
+        DashTabItemControlElementDateBase {
+    elementType: 'date';
+    defaultValue: StringDefaultValue;
 }
 
 export interface DashTabItemControlElementCheckbox extends DashTabItemControlElementBase {
-    elementType: DashTabItemControlElementType.Checkbox;
-    defaultValue: string;
+    elementType: 'checkbox';
+    defaultValue: StringDefaultValue;
 }
+
+export type DashItemControlExternalBaseSource = {
+    chartId: string;
+};
 
 export interface DashTabItemControlExternal extends DashTabItemControlData {
     sourceType: DashTabItemControlSourceType.External;
-    source: {
-        chartId: string;
-    };
+    source: DashItemControlExternalBaseSource;
 }
 
 export interface DashTabItemGroupControl extends DashTabItemBase {

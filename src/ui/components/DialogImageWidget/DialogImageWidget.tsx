@@ -14,7 +14,7 @@ import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {PaletteBackground} from '../..//units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
-import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import type {SetItemDataPayload} from '../../units/dash/store/actions/dashTyped';
 import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
 import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 
@@ -55,7 +55,7 @@ type Props = {
     openedItemData?: DashTabItemImage['data'];
     dialogIsVisible: boolean;
     onClose: () => void;
-    onApply: (newItemData: SetItemDataArgs) => void;
+    onApply: (newItemData: SetItemDataPayload) => void;
     scope: EntryScope;
     theme?: RealTheme;
 } & DialogImageWidgetFeatureProps;
@@ -127,7 +127,7 @@ export function DialogImageWidget(props: Props) {
             return;
         }
 
-        onApply({data: newData});
+        onApply({item: {data: newData}});
         onClose();
     };
 

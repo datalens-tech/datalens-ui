@@ -35,7 +35,7 @@ import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/Pal
 import {PaletteText} from 'ui/units/dash/containers/Dialogs/components/PaletteText/PaletteText';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import type {SetItemDataPayload} from '../../units/dash/store/actions/dashTyped';
 import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 
 import {useBackgroundColorSettings, useColorSettings} from './useColorSettings';
@@ -104,7 +104,7 @@ interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     dialogIsVisible: boolean;
 
     closeDialog: () => void;
-    setItemData: (newItemData: SetItemDataArgs) => void;
+    setItemData: (newItemData: SetItemDataPayload) => void;
 
     theme?: RealTheme;
 }
@@ -287,23 +287,25 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         if (Object.values(validationErrors).filter(Boolean).length === 0) {
             const resultedCustomFontSize = customFontSize ?? previousSelectedFontSize;
             setItemData({
-                data: {
-                    text,
-                    size:
-                        fontSize === 'custom'
-                            ? {
-                                  fontSize: Math.min(
-                                      MAX_FONT_SIZE,
-                                      Math.max(MIN_FONT_SIZE, resultedCustomFontSize),
-                                  ),
-                              }
-                            : fontSize,
-                    showInTOC,
-                    autoHeight,
-                    borderRadius,
-                    ...resultedBackgroundSettings,
-                    ...resultTextColorSettings,
-                    hint,
+                item: {
+                    data: {
+                        text,
+                        size:
+                            fontSize === 'custom'
+                                ? {
+                                      fontSize: Math.min(
+                                          MAX_FONT_SIZE,
+                                          Math.max(MIN_FONT_SIZE, resultedCustomFontSize),
+                                      ),
+                                  }
+                                : fontSize,
+                        showInTOC,
+                        autoHeight,
+                        borderRadius,
+                        ...resultedBackgroundSettings,
+                        ...resultTextColorSettings,
+                        hint,
+                    },
                 },
             });
             closeDialog();
