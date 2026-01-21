@@ -1,5 +1,5 @@
 import {Page} from '@playwright/test';
-import {LineShapeType, LineWidthSelectQa} from '../../../src/shared/constants';
+import {DialogShapeSettings, LineShapeType} from '../../../src/shared/constants';
 
 import {slct} from '../../utils';
 
@@ -18,7 +18,6 @@ export default class ShapeDialog {
     private cancelButton = '.dialog-shapes .g-dialog-footer__button_action_cancel';
     private valueLabelSelector = '.dialog-shapes .values-list__value-label';
     private applyButton = '.dialog-shapes .g-dialog-footer__button_action_apply';
-    private lineWidthSelectControl = '.dialog-shapes .dl-line-width-select__control';
 
     constructor(page: Page) {
         this.page = page;
@@ -43,19 +42,19 @@ export default class ShapeDialog {
     }
 
     async clickLineWidthSelectControl() {
-        await this.page.click(this.lineWidthSelectControl);
+        await this.page.locator(slct(DialogShapeSettings.LineWidthSelectControl)).click();
     }
 
     async changeLineWidth(width: string) {
         await this.clickLineWidthSelectControl();
         await this.page
-            .locator(slct(LineWidthSelectQa.Option))
+            .locator(slct(DialogShapeSettings.LineWidthSelectOption))
             .locator(`[data-qa="${width}"]`)
             .click();
     }
 
     async getLineWidthSelectOptions() {
-        return this.page.locator(slct(LineWidthSelectQa.Option));
+        return this.page.locator(slct(DialogShapeSettings.LineWidthSelectOption));
     }
 
     async selectValue(value: string) {

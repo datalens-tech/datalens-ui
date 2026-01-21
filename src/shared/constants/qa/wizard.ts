@@ -196,6 +196,7 @@ export const enum ChartSettingsDialogQA {
     PreserveWhiteSpace = 'preserve-white-space',
 }
 
-export const enum LineWidthSelectQa {
-    Option = 'line-width-select-option',
+export const enum DialogShapeSettings {
+    LineWidthSelectControl = 'line-width-select-control',
+    LineWidthSelectOption = 'line-width-select-option',
 }

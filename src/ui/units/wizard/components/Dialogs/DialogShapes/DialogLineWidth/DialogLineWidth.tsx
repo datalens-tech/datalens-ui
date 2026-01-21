@@ -1,15 +1,10 @@
 import React from 'react';
 
 import {Flex, Text} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
 import NumberInput from 'ui/components/NumberFormatSettings/NumberInput/NumberInput';
 import {LINE_WIDTH_MAX_VALUE, LINE_WIDTH_MIN_VALUE} from 'ui/units/wizard/constants/shapes';
 
 import {LineWidthSelect} from '../../../LineWidthSelect/LineWidthSelect';
-
-import './DialogLineWidth.scss';
-
-const b = block('dl-dialog-line-width');
 
 interface DialogLineWidthProps {
     value: number;
@@ -23,7 +18,7 @@ const I18N_STUB = {
 
 export const DialogLineWidth = React.memo(({value, onChange}: DialogLineWidthProps) => {
     return (
-        <Flex className={b()} direction="column" gap={2}>
+        <Flex direction="column" gap={2}>
             <Flex direction="row" alignItems="center" justifyContent="space-between">
                 <Text variant="body-1">{I18N_STUB['dialog-line-width-title']}</Text>
                 <LineWidthSelect value={value} onChange={onChange} />
@@ -33,9 +28,6 @@ export const DialogLineWidth = React.memo(({value, onChange}: DialogLineWidthPro
                     value={value}
                     min={LINE_WIDTH_MIN_VALUE}
                     max={LINE_WIDTH_MAX_VALUE}
-                    className={b('number-input')}
-                    buttonClassName={b('number-input-button')}
-                    inputClassName={b('number-input-value')}
                     onChange={onChange}
                 />
             </Flex>

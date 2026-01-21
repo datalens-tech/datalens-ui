@@ -1,6 +1,11 @@
 .wizard-number-input {
     display: flex;
-    max-width: 120px;
+    max-width: 136px;
+    width: 136px;
+
+    &__input-button {
+        width: 45px;
+    }
 
     // This beautiful crutch is already here
     // https://github.com/gravity-ui/chartkit/blob/master/src/components/Widget/Table/Paginator/Paginator.scss#L25
@@ -14,8 +19,11 @@
     & input[type='number'] {
         -moz-appearance: textfield;
     }
+    &__text-input {
+        width: 46px;
+    }
     /* stylelint-enable */
-    &__text-input > span {
+    &__text-input > .g-text-input__content {
         border-left: none;
         border-right: none;
     }

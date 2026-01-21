@@ -3,7 +3,7 @@ import React from 'react';
 import {ChevronDown} from '@gravity-ui/icons';
 import {Flex, Icon, Select, type SelectProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {LineWidthSelectQa} from 'shared';
+import {DialogShapeSettings} from 'shared';
 
 import {
     LINE_WIDTH_MAX_VALUE,
@@ -45,7 +45,11 @@ export const LineWidthSelect = React.memo(({value, onChange}: LineWidthSelectPro
             const optionValue = i.toString();
 
             result.push(
-                <Select.Option key={optionValue} value={optionValue} qa={LineWidthSelectQa.Option}>
+                <Select.Option
+                    key={optionValue}
+                    value={optionValue}
+                    qa={DialogShapeSettings.LineWidthSelectOption}
+                >
                     <Flex style={{height: '100%'}} direction="column" justifyContent="center">
                         <span
                             className={b('option-line')}
@@ -78,6 +82,7 @@ export const LineWidthSelect = React.memo(({value, onChange}: LineWidthSelectPro
                     direction="row"
                     alignItems="center"
                     gap={2}
+                    qa={DialogShapeSettings.LineWidthSelectControl}
                 >
                     <span className={b('option-line')} style={{height: `${value}px`}} />
                     <Icon data={ChevronDown} />

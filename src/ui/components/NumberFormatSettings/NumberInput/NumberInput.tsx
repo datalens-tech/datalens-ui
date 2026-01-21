@@ -11,9 +11,6 @@ interface NumberInputProps {
     min?: number;
     onChange: (value: number) => void;
     qa?: string;
-    className?: string;
-    buttonClassName?: string;
-    inputClassName?: string;
 }
 
 const b = block('wizard-number-input');
@@ -23,9 +20,6 @@ const NumberInput: React.FC<NumberInputProps> = ({
     onChange,
     max = Infinity,
     min = -Infinity,
-    className,
-    buttonClassName,
-    inputClassName,
     qa,
 }) => {
     const [internalValue, setInternalValue] = React.useState<string>(String(value));
@@ -42,24 +36,22 @@ const NumberInput: React.FC<NumberInputProps> = ({
         [onChange],
     );
 
-    const clampAndCommit = React.useCallback(() => {
-        const parsed = parseInt(internalValue, 10);
-        if (Number.isNaN(parsed)) {
-            commitValue(value);
-        } else if (parsed < min) {
-            commitValue(min);
-        } else if (parsed > max) {
-            commitValue(max);
-        } else {
-            commitValue(parsed);
-        }
-    }, [internalValue, min, max, commitValue, value]);
+    const clampAndCommit = React.useCallback(
+        (delta = 0) => {
+            const parsed = parseInt(internalValue, 10);
+            const baseValue = Number.isNaN(parsed) ? value : parsed;
+            const newValue = baseValue + delta;
+
+            commitValue(Math.max(min, Math.min(max, newValue)));
+        },
+        [internalValue, min, max, commitValue, value],
+    );
 
     const onBlur = React.useCallback(
         (e: React.FocusEvent<HTMLInputElement>) => {
             const relatedTarget = e.relatedTarget as HTMLElement | null;
             // Skip clampAndCommit if focus moved to +/- buttons
-            if (relatedTarget?.closest(`.${b('button')}`)) {
+            if (relatedTarget?.closest(`.${b('input-button')}`)) {
                 return;
             }
 
@@ -81,31 +73,9 @@ const NumberInput: React.FC<NumberInputProps> = ({
         setInternalValue(newValue);
     }, []);
 
-    const onPlus = React.useCallback(() => {
-        const parsed = parseInt(internalValue, 10);
-        if (Number.isNaN(parsed)) {
-            commitValue(value + 1 <= max ? value + 1 : max);
-        } else if (parsed < min) {
-            commitValue(min);
-        } else if (parsed >= max) {
-            commitValue(max);
-        } else {
-            commitValue(parsed + 1);
-        }
-    }, [internalValue, min, max, commitValue, value]);
+    const onPlus = React.useCallback(() => clampAndCommit(1), [clampAndCommit]);
 
-    const onMinus = React.useCallback(() => {
-        const parsed = parseInt(internalValue, 10);
-        if (Number.isNaN(parsed)) {
-            commitValue(value - 1 >= min ? value - 1 : min);
-        } else if (parsed > max) {
-            commitValue(max);
-        } else if (parsed <= min) {
-            commitValue(min);
-        } else {
-            commitValue(parsed - 1);
-        }
-    }, [internalValue, min, max, commitValue, value]);
+    const onMinus = React.useCallback(() => clampAndCommit(-1), [clampAndCommit]);
 
     const memorizedInputAttrs: React.InputHTMLAttributes<HTMLInputElement> = React.useMemo(
         () => ({
@@ -121,9 +91,9 @@ const NumberInput: React.FC<NumberInputProps> = ({
     const isPlusDisabled = !Number.isNaN(parsedInternal) && parsedInternal >= max;
 
     return (
-        <div className={b({}, className)}>
+        <div className={b({})}>
             <Button
-                className={b('button', buttonClassName)}
+                className={b('input-button')}
                 view="outlined"
                 pin="round-brick"
                 disabled={isMinusDisabled}
@@ -140,10 +110,10 @@ const NumberInput: React.FC<NumberInputProps> = ({
                 onBlur={onBlur}
                 onUpdate={onInput}
                 onKeyDown={onKeyDown}
-                className={b('text-input', inputClassName)}
+                className={b('text-input')}
             />
             <Button
-                className={b('button', buttonClassName)}
+                className={b('input-button')}
                 view="outlined"
                 pin="brick-round"
                 disabled={isPlusDisabled}
