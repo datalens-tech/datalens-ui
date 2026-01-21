@@ -136,8 +136,6 @@ const Content = ({
         [dispatch],
     );
 
-    const wrapperRef = React.useRef<HTMLDivElement | null>(null);
-
     const isEditMode = mode === Mode.Edit;
 
     switch (mode) {
@@ -159,7 +157,6 @@ const Content = ({
     return (
         <DashKitDnDWrapper onDragStart={onDragStart} onDragEnd={onDragEnd}>
             <div
-                ref={wrapperRef}
                 data-qa={DashBodyQa.ContentWrapper}
                 className={b('content-wrapper', {mobile: DL.IS_MOBILE, mode}, loadedMixin)}
             >
@@ -174,7 +171,7 @@ const Content = ({
                 >
                     <TableOfContent
                         disableHashNavigation={disableHashNavigation}
-                        wrapperRef={wrapperRef}
+                        dashEl={dashEl}
                         onItemClick={onItemClick}
                     />
                     <div
