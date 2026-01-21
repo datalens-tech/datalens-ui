@@ -29,7 +29,6 @@ import {
 } from '../../../../../../../shared';
 import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
-import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slider';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
@@ -37,6 +36,7 @@ import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
+import {mapToGravityChartValueFormat} from '../utils';
 
 import {prepareLineData} from './prepare-line-data';
 
@@ -151,6 +151,10 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
             seriesName = `${graph.custom.segmentTitle}: ${seriesName}`;
         }
 
+        const labelFormatting = graph.dataLabels
+            ? mapToGravityChartValueFormat({field: labelField, formatSettings: graph.dataLabels})
+            : undefined;
+
         return {
             name: seriesName,
             type: 'line',
@@ -165,10 +169,8 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 if (isDataLabelsEnabled) {
                     if (item?.y === null) {
                         dataItem.label = '';
-                    } else if (shouldUseHtmlForLabels) {
-                        dataItem.label = item?.label;
                     } else {
-                        dataItem.label = getFormattedLabel(item?.label, labelField);
+                        dataItem.label = item?.label;
                     }
                 }
 
@@ -187,6 +189,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
             dataLabels: {
                 enabled: isDataLabelsEnabled,
                 html: shouldUseHtmlForLabels,
+                format: labelFormatting,
             },
             legend: {
                 symbol: {
