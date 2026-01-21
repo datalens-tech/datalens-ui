@@ -1,0 +1,33 @@
+@import 'variables.scss';
+
+@mixin yfm-editor-height($maxHeight, $minHeight: 'auto') {
+    #{$markdownEditorClass} {
+        min-height: $minHeight;
+        max-height: $maxHeight;
+    }
+}
+
+@mixin yfm-editor($width, $maxHeight: calc(90vh - 166px), $minHeight: 140px) {
+    #{$markdownEditorClass} {
+        resize: both;
+        overflow: auto;
+        min-width: $width;
+        width: $width;
+        max-width: 80vw;
+        margin-top: $markdownEditorGap;
+    }
+
+    #{$markupModeEditorClass} {
+        padding: $markdownEditorGap 0 var(--g-spacing-2) var(--g-spacing-1);
+    }
+
+    #{$wisywigModeEditorClass} {
+        padding: 0 var(--g-spacing-4) var(--g-spacing-2);
+    }
+
+    @include yfm-editor-height($maxHeight, $minHeight);
+
+    #{$markdownEditorToolbarClass} {
+        padding: 0 $markdownEditorGap;
+    }
+}
