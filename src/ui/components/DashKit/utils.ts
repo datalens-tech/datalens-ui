@@ -316,7 +316,7 @@ function getPreparedWrapSettings({
     const style: CSSProperties = {
         ...additionalStyle,
         borderRadius,
-        backgroundColor: hasBgColor || hexBgColor ? hexBgColor : undefined,
+        backgroundColor: hasBgColor || bgColorFromConfigs ? bgColorFromConfigs : undefined,
     };
     return {
         style,
