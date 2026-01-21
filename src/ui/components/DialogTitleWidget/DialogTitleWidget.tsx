@@ -44,6 +44,7 @@ import './DialogTitleWidget.scss';
 
 const i18nCommon = I18n.keyset('dash.dashkit-plugin-common.view');
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
+const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
 
 type RadioButtonFontSizeOption = DashTabItemTitleSize | 'custom';
 
@@ -87,6 +88,7 @@ interface DialogTitleWidgetState {
     textColorSettings?: ColorSettings;
     hint?: HintSettings;
     borderRadius?: number;
+    internalMarginsEnabled?: boolean;
 }
 
 export interface DialogTitleWidgetFeatureProps {
@@ -97,6 +99,7 @@ export interface DialogTitleWidgetFeatureProps {
     enableSeparateThemeColorSelector?: boolean;
     enableBorderRadiusSelector?: boolean;
     enableCustomTextColorSelector?: boolean;
+    enableInternalMarginsSelector?: boolean;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     openedItemId: string | null;
@@ -465,7 +468,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                         enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
-                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                {enableBorderRadiusSelector && isNewDashSettingsEnabled && (
                     <FormRow className={b('row')} label={i18nCommon('label_border-radius')}>
                         <WidgetRoundingsInput value={borderRadius} onUpdate={setBorderRadius} />
                     </FormRow>

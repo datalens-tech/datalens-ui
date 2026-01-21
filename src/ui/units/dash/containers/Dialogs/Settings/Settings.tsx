@@ -81,7 +81,7 @@ const Settings = () => {
     const [supportDescription, setSupportDesc] = React.useState(supportDesc);
     const [margins, setMargins] = React.useState(settings.margins || DEFAULT_DASH_MARGINS);
     const [borderRadius, setBorderRadius] = React.useState(
-        settings.borderRadius ??
+        settings.widgetsSettings?.borderRadius ??
             (!isNew && isEnabledFeature(Feature.EnableNewDashSettings)
                 ? OLD_DEFAULT_WIDGET_BORDER_RADIUS
                 : undefined),

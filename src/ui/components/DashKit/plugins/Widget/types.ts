@@ -9,7 +9,6 @@ import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
 import type {ChartKitBaseOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import type {Widget} from '../../../../libs/DatalensChartkit/types';
-import type {CommonPluginProps} from '../../DashKit';
 import type {AdjustWidgetLayoutProps} from '../../utils';
 import type {DashkitMetaDataItemBase} from '../types';
 
@@ -35,13 +34,12 @@ export type CurrentTab = {
 export type WidgetPluginData = ConfigItem['data'];
 export type WidgetPluginDataWithTabs = ConfigItemWithTabs['data'] & {tabs: Array<CurrentTab>};
 
-export type WidgetPluginProps = Omit<PluginWidgetProps, 'data'> &
-    CommonPluginProps & {
-        forwardedRef: React.RefObject<ChartKit | ChartKitRef>;
-        data: WidgetPluginDataWithTabs | WidgetPluginData;
-        getMarkdown?: (props: {text: string}) => Promise<{result: string; meta?: object}>;
-        debouncedAdjustWidgetLayout: DebouncedFunc<(props: AdjustWidgetLayoutProps) => void>;
-    };
+export type WidgetPluginProps = Omit<PluginWidgetProps, 'data'> & {
+    forwardedRef: React.RefObject<ChartKit | ChartKitRef>;
+    data: WidgetPluginDataWithTabs | WidgetPluginData;
+    getMarkdown?: (props: {text: string}) => Promise<{result: string; meta?: object}>;
+    debouncedAdjustWidgetLayout: DebouncedFunc<(props: AdjustWidgetLayoutProps) => void>;
+};
 
 export type WidgetLoadedData = ChartKitBaseOnLoadProps<ChartsData & Widget> & {
     data?: {loadedData?: DashkitMetaDataItemBase & ChartsData & Widget};

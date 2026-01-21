@@ -32,7 +32,7 @@ import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
-import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
+import type {CommonGlobalWidgetSettings} from '../../DashKit';
 import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout} from '../../utils';
@@ -56,7 +56,6 @@ const GROUP_CONTROL_LOADING_EMULATION_TIMEOUT = 100;
 
 type OwnProps = ControlSettings &
     ContextProps &
-    Omit<CommonPluginProps, 'background' | 'backgroundSettings'> &
     PluginWidgetProps<Record<string, StringParams>> & {
         settings: SettingsProps & {
             dependentSelectors?: boolean;
@@ -66,7 +65,7 @@ type OwnProps = ControlSettings &
 type PluginGroupControlProps = OwnProps;
 
 type PluginGroupControl = Plugin<PluginGroupControlProps, Record<string, StringParams>> & {
-    globalWidgetSettings?: CommonPluginSettings['globalWidgetSettings'];
+    globalWidgetSettings?: CommonGlobalWidgetSettings;
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: ControlSettings['getDistincts'];
 };
@@ -270,10 +269,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.state.quickActionLoader ||
             this.state.localUpdateLoader;
 
-        const {borderRadius, globalWidgetSettings} = this.props;
-        const resultedBorderRadius = borderRadius ?? globalWidgetSettings?.borderRadius;
+        const borderRadius = this.props?.globalWidgetSettings?.borderRadius;
 
-        const style = resultedBorderRadius ? {borderRadius: resultedBorderRadius} : undefined;
+        const style: React.CSSProperties | undefined = borderRadius ? {borderRadius} : undefined;
 
         return (
             <GroupControlWrapper
