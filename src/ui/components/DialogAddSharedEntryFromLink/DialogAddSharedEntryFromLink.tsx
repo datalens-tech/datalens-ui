@@ -68,7 +68,7 @@ export const DialogAddSharedEntryFromLink: React.FC<DialogAddSharedEntryFromLink
             });
 
             const isSharedEntry = getIsSharedEntry(entry);
-            const {fullPermissions, ...lessEntry} = entry;
+            const {fullPermissions, ...restEntry} = entry;
             const isCanCreateBinding =
                 fullPermissions?.createEntryBinding || fullPermissions?.createLimitedEntryBinding;
             if (!isSharedEntry) {
@@ -84,7 +84,7 @@ export const DialogAddSharedEntryFromLink: React.FC<DialogAddSharedEntryFromLink
             }
 
             const extendedEntry: Partial<StructureItem> = {
-                ...lessEntry,
+                ...restEntry,
                 permissions: fullPermissions,
                 entity: CollectionItemEntities.ENTRY,
             };
