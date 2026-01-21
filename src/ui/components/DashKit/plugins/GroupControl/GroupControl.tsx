@@ -592,6 +592,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             config: {
                 ...this.getCurrentTabConfig(),
                 items: [currentConfigItem],
+                globalItems: [],
             } as Config,
             itemsStateAndParams: {
                 [this.props.id]: {params},
