@@ -24,14 +24,14 @@ export const getResourceRoles = (type: ResourceType) => {
         if (isSharedEntryEnable) {
             if ('limitedEntryBindingCreator' in roles && roles.limitedEntryBindingCreator) {
                 result.push({
-                    title: getSharedEntryMockText('iam-dialog-role-limitedEntryBindingCreator'),
+                    title: getSharedEntryMockText('iam-dialog-role-entryBindingCreator'),
                     value: roles.limitedEntryBindingCreator,
                 });
             }
 
             if ('entryBindingCreator' in roles && roles.entryBindingCreator) {
                 result.push({
-                    title: getSharedEntryMockText('iam-dialog-role-entryBindingCreator'),
+                    title: getSharedEntryMockText('iam-dialog-role-limitedEntryBindingCreator'),
                     value: roles.entryBindingCreator,
                 });
             }

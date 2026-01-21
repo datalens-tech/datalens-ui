@@ -1,5 +1,5 @@
 import {EntryScope} from 'shared';
-import type {WorkbookWithPermissions} from 'shared/schema';
+import type {WorkbookPermission, WorkbookWithPermissions} from 'shared/schema';
 
 import navigateHelper from '../../../../../libs/navigateHelper';
 import type {WorkbookEntry} from '../../../types';
@@ -18,4 +18,23 @@ export const getWorkbookEntryUrl = (
 
     return new URL(navigateHelper.redirectUrlSwitcher(workbookEntry), window.location.origin)
         .pathname;
+};
+
+export const getIsCanShowContextMenu = <T extends WorkbookEntry>(
+    entry: T,
+    workbookPermissions: WorkbookPermission,
+) => {
+    if (entry.collectionId) {
+        return workbookPermissions.updateAccessBindings;
+    } else {
+        return workbookPermissions.update;
+    }
+};
+
+export const getIsCanUpdateSharedEntryBindings = <T extends WorkbookEntry>(entry: T) => {
+    return (
+        entry.fullPermissions?.createEntryBinding ||
+        entry.fullPermissions?.createLimitedEntryBinding ||
+        undefined
+    );
 };
