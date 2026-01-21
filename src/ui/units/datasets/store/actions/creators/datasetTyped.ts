@@ -465,6 +465,7 @@ export function clickConnection({connectionId}: {connectionId: string}) {
 
 export function addConnection(args: {
     connection: ConnectionEntryWithDelegation;
+    skipDelegationCheck?: boolean;
     editHistoryOptions?: EditHistoryOptions;
 }) {
     return changeConnection({...args, action: ConnectionUpdateActions.ADD});
@@ -637,10 +638,12 @@ export function changeConnection({
     newConnection,
     editHistoryOptions,
     action,
+    skipDelegationCheck = false,
 }: {
     connection: ConnectionEntryWithDelegation;
     newConnection?: ConnectionEntryWithDelegation;
     editHistoryOptions?: EditHistoryOptions;
+    skipDelegationCheck?: boolean;
     action: ValueOf<typeof ConnectionUpdateActions>;
 }) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
@@ -653,7 +656,8 @@ export function changeConnection({
             const sourceId = newConnection?.entryId || connection.entryId;
             const connectionDelegegation = newConnection?.isDelegated ?? connection.isDelegated;
             const isAlreadyBinded = typeof connectionDelegegation === 'boolean';
-            const needCheckBinding = targetId && sourceId && !isAlreadyBinded;
+            const needCheckBinding =
+                targetId && sourceId && !isAlreadyBinded && !skipDelegationCheck;
 
             if (needCheckBinding) {
                 const result = await dispatch(
@@ -686,6 +690,8 @@ export function changeConnection({
                                     dispatch(closeDialog());
                                     rejectDialog(null);
                                 },
+                                delegation: (newConnection || connection).fullPermissions
+                                    ?.createEntryBinding,
                                 entry: newConnection || connection,
                                 onApply: async (delegation) => {
                                     if (id) {
@@ -2054,6 +2060,7 @@ export function initializeDataset({
                             // required delegation status, if user close dialog and ignore question
                             onClose: onDelegate,
                             onApply: onDelegate,
+                            delegation: connection.fullPermissions?.createEntryBinding,
                             open: true,
                             entry: connection,
                         },
