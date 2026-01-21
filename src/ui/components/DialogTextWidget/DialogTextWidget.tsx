@@ -26,6 +26,7 @@ export interface DialogTextWidgetFeatureProps {
     enableCustomBgColorSelector?: boolean;
     enableSeparateThemeColorSelector?: boolean;
     enableBorderRadiusSelector?: boolean;
+    enableInternalMarginsSelector?: boolean;
 }
 
 export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {
@@ -45,12 +46,14 @@ interface DialogTextWidgetState {
     autoHeight?: boolean;
     borderRadius?: number;
     isError?: boolean;
+    internalMarginsEnabled?: boolean;
 }
 
 const INPUT_TEXT_ID = 'widgetTextField';
 const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
 
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
+const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
 
 const DEFAULT_OPENED_ITEM_DATA: DashTabItemText['data'] = {
     text: '',
@@ -203,7 +206,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
                         enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
-                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                {enableBorderRadiusSelector && isNewDashSettingsEnabled && (
                     <FormRow className={b('row')} label={i18nCommon('label_border-radius')}>
                         <WidgetRoundingsInput value={borderRadius} onUpdate={setBorderRadius} />
                     </FormRow>

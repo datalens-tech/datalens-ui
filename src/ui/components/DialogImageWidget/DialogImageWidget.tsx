@@ -27,6 +27,7 @@ const INPUT_ALT_ID = 'dialog-image-input-alt';
 const INPUT_PRESERVE_ASPECT_RATIO_ID = 'dialog-image-input-preserve-aspect-ratio';
 
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
+const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
 
 const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
     src: '',
@@ -48,6 +49,7 @@ const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
 export type DialogImageWidgetFeatureProps = {
     enableSeparateThemeColorSelector?: boolean;
     enableBorderRadiusSelector?: boolean;
+    enableInternalMarginsSelector?: boolean;
 };
 
 type Props = {
@@ -200,7 +202,7 @@ export function DialogImageWidget(props: Props) {
                         enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
-                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                {enableBorderRadiusSelector && isNewDashSettingsEnabled && (
                     <FormRow className={b('row')} label={i18nCommon('label_border-radius')}>
                         <WidgetRoundingsInput
                             value={data.borderRadius}

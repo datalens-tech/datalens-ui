@@ -24,7 +24,7 @@ import {
 import type {ConnectionsData} from 'ui/components/DialogRelations/types';
 
 import {isEnabledFeature} from './isEnabledFeature';
-import {computeColorFromToken} from './widgetColors';
+import {computeColorFromToken} from './widgets/colors';
 
 // targetId - item is copied data from localStorage
 // id - item is already created via DashKit.setItem
