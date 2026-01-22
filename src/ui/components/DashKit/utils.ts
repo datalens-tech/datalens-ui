@@ -11,6 +11,7 @@ import type {
     DashTabItemControlElement,
     OldBackgroundSettings,
 } from 'shared';
+import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared';
 import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
 import {computeColorFromToken} from 'ui/utils/widgets/colors';
 
@@ -313,10 +314,18 @@ function getPreparedWrapSettings({
     const hexBgColor = bgColorFromConfigs ? computeColorFromToken(bgColorFromConfigs) : undefined;
     const hasBgColor = hexBgColor ? (d3Color(hexBgColor)?.opacity ?? 0) > 0 : true;
 
+    const newBackgroundColor =
+        bgColorFromConfigs === CustomPaletteBgColors.LIKE_CHART
+            ? LIKE_CHART_COLOR_TOKEN
+            : bgColorFromConfigs;
+
     const style: CSSProperties = {
         ...additionalStyle,
         borderRadius,
-        backgroundColor: hasBgColor || hexBgColor ? hexBgColor : undefined,
+        backgroundColor:
+            hasBgColor || newBackgroundColor === CustomPaletteBgColors.NONE
+                ? newBackgroundColor
+                : undefined,
     };
     return {
         style,
