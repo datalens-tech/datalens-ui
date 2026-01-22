@@ -100,6 +100,7 @@ export interface DialogChartWidgetFeatureProps {
     enableAutoheight?: boolean;
     enableBackgroundColor?: boolean;
     enableCustomBgColorSelector?: boolean;
+    enableInternalMarginsSelector?: boolean;
     enableSeparateThemeColorSelector?: boolean;
     enableBorderRadiusSelector?: boolean;
     enableFilteringSetting?: boolean;
@@ -151,6 +152,7 @@ const INPUT_HINT_ID = 'chartHintField';
 const INPUT_BORDER_RADIUS_ID = 'chartBorderRadiusField';
 
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableCommonChartDashSettings);
+const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
 
 const DEFAULT_OPENED_ITEM_DATA: DashTabItemWidget['data'] = {
     hideTitle: false,
@@ -216,6 +218,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
     });
 
     const couldChangeOldBg = enableCustomBgColorSelector;
+    const canHaveMaxOneTab = Boolean(withoutSidebar);
 
     const {
         oldBackgroundColor,
@@ -284,6 +287,13 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
         },
         [],
     );
+
+    const handleUpdateActiveTab = React.useCallback((value: string) => {
+        setState((prevState) => ({
+            ...prevState,
+            activeTab: value as (typeof TAB_TYPE)[keyof typeof TAB_TYPE],
+        }));
+    }, []);
 
     const onApply = React.useCallback(
         (argState: DialogChartWidgetState, resultedBg: typeof resultedBackgroundSettings) => {
@@ -645,7 +655,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                         />
                     </FormRow>
                 ) : null}
-                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                {enableBorderRadiusSelector && isNewDashSettingsEnabled && (
                     <FormRow
                         className={b('row')}
                         label={i18nCommon('label_border-radius')}
@@ -840,7 +850,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                                 />
                             </FormRow>
                         )}
-                        {renderVisualSettings()}
+                        {canHaveMaxOneTab && renderVisualSettings()}
                     </div>
                     <ParamsSection
                         tabIndex={tabIndex}
@@ -856,8 +866,8 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
         );
     };
 
-    const shouldRenderTabs = false;
-    // isEnabledFeature(Feature.EnableCommonChartDashSettings) && !withoutSidebar;
+    const shouldRenderTabs =
+        isEnabledFeature(Feature.EnableCommonChartDashSettings) && !withoutSidebar;
     const tabsTabContent = (
         <div className={b('tab-content', {'with-sidebar': !withoutSidebar})}>
             {!withoutSidebar && (
@@ -900,8 +910,8 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
             <Dialog.Body className={b('body')}>
                 {shouldRenderTabs ? (
                     <TabProvider
-                        value={TAB_TYPE.TABS}
-                        // onUpdate={(value) => this.setState({activeTab: value})}
+                        value={state.activeTab ?? TAB_TYPE.TABS}
+                        onUpdate={handleUpdateActiveTab}
                     >
                         <TabList className={b('tab-list')}>
                             <Tab value={TAB_TYPE.TABS}>

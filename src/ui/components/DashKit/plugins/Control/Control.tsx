@@ -49,7 +49,7 @@ import {
     addOperationForValue,
     unwrapFromArrayAndSkipOperation,
 } from '../../../../units/dash/modules/helpers';
-import type {CommonPluginProps} from '../../DashKit';
+import type {CommonGlobalWidgetSettings} from '../../DashKit';
 import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout, getControlHint} from '../../utils';
@@ -80,8 +80,7 @@ type ContextProps = {
     workbookId?: WorkbookId;
 };
 
-type PluginControlRendererProps = PluginWidgetProps &
-    Omit<CommonPluginProps, 'background' | 'backgroundSettings'>;
+type PluginControlRendererProps = PluginWidgetProps;
 
 export interface PluginControlProps
     extends PluginControlRendererProps,
@@ -95,7 +94,7 @@ export interface PluginControlProps
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: ControlSettings['getDistincts'];
-    globalWidgetSettings?: ControlSettings['globalWidgetSettings'];
+    globalWidgetSettings?: CommonGlobalWidgetSettings;
 }
 
 const b = block('dashkit-plugin-control');
@@ -720,16 +719,16 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     render() {
-        const {data, editMode, id, workbookId, globalWidgetSettings, borderRadius} = this.props;
+        const {data, editMode, id, workbookId, globalWidgetSettings} = this.props;
         const controlData = data as unknown as
             | DashTabItemControlExternal
             | DashTabItemControlManual
             | DashTabItemControlDataset;
         const {sourceType, source} = controlData;
 
-        const resultedBorderRadius = borderRadius ?? globalWidgetSettings?.borderRadius;
+        const borderRadius = globalWidgetSettings?.borderRadius;
 
-        const style = resultedBorderRadius ? {borderRadius: resultedBorderRadius} : undefined;
+        const style = borderRadius ? {borderRadius} : undefined;
 
         if (sourceType === DashTabItemControlSourceType.External) {
             const chartId = source.chartId;

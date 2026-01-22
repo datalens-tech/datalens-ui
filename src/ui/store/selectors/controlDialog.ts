@@ -34,7 +34,7 @@ export const selectControlDialogFeatureByType = createSelector(
 );
 
 export const selectControlDialogTheme = (state: DatalensGlobalState) =>
-    selectControlDialogState(state).theme ?? null;
+    selectControlDialogState(state).theme;
 
 export const selectSelectorsGroup = (state: DatalensGlobalState) =>
     selectControlDialogState(state).selectorsGroup;

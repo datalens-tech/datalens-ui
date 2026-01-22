@@ -262,10 +262,7 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
         {
             disableHashNavigation,
             scope: 'dash',
-            globalWidgetSettings: {
-                borderRadius: settings.borderRadius,
-                backgroundSettings: settings.backgroundSettings,
-            },
+            globalWidgetSettings: settings.widgetsSettings,
         },
         shouldReconfigureDashkit,
     );

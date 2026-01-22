@@ -1,20 +1,21 @@
 import React from 'react';
 
 import type {Plugin} from '@gravity-ui/dashkit';
+import type {DashTabItemWidget} from 'shared';
 import {CustomPaletteBgColors} from 'shared/constants';
 import {isOldBackgroundSettings} from 'shared/utils';
 import type {ChartWidgetWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 
 import MarkdownProvider from '../../../../modules/markdownProvider';
 import {ChartWrapper} from '../../../Widgets/Chart/ChartWidgetWithProvider';
-import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
+import type {CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {usePreparedWrapSettings} from '../../utils';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import type {WidgetPluginProps} from './types';
 
-type Props = WidgetPluginProps & CommonPluginProps;
+type Props = WidgetPluginProps;
 
 type PluginWidgetObjectSettings = CommonPluginSettings;
 
@@ -41,20 +42,23 @@ const widgetPlugin: PluginWidget = {
             elementRef: rootNodeRef,
         });
 
+        // @ts-expect-error TS2352: hideTitle is required in DashTabItemWidget['data'].
+        const data = props.data as DashTabItemWidget['data'];
+
         const workbookId = props.context.workbookId;
         const enableAssistant = props.context.enableAssistant;
-        const propsBg = props.data.tabs?.[0]?.background;
+        const propsBg = data.tabs?.[0]?.background;
 
         let oldWidgetBg = isOldBackgroundSettings(propsBg) ? propsBg : undefined;
-        if (widgetPlugin.scope === 'dash' && !props.data.backgroundSettings) {
+        if (widgetPlugin.scope === 'dash' && !data.backgroundSettings) {
             oldWidgetBg = {color: CustomPaletteBgColors.LIKE_CHART};
         }
 
         const {style} = usePreparedWrapSettings({
             ownWidgetSettings: {
                 background: oldWidgetBg,
-                backgroundSettings: props.backgroundSettings,
-                borderRadius: props.borderRadius,
+                backgroundSettings: data.backgroundSettings,
+                borderRadius: data.borderRadius,
             },
             globalWidgetSettings: widgetPlugin.globalWidgetSettings ?? {},
             defaultOldColor:
