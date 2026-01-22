@@ -37,7 +37,7 @@ datalensTest.describe('Dashboards - Markdown', () => {
 
         await dashboardPage.createDashboard({
             editDash: async () => {
-                await dashboardPage.addText(text, 20);
+                await dashboardPage.addText({text, timeout: 20, markup: true});
             },
         });
 

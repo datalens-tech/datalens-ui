@@ -4,7 +4,7 @@ import React from 'react';
 import type {Config, DashKit} from '@gravity-ui/dashkit';
 import {ChevronDown, TriangleExclamationFill} from '@gravity-ui/icons';
 import type {SelectOption} from '@gravity-ui/uikit';
-import {Button, Dialog, DropdownMenu, Icon, Popup, Select} from '@gravity-ui/uikit';
+import {Button, Dialog, DropdownMenu, Icon, Popup, Select, Skeleton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -16,6 +16,8 @@ import type {DashTab, DashTabAliases, DashTabItem} from 'shared';
 import {DashCommonQa, DashTabItemType} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
+import type {CurrentRequestState} from 'ui/components/Widgets/Chart/types';
+import type {LoadHiddenWidgetMetaType} from 'ui/units/dash/contexts/WidgetMetaContext';
 import {selectCurrentTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import {openDialogAliases} from '../../units/dash/store/actions/relations/actions';
@@ -27,6 +29,7 @@ import type {FiltersTypes} from './components/Filters/Filters';
 import {Filters} from './components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from './constants';
 import {
+    getInitialSubItemId,
     getPairedRelationType,
     getRelationsForSave,
     getRelationsIcon,
@@ -36,13 +39,7 @@ import {
 } from './helpers';
 import {useFilteredRelations} from './hooks/useFilteredRelations';
 import {useRelations} from './hooks/useRelations';
-import type {
-    ClickCallbackArgs,
-    DashMetaData,
-    RelationType,
-    RelationTypeChangeProps,
-    WidgetsTypes,
-} from './types';
+import type {ClickCallbackArgs, RelationType, RelationTypeChangeProps, WidgetsTypes} from './types';
 
 import './DialogRelations.scss';
 
@@ -62,6 +59,7 @@ export type DialogRelationsProps = {
     dashTabAliases: DashTabAliases | null;
     workbookId: string | null;
     widgetsCurrentTab: Record<string, string>;
+    loadHiddenWidgetMeta?: LoadHiddenWidgetMetaType;
 };
 
 export type OpenDialogRelationsArgs = {
@@ -69,7 +67,14 @@ export type OpenDialogRelationsArgs = {
     props: DialogRelationsProps;
 };
 
-const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
+const renderOptions = (option: SelectOption, silentFetchingWidgets: Set<string>) => {
+    if (silentFetchingWidgets.has(option.value)) {
+        const icon = <Skeleton className={b('skeleton-option-icon')} />;
+        return <SelectOptionWithIcon option={{...option, data: {...option.data, icon}}} />;
+    }
+
+    return <SelectOptionWithIcon option={option} />;
+};
 
 const EmptyState: React.FC = () => {
     return (
@@ -84,9 +89,6 @@ const EmptyState: React.FC = () => {
 };
 
 const DialogRelations = (props: DialogRelationsProps) => {
-    const [currentWidget, setCurrentWidget] = React.useState<DashTabItem | null>(
-        props.widget ?? null,
-    );
     const {
         dashKitRef,
         dashTabAliases,
@@ -95,38 +97,57 @@ const DialogRelations = (props: DialogRelationsProps) => {
         allWidgets: widgets,
         onClose,
         onApply,
+        loadHiddenWidgetMeta,
     } = props;
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
     const tabId = useSelector(selectCurrentTabId);
 
     const aliasWarnButtonRef = React.useRef<HTMLButtonElement | null>(null);
+    const silentRequestCancellationRef = React.useRef<CurrentRequestState>({});
 
     const [aliasWarnPopupOpen, setAliasWarnPopupOpen] = React.useState(false);
     const [searchValue, setSearchValue] = React.useState('');
     const [typeValues, setTypeValues] = React.useState<Array<FiltersTypes>>([]);
 
-    const [preparedRelations, setPreparedRelations] = React.useState<DashMetaData>([]);
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
 
-    const [itemId, setItemId] = React.useState(
-        currentWidget?.type === DashTabItemType.GroupControl
-            ? currentWidget.data.group[0].id
-            : null,
+    // used for control in group or tab of widget
+    const [selectedSubItemId, setSelectedSubItemId] = React.useState(
+        getInitialSubItemId(props.widget ?? null, widgetsCurrentTab),
     );
 
-    const {isLoading, currentWidgetMeta, relations, datasets, dashWidgetsMeta, invalidAliases} =
-        useRelations({
-            dashKitRef,
-            widget: currentWidget,
-            dialogAliases: aliases,
-            workbookId,
-            itemId,
-            widgetsCurrentTab,
-        });
+    const {
+        isLoading,
+        currentWidgetMeta,
+        relations,
+        datasets,
+        dashWidgetsMeta,
+        invalidAliases,
+        onLoadMeta,
+        setRelations,
+        currentWidget,
+        onChangeCurrentWidget,
+        setInvalidAliases,
+        silentFetchingWidgets,
+    } = useRelations({
+        dashKitRef,
+        initialWidget: props.widget ?? null,
+        dialogAliases: aliases,
+        workbookId,
+        selectedSubItemId,
+        loadHiddenWidgetMeta,
+        silentRequestCancellationRef,
+    });
+
+    const currentWidgetId = selectedSubItemId || currentWidgetMeta?.widgetId || '';
+
+    const isContentLoading =
+        isLoading || silentFetchingWidgets.has(selectedSubItemId || currentWidgetId);
 
     const widgetsIconMap = React.useMemo(() => {
         const iconsMap: Record<string, JSX.Element | null> = {};
+
         dashWidgetsMeta?.forEach((widgetMeta) => {
             iconsMap[widgetMeta.widgetId] = getRelationsIcon(widgetMeta, b('relations-icon'));
         });
@@ -138,13 +159,10 @@ const DialogRelations = (props: DialogRelationsProps) => {
         return getWidgetsOptions({tabId, widgetsIconMap, widgets, showDebugInfo});
     }, [tabId, widgetsIconMap, widgets, showDebugInfo]);
 
-    const currentWidgetId = itemId || currentWidgetMeta?.widgetId || '';
     const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>({});
 
-    const [shownInvalidAliases, setShownInvalidAliases] = React.useState<string[] | null>(null);
-
     const {filteredRelations} = useFilteredRelations({
-        relations: preparedRelations,
+        relations,
         searchValue,
         typeValues,
         changedWidgets,
@@ -155,20 +173,24 @@ const DialogRelations = (props: DialogRelationsProps) => {
         const newWidgetData = widgetOptions.find((item) => item.value === value[0])?.data;
         // if it's tab of widget or item in group control, widgetId is in the option
         // data, for old controls it's value[0]
-        const currentId = newWidgetData?.widgetId || value[0];
+        const selectedWidgetId = newWidgetData?.widgetId || value[0];
+        const selectedItemId = value[0];
 
-        const newCurrentWidget = widgets?.find((item) => item.id === currentId) as DashTabItem;
+        const newCurrentWidget = widgets?.find(
+            (item) => item.id === selectedWidgetId,
+        ) as DashTabItem;
 
-        setCurrentWidget(newCurrentWidget);
+        const newSelectedSubItemId = newWidgetData?.isItem ? selectedItemId : null;
 
-        setItemId(newWidgetData?.isItem ? value[0] : null);
-        setPreparedRelations([]);
+        setSelectedSubItemId(newSelectedSubItemId);
 
-        if (!changedWidgets[currentId]) {
+        if (!changedWidgets[selectedWidgetId]) {
             const updatedChangedWidgets = {...changedWidgets};
-            updatedChangedWidgets[currentId] = {};
+            updatedChangedWidgets[selectedWidgetId] = {};
             setChangedWidgets(updatedChangedWidgets);
         }
+
+        onChangeCurrentWidget({newCurrentWidget, newSelectedSubItemId});
     };
 
     const handleFilterInputChange = React.useCallback((data: string) => {
@@ -184,11 +206,11 @@ const DialogRelations = (props: DialogRelationsProps) => {
      */
     const handleUpdateRelations = React.useCallback(
         (changedAliases: string[][]) => {
-            if (isEmpty(preparedRelations)) {
+            if (relations.length === 0) {
                 return;
             }
 
-            const relationsWithChangedAliases = preparedRelations.map((widgetItem) => {
+            const relationsWithChangedAliases = relations.map((widgetItem) => {
                 const byAliases: Array<Array<string>> = changedAliases.filter((aliasArr) => {
                     if (!widgetItem.usedParams?.length) {
                         return false;
@@ -212,9 +234,9 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 });
                 setAliases(newAliases);
             }
-            setPreparedRelations(relationsWithChangedAliases);
+            setRelations(relationsWithChangedAliases);
         },
-        [aliases, preparedRelations],
+        [aliases, relations, setRelations],
     );
 
     /**
@@ -235,7 +257,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 changedWidgetsData: changedWidgets,
                 dashkitData: dashKitRef.current || null,
                 dashWidgetsMeta,
-                preparedRelations,
+                relations,
                 datasets,
                 currentWidgetId,
                 type: 'aliases',
@@ -257,7 +279,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 }
             });
             setChangedWidgets(newChangedWidgets);
-            setPreparedRelations(newPreparedRelations);
+            setRelations(newPreparedRelations);
         },
         [
             aliases,
@@ -266,9 +288,10 @@ const DialogRelations = (props: DialogRelationsProps) => {
             changedWidgets,
             dashKitRef,
             dashWidgetsMeta,
-            preparedRelations,
+            relations,
             datasets,
             currentWidgetId,
+            setRelations,
         ],
     );
 
@@ -299,7 +322,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     updateAliases: handleUpdateAliases,
                     onCloseCallback: handleAliasesClosed,
                     forceAddAlias: false,
-                    invalidAliases: shownInvalidAliases,
+                    invalidAliases,
                     ...data,
                     dialogAliases: aliases,
                 }),
@@ -313,7 +336,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             filteredRelations,
             currentWidgetMeta,
             handleAliasesClosed,
-            shownInvalidAliases,
+            invalidAliases,
             aliases,
         ],
     );
@@ -324,24 +347,20 @@ const DialogRelations = (props: DialogRelationsProps) => {
      */
     const handleRelationTypeChange = React.useCallback(
         (changedData: RelationTypeChangeProps) => {
-            const {type, widgetId, forceAddAlias, itemId: rowItemId, ...rest} = changedData;
+            const {type, widgetId, forceAddAlias, itemId: subItemId, ...rest} = changedData;
 
             const newChanged = {...changedWidgets};
             if (!newChanged[currentWidgetId]) {
                 newChanged[currentWidgetId] = {};
             }
             let currentRelations;
-            if (rowItemId) {
-                currentRelations = preparedRelations.find(
-                    (item) => item.itemId === rowItemId,
-                )?.relations;
+            if (subItemId) {
+                currentRelations = relations.find((item) => item.itemId === subItemId)?.relations;
             } else {
-                currentRelations = preparedRelations.find(
-                    (item) => item.widgetId === widgetId,
-                )?.relations;
+                currentRelations = relations.find((item) => item.widgetId === widgetId)?.relations;
             }
 
-            const relationSubjectId = rowItemId || widgetId;
+            const relationSubjectId = subItemId || widgetId;
             const currentRelationType = currentRelations?.type;
             if (currentRelationType === type) {
                 if (
@@ -385,7 +404,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                             forceAddAlias: true,
                             changedWidgetsData: newChanged,
                             changedWidgetId: widgetId,
-                            changedItemId: rowItemId,
+                            changedItemId: subItemId,
                         });
                     }
                 }
@@ -393,7 +412,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 setChangedWidgets(newChanged);
             }
         },
-        [changedWidgets, currentWidgetId, preparedRelations, handleAliasesClick],
+        [changedWidgets, currentWidgetId, relations, handleAliasesClick],
     );
 
     /**
@@ -401,12 +420,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
      */
     const handleInvalidAliasesClear = React.useCallback(() => {
         const filteredAliases = aliases[DEFAULT_ALIAS_NAMESPACE].map((aliasRow: string[]) => {
-            return aliasRow.filter((item) => !shownInvalidAliases?.includes(item));
+            return aliasRow.filter((item) => !invalidAliases?.includes(item));
         }).filter((item: string[]) => item.length > 1);
 
         handleUpdateAliases(filteredAliases);
-        setShownInvalidAliases([]);
-    }, [aliases, handleUpdateAliases, shownInvalidAliases]);
+        setInvalidAliases([]);
+    }, [aliases, handleUpdateAliases, invalidAliases, setInvalidAliases]);
 
     const handleDisconnectAll = React.useCallback(
         (disconnectType: 'all' | 'charts' | 'selectors') => {
@@ -440,7 +459,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 return res;
             }, {});
 
-            preparedRelations.forEach((item) => {
+            relations.forEach((item) => {
                 const widgetId = item.itemId || item.widgetId;
 
                 if (filteredIds[widgetId]) {
@@ -453,7 +472,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
             setChangedWidgets(newChangedWidgets);
         },
-        [changedWidgets, currentWidgetId, filteredRelations, preparedRelations],
+        [changedWidgets, currentWidgetId, filteredRelations, relations],
     );
 
     /**
@@ -486,29 +505,29 @@ const DialogRelations = (props: DialogRelationsProps) => {
         } else {
             onApply(newData);
         }
-    }, [dashKitRef, isLoading, changedWidgets, aliases, dashTabAliases, onClose, onApply]);
+    }, [dashKitRef, aliases, isLoading, dashTabAliases, changedWidgets, onClose, onApply]);
 
     const handleAliasesWarnClick = () => setAliasWarnPopupOpen(!aliasWarnPopupOpen);
 
     // disable disconnect button when loading
     // when selected only 'none' filter
     const isDisconnectDisabled = Boolean(
-        isLoading ||
+        isContentLoading ||
             (typeValues.length === 1 && typeValues[0] === 'none') ||
             !filteredRelations.length,
     );
 
+    // Cancel all silent requests on unmount
     React.useEffect(() => {
-        if (!preparedRelations?.length && relations.length) {
-            setPreparedRelations(relations);
-        }
-    }, [relations, preparedRelations]);
-
-    React.useEffect(() => {
-        if (!shownInvalidAliases && invalidAliases?.length) {
-            setShownInvalidAliases(invalidAliases);
-        }
-    }, [shownInvalidAliases, invalidAliases]);
+        return () => {
+            Object.values(silentRequestCancellationRef.current).forEach((requestState) => {
+                if (requestState.status === 'loading' && requestState.requestCancellation) {
+                    requestState.status = 'canceled';
+                    requestState.requestCancellation.cancel();
+                }
+            });
+        };
+    }, []);
 
     return (
         <Dialog
@@ -533,8 +552,8 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     onUpdate={handleItemChange}
                     filterable={true}
                     disabled={isLoading}
-                    renderOption={renderOptions}
-                    renderSelectedOption={renderOptions}
+                    renderOption={(option) => renderOptions(option, silentFetchingWidgets)}
+                    renderSelectedOption={(option) => renderOptions(option, silentFetchingWidgets)}
                     popupWidth="fit"
                 />
                 {currentWidget ? (
@@ -546,11 +565,13 @@ const DialogRelations = (props: DialogRelationsProps) => {
                         <Content
                             relations={filteredRelations}
                             widgetMeta={currentWidgetMeta}
-                            isLoading={isLoading}
+                            isLoading={isContentLoading}
                             onChange={handleRelationTypeChange}
                             onAliasClick={handleAliasesClick}
                             showDebugInfo={showDebugInfo}
                             widgetIcon={widgetsIconMap[currentWidgetMeta?.widgetId || '']}
+                            onLoadMeta={onLoadMeta}
+                            silentFetchingWidgets={silentFetchingWidgets}
                         />
                     </React.Fragment>
                 ) : (
@@ -609,7 +630,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                 </Button>
                             )}
                         />
-                        {Boolean(shownInvalidAliases?.length) && (
+                        {Boolean(invalidAliases?.length) && (
                             <React.Fragment>
                                 <Button
                                     ref={aliasWarnButtonRef}
@@ -638,7 +659,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                         </div>
                                         <AliasesInvalidList
                                             aliases={aliases?.[DEFAULT_ALIAS_NAMESPACE]}
-                                            invalidAliases={shownInvalidAliases}
+                                            invalidAliases={invalidAliases}
                                             datasets={datasets}
                                             onClose={handleAliasesWarnClick}
                                             onClear={handleInvalidAliasesClear}

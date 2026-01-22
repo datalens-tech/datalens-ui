@@ -84,7 +84,7 @@ const Settings = () => {
         settings.internalMarginsEnabled ?? true,
     );
     const [borderRadius, setBorderRadius] = React.useState(
-        settings.borderRadius ??
+        settings.widgetsSettings?.borderRadius ??
             (!isNew && isEnabledFeature(Feature.EnableNewDashSettings)
                 ? OLD_DEFAULT_WIDGET_BORDER_RADIUS
                 : undefined),

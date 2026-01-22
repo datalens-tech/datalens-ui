@@ -19,7 +19,7 @@ function prepareMetric({
     const measure = placeholders[0].items[0];
 
     if (typeof measure === 'undefined') {
-        return {};
+        return [];
     }
 
     const measureActualTitle = idToTitle[measure.guid];
@@ -27,7 +27,7 @@ function prepareMetric({
     const value = data[0][measureIndex];
 
     if (typeof value === 'undefined' || value === null) {
-        return {};
+        return [];
     }
 
     const useMarkup = isMarkupItem(value);

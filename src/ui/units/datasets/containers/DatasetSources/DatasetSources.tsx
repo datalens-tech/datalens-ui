@@ -18,6 +18,7 @@ import type {BaseSource} from 'shared/schema';
 import {showToast} from 'store/actions/toaster';
 import {SPLIT_PANE_RESIZER_CLASSNAME} from 'ui';
 import type {DataLensApiError, SDK} from 'ui';
+import {URL_QUERY} from 'ui/constants';
 import {
     addAvatar,
     addAvatarPrototypes,
@@ -28,6 +29,7 @@ import {
     deleteAvatar,
     deleteConnection,
     deleteSource,
+    getSharedConnectionDelegation,
     getSources,
     getSourcesListingOptions,
     openDialogParameterCreate,
@@ -59,6 +61,7 @@ import {
     componentErrorsSelector,
     connectionsSelector,
     currentDbNameSelector,
+    datasetIdSelector,
     filteredRelationsSelector,
     filteredSourceAvatarsSelector,
     filteredSourcesSelector,
@@ -87,6 +90,7 @@ interface OwnProps {
     workbookId: WorkbookId;
     collectionId: CollectionId;
     readonly: boolean;
+    bindedWorkbookId?: WorkbookId;
 }
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -293,16 +297,48 @@ export class DatasetSources extends React.Component<Props, State> {
         }
     };
 
-    selectConnection = async ({entryId, isDelegated}: {entryId: string; isDelegated?: boolean}) => {
+    selectConnection = async ({
+        entryId,
+        isDelegated,
+        collectionId: connCollectionId,
+    }: {
+        entryId: string;
+        isDelegated?: boolean;
+        collectionId?: CollectionId;
+    }) => {
         try {
+            const {
+                workbookId,
+                bindedWorkbookId,
+                datasetId,
+                collectionId: datasetCollectionId,
+            } = this.props;
             this.setState({isLoadingConnectionInfo: true});
+            const isAlreadyBinded = typeof isDelegated === 'boolean';
+            let delegation: boolean | undefined;
+            if (!isAlreadyBinded && datasetId) {
+                const result = await this.props.getSharedConnectionDelegation({
+                    targetId: datasetId,
+                    sourceId: entryId,
+                });
+                delegation = result?.isDelegated;
+            }
+
+            const bindedDatasetId =
+                bindedWorkbookId ||
+                (datasetCollectionId && connCollectionId && typeof delegation === 'boolean')
+                    ? datasetId
+                    : undefined;
             const connection = (await getSdk().sdk.us.getEntry({
                 entryId,
+                workbookId: workbookId || bindedWorkbookId,
+                bindedDatasetId,
                 includePermissionsInfo: true,
             })) as ConnectionEntry;
-
+            const delegationStatus = typeof delegation === 'boolean' ? delegation : isDelegated;
             await this.props.addConnection({
-                connection: {...connection, isDelegated},
+                connection: {...connection, isDelegated: delegationStatus},
+                skipDelegationCheck: !isAlreadyBinded,
             });
             this.setState({isLoadingConnectionInfo: false});
 
@@ -325,8 +361,12 @@ export class DatasetSources extends React.Component<Props, State> {
             sourcePrototypes,
             sourcesPagination,
             workbookId,
-            selectedConnection: {entryId: selectedConnId} = {},
+            selectedConnection: {
+                entryId: selectedConnId,
+                collectionId: selectedConnCollectionId,
+            } = {},
             resetSourcesPagination,
+            bindedWorkbookId,
         } = this.props;
 
         if (connectionId === selectedConnId) {
@@ -336,14 +376,21 @@ export class DatasetSources extends React.Component<Props, State> {
         this.props.clickConnection({connectionId});
 
         resetSourcesPagination();
-        const {sourceListing, currentDbName} =
-            await this.props.getSourcesListingOptions(connectionId);
+        const isSharedConnection = Boolean(selectedConnCollectionId);
+        const {sourceListing, currentDbName} = await this.props.getSourcesListingOptions({
+            connectionId,
+            isSharedConnection,
+            workbookId,
+            bindedWorkbookId,
+        });
 
         const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(sourceListing);
 
         return this.props.getSources({
             connectionId,
             workbookId,
+            bindedWorkbookId,
+            isSharedConnection,
             limit: serverPagination ? sourcesPagination.limit : undefined,
             currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
         });
@@ -363,11 +410,12 @@ export class DatasetSources extends React.Component<Props, State> {
 
     retryToGetSources = async () => {
         const {
-            selectedConnection: {entryId} = {},
+            selectedConnection: {entryId, collectionId: selectedConnCollectionId} = {},
             workbookId,
             sourcesPagination,
             resetSourcesPagination,
             getSourcesListingOptions,
+            bindedWorkbookId,
         } = this.props;
 
         if (!entryId) {
@@ -375,13 +423,22 @@ export class DatasetSources extends React.Component<Props, State> {
         }
 
         resetSourcesPagination();
-        const {sourceListing, currentDbName} = await getSourcesListingOptions(entryId);
+        const isSharedConnection = Boolean(selectedConnCollectionId);
+
+        const {sourceListing, currentDbName} = await getSourcesListingOptions({
+            connectionId: entryId,
+            isSharedConnection,
+            workbookId,
+            bindedWorkbookId,
+        });
 
         const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(sourceListing);
 
         this.props.getSources({
             connectionId: entryId,
             workbookId,
+            bindedWorkbookId,
+            isSharedConnection,
             limit: serverPagination ? sourcesPagination.limit : undefined,
             currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
         });
@@ -389,14 +446,16 @@ export class DatasetSources extends React.Component<Props, State> {
 
     updateDatasetByValidation = (data: UpdateDatasetByValidationProps) => {
         this.setState({isUpdating: true});
+        const {workbookId, bindedWorkbookId} = this.props;
+        return this.props
+            .updateDatasetByValidation({...data, workbookId, bindedWorkbookId})
+            .finally(() => {
+                if (this.isUnmounted) {
+                    return;
+                }
 
-        return this.props.updateDatasetByValidation(data).finally(() => {
-            if (this.isUnmounted) {
-                return;
-            }
-
-            this.setState({isUpdating: false});
-        });
+                this.setState({isUpdating: false});
+            });
     };
 
     updateDatasetConfig = ({
@@ -488,6 +547,10 @@ export class DatasetSources extends React.Component<Props, State> {
                             updatePreview,
                             validateEnabled,
                         });
+                    })
+                    .catch((e) => {
+                        this.setState({isLoadingConnectionInfo: false});
+                        throw e;
                     });
             }
             case DATASET_UPDATE_ACTIONS.SOURCE_UPDATE: {
@@ -777,8 +840,20 @@ export class DatasetSources extends React.Component<Props, State> {
 
     openConnection = (connectionId?: string) => {
         if (connectionId) {
-            // eslint-disable-next-line
-            window.open(`/connections/${connectionId}`, '_blank', 'noopener');
+            const url = new URL(`/connections/${connectionId}`, window.location.origin);
+
+            // open connection in readonly mode
+            if (this.props.readonly && this.props.bindedWorkbookId) {
+                url.searchParams.set(URL_QUERY.BINDED_WORKBOOK, this.props.bindedWorkbookId);
+                url.searchParams.append(URL_QUERY.BINDED_DATASET, this.props.datasetId);
+            } else if (this.props.workbookId && this.props.selectedConnection?.collectionId) {
+                url.searchParams.set(URL_QUERY.BINDED_WORKBOOK, this.props.workbookId);
+                url.searchParams.append(URL_QUERY.BINDED_DATASET, this.props.datasetId);
+            } else if (this.props.collectionId && this.props.selectedConnection?.collectionId) {
+                url.searchParams.set(URL_QUERY.BINDED_DATASET, this.props.datasetId);
+            }
+
+            window.open(url.pathname + url.search, '_blank', 'noopener');
         }
     };
 
@@ -798,6 +873,7 @@ export class DatasetSources extends React.Component<Props, State> {
             workbookId,
             collectionId,
             readonly,
+            bindedWorkbookId,
         } = this.props;
         const {
             isVisibleSourceEditorDialog,
@@ -829,6 +905,7 @@ export class DatasetSources extends React.Component<Props, State> {
                             }
                             isLoadingConnectionInfo={isLoadingConnectionInfo}
                             readonly={readonly}
+                            bindedWorkbookId={bindedWorkbookId}
                             isDisabledAddSource={isUpdating}
                             isDisabledDropSource={this.isDisabledDropSource}
                             connections={connections}
@@ -904,6 +981,7 @@ const mapStateToProps = createStructuredSelector({
     freeformSources: freeformSourcesSelector,
     sourcesPagination: sourcesPaginationSelector,
     currentDbName: currentDbNameSelector,
+    datasetId: datasetIdSelector,
 });
 const mapDispatchToProps = {
     updateDatasetByValidation,
@@ -927,6 +1005,7 @@ const mapDispatchToProps = {
     openDialogParameterEdit,
     resetSourcesPagination,
     getSourcesListingOptions,
+    getSharedConnectionDelegation,
 };
 const connector = connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true});
 

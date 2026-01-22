@@ -15,6 +15,7 @@ export interface SharedAppConfig {
     metrika: MetrikaCounter;
 
     usMasterToken?: string;
+    usDynamicMasterTokenPrivateKey?: string;
 
     regionalEnvConfig?: {allowLanguages?: string[]; defaultLang?: string; langRegion?: string};
 
@@ -88,26 +89,13 @@ export interface SharedAppConfig {
         };
     };
 
-    // sorted roles from the role with the most rights to the role with the least
-    orderedAuthRoles?: `${UserRole}`[];
-
-    // zitadel
-    isZitadelEnabled: boolean;
-    clientId?: string;
-    clientSecret?: string;
-    zitadelProjectId?: string;
-    zitadelUri?: string;
-    zitadelInternalUri?: string;
-    appHostUri?: string;
-    zitadelCookieSecret?: string;
-    serviceClientId?: string;
-    serviceClientSecret?: string;
-
     // auth
     isAuthEnabled: boolean;
     authTokenPublicKey?: string;
     authManageLocalUsersDisabled?: boolean;
     authSignupDisabled?: boolean;
+    // sorted roles from the role with the most rights to the role with the least
+    orderedAuthRoles?: `${UserRole}`[];
 
     chartTemplates: Partial<Record<keyof ChartTemplates, unknown>>;
     redis: RedisConfig | null;
@@ -148,6 +136,8 @@ export interface SharedAppContextParams {
     tenantId?: string;
 
     user?: CtxUser;
+
+    usDynamicMasterToken?: string;
 
     isEnabledServerFeature: (feature: string) => boolean;
 }

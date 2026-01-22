@@ -1,23 +1,46 @@
 import React from 'react';
 
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
-import {Button, DropdownMenu, Icon, Popover} from '@gravity-ui/uikit';
+import {
+    Button,
+    DropdownMenu,
+    Flex,
+    Icon,
+    Loader,
+    Popover,
+    Skeleton,
+    spacing,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DashCommonQa, DashRelationTypes} from 'shared';
+import logger from 'ui/libs/logger';
 
-import {RELATION_TYPES, TEXT_LIMIT} from '../../constants';
+import {TEXT_LIMIT} from '../../constants';
 import {getRelationsIcon} from '../../helpers';
-import type {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
+import type {
+    AliasClickHandlerData,
+    DashkitMetaDataItem,
+    OnLoadMetaType,
+    RelationType,
+} from '../../types';
 
 import {
     getClampedText,
+    getConnectionByInfo,
     getLinkIcon,
     getRelationDetailsKey,
+    getRelationDetailsText,
     getRelationsText,
     getRowTitle,
     getTextSeparator,
 } from './helpers';
+import type {
+    ConnectionByAliasesProp,
+    ConnectionByFieldsProp,
+    ConnectionByUsedParamsProp,
+    ConnectionIndirectAliasesProp,
+} from './types';
 
 import iconInfo from 'assets/icons/info.svg';
 import iconAlias from 'assets/icons/relations-alias.svg';
@@ -41,197 +64,8 @@ type RowParams = {
     onAliasClick?: (props: AliasClickHandlerData) => void;
     showDebugInfo: boolean;
     widgetIcon: React.ReactNode;
-};
-
-type ConnectionByFieldsProp = string[] | string;
-type ConnectionByUsedParamsProp = string[] | string;
-type ConnectionByAliasesProp = string[][] | string;
-type ConnectionIndirectAliasesProp = string[][];
-
-type ConnectionField =
-    | ConnectionByFieldsProp
-    | ConnectionByUsedParamsProp
-    | ConnectionByAliasesProp
-    | ConnectionIndirectAliasesProp;
-type ConnectionType = 'alias' | 'field' | 'param' | 'indirect';
-
-const getRelationDetailsText = ({
-    text,
-    linkType,
-    widget,
-    row,
-    withStrong,
-}: {
-    text: string;
-    linkType: RelationType;
-    widget: string;
-    row: string;
-    withStrong?: boolean;
-}) => {
-    const widgetNameTextWrapped = withStrong ? <strong>{widget}</strong> : widget;
-    const rowNameTextWrapped = withStrong ? <strong>{row}</strong> : row;
-    if (linkType === RELATION_TYPES.output) {
-        if (!rowNameTextWrapped) {
-            return '';
-        }
-        return withStrong ? (
-            <React.Fragment>
-                {widgetNameTextWrapped} {text} {rowNameTextWrapped}
-            </React.Fragment>
-        ) : (
-            `${widgetNameTextWrapped} ${text} ${rowNameTextWrapped}`
-        );
-    }
-    if (linkType === RELATION_TYPES.input) {
-        if (!widgetNameTextWrapped) {
-            return '';
-        }
-        return withStrong ? (
-            <React.Fragment>
-                {rowNameTextWrapped} {text} {widgetNameTextWrapped}
-            </React.Fragment>
-        ) : (
-            `${rowNameTextWrapped} ${text} ${widgetNameTextWrapped}`
-        );
-    }
-    return text;
-};
-
-const labelsMap = {
-    field: {
-        singleLabel: i18n('label_by-field'),
-        multiLabel: i18n('label_by-fields'),
-    },
-    alias: {
-        singleLabel: i18n('label_by-alias'),
-        multiLabel: i18n('label_by-aliases'),
-    },
-    param: {
-        singleLabel: i18n('label_by-parameter'),
-        multiLabel: i18n('label_by-parameters'),
-    },
-};
-
-const getFieldText = ({
-    field,
-    type,
-    hasDataset,
-}: {
-    field: ConnectionField;
-    type: ConnectionType;
-    hasDataset: boolean;
-}) => {
-    let fieldText = '';
-    let fieldTextWithStrong = null;
-
-    if (type === 'indirect') {
-        return {
-            fieldText,
-            fieldTextWithStrong,
-        };
-    }
-
-    const byField = type === 'field' || type === 'param';
-    const {singleLabel, multiLabel} = labelsMap[type];
-
-    if (Array.isArray(field) && field.length) {
-        const fieldLabel = field.length === 1 ? singleLabel : multiLabel;
-        const fieldName = byField ? (Array.isArray(field) && field?.join(', ')) || '' : '';
-        fieldText = ` ${fieldLabel} ${fieldName}`;
-
-        const fieldNameWithStrong = byField ? <strong>{fieldName}</strong> : null;
-
-        fieldTextWithStrong = (
-            <React.Fragment>
-                {' '}
-                {fieldLabel} {fieldNameWithStrong}
-            </React.Fragment>
-        );
-    } else if (type === 'field' && hasDataset && !field.length) {
-        fieldText = ` ${i18n('label_by-dataset-fields')}`;
-        fieldTextWithStrong = <React.Fragment>{fieldText}</React.Fragment>;
-    }
-
-    return {
-        fieldText,
-        fieldTextWithStrong,
-    };
-};
-
-const getConnectionByInfo = ({
-    byFields,
-    byUsedParams,
-    byAliases,
-    relationType,
-    indirectAliases,
-    hasDataset,
-}: {
-    relationType: RelationType;
-    byFields: ConnectionByFieldsProp;
-    byUsedParams: ConnectionByUsedParamsProp;
-    byAliases: ConnectionByAliasesProp;
-    indirectAliases: ConnectionIndirectAliasesProp;
-    hasDataset: boolean;
-}) => {
-    const isUnknownRelation = relationType === RELATION_TYPES.unknown;
-    const availableLink =
-        relationType !== RELATION_TYPES.ignore && relationType !== RELATION_TYPES.unknown;
-
-    const hasIndirectAliases = Boolean(indirectAliases.length);
-    const hasUsedParams = Array.isArray(byUsedParams)
-        ? Boolean(byUsedParams.length)
-        : Boolean(byUsedParams);
-    const showByUsedParams = hasUsedParams && availableLink;
-    const hasFields = Array.isArray(byFields) ? Boolean(byFields.length) : Boolean(byFields);
-    const showByField = hasFields && availableLink;
-    const hasAliases = Array.isArray(byAliases) ? Boolean(byAliases.length) : Boolean(byAliases);
-    const showByAlias = hasAliases && availableLink;
-
-    let field: ConnectionField;
-    let type: ConnectionType;
-
-    switch (true) {
-        case showByAlias: {
-            field = byAliases;
-            type = 'alias';
-            break;
-        }
-
-        case showByField || (hasDataset && availableLink): {
-            field = byFields;
-            type = 'field';
-            break;
-        }
-
-        case showByUsedParams: {
-            field = byUsedParams;
-            type = 'param';
-            break;
-        }
-
-        case isUnknownRelation && hasIndirectAliases: {
-            field = indirectAliases;
-            type = 'indirect';
-            break;
-        }
-
-        default: {
-            field = [];
-            type = 'field';
-        }
-    }
-
-    const {fieldText, fieldTextWithStrong} = getFieldText({
-        field,
-        type,
-        hasDataset,
-    });
-
-    return {
-        showByField: showByField || hasDataset || showByAlias || showByUsedParams,
-        fieldText,
-        fieldTextWithStrong,
-    };
+    onLoadMeta?: OnLoadMetaType;
+    silentFetchingWidgets: Set<string>;
 };
 
 export const getTooltipInfo = ({
@@ -361,7 +195,11 @@ export const Row = ({
     onAliasClick,
     showDebugInfo,
     widgetIcon,
+    onLoadMeta,
+    silentFetchingWidgets,
 }: RowParams) => {
+    const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+
     const relations = data?.relations;
     const {
         type: relationType,
@@ -385,7 +223,11 @@ export const Row = ({
         hasDataset,
     });
 
-    const icon = getRelationsIcon(data);
+    const isLoadingMeta = silentFetchingWidgets.has(data.widgetId);
+
+    const icon = React.useMemo(() => {
+        return isLoadingMeta ? <Skeleton className={b('skeleton-icon')} /> : getRelationsIcon(data);
+    }, [isLoadingMeta, data]);
 
     const handleAliasCLick = React.useCallback(() => {
         onAliasClick?.({
@@ -421,6 +263,29 @@ export const Row = ({
             widgetIcon,
             forceAddAlias,
         ],
+    );
+
+    const handleDropdownToggle = React.useCallback(
+        async (open: boolean) => {
+            setIsDropdownOpen(open);
+
+            if (
+                open &&
+                onLoadMeta &&
+                !isLoadingMeta &&
+                !data.loaded &&
+                !data.loadError &&
+                !data.isFetchFinished
+            ) {
+                try {
+                    await onLoadMeta({widget: data, subItemId: data.widgetId});
+                } catch (error) {
+                    logger.logError('Failed to load widget meta:', error);
+                } finally {
+                }
+            }
+        },
+        [data, isLoadingMeta, onLoadMeta],
     );
 
     if (!data || !widgetMeta) {
@@ -473,6 +338,8 @@ export const Row = ({
                         <DropdownMenu
                             size="l"
                             items={items}
+                            open={isDropdownOpen}
+                            onOpenToggle={handleDropdownToggle}
                             renderSwitcher={({onClick, onKeyDown}) => (
                                 <Button
                                     view="flat"
@@ -491,7 +358,19 @@ export const Row = ({
                                     {relationTypeText}
                                 </Button>
                             )}
-                        />
+                        >
+                            {silentFetchingWidgets.has(data.widgetId) && (
+                                <Flex
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    height="50px"
+                                    minWidth="160px"
+                                    className={spacing({p: 3})}
+                                >
+                                    <Loader size="s" />
+                                </Flex>
+                            )}
+                        </DropdownMenu>
                         <Popover
                             content={
                                 <div className={b('popover-content')} title={tooltipTitle}>

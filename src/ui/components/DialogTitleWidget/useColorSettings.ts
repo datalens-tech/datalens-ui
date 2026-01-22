@@ -1,15 +1,15 @@
 import React from 'react';
 
 import type {BackgroundSettings, ColorSettings, OldBackgroundSettings} from 'shared';
-import {CustomPaletteBgColors, Feature} from 'shared';
+import {Feature} from 'shared';
 import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
-import {getWidgetColorSettings} from 'ui/utils/widgetColors';
+import {getWidgetColorSettings} from 'ui/utils/widgets/colors';
 
 type UseColorSettingsProps = {
     color?: string;
     colorSettings?: ColorSettings;
-    defaultOldColor?: string;
+    defaultOldColor: string | undefined;
     enableSeparateThemeColorSelector?: boolean;
     isNewWidget: boolean;
 };
@@ -27,7 +27,10 @@ export function useColorSettings(props: UseColorSettingsProps) {
                 colorSettings: getWidgetColorSettings({
                     colorSettings: propsLocal.colorSettings,
                     oldColor: propsLocal.color,
-                    defaultOldColor: propsLocal.defaultOldColor ?? CustomPaletteBgColors.NONE,
+                    defaultOldColor:
+                        props.isNewWidget && isDashColorPickersByThemeEnabled
+                            ? undefined
+                            : propsLocal.defaultOldColor,
                     enableMultiThemeColors: propsLocal.enableSeparateThemeColorSelector ?? true,
                 }),
             };
@@ -99,7 +102,7 @@ function getColorSettingsProps({
 export function useBackgroundColorSettings({
     background,
     backgroundSettings,
-    defaultOldColor = CustomPaletteBgColors.NONE,
+    defaultOldColor,
     enableSeparateThemeColorSelector = true,
     isNewWidget,
 }: UseBackgroundColorSettingsProps) {

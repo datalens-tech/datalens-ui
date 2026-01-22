@@ -232,7 +232,6 @@ export type DLGlobalData = {
     defaultColorPaletteId?: string;
     extraPalettes?: Record<string, Palette>;
     headersMap?: Record<string, string>;
-    isZitadelEnabled?: boolean;
     hideNavigation?: boolean;
     connectorIcons?: ConnectorIconData[];
     releaseVersion?: string;

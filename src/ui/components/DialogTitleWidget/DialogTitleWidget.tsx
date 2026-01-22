@@ -510,7 +510,6 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                             <MarkdownControl
                                 value={hint?.text || ''}
                                 onChange={handleHintChanged}
-                                disabled={!hint?.enabled}
                             />
                         )}
                     </div>

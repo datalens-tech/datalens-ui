@@ -55,8 +55,10 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
         fetchEntityBindings,
         isLoadingDelete,
         onDelete,
+        entitiesForDeleteAlert,
     } = useSharedEntryBindings({
         entry,
+        isDeleteDialog,
         onDeleteSuccess,
     });
     const showDirectionControl = entry.scope === 'dataset';
@@ -82,7 +84,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                             isSearchActive={searchValue !== ''}
                             isDeleteDialog={isDeleteDialog}
                             entry={entry}
-                            entities={entities}
+                            entities={entitiesForDeleteAlert}
                             isError={isError}
                         />
                         {!showDirectionControl && !isDeleteDialog && (
@@ -95,6 +97,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                             />
                         )}
                         <Relations
+                            entitiesForDeleteAlert={entitiesForDeleteAlert}
                             isError={isError}
                             entities={entities}
                             currentDirection={currentDirection}

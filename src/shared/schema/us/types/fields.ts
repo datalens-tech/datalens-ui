@@ -85,7 +85,7 @@ export interface SharedEntryPermissions {
 export interface SharedEntryFields {
     collectionId: string;
     updatedAt: string;
-    workbookId: string;
+    workbookId: WorkbookId;
     scope: SharedScope;
     type: string;
     key: string;
@@ -97,6 +97,11 @@ export interface SharedEntryFields {
 
 export interface SharedEntryFieldsWithPermissions extends SharedEntryFields {
     permissions: SharedEntryPermissions;
+}
+
+export interface SharedEntryFieldsWithOptionalPermissions
+    extends Omit<SharedEntryFields, 'permissions'> {
+    permissions?: SharedEntryPermissions;
 }
 
 // corresponds to RETURN_FAVORITES_COLUMNS from US

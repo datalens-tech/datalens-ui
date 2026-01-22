@@ -3,7 +3,6 @@ import type {PointOptionsType} from 'highcharts';
 import escape from 'lodash/escape';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
-import pick from 'lodash/pick';
 import set from 'lodash/set';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
 import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/chart-storage';
@@ -27,18 +26,12 @@ import type {UiSandboxRuntimeOptions} from '../../../types';
 import {generateHtml} from '../../html-generator';
 import {getParseHtmlFn} from '../../html-generator/utils';
 
+import type {TargetValue} from './types';
 import {UiSandboxRuntime} from './ui-sandbox-runtime';
+import {clearVmProp} from './utils';
 
 export const UI_SANDBOX_TOTAL_TIME_LIMIT = 3000;
 export const UI_SANDBOX_FN_TIME_LIMIT = 100;
-
-/**
- * Config value to check. It could have any type.
- *
- * Each method in this module that uses such a value performs a typing check in runtime.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TargetValue = any;
 
 let uiSandbox: QuickJSWASMModule | undefined;
 let getInterruptAfterDeadlineHandler: (deadline: Date | number) => InterruptHandler;
@@ -58,116 +51,6 @@ export const getUISandbox = async () => {
 
     return uiSandbox;
 };
-
-const HC_FORBIDDEN_ATTRS = [
-    'chart',
-    'this',
-    'renderer',
-    'container',
-    'label',
-    'axis',
-    'legendItem',
-    'legendGroup',
-    'legendLine',
-    'xAxis',
-    'yAxis',
-] as const;
-const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'state'];
-
-const EVENT_KEYS = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey'];
-
-const MAX_NESTING_LEVEL = 5;
-function removeSVGElements(val: unknown, nestingLevel = 0): unknown {
-    if (nestingLevel > MAX_NESTING_LEVEL) {
-        return undefined;
-    }
-
-    if (val && typeof val === 'object') {
-        if (Array.isArray(val)) {
-            if (val.some((item) => item instanceof window.Highcharts.SVGElement)) {
-                return [];
-            }
-
-            return val.map((item) => removeSVGElements(item, nestingLevel + 1));
-        } else {
-            return Object.entries(val as object).reduce(
-                (acc, [key, value]) => {
-                    if (!(value instanceof window.Highcharts.SVGElement)) {
-                        acc[key] = removeSVGElements(value, nestingLevel + 1);
-                    }
-
-                    return acc;
-                },
-                {} as Record<string, unknown>,
-            );
-        }
-    }
-
-    return val;
-}
-
-function getChartProps(chart: unknown) {
-    return pick(chart, 'chartHeight', 'chartWidth', 'index');
-}
-
-function clearVmProp(prop: unknown): unknown {
-    if (prop && typeof prop === 'object') {
-        if (Array.isArray(prop)) {
-            return prop.map(clearVmProp);
-        }
-
-        if ('angular' in prop) {
-            // It looks like it's Highcharts.Chart - preparing a minimum of attributes for the entity
-            return getChartProps(prop);
-        }
-
-        // instanceof Event
-        const eventProps = 'preventDefault' in prop ? pick(prop, EVENT_KEYS) : {};
-
-        const item: Record<string, TargetValue> = {...(prop as object)};
-        HC_FORBIDDEN_ATTRS.forEach((attr) => {
-            if (attr in item) {
-                if (attr === 'this' && Array.isArray(item[attr]?.points)) {
-                    item[attr].points = item[attr].points.map(clearVmProp);
-                    return;
-                }
-
-                delete item[attr];
-            }
-        });
-
-        // eslint-disable-next-line prefer-const
-        let {series, point, points, this: _this, ...other} = item;
-        if (typeof series !== 'undefined') {
-            series = pick(series, ...ALLOWED_SERIES_ATTRS);
-            delete series.userOptions.data;
-        }
-
-        if (typeof point !== 'undefined') {
-            const pointClone = clearVmProp(item.point);
-            point = removeSVGElements(pointClone);
-        }
-
-        if (Array.isArray(points)) {
-            points = points.map(clearVmProp);
-        }
-
-        return {
-            series,
-            point,
-            points,
-            this: _this,
-            ...(removeSVGElements(other) as object),
-            ...eventProps,
-        };
-    }
-
-    if (prop && typeof prop === 'function') {
-        return prop.toString();
-    }
-
-    return prop;
-}
 
 async function getUiSandboxLibs(libs: string[]) {
     const getModule = (name: string) =>

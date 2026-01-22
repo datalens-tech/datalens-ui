@@ -20,13 +20,13 @@ import {usePrevious} from 'ui/hooks';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
-import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
+import type {CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Text.scss';
 
-type Props = Omit<PluginTextProps, 'apiHandler'> & CommonPluginProps;
+type Props = Omit<PluginTextProps, 'apiHandler'>;
 
 const b = block('dashkit-plugin-text-container');
 

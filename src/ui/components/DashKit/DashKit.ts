@@ -35,23 +35,18 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
     });
 };
 
-export interface CommonGlobalWidgetSettings {
+export interface CommonWidgetSettings {
     background?: OldBackgroundSettings;
     backgroundSettings?: BackgroundSettings;
     borderRadius?: number;
     internalMarginsEnabled?: boolean;
 }
 
+export type CommonGlobalWidgetSettings = CommonWidgetSettings;
+
 export interface CommonPluginSettings {
     scope?: string;
     globalWidgetSettings?: CommonGlobalWidgetSettings;
-}
-
-export interface CommonPluginProps {
-    background?: OldBackgroundSettings;
-    backgroundSettings?: BackgroundSettings;
-    borderRadius?: number;
-    internalMarginsEnabled: boolean;
 }
 
 export const getConfiguredDashKit = (

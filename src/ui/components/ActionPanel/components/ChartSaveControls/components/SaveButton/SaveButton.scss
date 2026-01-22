@@ -1,5 +1,7 @@
 .action-panel-save-button {
     &__save-btn {
+        min-width: 60px;
+
         svg {
             height: 16px;
             width: 16px;

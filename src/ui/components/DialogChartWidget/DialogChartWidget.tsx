@@ -153,6 +153,7 @@ const INPUT_BORDER_RADIUS_ID = 'chartBorderRadiusField';
 const INPUT_INTERNAL_MARGINS_ID = 'chartInternalMarginsField';
 
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableCommonChartDashSettings);
+const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
 
 const DEFAULT_OPENED_ITEM_DATA: DashTabItemWidget['data'] = {
     hideTitle: false,
@@ -219,6 +220,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
     });
 
     const couldChangeOldBg = enableCustomBgColorSelector;
+    const canHaveMaxOneTab = Boolean(withoutSidebar);
 
     const {
         oldBackgroundColor,
@@ -639,7 +641,6 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
     };
 
     const renderVisualSettings = () => {
-        const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
         return (
             <React.Fragment>
                 {enableBackgroundColor ? (
@@ -852,7 +853,6 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                                         key={`md-hint-tab-${tabIndex}`}
                                         value={hint || ''}
                                         onChange={handleUpdateHint}
-                                        disabled={!enableHint}
                                     />
                                 )}
                             </div>
@@ -875,7 +875,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                                 />
                             </FormRow>
                         )}
-                        {renderVisualSettings()}
+                        {canHaveMaxOneTab && renderVisualSettings()}
                     </div>
                     <ParamsSection
                         tabIndex={tabIndex}

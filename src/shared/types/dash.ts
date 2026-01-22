@@ -78,6 +78,12 @@ export interface DashEntry extends Entry {
     fake?: boolean;
 }
 
+export type DashWidgetsSettings = {
+    backgroundSettings?: BackgroundSettings;
+    borderRadius?: number;
+    internalMarginsEnabled?: boolean;
+};
+
 export type DashSettings = {
     autoupdateInterval: null | number;
     maxConcurrentRequests: null | number;
@@ -94,8 +100,8 @@ export type DashSettings = {
     internalMarginsEnabled?: boolean;
     margins?: [number, number];
     enableAssistant?: boolean;
+    widgetsSettings?: DashWidgetsSettings;
     backgroundSettings?: BackgroundSettings;
-    borderRadius?: number;
 };
 
 export interface DashData {
@@ -114,7 +120,7 @@ export type DashDragOptions = ItemDropProps;
 
 type OptionalDashDataSettings = Pick<
     DashSettings,
-    'margins' | 'enableAssistant' | 'backgroundSettings' | 'borderRadius' | 'internalMarginsEnabled'
+    'margins' | 'enableAssistant' | 'widgetsSettings' | 'backgroundSettings'
 >;
 
 // config with strict requirements of settings for new dash

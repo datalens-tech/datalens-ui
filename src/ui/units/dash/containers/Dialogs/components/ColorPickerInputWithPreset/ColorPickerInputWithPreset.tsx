@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {computeColorFromToken} from 'ui/utils/widgetColors';
+import {computeColorFromToken} from 'ui/utils/widgets/colors';
 
 import {
     ColorPickerInput,
@@ -24,6 +24,7 @@ export function ColorPickerInputWithPreset({
     paletteOptions,
     value,
     onUpdate,
+    onBlur,
     theme,
     ...colorPickerInputProps
 }: ColorPickerInputWithPresetProps) {
@@ -55,6 +56,7 @@ export function ColorPickerInputWithPreset({
                 {...colorPickerInputProps}
                 value={value}
                 onUpdate={onUpdate}
+                onBlur={onBlur}
                 theme={theme}
             />
         );
@@ -68,6 +70,7 @@ export function ColorPickerInputWithPreset({
                 onUpdate={onUpdate}
                 theme={theme}
                 onFocus={handleFocus}
+                onBlur={onBlur}
                 ref={inputRef}
             />
             <Popup
@@ -79,6 +82,7 @@ export function ColorPickerInputWithPreset({
             >
                 <ColorPalette
                     onSelect={handleSelectColor}
+                    onBlur={onBlur}
                     selectedColor={value || ''}
                     mainPresetOptions={mainPresetOptions || []}
                     paletteOptions={paletteOptions || []}

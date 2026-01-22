@@ -11,9 +11,9 @@ import type {
     DashTabItemControlElement,
     OldBackgroundSettings,
 } from 'shared';
-import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared/constants/widgets';
+import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared';
 import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
-import {computeColorFromToken} from 'ui/utils/widgetColors';
+import {computeColorFromToken} from 'ui/utils/widgets/colors';
 
 import {DL} from '../../constants';
 import {
@@ -280,21 +280,52 @@ export function getControlHint(source: DashTabItemControlElement) {
     return source.showHint ? source.hint : undefined;
 }
 
-function getPreparedWrapSettings(
-    backgroundColor: string | undefined,
-    additionalStyle?: CSSProperties,
-) {
-    const hexColor = backgroundColor ? computeColorFromToken(backgroundColor) : undefined;
-    const hasBgColor = hexColor ? (d3Color(hexColor)?.opacity ?? 0) > 0 : true;
+interface GetPreparedWrapSettingsArgs {
+    ownWidgetSettings: WidgetVisualSettings;
+    globalWidgetSettings: WidgetVisualSettings;
+    additionalStyle?: CSSProperties;
+    defaultOldColor: string;
+    theme: ThemeType;
+}
+
+function getPreparedWrapSettings({
+    ownWidgetSettings,
+    globalWidgetSettings,
+    additionalStyle,
+    defaultOldColor,
+    theme,
+}: GetPreparedWrapSettingsArgs) {
+    const borderRadius = ownWidgetSettings.borderRadius ?? globalWidgetSettings.borderRadius;
+
+    const bgColorFromConfigs =
+        getResultedBgColor(
+            ownWidgetSettings.background,
+            theme,
+            defaultOldColor,
+            ownWidgetSettings.backgroundSettings,
+        ) ??
+        getResultedBgColor(
+            globalWidgetSettings.background,
+            theme,
+            defaultOldColor,
+            globalWidgetSettings.backgroundSettings,
+        );
+
+    const hexBgColor = bgColorFromConfigs ? computeColorFromToken(bgColorFromConfigs) : undefined;
+    const hasBgColor = hexBgColor ? (d3Color(hexBgColor)?.opacity ?? 0) > 0 : true;
 
     const newBackgroundColor =
-        backgroundColor === CustomPaletteBgColors.LIKE_CHART
+        bgColorFromConfigs === CustomPaletteBgColors.LIKE_CHART
             ? LIKE_CHART_COLOR_TOKEN
-            : backgroundColor;
+            : bgColorFromConfigs;
 
     const style: CSSProperties = {
         ...additionalStyle,
-        backgroundColor: hasBgColor || hexColor ? newBackgroundColor : undefined,
+        borderRadius,
+        backgroundColor:
+            hasBgColor || newBackgroundColor === CustomPaletteBgColors.NONE
+                ? newBackgroundColor
+                : undefined,
     };
     return {
         style,
@@ -315,14 +346,6 @@ export function useTextColorStyles(oldTextColor?: string, textColorSettings?: Co
     }, [oldTextColor, textColorSettings, theme]);
 }
 
-export function useBorderRadiusStyles(borderRadius?: number, globalBorderRadius?: number) {
-    return React.useMemo(() => {
-        return {
-            borderRadius: borderRadius ?? globalBorderRadius,
-        };
-    }, [borderRadius, globalBorderRadius]);
-}
-
 interface WidgetVisualSettings {
     background?: OldBackgroundSettings | undefined;
     backgroundSettings?: BackgroundSettings | undefined;
@@ -335,49 +358,26 @@ export function usePreparedWrapSettings({
     globalWidgetSettings,
     additionalStyle,
     defaultOldColor,
-}: {
-    ownWidgetSettings: WidgetVisualSettings;
-    globalWidgetSettings: WidgetVisualSettings;
-    additionalStyle?: CSSProperties;
-    defaultOldColor: string;
-}) {
+}: Omit<GetPreparedWrapSettingsArgs, 'theme'>) {
     const theme = useThemeType();
-    const borderRadiusStyles = useBorderRadiusStyles(
-        ownWidgetSettings.borderRadius,
-        globalWidgetSettings.borderRadius,
-    );
-    return React.useMemo(() => {
-        return getPreparedWrapSettings(
-            getResultedBgColor(
-                ownWidgetSettings.background,
-                theme,
+
+    return React.useMemo(
+        () =>
+            getPreparedWrapSettings({
+                ownWidgetSettings,
+                globalWidgetSettings,
+                additionalStyle,
                 defaultOldColor,
-                ownWidgetSettings.backgroundSettings,
-            ) ??
-                getResultedBgColor(
-                    globalWidgetSettings.background,
-                    theme,
-                    defaultOldColor,
-                    globalWidgetSettings.backgroundSettings,
-                ),
-            {...borderRadiusStyles, ...additionalStyle},
-        );
-    }, [
-        ownWidgetSettings.background,
-        globalWidgetSettings.background,
-        ownWidgetSettings.backgroundSettings,
-        globalWidgetSettings.backgroundSettings,
-        additionalStyle,
-        borderRadiusStyles,
-        defaultOldColor,
-        theme,
-    ]);
+                theme,
+            }),
+        [ownWidgetSettings, globalWidgetSettings, additionalStyle, defaultOldColor, theme],
+    );
 }
 
 export function getResultedBgColor(
     oldBgColor: OldBackgroundSettings | undefined,
     theme: ThemeType,
-    defaultColor: string,
+    defaultColor: string | undefined,
     newBgColor: BackgroundSettings | undefined,
 ): string | undefined {
     if (newBgColor?.color) {

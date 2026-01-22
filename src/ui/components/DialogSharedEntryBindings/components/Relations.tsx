@@ -25,6 +25,7 @@ type RelationsProps = {
     isError: boolean;
     isDeleteDialog: boolean;
     entities: SharedEntryBindingsItem[];
+    entitiesForDeleteAlert: SharedEntryBindingsItem[];
     entry: SharedEntry;
     currentDirection: AttachmentValue;
     onSearch: (value: string) => void;
@@ -49,6 +50,7 @@ export const Relations = ({
     isLoading,
     showDirectionControl,
     fetchEntityBindings,
+    entitiesForDeleteAlert,
 }: RelationsProps) => {
     const dispatch: AppDispatch = useDispatch();
 
@@ -192,7 +194,7 @@ export const Relations = ({
         );
     }
 
-    if (isDeleteDialog && entities.length === 0 && searchValue === '') {
+    if (isDeleteDialog && entitiesForDeleteAlert.length === 0) {
         return null;
     }
 

@@ -19,7 +19,7 @@ import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHel
 import {DL} from 'ui/constants';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
-import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
+import type {CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
@@ -40,7 +40,7 @@ type PluginTitleObjectSettings = CommonPluginSettings & {
     hideHint?: boolean;
 };
 
-type Props = PluginTitleProps & PluginTitleObjectSettings & CommonPluginProps;
+type Props = PluginTitleProps & PluginTitleObjectSettings;
 
 type PluginTitle = Plugin<Props> &
     CommonPluginSettings & {

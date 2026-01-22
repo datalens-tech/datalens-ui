@@ -17,6 +17,7 @@ import type {WorkbookEntry} from 'ui/units/workbooks/types/index';
 
 import {EntryActions} from '../../../EntryActions/EntryActions';
 import {defaultRowStyle, mobileRowStyle} from '../constants';
+import {getIsCanShowContextMenu, getIsCanUpdateSharedEntryBindings} from '../utils';
 
 import './Row.scss';
 
@@ -151,7 +152,7 @@ const Row = <T extends WorkbookEntry>({
                         onClick={onChangeFavorite}
                         isFavorite={item.isFavorite}
                     />
-                    {workbook.permissions.update && (
+                    {getIsCanShowContextMenu(item, workbook.permissions) && (
                         <div className={b('btn-actions')}>
                             <EntryActions
                                 workbook={workbook}
@@ -167,6 +168,7 @@ const Row = <T extends WorkbookEntry>({
                                 }
                                 onCopyId={onCopyId && (() => onCopyId(item))}
                                 onUpdateSharedEntryBindings={
+                                    getIsCanUpdateSharedEntryBindings(item) &&
                                     onUpdateSharedEntryBindings &&
                                     (() => onUpdateSharedEntryBindings(item))
                                 }

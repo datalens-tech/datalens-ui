@@ -9,7 +9,6 @@ import {appEnv} from './app-env';
 import {appAuth} from './components/auth/middlewares/auth';
 import {getOpensourceLayoutConfig} from './components/layout/opensource-layout-config';
 import {serverFeatureWithBoundedContext} from './middlewares';
-import authZitadel from './middlewares/auth-zitadel';
 import {getConnectorToQlConnectionTypeMap} from './modes/charts/plugins/ql/utils/connection';
 import initOpensourceApp from './modes/opensource/app';
 import {nodekit} from './nodekit';
@@ -24,10 +23,6 @@ registerAppPlugins();
 nodekit.config.endpoints = getAppEndpointsConfig(
     appEnv as AppEnvironment.Production | AppEnvironment.Development,
 );
-
-if (nodekit.config.isZitadelEnabled) {
-    nodekit.config.appAuthHandler = authZitadel;
-}
 
 if (nodekit.config.isAuthEnabled) {
     nodekit.config.appAuthHandler = appAuth;

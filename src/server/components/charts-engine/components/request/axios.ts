@@ -74,6 +74,68 @@ function normalizeHeaders(
     return normalized;
 }
 
+function normalizeResponseHeaders(headers: Record<string, unknown>): Record<string, string> {
+    const normalized: Record<string, string> = {};
+
+    for (const [key, value] of Object.entries(headers)) {
+        if (typeof value === 'string') {
+            normalized[key] = value;
+        } else if (typeof value === 'number') {
+            normalized[key] = String(value);
+        } else if (Array.isArray(value)) {
+            normalized[key] = value.join(', ');
+        }
+    }
+
+    return normalized;
+}
+
+function isStreamLike(value: unknown): value is IncomingMessage {
+    return (
+        value !== null &&
+        typeof value === 'object' &&
+        typeof (value as {pipe?: unknown}).pipe === 'function'
+    );
+}
+
+async function readErrorBody(data: unknown, headers: Record<string, unknown>): Promise<unknown> {
+    if (data === null || data === undefined) {
+        return data;
+    }
+
+    if (isStreamLike(data)) {
+        return new Promise((resolve) => {
+            const chunks: Buffer[] = [];
+
+            data.on('data', (chunk: Buffer) => {
+                chunks.push(chunk);
+            });
+
+            data.on('end', () => {
+                const buffer = Buffer.concat(chunks);
+                const body = buffer.toString('utf-8');
+                const contentType = headers['content-type'];
+
+                if (typeof contentType === 'string' && contentType.includes('application/json')) {
+                    try {
+                        resolve(JSON.parse(body));
+                    } catch {
+                        resolve(body);
+                    }
+                } else {
+                    resolve(body);
+                }
+            });
+
+            data.on('error', () => {
+                resolve({});
+            });
+        });
+    }
+
+    return data;
+}
+
 export class RequestAxios {
     private static axiosInstance: AxiosInstance;
     private static appConfig: AppConfig;
@@ -208,7 +270,9 @@ export class RequestAxios {
                         const result = {
                             statusCode: response.status,
                             body,
-                            headers: response.headers,
+                            headers: normalizeResponseHeaders(
+                                response.headers as Record<string, unknown>,
+                            ),
                         };
 
                         resolve(result);
@@ -219,8 +283,8 @@ export class RequestAxios {
                     });
                 });
             })
-            .catch((error) => {
-                throw this.normalizeError(error);
+            .catch(async (error) => {
+                throw await this.normalizeError(error);
             });
     }
 
@@ -368,12 +432,20 @@ export class RequestAxios {
     }
 
     private static mapRequestOptions(options: RequestOptions): AxiosRequestConfig {
+        const normalizedHeaders = normalizeHeaders(options.headers);
+
         const axiosConfig: AxiosRequestConfig = {
             url: options.uri || options.url,
             method: options.method,
-            headers: normalizeHeaders(options.headers),
+            headers: normalizedHeaders,
             timeout: options.timeout,
-            maxRedirects: options.maxRedirects ?? 10,
+            maxRedirects: options.maxRedirects ?? 0,
+            beforeRedirect: (redirectOptions) => {
+                // Preserve all original headers on redirect (matches request-promise-native behavior)
+                if (normalizedHeaders) {
+                    Object.assign(redirectOptions.headers, normalizedHeaders);
+                }
+            },
         };
 
         if (options.body !== undefined) {
@@ -420,22 +492,34 @@ export class RequestAxios {
         return body;
     }
 
-    private static normalizeError(error: unknown): Error & {
-        statusCode?: number;
-        code?: string;
-        response?: {
-            statusCode: number;
-            body: unknown;
-            headers: Record<string, string>;
-            req?: {
-                headers: Record<string, unknown>;
+    private static async normalizeError(error: unknown): Promise<
+        Error & {
+            statusCode?: number;
+            code?: string;
+            response?: {
+                statusCode: number;
+                body: unknown;
+                headers: Record<string, string>;
+                req?: {
+                    headers: Record<string, unknown>;
+                };
+                request?: {
+                    headers: Record<string, unknown>;
+                };
             };
-            request?: {
-                headers: Record<string, unknown>;
-            };
-        };
-    } {
+        }
+    > {
         if (axios.isAxiosError(error)) {
+            // Serialize only primitive values from headers to avoid circular references
+            const safeHeaders = error.config?.headers
+                ? normalizeHeaders(error.config.headers as OutgoingHttpHeaders)
+                : undefined;
+
+            const responseHeaders = error.response?.headers as Record<string, unknown>;
+            const body = error.response
+                ? await readErrorBody(error.response.data, responseHeaders || {})
+                : undefined;
+
             const normalized = Object.assign(new Error(error.message), {
                 statusCode: error.response?.status,
                 code: error.code,
@@ -443,14 +527,10 @@ export class RequestAxios {
                 response: error.response
                     ? {
                           statusCode: error.response.status,
-                          body: error.response.data,
-                          headers: error.response.headers as Record<string, string>,
-                          req: error.config?.headers
-                              ? {headers: error.config.headers as Record<string, unknown>}
-                              : undefined,
-                          request: error.config?.headers
-                              ? {headers: error.config.headers as Record<string, unknown>}
-                              : undefined,
+                          body,
+                          headers: normalizeResponseHeaders(responseHeaders || {}),
+                          req: safeHeaders ? {headers: safeHeaders} : undefined,
+                          request: safeHeaders ? {headers: safeHeaders} : undefined,
                       }
                     : undefined,
             });

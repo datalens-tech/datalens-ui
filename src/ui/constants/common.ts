@@ -68,6 +68,9 @@ export const KeyCodes = {
 // and a DL structure with default values must be guaranteed to access, for example, DL.UserSettings.theme,
 // and not DL.USER_THEME (nevertheless, with frequent access, such a thing may be justified)
 export const DL = {
+    get IS_WORKBOOKS_ENABLED() {
+        return window.DL.tenantMode?.workbooksEnabled;
+    },
     get SERVICE_NAME() {
         return window.DL.serviceName;
     },
@@ -232,9 +235,6 @@ export const DL = {
     get HEADERS_MAP() {
         return window.DL.headersMap || {};
     },
-    get ZITADEL_ENABLED() {
-        return window.DL.isZitadelEnabled === true;
-    },
     get HIDE_NAVIGATION() {
         return window.DL.hideNavigation;
     },
@@ -337,7 +337,9 @@ export const URL_QUERY = {
     OPEN_DASH_INFO: '_opened_info',
     UNRELEASED: 'unreleased',
     LOCAL_CONFIG: '_use_local_config',
-    BINDED_WOKRBOOK: 'bindedWorkbookId',
+    BINDED_WORKBOOK: 'bindedWorkbookId',
+    BINDED_DATASET_WOKRBOOK_ID: 'bindedDatasetWorkbookId',
+    BINDED_DATASET: 'bindedDatasetId',
 };
 
 const GRADIENT_ICONS = {

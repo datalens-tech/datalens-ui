@@ -17,6 +17,7 @@ export interface ColorInputsGroupProps extends Pick<ColorPickerInputProps, 'plac
     theme?: RealTheme;
     value: ColorSettings | undefined;
     onUpdate: (value: ColorSettings | undefined) => void;
+    onBlur?: () => void;
     isSingleColorSelector?: boolean;
     direction?: FlexProps['direction'];
     className?: string;
@@ -29,6 +30,7 @@ export function ColorInputsGroup({
     theme,
     value,
     onUpdate,
+    onBlur,
     className,
     isSingleColorSelector = false,
     direction = 'row',
@@ -52,6 +54,7 @@ export function ColorInputsGroup({
                     theme={theme}
                     value={common}
                     onUpdate={(color) => onUpdate(color ?? undefined)}
+                    onBlur={onBlur}
                     hasOpacityInput
                 />
             ) : (
@@ -65,6 +68,7 @@ export function ColorInputsGroup({
                             value={light}
                             theme="light"
                             onUpdate={(color) => onUpdate({light: color ?? undefined, dark})}
+                            onBlur={onBlur}
                             hasOpacityInput
                         />
                     </div>
@@ -77,6 +81,7 @@ export function ColorInputsGroup({
                             value={dark}
                             theme="dark"
                             onUpdate={(color) => onUpdate({dark: color ?? undefined, light})}
+                            onBlur={onBlur}
                             hasOpacityInput
                         />
                     </div>

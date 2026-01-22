@@ -65,6 +65,7 @@ export function getWidgetColorSettings(args: {
     enableMultiThemeColors: boolean;
 }): ColorSettings | undefined {
     const {colorSettings, oldColor, defaultOldColor, enableMultiThemeColors = true} = args;
+
     if (!isDashColorPickersByThemeEnabled && !colorSettings) {
         return undefined;
     }
@@ -77,7 +78,7 @@ export function getWidgetColorSettings(args: {
         return getColorSettingsWithValue(computeColorFromToken(oldColor), enableMultiThemeColors);
     }
     if (!defaultOldColor) {
-        return undefined;
+        return {};
     }
     return getColorSettingsWithValue(
         computeColorFromToken(defaultOldColor),

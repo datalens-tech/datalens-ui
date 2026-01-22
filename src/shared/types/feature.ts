@@ -99,6 +99,10 @@ export enum Feature {
     EnableDashColorPickersByTheme = 'EnableDashColorPickersByTheme',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
+    /** Replace static master token with dynamic one */
+    UsDynamicMasterToken = 'UsDynamicMasterToken',
+    /** Enable using dynamic master token in proxy */
+    UsDynamicMasterTokenInProxy = 'UsDynamicMasterTokenInProxy',
     /** Use axios instead of request-promise-native for HTTP requests in charts-engine */
     UseAxiosRequest = 'UseAxiosRequest',
 }
