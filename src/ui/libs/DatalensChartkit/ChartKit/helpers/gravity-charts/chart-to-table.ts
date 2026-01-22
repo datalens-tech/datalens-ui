@@ -69,6 +69,7 @@ export function chartToTable(args: ChartToTableArgs): TableData | null {
         id: key,
         name: value.name,
         formatter: value.formatter,
+        format: value.format,
         type: value.type,
     })) as TableData['head'];
 

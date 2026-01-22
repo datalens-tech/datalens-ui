@@ -5,7 +5,7 @@ export type ColumnExportSettings = {
     name: string;
     formatter?: ServerFieldFormatting;
     format?: string;
-    type?: 'number' | 'text' | 'date';
+    type?: 'number' | 'text' | 'date' | 'genericdatetime';
 };
 
 export type SeriesExportSettings = {

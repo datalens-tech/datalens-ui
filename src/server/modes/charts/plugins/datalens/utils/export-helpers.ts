@@ -49,7 +49,7 @@ export function getExportColumnSettings(args: {
         columnType = 'number';
         formatter = getFormatOptions(field);
     } else if (isDateField(field)) {
-        columnType = 'date';
+        columnType = field.data_type;
         format = field.format ?? getDefaultDateFormat(field.data_type);
     }
 
