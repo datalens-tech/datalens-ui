@@ -54,7 +54,7 @@ const widgetPlugin: PluginWidget = {
             oldWidgetBg = {color: CustomPaletteBgColors.LIKE_CHART};
         }
 
-        const {style} = usePreparedWrapSettings({
+        const {style, hasInternalMargins} = usePreparedWrapSettings({
             ownWidgetSettings: {
                 background: oldWidgetBg,
                 backgroundSettings: data.backgroundSettings,
@@ -83,6 +83,7 @@ const widgetPlugin: PluginWidget = {
                     enableAssistant={enableAssistant}
                     onWidgetLoadData={onWidgetLoadData}
                     backgroundColor={style?.backgroundColor}
+                    hasInternalMargins={hasInternalMargins}
                 />
             </RendererWrapper>
         );

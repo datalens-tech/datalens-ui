@@ -370,7 +370,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                 }));
             }
         },
-        [setItemData, closeDialog],
+        [setItemData, closeDialog, internalMarginsEnabled],
     );
 
     const onAddWidget = React.useCallback(

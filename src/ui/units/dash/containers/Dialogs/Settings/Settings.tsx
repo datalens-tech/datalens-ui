@@ -136,9 +136,8 @@ const Settings = () => {
             !dependentSelectors ||
             confirm(i18n('dash.settings-dialog.edit', 'context_dependent-selectors'))
         ) {
-            const newSettings = {
+            const newSettings: DashSettings = {
                 ...settings,
-                borderRadius,
                 autoupdateInterval:
                     (typeof autoupdateInterval === 'string'
                         ? parseInt(autoupdateInterval)
@@ -152,7 +151,11 @@ const Settings = () => {
                 hideDashTitle,
                 expandTOC,
                 loadPriority,
-                internalMarginsEnabled,
+                widgetsSettings: {
+                    ...settings.widgetsSettings,
+                    borderRadius,
+                    internalMarginsEnabled,
+                },
                 ...otherSettinsState,
             };
 
