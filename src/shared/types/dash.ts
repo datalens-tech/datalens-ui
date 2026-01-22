@@ -97,7 +97,6 @@ export type DashSettings = {
     signedGlobalParams?: DashSettingsGlobalParams;
     loadPriority?: DashLoadPriority;
     loadOnlyVisibleCharts?: boolean;
-    internalMarginsEnabled?: boolean;
     margins?: [number, number];
     enableAssistant?: boolean;
     widgetsSettings?: DashWidgetsSettings;

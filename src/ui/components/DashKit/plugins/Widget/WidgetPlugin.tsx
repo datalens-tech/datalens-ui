@@ -61,7 +61,11 @@ const widgetPlugin: PluginWidget = {
                 borderRadius: data.borderRadius,
                 internalMarginsEnabled: data.internalMarginsEnabled,
             },
-            globalWidgetSettings: widgetPlugin.globalWidgetSettings ?? {},
+            dashVisualSettings: {
+                background: undefined,
+                backgroundSettings: undefined,
+                widgetsSettings: widgetPlugin.globalWidgetSettings,
+            },
             defaultOldColor:
                 widgetPlugin.scope === 'dash'
                     ? CustomPaletteBgColors.LIKE_CHART

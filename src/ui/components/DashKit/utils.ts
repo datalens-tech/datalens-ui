@@ -5,15 +5,17 @@ import type {PluginWidgetProps} from '@gravity-ui/dashkit';
 import type {ThemeType} from '@gravity-ui/uikit';
 import {useThemeType} from '@gravity-ui/uikit';
 import {color as d3Color} from 'd3-color';
-import type {
-    BackgroundSettings,
-    ColorSettings,
-    DashTabItemControlElement,
-    OldBackgroundSettings,
+import {
+    type BackgroundSettings,
+    type ColorSettings,
+    CustomPaletteBgColors,
+    type DashTabItemControlElement,
+    LIKE_CHART_COLOR_TOKEN,
+    type OldBackgroundSettings,
 } from 'shared';
-import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared';
 import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
 import {computeColorFromToken} from 'ui/utils/widgets/colors';
+import {calculateInternalMarginsEnabled} from 'ui/utils/widgets/internalMargins';
 
 import {DL} from '../../constants';
 import {
@@ -22,6 +24,7 @@ import {
     CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
 } from '../../libs/DatalensChartkit/ChartKit/helpers/constants';
 
+import type {CommonVisualSettings} from './DashKit';
 import {MAX_AUTO_HEIGHT_PX, MIN_AUTO_HEIGHT_PX} from './constants';
 
 /*
@@ -282,7 +285,7 @@ export function getControlHint(source: DashTabItemControlElement) {
 
 interface GetPreparedWrapSettingsArgs {
     ownWidgetSettings: WidgetVisualSettings;
-    globalWidgetSettings: WidgetVisualSettings;
+    dashVisualSettings: CommonVisualSettings;
     additionalStyle?: CSSProperties;
     defaultOldColor: string;
     theme: ThemeType;
@@ -290,12 +293,17 @@ interface GetPreparedWrapSettingsArgs {
 
 function getPreparedWrapSettings({
     ownWidgetSettings,
-    globalWidgetSettings,
+    dashVisualSettings,
     additionalStyle,
     defaultOldColor,
     theme,
 }: GetPreparedWrapSettingsArgs) {
-    const borderRadius = ownWidgetSettings.borderRadius ?? globalWidgetSettings.borderRadius;
+    const borderRadius =
+        ownWidgetSettings.borderRadius ?? dashVisualSettings.widgetsSettings?.borderRadius;
+
+    const hasInternalMarginsFromConfigs =
+        ownWidgetSettings.internalMarginsEnabled ??
+        dashVisualSettings.widgetsSettings?.internalMarginsEnabled;
 
     const bgColorFromConfigs =
         getResultedBgColor(
@@ -305,14 +313,23 @@ function getPreparedWrapSettings({
             ownWidgetSettings.backgroundSettings,
         ) ??
         getResultedBgColor(
-            globalWidgetSettings.background,
+            dashVisualSettings.background,
             theme,
             defaultOldColor,
-            globalWidgetSettings.backgroundSettings,
+            dashVisualSettings.backgroundSettings,
         );
 
     const hexBgColor = bgColorFromConfigs ? computeColorFromToken(bgColorFromConfigs) : undefined;
     const hasBgColor = hexBgColor ? (d3Color(hexBgColor)?.opacity ?? 0) > 0 : true;
+
+    const newInternalMarginsEnabled =
+        hasInternalMarginsFromConfigs ??
+        calculateInternalMarginsEnabled({
+            resultedHexWidgetColor: hexBgColor,
+            dashBackground: dashVisualSettings.background,
+            dashBackgroundSettings: dashVisualSettings.backgroundSettings,
+            themeType: theme,
+        });
 
     const newBackgroundColor =
         bgColorFromConfigs === CustomPaletteBgColors.LIKE_CHART
@@ -330,7 +347,7 @@ function getPreparedWrapSettings({
     return {
         style,
         hasBgColor,
-        hasInternalMargins: hasBgColor,
+        hasInternalMargins: newInternalMarginsEnabled,
     };
 }
 
@@ -355,9 +372,9 @@ interface WidgetVisualSettings {
 
 export function usePreparedWrapSettings({
     ownWidgetSettings,
-    globalWidgetSettings,
     additionalStyle,
     defaultOldColor,
+    dashVisualSettings,
 }: Omit<GetPreparedWrapSettingsArgs, 'theme'>) {
     const theme = useThemeType();
 
@@ -365,12 +382,12 @@ export function usePreparedWrapSettings({
         () =>
             getPreparedWrapSettings({
                 ownWidgetSettings,
-                globalWidgetSettings,
                 additionalStyle,
                 defaultOldColor,
                 theme,
+                dashVisualSettings,
             }),
-        [ownWidgetSettings, globalWidgetSettings, additionalStyle, defaultOldColor, theme],
+        [ownWidgetSettings, additionalStyle, defaultOldColor, theme, dashVisualSettings],
     );
 }
 

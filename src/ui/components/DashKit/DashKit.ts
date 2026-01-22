@@ -49,6 +49,12 @@ export interface CommonPluginSettings {
     globalWidgetSettings?: CommonGlobalWidgetSettings;
 }
 
+export interface CommonVisualSettings {
+    widgetsSettings?: CommonWidgetSettings;
+    background?: OldBackgroundSettings;
+    backgroundSettings?: BackgroundSettings;
+}
+
 export const getConfiguredDashKit = (
     pluginDefaultsGetter: typeof currentDefaultsGetter = null,
     options?: {

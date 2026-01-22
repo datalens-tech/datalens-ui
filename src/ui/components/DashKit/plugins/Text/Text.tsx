@@ -200,7 +200,11 @@ const textPlugin: PluginText = {
                 borderRadius: data.borderRadius,
                 internalMarginsEnabled: data.internalMarginsEnabled,
             },
-            globalWidgetSettings: textPlugin.globalWidgetSettings ?? {},
+            dashVisualSettings: {
+                widgetsSettings: textPlugin.globalWidgetSettings,
+                background: undefined,
+                backgroundSettings: undefined,
+            },
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 

@@ -31,11 +31,14 @@ import {
 } from 'shared';
 import {CustomPaletteBgColors, CustomPaletteTextColors} from 'shared/constants/widgets';
 import {registry} from 'ui/registry';
+import {InternalMarginsToggler} from 'ui/units/dash/containers/Dialogs/components/InternalMarginsToggler/InternalMarginsToggler';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import {PaletteText} from 'ui/units/dash/containers/Dialogs/components/PaletteText/PaletteText';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {useInternalMarginsEnabled} from 'ui/utils/widgets/internalMargins';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import type {CommonVisualSettings} from '../DashKit/DashKit';
 import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 
 import {useBackgroundColorSettings, useColorSettings} from './useColorSettings';
@@ -102,6 +105,7 @@ export interface DialogTitleWidgetFeatureProps {
     enableInternalMarginsSelector?: boolean;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
+    commonVisualSettings: CommonVisualSettings;
     openedItemId: string | null;
     openedItemData: DashTabItemTitle['data'];
     dialogIsVisible: boolean;
@@ -115,7 +119,6 @@ interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
 const INPUT_TITLE_ID = 'widgetTitleField';
 const INPUT_SHOW_IN_TOC_ID = 'widgetShowInTOCField';
 const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
-const INPUT_INTERNAL_MARGINS_ID = 'widgetInternalMarginsField';
 const MIN_FONT_SIZE = 15;
 const MAX_FONT_SIZE = 950;
 
@@ -154,6 +157,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         closeDialog,
         setItemData,
         openedItemData = defaultOpenedItemData,
+        commonVisualSettings,
     } = props;
 
     const isNewWidget = !props.openedItemData;
@@ -177,7 +181,6 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         autoHeight: Boolean(openedItemData.autoHeight),
         borderRadius: openedItemData.borderRadius,
         hint: openedItemData.hint,
-        internalMarginsEnabled: Boolean(openedItemData.internalMarginsEnabled),
     });
 
     const {
@@ -193,6 +196,12 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         enableSeparateThemeColorSelector: enableSeparateThemeColorSelector,
         isNewWidget,
     });
+
+    const {internalMarginsEnabled, setInternalMarginsEnabled, initialDisabledValue} =
+        useInternalMarginsEnabled({
+            dashSettings: commonVisualSettings,
+            currentValue: openedItemData.internalMarginsEnabled,
+        });
 
     const {
         oldColor: oldTextColor,
@@ -217,7 +226,6 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         autoHeight,
         previousSelectedFontSize,
         borderRadius,
-        internalMarginsEnabled,
     } = state;
 
     const enableCustomFontSize =
@@ -330,12 +338,12 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         showInTOC,
         autoHeight,
         borderRadius,
+        internalMarginsEnabled,
         resultedBackgroundSettings,
         oldTextColor,
         textColorSettings,
         closeDialog,
         hint,
-        internalMarginsEnabled,
     ]);
 
     const handleEnableHintSelected = React.useCallback(() => {
@@ -362,10 +370,6 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
 
     const setBorderRadius = React.useCallback((value: number | undefined) => {
         setState((prevState) => ({...prevState, borderRadius: value}));
-    }, []);
-
-    const handleUpdateInternalMarginsEnabled = React.useCallback((value: boolean) => {
-        setState((prevState) => ({...prevState, internalMarginsEnabled: value}));
     }, []);
 
     const inputRef: React.Ref<HTMLInputElement> = React.useRef(null);
@@ -484,19 +488,12 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                     </FormRow>
                 )}
                 {enableInternalMarginsSelector && isNewDashSettingsEnabled && (
-                    <FormRow
+                    <InternalMarginsToggler
                         className={b('row')}
-                        label={i18nCommon('label_internal-margins')}
-                        fieldId={INPUT_INTERNAL_MARGINS_ID}
-                    >
-                        <Checkbox
-                            className={b('checkbox')}
-                            id={INPUT_INTERNAL_MARGINS_ID}
-                            size="m"
-                            onUpdate={handleUpdateInternalMarginsEnabled}
-                            checked={internalMarginsEnabled}
-                        />
-                    </FormRow>
+                        value={internalMarginsEnabled}
+                        onUpdate={setInternalMarginsEnabled}
+                        initialDisabledValue={initialDisabledValue}
+                    />
                 )}
                 <FormRow className={b('row')} label={i18n('dash.widget-dialog.edit', 'field_hint')}>
                     <div className={b('settings-container')}>

@@ -7,10 +7,13 @@ import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
 import type {DashTabItemText} from 'shared';
 import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA, Feature} from 'shared';
+import {InternalMarginsToggler} from 'ui/units/dash/containers/Dialogs/components/InternalMarginsToggler/InternalMarginsToggler';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {useInternalMarginsEnabled} from 'ui/utils/widgets/internalMargins';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import type {CommonVisualSettings} from '../DashKit/DashKit';
 import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
 import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 import type {WysiwygEditorRef} from '../WysiwygEditor/WysiwygEditor';
@@ -30,6 +33,7 @@ export interface DialogTextWidgetFeatureProps {
 }
 
 export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {
+    commonVisualSettings: CommonVisualSettings;
     openedItemId: string | null;
     openedItemData: DashTabItemText['data'];
     dialogIsVisible: boolean;
@@ -51,7 +55,6 @@ interface DialogTextWidgetState {
 
 const INPUT_TEXT_ID = 'widgetTextField';
 const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
-const INPUT_INTERNAL_MARGINS_ID = 'widgetInternalMarginsField';
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
 const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
 
@@ -83,6 +86,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         closeDialog,
         setItemData,
         openedItemId,
+        commonVisualSettings,
     } = props;
 
     const isNewWidget = !props.openedItemData;
@@ -90,7 +94,6 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         text: openedItemData.text,
         autoHeight: Boolean(openedItemData.autoHeight),
         borderRadius: openedItemData.borderRadius,
-        internalMarginsEnabled: Boolean(openedItemData.internalMarginsEnabled),
     });
 
     const {
@@ -108,6 +111,11 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         isNewWidget,
     });
 
+    const {internalMarginsEnabled, setInternalMarginsEnabled, initialDisabledValue} =
+        useInternalMarginsEnabled({
+            dashSettings: commonVisualSettings,
+            currentValue: openedItemData.internalMarginsEnabled,
+        });
     const [prevDialogIsVisible, setPrevDialogIsVisible] = React.useState<boolean | undefined>();
 
     React.useEffect(() => {
@@ -148,7 +156,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
     }, []);
 
     const onApply = React.useCallback(() => {
-        const {text, autoHeight, borderRadius, internalMarginsEnabled} = state;
+        const {text, autoHeight, borderRadius} = state;
 
         setItemData({
             data: {
@@ -160,7 +168,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
             },
         });
         closeDialog();
-    }, [state, setItemData, closeDialog, resultedBackgroundSettings]);
+    }, [state, setItemData, closeDialog, resultedBackgroundSettings, internalMarginsEnabled]);
 
     const handleAutoHeightChanged = React.useCallback(() => {
         setState((prevState) => ({...prevState, autoHeight: !prevState.autoHeight}));
@@ -170,11 +178,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         setState((prevState) => ({...prevState, borderRadius: value}));
     }, []);
 
-    const handleUpdateInternalMarginsEnabled = React.useCallback((value: boolean) => {
-        setState((prevState) => ({...prevState, internalMarginsEnabled: value}));
-    }, []);
-
-    const {text, autoHeight, borderRadius, internalMarginsEnabled} = state;
+    const {text, autoHeight, borderRadius, isError} = state;
 
     return (
         <Dialog
@@ -213,19 +217,12 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
                     />
                 </FormRow>
                 {enableInternalMarginsSelector && isNewDashSettingsEnabled && (
-                    <FormRow
+                    <InternalMarginsToggler
                         className={b('row')}
-                        label={i18nCommon('label_internal-margins')}
-                        fieldId={INPUT_INTERNAL_MARGINS_ID}
-                    >
-                        <Checkbox
-                            className={b('checkbox')}
-                            id={INPUT_INTERNAL_MARGINS_ID}
-                            size="m"
-                            onUpdate={handleUpdateInternalMarginsEnabled}
-                            checked={internalMarginsEnabled}
-                        />
-                    </FormRow>
+                        value={internalMarginsEnabled}
+                        onUpdate={setInternalMarginsEnabled}
+                        initialDisabledValue={initialDisabledValue}
+                    />
                 )}
                 {enableBorderRadiusSelector && isNewDashSettingsEnabled && (
                     <FormRow className={b('row')} label={i18nCommon('label_border-radius')}>

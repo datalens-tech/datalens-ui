@@ -131,7 +131,6 @@ const titlePlugin: PluginTitle = {
 
         const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
         const withAbsoluteHint = showHint && !isInlineExtraElements;
-
         const {style, hasInternalMargins} = usePreparedWrapSettings({
             ownWidgetSettings: {
                 background: data.background,
@@ -139,7 +138,11 @@ const titlePlugin: PluginTitle = {
                 borderRadius: data.borderRadius,
                 internalMarginsEnabled: data.internalMarginsEnabled,
             },
-            globalWidgetSettings: titlePlugin.globalWidgetSettings ?? {},
+            dashVisualSettings: {
+                background: undefined,
+                backgroundSettings: undefined,
+                widgetsSettings: titlePlugin.globalWidgetSettings,
+            },
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 

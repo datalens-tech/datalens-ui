@@ -81,7 +81,7 @@ const Settings = () => {
     const [supportDescription, setSupportDesc] = React.useState(supportDesc);
     const [margins, setMargins] = React.useState(settings.margins || DEFAULT_DASH_MARGINS);
     const [internalMarginsEnabled, setInternalMarginsEnabled] = React.useState(
-        settings.internalMarginsEnabled ?? true,
+        settings.widgetsSettings?.internalMarginsEnabled ?? true,
     );
     const [borderRadius, setBorderRadius] = React.useState(
         settings.widgetsSettings?.borderRadius ??

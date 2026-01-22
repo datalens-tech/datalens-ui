@@ -72,7 +72,11 @@ function PluginImageRenderer(props: Props, _ref?: React.LegacyRef<HTMLDivElement
             borderRadius: borderRadius,
             internalMarginsEnabled: internalMarginsEnabled,
         },
-        globalWidgetSettings: pluginImage.globalWidgetSettings ?? {},
+        dashVisualSettings: {
+            background: undefined,
+            backgroundSettings: undefined,
+            widgetsSettings: pluginImage.globalWidgetSettings,
+        },
         defaultOldColor: CustomPaletteBgColors.NONE,
     });
 
