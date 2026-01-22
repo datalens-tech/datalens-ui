@@ -50,9 +50,12 @@ export function computeColorFromToken(externalToken?: string, theme?: RealTheme)
     }
     document.body.appendChild(elem);
     const color = getComputedStyle(div).backgroundColor;
+
     document.body.removeChild(elem);
-    const d3ColorResult = d3Color(color);
-    return d3ColorResult ? d3ColorResult.formatHex8() : undefined;
+    // if color with such token doesn't exist, then getComputedStyle(div).backgroundColor is transparent and div.style.backgroundColor is empty string
+    // in such case settings for global default (not transparent) color should be used
+    const d3ColorResult = div.style.backgroundColor ? d3Color(color) : undefined;
+    return d3ColorResult?.formatHex8() ?? undefined;
 }
 
 export function getWidgetColorSettings(args: {
@@ -62,6 +65,7 @@ export function getWidgetColorSettings(args: {
     enableMultiThemeColors: boolean;
 }): ColorSettings | undefined {
     const {colorSettings, oldColor, defaultOldColor, enableMultiThemeColors = true} = args;
+
     if (!isDashColorPickersByThemeEnabled && !colorSettings) {
         return undefined;
     }
@@ -74,7 +78,7 @@ export function getWidgetColorSettings(args: {
         return getColorSettingsWithValue(computeColorFromToken(oldColor), enableMultiThemeColors);
     }
     if (!defaultOldColor) {
-        return undefined;
+        return {};
     }
     return getColorSettingsWithValue(
         computeColorFromToken(defaultOldColor),

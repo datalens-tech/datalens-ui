@@ -15,13 +15,11 @@ import type {moveCollectionsResultSchema} from '../actions/collections/move-coll
 import type {updateCollectionResultSchema} from '../actions/collections/update-collection';
 
 import type {
-    SharedEntryFields,
     SharedEntryFieldsWithOptionalPermissions,
     SharedEntryFieldsWithPermissions,
 } from './fields';
 import type {OrderBasicField, OrderDirection} from './sort';
 import type {
-    ExtendedWorkbook,
     ExtendedWorkbookWithOptionalPermissions,
     ExtendedWorkbookWithPermissions,
 } from './workbooks';
@@ -110,7 +108,10 @@ export type StructureItemWithOptionalPermissions =
     | ExtendedWorkbookWithOptionalPermissions
     | SharedEntryFieldsWithOptionalPermissions;
 
-export type StructureItem = ExtendedCollection | ExtendedWorkbook | SharedEntryFields;
+export type StructureItem =
+    | ExtendedCollectionWithOptionalPermissions
+    | ExtendedWorkbookWithOptionalPermissions
+    | SharedEntryFieldsWithOptionalPermissions;
 
 export type GetStructureItemsResponse = {
     items: StructureItemWithOptionalPermissions[];

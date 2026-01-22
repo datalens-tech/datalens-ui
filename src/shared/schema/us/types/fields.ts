@@ -85,7 +85,7 @@ export interface SharedEntryPermissions {
 export interface SharedEntryFields {
     collectionId: string;
     updatedAt: string;
-    workbookId: string;
+    workbookId: WorkbookId;
     scope: SharedScope;
     type: string;
     key: string;

@@ -1,5 +1,8 @@
 import React from 'react';
 
+import {ErrorBoundary} from 'ui/components/ErrorBoundary/ErrorBoundary';
+import {ChartkitError} from 'ui/libs/DatalensChartkit/components/ChartKitBase/components/ChartkitError/ChartkitError';
+
 import {chartsDataProvider} from '../../../libs/DatalensChartkit';
 import type {ChartKitDataProvider} from '../../../libs/DatalensChartkit/components/ChartKitBase/types';
 
@@ -27,7 +30,7 @@ function isSelectorType(
     return props.usageType === 'control';
 }
 
-export class ChartWrapper extends React.Component<ChartWrapperWithProviderProps> {
+export class ChartWrapperComponent extends React.Component<ChartWrapperWithProviderProps> {
     dataProvider: ChartKitDataProvider;
 
     constructor(props: ChartWrapperWithProviderProps) {
@@ -70,3 +73,11 @@ export class ChartWrapper extends React.Component<ChartWrapperWithProviderProps>
         );
     }
 }
+
+export const ChartWrapper = (props: ChartWrapperWithProviderProps) => {
+    return (
+        <ErrorBoundary renderError={(error) => <ChartkitError error={error} />}>
+            <ChartWrapperComponent {...props} />
+        </ErrorBoundary>
+    );
+};

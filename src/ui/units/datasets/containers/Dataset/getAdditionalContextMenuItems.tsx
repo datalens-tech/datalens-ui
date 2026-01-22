@@ -46,10 +46,7 @@ export const getAdditionalContextMenuItems = ({
     const items: (EntryContextMenuItem & {theme?: string})[] = [];
 
     if (isWorkbookSharedDataset) {
-        if (
-            entry.fullPermissions?.createEntryBinding ||
-            entry.fullPermissions?.createLimitedEntryBinding
-        ) {
+        if (entry.permissions?.admin || entry.fullPermissions?.updateAccessBindings) {
             items.push({
                 id: ENTRY_CONTEXT_MENU_ACTION.ACCESS,
                 action: () => {
@@ -102,21 +99,23 @@ export const getAdditionalContextMenuItems = ({
             });
         }
     } else {
-        items.push({
-            id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
-            action: () => {
-                openDialog({
-                    id: DIALOG_SHARED_ENTRY_BINDINGS,
-                    props: {
-                        onClose: closeDialog,
-                        open: true,
-                        entry,
-                    },
-                });
-            },
-            icon: <CodeTrunk />,
-            text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
-        });
+        if (entry.permissions?.admin || entry.fullPermissions?.updateAccessBindings) {
+            items.push({
+                id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+                action: () => {
+                    openDialog({
+                        id: DIALOG_SHARED_ENTRY_BINDINGS,
+                        props: {
+                            onClose: closeDialog,
+                            open: true,
+                            entry,
+                        },
+                    });
+                },
+                icon: <CodeTrunk />,
+                text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
+            });
+        }
         if (entry.fullPermissions?.listAccessBindings) {
             items.push({
                 id: ENTRY_CONTEXT_MENU_ACTION.ACCESS,
