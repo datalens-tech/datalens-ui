@@ -73,8 +73,7 @@ export const getConfiguredDashKit = (
                 backgroundSettings: options?.globalWidgetSettings?.backgroundSettings,
                 borderRadius:
                     options?.globalWidgetSettings?.borderRadius ?? OLD_DEFAULT_WIDGET_BORDER_RADIUS,
-                internalMarginsEnabled:
-                    options?.globalWidgetSettings?.internalMarginsEnabled ?? true,
+                internalMarginsEnabled: options?.globalWidgetSettings?.internalMarginsEnabled,
             },
         };
         const titleSettings = {
