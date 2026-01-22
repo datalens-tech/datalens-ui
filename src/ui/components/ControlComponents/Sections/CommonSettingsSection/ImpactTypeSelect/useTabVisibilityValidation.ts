@@ -1,20 +1,13 @@
 import {useCallback} from 'react';
 
+import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {updateControlsValidation} from 'ui/store/actions/controlDialog/controlDialog';
 import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
 import type {IsWidgetVisibleOnTabArgs} from 'ui/units/dash/utils/selectors';
 import {isWidgetVisibleOnTab} from 'ui/units/dash/utils/selectors';
 
-// TODO (global selectors): Add translations
-const i18n = (key: string) => {
-    const values: Record<string, string> = {
-        'validation_need-current-tab-impact':
-            'Должен быть хотя бы один селектор, видимый на текущей вкладке',
-    };
-
-    return values[key];
-};
+const i18n = I18n.keyset('dash.control-dialog.edit');
 
 interface UseTabVisibilityValidationParams {
     hasMultipleSelectors?: boolean;

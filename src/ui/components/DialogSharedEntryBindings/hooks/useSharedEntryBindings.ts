@@ -14,16 +14,23 @@ import {sortEntities} from '../utils';
 
 type UseSharedEntryBindingsProps = {
     entry: SharedEntry;
+    isDeleteDialog: boolean;
     onDeleteSuccess?: () => void;
 };
 
 const CONCURRENT_ID = 'shared-entry-bindings';
 const cancelConcurrentRequest = () => getSdk().cancelRequest(CONCURRENT_ID);
 
-export const useSharedEntryBindings = ({entry, onDeleteSuccess}: UseSharedEntryBindingsProps) => {
+export const useSharedEntryBindings = ({
+    entry,
+    onDeleteSuccess,
+    isDeleteDialog,
+}: UseSharedEntryBindingsProps) => {
     const dispatch: AppDispatch = useDispatch();
     const [entities, setEntities] = React.useState<SharedEntryBindingsItem[]>([]);
-
+    const [entitiesForDeleteAlert, setEntitiesForDeleteAlert] = React.useState<
+        SharedEntryBindingsItem[]
+    >([]);
     const [currentDirection, setCurrentDirection] = React.useState<AttachmentValue>(
         Attachment.SOURCE,
     );
@@ -68,6 +75,9 @@ export const useSharedEntryBindings = ({entry, onDeleteSuccess}: UseSharedEntryB
                 })
                 .then((response) => {
                     setEntities(sortEntities(response.items));
+                    if (isDeleteDialog && !filter) {
+                        setEntitiesForDeleteAlert(response.items);
+                    }
                     setSearchFilter(filter);
                     setIsLoading(false);
                     setIsSearchLoading(false);
@@ -81,7 +91,7 @@ export const useSharedEntryBindings = ({entry, onDeleteSuccess}: UseSharedEntryB
                     setIsSearchLoading(false);
                 });
         },
-        [entry, currentDirection],
+        [entry, currentDirection, isDeleteDialog],
     );
 
     const debouncedSearch = React.useMemo(
@@ -125,6 +135,7 @@ export const useSharedEntryBindings = ({entry, onDeleteSuccess}: UseSharedEntryB
         onSearch,
         searchValue: searchFilter,
         entities,
+        entitiesForDeleteAlert,
         onDirectionChange,
         currentDirection,
         fetchEntityBindings,

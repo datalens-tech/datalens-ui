@@ -390,13 +390,14 @@ export type SetTabHashStateAction = {
         entryId: string | null;
         stateHashId?: string;
         hashStates?: TabsHashStates;
+        disableUrlState?: boolean;
     };
 };
 
 export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'hashStates'>) {
     return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
         const {hashStates} = getState().dash;
-        const {entryId, stateHashId, tabId} = data;
+        const {entryId, stateHashId, tabId, disableUrlState} = data;
         const newData: SetTabHashStateAction['payload'] = {...data};
 
         let hashId: string | undefined = stateHashId;
@@ -457,6 +458,7 @@ export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'ha
             payload: {
                 ...newData,
                 stateHashId: hashId,
+                disableUrlState,
             },
         });
     };
@@ -1087,7 +1089,7 @@ export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
             });
         };
 
-        if (tabId && isSelectorItem && isEnabledFeature(Feature.EnableGlobalSelectors)) {
+        if (tabId && isSelectorItem) {
             const selectorData = payload.item.data as IsWidgetVisibleOnTabArgs['itemData'];
 
             const isWidgetVisible = isWidgetVisibleOnTab({
@@ -1203,4 +1205,28 @@ export const removeGlobalItems = (
 ): RemoveGlobalItemsAction => ({
     type: REMOVE_GLOBAL_ITEMS,
     payload,
+});
+
+export const UPDATE_CONNECTIONS_UPDATERS = Symbol('dash/UPDATE_CONNECTIONS_UPDATERS');
+export type UpdateConnectionsUpdatersAction = {
+    type: typeof UPDATE_CONNECTIONS_UPDATERS;
+    payload: {
+        tabId: string;
+        joinedSelectorId: string;
+        targetSelectorParamId: string;
+    };
+};
+export const updateConnectionsUpdaters = (
+    payload: UpdateConnectionsUpdatersAction['payload'],
+): UpdateConnectionsUpdatersAction => ({
+    type: UPDATE_CONNECTIONS_UPDATERS,
+    payload,
+});
+
+export const RESET_CONNECTIONS_UPDATERS = Symbol('dash/RESET_CONNECTIONS_UPDATERS');
+export type ResetConnectionsUpdatersAction = {
+    type: typeof RESET_CONNECTIONS_UPDATERS;
+};
+export const resetConnectionsUpdaters = (): ResetConnectionsUpdatersAction => ({
+    type: RESET_CONNECTIONS_UPDATERS,
 });

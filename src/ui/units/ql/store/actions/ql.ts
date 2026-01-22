@@ -12,6 +12,7 @@ import type {
     QlConfigResultEntryMetadataDataColumnOrGroup,
 } from 'shared/types/config/ql';
 import {addEditHistoryPoint} from 'ui/store/actions/editHistory';
+import {showToast} from 'ui/store/actions/toaster';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {
@@ -103,6 +104,9 @@ export const SET_QUERY_METADATA = Symbol('ql/SET_QUERY_METADATA');
 export const SET_TABLE_PREVIEW_DATA = Symbol('ql/SET_TABLE_PREVIEW_DATA');
 export const SET_VISUALIZATION_STATUS = Symbol('ql/SET_VISUALIZATION_STATUS');
 export const SET_CONNECTION_STATUS = Symbol('ql/SET_CONNECTION_STATUS');
+export const SET_SHARED_CONNECTION_DELEGATION_STATUS = Symbol(
+    'ql/SET_SHARED_CONNECTION_DELEGATION_STATUS',
+);
 export const SET_COLUMNS_ORDER = Symbol('ql/SET_COLUMNS_ORDER');
 export const SET_CONNECTION_SOURCES = Symbol('ql/SET_CONNECTION_SOURCES');
 export const SET_CONNECTION_SOURCE_SCHEMA = Symbol('ql/SET_CONNECTION_SOURCE_SCHEMA');
@@ -406,6 +410,13 @@ export const setConnectionStatus = (connectionStatus: ConnectionStatus) => {
     };
 };
 
+export const setSharedConnectionDelegationStatus = (isDelegated: boolean) => {
+    return {
+        type: SET_SHARED_CONNECTION_DELEGATION_STATUS,
+        isDelegated,
+    };
+};
+
 export const toggleTablePreview = () => {
     return {
         type: TOGGLE_TABLE_PREVIEW,
@@ -581,6 +592,32 @@ type FetchConnectionSourcesArgs = {
     workbookId: WorkbookId;
 };
 
+export const fetchSharedConnectionDelegation = ({
+    connectionId,
+    workbookId,
+}: {
+    connectionId: string;
+    workbookId: string;
+}) => {
+    return async function (dispatch: QLDispatch) {
+        try {
+            const result = await getSdk().sdk.us.getSharedEntryDelegation({
+                sourceId: connectionId,
+                targetId: workbookId,
+            });
+            dispatch(setSharedConnectionDelegationStatus(result.isDelegated));
+        } catch (e) {
+            logger.logError('ql: getSharedEntryDelegation failed', e);
+            dispatch(
+                showToast({
+                    title: e.message,
+                    error: e,
+                }),
+            );
+        }
+    };
+};
+
 export const fetchConnectionSources = ({entryId, workbookId}: FetchConnectionSourcesArgs) => {
     return async function (dispatch: QLDispatch) {
         // Requesting information about connection sources
@@ -750,10 +787,20 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                     // We request the connection for which the chart is built
                     const loadedConnectionEntry = await getSdk().sdk.us.getEntry({
                         entryId: connectionEntryId,
+                        workbookId: entry.workbookId,
                     });
 
                     if (loadedConnectionEntry) {
                         connection = loadedConnectionEntry as QLConnectionEntry;
+
+                        if (entry.workbookId && connection.collectionId) {
+                            dispatch(
+                                fetchSharedConnectionDelegation({
+                                    connectionId: connection.entryId,
+                                    workbookId: entry.workbookId,
+                                }),
+                            );
+                        }
 
                         connection.name = getEntryNameByKey({key: connection.key});
 
@@ -761,11 +808,15 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                         dispatch(setConnectionStatus(ConnectionStatus.Ready));
 
+                        const bindedWorkbookId = loadedConnectionEntry.collectionId
+                            ? entry.workbookId
+                            : loadedConnectionEntry.workbookId;
+
                         if (chartType === QLChartType.Sql) {
                             dispatch(
                                 fetchConnectionSources({
                                     entryId: loadedConnectionEntry.entryId,
-                                    workbookId: loadedConnectionEntry.workbookId,
+                                    workbookId: bindedWorkbookId,
                                 }),
                             );
                         }
@@ -967,6 +1018,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                     try {
                         const loadedConnectionEntry = await getSdk().sdk.us.getEntry({
                             entryId: defaultMonitoringQLConnectionId,
+                            workbookId: urlWorkbookId,
                         });
 
                         if (!loadedConnectionEntry) {
@@ -1065,6 +1117,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                         // We request the connection for which the chart is built
                         const loadedConnectionEntry = await getSdk().sdk.us.getEntry({
                             entryId: connectionEntryId,
+                            workbookId: urlWorkbookId,
                         });
 
                         if (!loadedConnectionEntry) {
@@ -1138,19 +1191,22 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
 type PerformManualConfigurationArgs = {
     connection: QLConnectionEntry;
+    workbookId: WorkbookId;
     chartType?: QLChartType;
 };
 
 export const performManualConfiguration = ({
     connection,
     chartType,
+    workbookId,
 }: PerformManualConfigurationArgs) => {
     // eslint-disable-next-line consistent-return
     return async function (dispatch: QLDispatch) {
+        const bindedWorkbookId = connection.collectionId ? workbookId : connection.workbookId;
         dispatch(
             fetchConnectionSources({
                 entryId: connection.entryId,
-                workbookId: connection.workbookId,
+                workbookId: bindedWorkbookId,
             }),
         );
 

@@ -1,5 +1,5 @@
 import {registry} from '../../../../server/registry';
-import {WORKBOOK_ID_HEADER} from '../../../constants';
+import {DATASET_ID_HEADER, WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction, createTypedAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {transformConnectionResponseError} from '../helpers';
@@ -75,8 +75,12 @@ export const actions = {
         {
             method: 'GET',
             path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}`,
-            params: ({workbookId, rev_id}, headers) => ({
-                headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+            params: ({workbookId, bindedDatasetId, rev_id}, headers) => ({
+                headers: {
+                    ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                    ...(bindedDatasetId ? {[DATASET_ID_HEADER]: bindedDatasetId} : {}),
+                    ...headers,
+                },
                 query: {rev_id},
             }),
         },

@@ -20,13 +20,13 @@ import {usePrevious} from 'ui/hooks';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
-import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
+import type {CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Text.scss';
 
-type Props = Omit<PluginTextProps, 'apiHandler'> & CommonPluginProps;
+type Props = Omit<PluginTextProps, 'apiHandler'>;
 
 const b = block('dashkit-plugin-text-container');
 
@@ -87,10 +87,9 @@ type PluginText = Plugin<Props> &
 const textPlugin: PluginText = {
     ...pluginText,
     setSettings(settings: PluginTextObjectSettings) {
-        const {apiHandler, globalBackground, globalBackgroundSettings} = settings;
+        const {apiHandler, globalWidgetSettings} = settings;
         pluginText._apiHandler = apiHandler;
-        textPlugin.globalBackground = globalBackground;
-        textPlugin.globalBackgroundSettings = globalBackgroundSettings;
+        textPlugin.globalWidgetSettings = globalWidgetSettings;
         return textPlugin;
     },
     renderer: function Wrapper(
@@ -195,10 +194,12 @@ const textPlugin: PluginText = {
         const data = props.data as DashTabItemText['data'];
 
         const {style, hasBgColor} = usePreparedWrapSettings({
-            widgetBackground: data.background,
-            globalBackground: textPlugin.globalBackground,
-            widgetBackgroundSettings: data.backgroundSettings,
-            globalBackgroundSettings: textPlugin.globalBackgroundSettings,
+            ownWidgetSettings: {
+                background: data.background,
+                backgroundSettings: data.backgroundSettings,
+                borderRadius: data.borderRadius,
+            },
+            globalWidgetSettings: textPlugin.globalWidgetSettings ?? {},
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 

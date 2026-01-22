@@ -1,12 +1,14 @@
 /* eslint-disable complexity */
 import {DashTabItemType, TitlePlacementOption} from 'shared';
 import type {
+    DashTab,
     DashTabItem,
     DashTabItemControlData,
     DashTabItemControlExternal,
     DashTabItemGroupControl,
     StringParams,
 } from 'shared';
+import type {PreparedCopyItemOptions} from '@gravity-ui/dashkit';
 import type {
     PastedSelectorDialogState,
     DialogEditItemFeaturesProp,
@@ -38,13 +40,13 @@ import {COPIED_WIDGET_STORAGE_KEY} from 'ui/constants';
 import type {ConfigItemGroup} from '@gravity-ui/dashkit/helpers';
 import {DEFAULT_NAMESPACE} from '@gravity-ui/dashkit/helpers';
 import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
-import type {PreparedCopyItemOptions} from '@gravity-ui/dashkit';
 import type {RealTheme} from '@gravity-ui/uikit';
 import {getPreparedCopyItemOptions, type CopiedConfigContext} from 'ui/units/dash/modules/helpers';
 import type {
     SetItemDataArgs,
     SetItemDataExternalControl,
     SetItemDataGroupControl,
+    TabsHashStates,
 } from 'ui/units/dash/store/actions/dashTyped';
 import type {DatalensGlobalState} from 'ui/index';
 import {
@@ -57,10 +59,13 @@ import {
     selectSelectorsGroup,
     selectControlDialogFeatureByType,
     selectControlDialogState,
+    selectDashChangesBuffer,
 } from '../../selectors/controlDialog';
 import {getValidScopeFields} from './helpers';
 import {selectTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {SELECTOR_DIALOG_TABS} from 'ui/store/constants/controlDialog';
+import {setTabs, SET_STATE, resetConnectionsUpdaters} from 'ui/units/dash/store/actions/dashTyped';
+import {isItemGlobal} from 'ui/units/dash/utils/selectors';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
@@ -93,9 +98,10 @@ export type ResetDialogAction = {
     type: typeof RESET_DIALOG;
 };
 
-export const resetControlDialog = (): ResetDialogAction => {
-    return {
-        type: RESET_DIALOG,
+export const resetControlDialog = () => {
+    return (dispatch: AppDispatch) => {
+        dispatch(resetConnectionsUpdaters());
+        dispatch({type: RESET_DIALOG});
     };
 };
 
@@ -310,6 +316,26 @@ export const applyGroupControlDialog = ({
             return;
         }
 
+        // Apply dashChangesBuffer if it exists
+        const dashChangesBuffer = selectDashChangesBuffer(state);
+        if (dashChangesBuffer) {
+            // Apply tabs changes
+            dispatch(setTabs(dashChangesBuffer.tabs));
+
+            // Apply hashStates changes
+            if (dashChangesBuffer.hashStates) {
+                dispatch({
+                    type: SET_STATE,
+                    payload: {
+                        hashStates: dashChangesBuffer.hashStates,
+                    },
+                });
+            }
+
+            // Reset buffer
+            dispatch(updateDashChangesBuffer({tabs: undefined, hashStates: undefined}));
+        }
+
         const {enableAutoheightDefault} = features;
         const isSingleControl = selectorsGroup.group.length === 1;
 
@@ -348,6 +374,11 @@ export const applyGroupControlDialog = ({
             }
         });
 
+        const isGlobal = isItemGlobal({
+            data: validatedSelectorsGroup,
+            type: DashTabItemType.GroupControl,
+        });
+
         const tabId = selectTabId(state);
 
         const {impactType, impactTabsIds} = getValidScopeFields({
@@ -356,6 +387,7 @@ export const applyGroupControlDialog = ({
             tabId,
             isGroupSetting: true,
             isSingleControl,
+            isGlobal,
         });
 
         const data: SetItemDataGroupControl = {
@@ -392,6 +424,7 @@ export const applyGroupControlDialog = ({
                         impactTabsIds: selector.impactTabsIds,
                         tabId,
                         isSingleControl,
+                        isGlobal,
                     }),
                 };
             }),
@@ -406,6 +439,7 @@ export const applyGroupControlDialog = ({
         );
 
         setItemData(itemData);
+
         closeDialog();
     };
 };
@@ -528,6 +562,11 @@ export const applyExternalControlDialog = ({
 
         const tabId = selectTabId(state);
 
+        const isGlobal = isItemGlobal({
+            data: selectorDialog,
+            type: DashTabItemType.Control,
+        });
+
         const data: SetItemDataExternalControl = {
             title,
             sourceType,
@@ -539,6 +578,7 @@ export const applyExternalControlDialog = ({
                 tabId,
                 isGroupSetting: true,
                 isSingleControl: true,
+                isGlobal,
             }),
         };
         const getExtendedItemData = getExtendedItemDataAction();
@@ -556,5 +596,61 @@ export const closeExternalControlDialog = ({closeDialog}: {closeDialog: () => vo
         const beforeCloseDialogItem = getBeforeCloseDialogItemAction();
         dispatch(beforeCloseDialogItem());
         closeDialog();
+    };
+};
+
+export const SET_NEED_SIMILAR_SELECTORS_CHECK = Symbol(
+    'controlDialog/SET_NEED_SIMILAR_SELECTORS_CHECK',
+);
+
+export type SetNeedSimilarSelectorsCheckAction = {
+    type: typeof SET_NEED_SIMILAR_SELECTORS_CHECK;
+    payload: boolean;
+};
+
+export const setNeedSimilarSelectorsCheck = (
+    payload: SetNeedSimilarSelectorsCheckAction['payload'],
+): SetNeedSimilarSelectorsCheckAction => {
+    return {
+        type: SET_NEED_SIMILAR_SELECTORS_CHECK,
+        payload,
+    };
+};
+
+export const INIT_DASH_CHANGES_BUFFER = Symbol('controlDialog/INIT_DASH_CHANGES_BUFFER');
+
+export type InitDashChangesBufferAction = {
+    type: typeof INIT_DASH_CHANGES_BUFFER;
+    payload: {
+        tabs: DashTab[];
+        hashStates: TabsHashStates;
+    };
+};
+
+export const initDashChangesBuffer = (
+    payload: InitDashChangesBufferAction['payload'],
+): InitDashChangesBufferAction => {
+    return {
+        type: INIT_DASH_CHANGES_BUFFER,
+        payload,
+    };
+};
+
+export const UPDATE_DASH_CHANGES_BUFFER = Symbol('controlDialog/UPDATE_DASH_CHANGES_BUFFER');
+
+export type UpdateDashChangesBufferAction = {
+    type: typeof UPDATE_DASH_CHANGES_BUFFER;
+    payload: {
+        tabs?: DashTab[];
+        hashStates?: TabsHashStates;
+    };
+};
+
+export const updateDashChangesBuffer = (
+    payload: UpdateDashChangesBufferAction['payload'],
+): UpdateDashChangesBufferAction => {
+    return {
+        type: UPDATE_DASH_CHANGES_BUFFER,
+        payload,
     };
 };

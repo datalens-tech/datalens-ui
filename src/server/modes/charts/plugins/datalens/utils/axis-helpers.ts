@@ -5,7 +5,7 @@ import type {
     ServerPlaceholder,
     ServerPlaceholderSettings,
 } from '../../../../../../shared';
-import {isDateField} from '../../../../../../shared';
+import {AxisAutoScaleModes, isDateField} from '../../../../../../shared';
 import type {AxisOptions} from '../types';
 
 import {getOriginalTitleOrTitle} from './misc-helpers';
@@ -59,7 +59,8 @@ export const applyPlaceholderSettingsToAxis = (
         // Including support for the old autoscale flag === false
         if (
             placeholder.settings.autoscale === false ||
-            (placeholder.settings.scale === 'auto' && placeholder.settings.scaleValue === '0-max')
+            (placeholder.settings.scale === 'auto' &&
+                placeholder.settings.scaleValue === AxisAutoScaleModes.ZeroMax)
         ) {
             if (placeholder.settings.type === 'logarithmic') {
                 // Fallback to null for incorrect case

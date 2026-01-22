@@ -3,7 +3,7 @@ import React from 'react';
 import {Alert, Dialog, Link, Text, TextInput, spacing} from '@gravity-ui/uikit';
 import {useDispatch} from 'react-redux';
 import {CollectionItemEntities} from 'shared';
-import type {GetEntryResponse} from 'shared/schema';
+import type {GetEntryResponse, StructureItem} from 'shared/schema';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {registry} from 'ui/registry';
 import {showToast} from 'ui/store/actions/toaster';
@@ -14,9 +14,9 @@ import DialogManager from '../DialogManager/DialogManager';
 
 type DialogAddSharedEntryFromLinkProps = {
     open: boolean;
-    isValidEntry: (entry: GetEntryResponse) => boolean;
+    isValidEntry: (entry: Partial<StructureItem>) => boolean;
     onClose: () => void;
-    onSuccess: (entry: GetEntryResponse) => void;
+    onSuccess: (entry: Partial<StructureItem>) => void;
 };
 
 export const DIALOG_ADD_SHARED_ENTRY_FROM_LINK = Symbol('DIALOG_ADD_SHARED_ENTRY_FROM_LINK');
@@ -27,7 +27,7 @@ export interface OpenDialogAddSharedEntryFromLinkArgs {
 }
 
 const getIsSharedEntry = (
-    entry: GetEntryResponse,
+    entry: Partial<GetEntryResponse>,
 ): entry is GetEntryResponse & {collectionId: string} => {
     return typeof entry.collectionId === 'string';
 };
@@ -62,12 +62,15 @@ export const DialogAddSharedEntryFromLink: React.FC<DialogAddSharedEntryFromLink
                 return;
             }
 
-            const entry = await getSdk().sdk.us.getEntry({
+            const entry = await getSdk().sdk.us.getSharedEntryInfo({
                 entryId: extractedId,
                 includePermissionsInfo: true,
             });
 
             const isSharedEntry = getIsSharedEntry(entry);
+            const {fullPermissions, ...restEntry} = entry;
+            const isCanCreateBinding =
+                fullPermissions?.createEntryBinding || fullPermissions?.createLimitedEntryBinding;
             if (!isSharedEntry) {
                 showError(
                     getSharedEntryMockText('add-shared-connection-from-link-dialog-entry-error'),
@@ -75,8 +78,14 @@ export const DialogAddSharedEntryFromLink: React.FC<DialogAddSharedEntryFromLink
                 return;
             }
 
-            const extendedEntry = {
-                ...entry,
+            if (!isCanCreateBinding) {
+                showError(getSharedEntryMockText(`no-access-for-binding-create`));
+                return;
+            }
+
+            const extendedEntry: Partial<StructureItem> = {
+                ...restEntry,
+                permissions: fullPermissions,
                 entity: CollectionItemEntities.ENTRY,
             };
 
@@ -88,13 +97,17 @@ export const DialogAddSharedEntryFromLink: React.FC<DialogAddSharedEntryFromLink
             }
 
             onSuccess(extendedEntry);
-        } catch (e: any) {
-            dispatch(
-                showToast({
-                    title: e.message,
-                    error: e,
-                }),
-            );
+        } catch (e) {
+            if (e.status === 403) {
+                showError(getSharedEntryMockText(`no-access-for-binding-create`));
+            } else {
+                dispatch(
+                    showToast({
+                        title: e.message,
+                        error: e,
+                    }),
+                );
+            }
         } finally {
             setIsLoading(false);
         }

@@ -3,8 +3,13 @@ import React from 'react';
 import {Button, Dialog, Icon, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
+import type {CollectionId} from 'shared';
 import {CollectionItemEntities} from 'shared';
-import type {GetEntryResponse, SharedEntryFields, StructureItem} from 'shared/schema';
+import type {
+    GetEntryResponse,
+    SharedEntryFieldsWithOptionalPermissions,
+    StructureItem,
+} from 'shared/schema';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
     selectBreadcrumbs,
@@ -29,9 +34,9 @@ import './DialogSelectSharedEntry.scss';
 type DialogSelectSharedEntryProps = {
     open: boolean;
     onClose: () => void;
-    collectionId: string;
+    collectionId: CollectionId;
     getIsInactiveEntity: (entity: Partial<StructureItem>) => boolean;
-    onSelectEntry: (entry: SharedEntryFields) => Promise<void> | void;
+    onSelectEntry: (entry: SharedEntryFieldsWithOptionalPermissions) => Promise<void> | void;
     dialogTitle: string;
 };
 
@@ -47,7 +52,7 @@ const PAGE_SIZE = 50;
 const b = block('dialog-select-shared-entries');
 const isSharedEntry = (
     entry: Partial<StructureItem | GetEntryResponse>,
-): entry is SharedEntryFields => {
+): entry is SharedEntryFieldsWithOptionalPermissions => {
     return 'entity' in entry && entry.entity === CollectionItemEntities.ENTRY;
 };
 export const DialogSelectSharedEntry = ({

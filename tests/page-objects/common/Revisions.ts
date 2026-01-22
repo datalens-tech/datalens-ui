@@ -186,4 +186,21 @@ export default class Revisions {
     async getRevisionIdByIdx(idx: number) {
         return await this.getRevisionByIdx(idx).getAttribute('data-qa-revid');
     }
+
+    /**
+     * Close revisions list panel
+     * @returns Promise that resolves when panel is closed
+     */
+    async closeList(): Promise<void> {
+        await this.page.locator(slct(RevisionsListQa.ExpandablePanelButtonClose)).click();
+    }
+
+    /**
+     * Open revision by index and wait for it to load
+     * @param idx - Index of the revision to open
+     * @returns Promise that resolves when revision is opened
+     */
+    async openRevisionByIdx(idx: number): Promise<void> {
+        await this.getRevisionByIdx(idx).click();
+    }
 }

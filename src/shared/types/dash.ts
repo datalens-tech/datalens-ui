@@ -78,6 +78,12 @@ export interface DashEntry extends Entry {
     fake?: boolean;
 }
 
+export type DashWidgetsSettings = {
+    backgroundSettings?: BackgroundSettings;
+    borderRadius?: number;
+    internalMarginsEnabled?: boolean;
+};
+
 export type DashSettings = {
     autoupdateInterval: null | number;
     maxConcurrentRequests: null | number;
@@ -93,6 +99,7 @@ export type DashSettings = {
     loadOnlyVisibleCharts?: boolean;
     margins?: [number, number];
     enableAssistant?: boolean;
+    widgetsSettings?: DashWidgetsSettings;
     backgroundSettings?: BackgroundSettings;
 };
 
@@ -110,16 +117,16 @@ export interface DashData {
 
 export type DashDragOptions = ItemDropProps;
 
+type OptionalDashDataSettings = Pick<
+    DashSettings,
+    'margins' | 'enableAssistant' | 'widgetsSettings' | 'backgroundSettings'
+>;
+
 // config with strict requirements of settings for new dash
 // schemeVersion comes from server
 export type FakeDashData = Omit<DashData, 'schemeVersion'> & {
-    settings: Required<
-        Omit<
-            DashSettings,
-            'margins' | 'enableAssistant' | 'signedGlobalParams' | 'backgroundSettings'
-        >
-    > &
-        Pick<DashSettings, 'margins' | 'enableAssistant' | 'backgroundSettings'>;
+    settings: Required<Omit<DashSettings, 'signedGlobalParams' | keyof OptionalDashDataSettings>> &
+        OptionalDashDataSettings;
 };
 
 export interface DashTabSettings {
@@ -171,6 +178,8 @@ export interface DashTabItemBase {
 export type DashTabItemBaseData = {
     background?: OldBackgroundSettings;
     backgroundSettings?: BackgroundSettings;
+    borderRadius?: number;
+    internalMarginsEnabled?: boolean;
 };
 
 export interface DashTabItemText extends DashTabItemBase {
@@ -203,10 +212,9 @@ export interface DashTabItemTitle extends DashTabItemBase {
 
 export interface DashTabItemWidget extends DashTabItemBase {
     type: DashTabItemType.Widget;
-    data: {
+    data: Omit<DashTabItemBaseData, 'background'> & {
         hideTitle: boolean;
         tabs: DashTabItemWidgetTab[];
-        backgroundSettings?: BackgroundSettings;
     };
 }
 

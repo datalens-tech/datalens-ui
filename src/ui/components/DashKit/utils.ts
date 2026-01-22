@@ -4,14 +4,16 @@ import type {CSSProperties} from 'react';
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
 import type {ThemeType} from '@gravity-ui/uikit';
 import {useThemeType} from '@gravity-ui/uikit';
+import {color as d3Color} from 'd3-color';
 import type {
     BackgroundSettings,
     ColorSettings,
     DashTabItemControlElement,
     OldBackgroundSettings,
 } from 'shared';
-import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared/constants/widgets';
+import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared';
 import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
+import {computeColorFromToken} from 'ui/utils/widgets/colors';
 
 import {DL} from '../../constants';
 import {
@@ -278,27 +280,57 @@ export function getControlHint(source: DashTabItemControlElement) {
     return source.showHint ? source.hint : undefined;
 }
 
-function getPreparedWrapSettings(
-    backgroundColor: string | undefined,
-    additionalStyle?: CSSProperties,
-) {
-    const hasBgColor = Boolean(backgroundColor) && backgroundColor !== CustomPaletteBgColors.NONE;
+interface GetPreparedWrapSettingsArgs {
+    ownWidgetSettings: WidgetVisualSettings;
+    globalWidgetSettings: WidgetVisualSettings;
+    additionalStyle?: CSSProperties;
+    defaultOldColor: string;
+    theme: ThemeType;
+}
+
+function getPreparedWrapSettings({
+    ownWidgetSettings,
+    globalWidgetSettings,
+    additionalStyle,
+    defaultOldColor,
+    theme,
+}: GetPreparedWrapSettingsArgs) {
+    const borderRadius = ownWidgetSettings.borderRadius ?? globalWidgetSettings.borderRadius;
+
+    const bgColorFromConfigs =
+        getResultedBgColor(
+            ownWidgetSettings.background,
+            theme,
+            defaultOldColor,
+            ownWidgetSettings.backgroundSettings,
+        ) ??
+        getResultedBgColor(
+            globalWidgetSettings.background,
+            theme,
+            defaultOldColor,
+            globalWidgetSettings.backgroundSettings,
+        );
+
+    const hexBgColor = bgColorFromConfigs ? computeColorFromToken(bgColorFromConfigs) : undefined;
+    const hasBgColor = hexBgColor ? (d3Color(hexBgColor)?.opacity ?? 0) > 0 : true;
 
     const newBackgroundColor =
-        backgroundColor === CustomPaletteBgColors.LIKE_CHART
+        bgColorFromConfigs === CustomPaletteBgColors.LIKE_CHART
             ? LIKE_CHART_COLOR_TOKEN
-            : backgroundColor;
+            : bgColorFromConfigs;
 
     const style: CSSProperties = {
         ...additionalStyle,
+        borderRadius,
         backgroundColor:
-            hasBgColor || backgroundColor === CustomPaletteBgColors.NONE
+            hasBgColor || newBackgroundColor === CustomPaletteBgColors.NONE
                 ? newBackgroundColor
                 : undefined,
     };
     return {
         style,
         hasBgColor,
+        hasInternalMargins: hasBgColor,
     };
 }
 
@@ -314,53 +346,38 @@ export function useTextColorStyles(oldTextColor?: string, textColorSettings?: Co
     }, [oldTextColor, textColorSettings, theme]);
 }
 
+interface WidgetVisualSettings {
+    background?: OldBackgroundSettings | undefined;
+    backgroundSettings?: BackgroundSettings | undefined;
+    borderRadius?: number | undefined;
+    internalMarginsEnabled?: boolean;
+}
+
 export function usePreparedWrapSettings({
-    widgetBackground,
-    globalBackground,
-    widgetBackgroundSettings,
-    globalBackgroundSettings,
+    ownWidgetSettings,
+    globalWidgetSettings,
     additionalStyle,
     defaultOldColor,
-}: {
-    widgetBackground: OldBackgroundSettings | undefined;
-    globalBackground: OldBackgroundSettings | undefined;
-    widgetBackgroundSettings: BackgroundSettings | undefined;
-    globalBackgroundSettings: BackgroundSettings | undefined;
-    additionalStyle?: CSSProperties;
-    defaultOldColor: string;
-}) {
+}: Omit<GetPreparedWrapSettingsArgs, 'theme'>) {
     const theme = useThemeType();
-    return React.useMemo(() => {
-        return getPreparedWrapSettings(
-            getResultedBgColor(
-                widgetBackground,
-                theme,
+
+    return React.useMemo(
+        () =>
+            getPreparedWrapSettings({
+                ownWidgetSettings,
+                globalWidgetSettings,
+                additionalStyle,
                 defaultOldColor,
-                widgetBackgroundSettings,
-            ) ??
-                getResultedBgColor(
-                    globalBackground,
-                    theme,
-                    defaultOldColor,
-                    globalBackgroundSettings,
-                ),
-            additionalStyle,
-        );
-    }, [
-        widgetBackground,
-        globalBackground,
-        widgetBackgroundSettings,
-        globalBackgroundSettings,
-        additionalStyle,
-        defaultOldColor,
-        theme,
-    ]);
+                theme,
+            }),
+        [ownWidgetSettings, globalWidgetSettings, additionalStyle, defaultOldColor, theme],
+    );
 }
 
 export function getResultedBgColor(
     oldBgColor: OldBackgroundSettings | undefined,
     theme: ThemeType,
-    defaultColor: string,
+    defaultColor: string | undefined,
     newBgColor: BackgroundSettings | undefined,
 ): string | undefined {
     if (newBgColor?.color) {

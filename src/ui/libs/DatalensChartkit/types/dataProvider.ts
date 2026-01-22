@@ -21,11 +21,17 @@ export interface DataProvider<T extends {params?: StringParams}, R, K> {
         contextHeaders,
         requestId,
         requestCancellation,
+        responseOptions,
+        widgetElement,
     }: {
         props: T;
         contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: K;
+        widgetElement?: Element;
+        responseOptions?: {
+            includeConfig?: boolean;
+        };
     }) => Promise<(Widget & R) | null>;
     getControls?: ({
         props,

@@ -17,6 +17,7 @@ import type {WorkbookEntry} from 'ui/units/workbooks/types/index';
 
 import {EntryActions} from '../../../EntryActions/EntryActions';
 import {defaultRowStyle, mobileRowStyle} from '../constants';
+import {getIsCanShowContextMenu, getIsCanUpdateSharedEntryBindings} from '../utils';
 
 import './Row.scss';
 
@@ -54,6 +55,7 @@ const Row = <T extends WorkbookEntry>({
     onUpdateSharedEntryBindings,
 }: RowProps<T>) => {
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
+    const {WorkbookTableRowExtendedContent} = registry.workbooks.components.getAll();
     const {getLoginById} = registry.common.functions.getAll();
     const dispatch: AppDispatch = useDispatch();
     const isSharedEntry = Boolean(item.collectionId);
@@ -119,6 +121,13 @@ const Row = <T extends WorkbookEntry>({
                     >
                         {item.name}
                     </div>
+                    <WorkbookTableRowExtendedContent
+                        item={item}
+                        workbook={workbook}
+                        onUpdateSharedEntryBindings={
+                            onUpdateSharedEntryBindings && (() => onUpdateSharedEntryBindings(item))
+                        }
+                    />
                 </div>
             </div>
             <div className={b('content-cell', {author: true})}>
@@ -143,7 +152,7 @@ const Row = <T extends WorkbookEntry>({
                         onClick={onChangeFavorite}
                         isFavorite={item.isFavorite}
                     />
-                    {workbook.permissions.update && (
+                    {getIsCanShowContextMenu(item, workbook.permissions) && (
                         <div className={b('btn-actions')}>
                             <EntryActions
                                 workbook={workbook}
@@ -159,6 +168,7 @@ const Row = <T extends WorkbookEntry>({
                                 }
                                 onCopyId={onCopyId && (() => onCopyId(item))}
                                 onUpdateSharedEntryBindings={
+                                    getIsCanUpdateSharedEntryBindings(item) &&
                                     onUpdateSharedEntryBindings &&
                                     (() => onUpdateSharedEntryBindings(item))
                                 }

@@ -1,8 +1,8 @@
 import {DashTabItemType, Feature} from 'shared';
-import type {DashTabItemGroupControlData, ImpactTabsIds, ImpactType} from 'shared/types/dash';
+import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import type {GlobalItem} from '../typings/dash';
+import type {GlobalItem, GroupGlobalItemData} from '../typings/dash';
 
 export interface ImpactTypeItem {
     impactType?: ImpactType;
@@ -34,11 +34,11 @@ const isItemVisibleOnTabByGroup = (isVisibleByGroupSetting: boolean, impactType?
 };
 
 export const isGlobalWidgetVisibleByMainSetting = (
-    tabId: string,
+    tabId: string | null,
     groupImpactType?: ImpactType,
     groupImpactTabsIds?: ImpactTabsIds,
 ): boolean => {
-    if (!groupImpactType) {
+    if (!groupImpactType || !tabId) {
         return true;
     }
 
@@ -51,14 +51,16 @@ export const isGroupItemVisibleOnTab = ({
     groupImpactType,
     groupImpactTabsIds,
     isVisibleByMainSetting,
+    isGlobal = true,
 }: {
     item: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds};
     tabId: string | null;
     groupImpactType?: ImpactType;
     groupImpactTabsIds?: ImpactTabsIds;
     isVisibleByMainSetting?: boolean;
+    isGlobal?: boolean;
 }): boolean => {
-    if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !tabId) {
+    if (!isGlobal || !isEnabledFeature(Feature.EnableGlobalSelectors) || !tabId) {
         return true;
     }
 
@@ -77,10 +79,6 @@ export const isGroupItemVisibleOnTab = ({
     );
 };
 
-export const getAllTabItems = <T>(tab: {items: T[]; globalItems?: T[]}) => {
-    return tab.items.concat(tab.globalItems || []);
-};
-
 function isControlGlobal(impactType?: ImpactType, impactTabsIds?: ImpactTabsIds): boolean {
     return (
         impactType === 'allTabs' ||
@@ -88,7 +86,7 @@ function isControlGlobal(impactType?: ImpactType, impactTabsIds?: ImpactTabsIds)
     );
 }
 
-function isGroupControlGlobal(itemData: Partial<DashTabItemGroupControlData>): boolean {
+function isGroupControlGlobal(itemData: GroupGlobalItemData): boolean {
     const groupImpactType = itemData.impactType;
     const groupImpactTabsIds = itemData.impactTabsIds;
     const isGroupSettingApplied = itemData.group?.some(

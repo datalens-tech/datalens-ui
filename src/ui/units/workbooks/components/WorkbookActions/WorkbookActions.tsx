@@ -10,13 +10,15 @@ import {
     DIALOG_MOVE_WORKBOOK,
 } from 'components/CollectionsStructure';
 import {I18N} from 'i18n';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
 import {WorkbookPageActionsMoreQA} from 'shared/constants/qa';
 import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
+import {selectCollectionBreadcrumbsError} from 'ui/units/collections-navigation/store/selectors';
+import Utils from 'ui/utils';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared';
@@ -83,8 +85,18 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
     const isWorkbookExportDisabled = Boolean(globallyEntrySettings?.isWorkbookExportDisabled);
 
     const additionalActions = useAdditionalWorkbookActions(workbook);
+    const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
 
     const dropdownActions = [...additionalActions];
+
+    const collectionAccessPermissionDenied =
+        workbook.collectionId &&
+        breadcrumbsError &&
+        Utils.parseErrorResponse(breadcrumbsError).status === 403;
+
+    const initialCollectionId = collectionAccessPermissionDenied
+        ? undefined
+        : workbook.collectionId;
 
     if (workbook.permissions.move) {
         dropdownActions.push({
@@ -96,7 +108,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                             open: true,
                             workbookId: workbook.workbookId,
                             workbookTitle: workbook.title,
-                            initialCollectionId: workbook.collectionId,
+                            initialCollectionId,
                             onApply: refreshWorkbookInfo,
                             onClose: () => {
                                 dispatch(closeDialog());
@@ -119,7 +131,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                             open: true,
                             workbookId: workbook.workbookId,
                             workbookTitle: workbook.title,
-                            initialCollectionId: workbook.collectionId,
+                            initialCollectionId,
                             onApply: onApplyCopy,
                             onClose: () => {
                                 dispatch(closeDialog());

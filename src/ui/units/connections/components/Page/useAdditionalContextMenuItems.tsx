@@ -28,12 +28,14 @@ type UseAdditionalContextMenuItemsProps = {
     entry?: ConnectionEntry;
     isFakeEntry?: boolean;
     bindedWorkbookId?: string | null;
+    bindedDatasetId?: string | null;
 };
 
 export const useAdditionalContextMenuItems = ({
     entry,
     isFakeEntry,
     bindedWorkbookId,
+    bindedDatasetId,
 }: UseAdditionalContextMenuItemsProps) => {
     const dispatch = useDispatch();
     const history = useHistory();
@@ -41,13 +43,13 @@ export const useAdditionalContextMenuItems = ({
     const isWorkbookSharedEntry = isSharedConnection && bindedWorkbookId;
 
     return React.useMemo(() => {
-        if (!isSharedConnection || !entry || isFakeEntry) {
+        if (!isSharedConnection || !entry || isFakeEntry || bindedDatasetId) {
             return;
         }
         const items: (EntryContextMenuItem & {theme?: string})[] = [];
         if (isWorkbookSharedEntry) {
-            items.push(
-                {
+            if (entry.permissions?.admin || entry.fullPermissions?.updateAccessBindings) {
+                items.push({
                     id: ENTRY_CONTEXT_MENU_ACTION.ACCESS,
                     action: () => {
                         dispatch(
@@ -87,8 +89,10 @@ export const useAdditionalContextMenuItems = ({
                     },
                     icon: <Shield />,
                     text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
-                },
-                {
+                });
+            }
+            if (entry.fullPermissions.delete) {
+                items.push({
                     id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
                     action: () => {
                         dispatch(
@@ -111,11 +115,11 @@ export const useAdditionalContextMenuItems = ({
                     icon: <TrashBin />,
                     theme: 'danger',
                     text: getSharedEntryMockText('shared-entry-delete-dropdown-menu-title'),
-                },
-            );
+                });
+            }
         } else {
-            items.push(
-                {
+            if (entry.permissions?.admin || entry.fullPermissions?.updateAccessBindings) {
+                items.push({
                     id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
                     action: () => {
                         dispatch(
@@ -131,8 +135,10 @@ export const useAdditionalContextMenuItems = ({
                     },
                     icon: <CodeTrunk />,
                     text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
-                },
-                {
+                });
+            }
+            if (entry.fullPermissions.listAccessBindings) {
+                items.push({
                     id: ENTRY_CONTEXT_MENU_ACTION.ACCESS,
                     action: () => {
                         dispatch(
@@ -153,8 +159,10 @@ export const useAdditionalContextMenuItems = ({
                     },
                     icon: <Persons />,
                     text: i18ContextMenu('value_access'),
-                },
-                {
+                });
+            }
+            if (entry.fullPermissions.delete) {
+                items.push({
                     id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
                     action: () => {
                         dispatch(
@@ -176,8 +184,8 @@ export const useAdditionalContextMenuItems = ({
                     icon: <TrashBin />,
                     theme: 'danger',
                     text: getSharedEntryMockText('shared-entry-delete-dropdown-menu-title'),
-                },
-            );
+                });
+            }
         }
         return items;
     }, [

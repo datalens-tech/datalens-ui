@@ -3,7 +3,6 @@ import type {PointOptionsType} from 'highcharts';
 import escape from 'lodash/escape';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
-import pick from 'lodash/pick';
 import set from 'lodash/set';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
 import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/chart-storage';
@@ -27,18 +26,12 @@ import type {UiSandboxRuntimeOptions} from '../../../types';
 import {generateHtml} from '../../html-generator';
 import {getParseHtmlFn} from '../../html-generator/utils';
 
+import type {TargetValue} from './types';
 import {UiSandboxRuntime} from './ui-sandbox-runtime';
+import {clearVmProp} from './utils';
 
 export const UI_SANDBOX_TOTAL_TIME_LIMIT = 3000;
 export const UI_SANDBOX_FN_TIME_LIMIT = 100;
-
-/**
- * Config value to check. It could have any type.
- *
- * Each method in this module that uses such a value performs a typing check in runtime.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TargetValue = any;
 
 let uiSandbox: QuickJSWASMModule | undefined;
 let getInterruptAfterDeadlineHandler: (deadline: Date | number) => InterruptHandler;
@@ -58,116 +51,6 @@ export const getUISandbox = async () => {
 
     return uiSandbox;
 };
-
-const HC_FORBIDDEN_ATTRS = [
-    'chart',
-    'this',
-    'renderer',
-    'container',
-    'label',
-    'axis',
-    'legendItem',
-    'legendGroup',
-    'legendLine',
-    'xAxis',
-    'yAxis',
-] as const;
-const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'state'];
-
-const EVENT_KEYS = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey'];
-
-const MAX_NESTING_LEVEL = 5;
-function removeSVGElements(val: unknown, nestingLevel = 0): unknown {
-    if (nestingLevel > MAX_NESTING_LEVEL) {
-        return undefined;
-    }
-
-    if (val && typeof val === 'object') {
-        if (Array.isArray(val)) {
-            if (val.some((item) => item instanceof window.Highcharts.SVGElement)) {
-                return [];
-            }
-
-            return val.map((item) => removeSVGElements(item, nestingLevel + 1));
-        } else {
-            return Object.entries(val as object).reduce(
-                (acc, [key, value]) => {
-                    if (!(value instanceof window.Highcharts.SVGElement)) {
-                        acc[key] = removeSVGElements(value, nestingLevel + 1);
-                    }
-
-                    return acc;
-                },
-                {} as Record<string, unknown>,
-            );
-        }
-    }
-
-    return val;
-}
-
-function getChartProps(chart: unknown) {
-    return pick(chart, 'chartHeight', 'chartWidth', 'index');
-}
-
-function clearVmProp(prop: unknown): unknown {
-    if (prop && typeof prop === 'object') {
-        if (Array.isArray(prop)) {
-            return prop.map(clearVmProp);
-        }
-
-        if ('angular' in prop) {
-            // It looks like it's Highcharts.Chart - preparing a minimum of attributes for the entity
-            return getChartProps(prop);
-        }
-
-        // instanceof Event
-        const eventProps = 'preventDefault' in prop ? pick(prop, EVENT_KEYS) : {};
-
-        const item: Record<string, TargetValue> = {...(prop as object)};
-        HC_FORBIDDEN_ATTRS.forEach((attr) => {
-            if (attr in item) {
-                if (attr === 'this' && Array.isArray(item[attr]?.points)) {
-                    item[attr].points = item[attr].points.map(clearVmProp);
-                    return;
-                }
-
-                delete item[attr];
-            }
-        });
-
-        // eslint-disable-next-line prefer-const
-        let {series, point, points, this: _this, ...other} = item;
-        if (typeof series !== 'undefined') {
-            series = pick(series, ...ALLOWED_SERIES_ATTRS);
-            delete series.userOptions.data;
-        }
-
-        if (typeof point !== 'undefined') {
-            const pointClone = clearVmProp(item.point);
-            point = removeSVGElements(pointClone);
-        }
-
-        if (Array.isArray(points)) {
-            points = points.map(clearVmProp);
-        }
-
-        return {
-            series,
-            point,
-            points,
-            this: _this,
-            ...(removeSVGElements(other) as object),
-            ...eventProps,
-        };
-    }
-
-    if (prop && typeof prop === 'function') {
-        return prop.toString();
-    }
-
-    return prop;
-}
 
 async function getUiSandboxLibs(libs: string[]) {
     const getModule = (name: string) =>
@@ -214,14 +97,16 @@ async function getUnwrappedFunction(args: {
     entryId: string;
     entryType: string;
     name?: string;
+    widgetElement?: Element;
 }) {
-    const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
+    const {sandbox, wrappedFn, options, entryId, entryType, name, widgetElement} = args;
     const uiSandboxLibs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
     const isAdvancedChart = (
         [EditorType.AdvancedChartNode, LegacyEditorType.BlankChart] as string[]
     ).includes(entryType);
 
+    // eslint-disable-next-line complexity
     return function (this: unknown, ...restArgs: unknown[]) {
         let libs = uiSandboxLibs;
         const runId = getRandomCKId();
@@ -260,136 +145,157 @@ async function getUnwrappedFunction(args: {
             },
         };
 
-        // extend API for Highcharts charts
-        if (entryType === 'graph_node') {
-            const getCurrentChart = () => {
-                const chart = window.Highcharts.charts?.find(
-                    (c: unknown) => get(c, 'userOptions._config.entryId') === entryId,
-                );
+        switch (entryType) {
+            case EditorType.GraphNode: {
+                const getCurrentChart = () => {
+                    const chart = window.Highcharts.charts?.find(
+                        (c: unknown) => get(c, 'userOptions._config.entryId') === entryId,
+                    );
 
-                if (!chart) {
-                    throw Error("Couldn't find a chart associated with this function");
-                }
-                return chart;
-            };
+                    if (!chart) {
+                        throw Error("Couldn't find a chart associated with this function");
+                    }
+                    return chart;
+                };
 
-            merge(globalApi, {
-                Highcharts: {
-                    numberFormat: window.Highcharts.numberFormat,
-                    dateFormat: window.Highcharts.dateFormat,
-                },
-                Chart: {
-                    getBoundingClientRect: () => {
-                        return getCurrentChart()?.container.getBoundingClientRect();
+                merge(globalApi, {
+                    Highcharts: {
+                        numberFormat: window.Highcharts.numberFormat,
+                        dateFormat: window.Highcharts.dateFormat,
                     },
-                    appendElements: (node: unknown) => {
-                        const chart = getCurrentChart();
+                    Chart: {
+                        getBoundingClientRect: () => {
+                            return getCurrentChart()?.container.getBoundingClientRect();
+                        },
+                        appendElements: (node: unknown) => {
+                            const chart = getCurrentChart();
 
-                        const html = unwrapHtml({
-                            value: wrapHtml(node as ChartKitHtmlItem),
-                        }) as string;
-                        const container = chart.container;
-                        const wrapper = document.createElement('div');
-                        wrapper.insertAdjacentHTML('beforeend', html);
-                        const nodes = Array.from(wrapper.childNodes);
+                            const html = unwrapHtml({
+                                value: wrapHtml(node as ChartKitHtmlItem),
+                            }) as string;
+                            const container = chart.container;
+                            const wrapper = document.createElement('div');
+                            wrapper.insertAdjacentHTML('beforeend', html);
+                            const nodes = Array.from(wrapper.childNodes);
 
-                        return nodes.map((node) => {
-                            const el = container.appendChild(node) as HTMLElement;
-                            return el.getBoundingClientRect();
-                        });
-                    },
-                    updateSeries: (seriesIndex: number, data: any) => {
-                        processHtmlFields(data);
-                        getCurrentChart()?.series?.[seriesIndex]?.update(data);
-                    },
-                    updateTitle: (data: any) => {
-                        processHtmlFields(data);
-                        getCurrentChart()?.title?.update(data);
-                    },
-                    updatePoints: (updates: PointOptionsType, match?: Record<string, unknown>) => {
-                        const seriesOptions: [string, unknown][] = [];
-                        const pointOptions: [string, unknown][] = [];
-                        Object.entries(match ?? {}).forEach(([key, value]) => {
-                            if (key.startsWith('series.')) {
-                                seriesOptions.push([key.replace('series.', ''), value]);
-                            } else {
-                                pointOptions.push([key, value]);
+                            return nodes.map((node) => {
+                                const el = container.appendChild(node) as HTMLElement;
+                                return el.getBoundingClientRect();
+                            });
+                        },
+                        updateSeries: (seriesIndex: number, data: any) => {
+                            processHtmlFields(data);
+                            getCurrentChart()?.series?.[seriesIndex]?.update(data);
+                        },
+                        updateTitle: (data: any) => {
+                            processHtmlFields(data);
+                            getCurrentChart()?.title?.update(data);
+                        },
+                        updatePoints: (
+                            updates: PointOptionsType,
+                            match?: Record<string, unknown>,
+                        ) => {
+                            const seriesOptions: [string, unknown][] = [];
+                            const pointOptions: [string, unknown][] = [];
+                            Object.entries(match ?? {}).forEach(([key, value]) => {
+                                if (key.startsWith('series.')) {
+                                    seriesOptions.push([key.replace('series.', ''), value]);
+                                } else {
+                                    pointOptions.push([key, value]);
+                                }
+                            });
+
+                            let shouldRedraw = false;
+                            const chart = getCurrentChart();
+                            const chartSeries = chart.series;
+                            chartSeries.forEach((s) => {
+                                if (seriesOptions.every(([key, value]) => get(s, key) === value)) {
+                                    s.points?.forEach((p) => {
+                                        if (
+                                            pointOptions.every(
+                                                ([key, value]) => get(p, key) === value,
+                                            )
+                                        ) {
+                                            p.update(updates, false);
+                                            shouldRedraw = true;
+                                        }
+                                    });
+                                }
+                            });
+
+                            if (shouldRedraw) {
+                                chart.redraw();
                             }
-                        });
-
-                        let shouldRedraw = false;
-                        const chart = getCurrentChart();
-                        const chartSeries = chart.series;
-                        chartSeries.forEach((s) => {
-                            if (seriesOptions.every(([key, value]) => get(s, key) === value)) {
-                                s.points?.forEach((p) => {
-                                    if (
-                                        pointOptions.every(([key, value]) => get(p, key) === value)
-                                    ) {
-                                        p.update(updates, false);
-                                        shouldRedraw = true;
+                        },
+                        findPoint: (fn: (point: unknown) => boolean) => {
+                            const chartSeries = getCurrentChart()?.series ?? [];
+                            for (let i = 0; i < chartSeries.length; i++) {
+                                const points = chartSeries[i].data;
+                                for (let pointIndex = 0; pointIndex < points.length; pointIndex++) {
+                                    const cleanPoint = clearVmProp(points[pointIndex]);
+                                    if (fn(cleanPoint)) {
+                                        return cleanPoint;
                                     }
-                                });
-                            }
-                        });
-
-                        if (shouldRedraw) {
-                            chart.redraw();
-                        }
-                    },
-                    findPoint: (fn: (point: unknown) => boolean) => {
-                        const chartSeries = getCurrentChart()?.series ?? [];
-                        for (let i = 0; i < chartSeries.length; i++) {
-                            const points = chartSeries[i].data;
-                            for (let pointIndex = 0; pointIndex < points.length; pointIndex++) {
-                                const cleanPoint = clearVmProp(points[pointIndex]);
-                                if (fn(cleanPoint)) {
-                                    return cleanPoint;
                                 }
                             }
-                        }
-                        return null;
+                            return null;
+                        },
                     },
-                },
-                window: {
-                    open: function (url: string, target?: string) {
-                        try {
-                            const href = sanitizeUrl(url);
-                            window.open(href, target === '_self' ? '_self' : '_blank');
-                        } catch (e) {
-                            console.error(e);
-                        }
+                    window: {
+                        open: function (url: string, target?: string) {
+                            try {
+                                const href = sanitizeUrl(url);
+                                window.open(href, target === '_self' ? '_self' : '_blank');
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        },
                     },
-                },
-            });
-        } else if (isAdvancedChart) {
-            const chartId = get(this, 'chartId');
-            const chartContext = chartStorage.get(chartId);
+                });
+                break;
+            }
+            case EditorType.AdvancedChartNode:
+            case LegacyEditorType.BlankChart: {
+                const chartId = get(this, 'chartId');
+                const chartContext = chartStorage.get(chartId);
 
-            merge(globalApi, {
-                Chart: {
-                    getState: () => {
-                        return chartContext.getState();
+                merge(globalApi, {
+                    Chart: {
+                        getState: () => {
+                            return chartContext.getState();
+                        },
+                        setState: (update: any, options?: any) => {
+                            chartContext?.setState(update, options);
+                        },
+                        updateActionParams: (params: StringParams) => {
+                            chartContext?.updateActionParams(params);
+                        },
                     },
-                    setState: (update: any, options?: any) => {
-                        chartContext?.setState(update, options);
+                    ChartEditor: {
+                        updateActionParams: (params: StringParams) => {
+                            chartContext?.updateActionParams(params);
+                        },
+                        updateParams: (params: StringParams) => {
+                            chartContext?.updateParams(params);
+                        },
                     },
-                    updateActionParams: (params: StringParams) => {
-                        chartContext?.updateActionParams(params);
-                    },
-                },
-                ChartEditor: {
-                    updateActionParams: (params: StringParams) => {
-                        chartContext?.updateActionParams(params);
-                    },
-                    updateParams: (params: StringParams) => {
-                        chartContext?.updateParams(params);
-                    },
-                },
-            });
+                });
 
-            if (fnContext && typeof fnContext === 'object' && '__innerHTML' in fnContext) {
-                libs += `document.body.innerHTML = (${JSON.stringify(fnContext.__innerHTML)});`;
+                if (fnContext && typeof fnContext === 'object' && '__innerHTML' in fnContext) {
+                    libs += `document.body.innerHTML = (${JSON.stringify(fnContext.__innerHTML)});`;
+                }
+                break;
+            }
+            case EditorType.GravityChartsNode: {
+                merge(globalApi, {
+                    Chart: {
+                        getBoundingClientRect: () => {
+                            return widgetElement?.getBoundingClientRect();
+                        },
+                    },
+                });
+
+                break;
             }
         }
 
@@ -453,8 +359,9 @@ export async function unwrapPossibleFunctions(args: {
     sandbox: QuickJSWASMModule;
     target: TargetValue;
     options?: UiSandboxRuntimeOptions;
+    widgetElement?: Element;
 }) {
-    const {sandbox, target, options, entryId, entryType} = args;
+    const {sandbox, target, options, entryId, entryType, widgetElement} = args;
     if (!target || typeof target !== 'object') {
         return;
     }
@@ -476,6 +383,7 @@ export async function unwrapPossibleFunctions(args: {
                     entryId,
                     entryType,
                     name: key,
+                    widgetElement,
                 });
             } else if (Array.isArray(value)) {
                 await Promise.all(
@@ -486,6 +394,7 @@ export async function unwrapPossibleFunctions(args: {
                             options,
                             target: item,
                             entryType,
+                            widgetElement,
                         }),
                     ),
                 );
@@ -496,6 +405,7 @@ export async function unwrapPossibleFunctions(args: {
                     options,
                     target: value,
                     entryType,
+                    widgetElement,
                 });
             }
         }),

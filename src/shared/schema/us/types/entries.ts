@@ -52,6 +52,7 @@ export interface GetEntryArgs {
     includeLinks?: boolean;
     includeFavorite?: boolean;
     includeDlComponentUiData?: boolean;
+    bindedDatasetId?: string | null;
 }
 
 export interface PrivateGetEntryArgs extends GetEntryArgs {
@@ -81,6 +82,8 @@ export interface GetEntryByKeyArgs extends Omit<GetEntryArgs, 'entryId'> {
 export interface GetEntryMetaResponse extends EntryMetaFields {}
 export interface GetEntryMetaArgs {
     entryId: string;
+    bindedWorkbookId?: string | null;
+    bindedDatasetId?: string | null;
 }
 
 export interface GetRevisionsEntry extends EntryNavigationFields {
@@ -135,10 +138,45 @@ export type GetEntriesArgs = EntriesCommonArgs & {
 
 export type MoveEntryResponse = EntryFields[];
 
+export type GetSharedEntryInfoResponse = Pick<
+    GetEntryResponse,
+    'permissions' | 'fullPermissions' | 'entryId' | 'workbookId' | 'key' | 'type'
+> & {
+    scope: EntryScope.Connection | EntryScope.Dataset;
+    collectionId: string;
+};
+
+export type DeleteSharedEntriesResponse = {
+    entries: EntryFields[];
+};
+export type MoveSharedEntriesResponse = {
+    entries: EntryFields[];
+};
+
 export interface MoveEntryArgs {
     entryId: string;
     destination: string;
     name?: string;
+}
+
+export interface MoveSharedEntryArgs {
+    entryId: string;
+    collectionId: string;
+    name?: string;
+}
+
+export interface DeleteSharedEntriesArgs {
+    entryIds: string[];
+}
+
+export interface GetSharedEntryInfoArgs {
+    entryId: string;
+    includePermissionsInfo: boolean;
+}
+
+export interface MoveSharedEntriesArgs {
+    entryIds: string[];
+    collectionId: string;
 }
 
 export interface CopyEntry extends EntryFields {
@@ -320,6 +358,7 @@ export interface EntityBindingsArgs {
     sourceId: string;
     targetId: string;
     delegation: boolean;
+    bindedWorkbookId?: string | null;
 }
 
 export type GetSharedEntryBindingsArgs = {

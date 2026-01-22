@@ -12,7 +12,7 @@ import type {ValuesType} from 'utility-types';
 
 import type {Mode} from '../../modules/constants';
 import type {TabsHashStates} from '../../store/actions/dashTyped';
-import type {DashUpdateStatus, GlobalItem} from '../../typings/dash';
+import type {DashUpdateStatus, GlobalItemWithId} from '../../typings/dash';
 
 export type DashState = {
     tabId: null | string;
@@ -47,6 +47,6 @@ export type DashState = {
 
 export type UpdateTabsWithGlobalStateArgs = {
     params: ItemParams;
-    selectorItem: GlobalItem;
+    selectorItem: GlobalItemWithId;
     appliedSelectorsIds: string[];
 };

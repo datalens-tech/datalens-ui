@@ -93,6 +93,12 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
         margin-right: $widgetIconMarginRight;
         margin-left: $widgetIconMarginLeft;
         color: var(--g-color-text-hint);
+        display: flex;
+    }
+
+    &__skeleton-icon {
+        height: $widgetIconWidth;
+        width: $widgetIconWidth;
     }
 
     &__button-link {

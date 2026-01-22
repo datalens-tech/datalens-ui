@@ -4,6 +4,7 @@ import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
 import {getDefaultDashWidgetBgColorByType} from 'shared/constants/widgets';
+import {getAllTabItems} from 'shared/utils/dash';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {
     getUpdatedBackgroundData,
@@ -14,7 +15,7 @@ import {
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
-import {getAllTabItems, isItemGlobal} from '../../utils/selectors';
+import {isItemGlobal} from '../../utils/selectors';
 import * as actionTypes from '../constants/dashActionTypes';
 
 import {
@@ -200,11 +201,11 @@ function dash(state = initialState, action) {
                     // Copy global items to new tab if they exist
                     if (globalItemsToCopy.length > 0) {
                         globalItemsToCopy.forEach((globalItem) => {
-                            tabItem = addGlobalItemToTab(
-                                tabItem,
-                                globalItem,
-                                layout[globalItem.id],
-                            );
+                            tabItem = addGlobalItemToTab({
+                                tab: tabItem,
+                                item: globalItem,
+                                layoutItem: layout[globalItem.id],
+                            });
                         });
                     }
                 }
@@ -437,6 +438,8 @@ function dash(state = initialState, action) {
 
             // Handle global control items (GroupControl and Control types)
             if (itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control) {
+                const connectionsUpdaters = state.connectionsUpdaters;
+
                 const updatedState = getStateForControlWithGlobalLogic({
                     state,
                     data,
@@ -445,6 +448,7 @@ function dash(state = initialState, action) {
                     itemType,
                     itemData,
                     isGlobal,
+                    connectionsUpdaters,
                 });
 
                 // If the function returned a state, return it

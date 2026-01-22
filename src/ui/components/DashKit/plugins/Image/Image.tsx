@@ -6,7 +6,7 @@ import type {DashTabItemImage} from 'shared';
 import {CustomPaletteBgColors, DashTabItemType} from 'shared';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
-import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
+import type {CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {usePreparedWrapSettings} from '../../utils';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
@@ -15,10 +15,9 @@ import './Image.scss';
 
 const b = block('dashkit-plugin-image');
 
-type Props = PluginWidgetProps &
-    CommonPluginProps & {
-        data: DashTabItemImage['data'] & PluginWidgetProps['data'];
-    };
+type Props = PluginWidgetProps & {
+    data: DashTabItemImage['data'] & PluginWidgetProps['data'];
+};
 
 type PluginImageObjectSettings = CommonPluginSettings;
 
@@ -31,8 +30,7 @@ export const pluginImage: PluginImage = {
     type: DashTabItemType.Image,
     defaultLayout: {w: 12, h: 12, minH: 1, minW: 1},
     setSettings: (settings: PluginImageObjectSettings) => {
-        pluginImage.globalBackground = settings.globalBackground;
-        pluginImage.globalBackgroundSettings = settings.globalBackgroundSettings;
+        pluginImage.globalWidgetSettings = settings.globalWidgetSettings;
         return pluginImage;
     },
     renderer: PluginImageRenderer,
@@ -41,7 +39,7 @@ export const pluginImage: PluginImage = {
 function PluginImageRenderer(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
     const {
         id,
-        data: {alt, background, backgroundSettings, src, preserveAspectRatio},
+        data: {alt, background, backgroundSettings, borderRadius, src, preserveAspectRatio},
         layout,
     } = props;
 
@@ -60,10 +58,12 @@ function PluginImageRenderer(props: Props, _ref?: React.LegacyRef<HTMLDivElement
     };
 
     const {style} = usePreparedWrapSettings({
-        widgetBackground: background,
-        globalBackground: pluginImage.globalBackground,
-        widgetBackgroundSettings: backgroundSettings,
-        globalBackgroundSettings: pluginImage.globalBackgroundSettings,
+        ownWidgetSettings: {
+            background: background,
+            backgroundSettings: backgroundSettings,
+            borderRadius: borderRadius,
+        },
+        globalWidgetSettings: pluginImage.globalWidgetSettings ?? {},
         defaultOldColor: CustomPaletteBgColors.NONE,
     });
 

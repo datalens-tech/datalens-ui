@@ -1,12 +1,15 @@
-import type {AppContext} from '@gravity-ui/nodekit';
+import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
 import {crc32c} from '@node-rs/crc32';
 import type {RequiredUriUrl} from 'request';
 import type {RequestPromise, RequestPromiseOptions} from 'request-promise-native';
 import requestPromise from 'request-promise-native';
 
+import {Feature} from '../../../../../shared/types';
 import {CacheClient} from '../../../cache-client';
 import {config} from '../../constants';
 import {hideSensitiveData} from '../utils';
+
+import {RequestAxios} from './axios';
 
 type RequestOptions = RequiredUriUrl &
     RequestPromiseOptions & {useCaching?: boolean; signal: AbortSignal};
@@ -56,21 +59,41 @@ const requestWithPresets = requestPromise.defaults({
 });
 
 export class Request {
-    static init({cacheClientInstance}: {cacheClientInstance: CacheClient}) {
+    static init({
+        cacheClientInstance,
+        config: appConfig,
+    }: {
+        cacheClientInstance: CacheClient;
+        config: AppConfig;
+    }) {
         cacheClient = cacheClientInstance;
+        RequestAxios.init({cacheClientInstance, config: appConfig});
     }
 
     static request({
         requestOptions,
         useCaching = false,
         requestControl,
+        ctx,
     }: {
         requestOptions: RequestOptions | CachedRequestOptions;
         useCaching?: boolean;
         requestControl: {
             allBuffersLength: number;
         };
+        ctx: AppContext;
     }) {
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+        if (isEnabledServerFeature(Feature.UseAxiosRequest)) {
+            return RequestAxios.request({
+                requestOptions: requestOptions as Parameters<
+                    typeof RequestAxios.request
+                >[0]['requestOptions'],
+                useCaching,
+                requestControl,
+            });
+        }
+
         const {signal} = requestOptions;
 
         if (signal?.aborted === true) {

@@ -8,6 +8,7 @@ import {TAB_DATASET, TAB_FILTERS, TAB_PARAMETERS, TAB_SOURCES} from '../../const
 import DatasetEditor from '../DatasetEditor/DatasetEditor';
 import DatasetFilters from '../DatasetFilters/DatasetFilters';
 import {DatasetParameters} from '../DatasetParameters/DatasetParameters';
+import type {DatasetSources as DS} from '../DatasetSources/DatasetSources';
 import DatasetSources from '../DatasetSources/DatasetSources';
 
 type Props = {
@@ -15,23 +16,34 @@ type Props = {
     sdk: SDK;
     datasetId?: string;
     forwardedRef?: React.ForwardedRef<React.Component>;
-    workbookId?: string | null;
-    collectionId?: CollectionId;
+    workbookId: string | null;
+    collectionId: CollectionId;
     readonly: boolean;
+    bindedWorkbookId?: string | null;
 };
 
 function DatasetTabViewer(props: Props) {
-    const {tab, sdk, datasetId, forwardedRef, workbookId, collectionId, readonly} = props;
+    const {
+        tab,
+        sdk,
+        datasetId,
+        forwardedRef,
+        workbookId,
+        collectionId,
+        readonly,
+        bindedWorkbookId,
+    } = props;
 
     switch (tab) {
         case TAB_SOURCES:
             return (
                 <DatasetSources
-                    ref={forwardedRef}
+                    ref={forwardedRef as React.LegacyRef<DS>}
                     sdk={sdk}
                     workbookId={workbookId}
                     collectionId={collectionId}
                     readonly={readonly}
+                    bindedWorkbookId={bindedWorkbookId}
                 />
             );
         case TAB_FILTERS:

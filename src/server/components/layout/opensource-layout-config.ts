@@ -7,10 +7,9 @@ import type {
     DLUser,
     TenantSettings,
 } from '../../../shared';
-import {FALLBACK_LANGUAGES, Feature, Language, USER_SETTINGS_KEY} from '../../../shared';
+import {FALLBACK_LANGUAGES, Language, USER_SETTINGS_KEY} from '../../../shared';
 import type {AppLayoutSettings, GetLayoutConfig} from '../../types/app-layout';
 import {addTranslationsScript} from '../../utils/language';
-import {getUserInfo} from '../zitadel/utils';
 
 import {getChartkitLayoutSettings, getPlatform} from './utils';
 
@@ -44,7 +43,6 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         lang = Language.En;
     }
 
-    const isZitadelEnabled = req.ctx.config.isZitadelEnabled;
     const isAuthEnabled = req.ctx.config.isAuthEnabled;
 
     // TODO: check and remove optional props;
@@ -53,12 +51,6 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
     let iamUserId = '';
     const {scripts: chartkitScripts, inlineScripts: chartkitInlineScripts} =
         getChartkitLayoutSettings(config.chartkitSettings);
-
-    if (isZitadelEnabled) {
-        const userInfo = getUserInfo(req, res);
-        iamUserId = userInfo.uid as string;
-        user = {...user, ...userInfo};
-    }
 
     if (isAuthEnabled) {
         const authUser = req.ctx.get('user');
@@ -71,11 +63,6 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
             ...profile,
         };
     }
-
-    const isRebrandingEnabled = req.ctx.get('isEnabledServerFeature')(Feature.EnableDLRebranding);
-
-    // applying new favicon from rebranding
-    const faviconUrl = isRebrandingEnabled ? '/os-favicon.ico' : config.faviconUrl;
 
     const tenantSettings: TenantSettings = {
         defaultColorPaletteId: res.locals.tenantDefaultColorPaletteId,
@@ -97,7 +84,6 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         defaultColorPaletteId: config.defaultColorPaletteId,
         allowLanguages,
         headersMap: req.ctx.config.headersMap,
-        isZitadelEnabled,
         isAuthEnabled,
         ymapApiKey: config.chartkitSettings?.yandexMap?.token,
         connectorIcons: res.locals.connectorIcons,
@@ -115,7 +101,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         lang,
         icon: {
             type: 'image/ico',
-            href: faviconUrl,
+            href: config.faviconUrl,
             sizes: '32x32',
         },
         inlineScripts: ['window.DL = window.__DATA__.DL', ...chartkitInlineScripts],

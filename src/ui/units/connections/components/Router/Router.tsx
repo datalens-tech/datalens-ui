@@ -176,7 +176,7 @@ export const Router = ({flattenConnectors, groupedConnectors, connectionData}: R
                         const workbookId = get(props.match.params, 'workbookId');
                         const collectionId = get(props.match.params, 'collectionId');
                         const bindedWorkbookId = new URLSearchParams(props.location.search).get(
-                            URL_QUERY.BINDED_WOKRBOOK,
+                            URL_QUERY.BINDED_WORKBOOK,
                         );
                         const type = connectionData?.[FieldKey.DbType] as ConnectorType;
                         const {extractEntryId} = registry.common.functions.getAll();

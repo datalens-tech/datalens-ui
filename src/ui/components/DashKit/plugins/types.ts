@@ -30,6 +30,8 @@ export type DashkitMetaDataItemBase = {
     isEditor?: boolean;
     isQL?: boolean;
     getSimpleLoadedData?: () => WidgetLoadedData | Widget['data'] | string[];
+    // meta was silently fetched when user clicked on hidden tabs in relations dialog
+    isFetchFinished?: boolean;
 };
 
 export type DatasetsData = {

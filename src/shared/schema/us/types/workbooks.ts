@@ -36,7 +36,6 @@ export type Workbook = {
     title: string;
     description: string | null;
     tenantId: string;
-    projectId: string | null;
     meta: {importId?: string; [key: string]: unknown};
     createdBy: string;
     createdAt: string;
@@ -55,6 +54,13 @@ export type ExtendedWorkbook = Workbook & {
 
 export type ExtendedWorkbookWithPermissions = WorkbookWithPermissions & {
     entity?: typeof CollectionItemEntities.WORKBOOK;
+};
+
+export type ExtendedWorkbookWithOptionalPermissions = Omit<
+    ExtendedWorkbookWithPermissions,
+    'permissions'
+> & {
+    permissions?: WorkbookPermission;
 };
 
 export type CreateWorkbookResponse = z.infer<typeof createWorkbookResultSchema>;
