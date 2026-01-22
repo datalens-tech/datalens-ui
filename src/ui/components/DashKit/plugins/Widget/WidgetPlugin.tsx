@@ -54,7 +54,7 @@ const widgetPlugin: PluginWidget = {
             oldWidgetBg = {color: CustomPaletteBgColors.LIKE_CHART};
         }
 
-        const {style, hasInternalMargins} = usePreparedWrapSettings({
+        const {style, hasInternalMargins: hasInternalMarginsComputed} = usePreparedWrapSettings({
             ownWidgetSettings: {
                 background: oldWidgetBg,
                 backgroundSettings: data.backgroundSettings,
@@ -71,6 +71,11 @@ const widgetPlugin: PluginWidget = {
                     ? CustomPaletteBgColors.LIKE_CHART
                     : CustomPaletteBgColors.NONE,
         });
+
+        const hasInternalMargins =
+            (data.internalMarginsEnabled === undefined &&
+                widgetPlugin.globalWidgetSettings?.internalMarginsEnabled === undefined) ||
+            hasInternalMarginsComputed;
 
         return (
             <RendererWrapper type="widget" nodeRef={rootNodeRef} id={props.id} style={style}>
