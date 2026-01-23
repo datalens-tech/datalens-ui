@@ -7,7 +7,7 @@ import {ActionTooltip, Button, Flex, Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashTabItemType, DialogControlQa, Feature} from 'shared';
+import {DashTabItemType, DialogControlQa} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
@@ -31,7 +31,6 @@ import {
     selectTabs,
 } from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {isItemGlobal} from 'ui/units/dash/utils/selectors';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {CurrentTabOption} from './CurrentTabOption/CurrentTabOption';
 import {SelectedTabsOption} from './SelectedTabsOption/SelectedTabsOption';
@@ -329,7 +328,7 @@ export const ImpactTypeSelect = ({
         dispatch(setNeedSimilarSelectorsCheck(!needSimilarSelectorsCheck));
     }, [dispatch, needSimilarSelectorsCheck]);
 
-    if (!currentTabId || !isEnabledFeature(Feature.EnableGlobalSelectors)) {
+    if (!currentTabId) {
         return null;
     }
 
