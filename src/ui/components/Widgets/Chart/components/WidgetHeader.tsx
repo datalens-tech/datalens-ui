@@ -36,6 +36,7 @@ type TabItem = {
 };
 
 export type HeaderProps = {
+    hasInternalMargins?: boolean;
     widgetId: string;
     isFullscreen: boolean;
     onFullscreenClick: () => void;
@@ -89,6 +90,7 @@ const b = block('widget-header');
 
 export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
     const {
+        hasInternalMargins,
         widgetId,
         isFullscreen,
         onFullscreenClick,
@@ -206,6 +208,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                 className={b({
                     mobile: DL.IS_MOBILE,
                     fullscreen: isFullscreen,
+                    'with-internal-margins': hasInternalMargins,
                     ...{[String(extraMod)]: Boolean(extraMod)},
                 })}
             >
