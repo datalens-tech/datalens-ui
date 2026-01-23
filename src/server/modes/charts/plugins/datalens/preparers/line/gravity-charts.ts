@@ -245,6 +245,10 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const isSplitWithHtmlValues = isHtmlField(split?.[0]);
     const isMultiAxis = Boolean(yPlaceholder?.items.length && y2Placeholder?.items.length);
 
+    const yAxisBaseConfig = getYAxisBaseConfig({
+        chartConfig: shared,
+    });
+
     let yAxis: ChartYAxis[] = [];
     if (isSplitEnabled) {
         yAxis = segments.reduce((acc, d) => {
@@ -256,9 +260,6 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                   })
                 : undefined;
 
-            const axisBaseConfig = getYAxisBaseConfig({
-                placeholder,
-            });
             const shouldUseSegmentTitle = isMultiAxis ? !d.isOpposite : placeholder?.items.length;
             let axisTitle: ChartYAxis['title'] | null = null;
             if (shouldUseSegmentTitle) {
@@ -276,7 +277,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
             }
 
             acc.push(
-                merge(axisBaseConfig, {
+                merge(yAxisBaseConfig, {
                     title: axisTitle,
                     plotIndex: d.plotIndex,
                     labels: {
@@ -298,11 +299,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                   })
                 : undefined;
 
-            const axisBaseConfig = getYAxisBaseConfig({
-                placeholder,
-            });
-
-            return merge(axisBaseConfig, {
+            return merge(yAxisBaseConfig, {
                 labels: {
                     numberFormat: labelNumberFormat ?? undefined,
                 },

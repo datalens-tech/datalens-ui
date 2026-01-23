@@ -212,7 +212,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         undefined,
     );
     const axisBaseConfig = getYAxisBaseConfig({
-        placeholder: yPlaceholder,
+        chartConfig: shared,
         dataMinValue: dataYMinValue,
     });
     const config: ChartData = {
@@ -222,9 +222,6 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         xAxis,
         yAxis: segments?.length
             ? segments.map((d) => {
-                  const baseConfig = getYAxisBaseConfig({
-                      placeholder: yPlaceholder,
-                  });
                   let axisTitle: ChartYAxis['title'] | null = null;
                   if (isSplitEnabled) {
                       let titleText: string = d.title;
@@ -241,7 +238,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
                       };
                   }
 
-                  return merge(baseConfig, {
+                  return merge(axisBaseConfig, {
                       lineColor: 'transparent',
                       labels: {
                           numberFormat: axisLabelNumberFormat ?? undefined,

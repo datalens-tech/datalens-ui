@@ -308,7 +308,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         undefined,
     );
     const axisBaseConfig = getYAxisBaseConfig({
-        placeholder: yPlaceholder,
+        chartConfig: shared,
         dataMinValue: dataYMinValue,
     });
     const config: ChartData = {

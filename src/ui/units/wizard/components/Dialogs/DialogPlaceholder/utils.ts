@@ -1,10 +1,11 @@
 import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 
+import type {ServerChartsConfig} from '../../../../../../shared';
 import {
     AxisAutoScaleModes,
     AxisModeDisabledReason,
-    WizardVisualizationId,
+    isMinMaxYScaleDisabled,
 } from '../../../../../../shared';
 
 export function getAxisModeTooltipContent(reason: AxisModeDisabledReason) {
@@ -20,18 +21,10 @@ export function getAxisModeTooltipContent(reason: AxisModeDisabledReason) {
     }
 }
 
-export function isMinMaxScaleDisabled({visualizationId}: {visualizationId: WizardVisualizationId}) {
-    return [
-        WizardVisualizationId.Area100p,
-        WizardVisualizationId.Bar100p,
-        WizardVisualizationId.Column100p,
-    ].includes(visualizationId);
-}
-
 export function getScaleValueRadioButtons({
-    visualizationId,
+    chartConfig,
 }: {
-    visualizationId: WizardVisualizationId;
+    chartConfig: Partial<ServerChartsConfig>;
 }): SegmentedRadioGroupOptionProps[] {
     return [
         {
@@ -41,7 +34,7 @@ export function getScaleValueRadioButtons({
         {
             value: AxisAutoScaleModes.MinMax,
             content: i18n('wizard', 'label_scale-min-max'),
-            disabled: isMinMaxScaleDisabled({visualizationId}),
+            disabled: isMinMaxYScaleDisabled({chartConfig}),
         },
         {
             value: AxisAutoScaleModes.ZeroMax,

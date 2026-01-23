@@ -31,6 +31,7 @@ import {
     isContinuousAxisModeDisabled,
     isDateField,
     isFieldHierarchy,
+    isMinMaxYScaleDisabled,
     isNumberField,
     isPercentVisualization,
     isYAGRVisualization,
@@ -59,7 +60,7 @@ import {
     POLYLINE_POINTS_RADIO_BUTTON_OPTIONS,
     SCALE_RADIO_BUTTON_OPTIONS,
 } from './constants/radio-buttons';
-import {getAxisModeTooltipContent, getScaleValueRadioButtons, isMinMaxScaleDisabled} from './utils';
+import {getAxisModeTooltipContent, getScaleValueRadioButtons} from './utils';
 
 import './DialogPlaceholder.scss';
 
@@ -699,7 +700,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     }
 
     renderScaleSettings() {
-        const {visualizationId} = this.props;
+        const {chartConfig} = this.props;
         const {scale, scaleValue} = this.state.settings;
 
         if (typeof scale === 'undefined') {
@@ -707,7 +708,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         }
 
         const axisAutoScaleMode =
-            scaleValue === AxisAutoScaleModes.MinMax && isMinMaxScaleDisabled({visualizationId})
+            scaleValue === AxisAutoScaleModes.MinMax && isMinMaxYScaleDisabled({chartConfig})
                 ? AxisAutoScaleModes.Auto
                 : scaleValue;
 
@@ -733,7 +734,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                         setting={
                             <DialogRadioButtons
                                 qa="autoscale-radio-buttons"
-                                items={getScaleValueRadioButtons({visualizationId})}
+                                items={getScaleValueRadioButtons({chartConfig})}
                                 value={axisAutoScaleMode}
                                 onUpdate={this.handleScaleValueUpdate}
                                 ref={this.tooltipScaleValueAnchorRef}

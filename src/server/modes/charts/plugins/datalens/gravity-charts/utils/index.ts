@@ -10,6 +10,7 @@ import {
     PlaceholderId,
     WizardVisualizationId,
     isDateField,
+    isMinMaxYScaleDisabled,
     isTooltipSumEnabled,
 } from '../../../../../../../shared';
 import type {
@@ -50,9 +51,11 @@ export function getAxisLabelsRotationAngle(placeholderSettings?: ServerPlacehold
 
 function getAxisMinMax({
     placeholderSettings,
+    chartConfig,
     dataMinValue,
 }: {
-    placeholderSettings?: ServerPlaceholderSettings;
+    placeholderSettings: ServerPlaceholderSettings | undefined;
+    chartConfig?: Partial<ServerChartsConfig>;
     dataMinValue?: number;
 }): [number | undefined, number | undefined] {
     if (placeholderSettings?.scale === 'manual') {
@@ -70,7 +73,10 @@ function getAxisMinMax({
         return [0, undefined];
     }
 
-    if (placeholderSettings?.scaleValue === AxisAutoScaleModes.MinMax) {
+    if (
+        placeholderSettings?.scaleValue === AxisAutoScaleModes.MinMax &&
+        !isMinMaxYScaleDisabled({chartConfig})
+    ) {
         return [dataMinValue, undefined];
     }
 
@@ -78,23 +84,32 @@ function getAxisMinMax({
 }
 
 export function getYAxisBaseConfig({
-    placeholder,
+    chartConfig,
     dataMinValue,
 }: {
-    placeholder: ServerPlaceholder | undefined;
+    chartConfig: Partial<ServerChartsConfig>;
     dataMinValue?: number;
 }): ChartYAxis {
-    const placeholderSettings = placeholder?.settings || {};
-    const yItem = placeholder?.items[0];
+    const visualizationLayers =
+        chartConfig.visualization?.layers ??
+        (chartConfig.visualization ? [chartConfig.visualization] : []);
 
-    const [yMin, yMax] = getAxisMinMax({placeholderSettings, dataMinValue});
+    const yPlaceholders = visualizationLayers
+        .map((l) => l.placeholders.find((p) => p.id === PlaceholderId.Y))
+        .filter(Boolean) as ServerPlaceholder[];
+    const placeholder = yPlaceholders.find((p) => p.items.length > 0) ?? yPlaceholders[0];
+
+    const placeholderSettings = placeholder?.settings || {};
+    const yItem = placeholder?.items?.[0];
+
+    const [yMin, yMax] = getAxisMinMax({chartConfig, placeholderSettings, dataMinValue});
 
     return {
         // todo: the axis type should depend on the type of field
         type: isDateField(yItem) ? 'datetime' : 'linear',
         visible: placeholderSettings?.axisVisibility !== 'hide',
         labels: {
-            enabled: Boolean(yItem) && placeholder?.settings?.hideLabels !== 'yes',
+            enabled: Boolean(yItem) && placeholderSettings.hideLabels !== 'yes',
             rotation: getAxisLabelsRotationAngle(placeholder?.settings),
         },
         title: {
@@ -186,7 +201,6 @@ export function getBaseChartConfig(args: {
     const visualizationWithYMainAxis = [WizardVisualizationId.Bar, WizardVisualizationId.Bar100p];
 
     if (!visualizationWithoutAxis.includes(visualizationId)) {
-        const yPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.Y);
         const [xMin, xMax] = getAxisMinMax({placeholderSettings: xPlaceholderSettings});
 
         chartWidgetData = {
@@ -211,7 +225,6 @@ export function getBaseChartConfig(args: {
                 max: xMax,
                 rangeSlider: getRangeSliderConfig({extraSettings, visualization}),
             },
-            yAxis: [getYAxisBaseConfig({placeholder: yPlaceholder})],
         };
 
         if (visualizationWithYMainAxis.includes(visualizationId)) {
