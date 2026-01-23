@@ -39,6 +39,7 @@ import {
     SCROLL_TITLE_DEBOUNCE_TIME,
     SCR_USER_AGENT_HEADER_VALUE,
 } from 'shared';
+import {getAllTabItems} from 'shared/utils/dash';
 import type {DatalensGlobalState} from 'ui';
 import {
     DEFAULT_DASH_MARGINS,
@@ -61,7 +62,6 @@ import {
 import {dispatchDashLoadedEvent} from '../../utils/customEvents';
 import {getCustomizedProperties} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
-import {getAllTabItems} from '../../utils/selectors';
 import {FixedHeaderContainer, FixedHeaderControls} from '../FixedHeader/FixedHeader';
 
 import Content from './components/Content/Content';
