@@ -225,11 +225,12 @@ export const ImpactTypeSelect = ({
         hasMultipleSelectors,
         isGroupSettings,
         isGroupControl,
+        selectorsGroup.impactType,
         tabs,
         currentImpactType,
         currentTab?.title,
         currentImpactTabsIds,
-        selectorsGroup.impactType,
+        isGlobal,
         groupImpactType,
     ]);
 
@@ -350,24 +351,26 @@ export const ImpactTypeSelect = ({
     return (
         <FormRow label={i18n('label_tabs-scope')} className={className}>
             <Flex direction="column" gap={2}>
-                <FieldWrapper error={impactTypeValidation} className={b('impact-type-container')}>
-                    <Select
-                        qa={DialogControlQa.impactTypeSelect}
-                        value={[currentImpactType]}
-                        onUpdate={handleImpactTypeChange}
-                        width={selectorWidth}
-                        options={tabsScopeOptions}
-                        renderOption={renderOptions}
-                        renderSelectedOption={renderOptions}
-                        validationState={impactTypeValidation ? 'invalid' : undefined}
-                    />
-                    {showSearchButton && (
-                        <ActionTooltip title={groupI18n('hint_find-similiar-selectors')}>
-                            <Button onClick={handleFindSimilarSelectorsClick} view="outlined">
-                                <Icon data={Magnifier} size={16} />
-                            </Button>
-                        </ActionTooltip>
-                    )}
+                <FieldWrapper error={impactTypeValidation}>
+                    <Flex gap={2} justifyContent="space-between" width="100%">
+                        <Select
+                            qa={DialogControlQa.impactTypeSelect}
+                            value={[currentImpactType]}
+                            onUpdate={handleImpactTypeChange}
+                            width={selectorWidth}
+                            options={tabsScopeOptions}
+                            renderOption={renderOptions}
+                            renderSelectedOption={renderOptions}
+                            validationState={impactTypeValidation ? 'invalid' : undefined}
+                        />
+                        {showSearchButton && (
+                            <ActionTooltip title={groupI18n('hint_find-similiar-selectors')}>
+                                <Button onClick={handleFindSimilarSelectorsClick} view="outlined">
+                                    <Icon data={Magnifier} size={16} />
+                                </Button>
+                            </ActionTooltip>
+                        )}
+                    </Flex>
                 </FieldWrapper>
 
                 {showTabsSelector && (
