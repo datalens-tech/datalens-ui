@@ -425,7 +425,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             widgetsMap.byId = byId;
             widgetsMap.byGroup = byGroup;
             widgetsMap.columns = columns;
-            widgetsMap.totalItemsCount = tabConfig ? getAllTabItems(tabConfig).length : 0;
+            widgetsMap.totalItemsCount = getAllTabItems(tabConfig).length;
         }
 
         return widgetsMap;
