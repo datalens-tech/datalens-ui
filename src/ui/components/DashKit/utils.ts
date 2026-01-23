@@ -5,13 +5,12 @@ import type {PluginWidgetProps} from '@gravity-ui/dashkit';
 import type {ThemeType} from '@gravity-ui/uikit';
 import {useThemeType} from '@gravity-ui/uikit';
 import {color as d3Color} from 'd3-color';
-import {
-    type BackgroundSettings,
-    type ColorSettings,
-    CustomPaletteBgColors,
-    type DashTabItemControlElement,
-    LIKE_CHART_COLOR_TOKEN,
-    type OldBackgroundSettings,
+import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared';
+import type {
+    BackgroundSettings,
+    ColorSettings,
+    DashTabItemControlElement,
+    OldBackgroundSettings,
 } from 'shared';
 import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
 import {computeColorFromToken} from 'ui/utils/widgets/colors';
