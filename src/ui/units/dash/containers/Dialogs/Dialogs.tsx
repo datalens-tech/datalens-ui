@@ -2,14 +2,22 @@ import React from 'react';
 
 import {DEFAULT_NAMESPACE} from '@gravity-ui/dashkit/helpers';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashTabItemType, EntryScope} from 'shared';
+import type {WidgetType} from 'shared';
+import {DashTabItemType, EntryScope, Feature} from 'shared';
 import {useEffectOnce} from 'ui';
 import {DialogEditItem, isDialogEditItemType} from 'ui/components/DialogEditItem/DialogEditItem';
+import type {DatalensGlobalState} from 'ui/index';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import type {ValuesType} from 'utility-types';
 
 import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {selectControlDialogTheme} from '../../../../store/selectors/controlDialog';
-import {changeNavigationPath, setItemData} from '../../store/actions/dashTyped';
+import {
+    type SetItemDataArgs,
+    changeNavigationPath,
+    setItemData,
+} from '../../store/actions/dashTyped';
 import {closeDialog} from '../../store/actions/dialogs/actions';
 import {
     selectCurrentTabId,
@@ -31,7 +39,10 @@ const DASHBOARD_FEATURES = {
     [DashTabItemType.Control]: {
         enableGlobalSelectors: true,
     },
-};
+    [DashTabItemType.Widget]: {
+        enableBackgroundColor: isEnabledFeature(Feature.EnableDashColorPickersByTheme),
+    },
+} as const;
 
 // TODO: to see if dialogs with complex content will slow down due to the fact that mount/unmount is happening
 // TODO: if there are noticeable lags, it will be possible to render the contents of the dialogs as available
@@ -40,9 +51,15 @@ export function Dialogs() {
     const dispatch = useDispatch();
 
     const entryId = useSelector(selectEntryId);
-    const openedDialog = useSelector((state) => state.dash.openedDialog);
-    const widgetType = useSelector((state) => state.dash.openedItemWidgetType);
-    const openedItemId = useSelector((state) => state.dash.openedItemId);
+    const openedDialog = useSelector<DatalensGlobalState, ValuesType<typeof DIALOG_TYPE> | null>(
+        (state) => state.dash.openedDialog,
+    );
+    const widgetType = useSelector<DatalensGlobalState, WidgetType | undefined>(
+        (state) => state.dash.openedItemWidgetType,
+    );
+    const openedItemId = useSelector<DatalensGlobalState, string | null>(
+        (state) => state.dash.openedItemId,
+    );
     const openedItemData = useSelector(selectOpenedItemData);
     const openedItem = useSelector(selectOpenedItem);
     const currentTabId = useSelector(selectCurrentTabId);
@@ -58,7 +75,7 @@ export function Dialogs() {
     });
 
     const setItemDataHandle = React.useCallback(
-        (newItemData) => {
+        (newItemData: SetItemDataArgs) => {
             dispatch(setItemData(newItemData));
         },
         [dispatch],
@@ -69,22 +86,24 @@ export function Dialogs() {
     }, [dispatch]);
 
     const changeNavigationPathHandle = React.useCallback(
-        (newNavigationPath) => {
+        (newNavigationPath: string) => {
             dispatch(changeNavigationPath(newNavigationPath));
         },
         [dispatch],
     );
 
     if (openedDialog && isDialogEditItemType(openedDialog)) {
+        const openedItemDefaults =
+            openedItem && 'defaults' in openedItem ? openedItem.defaults : null;
         return (
             <DialogEditItem
                 scope={EntryScope.Dash}
                 entryId={entryId}
-                type={openedDialog}
+                type={openedDialog as any}
                 openedItemId={openedItemId}
                 openedItemNamespace={openedItem?.namespace ?? DEFAULT_NAMESPACE}
-                openedItemDefaults={openedItem?.defaults ?? null}
-                openedItemData={openedItemData}
+                openedItemDefaults={openedItemDefaults}
+                openedItemData={openedItemData as any}
                 widgetType={widgetType}
                 currentTabId={currentTabId}
                 workbookId={workbookId}

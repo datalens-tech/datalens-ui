@@ -238,6 +238,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         isWidgetMenuDataChanged,
         dataProps,
         runActivity,
+        silentLoadChartData,
     } = useLoadingChart({
         dataProvider,
         requestHeadersGetter,
@@ -497,13 +498,14 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 savedData: loadedData,
                 error,
                 widgetDataRef,
+                currentTabChartId: currentTab.chartId,
             });
 
             if (resolveMetaDataRef.current) {
                 resolveMetaDataRef.current(meta);
             }
         },
-        [tabs, tabIndex, resolveMetaDataRef.current, loadedData, error, widgetId],
+        [data.tabs, widgetId, loadedData, error, widgetDataRef, currentTab.chartId],
     );
 
     /**
@@ -710,5 +712,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         dataProps,
         noControls,
         runActivity,
+        silentLoadChartData,
     };
 };

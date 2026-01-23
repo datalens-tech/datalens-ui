@@ -21,6 +21,7 @@ import {
     EntryScope,
     ErrorCode,
     Feature,
+    getAllTabItems,
 } from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
@@ -174,7 +175,7 @@ function processControlWidget(
     // Support group and old single selectors
     const controlWidgetId = controlData.widgetId || controlData.id;
 
-    const controlWidgetConfig = controlTab?.items.find(
+    const controlWidgetConfig = getAllTabItems(controlTab).find(
         ({id}: {id: string}) => id === controlWidgetId,
     );
 

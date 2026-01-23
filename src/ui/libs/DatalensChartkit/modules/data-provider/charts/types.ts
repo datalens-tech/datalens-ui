@@ -582,3 +582,11 @@ type ResponseErrorNode =
 // TODO@types wizard
 
 export type ResponseError = ResponseErrorNode;
+
+/**
+ * Config value to check. It could have any type.
+ *
+ * Each method in this module that uses such a value performs a typing check in runtime.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TargetValue = any;

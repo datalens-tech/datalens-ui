@@ -1,0 +1,22 @@
+.wysiwyg-editor {
+    &__wrapper {
+        --g-md-toolbar-sticky-border: none;
+        --g-md-toolbar-sticky-padding: 0 8px;
+
+        border: 1px solid var(--g-color-line-generic);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    &__content {
+        &_disabled {
+            pointer-events: none;
+            color: var(--g-color-text-hint);
+            background-color: var(--g-color-base-generic-accent-disabled);
+        }
+    }
+
+    &__fallback {
+        height: 100%;
+    }
+}

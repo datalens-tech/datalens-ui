@@ -171,6 +171,7 @@ const Content = ({
                 >
                     <TableOfContent
                         disableHashNavigation={disableHashNavigation}
+                        dashEl={dashEl}
                         onItemClick={onItemClick}
                     />
                     <div

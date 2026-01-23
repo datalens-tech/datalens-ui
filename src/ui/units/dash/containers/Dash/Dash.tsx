@@ -34,6 +34,7 @@ import {
 } from '../../../../store/actions/entryContent';
 import {selectEntryContentRevId, selectLockToken} from '../../../../store/selectors/entryContent';
 import {RevisionsListMode, RevisionsMode} from '../../../../store/typings/entryContent';
+import {WidgetMetaProvider} from '../../contexts/WidgetMetaContext';
 import {LOCK_DURATION, LOCK_EXTEND_TIMEOUT} from '../../modules/constants';
 import type {CopiedConfigData} from '../../modules/helpers';
 import {getDashkitSettings, getTabTitleById, isItemPasteAllowed} from '../../modules/helpers';
@@ -268,32 +269,34 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const {DashBody} = registry.dash.components.getAll();
 
         return (
-            <DashHotkeys>
-                <PageTitle entry={entry} extraSettings={{subtitle}} />
-                <SlugifyUrl
-                    entryId={entry ? entry.entryId : null}
-                    name={entry ? Utils.getEntryNameFromKey(entry.key) : null}
-                    history={history}
-                />
-                <AccessRightsUrlOpen history={history} />
-                <Header
-                    entryDialoguesRef={this.entryDialoguesRef}
-                    handlerEditClick={this.handlerEditClick}
-                    history={history}
-                    location={location}
-                    isEditModeLoading={this.state.isEditModeLoading}
-                />
-                <DashBody
-                    onRetry={this.handleRetry}
-                    handlerEditClick={this.handlerEditClick}
-                    isEditModeLoading={this.state.isEditModeLoading}
-                    onPasteItem={this.onPasteItem}
-                    globalParams={getUrlGlobalParams(location.search, dashGlobalDefaultParams)}
-                    dashkitSettings={this.getDashkitSettings(settings)}
-                    onlyView={DL.IS_MOBILE}
-                />
-                <Dialogs />
-            </DashHotkeys>
+            <WidgetMetaProvider>
+                <DashHotkeys>
+                    <PageTitle entry={entry} extraSettings={{subtitle}} />
+                    <SlugifyUrl
+                        entryId={entry ? entry.entryId : null}
+                        name={entry ? Utils.getEntryNameFromKey(entry.key) : null}
+                        history={history}
+                    />
+                    <AccessRightsUrlOpen history={history} />
+                    <Header
+                        entryDialoguesRef={this.entryDialoguesRef}
+                        handlerEditClick={this.handlerEditClick}
+                        history={history}
+                        location={location}
+                        isEditModeLoading={this.state.isEditModeLoading}
+                    />
+                    <DashBody
+                        onRetry={this.handleRetry}
+                        handlerEditClick={this.handlerEditClick}
+                        isEditModeLoading={this.state.isEditModeLoading}
+                        onPasteItem={this.onPasteItem}
+                        globalParams={getUrlGlobalParams(location.search, dashGlobalDefaultParams)}
+                        dashkitSettings={this.getDashkitSettings(settings)}
+                        onlyView={DL.IS_MOBILE}
+                    />
+                    <Dialogs />
+                </DashHotkeys>
+            </WidgetMetaProvider>
         );
     }
 

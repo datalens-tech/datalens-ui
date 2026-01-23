@@ -4,6 +4,7 @@ import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
 import {getDefaultDashWidgetBgColorByType} from 'shared/constants/widgets';
+import {getAllTabItems} from 'shared/utils/dash';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {
     getUpdatedBackgroundData,
@@ -14,7 +15,7 @@ import {
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
-import {getAllTabItems, isItemGlobal} from '../../utils/selectors';
+import {isItemGlobal} from '../../utils/selectors';
 import * as actionTypes from '../constants/dashActionTypes';
 
 import {

@@ -47,11 +47,15 @@ export const CreateEntry = React.memo<Props>(
         };
 
         const handleSharedEntryAction = React.useCallback(
-            (
-                scope: EntryScope.Dataset | EntryScope.Connection,
-                collectionId: string,
-                workbookId: string,
-            ) =>
+            ({
+                scope,
+                collectionId,
+                workbookId,
+            }: {
+                scope: EntryScope.Dataset | EntryScope.Connection;
+                collectionId: string | null;
+                workbookId: string;
+            }) =>
                 () =>
                     dispatch(
                         openDialog({
@@ -70,6 +74,7 @@ export const CreateEntry = React.memo<Props>(
                                             props: {
                                                 open: true,
                                                 onClose: () => dispatch(closeDialog()),
+                                                delegation: entry.permissions?.createEntryBinding,
                                                 entry,
                                                 onApply: async (delegation) => {
                                                     const success = await dispatch(
@@ -118,9 +123,17 @@ export const CreateEntry = React.memo<Props>(
                                         }),
                                     );
                                 },
-                                getIsInactiveEntity: (entry) =>
-                                    entry.entity === CollectionItemEntities.ENTRY &&
-                                    entry.scope !== scope,
+                                getIsInactiveEntity: (entry) => {
+                                    if (entry.entity !== CollectionItemEntities.ENTRY) {
+                                        return false;
+                                    }
+
+                                    const canCreateBinding =
+                                        entry.permissions?.createEntryBinding ||
+                                        entry.permissions?.createLimitedEntryBinding;
+
+                                    return entry.scope !== scope || !canCreateBinding;
+                                },
                             },
                         }),
                     ),
@@ -134,23 +147,19 @@ export const CreateEntry = React.memo<Props>(
             handleAction,
         });
 
-        if (
-            isEnabledFeature(Feature.EnableSharedEntries) &&
-            workbook?.collectionId &&
-            workbook?.workbookId
-        ) {
+        if (isEnabledFeature(Feature.EnableSharedEntries) && workbook?.workbookId) {
             items.push(
                 getSharedEntriesMenuItems({
-                    datasetAction: handleSharedEntryAction(
-                        EntryScope.Dataset,
-                        workbook.collectionId,
-                        workbook.workbookId,
-                    ),
-                    connectionAction: handleSharedEntryAction(
-                        EntryScope.Connection,
-                        workbook.collectionId,
-                        workbook.workbookId,
-                    ),
+                    datasetAction: handleSharedEntryAction({
+                        scope: EntryScope.Dataset,
+                        collectionId: workbook.collectionId,
+                        workbookId: workbook.workbookId,
+                    }),
+                    connectionAction: handleSharedEntryAction({
+                        scope: EntryScope.Connection,
+                        collectionId: workbook.collectionId,
+                        workbookId: workbook.workbookId,
+                    }),
                     noticeClassName: b('shared-entry-notice'),
                 }),
             );

@@ -1,0 +1,5 @@
+$markdownEditorGap: 8px;
+$markupModeEditorClass: '.g-md-markup-editor__editor';
+$wisywigModeEditorClass: '.g-md-wysiwyg-editor__editor';
+$markdownEditorClass: '#{$markupModeEditorClass}, #{$wisywigModeEditorClass}';
+$markdownEditorToolbarClass: '.g-md-editor-component__toolbar';

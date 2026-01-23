@@ -5,9 +5,9 @@ import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import type {CollectionId, ConnectorType, DatasetOptions, WorkbookId} from 'shared';
+import type {CollectionId, ConnectorType, DatasetOptions, Permissions, WorkbookId} from 'shared';
 import {CollectionItemEntities, DatasetSourcesLeftPanelQA, EntryScope, PLACE} from 'shared';
-import type {BaseSource, GetEntryResponse} from 'shared/schema';
+import type {BaseSource, GetEntryResponse, SharedEntryPermissions} from 'shared/schema';
 import {NavigationMinimal, type SDK} from 'ui';
 import {ConnectorIcon} from 'ui/components/ConnectorIcon/ConnectorIcon';
 import {DIALOG_SELECT_SHARED_ENTRY} from 'ui/components/DialogSelectSharedEntry/DialogSelectSharedEntry';
@@ -81,7 +81,10 @@ function hasEnabledFreeformSources(freeformSources: FreeformSource[]) {
 function getInactiveEntryIds(connections: SelectedConnections = []) {
     return connections.map(({entryId}) => entryId);
 }
-type PartialEntryResponse = Partial<GetEntryResponse> & {entryId: string};
+type PartialEntryResponse = Partial<Omit<GetEntryResponse, 'permissions'>> & {
+    entryId: string;
+    permissions?: Permissions | SharedEntryPermissions;
+};
 type DeleteConnectionHandle = (props: {connectionId: string}) => void;
 type OpenConnectionHandle = (connectionId?: string) => void;
 type ReplaceConnectionHandle = (connection: {id?: string}, args: PartialEntryResponse) => void;
@@ -388,9 +391,21 @@ function SelectConnections(props: SelectConnectionsProps) {
                             dialogTitle: getSharedEntryMockText(
                                 'title-select-shared-entry-dialog-connection',
                             ),
-                            getIsInactiveEntity: (entry) =>
-                                entry.entity === CollectionItemEntities.ENTRY &&
-                                (entry.scope === 'dataset' || entry.entryId === connectionId),
+                            getIsInactiveEntity: (entry) => {
+                                if (entry.entity !== CollectionItemEntities.ENTRY) {
+                                    return false;
+                                }
+
+                                const canCreateBinding =
+                                    entry.permissions?.createEntryBinding ||
+                                    entry.permissions?.createLimitedEntryBinding;
+                                const isAlreadySelectedConnection = entry.entryId === connectionId;
+                                return (
+                                    entry.scope === EntryScope.Dataset ||
+                                    isAlreadySelectedConnection ||
+                                    !canCreateBinding
+                                );
+                            },
                             onSelectEntry: async (connection) => {
                                 await onApply(connection);
                             },

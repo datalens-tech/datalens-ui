@@ -13,12 +13,16 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {ChartkitMenuDialogsQA, type StringParams} from 'shared';
 import {DL} from 'ui/constants/common';
+import type {ChartsData} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {CombinedError, Widget} from 'ui/libs/DatalensChartkit/types';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import Loader from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
+import type {LoadHiddenWidgetMetaCallbackType} from '../../../units/dash/contexts/WidgetMetaContext';
+import {useWidgetMetaContext} from '../../../units/dash/contexts/WidgetMetaContext';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
 import {MarkdownHelpPopover} from '../../MarkdownHelpPopover/MarkdownHelpPopover';
@@ -30,6 +34,7 @@ import {WidgetHeader} from './components/WidgetHeader';
 import {
     COMPONENT_CLASSNAME,
     getTabIndex,
+    getTabMeta,
     removeEmptyNDatasetFieldsProperties,
 } from './helpers/helpers';
 import {useLoadingChartWidget} from './hooks/useLoadingChartWidget';
@@ -87,6 +92,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     } = props;
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
+    const metaCallback = useWidgetMetaContext();
     const skipReload = extDashkitContext?.skipReload ?? false;
     const setWidgetCurrentTab = extDashkitContext?.setWidgetCurrentTab;
 
@@ -374,6 +380,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         dataProps,
         noControls: urlNoControls,
         runActivity,
+        silentLoadChartData,
     } = useLoadingChartWidget({
         ...props,
         chartKitRef,
@@ -421,6 +428,57 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             true,
         );
     }, [handleChange, chartkitParams]);
+
+    React.useEffect(() => {
+        const loadHiddenWidgetMeta: LoadHiddenWidgetMetaCallbackType = async ({
+            subItemId,
+            silentRequestCancellationRef,
+        }) => {
+            const loadingTabIndex = getTabIndex(tabs, subItemId);
+            // this current tab we get from dashkit rerender with extra params for ds
+            const loadingTab = tabs[loadingTabIndex];
+            let chartData: (Widget & ChartsData) | null = null;
+            let error: CombinedError | null = null;
+
+            await silentLoadChartData(
+                getDataProviderData({
+                    id: loadingTab.chartId,
+                    params: chartkitParams,
+                    workbookId,
+                }),
+                silentRequestCancellationRef,
+            )
+                .then((tabLoadedData) => {
+                    chartData = tabLoadedData;
+                })
+                .catch((err) => {
+                    error = err;
+                });
+
+            const meta = getTabMeta({
+                tabWidget: loadingTab,
+                id: widgetId,
+                loadData: chartData,
+                error,
+            });
+            return meta;
+        };
+
+        metaCallback?.registerCallback(widgetId, loadHiddenWidgetMeta);
+
+        return () => {
+            metaCallback?.unregisterCallback(widgetId);
+        };
+    }, [
+        chartkitParams,
+        currentTab.chartId,
+        metaCallback,
+        silentLoadChartData,
+        tabIndex,
+        tabs,
+        widgetId,
+        workbookId,
+    ]);
 
     /**
      * Clear action params on disable of filtration of widget

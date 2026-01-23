@@ -11,6 +11,7 @@ import type {ChartKitAdapterProps} from '../types';
 
 import {
     applyGoToEvents,
+    applyRunActivityEvent,
     applySetActionParamsEvents,
     applyTreemapLabelFormatter,
     fixPieTotals,
@@ -192,6 +193,14 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
                             }
                             case 'goTo': {
                                 applyGoToEvents({data, target: handler.target});
+                                break;
+                            }
+                            case 'runActivity': {
+                                if (runActivity) {
+                                    applyRunActivityEvent({data, runActivity});
+                                }
+
+                                break;
                             }
                         }
                     });

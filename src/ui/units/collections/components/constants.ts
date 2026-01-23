@@ -138,4 +138,5 @@ export const mockSharedEntriesTexts = {
     'not-delegated-shared-entry-popup-title': 'без делегации прав',
     'workbook-list-change-delegation': 'Изменить делегацию прав',
     'link-to-original-entry-button': 'Перейти к оригиналу',
+    'no-access-for-binding-create': 'У вас нет прав на использование этого объекта',
 };

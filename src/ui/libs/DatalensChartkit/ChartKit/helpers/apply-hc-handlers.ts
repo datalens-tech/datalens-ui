@@ -7,6 +7,7 @@ import merge from 'lodash/merge';
 import set from 'lodash/set';
 
 import type {GoToEventHandler, GraphWidgetEventScope} from '../../../../../shared';
+import {clearVmProp} from '../../modules/data-provider/charts/utils';
 import type {GraphWidget} from '../../types';
 import type {ChartKitAdapterProps} from '../types';
 
@@ -190,6 +191,36 @@ export const applyGoToEvents = (args: {data: GraphWidget; target?: GoToEventHand
             event: Highcharts.SeriesClickEventObject,
         ) {
             handleSeriesClickForGoTo({point: event.point, target});
+            proceed?.apply(this, [event]);
+        },
+    );
+};
+
+export const applyRunActivityEvent = (args: {
+    data: GraphWidget;
+    runActivity: ChartKitAdapterProps['runActivity'];
+}) => {
+    const {data, runActivity} = args;
+
+    if (!runActivity) {
+        return;
+    }
+
+    const pathToSeriesEvents = 'libraryConfig.plotOptions.series.events';
+
+    if (!has(data, pathToSeriesEvents)) {
+        set(data, pathToSeriesEvents, {});
+    }
+
+    wrap(
+        get(data, pathToSeriesEvents),
+        'click',
+        function (
+            this: Highcharts.Series,
+            proceed: Highcharts.SeriesClickCallbackFunction,
+            event: Highcharts.SeriesClickEventObject,
+        ) {
+            runActivity({params: clearVmProp(event.point) as any});
             proceed?.apply(this, [event]);
         },
     );

@@ -18,9 +18,11 @@ const b = block('conn-panel-actions');
 export function ConnSettings({
     connectionId,
     className,
+    disabled,
 }: {
     connectionId: string | null;
     className?: string;
+    disabled?: boolean;
 }) {
     const form = useSelector(formSelector);
     const dataExportEnabled = !form.data_export_forbidden || form.data_export_forbidden === 'off';
@@ -71,6 +73,7 @@ export function ConnSettings({
             popupPlacement={'bottom-end'}
             renderControl={renderSelectControl}
             renderPopup={getRenderConnectionSettingsPopup(connectionId)}
+            disabled={disabled}
         >
             {settingsSelectOptions}
         </Select>

@@ -59,9 +59,11 @@ const getHash = ({
 const TableOfContent = React.memo(
     ({
         disableHashNavigation,
+        dashEl,
         onItemClick,
     }: {
         disableHashNavigation?: boolean;
+        dashEl: HTMLDivElement | null;
         onItemClick: (itemTitle: string) => void;
     }) => {
         const dispatch = useDispatch();
@@ -69,7 +71,6 @@ const TableOfContent = React.memo(
 
         const isAsideHeaderCompact = useSelector(selectAsideHeaderIsCompact);
 
-        const containerRef = React.useRef<HTMLDivElement | null>(null);
         const {opened, tabs, currentTabId, hashStates} = useShallowEqualSelector(selectState);
         const [offsets, setOffsets] = React.useState({top: '0px', bottom: '0px', left: '0px'});
 
@@ -127,7 +128,7 @@ const TableOfContent = React.memo(
         );
 
         const setUpdatedOffsets = React.useCallback(() => {
-            const updatedOffsets = getUpdatedOffsets(containerRef);
+            const updatedOffsets = getUpdatedOffsets(dashEl);
             if (!updatedOffsets) {
                 return;
             }
@@ -144,7 +145,7 @@ const TableOfContent = React.memo(
 
                 return state;
             });
-        }, []);
+        }, [dashEl]);
 
         React.useEffect(() => {
             // to recalculate ReactGridLayout
@@ -167,8 +168,8 @@ const TableOfContent = React.memo(
                 handler();
             });
 
-            if (containerRef?.current) {
-                resizeObserver.observe(containerRef?.current || undefined);
+            if (dashEl) {
+                resizeObserver.observe(dashEl || undefined);
             }
 
             // eslint-disable-next-line consistent-return
@@ -176,7 +177,7 @@ const TableOfContent = React.memo(
                 window.removeEventListener('scroll', handler);
                 resizeObserver.disconnect();
             };
-        }, [opened, setUpdatedOffsets]);
+        }, [dashEl, opened, setUpdatedOffsets]);
 
         React.useEffect(() => {
             requestAnimationFrame(setUpdatedOffsets);
@@ -239,11 +240,7 @@ const TableOfContent = React.memo(
                         <div className={b('tabs')}>{tabsItems}</div>
                     </Sheet>
                 ) : (
-                    <div
-                        className={b()}
-                        ref={containerRef}
-                        data-qa={TableOfContentQa.TableOfContent}
-                    >
+                    <div className={b()} data-qa={TableOfContentQa.TableOfContent}>
                         <div className={b('wrapper', {opened})}>
                             <div className={b('sidebar', {opened})} style={offsets}>
                                 <div className={b('header')}>

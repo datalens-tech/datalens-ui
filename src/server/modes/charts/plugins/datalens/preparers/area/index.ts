@@ -109,15 +109,22 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
     const shouldUsePercentStacking = visualizationId === WizardVisualizationId.Area100p;
     const seriesData: ExtendedLineSeries[] = preparedData.graphs.map<AreaSeries>((graph: any) => {
+        let seriesName = graph.title;
+
+        if (graph.custom?.segmentTitle) {
+            seriesName = `${graph.custom.segmentTitle}: ${seriesName}`;
+        }
+
         return {
-            name: graph.title,
+            name: seriesName,
             type: 'area',
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             color: graph.color,
+            nullMode: graph.connectNulls ? 'connect' : 'skip',
             data: graph.data.reduce((acc: ExtendedLineSeriesData[], item: any, index: number) => {
                 const dataItem: ExtendedLineSeriesData = {
-                    y: item?.y || 0,
+                    y: item?.y ?? null,
                     custom: item.custom,
                 };
 
@@ -145,6 +152,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
             }, []),
             legend: {
                 groupId: graph.id,
+                itemText: graph.legendTitle,
             },
             dataLabels: {
                 enabled: isDataLabelsEnabled,
@@ -261,7 +269,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
 
     return merge(
         getBaseChartConfig({
-            extraSettings: shared.extraSettings,
+            shared,
             visualization: {placeholders, id: visualizationId},
         }),
         config,

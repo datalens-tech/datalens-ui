@@ -1,11 +1,11 @@
 import type {DatalensGlobalState} from 'index';
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
+import {getAllTabItems} from 'shared/utils/dash';
 
 import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {Mode} from '../../modules/constants';
-import {getAllTabItems} from '../../utils/selectors';
 import type {DashState} from '../typings/dash';
 
 export const selectDash = (state: DatalensGlobalState) => state.dash || null;
