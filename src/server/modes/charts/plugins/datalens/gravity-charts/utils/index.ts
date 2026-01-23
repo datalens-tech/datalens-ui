@@ -86,16 +86,17 @@ function getAxisMinMax({
 export function getYAxisBaseConfig({
     chartConfig,
     dataMinValue,
+    placeholderId = PlaceholderId.Y,
 }: {
     chartConfig: Partial<ServerChartsConfig>;
     dataMinValue?: number;
+    placeholderId?: string | undefined;
 }): ChartYAxis {
     const visualizationLayers =
         chartConfig.visualization?.layers ??
         (chartConfig.visualization ? [chartConfig.visualization] : []);
-
     const yPlaceholders = visualizationLayers
-        .map((l) => l.placeholders.find((p) => p.id === PlaceholderId.Y))
+        .map((l) => l.placeholders.find((p) => p.id === placeholderId))
         .filter(Boolean) as ServerPlaceholder[];
     const placeholder = yPlaceholders.find((p) => p.items.length > 0) ?? yPlaceholders[0];
 

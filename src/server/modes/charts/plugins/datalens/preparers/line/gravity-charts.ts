@@ -245,14 +245,14 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const isSplitWithHtmlValues = isHtmlField(split?.[0]);
     const isMultiAxis = Boolean(yPlaceholder?.items.length && y2Placeholder?.items.length);
 
-    const yAxisBaseConfig = getYAxisBaseConfig({
-        chartConfig: shared,
-    });
-
     let yAxis: ChartYAxis[] = [];
     if (isSplitEnabled) {
         yAxis = segments.reduce((acc, d) => {
             const placeholder = d.isOpposite ? y2Placeholder : yPlaceholder;
+            const yAxisBaseConfig = getYAxisBaseConfig({
+                chartConfig: shared,
+                placeholderId: placeholder?.id,
+            });
             const labelNumberFormat = placeholder
                 ? getAxisFormatting({
                       placeholder,
@@ -292,6 +292,10 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         }, [] as ChartYAxis[]);
     } else {
         yAxis = yAxisItems.map((placeholder) => {
+            const yAxisBaseConfig = getYAxisBaseConfig({
+                chartConfig: shared,
+                placeholderId: placeholder.id,
+            });
             const labelNumberFormat = placeholder
                 ? getAxisFormatting({
                       placeholder,
