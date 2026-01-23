@@ -18,6 +18,7 @@
   "label_global-params": "Dashboard parameters",
   "label_hide-tabs": "Hide tabs",
   "label_hide-title": "Hide title",
+  "label_internal-margins": "Margins inside widgets",
   "label_load-only-visible-charts": "Only load visible charts",
   "label_load-priority": "Load priority",
   "label_load-priority-hint": "Defines the order in which widgets are loaded on the dashboard. For example, if priority is given to charts, all the charts that appear on the screen will be loaded first and then selectors",

@@ -131,14 +131,18 @@ const titlePlugin: PluginTitle = {
 
         const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
         const withAbsoluteHint = showHint && !isInlineExtraElements;
-
-        const {style, hasBgColor} = usePreparedWrapSettings({
+        const {style, hasInternalMargins} = usePreparedWrapSettings({
             ownWidgetSettings: {
                 background: data.background,
                 backgroundSettings: data.backgroundSettings,
                 borderRadius: data.borderRadius,
+                internalMarginsEnabled: data.internalMarginsEnabled,
             },
-            globalWidgetSettings: titlePlugin.globalWidgetSettings ?? {},
+            dashVisualSettings: {
+                background: undefined,
+                backgroundSettings: undefined,
+                widgetsSettings: titlePlugin.globalWidgetSettings,
+            },
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 
@@ -228,7 +232,9 @@ const titlePlugin: PluginTitle = {
 
             return {
                 ...fontStyles,
-                top: showAnchor ? extraElementsTop : getTopOffsetBySize(data.size, hasBgColor),
+                top: showAnchor
+                    ? extraElementsTop
+                    : getTopOffsetBySize(data.size, hasInternalMargins),
             };
         };
 
@@ -237,7 +243,7 @@ const titlePlugin: PluginTitle = {
                 <div
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
-                        'with-color': Boolean(hasBgColor),
+                        'with-internal-margins': Boolean(hasInternalMargins),
                         'with-inline-extra-elements': Boolean(withInlineExtraElements),
                         'with-absolute-anchor': withAbsoluteAnchor && !withAbsoluteHint,
                         'with-absolute-hint': withAbsoluteHint && !withAbsoluteAnchor,

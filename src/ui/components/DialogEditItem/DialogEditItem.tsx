@@ -10,6 +10,7 @@ import {initControlDialog, resetControlDialog} from 'ui/store/actions/controlDia
 import {selectOpenedDialogType} from 'ui/store/selectors/controlDialog';
 import type {DialogEditItemFeaturesProp} from 'ui/store/typings/controlDialog';
 
+import type {CommonVisualSettings} from '../DashKit/DashKit';
 import DialogChartWidget from '../DialogChartWidget/DialogChartWidget';
 import DialogExternalControl from '../DialogExternalControl/DialogExternalControl';
 import {DialogGroupControl} from '../DialogGroupControl/DialogGroupControl';
@@ -85,6 +86,7 @@ type DialogEditSpecificProps =
     | DialogEditImageProps;
 
 export type DialogEditItemProps = {
+    commonVisualSettings: CommonVisualSettings;
     entryId: string | null;
     scope: EntryScope;
     openedItemId: string | null;
@@ -139,6 +141,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
         navigationPath,
         changeNavigationPath,
         closeDialog,
+        commonVisualSettings,
     } = props;
 
     const dispatch = useDispatch();
@@ -186,6 +189,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
         case DashTabItemType.Title:
             return (
                 <DialogTitleWidget
+                    commonVisualSettings={commonVisualSettings}
                     openedItemId={openedItemId}
                     openedItemData={openedItemData}
                     setItemData={setItemData}
@@ -198,6 +202,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
         case DashTabItemType.Text: {
             return (
                 <DialogTextWidgetWrapper
+                    commonVisualSettings={commonVisualSettings}
                     openedItemId={openedItemId}
                     openedItemData={openedItemData}
                     setItemData={setItemData}
@@ -211,6 +216,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
         case DashTabItemType.Widget:
             return (
                 <DialogChartWidget
+                    commonVisualSettings={commonVisualSettings}
                     openedItemId={openedItemId}
                     openedItemData={openedItemData}
                     widgetType={widgetType}
@@ -256,6 +262,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
         case DashTabItemType.Image:
             return (
                 <DialogImageWidget
+                    commonVisualSettings={commonVisualSettings}
                     scope={scope}
                     openedItemData={openedItemData}
                     onApply={props.setItemData}

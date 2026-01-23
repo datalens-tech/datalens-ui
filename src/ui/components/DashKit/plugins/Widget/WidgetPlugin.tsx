@@ -54,18 +54,28 @@ const widgetPlugin: PluginWidget = {
             oldWidgetBg = {color: CustomPaletteBgColors.LIKE_CHART};
         }
 
-        const {style} = usePreparedWrapSettings({
+        const {style, hasInternalMargins: hasInternalMarginsComputed} = usePreparedWrapSettings({
             ownWidgetSettings: {
                 background: oldWidgetBg,
                 backgroundSettings: data.backgroundSettings,
                 borderRadius: data.borderRadius,
+                internalMarginsEnabled: data.internalMarginsEnabled,
             },
-            globalWidgetSettings: widgetPlugin.globalWidgetSettings ?? {},
+            dashVisualSettings: {
+                background: undefined,
+                backgroundSettings: undefined,
+                widgetsSettings: widgetPlugin.globalWidgetSettings,
+            },
             defaultOldColor:
                 widgetPlugin.scope === 'dash'
                     ? CustomPaletteBgColors.LIKE_CHART
                     : CustomPaletteBgColors.NONE,
         });
+
+        const hasInternalMargins =
+            (data.internalMarginsEnabled === undefined &&
+                widgetPlugin.globalWidgetSettings?.internalMarginsEnabled === undefined) ||
+            hasInternalMarginsComputed;
 
         return (
             <RendererWrapper type="widget" nodeRef={rootNodeRef} id={props.id} style={style}>
@@ -78,6 +88,7 @@ const widgetPlugin: PluginWidget = {
                     enableAssistant={enableAssistant}
                     onWidgetLoadData={onWidgetLoadData}
                     backgroundColor={style?.backgroundColor}
+                    hasInternalMargins={hasInternalMargins}
                 />
             </RendererWrapper>
         );

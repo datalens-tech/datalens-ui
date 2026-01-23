@@ -139,6 +139,7 @@ export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
         usageType: 'widget';
         onWidgetLoadData?: OnWidgetLoadDataHandler;
         backgroundColor?: string;
+        hasInternalMargins?: boolean;
     };
 
 export type ChartProviderPropsWithRefProps = ChartRefProp &

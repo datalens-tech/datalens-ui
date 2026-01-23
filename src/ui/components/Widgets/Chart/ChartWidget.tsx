@@ -89,6 +89,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         enableAssistant,
         onWidgetLoadData,
         backgroundColor,
+        hasInternalMargins,
     } = props;
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
@@ -632,6 +633,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
               : '';
 
     const widgetHeaderProps = {
+        hasInternalMargins,
         isFullscreen,
         editMode,
         hideTitle: Boolean(data.hideTitle),

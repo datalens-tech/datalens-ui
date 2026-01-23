@@ -83,7 +83,12 @@ export const TREEMAP_VISUALIZATION: GraphShared['visualization'] = {
     },
     placeholders: [
         {
-            allowedTypes: ITEM_TYPES.ALL,
+            allowedTypes: ITEM_TYPES.DIMENSIONS_AND_PSEUDO,
+            checkAllowed: (field) => {
+                return (
+                    ITEM_TYPES.DIMENSIONS_AND_PSEUDO.has(field.type) && !isMeasureNameOrValue(field)
+                );
+            },
             allowedDataTypes: PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
             id: 'dimensions',
             type: 'dimensions',
