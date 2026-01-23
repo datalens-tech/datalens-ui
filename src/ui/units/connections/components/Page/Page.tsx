@@ -162,7 +162,7 @@ const PageComponent = (props: PageProps) => {
     const bindedDatasetId = currentSearchParams.get(URL_QUERY.BINDED_DATASET);
     const isSharedConnection = getIsSharedConnection(originalEntry);
     const isWorkbookSharedEntry = isSharedConnection && bindedWorkbookId && !bindedDatasetId;
-    const isReadonly = isSharedConnection && (bindedWorkbookId || bindedDatasetId);
+    const isReadonly = Boolean(isSharedConnection && (bindedWorkbookId || bindedDatasetId));
 
     const entry = isWorkbookSharedEntry
         ? {...originalEntry, workbookId: bindedWorkbookId, collectionId: null}
@@ -187,7 +187,11 @@ const PageComponent = (props: PageProps) => {
         isShowCreateButtons = Boolean(entry.permissions?.edit);
     }
 
-    if (isSharedConnection && bindedDatasetId) {
+    if (entry?.collectionId && !isFakeEntry) {
+        isShowCreateButtons = Boolean(entry.permissions?.edit);
+    }
+
+    if (isReadonly || (!entry?.entryId && !isFakeEntry)) {
         isShowCreateButtons = false;
     }
 
@@ -292,7 +296,7 @@ const PageComponent = (props: PageProps) => {
             <div className={b()}>
                 {entry && (
                     <ActionPanel
-                        className={b('action-panel', {readonly: Boolean(isReadonly)})}
+                        className={b('action-panel', {readonly: isReadonly})}
                         entry={entry}
                         lastCrumbAdditionalContent={lastCrumbAdditionalContent}
                         centerItems={actionPanelCenterItems}
@@ -302,6 +306,7 @@ const PageComponent = (props: PageProps) => {
                                     className={spacing({mr: 2})}
                                     key="additional-actions"
                                     connectionId={extractedEntryId}
+                                    disabled={!isShowCreateButtons}
                                 />
                             ),
                             <DescriptionButton
@@ -314,6 +319,7 @@ const PageComponent = (props: PageProps) => {
                                     entryId={extractedEntryId}
                                     entryKey={(connectionData[FieldKey.Key] as string) || ''}
                                     s3BasedFormOpened={s3BasedFormOpened}
+                                    isSharedConnection={isSharedConnection}
                                     workbookId={workbookId || entry?.workbookId || bindedWorkbookId}
                                 />
                             ),

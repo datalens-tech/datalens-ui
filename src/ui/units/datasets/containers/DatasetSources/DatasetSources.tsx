@@ -29,6 +29,7 @@ import {
     deleteAvatar,
     deleteConnection,
     deleteSource,
+    getSharedConnectionDelegation,
     getSources,
     getSourcesListingOptions,
     openDialogParameterCreate,
@@ -313,8 +314,19 @@ export class DatasetSources extends React.Component<Props, State> {
                 collectionId: datasetCollectionId,
             } = this.props;
             this.setState({isLoadingConnectionInfo: true});
+            const isAlreadyBinded = typeof isDelegated === 'boolean';
+            let delegation: boolean | undefined;
+            if (!isAlreadyBinded && datasetId) {
+                const result = await this.props.getSharedConnectionDelegation({
+                    targetId: datasetId,
+                    sourceId: entryId,
+                });
+                delegation = result?.isDelegated;
+            }
+
             const bindedDatasetId =
-                bindedWorkbookId || (datasetCollectionId && connCollectionId)
+                bindedWorkbookId ||
+                (datasetCollectionId && connCollectionId && typeof delegation === 'boolean')
                     ? datasetId
                     : undefined;
             const connection = (await getSdk().sdk.us.getEntry({
@@ -323,9 +335,10 @@ export class DatasetSources extends React.Component<Props, State> {
                 bindedDatasetId,
                 includePermissionsInfo: true,
             })) as ConnectionEntry;
-
+            const delegationStatus = typeof delegation === 'boolean' ? delegation : isDelegated;
             await this.props.addConnection({
-                connection: {...connection, isDelegated},
+                connection: {...connection, isDelegated: delegationStatus},
+                skipDelegationCheck: !isAlreadyBinded,
             });
             this.setState({isLoadingConnectionInfo: false});
 
@@ -534,6 +547,10 @@ export class DatasetSources extends React.Component<Props, State> {
                             updatePreview,
                             validateEnabled,
                         });
+                    })
+                    .catch((e) => {
+                        this.setState({isLoadingConnectionInfo: false});
+                        throw e;
                     });
             }
             case DATASET_UPDATE_ACTIONS.SOURCE_UPDATE: {
@@ -988,6 +1005,7 @@ const mapDispatchToProps = {
     openDialogParameterEdit,
     resetSourcesPagination,
     getSourcesListingOptions,
+    getSharedConnectionDelegation,
 };
 const connector = connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true});
 

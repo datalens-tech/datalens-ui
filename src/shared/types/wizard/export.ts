@@ -4,7 +4,8 @@ export type ColumnExportSettings = {
     field: string;
     name: string;
     formatter?: ServerFieldFormatting;
-    type?: 'number' | 'text';
+    format?: string;
+    type?: 'number' | 'text' | 'date' | 'genericdatetime';
 };
 
 export type SeriesExportSettings = {

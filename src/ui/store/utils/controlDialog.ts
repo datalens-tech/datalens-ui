@@ -2,12 +2,6 @@ import type {StringParams} from '@gravity-ui/chartkit/highcharts';
 import {i18n} from 'i18n';
 import {DashTabItemControlSourceType, TitlePlacements} from 'shared/types';
 
-// Mock i18n object for testing/development
-const mockI18n = {
-    'validation_invalid-impact-type':
-        'Настройка селектора не должна быть шире, чем настройка группы',
-    'validation_empty-impact-tabs-ids': 'Должна быть выбрана хотя бы одна вкладка',
-};
 import type {
     ItemDataSource,
     SelectorDialogState,
@@ -103,8 +97,8 @@ const validateGroupItemImpactType = (
     selectorsGroup: SelectorsGroupDialogState,
     selectorDialog: SelectorDialogState,
 ) => {
-    const {impactType: itemImpactType, impactTabsIds: itemImpactTabsIds} = selectorDialog;
-    const {impactType: groupItemImpactType, impactTabsIds: groupImpactTabsIds} = selectorsGroup;
+    const {impactType: itemImpactType} = selectorDialog;
+    const {impactType: groupItemImpactType} = selectorsGroup;
     // No validation needed if item has no impact type or follows group
     if (!itemImpactType || itemImpactType === 'asGroup' || !groupItemImpactType) {
         return null;
@@ -124,16 +118,11 @@ const validateGroupItemImpactType = (
     }
 
     // Group affects current tab - item must also affect current tab
-    if (
-        groupItemImpactType === 'currentTab' &&
-        itemImpactType === 'currentTab' &&
-        groupImpactTabsIds?.[0] === itemImpactTabsIds?.[0]
-    ) {
+    if (groupItemImpactType === 'currentTab' && itemImpactType === 'currentTab') {
         return null;
     }
 
-    return mockI18n['validation_invalid-impact-type'];
-    // return i18n('dash.control-dialog.edit', 'validation_not-combined-with-group-setting');
+    return i18n('dash.control-dialog.edit', 'validation_not-combined-with-group-setting');
 };
 
 const getImpactValidation = (
@@ -145,11 +134,10 @@ const getImpactValidation = (
     const validation: SelectorDialogValidation = {};
 
     if (impactType === 'selectedTabs' && (!impactTabsIds || impactTabsIds.length === 0)) {
-        // validation.impactTabsIds = i18n(
-        //     'dash.control-dialog.edit',
-        //     'validation_empty-impact-tabs-ids',
-        // );
-        validation.impactTabsIds = mockI18n['validation_empty-impact-tabs-ids'];
+        validation.impactTabsIds = i18n(
+            'dash.control-dialog.edit',
+            'validation_empty-impact-tabs-ids',
+        );
     }
 
     if (selectorsGroup) {
@@ -173,11 +161,10 @@ export const getGroupControlValidation = ({
     const validation: SelectorsGroupValidation = {};
 
     if (impactType === 'selectedTabs' && impactTabsIds?.length === 0) {
-        // validation.impactTabsIds = i18n(
-        //     'dash.control-dialog.edit',
-        //     'validation_empty-impact-tabs-ids',
-        // );
-        validation.impactTabsIds = mockI18n['validation_empty-impact-tabs-ids'];
+        validation.impactTabsIds = i18n(
+            'dash.control-dialog.edit',
+            'validation_empty-impact-tabs-ids',
+        );
     }
 
     if (prevValidation.currentTabVisibility) {

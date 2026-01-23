@@ -116,12 +116,20 @@ const controlSchema = z
         namespace: z.literal(DASH_DEFAULT_NAMESPACE),
         title: z.string().min(1),
         sourceType: z.enum(DashTabItemControlSourceType),
-        // TODO(global selectors): uncomment when flag EnableGlobalSelectors will be enabled
         // 'allTabs' = global selectors
         // 'currentTab' = regular selector that is visible only on one tab
         // 'selectedTabs' + impactTabsIds = selector is visible on the selected tabs
-        // impactType: z.enum(['allTabs', 'currentTab', 'selectedTabs']).optional().describe('Type that regulate which tabs the selector will be displayed on'),
-        // impactTabsIds: z.array(z.string()).optional().describe('List of tabs ids that regulate which tabs the selector will be displayed on. Depends on impactType field'),
+        impactType: z
+            .enum(['allTabs', 'currentTab', 'selectedTabs'])
+            .optional()
+            .describe('Type that regulate which tabs the selector will be displayed on'),
+        impactTabsIds: z
+            .array(z.string())
+            .optional()
+            .nullable()
+            .describe(
+                'List of tabs ids that regulate which tabs the selector will be displayed on. Depends on impactType field',
+            ),
     })
     .and(
         z.discriminatedUnion('sourceType', [
@@ -153,12 +161,20 @@ const groupControlItemsSchema = z
         defaults: z.record(z.any(), z.any()),
         placementMode: z.enum(CONTROLS_PLACEMENT_MODE).optional(),
         width: z.string().optional(),
-        // TODO(global selectors): uncomment when flag EnableGlobalSelectors will be enabled
         // 'allTabs' = global selectors
         // 'currentTab' = regular selector that is visible only on one tab
         // 'selectedTabs' + impactTabsIds = selector is visible on the selected tabs
-        // impactType: z.enum(['allTabs', 'currentTab', 'selectedTabs']).optional().describe('Type that regulate which tabs the selector will be displayed on'),
-        // impactTabsIds: z.array(z.string()).optional().describe('List of tabs ids that regulate which tabs the selector will be displayed on. Depends on impactType field'),
+        impactType: z
+            .enum(['allTabs', 'currentTab', 'selectedTabs', 'asGroup'])
+            .optional()
+            .describe('Type that regulate which tabs the selector will be displayed on'),
+        impactTabsIds: z
+            .array(z.string())
+            .optional()
+            .nullable()
+            .describe(
+                'List of tabs ids that regulate which tabs the selector will be displayed on. Depends on impactType field',
+            ),
     })
     .and(
         z.discriminatedUnion('sourceType', [

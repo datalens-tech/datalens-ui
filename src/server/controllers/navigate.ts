@@ -37,7 +37,6 @@ export const navigateController = async (req: Request, res: Response) => {
             headers: {
                 ...req.headers,
                 [TENANT_ID_HEADER]: res.locals.currentTenantId,
-                ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
                 ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
             },
             requestId: req.id,

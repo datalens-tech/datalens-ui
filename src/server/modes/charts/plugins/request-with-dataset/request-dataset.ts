@@ -11,9 +11,7 @@ import type {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../../.
 import Cache from '../../../../components/cache-client';
 import {
     type AuthParams,
-    type ZitadelParams,
     addAuthHeaders,
-    addZitadelHeaders,
 } from '../../../../components/charts-engine/components/processor/data-fetcher';
 import {registry} from '../../../../registry';
 import type {DatalensGatewaySchemas} from '../../../../types/gateway';
@@ -32,7 +30,6 @@ const getDatasetFieldsById = async ({
     rejectFetchingSource,
     iamToken,
     pluginOptions,
-    zitadelParams,
     authParams,
     headers,
 }: {
@@ -42,7 +39,6 @@ const getDatasetFieldsById = async ({
     rejectFetchingSource: (reason?: any) => void;
     iamToken?: string;
     pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
-    zitadelParams: ZitadelParams | undefined;
     authParams: AuthParams | undefined;
     headers: OutgoingHttpHeaders;
 }): Promise<GetDataSetFieldsByIdResponse> => {
@@ -53,10 +49,6 @@ const getDatasetFieldsById = async ({
 
     const requestDatasetFieldsByToken = gatewayApi.bi.embedsGetDataSetFieldsById;
     try {
-        if (zitadelParams) {
-            addZitadelHeaders({headers, zitadelParams});
-        }
-
         if (authParams) {
             addAuthHeaders({headers, authParams});
         }
@@ -111,7 +103,6 @@ export const getDatasetFields = async (args: {
     userId: string | null;
     rejectFetchingSource: (reason: any) => void;
     pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
-    zitadelParams: ZitadelParams | undefined;
     authParams: AuthParams | undefined;
     requestHeaders: OutgoingHttpHeaders;
 }): Promise<{datasetFields: PartialDatasetField[]; revisionId: string}> => {
@@ -124,7 +115,6 @@ export const getDatasetFields = async (args: {
         iamToken,
         rejectFetchingSource,
         pluginOptions,
-        zitadelParams,
         authParams,
         requestHeaders,
     } = args;
@@ -153,7 +143,6 @@ export const getDatasetFields = async (args: {
                 rejectFetchingSource,
                 iamToken,
                 pluginOptions,
-                zitadelParams,
                 authParams,
                 headers: requestHeaders,
             });
@@ -187,7 +176,6 @@ export const getDatasetFields = async (args: {
             rejectFetchingSource,
             iamToken,
             pluginOptions,
-            zitadelParams,
             authParams,
             headers: requestHeaders,
         });

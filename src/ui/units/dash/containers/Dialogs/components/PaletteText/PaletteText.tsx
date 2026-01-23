@@ -4,7 +4,7 @@ import type {FlexProps, RealTheme} from '@gravity-ui/uikit';
 import {type ColorSettings, Feature} from 'shared';
 import {CustomPaletteTextColors, TITLE_WIDGET_TEXT_COLORS_PRESET} from 'shared/constants/widgets';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
-import {computeColorFromToken} from 'ui/utils/widgetColors';
+import {computeColorFromToken} from 'ui/utils/widgets/colors';
 
 import {ColorInputsGroup} from '../ColorInputsGroup/ColorInputsGroup';
 import {ColorPicker} from '../ColorPicker/ColorPicker';

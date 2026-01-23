@@ -35,21 +35,24 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
     });
 };
 
-export interface CommonGlobalWidgetSettings {
+export interface CommonWidgetSettings {
     background?: OldBackgroundSettings;
     backgroundSettings?: BackgroundSettings;
     borderRadius?: number;
+    internalMarginsEnabled?: boolean;
 }
+
+export type CommonGlobalWidgetSettings = CommonWidgetSettings;
 
 export interface CommonPluginSettings {
     scope?: string;
     globalWidgetSettings?: CommonGlobalWidgetSettings;
 }
 
-export interface CommonPluginProps {
+export interface CommonVisualSettings {
+    widgetsSettings?: CommonWidgetSettings;
     background?: OldBackgroundSettings;
     backgroundSettings?: BackgroundSettings;
-    borderRadius?: number;
 }
 
 export const getConfiguredDashKit = (
@@ -70,6 +73,7 @@ export const getConfiguredDashKit = (
                 backgroundSettings: options?.globalWidgetSettings?.backgroundSettings,
                 borderRadius:
                     options?.globalWidgetSettings?.borderRadius ?? OLD_DEFAULT_WIDGET_BORDER_RADIUS,
+                internalMarginsEnabled: options?.globalWidgetSettings?.internalMarginsEnabled,
             },
         };
         const titleSettings = {

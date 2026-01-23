@@ -235,9 +235,6 @@ export const DL = {
     get HEADERS_MAP() {
         return window.DL.headersMap || {};
     },
-    get ZITADEL_ENABLED() {
-        return window.DL.isZitadelEnabled === true;
-    },
     get HIDE_NAVIGATION() {
         return window.DL.hideNavigation;
     },

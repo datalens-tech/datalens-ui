@@ -38,6 +38,7 @@ import {
     isDateField,
     isTreeField,
 } from 'shared';
+import {isTooltipSumEnabled} from 'shared/modules/wizard';
 import type {DatalensGlobalState} from 'ui';
 import type {Widget} from 'ui/libs/DatalensChartkit/types/widget';
 import {getFirstFieldInPlaceholder} from 'ui/units/wizard/utils/placeholder';
@@ -104,16 +105,6 @@ const VISUALIZATION_WITH_TOOLTIP_AVAILABLE = new Set<string>([
     WizardVisualizationId.Pie,
     WizardVisualizationId.Donut,
     WizardVisualizationId.CombinedChart,
-]);
-
-const TOOLTIP_SUM_SUPPORTED_VISUALIZATION = new Set([
-    'line',
-    'area',
-    'area100p',
-    'column',
-    'column100p',
-    'bar',
-    'bar100p',
 ]);
 
 const DEFAULT_PERIOD: Period = 'day';
@@ -688,9 +679,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const {visualization} = this.props;
         const {tooltip, tooltipSum = CHART_SETTINGS.TOOLTIP_SUM.ON} = this.state;
 
-        const tooltipSumEnabled = TOOLTIP_SUM_SUPPORTED_VISUALIZATION.has(visualization.id);
-
-        if (!tooltipSumEnabled) {
+        if (!isTooltipSumEnabled({visualizationId: visualization.id})) {
             return null;
         }
 
