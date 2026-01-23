@@ -86,7 +86,7 @@ type DialogEditSpecificProps =
     | DialogEditImageProps;
 
 export type DialogEditItemProps = {
-    commonVisualSettings: CommonVisualSettings;
+    commonVisualSettings?: CommonVisualSettings;
     entryId: string | null;
     scope: EntryScope;
     openedItemId: string | null;
@@ -141,7 +141,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
         navigationPath,
         changeNavigationPath,
         closeDialog,
-        commonVisualSettings,
+        commonVisualSettings = {},
     } = props;
 
     const dispatch = useDispatch();
