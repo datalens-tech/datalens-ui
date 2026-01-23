@@ -20,13 +20,13 @@ import {usePrevious} from 'ui/hooks';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
-import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
+import type {CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Text.scss';
 
-type Props = Omit<PluginTextProps, 'apiHandler'> & CommonPluginProps;
+type Props = Omit<PluginTextProps, 'apiHandler'>;
 
 const b = block('dashkit-plugin-text-container');
 
@@ -193,13 +193,18 @@ const textPlugin: PluginText = {
 
         const data = props.data as DashTabItemText['data'];
 
-        const {style, hasBgColor} = usePreparedWrapSettings({
+        const {style, hasInternalMargins} = usePreparedWrapSettings({
             ownWidgetSettings: {
                 background: data.background,
                 backgroundSettings: data.backgroundSettings,
                 borderRadius: data.borderRadius,
+                internalMarginsEnabled: data.internalMarginsEnabled,
             },
-            globalWidgetSettings: textPlugin.globalWidgetSettings ?? {},
+            dashVisualSettings: {
+                widgetsSettings: textPlugin.globalWidgetSettings,
+                background: undefined,
+                backgroundSettings: undefined,
+            },
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 
@@ -249,7 +254,7 @@ const textPlugin: PluginText = {
                     // needed for force update when text is changed
                     key={`yfm_${YfmWrapperKeyRef.current}`}
                     content={<div className={b('content-wrap', null)}>{content}</div>}
-                    className={b({'with-color': Boolean(hasBgColor)})}
+                    className={b({'with-internal-margins': hasInternalMargins})}
                     metaScripts={metaScripts}
                     onRenderCallback={handleTextRender}
                 />

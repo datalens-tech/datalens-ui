@@ -80,8 +80,11 @@ const Settings = () => {
     const [accessDescription, setAccessDesc] = React.useState(accessDesc);
     const [supportDescription, setSupportDesc] = React.useState(supportDesc);
     const [margins, setMargins] = React.useState(settings.margins || DEFAULT_DASH_MARGINS);
+    const [internalMarginsEnabled, setInternalMarginsEnabled] = React.useState(
+        settings.widgetsSettings?.internalMarginsEnabled ?? true,
+    );
     const [borderRadius, setBorderRadius] = React.useState(
-        settings.borderRadius ??
+        settings.widgetsSettings?.borderRadius ??
             (!isNew && isEnabledFeature(Feature.EnableNewDashSettings)
                 ? OLD_DEFAULT_WIDGET_BORDER_RADIUS
                 : undefined),
@@ -133,9 +136,8 @@ const Settings = () => {
             !dependentSelectors ||
             confirm(i18n('dash.settings-dialog.edit', 'context_dependent-selectors'))
         ) {
-            const newSettings = {
+            const newSettings: DashSettings = {
                 ...settings,
-                borderRadius,
                 autoupdateInterval:
                     (typeof autoupdateInterval === 'string'
                         ? parseInt(autoupdateInterval)
@@ -149,6 +151,11 @@ const Settings = () => {
                 hideDashTitle,
                 expandTOC,
                 loadPriority,
+                widgetsSettings: {
+                    ...settings.widgetsSettings,
+                    borderRadius,
+                    internalMarginsEnabled,
+                },
                 ...otherSettinsState,
             };
 
@@ -264,6 +271,8 @@ const Settings = () => {
                 <Display
                     margins={margins}
                     onChangeMargins={handleMarginsChange}
+                    internalMarginsEnabled={internalMarginsEnabled}
+                    onChangeInternalMarginsEnabled={setInternalMarginsEnabled}
                     hideTabsValue={hideTabs}
                     onChangeHideTabs={() => setHideTabs(!hideTabs)}
                     hideDashTitleValue={hideDashTitle}

@@ -1,11 +1,11 @@
 import type {DatalensGlobalState} from 'index';
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
+import {getAllTabItems} from 'shared/utils/dash';
 
 import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {Mode} from '../../modules/constants';
-import {getAllTabItems} from '../../utils/selectors';
 import type {DashState} from '../typings/dash';
 
 export const selectDash = (state: DatalensGlobalState) => state.dash || null;
@@ -32,7 +32,13 @@ export const selectEntryTitle = (state: DatalensGlobalState) =>
 export const selectEntryData = (state: DatalensGlobalState) =>
     state.dash.convertedEntryData || state.dash.entry?.data || null;
 
-export const selectSettings = (state: DatalensGlobalState) => state.dash?.data?.settings || {};
+export const selectSettings = (state: DatalensGlobalState) =>
+    state.dash?.data?.settings || Object.create(null);
+
+export const selectVisualSettings = createSelector([selectSettings], (settings) => ({
+    backgroundSettings: settings.backgroundSettings,
+    widgetsSettings: settings.widgetsSettings,
+}));
 
 export const selectHasOpenedDialog = (state: DatalensGlobalState) =>
     Boolean(state.dash.openedDialog) || state.dialog?.dialogs?.length > 0;

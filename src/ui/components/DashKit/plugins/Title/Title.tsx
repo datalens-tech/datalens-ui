@@ -19,7 +19,7 @@ import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHel
 import {DL} from 'ui/constants';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
-import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
+import type {CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
@@ -40,7 +40,7 @@ type PluginTitleObjectSettings = CommonPluginSettings & {
     hideHint?: boolean;
 };
 
-type Props = PluginTitleProps & PluginTitleObjectSettings & CommonPluginProps;
+type Props = PluginTitleProps & PluginTitleObjectSettings;
 
 type PluginTitle = Plugin<Props> &
     CommonPluginSettings & {
@@ -131,14 +131,18 @@ const titlePlugin: PluginTitle = {
 
         const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
         const withAbsoluteHint = showHint && !isInlineExtraElements;
-
-        const {style, hasBgColor} = usePreparedWrapSettings({
+        const {style, hasInternalMargins} = usePreparedWrapSettings({
             ownWidgetSettings: {
                 background: data.background,
                 backgroundSettings: data.backgroundSettings,
                 borderRadius: data.borderRadius,
+                internalMarginsEnabled: data.internalMarginsEnabled,
             },
-            globalWidgetSettings: titlePlugin.globalWidgetSettings ?? {},
+            dashVisualSettings: {
+                background: undefined,
+                backgroundSettings: undefined,
+                widgetsSettings: titlePlugin.globalWidgetSettings,
+            },
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 
@@ -228,7 +232,9 @@ const titlePlugin: PluginTitle = {
 
             return {
                 ...fontStyles,
-                top: showAnchor ? extraElementsTop : getTopOffsetBySize(data.size, hasBgColor),
+                top: showAnchor
+                    ? extraElementsTop
+                    : getTopOffsetBySize(data.size, hasInternalMargins),
             };
         };
 
@@ -237,7 +243,7 @@ const titlePlugin: PluginTitle = {
                 <div
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
-                        'with-color': Boolean(hasBgColor),
+                        'with-internal-margins': Boolean(hasInternalMargins),
                         'with-inline-extra-elements': Boolean(withInlineExtraElements),
                         'with-absolute-anchor': withAbsoluteAnchor && !withAbsoluteHint,
                         'with-absolute-hint': withAbsoluteHint && !withAbsoluteAnchor,

@@ -41,10 +41,23 @@ export function getExportColumnSettings(args: {
 }): ColumnExportSettings {
     const {path, field} = args;
 
+    let columnType: ColumnExportSettings['type'] = 'text';
+    let formatter: ColumnExportSettings['formatter'] = {};
+    let format: ColumnExportSettings['format'];
+
+    if (isNumberField(field)) {
+        columnType = 'number';
+        formatter = getFormatOptions(field);
+    } else if (isDateField(field)) {
+        columnType = field.data_type;
+        format = field.format ?? getDefaultDateFormat(field.data_type);
+    }
+
     return {
         name: getFakeTitleOrTitle(field),
-        formatter: field ? getFormatOptions(field) : {},
+        formatter,
+        format,
         field: path,
-        type: isNumberField(field) ? 'number' : 'text',
+        type: columnType,
     };
 }

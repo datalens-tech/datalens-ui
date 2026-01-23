@@ -11,7 +11,7 @@ import {
 } from 'shared/constants/widgets';
 import type {ColorPickerInputProps} from 'ui/components/ColorPickerInput/ColorPickerInput';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
-import {computeColorFromToken} from 'ui/utils/widgetColors';
+import {computeColorFromToken} from 'ui/utils/widgets/colors';
 
 import {ColorInputsGroup} from '../ColorInputsGroup/ColorInputsGroup';
 import {ColorPicker} from '../ColorPicker/ColorPicker';

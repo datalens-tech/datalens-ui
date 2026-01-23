@@ -102,11 +102,8 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
     }
 
     const preparedData = prepareBarX(args);
-    const xCategories = xField
-        ? preparedData.categories
-        : yField
-          ? [getFakeTitleOrTitle(yField)]
-          : [];
+    const preparedCategories = preparedData.categories ?? preparedData.categories_ms;
+    const xCategories = xField ? preparedCategories : yField ? [getFakeTitleOrTitle(yField)] : [];
 
     const exportSettings: SeriesExportSettings = {
         columns: [
@@ -134,6 +131,12 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
     const shouldUsePercentStacking = PERCENT_VISUALIZATIONS.has(visualizationId);
     const inNavigatorEnabled = getIsNavigatorEnabled(shared);
+
+    let seriesTooltip: BarXSeries['tooltip'];
+    if (!yField) {
+        seriesTooltip = {enabled: false};
+    }
+
     const seriesData = preparedData.graphs.map<ExtendedBarXSeries>((graph) => {
         const rangeSlider = inNavigatorEnabled
             ? getSeriesRangeSliderConfig({
@@ -169,6 +172,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             color: seriesColor,
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
+            tooltip: seriesTooltip,
             data: graph.data.reduce(
                 (acc: ExtendedBaXrSeriesData[], item: OldBarXDataItem, index: number) => {
                     const dataItem: ExtendedBaXrSeriesData = {

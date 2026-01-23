@@ -30,7 +30,7 @@ import type {
     DashTabItemWidget,
     RecursivePartial,
 } from 'shared';
-import {DashTabItemType, EntryScope, EntryUpdateMode, Feature} from 'shared';
+import {DashTabItemType, EntryScope, EntryUpdateMode} from 'shared';
 import type {AppDispatch} from 'ui/store';
 import {
     addEditHistoryPoint,
@@ -38,7 +38,6 @@ import {
     resetEditHistoryUnit,
 } from 'ui/store/actions/editHistory';
 import type {ItemDataSource} from 'ui/store/typings/controlDialog';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -243,7 +242,7 @@ export const updateTabsWithGlobalState = ({
     appliedSelectorsIds,
 }: UpdateTabsWithGlobalStateArgs) => {
     return function (dispatch: DashDispatch, getState: GetState) {
-        if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !isItemGlobal(selectorItem)) {
+        if (!isItemGlobal(selectorItem)) {
             return;
         }
 
@@ -390,13 +389,14 @@ export type SetTabHashStateAction = {
         entryId: string | null;
         stateHashId?: string;
         hashStates?: TabsHashStates;
+        disableUrlState?: boolean;
     };
 };
 
 export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'hashStates'>) {
     return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
         const {hashStates} = getState().dash;
-        const {entryId, stateHashId, tabId} = data;
+        const {entryId, stateHashId, tabId, disableUrlState} = data;
         const newData: SetTabHashStateAction['payload'] = {...data};
 
         let hashId: string | undefined = stateHashId;
@@ -457,6 +457,7 @@ export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'ha
             payload: {
                 ...newData,
                 stateHashId: hashId,
+                disableUrlState,
             },
         });
     };
