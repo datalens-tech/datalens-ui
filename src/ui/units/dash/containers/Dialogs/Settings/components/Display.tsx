@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Checkbox, Label, Slider} from '@gravity-ui/uikit';
+import {Checkbox, Label, Slider, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
@@ -21,6 +21,8 @@ const i18n = I18n.keyset('dash.settings-dialog.edit');
 type DisplayProps = {
     margins: [number, number];
     onChangeMargins: (newMargins: number | [number, number]) => void;
+    internalMarginsEnabled: boolean;
+    onChangeInternalMarginsEnabled: (newInternalMarginsEnabled: boolean) => void;
     borderRadius: number | undefined;
     onChangeBorderRadius: (newBorderRadius: number | undefined) => void;
     hideTabsValue: boolean;
@@ -34,6 +36,8 @@ type DisplayProps = {
 export const Display = ({
     margins,
     onChangeMargins,
+    internalMarginsEnabled,
+    onChangeInternalMarginsEnabled,
     borderRadius,
     onChangeBorderRadius,
     hideTabsValue,
@@ -102,6 +106,15 @@ export const Display = ({
                         tooltipDisplay={'on'}
                         value={margins[0]}
                         onUpdate={onChangeMargins}
+                    />
+                </Row>
+            )}
+            {isNewDashSettingsEnabled && (
+                <Row>
+                    <Title text={i18n('label_internal-margins')} />
+                    <Switch
+                        checked={internalMarginsEnabled}
+                        onUpdate={onChangeInternalMarginsEnabled}
                     />
                 </Row>
             )}

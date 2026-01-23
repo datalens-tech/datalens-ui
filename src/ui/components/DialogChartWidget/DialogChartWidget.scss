@@ -124,11 +124,6 @@
         width: calc(100% - 14px - 8px);
     }
 
-    &__checkbox {
-        flex-grow: 0;
-        margin-block-start: var(--g-spacing-2);
-    }
-
     .widget-item-dialog__line {
         display: grid;
         grid-template-columns: 140px auto;

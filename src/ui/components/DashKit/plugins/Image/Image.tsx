@@ -39,7 +39,15 @@ export const pluginImage: PluginImage = {
 function PluginImageRenderer(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
     const {
         id,
-        data: {alt, background, backgroundSettings, borderRadius, src, preserveAspectRatio},
+        data: {
+            alt,
+            background,
+            backgroundSettings,
+            borderRadius,
+            internalMarginsEnabled,
+            src,
+            preserveAspectRatio,
+        },
         layout,
     } = props;
 
@@ -62,8 +70,13 @@ function PluginImageRenderer(props: Props, _ref?: React.LegacyRef<HTMLDivElement
             background: background,
             backgroundSettings: backgroundSettings,
             borderRadius: borderRadius,
+            internalMarginsEnabled: internalMarginsEnabled,
         },
-        globalWidgetSettings: pluginImage.globalWidgetSettings ?? {},
+        dashVisualSettings: {
+            background: undefined,
+            backgroundSettings: undefined,
+            widgetsSettings: pluginImage.globalWidgetSettings,
+        },
         defaultOldColor: CustomPaletteBgColors.NONE,
     });
 
