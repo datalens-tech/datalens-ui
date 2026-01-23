@@ -33,7 +33,12 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {DashTab, DashTabLayout} from 'shared';
-import {Feature, FixedHeaderQa, SCROLL_TITLE_DEBOUNCE_TIME} from 'shared';
+import {
+    Feature,
+    FixedHeaderQa,
+    SCROLL_TITLE_DEBOUNCE_TIME,
+    SCR_USER_AGENT_HEADER_VALUE,
+} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {
     DEFAULT_DASH_MARGINS,
@@ -56,6 +61,7 @@ import {
 import {dispatchDashLoadedEvent} from '../../utils/customEvents';
 import {getCustomizedProperties} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
+import {getAllTabItems} from '../../utils/selectors';
 import {FixedHeaderContainer, FixedHeaderControls} from '../FixedHeader/FixedHeader';
 
 import Content from './components/Content/Content';
@@ -188,11 +194,13 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         byGroup: Record<string, DashTabLayout[]>;
         byId: Record<string, DashTabLayout>;
         columns: number;
+        totalItemsCount: number;
     } = {
         layout: null,
         byGroup: {},
         byId: {},
         columns: 0,
+        totalItemsCount: 0,
     };
     _memoizedPropertiesCache: Map<string, ReactGridLayoutProps> = new Map();
 
@@ -407,7 +415,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
     getMemoLayoutMap() {
         const widgetsMap = this._memoizedWidgetsMap;
-        const layout = this.getTabConfig()?.layout || [];
+        const tabConfig = this.getTabConfig();
+        const layout = tabConfig?.layout || [];
 
         if (widgetsMap.layout !== layout) {
             widgetsMap.layout = layout;
@@ -416,6 +425,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             widgetsMap.byId = byId;
             widgetsMap.byGroup = byGroup;
             widgetsMap.columns = columns;
+            widgetsMap.totalItemsCount = tabConfig ? getAllTabItems(tabConfig).length : 0;
         }
 
         return widgetsMap;
@@ -705,10 +715,50 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         if (isMounted) {
             this.state.loadedItemsMap.set(item.id, false);
 
-            if (this.state.loadedItemsMap.size === this.props.tabData?.items.length) {
+            if (this.state.loadedItemsMap.size === this.getMemoLayoutMap().totalItemsCount) {
                 this.scrollIntoViewWithDebounce();
             }
         }
+    };
+
+    private isElementOutsideViewport = (element: Element): boolean => {
+        const rect = element.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
+        return (
+            rect.bottom < 0 ||
+            rect.top > viewportHeight ||
+            rect.right < 0 ||
+            rect.left > viewportWidth
+        );
+    };
+
+    private checkUnloadedItemsOutsideViewport = (): boolean => {
+        const {loadedItemsMap, dashEl} = this.state;
+
+        if (!dashEl) {
+            return false;
+        }
+
+        const unloadedItemIds: string[] = [];
+        loadedItemsMap.forEach((isLoaded, itemId) => {
+            if (isLoaded !== true) {
+                unloadedItemIds.push(itemId);
+            }
+        });
+
+        if (unloadedItemIds.length === 0) {
+            return false;
+        }
+
+        return unloadedItemIds.every((itemId) => {
+            const itemElement = document.getElementById(itemId);
+            if (!itemElement) {
+                return false;
+            }
+            return this.isElementOutsideViewport(itemElement);
+        });
     };
 
     private handleItemRender = (item: ConfigItem) => {
@@ -718,7 +768,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             loadedItemsMap.set(item.id, true);
 
             const isLoaded =
-                loadedItemsMap.size === this.props.tabData?.items.length &&
+                loadedItemsMap.size === this.getMemoLayoutMap().totalItemsCount &&
                 Array.from(loadedItemsMap.values()).every(Boolean);
 
             if (isLoaded && this.state.delayedScrollElement) {
@@ -730,7 +780,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 this.scrollIntoViewWithDebounce();
             }
 
-            if (isLoaded) {
+            if (
+                navigator.userAgent === SCR_USER_AGENT_HEADER_VALUE &&
+                (isLoaded || this.checkUnloadedItemsOutsideViewport())
+            ) {
                 dispatchDashLoadedEvent();
             }
 
