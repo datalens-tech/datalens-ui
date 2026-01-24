@@ -9,7 +9,6 @@ import type {
     ItemsStateAndParams,
     PluginTextProps,
     PluginTitleProps,
-    StateAndParamsMetaData,
 } from '@gravity-ui/dashkit';
 import type {ThemeType} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
@@ -55,7 +54,7 @@ import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import type {IsWidgetVisibleOnTabArgs} from '../../utils/selectors';
-import {isItemGlobal, isWidgetVisibleOnTab} from '../../utils/selectors';
+import {isWidgetVisibleOnTab} from '../../utils/selectors';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
 import {
@@ -70,8 +69,8 @@ import type {DashState, UpdateTabsWithGlobalStateArgs} from '../typings/dash';
 import {save} from './base/actions';
 import {
     getPreparedCopiedSelectorData,
+    getUpdatedTabsWithGlobalState,
     migrateDataSettings,
-    processTabForGlobalUpdate,
 } from './helpers';
 
 import type {DashDispatch} from './index';
@@ -242,41 +241,21 @@ export const updateTabsWithGlobalState = ({
     appliedSelectorsIds,
 }: UpdateTabsWithGlobalStateArgs) => {
     return function (dispatch: DashDispatch, getState: GetState) {
-        if (!isItemGlobal(selectorItem)) {
-            return;
-        }
-
         const {
             dash: {hashStates, tabId: currentTabId, data},
         } = getState();
 
         try {
-            const currentHashState = currentTabId ? hashStates?.[currentTabId] : null;
-            const currentMeta = currentHashState?.state?.__meta__ as StateAndParamsMetaData;
-
-            const updatedHashStates: TabsHashStates = {};
-            let hasUpdated = false;
-
-            data.tabs.forEach((tab) => {
-                const processedTab = processTabForGlobalUpdate(
-                    tab,
-                    currentTabId,
-                    selectorItem,
-                    appliedSelectorsIds,
-                    params,
-                    hashStates,
-                    currentMeta,
-                );
-                if (processedTab) {
-                    updatedHashStates[tab.id] = {
-                        state: processedTab.newState,
-                        hash: undefined,
-                    };
-                    hasUpdated = true;
-                }
+            const updatedHashStates = getUpdatedTabsWithGlobalState({
+                params,
+                selectorItem,
+                appliedSelectorsIds,
+                currentTabId,
+                tabs: data.tabs,
+                hashStates,
             });
 
-            if (!hasUpdated) {
+            if (!updatedHashStates) {
                 return;
             }
 
