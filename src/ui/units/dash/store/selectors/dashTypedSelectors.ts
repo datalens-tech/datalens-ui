@@ -32,7 +32,13 @@ export const selectEntryTitle = (state: DatalensGlobalState) =>
 export const selectEntryData = (state: DatalensGlobalState) =>
     state.dash.convertedEntryData || state.dash.entry?.data || null;
 
-export const selectSettings = (state: DatalensGlobalState) => state.dash?.data?.settings || {};
+export const selectSettings = (state: DatalensGlobalState) =>
+    state.dash?.data?.settings || Object.create(null);
+
+export const selectVisualSettings = createSelector([selectSettings], (settings) => ({
+    backgroundSettings: settings.backgroundSettings,
+    widgetsSettings: settings.widgetsSettings,
+}));
 
 export const selectHasOpenedDialog = (state: DatalensGlobalState) =>
     Boolean(state.dash.openedDialog) || state.dialog?.dialogs?.length > 0;

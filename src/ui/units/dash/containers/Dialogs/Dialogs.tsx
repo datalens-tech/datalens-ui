@@ -26,6 +26,7 @@ import {
     selectNavigationPath,
     selectOpenedItem,
     selectOpenedItemData,
+    selectVisualSettings,
     selectWidgetsCurrentTab,
 } from '../../store/selectors/dashTypedSelectors';
 
@@ -67,6 +68,7 @@ export function Dialogs() {
     const widgetsCurrentTab = useSelector(selectWidgetsCurrentTab);
     const navigationPath = useSelector(selectNavigationPath);
     const theme = useSelector(selectControlDialogTheme);
+    const visualSettings = useSelector(selectVisualSettings);
 
     useEffectOnce(() => {
         return () => {
@@ -114,6 +116,7 @@ export function Dialogs() {
                 changeNavigationPath={changeNavigationPathHandle}
                 theme={theme}
                 features={DASHBOARD_FEATURES}
+                commonVisualSettings={visualSettings}
             />
         );
     }

@@ -226,6 +226,25 @@ export const setActiveTab = (payload: SetActiveTabAction['payload']): SetActiveT
     };
 };
 
+export const UPDATE_DASH_CHANGES_BUFFER = Symbol('controlDialog/UPDATE_DASH_CHANGES_BUFFER');
+
+export type UpdateDashChangesBufferAction = {
+    type: typeof UPDATE_DASH_CHANGES_BUFFER;
+    payload: {
+        tabs?: DashTab[];
+        hashStates?: TabsHashStates;
+    };
+};
+
+export const updateDashChangesBuffer = (
+    payload: UpdateDashChangesBufferAction['payload'],
+): UpdateDashChangesBufferAction => {
+    return {
+        type: UPDATE_DASH_CHANGES_BUFFER,
+        payload,
+    };
+};
+
 const isSelectorWithContext = (
     selector: SelectorDialogState,
 ): selector is PastedSelectorDialogState => {
@@ -632,25 +651,6 @@ export const initDashChangesBuffer = (
 ): InitDashChangesBufferAction => {
     return {
         type: INIT_DASH_CHANGES_BUFFER,
-        payload,
-    };
-};
-
-export const UPDATE_DASH_CHANGES_BUFFER = Symbol('controlDialog/UPDATE_DASH_CHANGES_BUFFER');
-
-export type UpdateDashChangesBufferAction = {
-    type: typeof UPDATE_DASH_CHANGES_BUFFER;
-    payload: {
-        tabs?: DashTab[];
-        hashStates?: TabsHashStates;
-    };
-};
-
-export const updateDashChangesBuffer = (
-    payload: UpdateDashChangesBufferAction['payload'],
-): UpdateDashChangesBufferAction => {
-    return {
-        type: UPDATE_DASH_CHANGES_BUFFER,
         payload,
     };
 };

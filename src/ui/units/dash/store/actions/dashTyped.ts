@@ -54,7 +54,7 @@ import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import type {IsWidgetVisibleOnTabArgs} from '../../utils/selectors';
-import {isWidgetVisibleOnTab} from '../../utils/selectors';
+import {isItemGlobal, isWidgetVisibleOnTab} from '../../utils/selectors';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
 import {
@@ -241,6 +241,10 @@ export const updateTabsWithGlobalState = ({
     appliedSelectorsIds,
 }: UpdateTabsWithGlobalStateArgs) => {
     return function (dispatch: DashDispatch, getState: GetState) {
+        if (!isItemGlobal(selectorItem)) {
+            return;
+        }
+
         const {
             dash: {hashStates, tabId: currentTabId, data},
         } = getState();

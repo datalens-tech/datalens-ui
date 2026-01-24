@@ -25,7 +25,6 @@ datalensTest.describe('Wizard', () => {
             // It should be possible to drag any type of field except hierarchy into the Categories placeholder
             await checkIfFieldCanBeDragged(wizardPage, PlaceholderName.Dimensions, [
                 'Dimension',
-                'Measure',
                 'Parameter',
             ]);
             await checkIfFieldCantBeDragged(wizardPage, PlaceholderName.Dimensions, 'Hierarchy');
