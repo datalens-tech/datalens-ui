@@ -24,6 +24,8 @@
   "label_delete-collection": "Delete collection",
   "label_delete-collections-for-delete": "Collections to be deleted",
   "label_delete-collections-workbooks": "Delete collections and workbooks",
+  "label_delete-connections-for-delete": "Будут удалены подключения",
+  "label_delete-datasets-for-delete": "Будут удалены датасеты",
   "label_delete-workbook": "Delete workbook",
   "label_delete-workbooks-for-delete": "Workbooks to be deleted",
   "label_deploy-denied-title": "Insufficient permissions to create a workbook",

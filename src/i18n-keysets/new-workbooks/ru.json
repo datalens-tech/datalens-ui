@@ -43,6 +43,7 @@
   "menu_wizard-chart": "Чарт в Wizard",
   "no_objects": "Пока нет объектов",
   "section_delete-entry": "Вы действительно хотите удалить \"{{entryName}}\"?",
+  "shared-entry-workbook-table-title": "Привязанные объекты",
   "title_charts": "Чарты",
   "title_connections": "Подключения",
   "title_dashboards": "Дашборды",
