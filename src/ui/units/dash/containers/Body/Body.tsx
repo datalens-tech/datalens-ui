@@ -38,7 +38,6 @@ import {
     FixedHeaderQa,
     SCROLL_TITLE_DEBOUNCE_TIME,
     SCR_USER_AGENT_HEADER_VALUE,
-    VIEWPORT_DASH_LOADED_EVENT_DEBOUNCE_TIME,
 } from 'shared';
 import {getAllTabItems} from 'shared/utils/dash';
 import type {DatalensGlobalState} from 'ui';
@@ -69,6 +68,8 @@ import Content from './components/Content/Content';
 import {FixedContainerWrapperWithContext, FixedControlsWrapperWithContext} from './context';
 
 import './Body.scss';
+
+export const VIEWPORT_DASH_LOADED_EVENT_DEBOUNCE_TIME = 1000;
 
 // Do not change class name, the snapter service uses
 const b = block('dash-body');
@@ -792,6 +793,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             }
 
             if (isLoaded) {
+                this.dispatchViewportDashLoadedEventDebounced.cancel();
                 dispatchDashLoadedEvent();
             } else if (navigator.userAgent === SCR_USER_AGENT_HEADER_VALUE) {
                 this.dispatchViewportDashLoadedEventDebounced();
