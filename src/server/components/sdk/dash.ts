@@ -6,6 +6,7 @@ import assign from 'lodash/assign';
 import intersection from 'lodash/intersection';
 
 import type {ServerI18n} from '../../../i18n/types';
+import {getAllTabItems} from '../../../shared';
 import {DASH_CURRENT_SCHEME_VERSION, DASH_DATA_REQUIRED_FIELDS} from '../../../shared/constants';
 import {DashSchemeConverter} from '../../../shared/modules';
 import type {
@@ -48,7 +49,7 @@ function processControlLinkToResult(
 }
 
 function processLinksForItems(tabData: DashTab, matchCallback?: MatchCallback) {
-    return tabData.items.reduce((result: Dictionary<string>, item) => {
+    return getAllTabItems(tabData).reduce((result: Dictionary<string>, item) => {
         const {type, data} = item;
 
         if (type === DashTabItemType.Widget && 'tabs' in data) {
@@ -107,7 +108,7 @@ function setDefaultData(
     let counter = 2;
     if (initialData?.tabs && !initialData?.counter) {
         counter = initialData.tabs.reduce((acc, tab) => {
-            return acc + 1 + (tab.items?.length || 0); // + 1 tabId + n items ids
+            return acc + 1 + (getAllTabItems(tab)?.length || 0); // + 1 tabId + n items ids
         }, 0);
     }
     const salt = Math.random().toString();
