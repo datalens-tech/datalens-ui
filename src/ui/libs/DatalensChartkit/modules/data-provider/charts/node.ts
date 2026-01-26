@@ -61,7 +61,10 @@ function isNodeResponse(loaded: CurrentResponse): loaded is ResponseSuccessNode 
 
 function shouldShowSafeChartInfo(params: StringParams) {
     const ignoreSafeChartWarningParamValue = String(params?.['ignore_safe_chart_warning']?.[0]);
-    if (isEnabledFeature('ShowUnsafeChartIcon') && !isTrueArg(ignoreSafeChartWarningParamValue)) {
+    const hideSafeChartWarning =
+        isTrueArg(ignoreSafeChartWarningParamValue) &&
+        !isEnabledFeature('DisableIgnoreSafeChartWarningParam');
+    if (isEnabledFeature('ShowUnsafeChartIcon') && !hideSafeChartWarning) {
         return true;
     }
 
