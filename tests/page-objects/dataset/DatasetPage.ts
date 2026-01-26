@@ -15,6 +15,7 @@ import DialogParameter from '../common/DialogParameter';
 
 import DatasetTabSection from './DatasetTabSection';
 import {CollectionIds} from '../../constants/constants';
+import {SharedEntriesPermissionsDialogQa} from '../../../src/shared';
 
 export interface DatasetPageProps extends BasePageProps {}
 
@@ -54,7 +55,7 @@ class DatasetPage extends BasePage {
         await this.page.click('.dataset-panel input[value=sources]');
     }
 
-    async createDatasetInWorkbook({
+    async createDatasetInWorkbookOrCollection({
         name = uuidv1(),
         isSharedDataset = false,
     }: {name?: string; isSharedDataset?: boolean} = {}) {
@@ -115,6 +116,38 @@ class DatasetPage extends BasePage {
         );
 
         return await input.inputValue();
+    }
+
+    async setDelegationAndSaveSharedDataset(
+        {name, delegation}: {name?: string; delegation?: boolean} = {delegation: true},
+    ) {
+        if (delegation) {
+            const delegateBtn = await this.page.waitForSelector(
+                slct(SharedEntriesPermissionsDialogQa.DelegateBtn),
+            );
+            await delegateBtn.click();
+        } else {
+            const delegateBtn = await this.page.waitForSelector(
+                slct(SharedEntriesPermissionsDialogQa.NotDelegateBtn),
+            );
+            await delegateBtn.click();
+        }
+
+        const delegationApplyBtn = this.page.locator(
+            slct(SharedEntriesPermissionsDialogQa.ApplyBtn),
+        );
+        await delegationApplyBtn.click();
+
+        await this.page.waitForSelector(slct(DatasetSourcesTableQa.Source));
+
+        await this.addAvatarByDragAndDrop();
+
+        const dsName = await this.createDatasetInWorkbookOrCollection({
+            isSharedDataset: true,
+            name,
+        });
+
+        return dsName;
     }
 }
 

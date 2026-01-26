@@ -28,6 +28,10 @@ class ConnectionsPage extends BasePage {
         ConnectionsActionPanelControls.CREATE_QL_CHART_BUTTON,
     );
 
+    private createDatasetButtonSelector = slct(
+        ConnectionsActionPanelControls.CREATE_DATASET_BUTTON,
+    );
+
     constructor({page}: ConnectionsPageProps) {
         super({page});
         this.revisions = new Revisions(page);
@@ -35,6 +39,10 @@ class ConnectionsPage extends BasePage {
 
     async createQlChart() {
         await this.page.click(this.createQlChartButtonSelector);
+    }
+
+    async createDataset() {
+        await this.page.click(this.createDatasetButtonSelector);
     }
 
     async fillCreateConnectionInFolder({name}: {name: string}) {
@@ -58,7 +66,7 @@ class ConnectionsPage extends BasePage {
         await this.fillCreateConnectionInFolder({name});
     }
 
-    async createConnectionInWorkbook({
+    async createConnectionInWorkbookOrCollection({
         name = uuidv1(),
         isSharedConnection = false,
     }: {name?: string; isSharedConnection?: boolean} = {}) {

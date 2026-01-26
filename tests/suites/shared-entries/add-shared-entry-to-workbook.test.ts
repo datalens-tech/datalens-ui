@@ -12,7 +12,7 @@ import {Workbook} from '../../page-objects/workbook/Workbook';
 import {CollectionsPagePO} from '../../page-objects/collections';
 import {Page} from '@playwright/test';
 
-datalensTest.describe.only('Add shared entry to workbook', () => {
+datalensTest.describe('Add shared entry to workbook', () => {
     let workbookName: string;
     let page: Page;
     datalensTest.beforeAll(async ({browser}) => {
