@@ -29,9 +29,10 @@ import {
     type IsWidgetVisibleOnTabArgs,
     isGlobalWidgetVisibleByMainSetting,
     isGroupItemVisibleOnTab,
+    isItemGlobal,
     isWidgetVisibleOnTab,
 } from '../../utils/selectors';
-import type {DashState} from '../typings/dash';
+import type {DashState, UpdateTabsWithGlobalStateArgs} from '../typings/dash';
 import {createNewTabState} from '../utils';
 
 import type {SetItemDataArgs, TabsHashStates} from './dashTyped';
@@ -432,4 +433,53 @@ export const processTabForGlobalUpdate = (
         tabId: tab.id,
         newState: newTabHashState,
     };
+};
+
+export const getUpdatedTabsWithGlobalState = ({
+    params,
+    selectorItem,
+    appliedSelectorsIds,
+    currentTabId,
+    tabs,
+    hashStates,
+}: UpdateTabsWithGlobalStateArgs & {
+    currentTabId: string | null;
+    tabs: DashTab[];
+    hashStates: TabsHashStates | null | undefined;
+}): TabsHashStates | null => {
+    if (!isItemGlobal(selectorItem)) {
+        return null;
+    }
+
+    const currentHashState = currentTabId ? hashStates?.[currentTabId] : null;
+    const currentMeta = currentHashState?.state?.__meta__ as StateAndParamsMetaData;
+
+    const updatedHashStates: TabsHashStates = {};
+    let hasUpdated = false;
+
+    tabs.forEach((tab) => {
+        const processedTab = processTabForGlobalUpdate(
+            tab,
+            currentTabId,
+            selectorItem,
+            appliedSelectorsIds,
+            params,
+            hashStates,
+            currentMeta,
+        );
+
+        if (processedTab) {
+            updatedHashStates[tab.id] = {
+                state: processedTab.newState,
+                hash: undefined,
+            };
+            hasUpdated = true;
+        }
+    });
+
+    if (!hasUpdated) {
+        return null;
+    }
+
+    return updatedHashStates;
 };
