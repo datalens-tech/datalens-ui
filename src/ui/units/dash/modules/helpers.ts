@@ -12,7 +12,12 @@ import {DEFAULT_GROUP, extractIdsFromConfig} from '@gravity-ui/dashkit/helpers';
 import assignWith from 'lodash/assignWith';
 import memoize from 'lodash/memoize';
 import throttle from 'lodash/throttle';
-import {DashTabItemControlSourceType, DashTabItemType, resolveOperation} from 'shared';
+import {
+    DashTabItemControlSourceType,
+    DashTabItemType,
+    getAllTabItems,
+    resolveOperation,
+} from 'shared';
 import type {
     DashData,
     DashSettings,
@@ -492,7 +497,9 @@ export const getPreparedCopyItemOptions = (
         };
     }
 
-    if (!tabData?.items || !itemToCopy || !itemToCopy.data.tabs?.length) {
+    const allItems = getAllTabItems(tabData);
+
+    if (!allItems.length || !itemToCopy || !itemToCopy.data.tabs?.length) {
         return itemToCopy;
     }
 
@@ -502,7 +509,7 @@ export const getPreparedCopyItemOptions = (
         copyItemTabsWidgetParams[id] = params || {};
     });
 
-    tabData.items.forEach((dashTabItem) => {
+    allItems.forEach((dashTabItem) => {
         if ('tabs' in dashTabItem.data) {
             dashTabItem.data.tabs.forEach((item) => {
                 if (item.id in copyItemTabsWidgetParams) {
