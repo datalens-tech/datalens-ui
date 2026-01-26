@@ -433,7 +433,13 @@ export function getCategoryFormatter(args: {
         return (value: unknown) => wrapHtml(String(value));
     }
 
-    return (value: string | number) => String(value);
+    return (value: string | number) => {
+        if (value === '') {
+            return 'Null';
+        }
+
+        return String(value);
+    };
 }
 
 export function getSeriesTitleFormatter(args: {fields: (ServerField | undefined)[]}) {
