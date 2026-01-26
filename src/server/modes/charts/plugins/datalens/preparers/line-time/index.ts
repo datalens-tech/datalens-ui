@@ -235,7 +235,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
             colorsConfig,
             isColorsItemExists: Boolean(colors),
             defaultColorPaletteId,
-            colorField: colors[0],
+            colorField: colors?.[0],
         });
     } else {
         // Else apply colorizing from YAGR for compatibility with Monitoring
