@@ -277,8 +277,7 @@ function ConnectionsList(props: ConnectionsListProps) {
                 connections.map((connection) => {
                     const {id, entryId, deleted, deleteEnabled} = connection;
                     const isSharedConnection = connection.collectionId;
-                    const isShowSharedEntryIcon =
-                        isSharedConnection && connectionDelegation !== null;
+                    const isShowSharedEntryIcon = isSharedConnection;
 
                     const existedConnectionId = id || entryId;
                     const active = existedConnectionId === connectionId;
@@ -310,6 +309,7 @@ function ConnectionsList(props: ConnectionsListProps) {
                                         <SharedEntryIcon
                                             className={b('connection-shared-icon')}
                                             isDelegated={connectionDelegation}
+                                            noBinding={connectionDelegation === null}
                                         />
                                     )}
                                 </div>
@@ -370,6 +370,7 @@ function SelectConnections(props: SelectConnectionsProps) {
         readonly,
     } = props;
     const dispatch = useDispatch();
+    const connectionDelegation = useSelector(selectedConnectionDelegationStatusSelector);
     const [isNavVisible, setNavVisibility] = useState(false);
     const connectionBtnRef = useRef(null);
 
@@ -399,7 +400,8 @@ function SelectConnections(props: SelectConnectionsProps) {
                                 const canCreateBinding =
                                     entry.permissions?.createEntryBinding ||
                                     entry.permissions?.createLimitedEntryBinding;
-                                const isAlreadySelectedConnection = entry.entryId === connectionId;
+                                const isAlreadySelectedConnection =
+                                    entry.entryId === connectionId && connectionDelegation !== null;
                                 return (
                                     entry.scope === EntryScope.Dataset ||
                                     isAlreadySelectedConnection ||
