@@ -59,9 +59,10 @@ function isNodeResponse(loaded: CurrentResponse): loaded is ResponseSuccessNode 
 }
 
 function shouldShowSafeChartInfo(params: StringParams) {
-    if (!isEnabledFeature('ShowSafeChartInfo')) {
-        return false;
+    if (isEnabledFeature('ShowUnsafeChartIcon')) {
+        return true;
     }
+
     return (
         Utils.getOptionsFromSearch(window.location.search).showSafeChartInfo ||
         (params &&
