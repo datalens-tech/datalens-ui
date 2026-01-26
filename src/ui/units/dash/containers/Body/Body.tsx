@@ -69,7 +69,7 @@ import {FixedContainerWrapperWithContext, FixedControlsWrapperWithContext} from 
 
 import './Body.scss';
 
-export const VIEWPORT_DASH_LOADED_EVENT_DEBOUNCE_TIME = 1000;
+const VIEWPORT_DASH_LOADED_EVENT_DEBOUNCE_TIME = 1000;
 
 // Do not change class name, the snapter service uses
 const b = block('dash-body');
