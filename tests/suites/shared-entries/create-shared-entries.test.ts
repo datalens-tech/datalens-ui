@@ -1,47 +1,57 @@
-import datalensTest from '../../utils/playwright/globalTestDefinition';
+import {Page} from '@playwright/test';
+
+import ConnectionsPage from '../../page-objects/connections/ConnectionsPage';
+import DatasetPage from '../../page-objects/dataset/DatasetPage';
 import {CollectionsPagePO} from '../../page-objects/collections';
+import {CollectionsUrls} from '../../constants/constants';
+import datalensTest from '../../utils/playwright/globalTestDefinition';
 import {openTestPage, slct} from '../../utils';
 import {
-    CollectionActionsQa,
     CollectionContentTableQa,
     CollectionTableRowQa,
     ConnectionsFormQA,
     DatasetSourcesLeftPanelQA,
-    DatasetSourcesTableQa,
     DialogCollectionStructureQa,
     EntryScope,
     SharedEntriesBindingsDialogQa,
-    SharedEntriesPermissionsDialogQa,
 } from '../../../src/shared';
-import {CollectionsUrls} from '../../constants/constants';
-import ConnectionsPage from '../../page-objects/connections/ConnectionsPage';
-import DatasetPage from '../../page-objects/dataset/DatasetPage';
 
-const collectionsUrl = 'collections';
 const billingConnectionTitle = 'Yandex Cloud Billing';
 
-datalensTest.describe.only('Shared entries create', () => {
-    datalensTest(
-        'Shared objects create buttons should not be visible in root collection @yc',
-        async ({page}) => {
-            const collectionPage = new CollectionsPagePO({page});
-            const url = collectionsUrl;
+datalensTest.describe('Shared entries create', () => {
+    datalensTest.describe.configure({mode: 'serial'});
 
-            await openTestPage(page, url);
+    let page: Page;
+    const dsName: string[] = [];
+    let connName: string;
+    const url = CollectionsUrls.E2ESharedEntriesCollection;
 
-            const btn = await collectionPage.waitForSelector(
-                slct(CollectionActionsQa.CreateActionBtn),
+    datalensTest.beforeAll(async ({browser}) => {
+        const context = await browser.newContext();
+        page = await context.newPage();
+    });
+
+    datalensTest.afterAll(async () => {
+        await openTestPage(page, url);
+        await page.waitForSelector(slct(CollectionContentTableQa.EntryLinkRow));
+
+        for (const entryName of [...dsName, connName]) {
+            const entryRow = page.locator(slct(CollectionContentTableQa.EntryLinkRow), {
+                hasText: entryName,
+            });
+            const entryContextMenuBtn = entryRow.locator(
+                slct(CollectionTableRowQa.CollectionRowDropdownMenuBtn),
             );
-            await btn.click();
-            const sharedObjectsMenuItem = page.locator(
-                slct(CollectionActionsQa.SharedObjectsMenuItem),
-            );
-            await expect(sharedObjectsMenuItem).toHaveCount(0);
-        },
-    );
-    datalensTest('Shared connection and dataset should be success create @yc', async ({page}) => {
+            await entryContextMenuBtn.click();
+            await page.locator(slct(CollectionTableRowQa.CollectionDropdownMenuDeleteBtn)).click();
+            const dialogApply = page.locator(slct(SharedEntriesBindingsDialogQa.ApplyDeleteBtn));
+            await dialogApply.click();
+        }
+        await page.context().close();
+    });
+
+    datalensTest('Shared connection create should be success @yc', async () => {
         const collectionPage = new CollectionsPagePO({page});
-        const url = CollectionsUrls.E2ESharedEntriesCollection;
 
         await openTestPage(page, url);
 
@@ -55,9 +65,15 @@ datalensTest.describe.only('Shared entries create', () => {
         );
         // unselect checkbox to prevent template objects creation
         await checkbox.click();
-        const connName = await connectionsPage.createConnectionInWorkbook({
+        connName = await connectionsPage.createConnectionInWorkbookOrCollection({
             isSharedConnection: true,
         });
+    });
+
+    datalensTest('Shared dataset create should be success @yc', async () => {
+        const collectionPage = new CollectionsPagePO({page});
+
+        await openTestPage(page, url);
 
         await collectionPage.createSharedEntry({scope: EntryScope.Dataset});
 
@@ -66,32 +82,30 @@ datalensTest.describe.only('Shared entries create', () => {
         const connSelectionButton = page.locator(slct(DatasetSourcesLeftPanelQA.ConnSelection));
         await connSelectionButton.click();
 
-        const sharedConn = page.locator(slct(DialogCollectionStructureQa.ListItem), {
+        await page.waitForSelector(slct(DialogCollectionStructureQa.ListItem));
+
+        const sharedConn = page
+            .locator(slct(DialogCollectionStructureQa.ListItem))
+            .filter({hasText: connName});
+        await sharedConn.click();
+        const name = await datasetPage.setDelegationAndSaveSharedDataset();
+        dsName.push(name);
+    });
+
+    datalensTest('Shared dataset must be created from shared connection @yc', async () => {
+        await openTestPage(page, url);
+        await page.waitForSelector(slct(CollectionContentTableQa.EntryLinkRow));
+        const currentConnection = page.locator(slct(CollectionContentTableQa.EntryLinkRow), {
             hasText: connName,
         });
-        await sharedConn.click();
-
-        const delegationApplyBtn = page.locator(slct(SharedEntriesPermissionsDialogQa.ApplyBtn));
-        await delegationApplyBtn.click();
-
-        await datasetPage.waitForSelector(slct(DatasetSourcesTableQa.Source));
-
-        await datasetPage.addAvatarByDragAndDrop();
-
-        const dsName = await datasetPage.createDatasetInWorkbook({isSharedDataset: true});
-        await page.waitForSelector(slct(CollectionContentTableQa.EntryLinkRow));
-
-        for (const entryName of [dsName, connName]) {
-            const entryRow = page.locator(slct(CollectionContentTableQa.EntryLinkRow), {
-                hasText: entryName,
-            });
-            const entryContextMenuBtn = entryRow.locator(
-                slct(CollectionTableRowQa.CollectionRowDropdownMenuBtn),
-            );
-            await entryContextMenuBtn.click();
-            await page.locator(slct(CollectionTableRowQa.CollectionDropdownMenuDeleteBtn)).click();
-            const dialogApply = page.locator(slct(SharedEntriesBindingsDialogQa.ApplyDeleteBtn));
-            await dialogApply.click();
-        }
+        await currentConnection.click();
+        const connectionsPage = new ConnectionsPage({page});
+        const newTabPage: Promise<Page> = new Promise((resolve) =>
+            page.context().on('page', resolve),
+        );
+        await connectionsPage.createDataset();
+        const datasetPage = new DatasetPage({page: await newTabPage});
+        const name = await datasetPage.setDelegationAndSaveSharedDataset();
+        dsName.push(name);
     });
 });

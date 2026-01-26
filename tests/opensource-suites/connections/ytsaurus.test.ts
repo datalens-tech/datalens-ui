@@ -14,7 +14,7 @@ datalensTest.describe('YTsaurus connector interactions', () => {
             {id: 'input', name: 'port', value: '1234'},
             {id: 'input', name: 'token', value: 'abc'},
         ]);
-        await connectionsPage.createConnectionInWorkbook();
+        await connectionsPage.createConnectionInWorkbookOrCollection();
     });
     datalensTest(
         'Client validation errors should be displayed after creation attempt',
