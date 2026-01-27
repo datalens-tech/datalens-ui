@@ -7,6 +7,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {CommonSelectors} from '../../../page-objects/constants/common-selectors';
 import {DialogMetricColorsQa, WizardPageQa, WizardVisualizationId} from '../../../../src/shared';
 import {openTestPage, slct} from '../../../utils';
+import {CommonUrls} from '../../../page-objects/constants/common-urls';
 
 datalensTest.describe('Wizard - metric chart. Settings', () => {
     const defaultColor = '#4DA2F1';
@@ -41,6 +42,12 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         await wizardPage.chartSettings.open();
         await wizardPage.chartSettings.setMetricFontSize('L');
         await wizardPage.chartSettings.apply();
+
+        const apiRunRequest = wizardPage.page.waitForRequest(
+            (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,
+        );
+        await wizardPage.chartSettings.apply();
+        await (await apiRunRequest).response();
 
         const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
         const metricItem = chartContainer.locator(wizardPage.chartkit.metricItemSelector);
