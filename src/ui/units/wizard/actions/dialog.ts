@@ -15,7 +15,9 @@ import type {
 } from '../../../../shared';
 import {WizardVisualizationId, isMeasureValue} from '../../../../shared';
 import type {ApplyData, DatalensGlobalState, Filter} from '../../../../ui';
+import {fetchColorPalettes} from '../../../store/actions/colorPaletteEditor';
 import {closeDialog, openDialog, openDialogFilter} from '../../../store/actions/dialog';
+import {selectColorPalettes} from '../../../store/selectors/colorPaletteEditor';
 import {getChartType} from '../../ql/store/reducers/ql';
 import type {DialogColumnSettingsFields} from '../components/Dialogs/DialogColumnSettings/DialogColumnSettings';
 import {DIALOG_COLUMN_SETTINGS} from '../components/Dialogs/DialogColumnSettings/DialogColumnSettings';
@@ -180,7 +182,12 @@ type OpenDialogMetricColorsArguments = {
 };
 
 export function openDialogMetricColors({extraSettings, onApply}: OpenDialogMetricColorsArguments) {
-    return function (dispatch: WizardDispatch) {
+    return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
+        const colorPalettes = selectColorPalettes(getState());
+        if (!colorPalettes.length) {
+            await dispatch(fetchColorPalettes());
+        }
+
         dispatch(
             openDialog({
                 id: DIALOG_METRIC_COLORS,
@@ -194,6 +201,20 @@ export function openDialogMetricColors({extraSettings, onApply}: OpenDialogMetri
                         palette: string | undefined;
                         colorIndex?: number;
                     }) => {
+                        // TODO: use either index or color
+                        // const metricColorSettings =
+                        //     typeof colorIndex === 'number'
+                        //         ? {
+                        //               metricFontColorIndex: colorIndex,
+                        //               metricFontColor: undefined,
+                        //               metricFontColorPalette: palette,
+                        //           }
+                        //         : {
+                        //               metricFontColorIndex: undefined,
+                        //               metricFontColor: color,
+                        //               metricFontColorPalette: palette,
+                        //           };
+
                         const metricColorSettings = {
                             metricFontColorIndex: colorIndex,
                             metricFontColorPalette: palette,

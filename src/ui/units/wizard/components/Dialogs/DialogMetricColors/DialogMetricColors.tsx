@@ -2,10 +2,8 @@ import React from 'react';
 
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
-import {connect} from 'react-redux';
-import type {Dispatch} from 'redux';
-import {bindActionCreators} from 'redux';
+// import {I18n} from 'i18n';
+import {useDispatch, useSelector} from 'react-redux';
 import type {ColorPalette, CommonSharedExtraSettings} from 'shared';
 import {getColorByColorSettings} from 'shared/utils/palettes';
 import type {DatalensGlobalState} from 'ui';
@@ -19,25 +17,21 @@ import {MinifiedPalette} from '../../MinifiedPalette/MinifiedPalette';
 
 import './DialogMetricColors.scss';
 
-const i18n = I18n.keyset('wizard');
+// const i18n = I18n.keyset('wizard');
+
+const i18nKeys = {
+    'label_color-settings': 'label_color-settings',
+    section_color: 'section_color',
+    button_apply: 'button_apply',
+    button_cancel: 'button_cancel',
+};
+const i18n = (key: keyof typeof i18nKeys) => i18nKeys[key];
 
 const b = block('dialog-metric-colors');
 
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 type OwnProps = {
     onApply: (args: {palette: string | undefined; color: string; colorIndex?: number}) => void;
 };
-
-interface Props extends StateProps, DispatchProps, OwnProps {}
-
-interface State {
-    currentColorHex: string;
-    colorIndex?: number;
-    palette: string | undefined;
-    paletteColors: string[];
-    hasErrors: boolean;
-}
 
 export const DIALOG_METRIC_COLORS = Symbol('DIALOG_METRIC_COLORS');
 
@@ -46,139 +40,119 @@ export type OpenDialogMetricColorsArgs = {
     props: OwnProps;
 };
 
-class DialogMetricColors extends React.PureComponent<Props, State> {
-    constructor(props: Props) {
-        super(props);
+const DialogMetricColors: React.FC<OwnProps> = ({onApply}) => {
+    const dispatch = useDispatch();
 
-        const palette = props.metricFontColorPalette;
-        const paletteColors = getPaletteColors(palette, props.colorPalettes);
+    const extraSettings = useSelector(
+        (state: DatalensGlobalState) => selectExtraSettings(state) as CommonSharedExtraSettings,
+    );
+    const colorPalettes = useSelector(
+        (state: DatalensGlobalState) => selectColorPalettes(state) as ColorPalette[],
+    );
+
+    const metricFontColor = extraSettings.metricFontColor;
+    const metricFontColorIndex = extraSettings.metricFontColorIndex;
+    const metricFontColorPalette = extraSettings.metricFontColorPalette;
+
+    const [state, setState] = React.useState(() => {
+        const palette = metricFontColorPalette;
+        const paletteColors = getPaletteColors(palette, colorPalettes);
 
         // if font settings is empty take index 0 by default
-        const defaultIndex = props.metricFontColor ? undefined : 0;
+        const defaultIndex = metricFontColor ? undefined : 0;
 
-        this.state = {
+        return {
             currentColorHex: getColorByColorSettings({
                 currentColors: paletteColors,
-                colorIndex: props.metricFontColorIndex,
-                color: props.metricFontColor,
+                colorIndex: metricFontColorIndex,
+                color: metricFontColor,
             }),
             palette,
-            colorIndex: props.metricFontColorIndex ?? defaultIndex,
+            colorIndex: metricFontColorIndex ?? defaultIndex,
             paletteColors,
             hasErrors: false,
         };
-    }
+    });
 
-    render() {
-        const {hasErrors} = this.state;
+    const handleInputColorUpdate = React.useCallback((colorHex: string) => {
+        setState((prev) => ({...prev, currentColorHex: colorHex, colorIndex: undefined}));
+    }, []);
 
-        return (
-            <Dialog
-                open={true}
-                onClose={this.onClose}
-                qa="dialog-metric-colors"
-                disableHeightTransition={true}
-            >
-                <Dialog.Header caption={i18n('label_color-settings')} />
-                <Dialog.Body className={b()}>
-                    <div className={b('row')}>
-                        <div className={b('title')}>{i18n('section_color')}</div>
-                        <div className={b('palette')}>{this.renderPalette()}</div>
-                    </div>
-                </Dialog.Body>
-                <Dialog.Footer
-                    onClickButtonApply={this.onApply}
-                    textButtonApply={i18n('button_apply')}
-                    propsButtonApply={{disabled: hasErrors}}
-                    // propsButtonApply={{qa: 'dialog-metric-colors-apply', disabled: hasErrors}}
-                    onClickButtonCancel={this.onCancel}
-                    textButtonCancel={i18n('button_cancel')}
-                    // propsButtonCancel={{qa: 'dialog-metric-colors-cancel'}}
-                />
-            </Dialog>
-        );
-    }
-
-    private renderPalette() {
-        return (
-            <MinifiedPalette
-                onPaletteUpdate={this.handlePaletteUpdate}
-                onPaletteItemClick={this.onPaletteItemClick}
-                palette={this.state.palette ?? ''}
-                currentColorHex={this.state.currentColorHex}
-                controlQa="dialog-metric-colors-palette"
-                onInputColorUpdate={this.handleInputColorUpdate}
-                colorPalettes={this.props.colorPalettes}
-                customColorSelected={typeof this.state.colorIndex !== 'number'}
-                onValidChange={this.handlePaletteValidChange}
-            />
-        );
-    }
-
-    private handleInputColorUpdate = (colorHex: string) => {
-        this.setState({currentColorHex: colorHex, colorIndex: undefined});
-    };
-
-    private handlePaletteUpdate = (paletteName: string | undefined) => {
-        const {colorPalettes} = this.props;
-        const updatedColors = getPaletteColors(paletteName, colorPalettes);
-        const newColor = updatedColors[0];
-        this.setState({
-            palette: paletteName,
-            currentColorHex: newColor,
-            colorIndex: 0,
-            paletteColors: updatedColors,
-        });
-    };
-
-    private handlePaletteValidChange = (valid: boolean): void => {
-        this.setState({hasErrors: !valid});
-    };
-
-    private onPaletteItemClick = (value: string) => {
-        const colorIndex = this.state.paletteColors.indexOf(value);
-        this.setState({
-            currentColorHex: value,
-            colorIndex,
-        });
-    };
-
-    private onApply = () => {
-        const {currentColorHex, palette, colorIndex} = this.state;
-        this.props.onApply({color: currentColorHex, palette, colorIndex});
-        this.props.closeDialog();
-    };
-
-    private onCancel = () => {
-        this.props.closeDialog();
-    };
-
-    private onClose = () => {
-        this.props.closeDialog();
-    };
-}
-
-const mapStateToProps = (state: DatalensGlobalState) => {
-    const extraSettings = selectExtraSettings(state) as CommonSharedExtraSettings;
-
-    return {
-        metricFontColor: extraSettings.metricFontColor,
-        metricFontColorIndex: extraSettings.metricFontColorIndex,
-        metricFontColorPalette: extraSettings.metricFontColorPalette,
-        colorPalettes: selectColorPalettes(state) as ColorPalette[],
-    };
-};
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-    return bindActionCreators(
-        {
-            closeDialog,
+    const handlePaletteUpdate = React.useCallback(
+        (paletteName: string | undefined) => {
+            const updatedColors = getPaletteColors(paletteName, colorPalettes);
+            const newColor = updatedColors[0];
+            setState((prev) => ({
+                ...prev,
+                palette: paletteName,
+                currentColorHex: newColor,
+                colorIndex: 0,
+                paletteColors: updatedColors,
+            }));
         },
-        dispatch,
+        [colorPalettes],
+    );
+
+    const handlePaletteValidChange = React.useCallback((valid: boolean): void => {
+        setState((prev) => ({...prev, hasErrors: !valid}));
+    }, []);
+
+    const handlePaletteItemClick = React.useCallback((value: string) => {
+        setState((prev) => {
+            const colorIndex = prev.paletteColors.indexOf(value);
+            return {
+                ...prev,
+                currentColorHex: value,
+                colorIndex,
+            };
+        });
+    }, []);
+
+    const handleApply = React.useCallback(() => {
+        const {currentColorHex, palette, colorIndex} = state;
+        onApply({color: currentColorHex, palette, colorIndex});
+        dispatch(closeDialog());
+    }, [state, onApply, dispatch]);
+
+    const handleClose = React.useCallback(() => {
+        dispatch(closeDialog());
+    }, [dispatch]);
+
+    return (
+        <Dialog
+            open={true}
+            onClose={handleClose}
+            qa="dialog-metric-colors"
+            disableHeightTransition={true}
+        >
+            <Dialog.Header caption={i18n('label_color-settings')} />
+            <Dialog.Body className={b()}>
+                <div className={b('row')}>
+                    <div className={b('title')}>{i18n('section_color')}</div>
+                    <div className={b('palette')}>
+                        <MinifiedPalette
+                            onPaletteUpdate={handlePaletteUpdate}
+                            onPaletteItemClick={handlePaletteItemClick}
+                            palette={state.palette ?? ''}
+                            currentColorHex={state.currentColorHex}
+                            controlQa="dialog-metric-colors-palette"
+                            onInputColorUpdate={handleInputColorUpdate}
+                            colorPalettes={colorPalettes}
+                            customColorSelected={typeof state.colorIndex !== 'number'}
+                            onValidChange={handlePaletteValidChange}
+                        />
+                    </div>
+                </div>
+            </Dialog.Body>
+            <Dialog.Footer
+                onClickButtonApply={handleApply}
+                textButtonApply={i18n('button_apply')}
+                propsButtonApply={{disabled: state.hasErrors}}
+                onClickButtonCancel={handleClose}
+                textButtonCancel={i18n('button_cancel')}
+            />
+        </Dialog>
     );
 };
 
-DialogManager.registerDialog(
-    DIALOG_METRIC_COLORS,
-    connect(mapStateToProps, mapDispatchToProps)(DialogMetricColors),
-);
+DialogManager.registerDialog(DIALOG_METRIC_COLORS, DialogMetricColors);
