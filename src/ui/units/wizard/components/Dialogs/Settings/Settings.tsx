@@ -88,6 +88,7 @@ const BASE_SETTINGS_KEYS: SettingsKeys[] = [
     'mapCenterMode',
     'mapCenterValue',
     'preserveWhiteSpace',
+    'metricFontSize',
 ];
 
 const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteChart'];
@@ -186,6 +187,7 @@ interface State {
     mapCenterMode: MapCenterModes;
     mapCenterValue?: string | null;
     preserveWhiteSpace?: boolean;
+    metricFontSize?: string;
 }
 
 export const DIALOG_CHART_SETTINGS = Symbol('DIALOG_CHART_SETTINGS');
@@ -239,6 +241,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             mapCenterMode = MapCenterMode.Auto,
             mapCenterValue,
             preserveWhiteSpace,
+            metricFontSize,
         } = extraSettings;
 
         const navigatorSettings = this.prepareNavigatorSettings(visualization, extraSettings);
@@ -301,6 +304,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             mapCenterMode,
             mapCenterValue,
             preserveWhiteSpace,
+            metricFontSize,
         };
     }
 
@@ -538,8 +542,13 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 <IndicatorTitleSetting
                     mode={this.state.indicatorTitleMode}
                     title={this.state.title}
+                    fontSize={this.state.metricFontSize}
                     onUpdate={(settings) => {
-                        this.setState({indicatorTitleMode: settings.mode, title: settings.title});
+                        this.setState({
+                            indicatorTitleMode: settings.mode,
+                            title: settings.title,
+                            metricFontSize: settings.fontSize,
+                        });
                     }}
                 />
             );

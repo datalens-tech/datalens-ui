@@ -7,7 +7,7 @@ import {ChartSettingsDialogQA, IndicatorTitleMode} from 'shared';
 
 import './IndicatorTitleSetting.scss';
 
-const RADIO_OPTIONS = [
+const TITLE_MODE_OPTIONS = [
     {
         value: IndicatorTitleMode.ByField,
         label: i18n('wizard', 'label_field-name'),
@@ -22,23 +22,32 @@ const RADIO_OPTIONS = [
     },
 ];
 
+const FONT_SIZES = ['s', 'm', 'l', 'xl'];
+const FONT_SIZE_LABELS = ['XS', 'S', 'M', 'L'];
+const DEFAULT_FONT_SIZE = 'm';
+
 type Props = {
     mode: IndicatorTitleMode;
     title: string;
-    onUpdate: (settings: {mode: IndicatorTitleMode; title: string}) => void;
+    fontSize?: string;
+    onUpdate: (settings: {mode: IndicatorTitleMode; title: string; fontSize?: string}) => void;
 };
 
 const b = block('indicator-title-setting');
 
 const IndicatorTitleSetting: React.FC<Props> = (props: Props) => {
-    const {mode, title, onUpdate} = props;
+    const {mode, title, fontSize = DEFAULT_FONT_SIZE, onUpdate} = props;
 
     const handleUpdateMode = (value: string) => {
-        onUpdate({mode: value as IndicatorTitleMode, title});
+        onUpdate({mode: value as IndicatorTitleMode, title, fontSize});
     };
 
     const handleChangeInput = (value: string) => {
-        onUpdate({mode, title: value});
+        onUpdate({mode, title: value, fontSize});
+    };
+
+    const handleUpdateFontSize = (value: string) => {
+        onUpdate({mode, title, fontSize: value});
     };
 
     return (
@@ -50,7 +59,7 @@ const IndicatorTitleSetting: React.FC<Props> = (props: Props) => {
                     onUpdate={handleUpdateMode}
                     qa={ChartSettingsDialogQA.IndicatorTitleMode}
                 >
-                    {RADIO_OPTIONS.map((item) => (
+                    {TITLE_MODE_OPTIONS.map((item) => (
                         <RadioButton.Option key={item.value} value={item.value}>
                             {item.label}
                         </RadioButton.Option>
@@ -71,6 +80,16 @@ const IndicatorTitleSetting: React.FC<Props> = (props: Props) => {
                     />
                 </div>
             )}
+            <div className={b('row')} data-qa="indicator-font-size">
+                <div className={b('title')}>{i18n('wizard', 'label_font-size')}</div>
+                <RadioButton value={fontSize} onUpdate={handleUpdateFontSize}>
+                    {FONT_SIZES.map((size, index) => (
+                        <RadioButton.Option key={size} value={size}>
+                            {FONT_SIZE_LABELS[index]}
+                        </RadioButton.Option>
+                    ))}
+                </RadioButton>
+            </div>
         </div>
     );
 };

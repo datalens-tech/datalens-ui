@@ -38,6 +38,7 @@ import DashboardParametersPlaceholder from './DashboardParametersPlaceholder/Das
 import FiltersPlaceholder from './FiltersPlaceholder/FiltersPlaceholder';
 import LabelsPlaceholder from './LabelsPlaceholder/LabelsPlaceholder';
 import LayerFiltersPlaceholder from './LayerFiltersPlaceholder/LayerFiltersPlaceholder';
+import MetricColorsPlaceholder from './MetricColorsPlaceholder/MetricColorsPlaceholder';
 import SegmentsPlaceholder from './SegmentsPlaceholder/SegmentsPlaceholder';
 import ShapesPlaceholder from './ShapesPlaceholder/ShapesPlaceholder';
 import SortPlaceholder from './SortPlaceholder/SortPlaceholder';
@@ -105,6 +106,18 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                     />
                 )}
                 {placeholders.map((placeholder: Placeholder) => {
+                    if (
+                        visualization.id === WizardVisualizationId.Metric &&
+                        placeholder.id === 'colors'
+                    ) {
+                        return (
+                            <MetricColorsPlaceholder
+                                key={`${placeholder.id}-placeholder-component`}
+                                onUpdate={onUpdate}
+                            />
+                        );
+                    }
+
                     const placeholderNode = (
                         <VisualizationPlaceholder
                             wrapTo={this.renderDatasetItem}

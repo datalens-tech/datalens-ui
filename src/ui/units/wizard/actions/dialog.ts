@@ -15,16 +15,14 @@ import type {
 } from '../../../../shared';
 import {WizardVisualizationId, isMeasureValue} from '../../../../shared';
 import type {ApplyData, DatalensGlobalState, Filter} from '../../../../ui';
-import {fetchColorPalettes} from '../../../store/actions/colorPaletteEditor';
 import {closeDialog, openDialog, openDialogFilter} from '../../../store/actions/dialog';
-import {selectColorPalettes} from '../../../store/selectors/colorPaletteEditor';
 import {getChartType} from '../../ql/store/reducers/ql';
 import type {DialogColumnSettingsFields} from '../components/Dialogs/DialogColumnSettings/DialogColumnSettings';
 import {DIALOG_COLUMN_SETTINGS} from '../components/Dialogs/DialogColumnSettings/DialogColumnSettings';
 import type {ColumnSettingsState} from '../components/Dialogs/DialogColumnSettings/hooks/useDialogColumnSettingsState';
 import type {LabelSettings} from '../components/Dialogs/DialogLabelSettings/DialogLabelSettings';
 import {DIALOG_LABEL_SETTINGS} from '../components/Dialogs/DialogLabelSettings/DialogLabelSettings';
-import {DIALOG_METRIC_SETTINGS} from '../components/Dialogs/DialogMetricSettings/DialogMetricSettings';
+import {DIALOG_METRIC_COLORS} from '../components/Dialogs/DialogMetricColors/DialogMetricColors';
 import {DIALOG_MULTIDATASET} from '../components/Dialogs/DialogMultidataset';
 import {DIALOG_PLACEHOLDER} from '../components/Dialogs/DialogPlaceholder/DialogPlaceholder';
 import {DIALOG_POINTS_SIZE} from '../components/Dialogs/DialogPointsSize';
@@ -134,58 +132,6 @@ export function openDialogPlaceholder({placeholder, onApply}: OpenDialogPlacehol
     };
 }
 
-type OpenDialogMetricArguments = {
-    extraSettings: CommonSharedExtraSettings | undefined;
-    onApply?: () => void;
-};
-
-export function openDialogMetric({extraSettings, onApply}: OpenDialogMetricArguments) {
-    return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
-        const colorPalettes = selectColorPalettes(getState());
-        if (!colorPalettes.length) {
-            await dispatch(fetchColorPalettes());
-        }
-
-        dispatch(
-            openDialog({
-                id: DIALOG_METRIC_SETTINGS,
-                props: {
-                    onSave: ({size, palette, color, colorIndex}) => {
-                        // TODO: use either index or color
-                        // const metricSettins =
-                        //     typeof colorIndex === 'number'
-                        //         ? {
-                        //               metricFontColorIndex: colorIndex,
-                        //               metricFontSize: size,
-                        //               metricFontColorPalette: palette,
-                        //               metricFontColor: undefined,
-                        //           }
-                        //         : {
-                        //               metricFontSize: size,
-                        //               metricFontColor: color,
-                        //               metricFontColorPalette: palette,
-                        //               metricFontColorIndex: undefined,
-                        //           };
-
-                        const metricSettins = {
-                            metricFontColorIndex: colorIndex,
-                            metricFontSize: size,
-                            metricFontColorPalette: palette,
-                            metricFontColor: color,
-                        };
-
-                        dispatch(setExtraSettings({...extraSettings, ...metricSettins}));
-
-                        dispatch(updatePreviewAndClientChartsConfig({}));
-
-                        onApply?.();
-                    },
-                },
-            }),
-        );
-    };
-}
-
 type OpenDialogPointsSizeArguments = {
     geopointsConfig: PointSizeConfig;
     placeholder: Placeholder;
@@ -218,6 +164,43 @@ export function openDialogPointsSize({
 
                         dispatch(closeDialog());
 
+                        dispatch(updatePreviewAndClientChartsConfig({}));
+
+                        onApply?.();
+                    },
+                },
+            }),
+        );
+    };
+}
+
+type OpenDialogMetricColorsArguments = {
+    extraSettings: CommonSharedExtraSettings | undefined;
+    onApply?: () => void;
+};
+
+export function openDialogMetricColors({extraSettings, onApply}: OpenDialogMetricColorsArguments) {
+    return function (dispatch: WizardDispatch) {
+        dispatch(
+            openDialog({
+                id: DIALOG_METRIC_COLORS,
+                props: {
+                    onApply: ({
+                        color,
+                        palette,
+                        colorIndex,
+                    }: {
+                        color: string;
+                        palette: string | undefined;
+                        colorIndex?: number;
+                    }) => {
+                        const metricColorSettings = {
+                            metricFontColorIndex: colorIndex,
+                            metricFontColorPalette: palette,
+                            metricFontColor: color,
+                        };
+
+                        dispatch(setExtraSettings({...extraSettings, ...metricColorSettings}));
                         dispatch(updatePreviewAndClientChartsConfig({}));
 
                         onApply?.();
