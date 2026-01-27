@@ -119,12 +119,7 @@ const DialogMetricColors: React.FC<OwnProps> = ({onApply}) => {
     }, [dispatch]);
 
     return (
-        <Dialog
-            open={true}
-            onClose={handleClose}
-            qa="dialog-metric-colors"
-            disableHeightTransition={true}
-        >
+        <Dialog open={true} onClose={handleClose} disableHeightTransition={true}>
             <Dialog.Header caption={i18n('label_color-settings')} />
             <Dialog.Body className={b()}>
                 <div className={b('row')}>
@@ -135,7 +130,6 @@ const DialogMetricColors: React.FC<OwnProps> = ({onApply}) => {
                             onPaletteItemClick={handlePaletteItemClick}
                             palette={state.palette ?? ''}
                             currentColorHex={state.currentColorHex}
-                            controlQa="dialog-metric-colors-palette"
                             onInputColorUpdate={handleInputColorUpdate}
                             colorPalettes={colorPalettes}
                             customColorSelected={typeof state.colorIndex !== 'number'}
