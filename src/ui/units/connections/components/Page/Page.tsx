@@ -191,7 +191,7 @@ const PageComponent = (props: PageProps) => {
         isShowCreateButtons = Boolean(entry.permissions?.edit);
     }
 
-    if (isReadonly || (!entry?.entryId && !isFakeEntry)) {
+    if (isReadonly || (!entry?.entryId && !isFakeEntry) || apiErrors.entry) {
         isShowCreateButtons = false;
     }
 

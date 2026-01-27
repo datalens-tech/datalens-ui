@@ -138,6 +138,10 @@ export const Relations = ({
                                     entry: parentEntry,
                                     onClose: () => dispatch(closeDialog()),
                                     onApply: async (delegate) => {
+                                        if (delegate === item.isDelegated) {
+                                            dispatch(closeDialog());
+                                            return;
+                                        }
                                         try {
                                             await getSdk().sdk.us.updateSharedEntryBinding({
                                                 sourceId,
