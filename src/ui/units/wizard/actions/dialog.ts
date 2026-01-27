@@ -198,7 +198,7 @@ export function openDialogMetricColors({extraSettings, onApply}: OpenDialogMetri
                         colorIndex,
                     }: {
                         color: string;
-                        palette: string | undefined;
+                        palette?: string;
                         colorIndex?: number;
                     }) => {
                         // TODO: use either index or color

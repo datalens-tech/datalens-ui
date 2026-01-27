@@ -108,7 +108,7 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                 {placeholders.map((placeholder: Placeholder) => {
                     if (
                         visualization.id === WizardVisualizationId.Metric &&
-                        placeholder.id === 'colors'
+                        placeholder.id === PlaceholderId.Colors
                     ) {
                         return (
                             <MetricColorsPlaceholder

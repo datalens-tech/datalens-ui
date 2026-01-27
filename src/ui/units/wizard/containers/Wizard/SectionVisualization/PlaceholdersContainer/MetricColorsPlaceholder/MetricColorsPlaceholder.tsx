@@ -32,14 +32,13 @@ export const MetricColorsPlaceholder: React.FC<MetricColorsPlaceholderProps> = (
 
     return (
         <PlaceholderComponent
-            key="metric-colors"
             qa="placeholder-metric-colors"
             id="metric-colors"
             iconProps={{data: BucketPaint}}
             title="section_colors"
             hasSettings={true}
             onActionIconClick={handleOpenDialogMetricColors}
-            actionIconQa={PlaceholderActionQa.OpenColorDialogIcon}
+            actionIconQa={PlaceholderActionQa.OpenMetricColorDialogIcon}
             items={[]}
             checkAllowed={() => false}
             onUpdate={() => {}}

@@ -132,12 +132,6 @@ export const enum DialogColorQa {
     ApplyButton = 'color-dialog-apply-button',
 }
 
-export const enum DialogMetricSettingsQa {
-    Dialog = 'metric-settings-dialog',
-    CancelButton = 'metric-settings-dialog-cancel',
-    CustomColorButton = 'metric-settings-dialog-custom-color-btn',
-}
-
 export const enum SectionVisualizationAddItemQa {
     NoFieldsErrorTooltip = 'section-visualisation-no-field-error-tooltip',
     LabelsOverflowErrorTooltip = 'section-visualisation-labels-overflow-error-tooltip',
@@ -175,6 +169,7 @@ export const enum DialogMultiDatasetQa {
 
 export const enum PlaceholderActionQa {
     OpenColorDialogIcon = 'placeholder-action-open-color-dialog',
+    OpenMetricColorDialogIcon = 'placeholder-action-open-metric-color-dialog',
 }
 
 export const enum HierarchyEditorQa {
@@ -194,4 +189,12 @@ export const enum ChartSaveControlsQA {
 export const enum ChartSettingsDialogQA {
     IndicatorTitleMode = 'indicator-title-mode',
     PreserveWhiteSpace = 'preserve-white-space',
+}
+
+export const enum DialogMetricColorsQa {
+    Dialog = 'dialog-metric-colors',
+    ApplyButton = 'dialog-metric-colors-apply-button',
+    CancelButton = 'dialog-metric-colors-cancel-button',
+    Palette = 'dialog-metric-settings-palette',
+    CustomColorButton = 'dialog-metric-colors-custom-color-btn',
 }

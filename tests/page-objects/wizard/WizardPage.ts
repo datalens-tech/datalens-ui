@@ -27,7 +27,7 @@ import PlaceholderDialog from './PlaceholderDialog';
 import SectionVisualization, {PlaceholderName} from './SectionVisualization';
 import ShapeDialog from './ShapeDialog';
 import VisualizationItemDialog from './VisualizationItemDialog';
-import MetricSettingsDialog from './MetricSettingsDialog';
+import MetricColorsDialog from './MetricColorsDialog';
 import LabelsSettingsDialog from './LabelsSettingsDialog';
 
 export interface WizardPageProps extends BasePageProps {}
@@ -50,7 +50,7 @@ class WizardPage extends ChartPage {
     linkDialog: LinkDialog;
     parameterEditor: ParameterEditor;
     columnSettings: ColumnSettings;
-    metricSettingsDialog: MetricSettingsDialog;
+    metricColorsDialog: MetricColorsDialog;
     labelsSettingsDialog: LabelsSettingsDialog;
 
     constructor({page}: WizardPageProps) {
@@ -71,7 +71,7 @@ class WizardPage extends ChartPage {
         this.linkDialog = new LinkDialog(page);
         this.parameterEditor = new ParameterEditor(page);
         this.columnSettings = new ColumnSettings(page);
-        this.metricSettingsDialog = new MetricSettingsDialog(page);
+        this.metricColorsDialog = new MetricColorsDialog(page);
         this.labelsSettingsDialog = new LabelsSettingsDialog(page);
     }
 

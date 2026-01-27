@@ -120,6 +120,14 @@ export default class ChartSettings {
         await this.page.fill(`${slct('feed-input')} input`, feedValue);
     }
 
+    async setMetricFontSize(size: string) {
+        const sizeOption = this.page
+            .locator('indicator-font-size')
+            .locator(CommonSelectors.RadioButtonOption, {hasText: size});
+
+        await sizeOption.click();
+    }
+
     async setNavigatorLinesMode(linesMode: 'all' | 'selected') {
         await this.page.click(
             `${slct('navigator-lines-mode')} ${

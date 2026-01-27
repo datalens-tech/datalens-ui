@@ -4,9 +4,8 @@ import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 // import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import type {ColorPalette, CommonSharedExtraSettings} from 'shared';
+import {DialogMetricColorsQa} from 'shared';
 import {getColorByColorSettings} from 'shared/utils/palettes';
-import type {DatalensGlobalState} from 'ui';
 import {selectColorPalettes} from 'ui/store/selectors/colorPaletteEditor';
 import {getPaletteColors} from 'ui/utils';
 
@@ -30,7 +29,7 @@ const i18n = (key: keyof typeof i18nKeys) => i18nKeys[key];
 const b = block('dialog-metric-colors');
 
 type OwnProps = {
-    onApply: (args: {palette: string | undefined; color: string; colorIndex?: number}) => void;
+    onApply: (args: {palette?: string; color: string; colorIndex?: number}) => void;
 };
 
 export const DIALOG_METRIC_COLORS = Symbol('DIALOG_METRIC_COLORS');
@@ -43,20 +42,15 @@ export type OpenDialogMetricColorsArgs = {
 const DialogMetricColors: React.FC<OwnProps> = ({onApply}) => {
     const dispatch = useDispatch();
 
-    const extraSettings = useSelector(
-        (state: DatalensGlobalState) => selectExtraSettings(state) as CommonSharedExtraSettings,
-    );
-    const colorPalettes = useSelector(
-        (state: DatalensGlobalState) => selectColorPalettes(state) as ColorPalette[],
-    );
-
-    const metricFontColor = extraSettings.metricFontColor;
-    const metricFontColorIndex = extraSettings.metricFontColorIndex;
-    const metricFontColorPalette = extraSettings.metricFontColorPalette;
+    const extraSettings = useSelector(selectExtraSettings);
+    const colorPalettes = useSelector(selectColorPalettes);
 
     const [state, setState] = React.useState(() => {
-        const palette = metricFontColorPalette;
+        const palette = extraSettings?.metricFontColorPalette;
         const paletteColors = getPaletteColors(palette, colorPalettes);
+
+        const metricFontColor = extraSettings?.metricFontColor;
+        const metricFontColorIndex = extraSettings?.metricFontColorIndex;
 
         // if font settings is empty take index 0 by default
         const defaultIndex = metricFontColor ? undefined : 0;
@@ -130,6 +124,7 @@ const DialogMetricColors: React.FC<OwnProps> = ({onApply}) => {
                             onPaletteItemClick={handlePaletteItemClick}
                             palette={state.palette ?? ''}
                             currentColorHex={state.currentColorHex}
+                            controlQa="dialog-metric-settings-palette"
                             onInputColorUpdate={handleInputColorUpdate}
                             colorPalettes={colorPalettes}
                             customColorSelected={typeof state.colorIndex !== 'number'}
@@ -141,9 +136,10 @@ const DialogMetricColors: React.FC<OwnProps> = ({onApply}) => {
             <Dialog.Footer
                 onClickButtonApply={handleApply}
                 textButtonApply={i18n('button_apply')}
-                propsButtonApply={{disabled: state.hasErrors}}
+                propsButtonApply={{qa: DialogMetricColorsQa.ApplyButton, disabled: state.hasErrors}}
                 onClickButtonCancel={handleClose}
                 textButtonCancel={i18n('button_cancel')}
+                propsButtonCancel={{qa: DialogMetricColorsQa.CancelButton}}
             />
         </Dialog>
     );

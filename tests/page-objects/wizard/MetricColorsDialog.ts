@@ -3,16 +3,15 @@ import {Page, expect} from '@playwright/test';
 import {slct} from '../../utils';
 import {CommonSelectors} from '../constants/common-selectors';
 import {CommonUrls} from '../constants/common-urls';
-import {DialogMetricSettingsQa} from '../../../src/shared';
+import {DialogMetricColorsQa, PlaceholderActionQa} from '../../../src/shared';
 
-export default class MetricSettingsDialog {
+export default class MetricColorsDialog {
     private page: Page;
 
-    private settingsIconSelector = slct('placeholder-action-open-metric-dialog');
-    private applyButtonSelector = slct('metric-settings-dialog-apply');
-    private sizeControlsSelector = slct('metric-settings-dialog-size');
+    private colorSettingsIconSelector = slct(PlaceholderActionQa.OpenMetricColorDialogIcon);
+    private applyButtonSelector = slct(DialogMetricColorsQa.ApplyButton);
     private selectedPaletteItem = '.palette-item_selected';
-    private paletteColorInput = slct('dialog-metric-settings-palette-palette-input');
+    private paletteColorInput = slct(`${DialogMetricColorsQa.Palette}-palette-input`);
     private paletteSelector = slct('dialog-field-minifield-palette-selector');
 
     constructor(page: Page) {
@@ -20,27 +19,27 @@ export default class MetricSettingsDialog {
     }
 
     async open() {
-        await this.page.locator(this.settingsIconSelector).click({force: true});
+        await this.page.locator(this.colorSettingsIconSelector).click({force: true});
 
-        const dialog = this.page.locator(slct(DialogMetricSettingsQa.Dialog));
+        const dialog = this.page.locator(slct(DialogMetricColorsQa.Dialog));
         await expect(dialog).toBeVisible();
     }
 
     async cancel() {
-        const dialog = this.page.locator(slct(DialogMetricSettingsQa.Dialog));
-        const cancelButton = this.page.locator(slct(DialogMetricSettingsQa.CancelButton));
+        const dialog = this.page.locator(slct(DialogMetricColorsQa.Dialog));
+        const cancelButton = this.page.locator(slct(DialogMetricColorsQa.CancelButton));
         await cancelButton.click();
 
         await expect(dialog).not.toBeVisible();
     }
 
-    async selectSize(size = 'L') {
-        const sizeOption = this.page
-            .locator(this.sizeControlsSelector)
-            .locator(CommonSelectors.RadioButtonOption, {hasText: size});
+    // async selectSize(size = 'L') {
+    //     const sizeOption = this.page
+    //         .locator(this.sizeControlsSelector)
+    //         .locator(CommonSelectors.RadioButtonOption, {hasText: size});
 
-        await sizeOption.click();
-    }
+    //     await sizeOption.click();
+    // }
 
     async getSelectedPaletteColor() {
         const selectedPaletteItem = this.page.locator(this.selectedPaletteItem).first();
