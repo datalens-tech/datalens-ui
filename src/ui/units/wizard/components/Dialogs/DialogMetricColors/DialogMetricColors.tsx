@@ -87,7 +87,7 @@ const DialogMetricColors: React.FC<OwnProps> = ({onApply}) => {
         [colorPalettes],
     );
 
-    const handlePaletteValidChange = React.useCallback((valid: boolean): void => {
+    const handlePaletteValidChange = React.useCallback((valid: boolean) => {
         setState((prev) => ({...prev, hasErrors: !valid}));
     }, []);
 
@@ -133,6 +133,7 @@ const DialogMetricColors: React.FC<OwnProps> = ({onApply}) => {
                             onInputColorUpdate={handleInputColorUpdate}
                             colorPalettes={colorPalettes}
                             customColorSelected={typeof state.colorIndex !== 'number'}
+                            customColorBtnQa={DialogMetricColorsQa.CustomColorButton}
                             onValidChange={handlePaletteValidChange}
                         />
                     </div>
