@@ -80,7 +80,7 @@ const IndicatorTitleSetting: React.FC<Props> = (props: Props) => {
                     />
                 </div>
             )}
-            <div className={b('row')} data-qa="indicator-font-size">
+            <div className={b('row')} data-qa={ChartSettingsDialogQA.IndicatorFontSize}>
                 {/* TODO: remove i18n */}
                 {/* <div className={b('title')}>{i18n('wizard', 'label_font-size')}</div> */}
                 <div className={b('title')}>Размер</div>

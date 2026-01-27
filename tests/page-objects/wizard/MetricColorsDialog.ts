@@ -33,14 +33,6 @@ export default class MetricColorsDialog {
         await expect(dialog).not.toBeVisible();
     }
 
-    // async selectSize(size = 'L') {
-    //     const sizeOption = this.page
-    //         .locator(this.sizeControlsSelector)
-    //         .locator(CommonSelectors.RadioButtonOption, {hasText: size});
-
-    //     await sizeOption.click();
-    // }
-
     async getSelectedPaletteColor() {
         const selectedPaletteItem = this.page.locator(this.selectedPaletteItem).first();
 
