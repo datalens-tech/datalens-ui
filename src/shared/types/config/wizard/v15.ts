@@ -313,6 +313,8 @@ export type V15ShapesConfig = {
     mountedShapes?: Record<string, string>;
     mountedShapesLineWidths?: Record<string, number>;
     chartLineWidth?: number;
+    linecap?: string;
+    linejoin?: string;
     fieldGuid?: string;
 };
 
