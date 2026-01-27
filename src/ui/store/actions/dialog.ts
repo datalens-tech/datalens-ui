@@ -166,7 +166,7 @@ export const openWarningDialog = (commonProps: OpenWarningAlertArguments) => {
     };
 };
 
-type OpenDialogSaveChartConfirmArguments = Pick<
+export type OpenDialogSaveChartConfirmArguments = Pick<
     OpenDialogConfirmArguments,
     | 'onApply'
     | 'message'

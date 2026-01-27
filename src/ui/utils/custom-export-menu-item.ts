@@ -2,26 +2,26 @@ import type {ExportActionArgs} from 'ui/libs/DatalensChartkit/components/ChartKi
 import type {MenuItemConfig} from 'ui/libs/DatalensChartkit/menu/Menu';
 import type {AlertsActionArgs} from 'ui/libs/DatalensChartkit/types/menu';
 import {getStore} from 'ui/store';
+import type {OpenDialogSaveChartConfirmArguments} from 'ui/store/actions/dialog';
 import {openDialogSaveChartConfirm} from 'ui/store/actions/dialog';
 
 export function getCustomExportActionWrapperWithSave(
     {
-        message,
         onApply,
         canBeSaved,
+        ...args
     }: {
-        message: string;
         onApply: () => void;
         canBeSaved: boolean;
-    },
+    } & OpenDialogSaveChartConfirmArguments,
     originalAction: MenuItemConfig['action'],
 ) {
     return (originalActionArgs: ExportActionArgs | AlertsActionArgs) => {
         return confirmSaveChart(
             {
-                message,
                 onApply,
                 canBeSaved,
+                ...args,
             },
             () => originalAction(originalActionArgs),
         );
@@ -30,14 +30,13 @@ export function getCustomExportActionWrapperWithSave(
 
 export async function confirmSaveChart<T = void>(
     {
-        message,
         onApply,
         canBeSaved,
+        ...args
     }: {
-        message: string;
         onApply: () => void;
         canBeSaved: boolean;
-    },
+    } & OpenDialogSaveChartConfirmArguments,
     cb: () => T,
 ) {
     return new Promise((resolve) => {
@@ -47,7 +46,7 @@ export async function confirmSaveChart<T = void>(
                     await onApply();
                     resolve(cb());
                 },
-                message,
+                ...args,
             })(getStore().dispatch);
         } else {
             resolve(cb());
