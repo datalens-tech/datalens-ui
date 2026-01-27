@@ -113,7 +113,12 @@ const DialogMetricColors: React.FC<OwnProps> = ({onApply}) => {
     }, [dispatch]);
 
     return (
-        <Dialog open={true} onClose={handleClose} disableHeightTransition={true}>
+        <Dialog
+            open={true}
+            onClose={handleClose}
+            disableHeightTransition={true}
+            qa={DialogMetricColorsQa.Dialog}
+        >
             <Dialog.Header caption={i18n('label_color-settings')} />
             <Dialog.Body className={b()}>
                 <div className={b('row')}>
