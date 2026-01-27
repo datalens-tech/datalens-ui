@@ -41,7 +41,6 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
 
         await wizardPage.chartSettings.open();
         await wizardPage.chartSettings.setMetricFontSize('L');
-        await wizardPage.chartSettings.apply();
 
         const apiRunRequest = wizardPage.page.waitForRequest(
             (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,
