@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-// import {I18n} from 'i18n';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogMetricColorsQa} from 'shared';
 import {getColorByColorSettings} from 'shared/utils/palettes';
@@ -16,15 +16,7 @@ import {MinifiedPalette} from '../../MinifiedPalette/MinifiedPalette';
 
 import './DialogMetricColors.scss';
 
-// const i18n = I18n.keyset('wizard');
-
-const i18nKeys = {
-    'label_color-settings': 'label_color-settings',
-    section_color: 'section_color',
-    button_apply: 'button_apply',
-    button_cancel: 'button_cancel',
-};
-const i18n = (key: keyof typeof i18nKeys) => i18nKeys[key];
+const i18n = I18n.keyset('wizard');
 
 const b = block('dialog-metric-colors');
 

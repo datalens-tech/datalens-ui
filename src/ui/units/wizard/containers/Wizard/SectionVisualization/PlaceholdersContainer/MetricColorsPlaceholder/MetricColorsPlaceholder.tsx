@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {BucketPaint} from '@gravity-ui/icons';
-// import {i18n} from 'i18n';
+import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {CommonSharedExtraSettings} from 'shared';
 import {PlaceholderActionQa} from 'shared';
@@ -44,9 +44,7 @@ export const MetricColorsPlaceholder: React.FC<MetricColorsPlaceholderProps> = (
             onUpdate={() => {}}
             wrapTo={() => null}
             disabled={false}
-            // TODO: remove i18n
-            addFieldDisableText={'label_metric-colors-add-field-disabled'}
-            // addFieldDisableText={i18n('wizard', 'label_metric-colors-add-field-disabled')}
+            addFieldDisableText={i18n('wizard', 'label_metric-colors-add-field-disabled')}
         />
     );
 };
