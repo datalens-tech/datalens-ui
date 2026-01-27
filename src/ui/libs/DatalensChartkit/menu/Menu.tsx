@@ -37,6 +37,7 @@ export type MenuItemConfig = {
     isVisible: (params?: any) => boolean;
     action: (params: any) => void | Promise<void> | MenuActionComponent;
     actionWrapper?: (args: MenuItemConfig['action']) => (args: unknown) => void;
+    extraOptions?: Record<string, unknown>;
     onExportLoading?: (isLoading: boolean) => void;
     onFullscreenClick?: () => void;
 };

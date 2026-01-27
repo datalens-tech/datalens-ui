@@ -17,18 +17,40 @@ export function getCustomExportActionWrapperWithSave(
     originalAction: MenuItemConfig['action'],
 ) {
     return (originalActionArgs: ExportActionArgs | AlertsActionArgs) => {
-        return new Promise((resolve) => {
-            if (canBeSaved) {
-                openDialogSaveChartConfirm({
-                    onApply: async () => {
-                        await onApply();
-                        resolve(originalAction(originalActionArgs));
-                    },
-                    message,
-                })(getStore().dispatch);
-            } else {
-                resolve(originalAction(originalActionArgs));
-            }
-        });
+        return confirmSaveChart(
+            {
+                message,
+                onApply,
+                canBeSaved,
+            },
+            () => originalAction(originalActionArgs),
+        );
     };
+}
+
+export async function confirmSaveChart<T = void>(
+    {
+        message,
+        onApply,
+        canBeSaved,
+    }: {
+        message: string;
+        onApply: () => void;
+        canBeSaved: boolean;
+    },
+    cb: () => T,
+) {
+    return new Promise((resolve) => {
+        if (canBeSaved) {
+            openDialogSaveChartConfirm({
+                onApply: async () => {
+                    await onApply();
+                    resolve(cb());
+                },
+                message,
+            })(getStore().dispatch);
+        } else {
+            resolve(cb());
+        }
+    });
 }
