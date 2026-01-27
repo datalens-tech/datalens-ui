@@ -180,6 +180,10 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             entry: entity,
                             delegation: entity.isDelegated,
                             onApply: async (delegation) => {
+                                if (delegation === entity.isDelegated) {
+                                    dispatch(closeDialog());
+                                    return;
+                                }
                                 try {
                                     await getSdk().sdk.us.updateSharedEntryBinding({
                                         sourceId: entity.entryId,

@@ -59,6 +59,10 @@ export const useAdditionalContextMenuItems = ({
                                     onClose: () => dispatch(closeDialog()),
                                     open: true,
                                     onApply: async (delegate) => {
+                                        if (delegate === entry.isDelegated) {
+                                            dispatch(closeDialog());
+                                            return;
+                                        }
                                         try {
                                             const delegation =
                                                 await getSdk().sdk.us.updateSharedEntryBinding({

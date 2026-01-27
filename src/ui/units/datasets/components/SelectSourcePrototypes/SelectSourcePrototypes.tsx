@@ -416,7 +416,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                 );
             }
         },
-        [collectionId, dispatch, connectionId],
+        [collectionId, dispatch, connectionId, connectionDelegation],
     );
 
     const onAddConnectionClick = React.useCallback(() => {
