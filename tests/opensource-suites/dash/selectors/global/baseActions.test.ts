@@ -26,7 +26,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
     datalensTest(
         'Creating a global selector with "All Tabs" impact type - selector appears on all tabs',
-        async ({page}: {page: Page}) => {
+        async ({page, config}) => {
             const dashboardPage = new DashboardPage({page});
 
             await dashboardPage.createDashboard({
@@ -42,6 +42,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
                     // Created global selector with the allTabs scope should appear on a new tab
                     await dashboardPage.addTab();
                 },
+                workbookId: config.workbookId,
             });
 
             // Verify selector appears on Tab 1
@@ -69,7 +70,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
     datalensTest(
         'Creating a global selector with "Selected Tabs" impact type - selector appears only on selected tabs',
-        async ({page}: {page: Page}) => {
+        async ({page, config}) => {
             const dashboardPage = new DashboardPage({page});
 
             await dashboardPage.createDashboard({
@@ -86,6 +87,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
                         impactTabsIndexes: [1],
                     });
                 },
+                workbookId: config.workbookId,
             });
 
             // Verify selector appears on Tab 1
@@ -116,7 +118,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
     datalensTest(
         'Editing global selector - changing from "All Tabs" to "Selected Tabs" updates visibility',
-        async ({page}: {page: Page}) => {
+        async ({page, config}) => {
             const dashboardPage = new DashboardPage({page});
 
             await dashboardPage.createDashboard({
@@ -130,6 +132,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
                         impactType: 'allTabs',
                     });
                 },
+                workbookId: config.workbookId,
             });
 
             // Verify selector is visible on all tabs initially
@@ -212,7 +215,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
     datalensTest(
         'Multiple selectors with different impact types coexist correctly',
-        async ({page}: {page: Page}) => {
+        async ({page, config}) => {
             const dashboardPage = new DashboardPage({page});
 
             const CURRENT_TAB_SELECTOR = {
@@ -253,6 +256,7 @@ datalensTest.describe('Dashboards - Global selectors with impact type base actio
 
                     await page.click(slct(ControlQA.dialogControlApplyBtn));
                 },
+                workbookId: config.workbookId,
             });
 
             // On Tab 1: all 3 selectors should be visible
