@@ -8,6 +8,7 @@ import {
     getAuthHeadersUSPrivate,
     hasValidWorkbookTransferAuthHeaders,
 } from '../../../components/gateway-auth-helpers';
+import {pickAdditionalPublicApiHeaders} from '../../../components/public-api/utils';
 import {handleEntryRedirect} from '../../../controllers/utils/handle-entry-redirect';
 import {registry} from '../../index';
 
@@ -18,6 +19,7 @@ export const registerCommonPlugins = () => {
         isEntryId,
         extractEntryId,
         handleEntryRedirect,
+        pickAdditionalPublicApiHeaders,
     });
 
     registry.common.auth.register({
