@@ -8,7 +8,6 @@ import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualizat
 import {ColorValue} from '../../../../page-objects/wizard/ColorDialog';
 import {DOMNamedAttributes} from '../../../../page-objects/wizard/ChartKit';
 import {
-    LINE_WIDTH_DEFAULT_VALUE,
     LINE_WIDTH_MAX_VALUE,
     LINE_WIDTH_MIN_VALUE,
     LINE_WIDTH_VALUE_STEP,
@@ -84,15 +83,12 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'Category');
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
 
-            const defaultLineWidth = LINE_WIDTH_DEFAULT_VALUE.toString();
             const newLineWidth = '5';
-
-            let lineWidths = await wizardPage.chartkit.getAttributeFromLines(
+            const initialLineWidths = await wizardPage.chartkit.getAttributeFromLines(
                 DOMNamedAttributes.StrokeWidth,
             );
 
-            expect(lineWidths.length).toEqual(1);
-            expect(lineWidths[0]).toEqual(defaultLineWidth);
+            expect(initialLineWidths.length).toEqual(1);
 
             await wizardPage.shapeDialog.open();
 
@@ -102,15 +98,15 @@ datalensTest.describe('Wizard', () => {
 
             await wizardPage.chartkit.waitUntilLoaderExists();
 
-            lineWidths = await wizardPage.chartkit.getAttributeFromLines(
+            const updatedLineWidths = await wizardPage.chartkit.getAttributeFromLines(
                 DOMNamedAttributes.StrokeWidth,
             );
 
-            expect(lineWidths.length).toEqual(1);
-            expect(lineWidths[0]).toEqual(String(newLineWidth));
+            expect(updatedLineWidths.length).toEqual(1);
+            expect(updatedLineWidths[0]).toEqual(newLineWidth);
         });
 
-        datalensTest('User can only select line widths 1–12', async ({page}) => {
+        datalensTest('User can only select line widths 1–12 and auto', async ({page}) => {
             const wizardPage = new WizardPage({page});
 
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'Category');
@@ -121,14 +117,19 @@ datalensTest.describe('Wizard', () => {
 
             const optionElements = await wizardPage.shapeDialog.getLineWidthSelectOptions();
 
-            expect(await optionElements.count()).toEqual(LINE_WIDTH_MAX_VALUE);
+            const expectedOptionsCount = LINE_WIDTH_MAX_VALUE + 1;
+
+            expect(await optionElements.count()).toEqual(expectedOptionsCount);
+
+            const autoOption = optionElements.nth(0);
+            await expect(autoOption).toContainText('Автоматически');
 
             for (
                 let i = LINE_WIDTH_MIN_VALUE;
                 i <= LINE_WIDTH_MAX_VALUE;
                 i += LINE_WIDTH_VALUE_STEP
             ) {
-                const optionElement = optionElements.nth(i - 1);
+                const optionElement = optionElements.nth(i);
                 const optionValue = i.toString();
 
                 await expect(optionElement.locator(`[data-qa="${optionValue}"]`)).toBeVisible();

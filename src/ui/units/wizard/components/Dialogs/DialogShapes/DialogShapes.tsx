@@ -1,18 +1,26 @@
 import React from 'react';
 
 import {Shapes4} from '@gravity-ui/icons';
-import {Button, Dialog, Flex, Icon} from '@gravity-ui/uikit';
+import {Button, Dialog, Flex, Icon, Tab, TabList, TabPanel, TabProvider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
-import type {DatasetOptions, Field, FilterField, ShapesConfig, Update} from 'shared';
-import {LINE_WIDTH_DEFAULT_VALUE} from 'ui/units/wizard/constants/shapes';
+import {
+    type DatasetOptions,
+    DialogShapeSettings,
+    type Field,
+    type FilterField,
+    type ShapesConfig,
+    type Update,
+    type ValueOf,
+} from 'shared';
+import {getColorsConfigKey} from 'shared/modules/colors/common-helpers';
+import {LINE_WIDTH_AUTO_VALUE, LINE_WIDTH_DEFAULT_VALUE} from 'ui/units/wizard/constants/shapes';
 
 import {PaletteTypes} from '../../../constants';
 
-import {DialogLineWidth} from './DialogLineWidth/DialogLineWidth';
-import DialogShapesPalette from './DialogShapesPalette/DialogShapesPalette';
-import {DialogValueList} from './DialogValueList/DialogValueList';
+import {DialogShapesChartSettingsTab} from './tabs/DialogShapesChartSettingsTab';
+import {DialogShapesGraphSettingsTab} from './tabs/DialogShapesGraphSettingsTab';
 
 import './DialogShapes.scss';
 
@@ -43,9 +51,77 @@ export type OpenDialogShapesArgs = {
 
 export type ShapesState = {
     mountedShapes: Record<string, string>;
-    mountedShapesLineWidths: Record<string, number>;
+    mountedShapesLineWidths: Record<string, string>;
+    chartLineWidth: string;
     selectedValue: string | null;
 };
+
+// TODO: Fix in a separate branch
+const I18N_STUB = {
+    'dialog-shapes-line-settings-tab-title': 'Линии',
+    'dialog-shapes-chart-settings-tab-title': 'Общие настройки',
+};
+
+const SETTINGS_SCOPE = {
+    LINE: 'line-shapes-settings',
+    CHART: 'chart-shapes-settings',
+} as const;
+
+const SETTINGS_SCOPE_TABS = [
+    {title: I18N_STUB['dialog-shapes-line-settings-tab-title'], value: SETTINGS_SCOPE.LINE},
+    {title: I18N_STUB['dialog-shapes-chart-settings-tab-title'], value: SETTINGS_SCOPE.CHART},
+];
+
+type GetInitialShapesStateArgs = {
+    shapesConfig: ShapesConfig;
+    paletteType: PaletteTypes;
+    items?: Field[];
+};
+
+function getInitialShapesState({
+    shapesConfig,
+    paletteType,
+    items,
+}: GetInitialShapesStateArgs): ShapesState {
+    const mountedShapes = shapesConfig.mountedShapes ?? {};
+
+    const allLineIds =
+        items?.map(
+            (lineItem) => getColorsConfigKey(lineItem, items, {isMeasureNames: true}) as string,
+        ) ?? [];
+
+    const savedLineWidths =
+        paletteType === PaletteTypes.Lines && shapesConfig.mountedShapesLineWidths
+            ? Object.fromEntries(
+                  Object.entries(shapesConfig.mountedShapesLineWidths).map(([key, value]) => [
+                      key,
+                      String(value),
+                  ]),
+              )
+            : {};
+
+    const mountedShapesLineWidths =
+        paletteType === PaletteTypes.Lines
+            ? Object.fromEntries(
+                  allLineIds.map((lineId) => [
+                      lineId,
+                      savedLineWidths[lineId] ?? LINE_WIDTH_AUTO_VALUE,
+                  ]),
+              )
+            : {};
+
+    const chartLineWidth =
+        shapesConfig.chartLineWidth === undefined
+            ? LINE_WIDTH_DEFAULT_VALUE
+            : String(shapesConfig.chartLineWidth);
+
+    return {
+        selectedValue: null,
+        mountedShapes,
+        mountedShapesLineWidths,
+        chartLineWidth,
+    };
+}
 
 const DialogShapes: React.FC<Props> = ({
     item,
@@ -62,23 +138,12 @@ const DialogShapes: React.FC<Props> = ({
     onCancel,
     paletteType,
 }: Props) => {
-    const [shapesState, setShapesState] = React.useState<ShapesState>(() => {
-        const mountedShapes =
-            shapesConfig.mountedShapes && Object.keys(shapesConfig.mountedShapes)
-                ? shapesConfig.mountedShapes
-                : {};
-        const mountedShapesLineWidths =
-            shapesConfig.mountedShapesLineWidths &&
-            Object.keys(shapesConfig.mountedShapesLineWidths)
-                ? shapesConfig.mountedShapesLineWidths
-                : {};
-
-        return {
-            selectedValue: null,
-            mountedShapes,
-            mountedShapesLineWidths,
-        };
-    });
+    const [activeTab, setActiveTab] = React.useState<ValueOf<typeof SETTINGS_SCOPE>>(
+        SETTINGS_SCOPE.LINE,
+    );
+    const [shapesState, setShapesState] = React.useState<ShapesState>(() =>
+        getInitialShapesState({shapesConfig, paletteType, items}),
+    );
 
     const onPaletteItemClick = React.useCallback(
         (shape: string) => {
@@ -96,18 +161,21 @@ const DialogShapes: React.FC<Props> = ({
             } else {
                 mountedShapes[selectedValue] = shape;
                 mountedShapesLineWidths[selectedValue] =
-                    mountedShapesLineWidths[selectedValue] || LINE_WIDTH_DEFAULT_VALUE;
+                    mountedShapesLineWidths[selectedValue] || LINE_WIDTH_AUTO_VALUE;
             }
 
-            setShapesState((prevState) => ({...prevState, mountedShapes, mountedShapesLineWidths}));
+            setShapesState((prevState) => ({
+                ...prevState,
+                mountedShapes,
+                ...(paletteType === PaletteTypes.Lines ? {mountedShapesLineWidths} : {}),
+            }));
         },
-        [shapesState],
+        [paletteType, shapesState],
     );
 
-    const onLineWidthChange = React.useCallback((nextLineWidth: number) => {
+    const onLineWidthChange = React.useCallback((nextLineWidth: string) => {
         setShapesState((prevState) => ({
             ...prevState,
-            lineWidth: nextLineWidth,
             mountedShapesLineWidths: {
                 ...prevState.mountedShapesLineWidths,
                 ...(prevState.selectedValue ? {[prevState.selectedValue]: nextLineWidth} : {}),
@@ -115,9 +183,36 @@ const DialogShapes: React.FC<Props> = ({
         }));
     }, []);
 
-    const onReset = React.useCallback(() => {
-        setShapesState((prevState) => ({...prevState, mountedShapes: {}}));
+    const onChartLineWidthChange = React.useCallback((nextLineWidth: string) => {
+        setShapesState((prevState) => ({
+            ...prevState,
+            chartLineWidth: nextLineWidth,
+        }));
     }, []);
+
+    const onReset = React.useCallback(() => {
+        setShapesState((prevState) => ({
+            ...prevState,
+            mountedShapes: {},
+            mountedShapesLineWidths: {},
+            chartLineWidth: LINE_WIDTH_DEFAULT_VALUE,
+        }));
+    }, []);
+
+    const isResetDisabled = React.useMemo(() => {
+        const hasNoMountedShapes =
+            shapesState.mountedShapes && !Object.keys(shapesState.mountedShapes).length;
+        const hasNoMountedShapesLineWidths =
+            shapesState.mountedShapesLineWidths &&
+            !Object.keys(shapesState.mountedShapesLineWidths).length;
+        const isChartLineWidthDefault = shapesState.chartLineWidth === LINE_WIDTH_DEFAULT_VALUE;
+
+        return hasNoMountedShapes && hasNoMountedShapesLineWidths && isChartLineWidthDefault;
+    }, [
+        shapesState.mountedShapes,
+        shapesState.mountedShapesLineWidths,
+        shapesState.chartLineWidth,
+    ]);
 
     const onClose = React.useCallback(() => {
         onCancel();
@@ -128,29 +223,156 @@ const DialogShapes: React.FC<Props> = ({
     }, [onClose]);
 
     const onApplyButtonClick = React.useCallback(() => {
-        const shapesConfig: ShapesConfig = {
+        // Filter out lines with LINE_WIDTH_AUTO_VALUE - they will inherit from chartLineWidth on the server
+        const filteredMountedShapesLineWidths = Object.entries(
+            shapesState.mountedShapesLineWidths,
+        ).reduce<Record<string, number>>((acc, [key, value]) => {
+            if (value !== LINE_WIDTH_AUTO_VALUE) {
+                acc[key] = Number(value);
+            }
+            return acc;
+        }, {});
+
+        const nextShapesConfig: ShapesConfig = {
             mountedShapes: shapesState.mountedShapes,
-            mountedShapesLineWidths: shapesState.mountedShapesLineWidths,
+            chartLineWidth: Number(shapesState.chartLineWidth),
+            ...(paletteType === PaletteTypes.Lines
+                ? {
+                      mountedShapesLineWidths: filteredMountedShapesLineWidths,
+                  }
+                : {}),
             fieldGuid: item.guid,
         };
-        onApply(shapesConfig);
+        onApply(nextShapesConfig);
         onClose();
     }, [
+        shapesState.mountedShapes,
+        shapesState.mountedShapesLineWidths,
+        shapesState.chartLineWidth,
+        paletteType,
         item.guid,
         onApply,
         onClose,
-        shapesState.mountedShapes,
-        shapesState.mountedShapesLineWidths,
     ]);
 
-    const selectedShapeLineWidth =
-        shapesState.selectedValue && shapesState.mountedShapesLineWidths[shapesState.selectedValue]
-            ? shapesState.mountedShapesLineWidths[shapesState.selectedValue]
-            : LINE_WIDTH_DEFAULT_VALUE;
+    const linesShapesDialogBody = React.useMemo(() => {
+        return (
+            <TabProvider
+                value={activeTab}
+                onUpdate={(value) => setActiveTab(value as ValueOf<typeof SETTINGS_SCOPE>)}
+            >
+                <Flex direction="column" style={{width: '100%', height: '100%'}}>
+                    <TabList style={{padding: '0 32px', flexShrink: 0}}>
+                        {SETTINGS_SCOPE_TABS.map(({title, value}) => (
+                            <Tab key={value} value={value}>
+                                {title}
+                            </Tab>
+                        ))}
+                    </TabList>
+                    <React.Fragment>
+                        <TabPanel
+                            value={SETTINGS_SCOPE.LINE}
+                            style={{height: '100%'}}
+                            qa={DialogShapeSettings.LineSettingsScopeTab}
+                        >
+                            <DialogShapesGraphSettingsTab
+                                item={item}
+                                items={items}
+                                distincts={distincts}
+                                options={options}
+                                parameters={parameters}
+                                dashboardParameters={dashboardParameters}
+                                datasetId={datasetId}
+                                updates={updates}
+                                filters={filters}
+                                shapesState={shapesState}
+                                paletteType={paletteType}
+                                setShapesState={(state) =>
+                                    setShapesState((prevState) => ({
+                                        ...prevState,
+                                        ...state,
+                                    }))
+                                }
+                                onPaletteItemClick={onPaletteItemClick}
+                                onLineWidthChange={onLineWidthChange}
+                            />
+                        </TabPanel>
+                        <TabPanel value={SETTINGS_SCOPE.CHART}>
+                            <DialogShapesChartSettingsTab
+                                shapesState={shapesState}
+                                onChartLineWidthChange={onChartLineWidthChange}
+                            />
+                        </TabPanel>
+                    </React.Fragment>
+                </Flex>
+            </TabProvider>
+        );
+    }, [
+        activeTab,
+        dashboardParameters,
+        datasetId,
+        distincts,
+        filters,
+        item,
+        items,
+        onChartLineWidthChange,
+        onLineWidthChange,
+        onPaletteItemClick,
+        options,
+        paletteType,
+        parameters,
+        shapesState,
+        updates,
+    ]);
+
+    const otherShapesDialogBody = React.useMemo(() => {
+        return (
+            <DialogShapesGraphSettingsTab
+                item={item}
+                items={items}
+                distincts={distincts}
+                options={options}
+                parameters={parameters}
+                dashboardParameters={dashboardParameters}
+                datasetId={datasetId}
+                updates={updates}
+                filters={filters}
+                shapesState={shapesState}
+                paletteType={paletteType}
+                setShapesState={(state) =>
+                    setShapesState((prevState) => ({
+                        ...prevState,
+                        ...state,
+                    }))
+                }
+                onPaletteItemClick={onPaletteItemClick}
+                onLineWidthChange={onLineWidthChange}
+            />
+        );
+    }, [
+        dashboardParameters,
+        datasetId,
+        distincts,
+        filters,
+        item,
+        items,
+        onLineWidthChange,
+        onPaletteItemClick,
+        options,
+        paletteType,
+        parameters,
+        shapesState,
+        updates,
+    ]);
 
     return (
         <Dialog onClose={onClose} open={true}>
-            <div className={b()}>
+            <div
+                className={b({
+                    ['lines-shapes']: paletteType === PaletteTypes.Lines,
+                    ['other-shapes']: paletteType !== PaletteTypes.Lines,
+                })}
+            >
                 <Dialog.Header
                     insertBefore={
                         <div className={b('title-icon')}>
@@ -160,35 +382,9 @@ const DialogShapes: React.FC<Props> = ({
                     caption={i18n('wizard', 'label_shapes-settings')}
                 />
                 <Dialog.Body>
-                    <DialogValueList
-                        item={item}
-                        items={items}
-                        distincts={distincts}
-                        filters={filters}
-                        parameters={parameters}
-                        dashboardParameters={dashboardParameters}
-                        updates={updates}
-                        options={options}
-                        datasetId={datasetId}
-                        shapesState={shapesState}
-                        paletteType={paletteType}
-                        setShapesState={(state) =>
-                            setShapesState((prevState) => ({...prevState, ...state}))
-                        }
-                    />
-                    <Flex direction="column" gap={4} spacing={{py: '5', px: '6'}}>
-                        {paletteType === PaletteTypes.Lines && (
-                            <DialogLineWidth
-                                value={selectedShapeLineWidth}
-                                onChange={onLineWidthChange}
-                            />
-                        )}
-                        <DialogShapesPalette
-                            shapesState={shapesState}
-                            onPaletteItemClick={onPaletteItemClick}
-                            paletteType={paletteType}
-                        />
-                    </Flex>
+                    {paletteType === PaletteTypes.Lines
+                        ? linesShapesDialogBody
+                        : otherShapesDialogBody}
                 </Dialog.Body>
                 <Dialog.Footer
                     preset="default"
@@ -198,15 +394,7 @@ const DialogShapes: React.FC<Props> = ({
                     textButtonApply={i18n('wizard', 'button_apply')}
                     textButtonCancel={i18n('wizard', 'button_cancel')}
                 >
-                    <Button
-                        view="outlined"
-                        size="l"
-                        disabled={
-                            shapesState.mountedShapes &&
-                            !Object.keys(shapesState.mountedShapes).length
-                        }
-                        onClick={onReset}
-                    >
+                    <Button view="outlined" size="l" disabled={isResetDisabled} onClick={onReset}>
                         {i18n('wizard', 'button_reset')}
                     </Button>
                 </Dialog.Footer>

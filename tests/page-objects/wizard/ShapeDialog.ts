@@ -42,7 +42,10 @@ export default class ShapeDialog {
     }
 
     async clickLineWidthSelectControl() {
-        await this.page.locator(slct(DialogShapeSettings.LineWidthSelectControl)).click();
+        await this.page
+            .locator(slct(DialogShapeSettings.LineSettingsScopeTab))
+            .locator(slct(DialogShapeSettings.LineWidthSelectControl))
+            .click();
     }
 
     async changeLineWidth(width: string) {
@@ -55,6 +58,27 @@ export default class ShapeDialog {
 
     async getLineWidthSelectOptions() {
         return this.page.locator(slct(DialogShapeSettings.LineWidthSelectOption));
+    }
+
+    async getLineWidthSelectControlText() {
+        const control = this.page
+            .locator(slct(DialogShapeSettings.LineSettingsScopeTab))
+            .locator(slct(DialogShapeSettings.LineWidthSelectControl));
+        return control.textContent();
+    }
+
+    getLineWidthSelectControlLine() {
+        return this.page
+            .locator(slct(DialogShapeSettings.LineSettingsScopeTab))
+            .locator(slct(DialogShapeSettings.LineWidthSelectControl))
+            .locator('.dl-line-width-select__option-line');
+    }
+
+    async getLineWidthSelectControlLineHeight() {
+        const line = this.getLineWidthSelectControlLine();
+        const style = await line.getAttribute('style');
+        const match = style?.match(/height:\s*(\d+)px/);
+        return match ? match[1] : null;
     }
 
     async selectValue(value: string) {

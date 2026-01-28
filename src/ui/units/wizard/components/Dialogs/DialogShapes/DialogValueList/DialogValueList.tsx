@@ -105,6 +105,7 @@ export const DialogValueList: React.FC<Props> = ({
 
                 if (shouldResetShapes) {
                     state.mountedShapes = {};
+                    state.mountedShapesLineWidths = {};
                 }
 
                 setShapesState(state);

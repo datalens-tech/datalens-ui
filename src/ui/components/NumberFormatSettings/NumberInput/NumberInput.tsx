@@ -1,9 +1,46 @@
 import React from 'react';
 
-import {Button, TextInput} from '@gravity-ui/uikit';
+import {Minus, Plus} from '@gravity-ui/icons';
+import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import type {ValueOf} from 'shared';
 
 import './NumberInput.scss';
+
+const STEP_BUTTON_DIRECTION = {
+    Plus: '+',
+    Minus: '-',
+} as const;
+
+type StepButtonDirection = ValueOf<typeof STEP_BUTTON_DIRECTION>;
+
+interface StepButtonProps {
+    direction: StepButtonDirection;
+    disabled: boolean;
+    onClick: () => void;
+}
+
+const DIRECTION_CONFIG: Record<
+    StepButtonDirection,
+    {icon: typeof Plus | typeof Minus; pin: 'brick-round' | 'round-brick'}
+> = {
+    [STEP_BUTTON_DIRECTION.Plus]: {icon: Plus, pin: 'brick-round'},
+    [STEP_BUTTON_DIRECTION.Minus]: {icon: Minus, pin: 'round-brick'},
+};
+
+const b = block('wizard-number-input');
+
+const StepButton: React.FC<StepButtonProps> = ({direction, disabled, onClick}) => {
+    const {icon, pin} = DIRECTION_CONFIG[direction];
+
+    return (
+        <div className={b('input-button')}>
+            <Button view="outlined" pin={pin} width="max" disabled={disabled} onClick={onClick}>
+                <Icon data={icon} />
+            </Button>
+        </div>
+    );
+};
 
 interface NumberInputProps {
     value: number;
@@ -12,8 +49,6 @@ interface NumberInputProps {
     onChange: (value: number) => void;
     qa?: string;
 }
-
-const b = block('wizard-number-input');
 
 const NumberInput: React.FC<NumberInputProps> = ({
     value,
@@ -50,7 +85,6 @@ const NumberInput: React.FC<NumberInputProps> = ({
     const onBlur = React.useCallback(
         (e: React.FocusEvent<HTMLInputElement>) => {
             const relatedTarget = e.relatedTarget as HTMLElement | null;
-            // Skip clampAndCommit if focus moved to +/- buttons
             if (relatedTarget?.closest(`.${b('input-button')}`)) {
                 return;
             }
@@ -92,15 +126,11 @@ const NumberInput: React.FC<NumberInputProps> = ({
 
     return (
         <div className={b({})}>
-            <Button
-                className={b('input-button')}
-                view="outlined"
-                pin="round-brick"
+            <StepButton
+                direction={STEP_BUTTON_DIRECTION.Minus}
                 disabled={isMinusDisabled}
                 onClick={onMinus}
-            >
-                -
-            </Button>
+            />
             <TextInput
                 qa={qa}
                 type="number"
@@ -112,15 +142,11 @@ const NumberInput: React.FC<NumberInputProps> = ({
                 onKeyDown={onKeyDown}
                 className={b('text-input')}
             />
-            <Button
-                className={b('input-button')}
-                view="outlined"
-                pin="brick-round"
+            <StepButton
+                direction={STEP_BUTTON_DIRECTION.Plus}
                 disabled={isPlusDisabled}
                 onClick={onPlus}
-            >
-                +
-            </Button>
+            />
         </div>
     );
 };

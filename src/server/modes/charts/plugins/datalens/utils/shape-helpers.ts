@@ -48,14 +48,18 @@ export const mapAndShapeGraph = ({
             graph.dashStyle = SHAPES_IN_ORDER[shapeIndex % SHAPES_IN_ORDER.length];
         }
 
-        if (
-            shapesConfig &&
-            shapesConfig.mountedShapesLineWidths &&
-            title &&
-            shapesConfig.mountedShapesLineWidths[title]
-        ) {
-            const lineWidth = shapesConfig.mountedShapesLineWidths?.[title] as number;
+        // Determine line width: use individual line width if set, otherwise fall back to chart-level width
+        let lineWidth: number | undefined;
 
+        if (title && shapesConfig?.mountedShapesLineWidths?.[title]) {
+            // Individual line has a specific width set
+            lineWidth = shapesConfig.mountedShapesLineWidths[title];
+        } else if (shapesConfig?.chartLineWidth !== undefined) {
+            // Fall back to chart-level line width
+            lineWidth = shapesConfig.chartLineWidth;
+        }
+
+        if (lineWidth !== undefined) {
             graph.lineWidth = lineWidth;
             graph.states = {
                 hover: {

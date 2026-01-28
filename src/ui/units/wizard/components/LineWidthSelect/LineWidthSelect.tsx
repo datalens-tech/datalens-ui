@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import {DialogShapeSettings} from 'shared';
 
 import {
+    LINE_WIDTH_AUTO_VALUE,
     LINE_WIDTH_MAX_VALUE,
     LINE_WIDTH_MIN_VALUE,
     LINE_WIDTH_VALUE_STEP,
@@ -16,97 +17,122 @@ import './LineWidthSelect.scss';
 const b = block('dl-line-width-select');
 
 interface LineWidthSelectProps {
-    value: number;
-    onChange: (lineWidth: number) => void;
+    value: string;
+    onChange: (lineWidth: string) => void;
+    allowDefault?: boolean;
 }
 
 const EMPTY_VALUE: string[] = [];
 const SELECT_WIDTH = 136;
 
-export const LineWidthSelect = React.memo(({value, onChange}: LineWidthSelectProps) => {
-    const handleUpdate = React.useCallback(
-        (values: string[]) => {
-            const [nextLineWidth] = values;
-            const nextLineWidthNumber = Number.parseInt(nextLineWidth, 10);
+const I18N_STUB = {
+    'line-width-auto-value-label': 'Автоматически',
+};
 
-            if (Number.isNaN(nextLineWidth)) {
-                return;
+export const LineWidthSelect = React.memo(
+    ({value, onChange, allowDefault}: LineWidthSelectProps) => {
+        const handleUpdate = React.useCallback(
+            (values: string[]) => {
+                const [nextLineWidth] = values;
+
+                onChange(nextLineWidth);
+            },
+            [onChange],
+        );
+
+        const options = React.useMemo(() => {
+            const result = [];
+
+            if (allowDefault) {
+                result.push(
+                    <Select.Option
+                        key={LINE_WIDTH_AUTO_VALUE}
+                        value={LINE_WIDTH_AUTO_VALUE}
+                        qa={DialogShapeSettings.LineWidthSelectOption}
+                    >
+                        <Flex style={{height: '100%'}} direction="column" justifyContent="center">
+                            {I18N_STUB['line-width-auto-value-label']}
+                        </Flex>
+                    </Select.Option>,
+                );
             }
 
-            onChange(nextLineWidthNumber);
-        },
-        [onChange],
-    );
+            for (
+                let i = LINE_WIDTH_MIN_VALUE;
+                i <= LINE_WIDTH_MAX_VALUE;
+                i += LINE_WIDTH_VALUE_STEP
+            ) {
+                const optionValue = i.toString();
 
-    const options = React.useMemo(() => {
-        const result = [];
+                result.push(
+                    <Select.Option
+                        key={optionValue}
+                        value={optionValue}
+                        qa={DialogShapeSettings.LineWidthSelectOption}
+                    >
+                        <Flex style={{height: '100%'}} direction="column" justifyContent="center">
+                            <span
+                                className={b('option-line')}
+                                style={{height: `${optionValue}px`}}
+                                data-qa={optionValue}
+                            />
+                        </Flex>
+                    </Select.Option>,
+                );
+            }
 
-        for (let i = LINE_WIDTH_MIN_VALUE; i <= LINE_WIDTH_MAX_VALUE; i += LINE_WIDTH_VALUE_STEP) {
-            const optionValue = i.toString();
+            return result;
+        }, [allowDefault]);
 
-            result.push(
-                <Select.Option
-                    key={optionValue}
-                    value={optionValue}
-                    qa={DialogShapeSettings.LineWidthSelectOption}
-                >
-                    <Flex style={{height: '100%'}} direction="column" justifyContent="center">
-                        <span
-                            className={b('option-line')}
-                            style={{height: `${optionValue}px`}}
-                            data-qa={optionValue}
-                            data-foo-bar="foo"
-                        />
+        const selectValue: string[] = React.useMemo(() => {
+            if (!value) {
+                return EMPTY_VALUE;
+            }
+
+            return [value];
+        }, [value]);
+
+        const renderControl: SelectProps['renderControl'] = React.useCallback(
+            (props) => {
+                const isAutoValue = allowDefault && value === LINE_WIDTH_AUTO_VALUE;
+
+                return (
+                    <Flex
+                        {...props.triggerProps}
+                        className={b('control')}
+                        direction="row"
+                        alignItems="center"
+                        gap={2}
+                        qa={DialogShapeSettings.LineWidthSelectControl}
+                    >
+                        {isAutoValue ? (
+                            <span>{I18N_STUB['line-width-auto-value-label']}</span>
+                        ) : (
+                            <span className={b('option-line')} style={{height: `${value}px`}} />
+                        )}
+                        <Icon data={ChevronDown} />
                     </Flex>
-                </Select.Option>,
-            );
-        }
+                );
+            },
+            [value, allowDefault],
+        );
 
-        return result;
-    }, []);
+        const renderSelectedOption = React.useCallback((option) => {
+            return option.children;
+        }, []);
 
-    const selectValue: string[] = React.useMemo(() => {
-        if (value === null) {
-            return EMPTY_VALUE;
-        }
-
-        return [value.toString()];
-    }, [value]);
-
-    const renderControl: SelectProps['renderControl'] = React.useCallback(
-        (props) => {
-            return (
-                <Flex
-                    {...props.triggerProps}
-                    className={b('control')}
-                    direction="row"
-                    alignItems="center"
-                    gap={2}
-                    qa={DialogShapeSettings.LineWidthSelectControl}
-                >
-                    <span className={b('option-line')} style={{height: `${value}px`}} />
-                    <Icon data={ChevronDown} />
-                </Flex>
-            );
-        },
-        [value],
-    );
-
-    const renderSelectedOption = React.useCallback((option) => {
-        return option.children;
-    }, []);
-
-    return (
-        <Select
-            value={selectValue}
-            width={SELECT_WIDTH}
-            renderControl={renderControl}
-            renderSelectedOption={renderSelectedOption}
-            onUpdate={handleUpdate}
-        >
-            {options}
-        </Select>
-    );
-});
+        return (
+            <Select
+                value={selectValue}
+                width={SELECT_WIDTH}
+                renderControl={renderControl}
+                renderSelectedOption={renderSelectedOption}
+                onUpdate={handleUpdate}
+            >
+                {options}
+            </Select>
+        );
+    },
+);
 
 LineWidthSelect.displayName = 'LineWidthSelect';
