@@ -114,13 +114,11 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         const isMarkup = isMarkupField(
                             placeholders.find(({id}) => id === PlaceholderId.Measures)?.items[0],
                         );
-                        if (isMarkup) {
-                            return null;
-                        }
                         return (
                             <MetricColorsPlaceholder
                                 key={`${placeholder.id}-placeholder-component`}
                                 onUpdate={onUpdate}
+                                isMarkup={isMarkup}
                             />
                         );
                     }

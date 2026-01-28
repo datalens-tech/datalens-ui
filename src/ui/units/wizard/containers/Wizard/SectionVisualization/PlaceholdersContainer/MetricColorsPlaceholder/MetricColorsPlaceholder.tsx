@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {BucketPaint} from '@gravity-ui/icons';
-import {i18n} from 'i18n';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {CommonSharedExtraSettings} from 'shared';
 import {PlaceholderActionQa} from 'shared';
@@ -11,24 +11,33 @@ import {openDialogMetricColors} from '../../../../../actions/dialog';
 import {selectExtraSettings} from '../../../../../selectors/widget';
 import PlaceholderComponent from '../Placeholder/Placeholder';
 
+const i18n = I18n.keyset('wizard');
+
 type MetricColorsPlaceholderProps = {
     onUpdate?: () => void;
+    isMarkup: boolean;
 };
 
-export const MetricColorsPlaceholder: React.FC<MetricColorsPlaceholderProps> = ({onUpdate}) => {
+export const MetricColorsPlaceholder: React.FC<MetricColorsPlaceholderProps> = ({
+    onUpdate,
+    isMarkup,
+}) => {
     const dispatch = useDispatch();
     const extraSettings = useSelector(
         (state: DatalensGlobalState) => selectExtraSettings(state) as CommonSharedExtraSettings,
     );
 
     const handleOpenDialogMetricColors = React.useCallback(() => {
+        if (isMarkup) {
+            return;
+        }
         dispatch(
             openDialogMetricColors({
                 extraSettings,
                 onApply: onUpdate,
             }),
         );
-    }, [dispatch, extraSettings, onUpdate]);
+    }, [dispatch, extraSettings, onUpdate, isMarkup]);
 
     return (
         <PlaceholderComponent
@@ -44,7 +53,8 @@ export const MetricColorsPlaceholder: React.FC<MetricColorsPlaceholderProps> = (
             onUpdate={() => {}}
             wrapTo={() => null}
             disabled={false}
-            addFieldDisableText={i18n('wizard', 'label_metric-colors-add-field-disabled')}
+            disabledText={i18n('label_metric-colors-edit-field-disabled')}
+            addFieldDisableText={i18n('label_metric-colors-add-field-disabled')}
         />
     );
 };

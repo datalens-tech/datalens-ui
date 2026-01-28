@@ -1,6 +1,12 @@
 import React from 'react';
 
-import {SegmentedRadioGroup as RadioButton, TextInput} from '@gravity-ui/uikit';
+import {
+    Flex,
+    SegmentedRadioGroup as RadioButton,
+    Text,
+    TextInput,
+    spacing,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {ChartSettingsDialogQA, IndicatorTitleMode} from 'shared';
@@ -81,18 +87,27 @@ const IndicatorTitleSetting: React.FC<Props> = (props: Props) => {
                     />
                 </div>
             )}
-            {!isMarkup && (
-                <div className={b('row')} data-qa={ChartSettingsDialogQA.IndicatorFontSize}>
-                    <div className={b('title')}>{i18n('wizard', 'label_font-size')}</div>
-                    <RadioButton value={fontSize} onUpdate={handleUpdateFontSize}>
+            <div className={b('row')} data-qa={ChartSettingsDialogQA.IndicatorFontSize}>
+                <div className={b('title', spacing({mb: 5}))}>
+                    {i18n('wizard', 'label_font-size')}
+                </div>
+                <Flex direction="column">
+                    <RadioButton
+                        value={fontSize}
+                        onUpdate={handleUpdateFontSize}
+                        disabled={isMarkup}
+                    >
                         {FONT_SIZES.map((size, index) => (
                             <RadioButton.Option key={size} value={size}>
                                 {FONT_SIZE_LABELS[index]}
                             </RadioButton.Option>
                         ))}
                     </RadioButton>
-                </div>
-            )}
+                    <Text color="secondary" className={spacing({mt: 1})}>
+                        {i18n('wizard', 'label_font-size-disabled-hint')}
+                    </Text>
+                </Flex>
+            </div>
         </div>
     );
 };
