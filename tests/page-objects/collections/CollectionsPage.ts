@@ -1,4 +1,10 @@
-import {CollectionActionsQa, EntryScope} from '../../../src/shared';
+import {
+    CollectionActionsQa,
+    CollectionContentTableQa,
+    CollectionTableRowQa,
+    EntryScope,
+    SharedEntriesBindingsDialogQa,
+} from '../../../src/shared';
 import type {BasePageProps} from '../BasePage';
 import {BasePage} from '../BasePage';
 import {ContentTablePO} from './ContentTable';
@@ -37,7 +43,6 @@ export class CollectionsPagePO extends BasePage {
         await dialogWb.fillTitle(name);
         await dialogWb.apply();
         await this.page.waitForURL(() => {
-            //TODO
             return this.page.url().includes('workbook');
         });
         return name;
@@ -55,5 +60,18 @@ export class CollectionsPagePO extends BasePage {
             page: this.page,
             parent: this.root,
         });
+    }
+
+    async removeSharedEntry({entryName}: {entryName: string}) {
+        const entryRow = this.page.locator(slct(CollectionContentTableQa.EntryLinkRow), {
+            hasText: entryName,
+        });
+        const entryContextMenuBtn = entryRow.locator(
+            slct(CollectionTableRowQa.CollectionRowDropdownMenuBtn),
+        );
+        await entryContextMenuBtn.click();
+        await this.page.locator(slct(CollectionTableRowQa.CollectionDropdownMenuDeleteBtn)).click();
+        const dialogApply = this.page.locator(slct(SharedEntriesBindingsDialogQa.ApplyDeleteBtn));
+        await dialogApply.click();
     }
 }
