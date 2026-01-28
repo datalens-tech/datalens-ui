@@ -208,6 +208,8 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
             },
             rangeSlider,
             lineWidth: graph.lineWidth,
+            linecap: graph.linecap,
+            linejoin: graph.linejoin,
         };
     });
 

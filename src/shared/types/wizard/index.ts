@@ -513,6 +513,8 @@ export interface ShapesConfig {
     mountedShapesLineWidths?: Record<string, number>;
     chartLineWidth?: number;
     fieldGuid?: string;
+    linecap?: string;
+    linejoin?: string;
 }
 
 export type ClientChartsConfig = {

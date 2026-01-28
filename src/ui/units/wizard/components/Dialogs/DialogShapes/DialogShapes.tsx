@@ -15,10 +15,17 @@ import {
     type ValueOf,
 } from 'shared';
 import {getColorsConfigKey} from 'shared/modules/colors/common-helpers';
-import {LINE_WIDTH_AUTO_VALUE, LINE_WIDTH_DEFAULT_VALUE} from 'ui/units/wizard/constants/shapes';
+import {
+    DEFAULT_LINE_CAP,
+    DFAULT_LINE_JOIN,
+    LINE_WIDTH_AUTO_VALUE,
+    LINE_WIDTH_DEFAULT_VALUE,
+} from 'ui/units/wizard/constants/shapes';
+import type {LineCap, LineJoin} from 'ui/units/wizard/typings/shapes';
 
 import {PaletteTypes} from '../../../constants';
 
+import type {DialogLineCapAndJoinValue} from './DialogLineCapAndJoin/DialogLineCapAndJoin';
 import {DialogShapesChartSettingsTab} from './tabs/DialogShapesChartSettingsTab';
 import {DialogShapesGraphSettingsTab} from './tabs/DialogShapesGraphSettingsTab';
 
@@ -53,6 +60,7 @@ export type ShapesState = {
     mountedShapes: Record<string, string>;
     mountedShapesLineWidths: Record<string, string>;
     chartLineWidth: string;
+    capAndJoin: DialogLineCapAndJoinValue;
     selectedValue: string | null;
 };
 
@@ -122,6 +130,10 @@ function getInitialShapesState({
         mountedShapes,
         mountedShapesLineWidths,
         chartLineWidth,
+        capAndJoin: {
+            cap: (shapesConfig.linecap as LineCap | undefined) || DEFAULT_LINE_CAP,
+            join: (shapesConfig.linejoin as LineJoin | undefined) || DFAULT_LINE_JOIN,
+        },
     };
 }
 
@@ -192,12 +204,23 @@ const DialogShapes: React.FC<Props> = ({
         }));
     }, []);
 
+    const onLineCapAndJoinChange = React.useCallback((nextValue: DialogLineCapAndJoinValue) => {
+        setShapesState((prevState) => ({
+            ...prevState,
+            capAndJoin: {cap: nextValue.cap, join: nextValue.join},
+        }));
+    }, []);
+
     const onReset = React.useCallback(() => {
         setShapesState((prevState) => ({
             ...prevState,
             mountedShapes: {},
             mountedShapesLineWidths: {},
             chartLineWidth: LINE_WIDTH_DEFAULT_VALUE,
+            capAndJoin: {
+                cap: DEFAULT_LINE_CAP,
+                join: DFAULT_LINE_JOIN,
+            },
         }));
     }, []);
 
@@ -208,12 +231,22 @@ const DialogShapes: React.FC<Props> = ({
             shapesState.mountedShapesLineWidths &&
             !Object.keys(shapesState.mountedShapesLineWidths).length;
         const isChartLineWidthDefault = shapesState.chartLineWidth === LINE_WIDTH_DEFAULT_VALUE;
+        const isCapAndJoinDefault =
+            shapesState.capAndJoin.cap === DEFAULT_LINE_CAP &&
+            shapesState.capAndJoin.join === DFAULT_LINE_JOIN;
 
-        return hasNoMountedShapes && hasNoMountedShapesLineWidths && isChartLineWidthDefault;
+        return (
+            hasNoMountedShapes &&
+            hasNoMountedShapesLineWidths &&
+            isChartLineWidthDefault &&
+            isCapAndJoinDefault
+        );
     }, [
         shapesState.mountedShapes,
         shapesState.mountedShapesLineWidths,
         shapesState.chartLineWidth,
+        shapesState.capAndJoin.cap,
+        shapesState.capAndJoin.join,
     ]);
 
     const onClose = React.useCallback(() => {
@@ -243,14 +276,18 @@ const DialogShapes: React.FC<Props> = ({
                       mountedShapesLineWidths: filteredMountedShapesLineWidths,
                   }
                 : {}),
+            linecap: shapesState.capAndJoin.cap,
+            linejoin: shapesState.capAndJoin.join,
             fieldGuid: item.guid,
         };
         onApply(nextShapesConfig);
         onClose();
     }, [
-        shapesState.mountedShapes,
         shapesState.mountedShapesLineWidths,
         shapesState.chartLineWidth,
+        shapesState.mountedShapes,
+        shapesState.capAndJoin.cap,
+        shapesState.capAndJoin.join,
         paletteType,
         item.guid,
         onApply,
@@ -306,7 +343,9 @@ const DialogShapes: React.FC<Props> = ({
                         >
                             <DialogShapesChartSettingsTab
                                 shapesState={shapesState}
+                                paletteType={paletteType}
                                 onChartLineWidthChange={onChartLineWidthChange}
+                                onLineCapAndJoinChange={onLineCapAndJoinChange}
                             />
                         </TabPanel>
                     </React.Fragment>
@@ -322,6 +361,7 @@ const DialogShapes: React.FC<Props> = ({
         item,
         items,
         onChartLineWidthChange,
+        onLineCapAndJoinChange,
         onLineWidthChange,
         onPaletteItemClick,
         options,

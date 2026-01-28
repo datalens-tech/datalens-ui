@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Flex} from '@gravity-ui/uikit';
-import type {DatasetOptions, Field, FilterField, Update} from 'shared';
+import {type DatasetOptions, type Field, type FilterField, type Update} from 'shared';
 import {PaletteTypes} from 'ui/units/wizard/constants';
 import {LINE_WIDTH_AUTO_VALUE} from 'ui/units/wizard/constants/shapes';
 
@@ -47,6 +47,7 @@ export const DialogShapesGraphSettingsTab: React.FC<Props> = ({
         shapesState.selectedValue && shapesState.mountedShapesLineWidths[shapesState.selectedValue]
             ? shapesState.mountedShapesLineWidths[shapesState.selectedValue]
             : LINE_WIDTH_AUTO_VALUE;
+    const isLineShape = paletteType === PaletteTypes.Lines;
 
     return (
         <Flex direction="row" style={{height: '100%'}}>
@@ -65,7 +66,7 @@ export const DialogShapesGraphSettingsTab: React.FC<Props> = ({
                 setShapesState={setShapesState}
             />
             <Flex direction="column" gap={4} spacing={{py: '5', px: '6'}}>
-                {paletteType === PaletteTypes.Lines && (
+                {isLineShape && (
                     <DialogLineWidth
                         allowDefault
                         value={selectedShapeLineWidth}

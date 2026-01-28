@@ -470,6 +470,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     colorGuid: colorItem?.guid || null,
                     shapeGuid: shapeItem?.guid || null,
                     measureFieldTitle: line.fieldTitle,
+                    linecap: shapesConfig?.linecap,
+                    linejoin: shapesConfig?.linejoin,
                 };
 
                 // For one point (non-zero), the setting of the connection empty values has a strange effect:
