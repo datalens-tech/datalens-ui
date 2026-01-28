@@ -29,10 +29,7 @@ import type {
     QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
-import {
-    CONNECTIONS_DASHSQL_WITH_EXPORT_INFO,
-    CONNECTION_ID_PLACEHOLDER,
-} from '../../control/url/constants';
+import {CONNECTIONS_DASHSQL, CONNECTION_ID_PLACEHOLDER} from '../../control/url/constants';
 
 import type {QLConnectionTypeMap} from './connection';
 import {convertConnectionType} from './connection';
@@ -66,6 +63,7 @@ export interface QLResultEntryMetadata {
         driver_types: (string | number)[];
         postgresql_typnames?: string[];
         bi_types: string[];
+        data_export: ApiV2DataExportField;
     };
 }
 
@@ -79,18 +77,9 @@ export interface QLResultEntryData {
     data: string[];
 }
 
-export interface QLResultOld {
+export interface QLResult {
     [key: string]: QLResultEntry[];
 }
-
-export interface QLResultWithDataExport {
-    [key: string]: {
-        events: QLResultEntry[];
-        data_export: ApiV2DataExportField;
-    };
-}
-
-export type QLResult = QLResultWithDataExport | QLResultOld;
 
 export interface QLRenderResultTable {
     head: {};
@@ -506,7 +495,7 @@ export function buildSource({
         params: QLRequestParams,
     };
 
-    const connectionsUrl = CONNECTIONS_DASHSQL_WITH_EXPORT_INFO;
+    const connectionsUrl = CONNECTIONS_DASHSQL;
 
     return {
         url: connectionsUrl.replace(CONNECTION_ID_PLACEHOLDER, id),
@@ -518,8 +507,7 @@ export function buildSource({
 export function getRows(data: QLResult, field = 'sql'): string[][] {
     let rows: string[][] = [];
 
-    const events = 'events' in data[field] ? data[field].events : data[field];
-    rows = events
+    rows = data[field]
         .filter((entry: QLResultEntry) => entry.event === 'row')
         .map((entry: QLResultEntry) => entry.data) as string[][];
 
@@ -533,8 +521,7 @@ export function getColumns(args: {
     qlConnectionTypeMap: QLConnectionTypeMap;
 }): QlConfigResultEntryMetadataDataColumn[] | null {
     const {data, connectionType, field = 'sql', qlConnectionTypeMap} = args;
-    const events = 'events' in data[field] ? data[field].events : data[field];
-    const row = events.find((entry: QLResultEntry) => entry.event === 'metadata');
+    const row = data[field].find((entry: QLResultEntry) => entry.event === 'metadata');
 
     const datalensQLConnectionType = convertConnectionType(qlConnectionTypeMap, connectionType);
 
