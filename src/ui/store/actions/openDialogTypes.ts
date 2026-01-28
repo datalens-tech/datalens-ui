@@ -1,4 +1,4 @@
-import type {OpenDialogMetricSettingsArgs} from '../../units/wizard/components/Dialogs/DialogMetricSettings/DialogMetricSettings';
+import type {OpenDialogMetricColorsArgs} from 'ui/units/wizard/components/Dialogs/DialogMetricColors/DialogMetricColors';
 import type {OpenDialogColorArgs} from '../../units/wizard/components/Dialogs/DialogColor/DialogColor';
 import type {OpenDialogFieldInspectorArgs} from '../../units/wizard/components/Dialogs/DialogFieldInspector/DialogFieldInspector';
 import type {OpenDialogShapesArgs} from '../../units/wizard/components/Dialogs/DialogShapes/DialogShapes';
@@ -68,7 +68,7 @@ import type {OpenDialogEditSharedEntryArgs} from 'ui/components/CollectionsStruc
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogReleaseVersionArgs
-    | OpenDialogMetricSettingsArgs
+    | OpenDialogMetricColorsArgs
     | OpenDialogColorArgs
     | OpenDialogFieldInspectorArgs
     | OpenDialogShapesArgs
