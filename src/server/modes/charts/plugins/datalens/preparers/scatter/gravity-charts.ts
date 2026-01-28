@@ -20,7 +20,7 @@ import type {
     PointCustomData,
     ScatterSeriesCustomData,
 } from '../../../../../../../shared/types/chartkit';
-import {getBaseChartConfig} from '../../gravity-charts/utils';
+import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
@@ -228,11 +228,14 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
               visualizationId,
           })
         : undefined;
+    const yAxisBaseConfig = getYAxisBaseConfig({
+        chartConfig: shared,
+    });
 
     const config: ChartData = {
         xAxis,
         yAxis: [
-            {
+            merge(yAxisBaseConfig, {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                     html:
@@ -240,7 +243,7 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
                         (isHtmlField(y) || isMarkdownField(y) || isMarkupField(y)),
                 },
                 maxPadding: 0,
-            },
+            }),
         ],
         series: {
             data: graphs.map((graph) => ({

@@ -13,7 +13,7 @@ import {
     isMarkupField,
 } from '../../../../../../../shared';
 import type {ExtendedChartData} from '../../../../../../../shared/types/chartkit';
-import {getBaseChartConfig} from '../../gravity-charts/utils';
+import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {colorizeByColorValues} from '../../utils/color-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
@@ -230,9 +230,13 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         };
     }
 
+    const axisBaseConfig = getYAxisBaseConfig({
+        chartConfig: shared,
+    });
+
     if (hasCategories) {
         config.yAxis = [
-            {
+            merge(axisBaseConfig, {
                 type: 'category',
                 categories: categories as string[],
                 order: 'reverse',
@@ -242,7 +246,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                     maxWidth: '33%',
                     padding: 0,
                 },
-            },
+            }),
         ];
     } else {
         const axisLabelNumberFormat = yPlaceholder
@@ -253,14 +257,14 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             : undefined;
 
         config.yAxis = [
-            {
+            merge(axisBaseConfig, {
                 labels: {
                     enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
                 maxPadding: 0,
                 order: 'reverse',
-            },
+            }),
         ];
     }
 
