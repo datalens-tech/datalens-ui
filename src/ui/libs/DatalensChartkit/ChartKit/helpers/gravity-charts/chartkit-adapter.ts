@@ -63,6 +63,10 @@ export function getGravityChartsChartKitData(args: {
 
     const result = merge({}, chartWidgetData, widgetData);
 
+    if (result.title) {
+        result.title.qa = 'g-charts-title';
+    }
+
     if (!result.tooltip) {
         result.tooltip = {};
     }

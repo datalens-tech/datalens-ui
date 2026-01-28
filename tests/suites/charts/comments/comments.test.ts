@@ -35,7 +35,8 @@ datalensTest.describe('Chart comments', () => {
             expect(comments).toHaveLength(1);
 
             // the comment caption is displayed on the graph
-            await wizardPage.chartkit.getCommentByText(SELECTORS.comment);
+            const comment = wizardPage.page.getByText(SELECTORS.comment);
+            await expect(comment).toBeVisible();
         },
     );
     datalensTest('Switching the display of comments', async ({page}: {page: Page}) => {

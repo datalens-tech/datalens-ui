@@ -29,9 +29,9 @@ export default class ChartKit {
     chartMenuList = slct('chart-dropdown-menu');
     commentsSelector = '.highcharts-comment';
     alertLimitSelector = '.highcharts-plot-band';
-    xAxisLabel = '.highcharts-xaxis-labels text';
-    chartTitle = '.highcharts-title';
-    navigator = '.highcharts-navigator';
+    xAxisLabel = '.highcharts-xaxis-labels text, .gcharts-x-axis__label';
+    chartTitle = ['.highcharts-title', slct('g-charts-title')].join();
+    navigator = '.highcharts-navigator, .gcharts-range-slider';
     metricItemSelector = ['.chartkit-indicator__item', slct(ChartQa.Chart)].join();
     metricItemValueSelector = '.chartkit-indicator__item-value,.markup-metric-value';
     metricItemTitleSelector = '.chartkit-indicator__item-title,.markup-metric-title';
@@ -39,8 +39,10 @@ export default class ChartKit {
     private paginatorSelector = '.chartkit-table-paginator';
     private tableHeadCellSelector = '.data-table__head-cell';
     private layerLegendSelector = '.chartkit .chartkit-ymap-legend-layer';
-    private labelsSelector = '.highcharts-data-labels .highcharts-data-label';
-    private chartkitSeriesRect = '.chartkit-highcharts rect.highcharts-point';
+    private labelsSelector =
+        '.highcharts-data-labels .highcharts-data-label, .gcharts-line__label, .gcharts-bar-x__label';
+    private chartkitSeriesRect =
+        '.chartkit-highcharts rect.highcharts-point, .gcharts-bar-x__segment';
 
     private page: Page;
 
@@ -81,11 +83,11 @@ export default class ChartKit {
 
     async getComments() {
         // while in the tests we take into account only comments-lines, for areas and so on, the logic may be different
-        return await this.page.$$(`path${this.commentsSelector}`);
-    }
+        const locator = this.page
+            .locator(`path${this.commentsSelector}`)
+            .or(this.page.locator(slct(ChartQa.CommentLabel)));
 
-    async getCommentByText(commentText: string) {
-        return await this.page.$$(`text${this.commentsSelector} >> ${commentText}`);
+        return await locator.all();
     }
 
     async openScreenshotDialog() {
