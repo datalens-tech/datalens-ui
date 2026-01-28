@@ -15,6 +15,7 @@ import type {
 import {
     PlaceholderId,
     WizardVisualizationId,
+    isMarkupField,
     isYAGRVisualization,
 } from '../../../../../../../shared';
 import type {DataLensApiError, DatalensGlobalState} from '../../../../../../index';
@@ -110,6 +111,12 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         visualization.id === WizardVisualizationId.Metric &&
                         placeholder.id === PlaceholderId.Colors
                     ) {
+                        const isMarkup = isMarkupField(
+                            placeholders.find(({id}) => id === PlaceholderId.Measures)?.items[0],
+                        );
+                        if (isMarkup) {
+                            return null;
+                        }
                         return (
                             <MetricColorsPlaceholder
                                 key={`${placeholder.id}-placeholder-component`}

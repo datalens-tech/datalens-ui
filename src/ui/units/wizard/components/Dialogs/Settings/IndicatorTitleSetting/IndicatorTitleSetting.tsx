@@ -31,12 +31,13 @@ type Props = {
     title: string;
     fontSize?: string;
     onUpdate: (settings: {mode: IndicatorTitleMode; title: string; fontSize?: string}) => void;
+    isMarkup?: boolean;
 };
 
 const b = block('indicator-title-setting');
 
 const IndicatorTitleSetting: React.FC<Props> = (props: Props) => {
-    const {mode, title, fontSize = DEFAULT_FONT_SIZE, onUpdate} = props;
+    const {mode, title, fontSize = DEFAULT_FONT_SIZE, onUpdate, isMarkup} = props;
 
     const handleUpdateMode = (value: string) => {
         onUpdate({mode: value as IndicatorTitleMode, title, fontSize});
@@ -80,16 +81,18 @@ const IndicatorTitleSetting: React.FC<Props> = (props: Props) => {
                     />
                 </div>
             )}
-            <div className={b('row')} data-qa={ChartSettingsDialogQA.IndicatorFontSize}>
-                <div className={b('title')}>{i18n('wizard', 'label_font-size')}</div>
-                <RadioButton value={fontSize} onUpdate={handleUpdateFontSize}>
-                    {FONT_SIZES.map((size, index) => (
-                        <RadioButton.Option key={size} value={size}>
-                            {FONT_SIZE_LABELS[index]}
-                        </RadioButton.Option>
-                    ))}
-                </RadioButton>
-            </div>
+            {!isMarkup && (
+                <div className={b('row')} data-qa={ChartSettingsDialogQA.IndicatorFontSize}>
+                    <div className={b('title')}>{i18n('wizard', 'label_font-size')}</div>
+                    <RadioButton value={fontSize} onUpdate={handleUpdateFontSize}>
+                        {FONT_SIZES.map((size, index) => (
+                            <RadioButton.Option key={size} value={size}>
+                                {FONT_SIZE_LABELS[index]}
+                            </RadioButton.Option>
+                        ))}
+                    </RadioButton>
+                </div>
+            )}
         </div>
     );
 };

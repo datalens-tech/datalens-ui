@@ -36,6 +36,7 @@ import {
     ZoomMode,
     getIsNavigatorAvailable,
     isDateField,
+    isMarkupField,
     isTreeField,
 } from 'shared';
 import {isTooltipSumEnabled} from 'shared/modules/wizard';
@@ -538,6 +539,9 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     renderTitleMode() {
         const {visualization} = this.props;
         if (visualization.id === WizardVisualizationId.Metric) {
+            const isMarkup = isMarkupField(
+                visualization.placeholders.find(({id}) => id === PlaceholderId.Measures)?.items[0],
+            );
             return (
                 <IndicatorTitleSetting
                     mode={this.state.indicatorTitleMode}
@@ -550,6 +554,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                             metricFontSize: settings.fontSize,
                         });
                     }}
+                    isMarkup={isMarkup}
                 />
             );
         }
