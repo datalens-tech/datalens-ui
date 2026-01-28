@@ -47,7 +47,12 @@ export const LineWidthSelect = React.memo(
                         value={LINE_WIDTH_AUTO_VALUE}
                         qa={DialogShapeSettings.LineWidthSelectOption}
                     >
-                        <Flex style={{height: '100%'}} direction="column" justifyContent="center">
+                        <Flex
+                            style={{height: '100%'}}
+                            direction="column"
+                            justifyContent="center"
+                            qa={LINE_WIDTH_AUTO_VALUE}
+                        >
                             {i18n('wizard', 'label_line-width-auto-value')}
                         </Flex>
                     </Select.Option>,

@@ -8,6 +8,7 @@ import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualizat
 import {ColorValue} from '../../../../page-objects/wizard/ColorDialog';
 import {DOMNamedAttributes} from '../../../../page-objects/wizard/ChartKit';
 import {
+    LINE_WIDTH_AUTO_VALUE,
     LINE_WIDTH_MAX_VALUE,
     LINE_WIDTH_MIN_VALUE,
     LINE_WIDTH_VALUE_STEP,
@@ -122,7 +123,7 @@ datalensTest.describe('Wizard', () => {
             expect(await optionElements.count()).toEqual(expectedOptionsCount);
 
             const autoOption = optionElements.nth(0);
-            await expect(autoOption).toContainText('Автоматически');
+            await expect(autoOption.locator(`[data-qa="${LINE_WIDTH_AUTO_VALUE}"]`)).toBeVisible();
 
             for (
                 let i = LINE_WIDTH_MIN_VALUE;
@@ -136,7 +137,7 @@ datalensTest.describe('Wizard', () => {
             }
         });
 
-        datalensTest('User can set auto line width', async ({page}) => {
+        datalensTest('User can set default line width', async ({page}) => {
             const wizardPage = new WizardPage({page});
 
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'Category');
@@ -144,27 +145,14 @@ datalensTest.describe('Wizard', () => {
 
             const chartLineWidth = '7';
 
-            // 1. Open shape dialog
             await wizardPage.shapeDialog.open();
-
-            // 2. Switch to chart-wide settings tab
             await wizardPage.shapeDialog.switchToChartSettingsTab();
-
-            // 3. Set chart-wide line width
             await wizardPage.shapeDialog.changeChartLineWidth(chartLineWidth);
-
-            // 4. Switch back to individual line settings tab
             await wizardPage.shapeDialog.switchToGraphSettingsTab();
-
-            // 5. Select auto (default) line width for the line
             await wizardPage.shapeDialog.selectDefaultLineWidth();
-
-            // 6. Apply settings
             await wizardPage.shapeDialog.apply();
-
             await wizardPage.chartkit.waitUntilLoaderExists();
 
-            // 7. Verify that line width equals the chart-wide setting
             const updatedLineWidths = await wizardPage.chartkit.getAttributeFromLines(
                 DOMNamedAttributes.StrokeWidth,
             );
