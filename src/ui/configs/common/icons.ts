@@ -21,6 +21,7 @@ import visColumn from 'assets/icons/vis-column.svg';
 import visCombined from 'assets/icons/vis-combined.svg';
 import visDonut from 'assets/icons/vis-donut.svg';
 import visFlatTable from 'assets/icons/vis-flat-table.svg';
+import visFunnel from 'assets/icons/vis-funnel.svg';
 import visGeolayers from 'assets/icons/vis-geolayers.svg';
 import visHeatmap from 'assets/icons/vis-heatmap.svg';
 import visLines from 'assets/icons/vis-lines.svg';
@@ -47,6 +48,7 @@ export default {
     visPie,
     visPivot,
     visTreemap,
+    visFunnel,
     visHeatmap,
     collectionColored,
     collectionColoredDark,
