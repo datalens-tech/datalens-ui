@@ -6,6 +6,7 @@
   "button_open-actual": "Open actual",
   "button_open-draft": "Open draft",
   "button_open-revisions": "Show in history",
+  "context-menu_copy-id": "Copy ID",
   "label_already-editing-entry": "This {{scope}} is already being edited",
   "label_by": "by",
   "label_chart": "chart",
@@ -23,5 +24,7 @@
   "label_of-dash": "of dashboard",
   "label_of-dataset": "of dataset",
   "label_of-editor": "of editor",
-  "label_unexpected-error": "Error"
+  "label_unexpected-error": "Error",
+  "toast_copy-error": "Copy error",
+  "toast_copy-id-success": "ID copied to clipboard"
 }

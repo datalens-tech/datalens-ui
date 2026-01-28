@@ -28,7 +28,7 @@ const DATE_FORMAT = 'DD MMMM YYYY';
 const TIME_FORMAT = 'H:mm:ss';
 const TOOLTIP_DELAY_CLOSING = 100;
 
-const contextMenuI18n = I18n.keyset('component.entry-context-menu.view');
+const contextMenuI18n = I18n.keyset('component.revisions-panel.view');
 
 const b = block('revisions-list');
 
@@ -72,10 +72,10 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
                         copyText: item.revId,
                         successText: contextMenuI18n('toast_copy-id-success'),
                         errorText: contextMenuI18n('toast_copy-error'),
-                        toastName: 'toast-menu-copy-link',
+                        toastName: 'toast-menu-copy-id',
                     });
                 },
-                text: contextMenuI18n('value_copy-id'),
+                text: contextMenuI18n('context-menu_copy-id'),
                 iconStart: <Icon size={16} data={iconId} />,
             },
         ],
