@@ -37,4 +37,5 @@ export type ExportMenuAction = (
     onExportLoading?: ExportChartArgs['onExportLoading'],
     hasAccessToBusinessFeature?: boolean,
     format?: typeof EXPORT_FORMATS.XLSX | typeof EXPORT_FORMATS.CSV,
+    extraOptions?: Record<string, unknown>,
 ) => (chartData: ExportActionArgs) => void | MenuActionComponent;
