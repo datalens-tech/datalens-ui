@@ -135,5 +135,42 @@ datalensTest.describe('Wizard', () => {
                 await expect(optionElement.locator(`[data-qa="${optionValue}"]`)).toBeVisible();
             }
         });
+
+        datalensTest('User can set auto line width', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'Category');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
+
+            const chartLineWidth = '7';
+
+            // 1. Open shape dialog
+            await wizardPage.shapeDialog.open();
+
+            // 2. Switch to chart-wide settings tab
+            await wizardPage.shapeDialog.switchToChartSettingsTab();
+
+            // 3. Set chart-wide line width
+            await wizardPage.shapeDialog.changeChartLineWidth(chartLineWidth);
+
+            // 4. Switch back to individual line settings tab
+            await wizardPage.shapeDialog.switchToGraphSettingsTab();
+
+            // 5. Select auto (default) line width for the line
+            await wizardPage.shapeDialog.selectDefaultLineWidth();
+
+            // 6. Apply settings
+            await wizardPage.shapeDialog.apply();
+
+            await wizardPage.chartkit.waitUntilLoaderExists();
+
+            // 7. Verify that line width equals the chart-wide setting
+            const updatedLineWidths = await wizardPage.chartkit.getAttributeFromLines(
+                DOMNamedAttributes.StrokeWidth,
+            );
+
+            expect(updatedLineWidths.length).toEqual(1);
+            expect(updatedLineWidths[0]).toEqual(chartLineWidth);
+        });
     });
 });

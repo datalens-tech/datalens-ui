@@ -3,6 +3,7 @@ import React from 'react';
 import {ChevronDown} from '@gravity-ui/icons';
 import {Flex, Icon, Select, type SelectProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {i18n} from 'i18n';
 import {DialogShapeSettings} from 'shared';
 
 import {
@@ -24,10 +25,6 @@ interface LineWidthSelectProps {
 
 const EMPTY_VALUE: string[] = [];
 const SELECT_WIDTH = 136;
-
-const I18N_STUB = {
-    'line-width-auto-value-label': 'Автоматически',
-};
 
 export const LineWidthSelect = React.memo(
     ({value, onChange, allowDefault}: LineWidthSelectProps) => {
@@ -51,7 +48,7 @@ export const LineWidthSelect = React.memo(
                         qa={DialogShapeSettings.LineWidthSelectOption}
                     >
                         <Flex style={{height: '100%'}} direction="column" justifyContent="center">
-                            {I18N_STUB['line-width-auto-value-label']}
+                            {i18n('wizard', 'label_line-width-auto-value')}
                         </Flex>
                     </Select.Option>,
                 );
@@ -106,7 +103,7 @@ export const LineWidthSelect = React.memo(
                         qa={DialogShapeSettings.LineWidthSelectControl}
                     >
                         {isAutoValue ? (
-                            <span>{I18N_STUB['line-width-auto-value-label']}</span>
+                            <span>{i18n('wizard', 'label_line-width-auto-value')}</span>
                         ) : (
                             <span className={b('option-line')} style={{height: `${value}px`}} />
                         )}

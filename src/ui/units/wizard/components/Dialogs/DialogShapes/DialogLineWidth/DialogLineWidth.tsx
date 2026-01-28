@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {Flex, Text} from '@gravity-ui/uikit';
+import {i18n} from 'i18n';
 import NumberInput from 'ui/components/NumberFormatSettings/NumberInput/NumberInput';
 import {
     LINE_WIDTH_AUTO_VALUE,
@@ -16,11 +17,6 @@ interface DialogLineWidthProps {
     style?: React.CSSProperties;
     allowDefault?: boolean;
 }
-
-// TODO: Fix in a separate branch
-const I18N_STUB = {
-    'dialog-line-width-title': 'Толщина линии',
-};
 
 export const DialogLineWidth = React.memo(
     ({value, onChange, allowDefault, style}: DialogLineWidthProps) => {
@@ -59,7 +55,7 @@ export const DialogLineWidth = React.memo(
         return (
             <Flex direction="column" gap={2} style={style}>
                 <Flex direction="row" alignItems="center" justifyContent="space-between">
-                    <Text variant="body-1">{I18N_STUB['dialog-line-width-title']}</Text>
+                    <Text variant="body-1">{i18n('wizard', 'label_dialog-line-width')}</Text>
                     <LineWidthSelect
                         allowDefault={allowDefault}
                         value={value}

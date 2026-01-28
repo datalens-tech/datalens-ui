@@ -197,7 +197,10 @@ export const enum ChartSettingsDialogQA {
 }
 
 export const enum DialogShapeSettings {
-    LineSettingsScopeTab = 'line-settings-scope-tab',
+    LineSettingsGraphScopeTabPanel = 'line-settings-graph-scope-tab-panel',
+    LineSettingsChartScopeTabPanel = 'line-settings-chart-scope-tab-panel',
+    LineSettingsGraphScopeTab = 'line-settings-graph-scope-tab',
+    LineSettingsChartScopeTab = 'line-settings-chart-scope-tab',
     LineWidthSelectControl = 'line-width-select-control',
     LineWidthSelectOption = 'line-width-select-option',
 }

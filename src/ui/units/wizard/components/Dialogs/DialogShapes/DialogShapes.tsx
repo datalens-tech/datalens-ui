@@ -56,20 +56,22 @@ export type ShapesState = {
     selectedValue: string | null;
 };
 
-// TODO: Fix in a separate branch
-const I18N_STUB = {
-    'dialog-shapes-line-settings-tab-title': 'Линии',
-    'dialog-shapes-chart-settings-tab-title': 'Общие настройки',
-};
-
 const SETTINGS_SCOPE = {
-    LINE: 'line-shapes-settings',
+    GRAPH: 'graph-shapes-settings',
     CHART: 'chart-shapes-settings',
 } as const;
 
 const SETTINGS_SCOPE_TABS = [
-    {title: I18N_STUB['dialog-shapes-line-settings-tab-title'], value: SETTINGS_SCOPE.LINE},
-    {title: I18N_STUB['dialog-shapes-chart-settings-tab-title'], value: SETTINGS_SCOPE.CHART},
+    {
+        title: i18n('wizard', 'label_dialog-shapes-line-settings-tab'),
+        value: SETTINGS_SCOPE.GRAPH,
+        qa: DialogShapeSettings.LineSettingsGraphScopeTab,
+    },
+    {
+        title: i18n('wizard', 'label_dialog-shapes-chart-settings-tab'),
+        value: SETTINGS_SCOPE.CHART,
+        qa: DialogShapeSettings.LineSettingsChartScopeTab,
+    },
 ];
 
 type GetInitialShapesStateArgs = {
@@ -139,7 +141,7 @@ const DialogShapes: React.FC<Props> = ({
     paletteType,
 }: Props) => {
     const [activeTab, setActiveTab] = React.useState<ValueOf<typeof SETTINGS_SCOPE>>(
-        SETTINGS_SCOPE.LINE,
+        SETTINGS_SCOPE.GRAPH,
     );
     const [shapesState, setShapesState] = React.useState<ShapesState>(() =>
         getInitialShapesState({shapesConfig, paletteType, items}),
@@ -263,17 +265,17 @@ const DialogShapes: React.FC<Props> = ({
             >
                 <Flex direction="column" style={{width: '100%', height: '100%'}}>
                     <TabList style={{padding: '0 32px', flexShrink: 0}}>
-                        {SETTINGS_SCOPE_TABS.map(({title, value}) => (
-                            <Tab key={value} value={value}>
+                        {SETTINGS_SCOPE_TABS.map(({title, value, qa}) => (
+                            <Tab key={value} value={value} qa={qa}>
                                 {title}
                             </Tab>
                         ))}
                     </TabList>
                     <React.Fragment>
                         <TabPanel
-                            value={SETTINGS_SCOPE.LINE}
+                            value={SETTINGS_SCOPE.GRAPH}
                             style={{height: '100%'}}
-                            qa={DialogShapeSettings.LineSettingsScopeTab}
+                            qa={DialogShapeSettings.LineSettingsGraphScopeTabPanel}
                         >
                             <DialogShapesGraphSettingsTab
                                 item={item}
@@ -297,7 +299,11 @@ const DialogShapes: React.FC<Props> = ({
                                 onLineWidthChange={onLineWidthChange}
                             />
                         </TabPanel>
-                        <TabPanel value={SETTINGS_SCOPE.CHART}>
+                        <TabPanel
+                            value={SETTINGS_SCOPE.CHART}
+                            style={{height: '100%'}}
+                            qa={DialogShapeSettings.LineSettingsChartScopeTabPanel}
+                        >
                             <DialogShapesChartSettingsTab
                                 shapesState={shapesState}
                                 onChartLineWidthChange={onChartLineWidthChange}
