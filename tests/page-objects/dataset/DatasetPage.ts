@@ -14,7 +14,6 @@ import {BasePage, BasePageProps} from '../BasePage';
 import DialogParameter from '../common/DialogParameter';
 
 import DatasetTabSection from './DatasetTabSection';
-import {CollectionIds} from '../../constants/constants';
 import {SharedEntriesPermissionsDialogQa} from '../../../src/shared';
 
 export interface DatasetPageProps extends BasePageProps {}
@@ -57,8 +56,8 @@ class DatasetPage extends BasePage {
 
     async createDatasetInWorkbookOrCollection({
         name = uuidv1(),
-        isSharedDataset = false,
-    }: {name?: string; isSharedDataset?: boolean} = {}) {
+        collectionId,
+    }: {name?: string; collectionId?: string} = {}) {
         const dsCreateBtn = this.page.locator(slct(DatasetActionQA.CreateButton));
         await dsCreateBtn.click();
 
@@ -76,9 +75,9 @@ class DatasetPage extends BasePage {
         // create connection
         await dialogApplyButton.click();
         try {
-            if (isSharedDataset) {
+            if (collectionId) {
                 await this.page.waitForURL(() => {
-                    return this.page.url().endsWith(CollectionIds.E2ESharedEntriesCollection);
+                    return this.page.url().endsWith(collectionId);
                 });
             } else {
                 await this.page.waitForURL(() => {
@@ -118,9 +117,15 @@ class DatasetPage extends BasePage {
         return await input.inputValue();
     }
 
-    async setDelegationAndSaveSharedDataset(
-        {name, delegation}: {name?: string; delegation?: boolean} = {delegation: true},
-    ) {
+    async setDelegationAndSaveSharedDataset({
+        name,
+        delegation = true,
+        collectionId,
+    }: {
+        name?: string;
+        delegation?: boolean;
+        collectionId: string;
+    }) {
         if (delegation) {
             const delegateBtn = await this.page.waitForSelector(
                 slct(SharedEntriesPermissionsDialogQa.DelegateBtn),
@@ -143,7 +148,7 @@ class DatasetPage extends BasePage {
         await this.addAvatarByDragAndDrop();
 
         const dsName = await this.createDatasetInWorkbookOrCollection({
-            isSharedDataset: true,
+            collectionId,
             name,
         });
 

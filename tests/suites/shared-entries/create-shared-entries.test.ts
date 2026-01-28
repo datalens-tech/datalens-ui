@@ -1,56 +1,24 @@
-import {Page} from '@playwright/test';
-
-import ConnectionsPage from '../../page-objects/connections/ConnectionsPage';
-import DatasetPage from '../../page-objects/dataset/DatasetPage';
-import {CollectionsPagePO} from '../../page-objects/collections';
-import {CollectionsUrls} from '../../constants/constants';
 import datalensTest from '../../utils/playwright/globalTestDefinition';
+import {Page} from '@playwright/test';
+import DatasetPage from '../../page-objects/dataset/DatasetPage';
 import {openTestPage, slct} from '../../utils';
+import {CollectionIds, CollectionsUrls, SharedEntryNames} from '../../constants/constants';
+import {CollectionsPagePO} from '../../page-objects/collections';
 import {
     CollectionContentTableQa,
-    CollectionTableRowQa,
     ConnectionsFormQA,
     DatasetSourcesLeftPanelQA,
     DialogCollectionStructureQa,
     EntryScope,
-    SharedEntriesBindingsDialogQa,
 } from '../../../src/shared';
+import ConnectionsPage from '../../page-objects/connections/ConnectionsPage';
 
 const billingConnectionTitle = 'Yandex Cloud Billing';
 
-datalensTest.describe('Shared entries create', () => {
-    datalensTest.describe.configure({mode: 'serial'});
-
-    let page: Page;
-    const dsName: string[] = [];
-    let connName: string;
+datalensTest.describe('Shared entries creation', () => {
     const url = CollectionsUrls.E2ESharedEntriesCollection;
 
-    datalensTest.beforeAll(async ({browser}) => {
-        const context = await browser.newContext();
-        page = await context.newPage();
-    });
-
-    datalensTest.afterAll(async () => {
-        await openTestPage(page, url);
-        await page.waitForSelector(slct(CollectionContentTableQa.EntryLinkRow));
-
-        for (const entryName of [...dsName, connName]) {
-            const entryRow = page.locator(slct(CollectionContentTableQa.EntryLinkRow), {
-                hasText: entryName,
-            });
-            const entryContextMenuBtn = entryRow.locator(
-                slct(CollectionTableRowQa.CollectionRowDropdownMenuBtn),
-            );
-            await entryContextMenuBtn.click();
-            await page.locator(slct(CollectionTableRowQa.CollectionDropdownMenuDeleteBtn)).click();
-            const dialogApply = page.locator(slct(SharedEntriesBindingsDialogQa.ApplyDeleteBtn));
-            await dialogApply.click();
-        }
-        await page.context().close();
-    });
-
-    datalensTest('Shared connection create should be success @yc', async () => {
+    datalensTest('Shared connection create should be success @yc', async ({page}) => {
         const collectionPage = new CollectionsPagePO({page});
 
         await openTestPage(page, url);
@@ -65,12 +33,14 @@ datalensTest.describe('Shared entries create', () => {
         );
         // unselect checkbox to prevent template objects creation
         await checkbox.click();
-        connName = await connectionsPage.createConnectionInWorkbookOrCollection({
-            isSharedConnection: true,
+        const connName = await connectionsPage.createConnectionInWorkbookOrCollection({
+            collectionId: CollectionIds.E2ESharedEntriesCollection,
         });
+
+        await collectionPage.removeSharedEntry({entryName: connName});
     });
 
-    datalensTest('Shared dataset create should be success @yc', async () => {
+    datalensTest('Shared dataset create should be success @yc', async ({page}) => {
         const collectionPage = new CollectionsPagePO({page});
 
         await openTestPage(page, url);
@@ -86,17 +56,19 @@ datalensTest.describe('Shared entries create', () => {
 
         const sharedConn = page
             .locator(slct(DialogCollectionStructureQa.ListItem))
-            .filter({hasText: connName});
+            .filter({hasText: SharedEntryNames.connection});
         await sharedConn.click();
-        const name = await datasetPage.setDelegationAndSaveSharedDataset();
-        dsName.push(name);
+        const name = await datasetPage.setDelegationAndSaveSharedDataset({
+            collectionId: CollectionIds.E2ESharedEntriesCollection,
+        });
+        await collectionPage.removeSharedEntry({entryName: name});
     });
 
-    datalensTest('Shared dataset must be created from shared connection @yc', async () => {
+    datalensTest('Shared dataset must be created from shared connection @yc', async ({page}) => {
         await openTestPage(page, url);
         await page.waitForSelector(slct(CollectionContentTableQa.EntryLinkRow));
         const currentConnection = page.locator(slct(CollectionContentTableQa.EntryLinkRow), {
-            hasText: connName,
+            hasText: SharedEntryNames.connection,
         });
         await currentConnection.click();
         const connectionsPage = new ConnectionsPage({page});
@@ -105,7 +77,10 @@ datalensTest.describe('Shared entries create', () => {
         );
         await connectionsPage.createDataset();
         const datasetPage = new DatasetPage({page: await newTabPage});
-        const name = await datasetPage.setDelegationAndSaveSharedDataset();
-        dsName.push(name);
+        const name = await datasetPage.setDelegationAndSaveSharedDataset({
+            collectionId: CollectionIds.E2ESharedEntriesCollection,
+        });
+        const collectionPage = new CollectionsPagePO({page: await newTabPage});
+        await collectionPage.removeSharedEntry({entryName: name});
     });
 });

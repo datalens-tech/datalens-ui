@@ -7,7 +7,7 @@ import {
     EntryScope,
     SharedEntriesPermissionsDialogQa,
 } from '../../../src/shared';
-import {CollectionsUrls} from '../../constants/constants';
+import {CollectionsUrls, URL_QUERY} from '../../constants/constants';
 import {Workbook} from '../../page-objects/workbook/Workbook';
 import {CollectionsPagePO} from '../../page-objects/collections';
 import {Page} from '@playwright/test';
@@ -15,6 +15,7 @@ import {Page} from '@playwright/test';
 datalensTest.describe('Add shared entry to workbook', () => {
     let workbookName: string;
     let page: Page;
+
     datalensTest.beforeAll(async ({browser}) => {
         const context = await browser.newContext();
         page = await context.newPage();
@@ -23,6 +24,7 @@ datalensTest.describe('Add shared entry to workbook', () => {
         await openTestPage(page, url);
         workbookName = await collectionPage.createWorkbook();
     });
+
     datalensTest.beforeEach(async () => {
         const url = CollectionsUrls.E2ESharedEntriesCollection;
         await openTestPage(page, url);
@@ -32,7 +34,6 @@ datalensTest.describe('Add shared entry to workbook', () => {
         });
         await wb.click();
         await page.waitForURL(() => {
-            //TODO
             return page.url().includes('workbook');
         });
     });
@@ -54,6 +55,7 @@ datalensTest.describe('Add shared entry to workbook', () => {
         await confirm.click();
         await page.context().close();
     });
+
     datalensTest('Shared connection should be success added to workbook @yc', async () => {
         const workbookPage = new Workbook(page);
 
@@ -66,8 +68,7 @@ datalensTest.describe('Add shared entry to workbook', () => {
         );
         await bindedConnection.click();
         await page.waitForURL(() => {
-            //TODO
-            return page.url().includes('bindedWorkbookId');
+            return page.url().includes(URL_QUERY.BINDED_WORKBOOK);
         });
     });
 
@@ -80,8 +81,7 @@ datalensTest.describe('Add shared entry to workbook', () => {
         const bindedDataset = await workbookPage.findFirstItemByScope(EntryScope.Dataset, true);
         await bindedDataset.click();
         await page.waitForURL(() => {
-            //TODO
-            return page.url().includes('bindedWorkbookId');
+            return page.url().includes(URL_QUERY.BINDED_WORKBOOK);
         });
     });
 });

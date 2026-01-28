@@ -20,3 +20,14 @@ export const SharedEntryIds = {
     connection: '0qouuqzxk3ick',
     dataset: 'c2069elywgg4w',
 } as const;
+
+export const SharedEntryNames = {
+    connection: 'Shared connection for workbook test',
+    dataset: 'Shared dataset for workbook test',
+};
+
+export const URL_QUERY = {
+    BINDED_WORKBOOK: 'bindedWorkbookId',
+    BINDED_DATASET_WOKRBOOK_ID: 'bindedDatasetWorkbookId',
+    BINDED_DATASET: 'bindedDatasetId',
+};
