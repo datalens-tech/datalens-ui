@@ -1,9 +1,46 @@
 import React from 'react';
 
-import {Button, TextInput} from '@gravity-ui/uikit';
+import {Minus, Plus} from '@gravity-ui/icons';
+import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import type {ValueOf} from 'shared';
 
 import './NumberInput.scss';
+
+const STEP_BUTTON_DIRECTION = {
+    Plus: '+',
+    Minus: '-',
+} as const;
+
+type StepButtonDirection = ValueOf<typeof STEP_BUTTON_DIRECTION>;
+
+interface StepButtonProps {
+    direction: StepButtonDirection;
+    disabled: boolean;
+    onClick: () => void;
+}
+
+const DIRECTION_CONFIG: Record<
+    StepButtonDirection,
+    {icon: typeof Plus | typeof Minus; pin: 'brick-round' | 'round-brick'}
+> = {
+    [STEP_BUTTON_DIRECTION.Plus]: {icon: Plus, pin: 'brick-round'},
+    [STEP_BUTTON_DIRECTION.Minus]: {icon: Minus, pin: 'round-brick'},
+};
+
+const b = block('wizard-number-input');
+
+const StepButton: React.FC<StepButtonProps> = ({direction, disabled, onClick}) => {
+    const {icon, pin} = DIRECTION_CONFIG[direction];
+
+    return (
+        <div className={b('input-button')}>
+            <Button view="outlined" pin={pin} width="max" disabled={disabled} onClick={onClick}>
+                <Icon data={icon} />
+            </Button>
+        </div>
+    );
+};
 
 interface NumberInputProps {
     value: number;
@@ -13,9 +50,6 @@ interface NumberInputProps {
     qa?: string;
 }
 
-const b = block('wizard-number-input');
-const DEFAULT_VALUE = 0;
-
 const NumberInput: React.FC<NumberInputProps> = ({
     value,
     onChange,
@@ -23,43 +57,96 @@ const NumberInput: React.FC<NumberInputProps> = ({
     min = -Infinity,
     qa,
 }) => {
-    const onBlur = React.useCallback(() => {
-        if (Number.isNaN(value)) {
-            onChange(DEFAULT_VALUE);
-        }
-    }, [onChange, value]);
+    const [internalValue, setInternalValue] = React.useState<string>(String(value));
 
-    const onInput = React.useCallback((newValue) => onChange(parseInt(newValue, 10)), [onChange]);
+    React.useEffect(() => {
+        setInternalValue(String(value));
+    }, [value]);
 
-    const onPlus = React.useCallback(() => {
-        const newValue = Number.isNaN(value) ? DEFAULT_VALUE : Math.min(value + 1, max);
-        onChange(newValue);
-    }, [max, onChange, value]);
+    const commitValue = React.useCallback(
+        (newValue: number) => {
+            setInternalValue(String(newValue));
+            onChange(newValue);
+        },
+        [onChange],
+    );
 
-    const onMinus = React.useCallback(() => {
-        const newValue = Number.isNaN(value) ? DEFAULT_VALUE : Math.max(value - 1, min);
-        onChange(newValue);
-    }, [min, onChange, value]);
+    const clampAndCommit = React.useCallback(
+        (delta = 0) => {
+            const parsed = parseInt(internalValue, 10);
+            const baseValue = Number.isNaN(parsed) ? value : parsed;
+            const newValue = baseValue + delta;
 
-    const memorizedInputAttrs = React.useMemo(() => ({min, max}), [min, max]);
+            commitValue(Math.max(min, Math.min(max, newValue)));
+        },
+        [internalValue, min, max, commitValue, value],
+    );
+
+    const onBlur = React.useCallback(
+        (e: React.FocusEvent<HTMLInputElement>) => {
+            const relatedTarget = e.relatedTarget as HTMLElement | null;
+            if (relatedTarget?.closest(`.${b('input-button')}`)) {
+                return;
+            }
+
+            clampAndCommit();
+        },
+        [clampAndCommit],
+    );
+
+    const onKeyDown = React.useCallback(
+        (e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+                clampAndCommit();
+            }
+        },
+        [clampAndCommit],
+    );
+
+    const onInput = React.useCallback((newValue: string) => {
+        setInternalValue(newValue);
+    }, []);
+
+    const onPlus = React.useCallback(() => clampAndCommit(1), [clampAndCommit]);
+
+    const onMinus = React.useCallback(() => clampAndCommit(-1), [clampAndCommit]);
+
+    const memorizedInputAttrs: React.InputHTMLAttributes<HTMLInputElement> = React.useMemo(
+        () => ({
+            min: Number.isFinite(min) ? min : undefined,
+            max: Number.isFinite(max) ? max : undefined,
+            style: {textAlign: 'center'},
+        }),
+        [min, max],
+    );
+
+    const parsedInternal = parseInt(internalValue, 10);
+    const isMinusDisabled = !Number.isNaN(parsedInternal) && parsedInternal <= min;
+    const isPlusDisabled = !Number.isNaN(parsedInternal) && parsedInternal >= max;
 
     return (
-        <div className={b()}>
-            <Button pin="round-brick" onClick={onMinus}>
-                -
-            </Button>
+        <div className={b({})}>
+            <StepButton
+                direction={STEP_BUTTON_DIRECTION.Minus}
+                disabled={isMinusDisabled}
+                onClick={onMinus}
+            />
             <TextInput
                 qa={qa}
                 type="number"
                 pin="brick-brick"
                 controlProps={memorizedInputAttrs}
-                value={String(value)}
+                value={internalValue}
                 onBlur={onBlur}
                 onUpdate={onInput}
+                onKeyDown={onKeyDown}
+                className={b('text-input')}
             />
-            <Button pin="brick-round" onClick={onPlus}>
-                +
-            </Button>
+            <StepButton
+                direction={STEP_BUTTON_DIRECTION.Plus}
+                disabled={isPlusDisabled}
+                onClick={onPlus}
+            />
         </div>
     );
 };

@@ -15,12 +15,17 @@
         justify-content: center;
     }
 
-    & .g-dialog-body {
+    &_other-shapes .g-dialog-body {
         display: flex;
         padding: 0;
         overflow-y: auto;
         height: calc(80vh - 153px);
         border-top: 1px solid var(--g-color-line-generic);
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &_lines-shapes .g-dialog-body {
+        padding: 0;
         border-bottom: 1px solid var(--g-color-line-generic);
     }
 }

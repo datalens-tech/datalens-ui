@@ -195,3 +195,12 @@ export const enum ChartSettingsDialogQA {
     IndicatorTitleMode = 'indicator-title-mode',
     PreserveWhiteSpace = 'preserve-white-space',
 }
+
+export const enum DialogShapeSettings {
+    LineSettingsGraphScopeTabPanel = 'line-settings-graph-scope-tab-panel',
+    LineSettingsChartScopeTabPanel = 'line-settings-chart-scope-tab-panel',
+    LineSettingsGraphScopeTab = 'line-settings-graph-scope-tab',
+    LineSettingsChartScopeTab = 'line-settings-chart-scope-tab',
+    LineWidthSelectControl = 'line-width-select-control',
+    LineWidthSelectOption = 'line-width-select-option',
+}

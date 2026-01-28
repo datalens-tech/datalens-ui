@@ -1,0 +1,36 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/mixins';
+@import '../../../../../../styles/mixins';
+
+.dl-dialog-value-list {
+    $class: &;
+
+    &__value-shape {
+        margin-right: 12px;
+        border-radius: 2px;
+        display: flex;
+
+        &_type_points {
+            width: 24px;
+            flex-shrink: 0;
+            justify-content: center;
+
+            &#{$class}__value-shape_default {
+                width: 24px;
+            }
+        }
+
+        &_default {
+            width: 40px;
+            background-color: var(--g-color-base-generic);
+            border: 1px solid var(--g-color-line-generic);
+            color: var(--g-color-text-hint);
+            font-size: 10px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+    }
+}
