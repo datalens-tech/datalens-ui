@@ -2,7 +2,7 @@ import {i18n} from 'i18n';
 import update from 'immutability-helper';
 import {isNumber} from 'lodash';
 import type {DashData, DashTab, DashTabItem, DashTabItemBase, DashTabItemWidgetTab} from 'shared';
-import {DashTabItemType} from 'shared';
+import {DashTabItemType, getAllTabItems} from 'shared';
 
 import {getTextOverflowedStr} from '../../../../../../utils/stringUtils';
 
@@ -100,7 +100,7 @@ interface MappedItem {
 }
 
 const getMapped = (data: DashTab, id: string) =>
-    data.items.map((item) => ({
+    getAllTabItems(data).map((item) => ({
         tabId: id,
         id: item.id,
         orderId: item.orderId,

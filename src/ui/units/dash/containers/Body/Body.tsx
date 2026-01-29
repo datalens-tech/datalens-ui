@@ -33,7 +33,13 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {DashTab, DashTabLayout} from 'shared';
-import {Feature, FixedHeaderQa, SCROLL_TITLE_DEBOUNCE_TIME} from 'shared';
+import {
+    Feature,
+    FixedHeaderQa,
+    SCROLL_TITLE_DEBOUNCE_TIME,
+    SCR_USER_AGENT_HEADER_VALUE,
+} from 'shared';
+import {getAllTabItems} from 'shared/utils/dash';
 import type {DatalensGlobalState} from 'ui';
 import {
     DEFAULT_DASH_MARGINS,
@@ -62,6 +68,8 @@ import Content from './components/Content/Content';
 import {FixedContainerWrapperWithContext, FixedControlsWrapperWithContext} from './context';
 
 import './Body.scss';
+
+const VIEWPORT_DASH_LOADED_EVENT_DEBOUNCE_TIME = 1000;
 
 // Do not change class name, the snapter service uses
 const b = block('dash-body');
@@ -110,6 +118,7 @@ type DashBodyState = {
         margins: [number, number];
         renderers: DashKitGroup[];
     };
+    totalItemsCount: number;
 };
 
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
@@ -143,6 +152,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             };
 
             isTabUnmount = true;
+        }
+
+        const newTotalItemsCount = getAllTabItems(props.tabData).length;
+        if (newTotalItemsCount !== state.totalItemsCount) {
+            updatedState.totalItemsCount = newTotalItemsCount;
         }
 
         const currentHash = props.location.hash;
@@ -182,6 +196,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             this.setState({lastDelayedScrollTop});
         }
     }, SCROLL_TITLE_DEBOUNCE_TIME);
+
+    dispatchViewportDashLoadedEventDebounced = debounce(() => {
+        return this.dispatchViewportDashLoadedEvent();
+    }, VIEWPORT_DASH_LOADED_EVENT_DEBOUNCE_TIME);
 
     _memoizedWidgetsMap: {
         layout: DashTabLayout[] | null;
@@ -230,6 +248,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     },
                 ],
             },
+            totalItemsCount: 0,
         };
     }
 
@@ -256,6 +275,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     componentWillUnmount() {
         window.removeEventListener('wheel', this.interruptAutoScroll);
         window.removeEventListener('touchmove', this.interruptAutoScroll);
+        this.scrollIntoViewWithDebounce.cancel();
+        this.dispatchViewportDashLoadedEventDebounced.cancel();
     }
 
     render() {
@@ -705,9 +726,50 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         if (isMounted) {
             this.state.loadedItemsMap.set(item.id, false);
 
-            if (this.state.loadedItemsMap.size === this.props.tabData?.items.length) {
+            if (this.state.loadedItemsMap.size === this.state.totalItemsCount) {
                 this.scrollIntoViewWithDebounce();
             }
+        }
+    };
+
+    private isElementOutsideViewport = (element: Element): boolean => {
+        const rect = element.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
+        return (
+            rect.bottom < 0 ||
+            rect.top > viewportHeight ||
+            rect.right < 0 ||
+            rect.left > viewportWidth
+        );
+    };
+
+    private dispatchViewportDashLoadedEvent = () => {
+        const {loadedItemsMap, dashEl} = this.state;
+
+        if (!dashEl) {
+            return;
+        }
+
+        const unloadedItemIds: string[] = [];
+        loadedItemsMap.forEach((isLoaded, itemId) => {
+            if (isLoaded !== true) {
+                unloadedItemIds.push(itemId);
+            }
+        });
+
+        const allViewportItemsLoaded = unloadedItemIds.every((itemId) => {
+            const itemElement = document.getElementById(itemId);
+            if (!itemElement) {
+                return false;
+            }
+            const result = this.isElementOutsideViewport(itemElement);
+            return result;
+        });
+
+        if (allViewportItemsLoaded) {
+            dispatchDashLoadedEvent();
         }
     };
 
@@ -718,7 +780,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             loadedItemsMap.set(item.id, true);
 
             const isLoaded =
-                loadedItemsMap.size === this.props.tabData?.items.length &&
+                loadedItemsMap.size === this.state.totalItemsCount &&
                 Array.from(loadedItemsMap.values()).every(Boolean);
 
             if (isLoaded && this.state.delayedScrollElement) {
@@ -731,7 +793,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             }
 
             if (isLoaded) {
+                this.dispatchViewportDashLoadedEventDebounced.cancel();
                 dispatchDashLoadedEvent();
+            } else if (navigator.userAgent === SCR_USER_AGENT_HEADER_VALUE) {
+                this.dispatchViewportDashLoadedEventDebounced();
             }
 
             this.setState({loaded: isLoaded});

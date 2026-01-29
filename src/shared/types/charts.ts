@@ -304,8 +304,13 @@ type ChartActivitySetParamsResult = {
     params: StringParams;
 };
 
+export type ChartActivitiesActionResult =
+    | ChartActivityToastResult
+    | ChartActivitySetParamsResult
+    | ChartActivityPopupResult;
+
 export type ChartActivityResponseData = {
-    data?: ChartActivityToastResult | ChartActivitySetParamsResult | ChartActivityPopupResult;
+    data?: ChartActivitiesActionResult | ChartActivitiesActionResult[];
     error?: {
         code?: string;
         message: string;

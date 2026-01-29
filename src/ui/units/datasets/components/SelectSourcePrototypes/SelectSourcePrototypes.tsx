@@ -277,7 +277,6 @@ function ConnectionsList(props: ConnectionsListProps) {
                 connections.map((connection) => {
                     const {id, entryId, deleted, deleteEnabled} = connection;
                     const isSharedConnection = connection.collectionId;
-                    const isShowSharedEntryIcon = isSharedConnection;
 
                     const existedConnectionId = id || entryId;
                     const active = existedConnectionId === connectionId;
@@ -305,7 +304,7 @@ function ConnectionsList(props: ConnectionsListProps) {
                                     >
                                         {connectionName}
                                     </span>
-                                    {isShowSharedEntryIcon && (
+                                    {isSharedConnection && (
                                         <SharedEntryIcon
                                             className={b('connection-shared-icon')}
                                             isDelegated={connectionDelegation}
@@ -416,7 +415,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                 );
             }
         },
-        [collectionId, dispatch, connectionId],
+        [collectionId, dispatch, connectionId, connectionDelegation],
     );
 
     const onAddConnectionClick = React.useCallback(() => {
