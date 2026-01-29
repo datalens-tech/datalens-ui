@@ -2,7 +2,6 @@ import type {ChartData, LineSeries} from '@gravity-ui/chartkit/gravity-charts';
 import chroma from 'chroma-js';
 import cloneDeep from 'lodash/cloneDeep';
 import max from 'lodash/max';
-import merge from 'lodash/merge';
 import min from 'lodash/min';
 import {PolynomialRegression} from 'ml-regression-polynomial';
 import type {ChartStateSettings, SmoothingLineSettings, TrendLineSettings} from 'shared';
@@ -131,16 +130,14 @@ function createTrendSeries({
                 });
                 const originalSeriesName = s.name;
 
-                return merge({}, cloneDeep(s), {
+                return {
+                    ...cloneDeep(s),
                     type: 'line',
                     name: `${originalSeriesName}: тренд`,
                     color: settings?.color ?? getDarkenColor(s.color),
                     dashStyle: (settings?.dashStyle ?? 'Dash') as LineSeries['dashStyle'],
                     data: trendData,
-                    tooltip: {
-                        enabled: false,
-                    },
-                });
+                };
             });
         }
         case WidgetKind.Graph: {
@@ -194,16 +191,14 @@ function createSmoothingSeries({
                 });
                 const originalSeriesName = s.name;
 
-                return merge({}, cloneDeep(s), {
+                return {
+                    ...cloneDeep(s),
                     type: 'line',
                     name: `${originalSeriesName}: сглаживание`,
                     color: settings?.color ?? getDarkenColor(s.color),
-                    dashStyle: settings?.dashStyle as LineSeries['dashStyle'],
+                    dashStyle: (settings?.dashStyle ?? s.dashStyle) as LineSeries['dashStyle'],
                     data: trendData,
-                    tooltip: {
-                        enabled: false,
-                    },
-                });
+                };
             });
         }
         case WidgetKind.Graph: {
@@ -224,7 +219,7 @@ function createSmoothingSeries({
                     type: 'line',
                     name: `${originalSeriesName}: сглаживание`,
                     color: settings?.color ?? getDarkenColor(s.color),
-                    dashStyle: settings?.dashStyle,
+                    dashStyle: settings?.dashStyle ?? s.dashStyle,
                     data: trendData,
                 };
             });
