@@ -24,4 +24,7 @@ export enum MenuItemsIds {
     SETTINGS = 'settings',
     ALERTS = 'alerts',
     FULLSCREEEN = 'fullscreen',
+    CHART_MODELING = 'modeling',
+    CHART_MODELING_TREND = 'trend',
+    CHART_MODELING_SMOOTHING = 'smoothing',
 }

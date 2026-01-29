@@ -7,7 +7,7 @@ import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab} from 'components/DashKit/plugins/Widget/types';
 import {useDispatch} from 'react-redux';
-import {ChartkitMenuDialogsQA} from 'shared';
+import {ChartkitMenuDialogsQA, ChartStateSettings} from 'shared';
 import {Header as ChartHeader} from 'ui/components/Widgets/Chart/components/Header';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
@@ -23,7 +23,12 @@ import type {
 } from '../../../../libs/DatalensChartkit/types';
 import {MarkdownHelpPopover} from '../../../MarkdownHelpPopover/MarkdownHelpPopover';
 import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
-import type {ChartProviderPropsWithRefProps, ChartWidgetDataRef, DataProps} from '../types';
+import type {
+    ChartProviderPropsWithRefProps,
+    ChartWidgetDataRef,
+    DataProps,
+    UpdateChartDataFn,
+} from '../types';
 
 import './WidgetHeader.scss';
 
@@ -84,6 +89,8 @@ export type HeaderWithControlsProps = HeaderProps &
 
         setIsExportLoading: (arg: boolean) => void;
         reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
+        updateChartData?: UpdateChartDataFn;
+        chartStateData?: ChartStateSettings;
     };
 
 const b = block('widget-header');
@@ -249,6 +256,8 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                     onFiltersClear={onFiltersClear}
                     canBeDisplayedFilters={true}
                     reload={headerWithControlsProps.reload}
+                    updateChartData={headerWithControlsProps.updateChartData}
+                    extraOptions={{chartStateData: headerWithControlsProps.chartStateData}}
                 />
             </div>
         </React.Fragment>

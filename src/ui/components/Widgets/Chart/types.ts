@@ -5,9 +5,15 @@ import type {CkHighchartsSeriesOptionsType, Highcharts} from '@gravity-ui/chartk
 import type {StringWithSuggest} from '@gravity-ui/uikit';
 import type {CancelTokenSource} from 'axios';
 import type {Split} from 'react-split-pane';
-import type {DashTabItemControlSourceType, MenuItemsIds, StringParams} from 'shared';
+import type {
+    ChartStateSettings,
+    DashTabItemControlSourceType,
+    MenuItemsIds,
+    StringParams,
+} from 'shared';
 import type {OnWidgetLoadDataHandler} from 'ui/components/DashKit/context/WidgetContext';
 import type {
+    ChartContentWidgetData,
     Widget as ChartWidget,
     CombinedError,
     ControlWidget,
@@ -277,6 +283,8 @@ export type ChartWidgetDataRef = React.MutableRefObject<ChartWidgetData> | null;
  */
 export type ChartRevIdRef = React.MutableRefObject<ChartsData['revId']> | null;
 
+export type UpdateChartDataFn = (update: ChartStateSettings) => void;
+
 export type ChartContentProps = Pick<
     ChartProviderPropsWithRefProps,
     | 'widgetBodyClassName'
@@ -308,9 +316,7 @@ export type ChartContentProps = Pick<
         chartId: ChartsProps['id'];
         requestId: ChartsData['requestId'];
         error: CombinedError | null;
-        loadedData:
-            | LoadedWidgetData<ChartsData>
-            | (LoadedWidgetData<ChartsData> & ControlWidget & ChartsData['extra']);
+        loadedData: ChartContentWidgetData;
         drillDownFilters: DrillProps['filters'];
         drillDownLevel: DrillProps['level'];
         widgetType?: DashTabItemControlSourceType | WidgetType | ChartWidget['type'];
@@ -327,6 +333,9 @@ export type ChartContentProps = Pick<
         enableAssistant?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
         backgroundColor?: string;
+        chartData: ChartContentWidgetData;
+        updateChartData: UpdateChartDataFn;
+        chartStateData: ChartStateSettings | undefined;
     };
 
 export type WidgetDataRef = React.MutableRefObject<

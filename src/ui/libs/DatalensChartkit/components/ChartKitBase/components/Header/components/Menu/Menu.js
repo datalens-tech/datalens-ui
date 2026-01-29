@@ -62,6 +62,7 @@ export class Menu extends React.PureComponent {
          * but we need to toggle show/hide comments menu
          */
         hideChartComments: PropTypes.bool,
+        updateChartData: PropTypes.func,
     };
 
     state = {
@@ -256,6 +257,7 @@ export class Menu extends React.PureComponent {
             chartsDataProvider,
             configMenu,
             commentsLength,
+            updateChartData,
         } = this.props;
 
         const {modal: ModalComponent} = this.state;
@@ -275,6 +277,7 @@ export class Menu extends React.PureComponent {
             widgetRenderTimeRef,
             callbackOnCommentsChanged,
             chartsDataProvider,
+            updateChartData,
         };
 
         if (!items && !configMenu) {

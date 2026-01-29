@@ -8,12 +8,14 @@ import {
     pickExceptActionParamsFromParams,
 } from '@gravity-ui/dashkit/helpers';
 import {useMountedState, usePrevious} from 'hooks';
+import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
+import mergeWith from 'lodash/mergeWith';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
-import type {DashChartRequestContext, StringParams} from 'shared';
+import type {ChartStateSettings, DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
 import {isEmbeddedMode} from 'ui/utils/embedded';
@@ -33,6 +35,7 @@ import type {
     OnActivityComplete,
     OnChangeData,
 } from '../../../../libs/DatalensChartkit/types';
+import {addSmoothingLine, addTrendLine} from '../helpers/analytics';
 import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
@@ -1026,6 +1029,54 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         onActivityComplete,
     });
 
+    const [chartStateData, setChartStateData] = React.useState<ChartStateSettings>({});
+    const handleUpdateChartData = React.useCallback(
+        (updates: ChartStateSettings) => {
+            setChartStateData({
+                ...chartStateData,
+                ...updates,
+            });
+        },
+        [chartStateData],
+    );
+
+    const chartData = React.useMemo(() => {
+        if (!loadedData) {
+            return null;
+        }
+
+        const updatedChartData = cloneDeep(loadedData);
+
+        const updates = [];
+        if (chartStateData?.trends?.enabled) {
+            const configWithTrends = addTrendLine({
+                chartData: loadedData,
+                settings: chartStateData.trends.settings,
+            });
+            updates.push(configWithTrends);
+        }
+
+        if (chartStateData?.smoothing?.enabled) {
+            const configWithSmoothingLines = addSmoothingLine({
+                chartData: loadedData,
+                settings: chartStateData.smoothing.settings,
+            });
+            updates.push(configWithSmoothingLines);
+        }
+
+        return mergeWith(
+            updatedChartData,
+            ...updates,
+            (objValue: unknown, srcValue: unknown, key: string) => {
+                if (['data', 'graphs'].includes(key) && Array.isArray(objValue)) {
+                    return objValue.concat(srcValue);
+                }
+
+                return undefined;
+            },
+        );
+    }, [loadedData, chartStateData]);
+
     return {
         loadedData,
         isLoading,
@@ -1051,5 +1102,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isWidgetMenuDataChanged,
         runActivity,
         silentLoadChartData,
+        chartData,
+        updateChartData: handleUpdateChartData,
+        chartStateData,
     };
 };

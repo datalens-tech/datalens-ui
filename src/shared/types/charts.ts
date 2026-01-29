@@ -323,3 +323,28 @@ export type ChartActivityResponseData = {
     requestId?: string;
     traceId?: string;
 };
+
+export type TrendLineSettings = {
+    // default: 'linear';
+    method?: 'linear' | 'quadratic' | 'cubic';
+    color?: string;
+    dashStyle?: string;
+};
+
+export type SmoothingLineSettings = {
+    method?: 'sma';
+    windowSize?: number;
+    color?: string;
+    dashStyle?: string;
+};
+
+export type ChartStateSettings = {
+    trends?: {
+        enabled?: boolean;
+        settings?: TrendLineSettings;
+    };
+    smoothing?: {
+        enabled?: boolean;
+        settings?: SmoothingLineSettings;
+    };
+};

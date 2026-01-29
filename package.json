@@ -210,6 +210,7 @@
     "jest-html-reporters": "^2.1.2",
     "lint-staged": "^13.2.2",
     "lowlight": "^3.1.0",
+    "ml-regression-polynomial": "^3.0.2",
     "mockdate": "^3.0.5",
     "monaco-editor": "^0.36.1",
     "monaco-editor-webpack-plugin": "^7.1.0",

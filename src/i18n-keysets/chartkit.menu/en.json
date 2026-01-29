@@ -23,5 +23,10 @@
   "show-full-period": "Show full period",
   "show-holidays": "Show weekends",
   "show-sources": "Sources",
-  "title_select-action": "Select action"
+  "title_select-action": "Select action",
+  "modeling": "Modeling",
+  "add-trend": "Add trend",
+  "add-smoothing": "Add smoothing",
+  "remove-trend": "Remove trend",
+  "remove-smoothing": "Remove smoothing"
 }
