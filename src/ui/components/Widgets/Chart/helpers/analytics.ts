@@ -1,8 +1,6 @@
 import type {ChartData, LineSeries} from '@gravity-ui/chartkit/gravity-charts';
 import chroma from 'chroma-js';
 import cloneDeep from 'lodash/cloneDeep';
-import max from 'lodash/max';
-import min from 'lodash/min';
 import {PolynomialRegression} from 'ml-regression-polynomial';
 import type {ChartStateSettings, SmoothingLineSettings, TrendLineSettings} from 'shared';
 import {WidgetKind} from 'shared';
@@ -26,8 +24,7 @@ function generateTrendLine({
     data: PointData[];
     method: TrendLineSettings['method'];
 }) {
-    const trendLine = [];
-    let numPoints;
+    const trendLine: PointData[] = [];
 
     const xValues = data.map((point) => point.x);
     const yValues = data.map((point) => point.y);
@@ -35,36 +32,23 @@ function generateTrendLine({
     switch (method) {
         case 'quadratic': {
             regression = new PolynomialRegression(xValues, yValues, 2);
-            numPoints = 100;
             break;
         }
         case 'cubic': {
             regression = new PolynomialRegression(xValues, yValues, 3);
-            numPoints = 100;
             break;
         }
         case 'linear':
         default: {
             regression = new PolynomialRegression(xValues, yValues, 1);
-            numPoints = 2;
             break;
         }
     }
 
-    const xMin = min(xValues);
-    const xMax = max(xValues);
-
-    if (typeof xMin === 'undefined' || typeof xMax === 'undefined') {
-        return [];
-    }
-
-    const step = (xMax - xMin) / (numPoints - 1);
-
-    for (let i = 0; i < numPoints; i++) {
-        const x = xMin + step * i;
-        const y = regression.predict(x);
-        trendLine.push({x, y});
-    }
+    data.forEach((d) => {
+        const y = regression.predict(d.x);
+        trendLine.push({x: d.x, y});
+    });
 
     return trendLine;
 }
@@ -152,11 +136,13 @@ function createTrendSeries({
                     method: regressionMethod,
                 });
                 const originalSeriesName = s.name ?? s.title ?? s.id;
+                const name = `${originalSeriesName}: тренд`;
 
                 return {
                     ...cloneDeep(s),
+                    id: name,
                     type: 'line',
-                    name: `${originalSeriesName}: тренд`,
+                    name: name,
                     color: settings?.color ?? getDarkenColor(s.color),
                     dashStyle: settings?.dashStyle ?? 'Dash',
                     data: trendData,
@@ -214,10 +200,13 @@ function createSmoothingSeries({
                     windowSize,
                 });
                 const originalSeriesName = s.name ?? s.title ?? s.id;
+                const name = `${originalSeriesName}: сглаживание`;
+
                 return {
                     ...cloneDeep(s),
+                    id: name,
                     type: 'line',
-                    name: `${originalSeriesName}: сглаживание`,
+                    name,
                     color: settings?.color ?? getDarkenColor(s.color),
                     dashStyle: settings?.dashStyle ?? s.dashStyle,
                     data: trendData,
@@ -236,6 +225,10 @@ export function addChartAnalyticsSeries({
     chartStateData: ChartStateSettings;
     chartData: ChartContentWidgetData;
 }) {
+    if (!(chartStateData?.trends?.enabled || chartStateData?.smoothing?.enabled)) {
+        return chartData;
+    }
+
     const newChartSeries = [];
     let shouldHideOriginalLines = false;
     if (chartStateData?.trends?.enabled) {
@@ -282,6 +275,9 @@ export function addChartAnalyticsSeries({
                 });
             }
             series.push(...(newChartSeries as GraphWidgetSeriesOptions[]));
+            if ('enableSum' in chartData.config) {
+                chartData.config.enableSum = false;
+            }
 
             break;
         }
