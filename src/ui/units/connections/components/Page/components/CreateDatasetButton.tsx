@@ -6,6 +6,7 @@ import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
 import type {WorkbookId} from 'shared';
+import {ConnectionsActionPanelControls} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 
 import {collectionIdSelector, workbookIdSelector} from '../../../store';
@@ -55,7 +56,12 @@ const CreateDatasetButtonComponent = (props: CreateDatasetButtonProps) => {
     }
 
     return (
-        <Button target="_blank" size={size} href={`${pathname}${query}`}>
+        <Button
+            target="_blank"
+            size={size}
+            href={`${pathname}${query}`}
+            qa={ConnectionsActionPanelControls.CREATE_DATASET_BUTTON}
+        >
             {i18n('button_create-dataset')}
         </Button>
     );

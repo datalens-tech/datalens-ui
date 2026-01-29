@@ -16,6 +16,7 @@ export const ConnectionsFormQA = {
 
 export const ConnectionsActionPanelControls = {
     CREATE_QL_CHART_BUTTON: 'conn-action-panel-controls-create-ql-chart-button',
+    CREATE_DATASET_BUTTON: 'conn-action-panel-controls-create-dataset-button',
 };
 
 export const ConnectionsS3BaseQA = {
