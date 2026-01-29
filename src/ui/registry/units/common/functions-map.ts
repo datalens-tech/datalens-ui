@@ -43,6 +43,7 @@ import type {
 import type {FetchFunctionsDocumentationResponse} from './types/functions/fetchFunctionsDocumentation';
 import type {GetAdditionalChartkitErrorContent} from './types/functions/getAdditionalChartkitErrorContent';
 import type {GetBasicActionPanelItems} from './types/functions/getBasicActionPanelItems';
+import type {GetBatchListAccessBindingsFilter} from './types/functions/getBatchListAccessBindingsFilter';
 import type {GetFunctionsDocumentationResponse} from './types/functions/getFunctionsDocumentation';
 import type {GloballyEntrySettings} from './types/functions/getGloballyEntrySettings';
 import type {GetHeaderWithoutHelpCenterErrorContentTypes} from './types/functions/getHeaderWithoutHelpCenterErrorContentTypes';
@@ -65,6 +66,7 @@ import type {UseSubjectsListId} from './types/functions/useSubjectsListId';
 
 export const commonFunctionsMap = {
     [EXAMPLE_FUNCTION]: makeFunctionTemplate<(arg: number) => string>(),
+    getBatchListAccessBindingsFilter: makeFunctionTemplate<GetBatchListAccessBindingsFilter>(),
     useSubjectsListId: makeFunctionTemplate<() => UseSubjectsListId>(),
     useOrganizationData: makeFunctionTemplate<() => UseOrganizationData>(),
     openDialogOrganizationInvite: makeFunctionTemplate<() => OpenDialogOrganizationInvite>(),
