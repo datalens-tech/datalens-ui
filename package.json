@@ -74,7 +74,7 @@
     "@gravity-ui/chartkit": "^7.35.1",
     "@gravity-ui/dashkit": "^9.3.1",
     "@gravity-ui/date-utils": "^2.5.6",
-    "@gravity-ui/expresskit": "^2.4.0",
+    "@gravity-ui/expresskit": "^2.11.1",
     "@gravity-ui/gateway": "^4.10.4",
     "@gravity-ui/i18n": "^1.7.0",
     "@gravity-ui/nodekit": "^2.4.1",
