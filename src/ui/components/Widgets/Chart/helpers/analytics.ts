@@ -2,7 +2,6 @@ import type {ChartData, LineSeries} from '@gravity-ui/chartkit/gravity-charts';
 import chroma from 'chroma-js';
 import {cloneDeep} from 'lodash';
 import max from 'lodash/max';
-import merge from 'lodash/merge';
 import min from 'lodash/min';
 import {PolynomialRegression} from 'ml-regression-polynomial';
 import type {SmoothingLineSettings, TrendLineSettings} from 'shared';
@@ -102,14 +101,13 @@ function generateSmoothingLine({
 }
 
 export function addTrendLine({
-    chartData: originalChartData,
+    chartData,
     settings,
 }: {
     chartData: ChartContentWidgetData;
     settings: TrendLineSettings | undefined;
 }) {
     const regressionMethod = settings?.method ?? 'linear';
-    const chartData: ChartContentWidgetData = cloneDeep(originalChartData);
 
     switch (chartData?.type) {
         case WidgetKind.GravityCharts: {
@@ -139,9 +137,14 @@ export function addTrendLine({
                 return trendLine;
             });
 
-            series.push(...trendLines);
-            merge(gChartsData, {legend: {enabled: true}});
-            break;
+            return {
+                data: {
+                    series: {
+                        data: trendLines,
+                    },
+                    legend: {enabled: true},
+                },
+            };
         }
         case WidgetKind.Graph: {
             const graphWidget = chartData as GraphWidget;
@@ -165,12 +168,15 @@ export function addTrendLine({
                 };
             });
 
-            series.push(...trendLines);
-            break;
+            return {
+                data: {
+                    graphs: trendLines,
+                },
+            };
         }
     }
 
-    return chartData;
+    return {};
 }
 
 export function addSmoothingLine({
@@ -197,7 +203,7 @@ export function addSmoothingLine({
                 });
                 const originalSeriesName = s.name;
 
-                const trendLine: LineSeries = {
+                return {
                     type: 'line',
                     name: `${originalSeriesName}: сглаживание`,
                     color: settings?.color ?? chroma(String(s.color)).darken(1.2).hex(),
@@ -209,13 +215,16 @@ export function addSmoothingLine({
                         },
                     },
                 };
-
-                return trendLine;
             });
 
-            series.push(...newSeries);
-            merge(gChartsData, {legend: {enabled: true}});
-            break;
+            return {
+                data: {
+                    series: {
+                        data: newSeries,
+                    },
+                    legend: {enabled: true},
+                },
+            };
         }
         case WidgetKind.Graph: {
             const graphWidget = chartData as GraphWidget;
@@ -239,10 +248,13 @@ export function addSmoothingLine({
                 };
             });
 
-            series.push(...newSeries);
-            break;
+            return {
+                data: {
+                    graphs: newSeries,
+                },
+            };
         }
     }
 
-    return chartData;
+    return {};
 }
