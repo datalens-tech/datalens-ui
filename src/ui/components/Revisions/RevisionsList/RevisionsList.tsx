@@ -1,11 +1,14 @@
 import React from 'react';
 
 import {dateTimeParse} from '@gravity-ui/date-utils';
-import {ActionTooltip, Popover} from '@gravity-ui/uikit';
+import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import {ActionTooltip, DropdownMenu, Icon, Popover, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {RevisionsListQa} from 'shared/constants/qa';
 import {RevisionStatusPoint} from 'ui/components/RevisionStatusPoint/RevisionStatusPoint';
 import {registry} from 'ui/registry';
+import {copyTextWithToast} from 'ui/utils/copyText';
 import {
     getRevisionStatus,
     getRevisionStatusKey,
@@ -15,13 +18,17 @@ import {
 
 import type {GetRevisionsEntry} from '../../../../shared/schema';
 import {prepareRevisionListItems} from '../helpers';
-import type {GetRevisionRowExtendedProps, RevisionsListItems} from '../types';
+import type {GetRevisionMenuItems, GetRevisionRowExtendedProps, RevisionsListItems} from '../types';
+
+import iconId from 'ui/assets/icons/id-square.svg';
 
 import './RevisionsList.scss';
 
 const DATE_FORMAT = 'DD MMMM YYYY';
 const TIME_FORMAT = 'H:mm:ss';
 const TOOLTIP_DELAY_CLOSING = 100;
+
+const contextMenuI18n = I18n.keyset('component.revisions-panel.view');
 
 const b = block('revisions-list');
 
@@ -31,6 +38,7 @@ export type RevisionRowProps = {
     currentRevId: string;
     renderItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
     getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
+    getMenuItems?: GetRevisionMenuItems;
 };
 
 const RevisionRow: React.FC<RevisionRowProps> = ({
@@ -39,6 +47,7 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
     currentRevId,
     renderItemActions,
     getRevisionRowExtendedProps,
+    getMenuItems,
 }) => {
     const handlerClick = () => onItemClick(item.revId);
     const {updatedAt, updatedBy} = item;
@@ -53,6 +62,29 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
     const revisionStatusKey = getRevisionStatusKey(item);
 
     const {disabledText = '', disabled = false} = getRevisionRowExtendedProps?.(item) ?? {};
+
+    const defaultMenuItems: DropdownMenuItemMixed<unknown>[] = React.useMemo(
+        () => [
+            {
+                action: (event) => {
+                    event.stopPropagation();
+                    copyTextWithToast({
+                        copyText: item.revId,
+                        successText: contextMenuI18n('toast_copy-id-success'),
+                        errorText: contextMenuI18n('toast_copy-error'),
+                        toastName: 'toast-menu-copy-id',
+                    });
+                },
+                text: contextMenuI18n('context-menu_copy-id'),
+                iconStart: <Icon size={16} data={iconId} />,
+            },
+        ],
+        [item],
+    );
+
+    const menuItems = React.useMemo(() => {
+        return getMenuItems ? getMenuItems(defaultMenuItems, item) : defaultMenuItems;
+    }, [defaultMenuItems, getMenuItems, item]);
 
     return (
         <ActionTooltip title={disabledText} disabled={!disabledText || !disabled}>
@@ -88,7 +120,22 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
                 <div className={b('text')}>
                     {dateTimeParse(updatedAt)?.format(TIME_FORMAT) || updatedAt}
                 </div>
-                {customActions && <div className={b('row-actions')}>{customActions}</div>}
+                <div className={b('row-actions')}>
+                    {customActions}
+                    <DropdownMenu
+                        switcherWrapperClassName={spacing({ml: 1})}
+                        onSwitcherClick={(event) => {
+                            event.stopPropagation();
+                        }}
+                        defaultSwitcherProps={{
+                            view: 'flat-secondary',
+                        }}
+                        popupProps={{
+                            placement: 'bottom-end',
+                        }}
+                        items={menuItems}
+                    />
+                </div>
             </li>
         </ActionTooltip>
     );
@@ -101,6 +148,7 @@ type RevisionsListDayProps = {
     currentRevId: string;
     getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
     renderItemActions?: RevisionRowProps['renderItemActions'];
+    getMenuItems?: GetRevisionMenuItems;
 };
 
 const RevisionsListDay: React.FC<RevisionsListDayProps> = ({
@@ -110,6 +158,7 @@ const RevisionsListDay: React.FC<RevisionsListDayProps> = ({
     currentRevId,
     renderItemActions,
     getRevisionRowExtendedProps,
+    getMenuItems,
 }) => {
     const list = items.map((item) => (
         <RevisionRow
@@ -119,6 +168,7 @@ const RevisionsListDay: React.FC<RevisionsListDayProps> = ({
             currentRevId={currentRevId}
             renderItemActions={renderItemActions}
             getRevisionRowExtendedProps={getRevisionRowExtendedProps}
+            getMenuItems={getMenuItems}
         />
     ));
     return (
@@ -139,6 +189,7 @@ type RevisionsListProps = {
     currentRevId: string;
     renderItemActions?: RevisionsListDayProps['renderItemActions'];
     getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
+    getContextMenuItems?: GetRevisionMenuItems;
 };
 
 export const RevisionsList: React.FC<RevisionsListProps> = ({
@@ -147,6 +198,7 @@ export const RevisionsList: React.FC<RevisionsListProps> = ({
     currentRevId,
     renderItemActions,
     getRevisionRowExtendedProps,
+    getContextMenuItems,
 }) => {
     const preparedItems = React.useMemo(() => prepareRevisionListItems(items), [items]);
     const list = preparedItems.map((listItems, index) => (
@@ -158,6 +210,7 @@ export const RevisionsList: React.FC<RevisionsListProps> = ({
             currentRevId={currentRevId}
             renderItemActions={renderItemActions}
             getRevisionRowExtendedProps={getRevisionRowExtendedProps}
+            getMenuItems={getContextMenuItems}
         />
     ));
 
