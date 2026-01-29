@@ -52,7 +52,7 @@ export type OpenDialogShapesArgs = {
 export type ShapesState = {
     mountedShapes: Record<string, string>;
     mountedShapesLineWidths: Record<string, string>;
-    chartLineWidth: string;
+    lineWidth: string;
     selectedValue: string | null;
 };
 
@@ -112,16 +112,16 @@ function getInitialShapesState({
               )
             : {};
 
-    const chartLineWidth =
-        shapesConfig.chartLineWidth === undefined
+    const lineWidth =
+        shapesConfig.lineWidth === undefined
             ? LINE_WIDTH_DEFAULT_VALUE
-            : String(shapesConfig.chartLineWidth);
+            : String(shapesConfig.lineWidth);
 
     return {
         selectedValue: null,
         mountedShapes,
         mountedShapesLineWidths,
-        chartLineWidth,
+        lineWidth,
     };
 }
 
@@ -188,7 +188,7 @@ const DialogShapes: React.FC<Props> = ({
     const onChartLineWidthChange = React.useCallback((nextLineWidth: string) => {
         setShapesState((prevState) => ({
             ...prevState,
-            chartLineWidth: nextLineWidth,
+            lineWidth: nextLineWidth,
         }));
     }, []);
 
@@ -197,7 +197,7 @@ const DialogShapes: React.FC<Props> = ({
             ...prevState,
             mountedShapes: {},
             mountedShapesLineWidths: {},
-            chartLineWidth: LINE_WIDTH_DEFAULT_VALUE,
+            lineWidth: LINE_WIDTH_DEFAULT_VALUE,
         }));
     }, []);
 
@@ -207,14 +207,10 @@ const DialogShapes: React.FC<Props> = ({
         const hasNoMountedShapesLineWidths =
             shapesState.mountedShapesLineWidths &&
             !Object.keys(shapesState.mountedShapesLineWidths).length;
-        const isChartLineWidthDefault = shapesState.chartLineWidth === LINE_WIDTH_DEFAULT_VALUE;
+        const isChartLineWidthDefault = shapesState.lineWidth === LINE_WIDTH_DEFAULT_VALUE;
 
         return hasNoMountedShapes && hasNoMountedShapesLineWidths && isChartLineWidthDefault;
-    }, [
-        shapesState.mountedShapes,
-        shapesState.mountedShapesLineWidths,
-        shapesState.chartLineWidth,
-    ]);
+    }, [shapesState.mountedShapes, shapesState.mountedShapesLineWidths, shapesState.lineWidth]);
 
     const onClose = React.useCallback(() => {
         onCancel();
@@ -225,7 +221,7 @@ const DialogShapes: React.FC<Props> = ({
     }, [onClose]);
 
     const onApplyButtonClick = React.useCallback(() => {
-        // Filter out lines with LINE_WIDTH_AUTO_VALUE - they will inherit from chartLineWidth on the server
+        // Filter out lines with LINE_WIDTH_AUTO_VALUE - they will inherit from lineWidth on the server
         const filteredMountedShapesLineWidths = Object.entries(
             shapesState.mountedShapesLineWidths,
         ).reduce<Record<string, number>>((acc, [key, value]) => {
@@ -237,7 +233,7 @@ const DialogShapes: React.FC<Props> = ({
 
         const nextShapesConfig: ShapesConfig = {
             mountedShapes: shapesState.mountedShapes,
-            chartLineWidth: Number(shapesState.chartLineWidth),
+            lineWidth: Number(shapesState.lineWidth),
             ...(paletteType === PaletteTypes.Lines
                 ? {
                       mountedShapesLineWidths: filteredMountedShapesLineWidths,
@@ -250,7 +246,7 @@ const DialogShapes: React.FC<Props> = ({
     }, [
         shapesState.mountedShapes,
         shapesState.mountedShapesLineWidths,
-        shapesState.chartLineWidth,
+        shapesState.lineWidth,
         paletteType,
         item.guid,
         onApply,

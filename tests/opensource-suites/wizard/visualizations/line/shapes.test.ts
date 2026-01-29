@@ -143,11 +143,11 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'Category');
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
 
-            const chartLineWidth = '7';
+            const lineWidth = '7';
 
             await wizardPage.shapeDialog.open();
             await wizardPage.shapeDialog.switchToChartSettingsTab();
-            await wizardPage.shapeDialog.changeChartLineWidth(chartLineWidth);
+            await wizardPage.shapeDialog.changeChartLineWidth(lineWidth);
             await wizardPage.shapeDialog.switchToGraphSettingsTab();
             await wizardPage.shapeDialog.selectDefaultLineWidth();
             await wizardPage.shapeDialog.apply();
@@ -158,7 +158,7 @@ datalensTest.describe('Wizard', () => {
             );
 
             expect(updatedLineWidths.length).toEqual(1);
-            expect(updatedLineWidths[0]).toEqual(chartLineWidth);
+            expect(updatedLineWidths[0]).toEqual(lineWidth);
         });
     });
 });

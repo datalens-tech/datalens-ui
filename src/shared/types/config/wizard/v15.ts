@@ -312,7 +312,7 @@ export type V15ColorsConfig = {
 export type V15ShapesConfig = {
     mountedShapes?: Record<string, string>;
     mountedShapesLineWidths?: Record<string, number>;
-    chartLineWidth?: number;
+    lineWidth?: number;
     fieldGuid?: string;
 };
 

@@ -10,14 +10,11 @@ type Props = {
     onChartLineWidthChange: (nextLineWidth: string) => void;
 };
 
-export const DialogShapesChartSettingsTab: React.FC<Props> = ({
-    shapesState,
-    onChartLineWidthChange,
-}) => {
+export const DialogShapesChartSettingsTab = ({shapesState, onChartLineWidthChange}: Props) => {
     return (
         <Flex spacing={{pt: 5, px: 8}}>
             <DialogLineWidth
-                value={shapesState.chartLineWidth}
+                value={shapesState.lineWidth}
                 onChange={onChartLineWidthChange}
                 style={{width: '292px'}}
             />

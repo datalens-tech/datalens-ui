@@ -1,46 +1,13 @@
 import React from 'react';
 
-import {Minus, Plus} from '@gravity-ui/icons';
-import {Button, Icon, TextInput} from '@gravity-ui/uikit';
+import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import type {ValueOf} from 'shared';
+
+import {STEP_BUTTON_DIRECTION, StepButton} from './StepButton';
 
 import './NumberInput.scss';
 
-const STEP_BUTTON_DIRECTION = {
-    Plus: '+',
-    Minus: '-',
-} as const;
-
-type StepButtonDirection = ValueOf<typeof STEP_BUTTON_DIRECTION>;
-
-interface StepButtonProps {
-    direction: StepButtonDirection;
-    disabled: boolean;
-    onClick: () => void;
-}
-
-const DIRECTION_CONFIG: Record<
-    StepButtonDirection,
-    {icon: typeof Plus | typeof Minus; pin: 'brick-round' | 'round-brick'}
-> = {
-    [STEP_BUTTON_DIRECTION.Plus]: {icon: Plus, pin: 'brick-round'},
-    [STEP_BUTTON_DIRECTION.Minus]: {icon: Minus, pin: 'round-brick'},
-};
-
-const b = block('wizard-number-input');
-
-const StepButton: React.FC<StepButtonProps> = ({direction, disabled, onClick}) => {
-    const {icon, pin} = DIRECTION_CONFIG[direction];
-
-    return (
-        <div className={b('input-button')}>
-            <Button view="outlined" pin={pin} width="max" disabled={disabled} onClick={onClick}>
-                <Icon data={icon} />
-            </Button>
-        </div>
-    );
-};
+const b = block('number-input');
 
 interface NumberInputProps {
     value: number;

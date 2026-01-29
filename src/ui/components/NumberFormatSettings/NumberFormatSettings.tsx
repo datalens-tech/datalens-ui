@@ -12,7 +12,7 @@ import {
     NumberFormatUnit,
 } from 'shared';
 
-import NumberInput from './NumberInput/NumberInput';
+import NumberInput from '../NumberInput/NumberInput';
 
 type Props = {
     dataType: DATASET_FIELD_TYPES;

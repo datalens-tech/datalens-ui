@@ -54,9 +54,9 @@ export const mapAndShapeGraph = ({
         if (title && shapesConfig?.mountedShapesLineWidths?.[title]) {
             // Individual line has a specific width set
             lineWidth = shapesConfig.mountedShapesLineWidths[title];
-        } else if (shapesConfig?.chartLineWidth !== undefined) {
+        } else if (shapesConfig?.lineWidth !== undefined) {
             // Fall back to chart-level line width
-            lineWidth = shapesConfig.chartLineWidth;
+            lineWidth = shapesConfig.lineWidth;
         }
 
         if (lineWidth !== undefined) {

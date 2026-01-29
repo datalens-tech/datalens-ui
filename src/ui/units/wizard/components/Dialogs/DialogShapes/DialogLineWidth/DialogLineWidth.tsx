@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Flex, Text} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
-import NumberInput from 'ui/components/NumberFormatSettings/NumberInput/NumberInput';
+import NumberInput from 'ui/components/NumberInput/NumberInput';
 import {
     LINE_WIDTH_AUTO_VALUE,
     LINE_WIDTH_MAX_VALUE,
