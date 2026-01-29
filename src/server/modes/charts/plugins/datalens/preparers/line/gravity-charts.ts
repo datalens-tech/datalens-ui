@@ -284,6 +284,8 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                     },
                     lineColor: 'transparent',
                     position: placeholder?.id === PlaceholderId.Y2 ? 'right' : 'left',
+                    startOnTick: true,
+                    endOnTick: true,
                 }),
             );
 

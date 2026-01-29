@@ -332,6 +332,8 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 },
                 plotIndex: d.index,
                 title: axisTitle,
+                startOnTick: isSplitEnabled,
+                endOnTick: isSplitEnabled,
             });
         }),
         split: {
