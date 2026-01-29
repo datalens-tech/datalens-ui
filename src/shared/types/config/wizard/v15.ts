@@ -178,7 +178,7 @@ export type V15PlaceholderSettings = {
     groupping?: 'disabled' | 'off';
     autoscale?: boolean;
     scale?: 'auto' | 'manual';
-    scaleValue?: '0-max' | [string, string];
+    scaleValue?: '0-max' | 'data-min-max' | [string, string];
     title?: 'auto' | 'manual' | 'off';
     titleValue?: 'string';
     type?: 'logarithmic';

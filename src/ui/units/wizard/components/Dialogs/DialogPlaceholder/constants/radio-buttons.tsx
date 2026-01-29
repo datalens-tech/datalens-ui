@@ -1,8 +1,5 @@
-import React from 'react';
-
 import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
-import {AxisAutoScaleModes} from 'shared/types';
 
 import {SETTINGS} from '../../../../constants';
 
@@ -14,27 +11,6 @@ export const SCALE_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: SETTINGS.SCALE.MANUAL,
         content: i18n('wizard', 'label_manual'),
-    },
-];
-
-export const SCALE_VALUE_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
-    {
-        value: AxisAutoScaleModes.Auto,
-        content: (
-            <React.Fragment>
-                <span>{i18n('wizard', 'label_autoscale')} </span>
-                {i18n('wizard', 'label_scale-min-max')}
-            </React.Fragment>
-        ),
-    },
-    {
-        value: AxisAutoScaleModes.ZeroMax,
-        content: (
-            <React.Fragment>
-                <span>{i18n('wizard', 'label_autoscale')} </span>
-                {i18n('wizard', 'label_scale-0-max')}
-            </React.Fragment>
-        ),
     },
 ];
 

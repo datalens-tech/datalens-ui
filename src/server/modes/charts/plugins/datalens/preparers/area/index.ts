@@ -46,6 +46,7 @@ type ExtendedLineSeries = Omit<AreaSeries, 'data'> & {
     data: ExtendedLineSeriesData[];
 };
 
+// eslint-disable-next-line complexity
 export function prepareGravityChartArea(args: PrepareFunctionArgs) {
     const {
         visualizationId,
@@ -202,41 +203,51 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
               visualizationId,
           })
         : undefined;
-
+    const dataYMinValue = seriesData.reduce<number | undefined>(
+        (acc, s) =>
+            Math.min(
+                ...(acc === undefined ? [] : [acc]),
+                ...s.data.map((point) => Number(point.y)),
+            ),
+        undefined,
+    );
+    const axisBaseConfig = getYAxisBaseConfig({
+        chartConfig: shared,
+        dataMinValue: dataYMinValue,
+    });
     const config: ChartData = {
         series: {
             data: seriesData as ChartSeries[],
         },
         xAxis,
-        yAxis: segments.map((d) => {
-            const baseConfig = getYAxisBaseConfig({
-                placeholder: yPlaceholder,
-            });
-            let axisTitle: ChartYAxis['title'] | null = null;
-            if (isSplitEnabled) {
-                let titleText: string = d.title;
-                if (isSplitWithHtmlValues) {
-                    // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
-                    titleText = wrapHtml(d.title);
-                }
+        yAxis: segments?.length
+            ? segments.map((d) => {
+                  let axisTitle: ChartYAxis['title'] | null = null;
+                  if (isSplitEnabled) {
+                      let titleText: string = d.title;
+                      if (isSplitWithHtmlValues) {
+                          // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+                          titleText = wrapHtml(d.title);
+                      }
 
-                axisTitle = {
-                    text: titleText,
-                    rotation: 0,
-                    maxWidth: '25%',
-                    html: isSplitWithHtmlValues,
-                };
-            }
+                      axisTitle = {
+                          text: titleText,
+                          rotation: 0,
+                          maxWidth: '25%',
+                          html: isSplitWithHtmlValues,
+                      };
+                  }
 
-            return merge(baseConfig, {
-                lineColor: 'transparent',
-                labels: {
-                    numberFormat: axisLabelNumberFormat ?? undefined,
-                },
-                plotIndex: d.index,
-                title: axisTitle,
-            });
-        }),
+                  return merge(axisBaseConfig, {
+                      lineColor: 'transparent',
+                      labels: {
+                          numberFormat: axisLabelNumberFormat ?? undefined,
+                      },
+                      plotIndex: d.index,
+                      title: axisTitle,
+                  });
+              })
+            : [axisBaseConfig],
         legend,
         split: {
             enable: isSplitEnabled,
