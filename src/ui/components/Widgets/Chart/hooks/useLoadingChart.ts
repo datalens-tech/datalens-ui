@@ -11,7 +11,6 @@ import {useMountedState, usePrevious} from 'hooks';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
-import mergeWith from 'lodash/mergeWith';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
@@ -35,7 +34,7 @@ import type {
     OnActivityComplete,
     OnChangeData,
 } from '../../../../libs/DatalensChartkit/types';
-import {addSmoothingLine, addTrendLine} from '../helpers/analytics';
+import {addChartAnalyticsSeries} from '../helpers/analytics';
 import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
@@ -1046,35 +1045,12 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         }
 
         const updatedChartData = cloneDeep(loadedData);
+        addChartAnalyticsSeries({
+            chartData: updatedChartData,
+            chartStateData,
+        });
 
-        const updates = [];
-        if (chartStateData?.trends?.enabled) {
-            const configWithTrends = addTrendLine({
-                chartData: loadedData,
-                settings: chartStateData.trends.settings,
-            });
-            updates.push(configWithTrends);
-        }
-
-        if (chartStateData?.smoothing?.enabled) {
-            const configWithSmoothingLines = addSmoothingLine({
-                chartData: loadedData,
-                settings: chartStateData.smoothing.settings,
-            });
-            updates.push(configWithSmoothingLines);
-        }
-
-        return mergeWith(
-            updatedChartData,
-            ...updates,
-            (objValue: unknown, srcValue: unknown, key: string) => {
-                if (['data', 'graphs'].includes(key) && Array.isArray(objValue)) {
-                    return objValue.concat(srcValue);
-                }
-
-                return undefined;
-            },
-        );
+        return updatedChartData;
     }, [loadedData, chartStateData]);
 
     return {

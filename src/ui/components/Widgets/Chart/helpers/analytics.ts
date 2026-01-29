@@ -1,12 +1,22 @@
 import type {ChartData, LineSeries} from '@gravity-ui/chartkit/gravity-charts';
 import chroma from 'chroma-js';
-import {cloneDeep} from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import max from 'lodash/max';
+import merge from 'lodash/merge';
 import min from 'lodash/min';
 import {PolynomialRegression} from 'ml-regression-polynomial';
-import type {SmoothingLineSettings, TrendLineSettings} from 'shared';
+import type {ChartStateSettings, SmoothingLineSettings, TrendLineSettings} from 'shared';
 import {WidgetKind} from 'shared';
-import type {ChartContentWidgetData, GraphWidget} from 'ui/libs/DatalensChartkit/types';
+import type {
+    ChartContentWidgetData,
+    GraphWidget,
+    GraphWidgetSeriesOptions,
+} from 'ui/libs/DatalensChartkit/types';
+
+function getDarkenColor(originalColor: unknown) {
+    const color = chroma(String(originalColor));
+    return color.set('lab.l', color.get('lab.l') * 0.8).hex();
+}
 
 type PointData = {x: number; y: number};
 
@@ -100,7 +110,7 @@ function generateSmoothingLine({
     }
 }
 
-export function addTrendLine({
+function createTrendSeries({
     chartData,
     settings,
 }: {
@@ -113,7 +123,7 @@ export function addTrendLine({
         case WidgetKind.GravityCharts: {
             const gChartsData = chartData.data as ChartData;
             const series = gChartsData?.series?.data as LineSeries[];
-            const trendLines = series.map((s) => {
+            return series.map((s) => {
                 const originalLineData = (s.data ?? []) as PointData[];
                 const trendData = generateTrendLine({
                     data: originalLineData,
@@ -121,37 +131,24 @@ export function addTrendLine({
                 });
                 const originalSeriesName = s.name;
 
-                const trendLine: LineSeries = {
+                return merge({}, cloneDeep(s), {
                     type: 'line',
                     name: `${originalSeriesName}: тренд`,
-                    color: settings?.color ?? chroma(String(s.color)).darken(1.2).hex(),
+                    color: settings?.color ?? getDarkenColor(s.color),
                     dashStyle: (settings?.dashStyle ?? 'Dash') as LineSeries['dashStyle'],
                     data: trendData,
-                    legend: {
-                        symbol: {
-                            width: 36,
-                        },
+                    tooltip: {
+                        enabled: false,
                     },
-                };
-
-                return trendLine;
+                });
             });
-
-            return {
-                data: {
-                    series: {
-                        data: trendLines,
-                    },
-                    legend: {enabled: true},
-                },
-            };
         }
         case WidgetKind.Graph: {
             const graphWidget = chartData as GraphWidget;
             const series =
                 'graphs' in graphWidget.data ? graphWidget.data.graphs : graphWidget.data;
 
-            const trendLines = series.map((s) => {
+            return series.map((s) => {
                 const originalLineData = (s.data ?? []) as PointData[];
                 const trendData = generateTrendLine({
                     data: originalLineData,
@@ -160,27 +157,22 @@ export function addTrendLine({
                 const originalSeriesName = s.name ?? s.title ?? s.id;
 
                 return {
+                    ...cloneDeep(s),
                     type: 'line',
                     name: `${originalSeriesName}: тренд`,
-                    color: settings?.color ?? chroma(String(s.color)).darken(1.2).hex(),
+                    color: settings?.color ?? getDarkenColor(s.color),
                     dashStyle: settings?.dashStyle ?? 'Dash',
                     data: trendData,
                 };
             });
-
-            return {
-                data: {
-                    graphs: trendLines,
-                },
-            };
         }
     }
 
-    return {};
+    return [];
 }
 
-export function addSmoothingLine({
-    chartData: originalChartData,
+function createSmoothingSeries({
+    chartData,
     settings,
 }: {
     chartData: ChartContentWidgetData;
@@ -189,12 +181,11 @@ export function addSmoothingLine({
     const method = settings?.method ?? 'sma';
     const windowSize = settings?.windowSize ?? 3;
 
-    const chartData: ChartContentWidgetData = cloneDeep(originalChartData);
     switch (chartData?.type) {
         case WidgetKind.GravityCharts: {
             const gChartsData = chartData.data as ChartData;
             const series = gChartsData?.series?.data as LineSeries[];
-            const newSeries = series.map((s) => {
+            return series.map((s) => {
                 const originalLineData = (s.data ?? []) as PointData[];
                 const trendData = generateSmoothingLine({
                     data: originalLineData,
@@ -203,35 +194,24 @@ export function addSmoothingLine({
                 });
                 const originalSeriesName = s.name;
 
-                return {
+                return merge({}, cloneDeep(s), {
                     type: 'line',
                     name: `${originalSeriesName}: сглаживание`,
-                    color: settings?.color ?? chroma(String(s.color)).darken(1.2).hex(),
+                    color: settings?.color ?? getDarkenColor(s.color),
                     dashStyle: settings?.dashStyle as LineSeries['dashStyle'],
                     data: trendData,
-                    legend: {
-                        symbol: {
-                            width: 36,
-                        },
+                    tooltip: {
+                        enabled: false,
                     },
-                };
+                });
             });
-
-            return {
-                data: {
-                    series: {
-                        data: newSeries,
-                    },
-                    legend: {enabled: true},
-                },
-            };
         }
         case WidgetKind.Graph: {
             const graphWidget = chartData as GraphWidget;
             const series =
                 'graphs' in graphWidget.data ? graphWidget.data.graphs : graphWidget.data;
 
-            const newSeries = series.map((s) => {
+            return series.map((s) => {
                 const originalLineData = (s.data ?? []) as PointData[];
                 const trendData = generateSmoothingLine({
                     data: originalLineData,
@@ -240,21 +220,77 @@ export function addSmoothingLine({
                 });
                 const originalSeriesName = s.name ?? s.title ?? s.id;
                 return {
+                    ...cloneDeep(s),
                     type: 'line',
                     name: `${originalSeriesName}: сглаживание`,
-                    color: settings?.color ?? chroma(String(s.color)).darken(1.2).hex(),
+                    color: settings?.color ?? getDarkenColor(s.color),
                     dashStyle: settings?.dashStyle,
                     data: trendData,
                 };
             });
-
-            return {
-                data: {
-                    graphs: newSeries,
-                },
-            };
         }
     }
 
-    return {};
+    return [];
+}
+
+export function addChartAnalyticsSeries({
+    chartStateData,
+    chartData,
+}: {
+    chartStateData: ChartStateSettings;
+    chartData: ChartContentWidgetData;
+}) {
+    const newChartSeries = [];
+    let shouldHideOriginalLines = false;
+    if (chartStateData?.trends?.enabled) {
+        newChartSeries.push(
+            ...createTrendSeries({
+                chartData,
+                settings: chartStateData.trends.settings,
+            }),
+        );
+    }
+
+    if (chartStateData?.smoothing?.enabled) {
+        newChartSeries.push(
+            ...createSmoothingSeries({
+                chartData,
+                settings: chartStateData.smoothing.settings,
+            }),
+        );
+        shouldHideOriginalLines = true;
+    }
+
+    switch (chartData?.type) {
+        case WidgetKind.GravityCharts: {
+            const gChartData = chartData.data as ChartData;
+            if (shouldHideOriginalLines) {
+                gChartData.series.data.forEach((s) => {
+                    s.visible = false;
+                });
+            }
+            gChartData.series.data.push(...(newChartSeries as LineSeries[]));
+            break;
+        }
+        case WidgetKind.Graph: {
+            const graphWidget = chartData as GraphWidget;
+            let series;
+            if ('graphs' in graphWidget.data) {
+                series = graphWidget.data.graphs;
+            } else {
+                series = graphWidget.data;
+            }
+            if (shouldHideOriginalLines) {
+                series.forEach((s) => {
+                    s.visible = false;
+                });
+            }
+            series.push(...(newChartSeries as GraphWidgetSeriesOptions[]));
+
+            break;
+        }
+    }
+
+    return chartData;
 }

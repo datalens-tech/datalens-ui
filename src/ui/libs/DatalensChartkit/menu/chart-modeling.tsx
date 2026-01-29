@@ -1,14 +1,16 @@
 import React from 'react';
 
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import {ChartLine} from '@gravity-ui/icons';
 import {i18n} from 'i18n';
 
 import type {ChartStateSettings} from '../../../../shared';
-import {MenuItemsIds} from '../../../../shared';
+import {MenuItemsIds, WidgetKind} from '../../../../shared';
 import {Feature} from '../../../../shared/types/feature';
 import {DL} from '../../../constants';
 import {isEnabledFeature} from '../../../utils/isEnabledFeature';
 import ChartKitIcon from '../components/ChartKitIcon/ChartKitIcon';
+import type {GraphWidget} from '../types';
 
 import type {MenuItemConfig} from './Menu';
 
@@ -24,7 +26,25 @@ export const getChartModelingMenuItem = ({
         id: MenuItemsIds.CHART_MODELING,
         title: i18n('chartkit.menu', 'modeling'),
         icon: <ChartKitIcon data={ChartLine} />,
-        isVisible: () => !DL.IS_MOBILE && isEnabledFeature(Feature.ChartModeling),
+        isVisible: ({loadedData}) => {
+            if (DL.IS_MOBILE || !isEnabledFeature(Feature.ChartModeling)) {
+                return false;
+            }
+
+            switch (loadedData.type) {
+                case WidgetKind.GravityCharts: {
+                    return (loadedData.data as ChartData).series.data.every(
+                        (s) => s.type === 'line',
+                    );
+                }
+                case WidgetKind.Graph: {
+                    return (loadedData as GraphWidget).libraryConfig.chart?.type === 'line';
+                }
+                default: {
+                    return false;
+                }
+            }
+        },
         items: [
             {
                 id: MenuItemsIds.CHART_MODELING_TREND,
