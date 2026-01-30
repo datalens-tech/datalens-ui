@@ -27,6 +27,10 @@ class ConnectionsPage extends BasePage {
         ConnectionsActionPanelControls.CREATE_QL_CHART_BUTTON,
     );
 
+    private createDatasetButtonSelector = slct(
+        ConnectionsActionPanelControls.CREATE_DATASET_BUTTON,
+    );
+
     constructor({page}: ConnectionsPageProps) {
         super({page});
         this.revisions = new Revisions(page);
@@ -34,6 +38,10 @@ class ConnectionsPage extends BasePage {
 
     async createQlChart() {
         await this.page.click(this.createQlChartButtonSelector);
+    }
+
+    async createDataset() {
+        await this.page.click(this.createDatasetButtonSelector);
     }
 
     async fillCreateConnectionInFolder({name}: {name: string}) {
@@ -57,7 +65,10 @@ class ConnectionsPage extends BasePage {
         await this.fillCreateConnectionInFolder({name});
     }
 
-    async createConnectionInWorkbook({name = uuidv1()}: {name?: string} = {}) {
+    async createConnectionInWorkbookOrCollection({
+        name = uuidv1(),
+        collectionId,
+    }: {name?: string; collectionId?: string} = {}) {
         const formSubmit = await this.page.waitForSelector(
             slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON),
         );
@@ -77,9 +88,16 @@ class ConnectionsPage extends BasePage {
         // create connection
         await dialogApplyButton.click();
         try {
-            await this.page.waitForURL(() => {
-                return this.page.url().includes(name);
-            });
+            if (collectionId) {
+                await this.page.waitForURL(() => {
+                    return this.page.url().endsWith(collectionId);
+                });
+            } else {
+                await this.page.waitForURL(() => {
+                    return this.page.url().includes(name);
+                });
+            }
+            return name;
         } catch {
             throw new Error("Connection wasn't created");
         }

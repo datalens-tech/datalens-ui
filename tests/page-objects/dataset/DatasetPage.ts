@@ -1,12 +1,20 @@
 import {v1 as uuidv1} from 'uuid';
-import {EntryDialogQA} from '../../../src/shared/constants/qa/components';
-import {DatasetPanelQA, DatasetActionQA} from '../../../src/shared/constants/qa/datasets';
+import {
+    DialogCreateWorkbookEntryQa,
+    EntryDialogQA,
+} from '../../../src/shared/constants/qa/components';
+import {
+    DatasetPanelQA,
+    DatasetActionQA,
+    DatasetSourcesTableQa,
+} from '../../../src/shared/constants/qa/datasets';
 
 import {deleteEntity, slct} from '../../utils';
 import {BasePage, BasePageProps} from '../BasePage';
 import DialogParameter from '../common/DialogParameter';
 
 import DatasetTabSection from './DatasetTabSection';
+import {SharedEntriesPermissionsDialogQa} from '../../../src/shared';
 
 export interface DatasetPageProps extends BasePageProps {}
 
@@ -23,8 +31,8 @@ class DatasetPage extends BasePage {
 
     async addAvatarByDragAndDrop(sourceTitle?: string) {
         const selector = sourceTitle
-            ? `${slct('ds-source')} span >> text=${sourceTitle}`
-            : slct('ds-source');
+            ? `${slct(DatasetSourcesTableQa.Source)} span >> text=${sourceTitle}`
+            : slct(DatasetSourcesTableQa.Source);
 
         const source = await this.page.$(selector);
 
@@ -44,6 +52,42 @@ class DatasetPage extends BasePage {
 
     async openSourcesPanel() {
         await this.page.click('.dataset-panel input[value=sources]');
+    }
+
+    async createDatasetInWorkbookOrCollection({
+        name = uuidv1(),
+        collectionId,
+    }: {name?: string; collectionId?: string} = {}) {
+        const dsCreateBtn = this.page.locator(slct(DatasetActionQA.CreateButton));
+        await dsCreateBtn.click();
+
+        const textInput = this.page
+            .locator(slct(DialogCreateWorkbookEntryQa.Input))
+            .locator('input');
+        // clear input
+        await textInput.press('Meta+A');
+        await textInput.press('Backspace');
+        // type dataset name
+        await textInput.fill(name);
+        const dialogApplyButton = await this.page.waitForSelector(
+            slct(DialogCreateWorkbookEntryQa.ApplyButton),
+        );
+        // create connection
+        await dialogApplyButton.click();
+        try {
+            if (collectionId) {
+                await this.page.waitForURL(() => {
+                    return this.page.url().endsWith(collectionId);
+                });
+            } else {
+                await this.page.waitForURL(() => {
+                    return this.page.url().includes(name);
+                });
+            }
+            return name;
+        } catch {
+            throw new Error("Dataset wasn't created");
+        }
     }
 
     async createDatasetInFolder({name = uuidv1()}: {name?: string} = {}) {
@@ -71,6 +115,44 @@ class DatasetPage extends BasePage {
         );
 
         return await input.inputValue();
+    }
+
+    async setDelegationAndSaveSharedDataset({
+        name,
+        delegation = true,
+        collectionId,
+    }: {
+        name?: string;
+        delegation?: boolean;
+        collectionId: string;
+    }) {
+        if (delegation) {
+            const delegateBtn = await this.page.waitForSelector(
+                slct(SharedEntriesPermissionsDialogQa.DelegateBtn),
+            );
+            await delegateBtn.click();
+        } else {
+            const delegateBtn = await this.page.waitForSelector(
+                slct(SharedEntriesPermissionsDialogQa.NotDelegateBtn),
+            );
+            await delegateBtn.click();
+        }
+
+        const delegationApplyBtn = this.page.locator(
+            slct(SharedEntriesPermissionsDialogQa.ApplyBtn),
+        );
+        await delegationApplyBtn.click();
+
+        await this.page.waitForSelector(slct(DatasetSourcesTableQa.Source));
+
+        await this.addAvatarByDragAndDrop();
+
+        const dsName = await this.createDatasetInWorkbookOrCollection({
+            collectionId,
+            name,
+        });
+
+        return dsName;
     }
 }
 

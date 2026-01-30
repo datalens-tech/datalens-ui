@@ -13,7 +13,7 @@ datalensTest.describe('Clickhouse connector interactions', () => {
             {id: 'input', name: 'host', value: 'abc.def'},
             {id: 'input', name: 'username', value: 'abc'},
         ]);
-        await connectionsPage.createConnectionInWorkbook();
+        await connectionsPage.createConnectionInWorkbookOrCollection();
     });
     datalensTest(
         'Client validation errors should be displayed after creation attempt',
