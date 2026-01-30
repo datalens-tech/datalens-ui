@@ -39,7 +39,6 @@ $actionPanelDefaultBottom: 20px;
         width: 100%;
         transition: width 0.1s;
         padding: 20px #{$contentPadding} 48px;
-        background-color: var(--dash-current-background);
 
         &_with-table-of-content:not(&_mobile) {
             width: calc(100% - 250px);
@@ -145,7 +144,6 @@ $actionPanelDefaultBottom: 20px;
         font-size: var(--g-text-header-2-font-size);
         line-height: var(--g-text-header-2-line-height);
         font-weight: 500;
-        background-color: var(--_--dash-background);
         padding: 16px 0 4px;
     }
 

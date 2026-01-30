@@ -89,6 +89,12 @@ const Settings = () => {
                 ? OLD_DEFAULT_WIDGET_BORDER_RADIUS
                 : undefined),
     );
+    const [backgroundColorSettings, setBackgroundColorSettings] = React.useState(
+        settings.backgroundSettings?.color || undefined,
+    );
+    const [widgetsBackgroundColorSettings, setWidgetsBackgroundColorSettings] = React.useState(
+        settings.widgetsSettings?.backgroundSettings?.color || undefined,
+    );
     const [otherSettinsState, setOtherSettingsState] = React.useState<Partial<DashSettings>>({});
 
     const entryDialoguesRef = React.useRef<EntryDialogues>(null);
@@ -155,7 +161,17 @@ const Settings = () => {
                     ...settings.widgetsSettings,
                     borderRadius,
                     internalMarginsEnabled,
+                    backgroundSettings: widgetsBackgroundColorSettings
+                        ? {
+                              color: widgetsBackgroundColorSettings,
+                          }
+                        : undefined,
                 },
+                backgroundSettings: backgroundColorSettings
+                    ? {
+                          color: backgroundColorSettings,
+                      }
+                    : undefined,
                 ...otherSettinsState,
             };
 
@@ -281,6 +297,10 @@ const Settings = () => {
                     onChangeExpandTOC={() => setExpandTOC(!expandTOC)}
                     borderRadius={borderRadius}
                     onChangeBorderRadius={setBorderRadius}
+                    backgroundSettings={backgroundColorSettings}
+                    onChangeBackgroundSettings={setBackgroundColorSettings}
+                    widgetsBackgroundSettings={widgetsBackgroundColorSettings}
+                    onChangeWidgetsBackgroundSettings={setWidgetsBackgroundColorSettings}
                 />
                 <OtherSettings
                     showDependentSelectors={showDependentSelectors}
