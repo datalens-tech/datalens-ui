@@ -1117,11 +1117,13 @@ class DashboardPage extends BasePage {
         if (!elementLocator) {
             return;
         }
-        const hasNoScroll = await elementLocator.evaluate((element) => {
-            return element?.clientHeight === element?.scrollHeight;
-        });
 
-        expect(hasNoScroll).toBe(true);
+        await waitForCondition(async () => {
+            const hasNoScroll = await elementLocator.evaluate((element) => {
+                return element?.clientHeight === element?.scrollHeight;
+            });
+            return hasNoScroll;
+        });
     }
 
     /**
