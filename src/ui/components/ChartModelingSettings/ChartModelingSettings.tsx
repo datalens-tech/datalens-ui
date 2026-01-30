@@ -6,36 +6,29 @@ import {Button, Icon, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import type {ChartStateSettings} from 'shared';
-import {reducerRegistry} from 'ui/store';
+import type {DatalensGlobalState} from 'ui/index';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
-import {chartModelingReducer} from 'ui/store/chart-modeling/reducer';
-import {selectIsChartModelingSettingOpen} from 'ui/store/chart-modeling/selectors';
+import {getChartModelingState, getEditingWidgetId} from 'ui/store/chart-modeling/selectors';
 
 import {SmothSettings} from './SmothSettings';
 import {TrendSettings} from './TrendSettings';
 
 import './ChartModelingSettings.scss';
 
-reducerRegistry.register({
-    chartModeling: chartModelingReducer,
-});
-
-type Props = {
-    chartState: ChartStateSettings | undefined;
-};
-
 const b = block('chart-modeling-settings');
 const i18n = I18n.keyset('component.chart-modeling-settings');
 
-export const ChartModelingSettings = (props: Props) => {
-    const {chartState} = props;
-    const containerRef = React.useRef<HTMLDivElement | null>(null);
-    const isOpen = useSelector(selectIsChartModelingSettingOpen);
+export const ChartModelingSettings = () => {
     const dispatch = useDispatch();
+    const containerRef = React.useRef<HTMLDivElement | null>(null);
+    const widgetId = useSelector(getEditingWidgetId);
+    const isOpen = Boolean(widgetId);
+    const chartState = useSelector((state: DatalensGlobalState) =>
+        getChartModelingState(state, widgetId),
+    );
 
     const handleClose = React.useCallback(() => {
-        dispatch(chartModelingActions.setOpen(false));
+        dispatch(chartModelingActions.closeChartModelingDialog());
     }, [dispatch]);
 
     return (
@@ -55,12 +48,16 @@ export const ChartModelingSettings = (props: Props) => {
                         </Button>
                     </div>
                 </div>
-                <div className={b('section')}>
-                    <SmothSettings chartState={chartState} />
-                </div>
-                <div className={b('section')}>
-                    <TrendSettings chartState={chartState} />
-                </div>
+                {Boolean(widgetId) && (
+                    <React.Fragment>
+                        <div className={b('section')}>
+                            <SmothSettings chartState={chartState} widgetId={String(widgetId)} />
+                        </div>
+                        <div className={b('section')}>
+                            <TrendSettings chartState={chartState} widgetId={String(widgetId)} />
+                        </div>
+                    </React.Fragment>
+                )}
             </DrawerItem>
         </Drawer>
     );

@@ -325,7 +325,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 />
                 <PaletteEditor />
                 <EntryDialogues ref={this.entryDialoguesRef} />
-                <ChartModelingSettings chartState={{}} />
+                <ChartModelingSettings />
             </div>
         );
     }

@@ -87,7 +87,6 @@ export const Content = (props: ChartContentProps) => {
         reload,
         chartData,
         chartStateData,
-        updateChartData,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -174,7 +173,6 @@ export const Content = (props: ChartContentProps) => {
                         showActionParamsFilter={showActionParamsFilter}
                         onFiltersClear={onFiltersClear}
                         reload={reload}
-                        updateChartData={updateChartData}
                         extraOptions={{chartStateData}}
                     />
                 </React.Fragment>

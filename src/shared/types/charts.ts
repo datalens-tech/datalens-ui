@@ -325,7 +325,6 @@ export type ChartActivityResponseData = {
 };
 
 export type TrendLineSettings = {
-    // default: 'linear';
     method?: 'linear' | 'quadratic' | 'cubic';
     color?: string;
     dashStyle?: string;
@@ -334,6 +333,7 @@ export type TrendLineSettings = {
 export type SmoothingLineSettings = {
     method?: 'sma';
     windowSize?: number;
+    colorMode?: 'similar' | 'contrast';
     color?: string;
     dashStyle?: string;
 };

@@ -3,4 +3,10 @@ import type {DatalensGlobalState} from 'ui';
 
 const selectState = (state: DatalensGlobalState) => state.chartModeling;
 
-export const selectIsChartModelingSettingOpen = createSelector(selectState, (state) => state.open);
+export const getEditingWidgetId = createSelector(selectState, (state) => state.editingWidgetId);
+
+const getWidgetId = (_state: DatalensGlobalState, widgetId: string | undefined) => widgetId;
+
+export const getChartModelingState = createSelector(selectState, getWidgetId, (state, widgetId) => {
+    return widgetId ? state.widgets[widgetId] : {};
+});

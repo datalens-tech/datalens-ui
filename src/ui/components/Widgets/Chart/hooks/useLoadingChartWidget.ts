@@ -241,7 +241,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         silentLoadChartData,
         chartData,
         chartStateData,
-        updateChartData,
     } = useLoadingChart({
         dataProvider,
         requestHeadersGetter,
@@ -718,6 +717,5 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         silentLoadChartData,
         chartData,
         chartStateData,
-        updateChartData,
     };
 };

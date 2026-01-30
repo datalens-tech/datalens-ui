@@ -14,9 +14,12 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
-import type {ChartStateSettings, DashChartRequestContext, StringParams} from 'shared';
+import {useSelector} from 'react-redux';
+import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
+import type {DatalensGlobalState} from 'ui/index';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
+import {getChartModelingState} from 'ui/store/chart-modeling/selectors';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import {START_PAGE} from '../../../../libs/DatalensChartkit/ChartKit/components/Widget/components/Table/Paginator/Paginator';
@@ -1028,15 +1031,9 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         onActivityComplete,
     });
 
-    const [chartStateData, setChartStateData] = React.useState<ChartStateSettings>({});
-    const handleUpdateChartData = React.useCallback(
-        (updates: ChartStateSettings) => {
-            setChartStateData({
-                ...chartStateData,
-                ...updates,
-            });
-        },
-        [chartStateData],
+    const widgetId = requestId;
+    const chartStateData = useSelector((state: DatalensGlobalState) =>
+        getChartModelingState(state, widgetId),
     );
 
     const chartData = React.useMemo(() => {
@@ -1079,7 +1076,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         runActivity,
         silentLoadChartData,
         chartData,
-        updateChartData: handleUpdateChartData,
         chartStateData,
     };
 };

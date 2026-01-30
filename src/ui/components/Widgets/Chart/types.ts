@@ -283,8 +283,6 @@ export type ChartWidgetDataRef = React.MutableRefObject<ChartWidgetData> | null;
  */
 export type ChartRevIdRef = React.MutableRefObject<ChartsData['revId']> | null;
 
-export type UpdateChartDataFn = (update: ChartStateSettings) => void;
-
 export type ChartContentProps = Pick<
     ChartProviderPropsWithRefProps,
     | 'widgetBodyClassName'
@@ -334,7 +332,6 @@ export type ChartContentProps = Pick<
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
         backgroundColor?: string;
         chartData: ChartContentWidgetData;
-        updateChartData: UpdateChartDataFn;
         chartStateData: ChartStateSettings | undefined;
     };
 

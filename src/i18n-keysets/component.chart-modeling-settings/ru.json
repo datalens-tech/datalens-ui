@@ -5,9 +5,12 @@
   "label_method": "Функция",
   "label_color": "Цвет",
   "label_shape-and-width": "Форма и толщина",
-  "label_moving-average": "Скользящее среднее",
+  "label_simple-moving-average": "Простое скользящее среднее",
   "label_linear": "Линейная",
   "label_quadratic": "Квадратичная",
   "label_cubic": "Кубическая",
-  "label_auto": "Авто"
+  "label_auto": "Авто",
+  "label_window-size": "Размер окна",
+  "label_similar": "Близкие",
+  "label_contrasted": "Контрастные"
 }

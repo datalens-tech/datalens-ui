@@ -5,9 +5,12 @@
   "label_method": "Function",
   "label_color": "Color",
   "label_shape-and-width": "Shape and width",
-  "label_moving-average": "Moving average",
+  "label_simple-moving-average": "Simple moving average",
   "label_linear": "Linear",
   "label_quadratic": "Quadratic",
   "label_cubic": "Cubic",
-  "label_auto": "Auto"
+  "label_auto": "Auto",
+  "label_window-size": "Window size",
+  "label_similar": "Simalar",
+  "label_contrasted": "Contrasted"
 }

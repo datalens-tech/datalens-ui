@@ -384,7 +384,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         silentLoadChartData,
         chartData: widgetChartData,
         chartStateData,
-        updateChartData,
     } = useLoadingChartWidget({
         ...props,
         chartKitRef,
@@ -624,7 +623,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         noControls: disableControls,
         onFiltersClear: handleFiltersClear,
         reload,
-        updateChartData,
         chartStateData,
     };
 

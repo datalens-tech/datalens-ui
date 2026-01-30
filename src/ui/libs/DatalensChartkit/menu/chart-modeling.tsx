@@ -16,6 +16,19 @@ import type {GraphWidget} from '../types';
 
 import type {MenuItemConfig} from './Menu';
 
+const dispatchAction = (action: any) => {
+    return ({onClose}: {onClose: () => void}) => {
+        const dispatch = useDispatch();
+
+        React.useEffect(() => {
+            dispatch(action);
+            onClose();
+        }, [dispatch, onClose]);
+
+        return null;
+    };
+};
+
 export const getChartModelingMenuItem = ({
     chartState,
 }: {
@@ -54,10 +67,18 @@ export const getChartModelingMenuItem = ({
                     ? i18n('chartkit.menu', 'remove-trend')
                     : i18n('chartkit.menu', 'add-trend'),
                 isVisible: () => true,
-                action: ({updateChartData}) => {
-                    updateChartData({
+                action: ({requestId}) => {
+                    const widgetId = requestId;
+                    const chartSettings = {
                         trends: {enabled: !hasTrendsOnChart},
-                    });
+                    };
+
+                    return dispatchAction(
+                        chartModelingActions.updateChartSettings({
+                            id: widgetId,
+                            settings: chartSettings,
+                        }),
+                    );
                 },
             },
             {
@@ -66,27 +87,32 @@ export const getChartModelingMenuItem = ({
                     ? i18n('chartkit.menu', 'remove-smoothing')
                     : i18n('chartkit.menu', 'add-smoothing'),
                 isVisible: () => true,
-                action: ({updateChartData}) => {
-                    updateChartData({
+                action: ({requestId}) => {
+                    const widgetId = requestId;
+                    const chartSettings = {
                         smoothing: {enabled: !hasSmoothingLinesOnChart},
-                    });
+                    };
+
+                    return dispatchAction(
+                        chartModelingActions.updateChartSettings({
+                            id: widgetId,
+                            settings: chartSettings,
+                        }),
+                    );
                 },
             },
             {
                 id: MenuItemsIds.CHART_MODELING_SETTINGS,
                 title: i18n('chartkit.menu', 'modeling-settings'),
                 isVisible: () => true,
-                action: () => {
-                    return ({onClose}: {onClose: () => void}) => {
-                        const dispatch = useDispatch();
-
-                        React.useEffect(() => {
-                            dispatch(chartModelingActions.setOpen(true));
-                            onClose();
-                        }, [dispatch, onClose]);
-
-                        return null;
-                    };
+                action: ({requestId}) => {
+                    // temporary solution - so that the same chart work differently in different dashboard widgets
+                    const widgetId = requestId;
+                    return dispatchAction(
+                        chartModelingActions.openChartModelingDialog({
+                            id: widgetId,
+                        }),
+                    );
                 },
             },
         ],

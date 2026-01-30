@@ -24,7 +24,7 @@ import {getChartkitMenu} from '../../../../libs/DatalensChartkit/modules/menu/me
 import settings from '../../../../libs/DatalensChartkit/modules/settings/settings';
 import type {ChartsInsightsData, GraphWidget} from '../../../../libs/DatalensChartkit/types';
 import {registry} from '../../../../registry';
-import type {ChartContentProps, UpdateChartDataFn} from '../types';
+import type {ChartContentProps} from '../types';
 
 import iconClearActionParams from '../../../../assets/icons/funnel-clear.svg';
 
@@ -58,7 +58,6 @@ export type HeaderProps = Pick<
         onFullscreenClick?: () => void;
         canBeDisplayedFilters?: boolean;
         enableAssistant?: boolean;
-        updateChartData?: UpdateChartDataFn;
     };
 
 const b = block('dl-widget');
@@ -96,7 +95,6 @@ export const Header = (props: HeaderProps) => {
         onFiltersClear,
         extraOptions,
         reload,
-        updateChartData,
     } = props;
 
     const dispatch = useDispatch();
@@ -185,7 +183,6 @@ export const Header = (props: HeaderProps) => {
                         /* isWidgetMenuDataChanged - need this flag for extra rerender after widget rendered to check visibility of items (it is not used in component directly) */
                         isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                         chartsDataProvider={dataProvider}
-                        updateChartData={updateChartData}
                     />
                 )}
                 {showFiltersClear && props.canBeDisplayedFilters && (
