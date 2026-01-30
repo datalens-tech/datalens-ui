@@ -11,6 +11,7 @@ import type {
     DashTabItemControlDataset,
     DashTabItemControlManual,
     DashTabItemControlSingle,
+    DashTabItemGroupControlData,
     StringParams,
     WorkbookId,
 } from 'shared';
@@ -19,6 +20,7 @@ import {
     DATASET_FIELD_TYPES,
     DashTabItemControlElementType,
     DashTabItemControlSourceType,
+    DashTabItemType,
     TitlePlacementOption,
 } from 'shared';
 import {useMountedState} from 'ui/hooks';
@@ -113,6 +115,7 @@ type ControlProps = {
     workbookId?: WorkbookId;
     dependentSelectors?: boolean;
     widgetId: string;
+    groupData: DashTabItemGroupControlData;
 };
 
 export const Control = ({
@@ -128,6 +131,7 @@ export const Control = ({
     workbookId,
     dependentSelectors,
     widgetId,
+    groupData,
 }: ControlProps) => {
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
 
@@ -327,6 +331,15 @@ export const Control = ({
             dependentSelectors,
         });
         if (!needReload && !isEqual(currentSignificantParams.current, significantParams)) {
+            extDashkitContext?.updateTabsWithGlobalState?.({
+                params: significantParams,
+                selectorItem: {
+                    type: DashTabItemType.GroupControl,
+                    data: groupData,
+                    id: widgetId,
+                },
+                appliedSelectorsIds: [id],
+            });
             currentSignificantParams.current = significantParams;
             reload();
         }
