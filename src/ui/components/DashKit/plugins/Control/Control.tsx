@@ -513,16 +513,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     };
 
     onChange = ({param, value}: {param: string; value: string | string[]}) => {
-        // const params: StringParams = {[param]: value};
-        // this.context?.updateTabsWithGlobalState?.({
-        //     params,
-        //     selectorItem: {
-        //         type: DashTabItemType.Control,
-        //         data: this.propsControlData,
-        //         id: this.props.id,
-        //     },
-        //     appliedSelectorsIds: [this.props.id],
-        // });
         this.props.onStateAndParamsChange({params: {[param]: value}}, {action: 'setParams'});
     };
 
