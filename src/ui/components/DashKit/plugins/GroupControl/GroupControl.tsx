@@ -518,16 +518,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             const appliedControlsIds = this.getControlsIds({data: controlData, controlId});
             this.props.onStateAndParamsChange({params}, {groupItemIds: appliedControlsIds});
             this.localMeta.queue = [];
-
-            this.context?.updateTabsWithGlobalState?.({
-                params,
-                selectorItem: {
-                    type: DashTabItemType.GroupControl,
-                    data: controlData,
-                    id: this.props.id,
-                },
-                appliedSelectorsIds: appliedControlsIds,
-            });
             return;
         }
 
@@ -803,6 +793,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 dependentSelectors={this.dependentSelectors}
                 widgetId={this.props.id}
                 requestHeaders={this.requestHeadersGetter}
+                groupData={this.propsControlData}
             />
         );
     }

@@ -56,7 +56,7 @@
     --fixed-header-block-spacing: var(--g-spacing-4);
 
     --dashed-border-offset: calc(var(--g-spacing-3) * -1);
-    --hidden-dashed-border-width: 4px;
+    --hidden-dashed-border-width: 0px;
 
     --outline-dashed-style: calc(var(--hidden-dashed-border-width) + 1px) dashed
         var(--g-color-line-generic);

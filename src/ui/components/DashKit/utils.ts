@@ -312,10 +312,10 @@ function getPreparedWrapSettings({
             ownWidgetSettings.backgroundSettings,
         ) ??
         getResultedBgColor(
-            dashVisualSettings.background,
+            undefined,
             theme,
             defaultOldColor,
-            dashVisualSettings.backgroundSettings,
+            dashVisualSettings.widgetsSettings?.backgroundSettings,
         );
 
     const hexBgColor = bgColorFromConfigs ? computeColorFromToken(bgColorFromConfigs) : undefined;

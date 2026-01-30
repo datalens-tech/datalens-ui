@@ -1,8 +1,8 @@
 import type {WorkbookWithPermissions} from 'shared/schema';
-import type {WorkbookEntry} from 'ui/units/workbooks/types';
+import type {WorkbookUnionEntry} from 'ui/units/workbooks/types';
 
 export type WorkbookTableRowExtendedContentProps = {
-    item: WorkbookEntry;
+    item: WorkbookUnionEntry;
     workbook: WorkbookWithPermissions;
     onUpdateSharedEntryBindings?: () => void;
 };

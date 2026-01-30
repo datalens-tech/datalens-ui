@@ -77,22 +77,28 @@ class SectionPreview extends Component<Props> {
     getCustomMenuOptions() {
         const {isChartSaved, widget, configForSaving} = this.props;
 
+        const onSaveChart = async () => {
+            if (configForSaving) {
+                await this.props.updateWizardWidgetAndUpdateConfig({
+                    config: configForSaving,
+                    entry: widget,
+                });
+
+                this.props.reloadRevisionsOnSave();
+            }
+        };
+
         const args = {
             canBeSaved: !isChartSaved,
-            onApply: async () => {
-                if (configForSaving) {
-                    await this.props.updateWizardWidgetAndUpdateConfig({
-                        config: configForSaving,
-                        entry: widget,
-                    });
-
-                    this.props.reloadRevisionsOnSave();
-                }
-            },
+            onApply: onSaveChart,
         };
 
         return {
             [MenuItemsIds.EXPORT]: {
+                extraOptions: {
+                    canBeSaved: !isChartSaved,
+                    onSaveChart,
+                },
                 actionWrapper: getCustomExportActionWrapperWithSave.bind(null, {
                     message: i18n('wizard', 'confirm_chart-save_message'),
                     ...args,

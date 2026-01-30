@@ -163,6 +163,7 @@ type FixedHeaderWrapperProps = CommonFixedHeaderProps & {
     isControlsGroupEmpty?: boolean;
     isContainerGroupEmpty?: boolean;
     isSplitPaneContainer?: boolean;
+    backgroundColor?: string;
     dashBodyEl: HTMLDivElement | null;
     controlsRef: React.Ref<HTMLDivElement>;
     containerRef: React.Ref<HTMLDivElement>;
@@ -170,6 +171,7 @@ type FixedHeaderWrapperProps = CommonFixedHeaderProps & {
 };
 
 export function FixedHeaderWrapper({
+    backgroundColor,
     dashBodyEl,
     controlsRef,
     containerRef,
@@ -194,7 +196,10 @@ export function FixedHeaderWrapper({
         topOffset,
         isSplitPaneContainer ? dashBodyEl : undefined,
     );
-    const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, width} : {};
+    const style =
+        isFixed && !editMode
+            ? {left: leftOffset, top: topOffset, width, backgroundColor}
+            : {backgroundColor};
 
     React.useEffect(() => {
         const observer = new ResizeObserver(([el]) => {
