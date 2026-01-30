@@ -69,7 +69,8 @@ datalensTest.describe('Dashboards - Auto-height of widgets with dynamic content'
 
             const textWrapper = page.locator(slct(TextWidgetQa.Wrapper));
             const cutTitle = textWrapper.getByText(PARAMS_NAMES.CUT).first();
-            const textContent = textWrapper.locator('> *');
+            // TODO: Replace with qa from dashkit
+            const textContent = textWrapper.locator('> :first-child');
 
             await expect(cutTitle).toBeVisible();
 
@@ -101,7 +102,8 @@ datalensTest.describe('Dashboards - Auto-height of widgets with dynamic content'
             const textWrapper = page.locator(slct(TextWidgetQa.Wrapper));
             const tab2Title = textWrapper.getByText(PARAMS_NAMES.TAB_2).first();
             const tab1Content = textWrapper.getByText(PARAMS_TEXT.TAB_1);
-            const textContent = textWrapper.locator('> *');
+            // TODO: Replace with qa from dashkit
+            const textContent = textWrapper.locator('> :first-child');
 
             await expect(tab1Content).toBeVisible();
 
@@ -131,8 +133,9 @@ datalensTest.describe('Dashboards - Auto-height of widgets with dynamic content'
             });
 
             const textWrapper = page.locator(slct(TextWidgetQa.Wrapper));
-            const mermaidContent = textWrapper.getByText(PARAMS_TEXT.MERMAID_NAME);
-            const textContent = textWrapper.locator('> *');
+            const mermaidContent = textWrapper.locator('svg').first();
+            // TODO: Replace with qa from dashkit
+            const textContent = textWrapper.locator('> :first-child');
 
             await expect(mermaidContent).toBeVisible();
 
