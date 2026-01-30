@@ -183,9 +183,11 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 this.adjustWidgetLayout(true);
             }
         }
+        const currentSignigicantParams = this.filterSignificantParams(this.props.params);
+
         const hasDataChanged = !isEqual(this.props.data, prevProps.data);
         const hasParamsChanged = !isEqual(
-            this.filterSignificantParams(this.props.params),
+            currentSignigicantParams,
             this.filterSignificantParams(prevProps.params),
         );
 
@@ -199,6 +201,18 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             this.initialParams = {
                 params: initialParams,
             } as ChartInitialParams;
+        }
+
+        if (hasParamsChanged) {
+            this.context?.updateTabsWithGlobalState?.({
+                params: currentSignigicantParams,
+                selectorItem: {
+                    type: DashTabItemType.Control,
+                    data: this.propsControlData,
+                    id: this.props.id,
+                },
+                appliedSelectorsIds: [this.props.id],
+            });
         }
 
         const hasChanged = hasDataChanged || hasParamsChanged || hasDefaultsChanged;
@@ -499,16 +513,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     };
 
     onChange = ({param, value}: {param: string; value: string | string[]}) => {
-        const params: StringParams = {[param]: value};
-        this.context?.updateTabsWithGlobalState?.({
-            params,
-            selectorItem: {
-                type: DashTabItemType.Control,
-                data: this.propsControlData,
-                id: this.props.id,
-            },
-            appliedSelectorsIds: [this.props.id],
-        });
         this.props.onStateAndParamsChange({params: {[param]: value}}, {action: 'setParams'});
     };
 
@@ -523,15 +527,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         // }
         if (type === 'PARAMS_CHANGED') {
             const {params} = data as {params: StringParams};
-            this.context?.updateTabsWithGlobalState?.({
-                params,
-                selectorItem: {
-                    type: DashTabItemType.Control,
-                    data: this.propsControlData,
-                    id: this.props.id,
-                },
-                appliedSelectorsIds: [this.props.id],
-            });
             this.props.onStateAndParamsChange({params: params || {}});
         }
     };

@@ -2,6 +2,7 @@ import React from 'react';
 
 import type {ConfigItem, ConfigLayout, DashKitGroup, DashKitProps} from '@gravity-ui/dashkit';
 import {DashKitDnDWrapper, ActionPanel as DashkitActionPanel} from '@gravity-ui/dashkit';
+import {useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -13,6 +14,7 @@ import {
     LOADED_DASH_CLASS,
 } from 'shared';
 import type {DashTabLayout} from 'shared';
+import {registry} from 'ui/registry';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {selectUserSettings} from 'ui/store/selectors/user';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -127,6 +129,26 @@ const Content = ({
     const tabs = useSelector(selectTabs);
     const userSettings = useSelector(selectUserSettings);
 
+    const theme = useThemeType();
+
+    const dashBgColors = React.useMemo(() => {
+        const backgroundSettings = settings.backgroundSettings;
+        const dashBgColor =
+            typeof backgroundSettings?.color === 'string'
+                ? backgroundSettings?.color
+                : backgroundSettings?.color?.[theme];
+        if (dashBgColor) {
+            const {getFixedHeaderBackgroundColor} = registry.dash.functions.getAll();
+            const fixedHeaderBgColor = getFixedHeaderBackgroundColor(dashBgColor, theme);
+
+            return {
+                dashBgColor,
+                fixedHeaderBgColor,
+            };
+        }
+        return undefined;
+    }, [settings.backgroundSettings, theme]);
+
     const {copiedData, setCopiedDataToStore} = useCopiedData();
 
     const handleOpenDialog = React.useCallback<(...args: Parameters<typeof openDialog>) => void>(
@@ -161,6 +183,11 @@ const Content = ({
                 className={b('content-wrapper', {mobile: DL.IS_MOBILE, mode}, loadedMixin)}
             >
                 <div
+                    style={
+                        dashBgColors?.dashBgColor
+                            ? {backgroundColor: dashBgColors.dashBgColor}
+                            : undefined
+                    }
                     className={b('content-container', {
                         mobile: DL.IS_MOBILE,
                         'no-title':
@@ -217,6 +244,7 @@ const Content = ({
                                 onWidgetMountChange,
                                 onPasteItem: restProps.onPasteItem,
                                 setCopiedDataToStore,
+                                fixedHeaderBgColor: dashBgColors?.fixedHeaderBgColor,
                             }}
                         />
 
