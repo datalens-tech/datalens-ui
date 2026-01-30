@@ -151,7 +151,7 @@
   "label_filter-all-values": "Все",
   "label_filter-from-dashboard": "фильтр с дашборда",
   "label_float": "Дробное число",
-  "label_font-size": "Размер",
+  "label_font-size": "Размер шрифта",
   "label_font-size-disabled-hint": "Нельзя задать размер для markup",
   "label_genericdatetime": "Дата и время",
   "label_geopoint": "Геоточка",
