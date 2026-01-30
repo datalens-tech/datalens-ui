@@ -1,6 +1,7 @@
 import type {OpenDialogArgs} from 'store/actions/openDialogTypes';
+import type {DialogErrorWithTabsProps} from '../../components/DialogErrorWithTabs/DialogErrorWithTabs';
 import {DIALOG_ERROR_WITH_TABS} from '../../components/DialogErrorWithTabs/DialogErrorWithTabs';
-import type {DataLensApiError, DialogFilterProps, OpenDialogFilterArgs} from 'ui';
+import type {DialogFilterProps, OpenDialogFilterArgs} from 'ui';
 import {DIALOG_FILTER} from 'ui';
 import type {
     DialogConfirmApplyStatus,
@@ -20,6 +21,7 @@ export const OPEN_DIALOG = Symbol('dialog/OPEN_DIALOG');
 export const UPDATE_DIALOG_PROPS = Symbol('dialog/UPDATE_DIALOG_PROPS');
 export const CLOSE_DIALOG = Symbol('dialog/CLOSE_DIALOG');
 export const SET_CONFIRM_DIALOG_LOADING_STATUS = Symbol('dialog/SET_CONFIRM_DIALOG_LOADING_STATUS');
+export const PARTIAL_UPDATE_DIALOG_PROPS = Symbol('dialog/PARTIAL_UPDATE_DIALOG_PROPS');
 
 export type OpenDialogAction = {
     type: typeof OPEN_DIALOG;
@@ -33,6 +35,12 @@ export type CloseDialogAction = {
 
 export type UpdateDialogStateAction = {
     type: typeof UPDATE_DIALOG_PROPS;
+    id: symbol;
+    props?: any;
+};
+
+export type PartialUpdateDialogStateAction = {
+    type: typeof PARTIAL_UPDATE_DIALOG_PROPS;
     id: symbol;
     props?: any;
 };
@@ -75,29 +83,51 @@ export function setDialogConfirmLoadingStatus(
     };
 }
 
-type OpenDialogErrorWithTabsArguments = {
-    error: DataLensApiError;
+export function partialUpdateDialogProps<T extends unknown>(args: {
+    id: OpenDialogArgs<T>['id'];
+    props: Partial<OpenDialogArgs<T>['props']>;
+}): PartialUpdateDialogStateAction {
+    return {
+        type: PARTIAL_UPDATE_DIALOG_PROPS,
+        id: args.id,
+        props: args.props,
+    };
+}
+
+export type DialogErrorWithTabsBaseProps = {
     title?: string | null;
     withReport?: boolean;
     onRetry?: () => void;
+    exportId?: string;
+    importId?: string;
 };
 
-export const openDialogErrorWithTabs = ({
-    error,
-    title,
-    withReport,
-    onRetry,
-}: OpenDialogErrorWithTabsArguments) => {
-    return function (dispatch: AppDispatch) {
+type DialogErrorWithTabsErrorProps = DialogErrorWithTabsBaseProps & {
+    error: DialogErrorWithTabsProps['error'];
+    details?: never;
+};
+
+type DialogErrorWithTabsDetailsProps = DialogErrorWithTabsBaseProps & {
+    error?: never;
+    details: string;
+};
+
+type OpenDialogErrorWithTabsParams =
+    | DialogErrorWithTabsErrorProps
+    | DialogErrorWithTabsDetailsProps;
+
+export const openDialogErrorWithTabs = (params: OpenDialogErrorWithTabsParams) => {
+    return (dispatch: AppDispatch) => {
+        const {error, details, title, ...restProps} = params;
+
         dispatch(
             openDialog({
                 id: DIALOG_ERROR_WITH_TABS,
                 props: {
-                    title: title || error?.message,
-                    error,
+                    title: title || error?.message || null,
                     onCancel: () => dispatch(closeDialog()),
-                    withReport,
-                    onRetry,
+                    ...restProps,
+                    ...(error ? {error} : {details: details as string}),
                 },
             }),
         );
@@ -213,6 +243,8 @@ export const openDialogParameter = ({
     onApply,
     field,
     onReset,
+    showTemplateWarn,
+    templateEnabled,
 }: OpenDialogParameterArguments) => {
     return function (dispatch: AppDispatch) {
         const openDialogParameterParams: DialogParameterProps = {
@@ -233,6 +265,8 @@ export const openDialogParameter = ({
             },
             onReset,
             field,
+            showTemplateWarn,
+            templateEnabled,
         };
 
         dispatch(
@@ -283,4 +317,5 @@ export type DialogAction =
     | OpenDialogAction
     | CloseDialogAction
     | UpdateDialogStateAction
-    | SetConfirmDialogLoadingStatusAction;
+    | SetConfirmDialogLoadingStatusAction
+    | PartialUpdateDialogStateAction;

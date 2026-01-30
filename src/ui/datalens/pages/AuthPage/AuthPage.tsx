@@ -1,10 +1,7 @@
 import React from 'react';
-import {reducerRegistry} from '../../../store';
+import type {AuthPageProps} from '../../../units/auth/components/AuthPage/AuthPage';
 import {AuthPage as AuthPageContainer} from '../../../units/auth/components/AuthPage/AuthPage';
-import {reducer} from '../../../units/auth/store/reducers';
 
-reducerRegistry.register({auth: reducer});
-
-const AuthPage = () => <AuthPageContainer />;
+const AuthPage = (props: AuthPageProps) => <AuthPageContainer {...props} />;
 
 export default AuthPage;

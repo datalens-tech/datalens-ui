@@ -11,10 +11,12 @@ import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {EntryScope, PLACE} from 'shared';
 import type {DatalensGlobalState, EntryDialogues, MonacoTypes} from 'ui';
-import {DL, NavigationMinimal, sdk} from 'ui';
+import {DL, NavigationMinimal, URL_QUERY, sdk} from 'ui';
+import {SharedEntryIcon} from 'ui/components/SharedEntryIcon/SharedEntryIcon';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {ConnectionStatus} from 'ui/units/ql/constants';
+import {getIsSharedEntry} from 'ui/utils';
 
 import {ScreenEditorQA, TabQueryQA} from '../../../../../../shared';
 import {registry} from '../../../../../registry';
@@ -58,8 +60,7 @@ interface ScreenEditorState {
 
 class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEditorState> {
     decorations: string[] = [];
-    navigationButtonRef: React.RefObject<HTMLDivElement>;
-    navigationButtonNoConnectionRef: React.RefObject<HTMLDivElement>;
+    navigationButtonRef: React.RefObject<HTMLButtonElement>;
     monaco: typeof MonacoTypes | null = null;
 
     tabs = [
@@ -79,7 +80,6 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
         super(props);
 
         this.navigationButtonRef = React.createRef();
-        this.navigationButtonNoConnectionRef = React.createRef();
 
         this.state = {
             isNavigationVisible: false,
@@ -98,7 +98,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
         return (
             chartType && (
                 <div className={b()}>
-                    <div className={b('action-bar-top')} ref={this.navigationButtonRef}>
+                    <div className={b('action-bar-top')}>
                         <AdaptiveTabs
                             className={b('action-bar-top_tabs')}
                             breakpointsConfig={this.breakpointsConfig}
@@ -106,7 +106,9 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                             onSelectTab={this.setActiveTab}
                             activeTab={this.state.activeTab}
                         />
-                        {this.renderConnectionBlock()}
+                        <div className={b('action-bar-top_connection-select-btn-wrapper')}>
+                            {this.renderConnectionBlock()}
+                        </div>
                         {workbookId ? (
                             <WorkbookNavigationMinimal
                                 anchor={this.navigationButtonRef}
@@ -162,25 +164,33 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
     }
 
     private renderConnectionBlock() {
-        const {connection, connectionStatus} = this.props;
+        const {connection, connectionStatus, entry} = this.props;
 
         if (connection) {
+            const isSharedConnection = getIsSharedEntry(connection);
             return (
                 <DropdownMenu
                     size="s"
                     switcherWrapperClassName={b('action-bar-top_connection-select-btn_more')}
-                    switcher={
+                    renderSwitcher={({onClick, onKeyDown}) => (
                         <Button
-                            className={b('action-bar-top_connection-select-btn')}
+                            ref={this.navigationButtonRef}
                             view="flat"
                             pin="brick-brick"
                             size="l"
+                            onClick={onClick}
+                            onKeyDown={onKeyDown}
                             qa={TabQueryQA.SelectConnection}
                         >
                             <EntryIcon entry={connection} size={24} className={b('entry-icon')} />
-                            {connection.name}
+                            <span className={b('action-bar-top_connection-select-btn-text')}>
+                                {connection.name}
+                            </span>
+                            {isSharedConnection && (
+                                <SharedEntryIcon isDelegated={connection.isDelegated} />
+                            )}
                         </Button>
-                    }
+                    )}
                     items={[
                         {
                             action: () => {
@@ -190,7 +200,17 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                         },
                         {
                             action: () => {
-                                window.open(`${DL.ENDPOINTS.connections}/${connection?.entryId}`);
+                                const url = new URL(
+                                    `${DL.ENDPOINTS.connections}/${connection?.entryId}`,
+                                    window.location.origin,
+                                );
+                                if (isSharedConnection && entry?.workbookId) {
+                                    url.searchParams.set(
+                                        URL_QUERY.BINDED_WORKBOOK,
+                                        entry?.workbookId,
+                                    );
+                                }
+                                window.open(url);
                             },
                             text: i18n('sql', 'button_to-connection'),
                         },
@@ -199,9 +219,12 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
             );
         } else if (connectionStatus === ConnectionStatus.Empty) {
             return (
-                <div className={b('action-bar-top_connection-select-btn-wrapper')}>
-                    <span>{i18n('sql', 'label_new-connection-text')}</span>
+                <>
+                    <span className={b('action-bar-top_connection-label')}>
+                        {i18n('sql', 'label_new-connection-text')}
+                    </span>
                     <Button
+                        ref={this.navigationButtonRef}
                         className={b('action-bar-top_connection-select-btn')}
                         view="flat"
                         pin="brick-brick"
@@ -213,14 +236,17 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                     >
                         {i18n('sql', 'label_select-connection')}
                     </Button>
-                </div>
+                </>
             );
         } else {
             // This means that connectionStatus === ConnectionStatus.Failed
             return (
-                <div className={b('action-bar-top_connection-select-btn-wrapper')}>
-                    <span>{i18n('sql', 'label_failed-connection-text')}</span>
+                <>
+                    <span className={b('action-bar-top_connection-label')}>
+                        {i18n('sql', 'label_failed-connection-text')}
+                    </span>
                     <Button
+                        ref={this.navigationButtonRef}
                         className={b('action-bar-top_connection-select-btn')}
                         view="flat"
                         pin="brick-brick"
@@ -232,7 +258,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                     >
                         {i18n('sql', 'label_select-connection')}
                     </Button>
-                </div>
+                </>
             );
         }
     }
@@ -258,6 +284,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
     };
 
     private onNavigationEntryClick = async (newConnection: {entryId: string}) => {
+        const {entry} = this.props;
         const connection = {
             ...newConnection,
             data: null,
@@ -267,7 +294,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
             unversionedData: null,
         } as QLConnectionEntry;
 
-        this.props.performManualConfiguration({connection});
+        this.props.performManualConfiguration({connection, workbookId: entry?.workbookId || null});
 
         this.toggleNavigation(false);
     };

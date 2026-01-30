@@ -1,9 +1,9 @@
 import React from 'react';
 
 import {Icon} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
+import type {GetEntryResponse} from 'shared/schema';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {EntryContextMenuNestedProps, MenuClickHandler} from '../EntryContextMenu';
@@ -18,11 +18,10 @@ import {getFilteredEntryContextMenu} from './helpers';
 import '../EntryContextMenuBase/EntryContextMenuBase.scss';
 
 const i18n = I18n.keyset('component.entry-context-menu.view');
-const b = block('dl-entry-context-menu-base');
 
-const OVERRIDE_CONTEXT_MENU = {
+const OVERRIDE_CONTEXT_MENU: Record<string, Record<string, string>> = {
     [ENTRY_CONTEXT_MENU_ACTION.DELETE]: {
-        menuItemClassName: b('item', {danger: true}),
+        theme: 'danger',
     },
 };
 
@@ -57,16 +56,32 @@ export const getEntryContextMenuItems = (
     return entryContextMenuItems;
 };
 
+export type FilterEntryContextMenuItems = (args: {
+    entry?: GetEntryResponse;
+    items: EntryContextMenuItem[];
+}) => EntryContextMenuItem[];
+
 export const withConfiguredEntryContextMenu = (
     Component: typeof EntryContextMenuBase,
     itemsPropName = 'items',
 ) =>
-    function WithConfiguredEntryContextMenu(
-        props: EntryContextMenuNestedProps &
-            ContextMenuParams & {
-                onMenuClick: MenuClickHandler;
-            },
-    ) {
+    function WithConfiguredEntryContextMenu({
+        filterEntryContextMenuItems,
+        ...props
+    }: EntryContextMenuNestedProps &
+        ContextMenuParams & {
+            onMenuClick: MenuClickHandler<GetEntryResponse>;
+            filterEntryContextMenuItems?: FilterEntryContextMenuItems;
+        }) {
+        const entryContextMenuItems = getEntryContextMenuItems({
+            entry: props.entry, // eslint-disable-line react/prop-types
+            isEditMode: props.isEditMode,
+            showSpecificItems: props.showSpecificItems,
+            isLimitedView: props.isLimitedView,
+        });
+        const filteredContextMenuItems =
+            filterEntryContextMenuItems?.({entry: props.entry, items: entryContextMenuItems}) ??
+            entryContextMenuItems;
         const resultProps = {
             ...props,
             [itemsPropName]:
@@ -75,18 +90,10 @@ export const withConfiguredEntryContextMenu = (
                           type: 'entry',
                           isFlat: isEnabledFeature(Feature.MenuItemsFlatView),
                       })
-                    : getGroupedMenu(
-                          getEntryContextMenuItems({
-                              entry: props.entry, // eslint-disable-line react/prop-types
-                              isEditMode: props.isEditMode,
-                              showSpecificItems: props.showSpecificItems,
-                              isLimitedView: props.isLimitedView,
-                          }).concat(props.additionalItems),
-                          {
-                              type: 'entry',
-                              isFlat: isEnabledFeature(Feature.MenuItemsFlatView),
-                          },
-                      ),
+                    : getGroupedMenu(filteredContextMenuItems.concat(props.additionalItems), {
+                          type: 'entry',
+                          isFlat: isEnabledFeature(Feature.MenuItemsFlatView),
+                      }),
         };
         return <Component {...resultProps} />;
     };

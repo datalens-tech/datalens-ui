@@ -2,18 +2,27 @@ import {I18n} from 'i18n';
 import {flow} from 'lodash';
 import {batch} from 'react-redux';
 import type {ConnectionData, ConnectorType} from 'shared';
-import type {FormSchema, GetEntryResponse} from 'shared/schema/types';
+import type {ConnectorItem, FormSchema, GetEntryResponse} from 'shared/schema/types';
+import {URL_QUERY} from 'ui';
 import {registry} from 'ui/registry';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import logger from '../../../../libs/logger';
+import {loadRevisions, setEntryContent} from '../../../../store/actions/entryContent';
 import {showToast} from '../../../../store/actions/toaster';
+import {RevisionsMode} from '../../../../store/typings/entryContent';
 import type {DataLensApiError} from '../../../../typings';
-import {getWorkbookIdFromPathname} from '../../../../utils';
+import {getEntityIdFromPathname} from '../../../../utils';
 import history from '../../../../utils/history';
 import {FieldKey, InnerFieldKey} from '../../constants';
-import {newConnectionSelector} from '../selectors';
-import type {ConnectionsReduxDispatch, ConnectionsReduxState, GetState} from '../typings';
+import {getIsRevisionsSupported} from '../../utils';
+import {connectionIdSelector, newConnectionSelector} from '../selectors';
+import type {
+    ConnectionEntry,
+    ConnectionsReduxDispatch,
+    ConnectionsReduxState,
+    GetState,
+} from '../typings';
 import {
     getConnectorItemFromFlattenList,
     getDataForParamsChecking,
@@ -53,34 +62,127 @@ export * from './yadoc';
 
 const i18n = I18n.keyset('connections.form');
 
-export function setPageData({entryId, workbookId}: {entryId?: string | null; workbookId?: string}) {
+function updateRevisions(entry: GetEntryResponse) {
+    return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
+        const {entryContent} = getState();
+        dispatch(setEntryContent(entry));
+
+        if (entryContent.revisionsMode === RevisionsMode.Opened) {
+            await dispatch(
+                loadRevisions({
+                    entryId: entry?.entryId ?? '',
+                    page: 0,
+                }),
+            );
+        }
+    };
+}
+
+interface GetConnectionDataRequestProps {
+    entry?: GetEntryResponse;
+    flattenConnectors: ConnectorItem[];
+    rev_id?: string;
+    bindedWorkbookId?: string | null;
+    bindedDatasetId?: string | null;
+}
+
+async function getConnectionDataRequest({
+    entry,
+    bindedWorkbookId,
+    bindedDatasetId,
+    flattenConnectors,
+    rev_id,
+}: GetConnectionDataRequestProps) {
+    let revId: string | undefined;
+    let connectionData: ConnectionData | undefined;
+    let connectionError: DataLensApiError | undefined;
+
+    if (entry) {
+        const isRevisionsSupported = getIsRevisionsSupported({entry, flattenConnectors});
+        if (isRevisionsSupported) {
+            revId = rev_id;
+        }
+        ({connectionData, error: connectionError} = await api.fetchConnectionData({
+            connectionId: entry.entryId,
+            workbookId: entry?.workbookId || bindedWorkbookId,
+            bindedDatasetId,
+            revId,
+        }));
+    }
+    return {connectionData, connectionError};
+}
+
+export function setPageData({
+    entryId,
+    workbookId,
+    collectionId,
+    rev_id,
+    bindedWorkbookId,
+    bindedDatasetId,
+}: {
+    entryId?: string | null;
+    workbookId?: string;
+    collectionId?: string;
+    rev_id?: string;
+    bindedWorkbookId?: string | null;
+    bindedDatasetId?: string | null;
+}) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         dispatch(setPageLoading({pageLoading: true}));
         const groupedConnectors = await api.fetchConnectors();
         const flattenConnectors = getFlattenConnectors(groupedConnectors);
         const {checkData, form, validationErrors} = getState().connections;
-        let entry: GetEntryResponse | undefined;
+        let entry: ConnectionEntry | undefined;
         let entryError: DataLensApiError | undefined;
         let connectionData: ConnectionData | undefined;
         let connectionError: DataLensApiError | undefined;
 
         if (entryId) {
-            ({entry, error: entryError} = await api.fetchEntry(entryId));
-            ({connectionData, error: connectionError} = await api.fetchConnectionData(
+            ({entry, error: entryError} = await api.fetchEntry({
                 entryId,
-                entry?.workbookId ?? null,
-            ));
+                bindedDatasetId,
+                bindedWorkbookId,
+            }));
+            ({connectionData, connectionError} = await getConnectionDataRequest({
+                entry,
+                flattenConnectors,
+                bindedWorkbookId,
+                bindedDatasetId,
+                rev_id,
+            }));
+        }
+
+        if (entry?.collectionId && bindedWorkbookId && !bindedDatasetId) {
+            const {delegation, error: delegationError} = await api.fetchSharedEntryDelegation(
+                entry.entryId,
+                bindedWorkbookId,
+            );
+            if (delegationError) {
+                dispatch(
+                    showToast({
+                        title: delegationError.message,
+                        error: delegationError,
+                    }),
+                );
+            } else {
+                entry.isDelegated = delegation?.isDelegated;
+            }
         }
 
         if (!entry) {
             const getFakeEntry = registry.connections.functions.get('getFakeEntry');
-            entry = getFakeEntry(workbookId);
+            entry = getFakeEntry(workbookId, collectionId);
         }
 
         batch(() => {
             dispatch(setGroupedConnectors({groupedConnectors}));
             dispatch(setFlattenConnectors({flattenConnectors}));
-            dispatch(setEntry({entry, error: entryError}));
+            dispatch(
+                setEntry({
+                    entry: {...entry, revId: rev_id ?? entry?.publishedId ?? ''},
+                    error: entryError,
+                }),
+            );
 
             if (Object.keys(form).length) {
                 dispatch(resetFormsData());
@@ -176,6 +278,7 @@ export function getConnectorSchema(type: ConnectorType) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {flattenConnectors} = getState().connections;
         const isNewConnection = newConnectionSelector(getState());
+        const connectionId = connectionIdSelector(getState());
         const connectorItem = getConnectorItemFromFlattenList(flattenConnectors, type);
         const useBackendSchema = Boolean(connectorItem?.backend_driven_form);
         let schema: FormSchema | undefined;
@@ -186,6 +289,7 @@ export function getConnectorSchema(type: ConnectorType) {
             ({schema, error} = await api.fetchConnectorSchema({
                 type,
                 mode: isNewConnection ? 'create' : 'edit',
+                connectionId: isNewConnection ? undefined : connectionId,
             }));
         } else {
             const getMockedForm = registry.connections.functions.get('getMockedForm');
@@ -206,22 +310,24 @@ export function getConnectorSchema(type: ConnectorType) {
     };
 }
 
-export function getConnectionData() {
+export function getConnectionData(revId?: string) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {entry} = getState().connections;
+        const {entry, flattenConnectors} = getState().connections;
 
         if (!entry) {
             return;
         }
-
         dispatch(setPageLoading({pageLoading: true}));
-        const {connectionData, error} = await api.fetchConnectionData(
-            entry.entryId,
-            entry?.workbookId,
-        );
 
+        const {connectionData, connectionError} = await getConnectionDataRequest({
+            entry,
+            flattenConnectors,
+            rev_id: revId,
+        });
         batch(() => {
-            dispatch(setConectorData({connectionData, error}));
+            dispatch(
+                setConectorData({connectionData: connectionData ?? {}, error: connectionError}),
+            );
             dispatch(setPageLoading({pageLoading: false}));
         });
     };
@@ -245,9 +351,19 @@ export function changeInitialForm(initialFormUpdates: ConnectionsReduxState['ini
     };
 }
 
-export function createConnection(args: {name: string; dirPath?: string; workbookId?: string}) {
+export function createConnection(args: {
+    name: string;
+    dirPath?: string;
+    workbookId?: string;
+    collectionId?: string;
+}) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
+        const {
+            name,
+            dirPath,
+            workbookId = getEntityIdFromPathname(),
+            collectionId = getEntityIdFromPathname(true),
+        } = args;
         const {form, innerForm, schema} = getState().connections;
 
         if (!schema || !schema.apiSchema?.create) {
@@ -268,8 +384,10 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
 
         if (typeof dirPath === 'string') {
             resultForm[FieldKey.DirPath] = dirPath;
-        } else {
+        } else if (workbookId) {
             resultForm[FieldKey.WorkbookId] = workbookId;
+        } else {
+            resultForm[FieldKey.CollectionId] = collectionId;
         }
 
         flow([setSubmitLoading, dispatch])({loading: true});
@@ -314,6 +432,8 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
             history.replace(`/navigation/${templateFolderId}`);
         } else if (templateWorkbookId) {
             history.replace(`/workbooks/${templateWorkbookId}`);
+        } else if (collectionId && connectionId) {
+            history.replace(`/collections/${collectionId}`);
         } else if (connectionId) {
             history.replace(`/connections/${connectionId}`);
         }
@@ -338,9 +458,9 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
     };
 }
 
-export function updateConnection() {
+function updateConnection() {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {form, innerForm, schema, connectionData} = getState().connections;
+        const {form, innerForm, schema, connectionData, entry} = getState().connections;
 
         if (!schema || !schema.apiSchema?.edit) {
             logger.logError(
@@ -376,15 +496,42 @@ export function updateConnection() {
             connectionData.id as string,
             connectionData.db_type as string,
         );
+        let updatedEntry: GetEntryResponse | undefined;
+        if (!error && entry?.entryId) {
+            const response = await api.fetchEntry({entryId: entry.entryId});
+            updatedEntry = response.entry;
+        }
         batch(() => {
             if (error) {
                 flow([showToast, dispatch])({title: i18n('toast_modify-connection-error'), error});
             } else {
                 flow([setInitialForm, dispatch])({updates: form});
+                if (updatedEntry) {
+                    flow([updateRevisions, dispatch])(updatedEntry);
+                }
             }
 
             flow([setSubmitLoading, dispatch])({loading: false});
         });
+    };
+}
+
+export function updateConnectionWithRevision() {
+    return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
+        const {
+            connections: {flattenConnectors, entry},
+        } = getState();
+        const isRevisionsSupported = getIsRevisionsSupported({entry, flattenConnectors});
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.delete(URL_QUERY.REV_ID);
+        await dispatch(updateConnection());
+
+        if (isRevisionsSupported) {
+            history.push({
+                ...location,
+                search: `?${searchParams.toString()}`,
+            });
+        }
     };
 }
 

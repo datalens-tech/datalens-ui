@@ -33,6 +33,7 @@ class NavigationModal extends React.Component {
         aside: PropTypes.bool,
         hideSidebar: PropTypes.bool,
         isOnlyCollectionsMode: PropTypes.bool,
+        dialogs: PropTypes.element,
     };
     static defaultProps = {
         onCrumbClick: noop,
@@ -109,6 +110,14 @@ class NavigationModal extends React.Component {
     onItemSelect = ({selectedItemsIds}) => {
         this.setState({isSomeItemSelected: selectedItemsIds.size > 0});
     };
+    renderEmptyStateAction = () => (
+        <CreateEntry
+            place={this.props.place}
+            onClick={this.props.onCreateMenuClick}
+            isOnlyCollectionsMode={this.props.isOnlyCollectionsMode}
+            buttonView="normal"
+        />
+    );
     render() {
         const {
             linkWrapper,
@@ -120,6 +129,7 @@ class NavigationModal extends React.Component {
             visible,
             hideSidebar,
             aside,
+            dialogs,
             ...props
         } = this.props;
         const {path, place} = this.state;
@@ -165,6 +175,7 @@ class NavigationModal extends React.Component {
                         mode={MODE_MODAL}
                         setBreadCrumbs={this.setBreadCrumbs}
                         onItemSelect={this.onItemSelect}
+                        renderEmptyStateAction={this.renderEmptyStateAction}
                     >
                         <CreateEntry
                             place={place}
@@ -173,12 +184,13 @@ class NavigationModal extends React.Component {
                         />
                     </NavigationEntries>
                 </div>
+                {dialogs}
             </div>
         );
         return asideMode ? (
             body
         ) : (
-            <Dialog open={visible} onClose={onClose} disableFocusTrap={true}>
+            <Dialog open={visible} onClose={onClose}>
                 {body}
             </Dialog>
         );

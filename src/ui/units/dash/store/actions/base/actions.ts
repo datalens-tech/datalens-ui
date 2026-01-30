@@ -22,12 +22,13 @@ import {registry} from '../../../../../registry';
 import {showToast} from '../../../../../store/actions/toaster';
 import {DashErrorCode, Mode} from '../../../modules/constants';
 import {collectDashStats} from '../../../modules/pushStats';
-import type {DashState} from '../../reducers/dashTypedReducer';
+import type {DashState} from '../../typings/dash';
 import {getFakeDashEntry} from '../../utils';
 import {
     SET_ERROR_MODE,
     SET_STATE,
     purgeData,
+    resetDashEditHistory,
     setDashViewMode,
     setLock,
     toggleTableOfContent,
@@ -40,6 +41,8 @@ import {
     isCallable,
     removeParamAndUpdate,
 } from '../helpers';
+
+import {getGlobalStatesForInactiveTabs} from './helpers';
 
 const i18n = I18n.keyset('dash.store.view');
 
@@ -121,6 +124,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
         } = getState();
 
         if (fake) {
+            dispatch(resetDashEditHistory());
             return;
         }
 
@@ -153,6 +157,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
             }
 
             await dispatch(setLock(entryId));
+            dispatch(resetDashEditHistory());
             successCallback();
         } catch (error) {
             if (isEntryIsLockedError(error)) {
@@ -165,6 +170,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
                                 await dispatch(setLock(entryId, true));
                                 (dispatch as ConnectionsReduxDispatch)(closeDialogConfirm());
                                 successCallback();
+                                dispatch(resetDashEditHistory());
                             } catch (localError) {
                                 dispatch(
                                     showToast({
@@ -261,6 +267,7 @@ export const load = ({
             const readDashParams: Omit<GetEntryArgs, 'entryId'> = {
                 includePermissionsInfo: true,
                 includeLinks: true,
+                includeFavorite: true,
                 branch: 'published',
             };
 
@@ -298,7 +305,7 @@ export const load = ({
                     type: SET_STATE,
                     payload: {mode: Mode.Updating},
                 });
-                data = await DashSchemeConverter.update(entry.data);
+                data = DashSchemeConverter.update(entry.data);
                 convertedEntryData = data;
             }
 
@@ -307,10 +314,18 @@ export const load = ({
                 throw new Error(NOT_FOUND_ERROR_TEXT);
             }
 
-            // without await, they will start following each markdown separately
-            await MarkdownProvider.init(data);
-
             const {tabId, widgetsCurrentTab} = getCurrentTab({searchParams, data, history});
+
+            // without await, they will start following each markdown separately
+
+            const [updatedHashStates, _] = await Promise.all([
+                getGlobalStatesForInactiveTabs({
+                    state: hashData?.data,
+                    data,
+                    currentTabId: tabId,
+                }),
+                MarkdownProvider.init(data),
+            ]);
 
             let hashStates = {};
             if (hashData) {
@@ -321,6 +336,7 @@ export const load = ({
                         hash,
                         state: {...controls, ...states},
                     },
+                    ...(updatedHashStates || {}),
                 };
             }
 
@@ -364,6 +380,7 @@ export const load = ({
                     currentRevId: entry.revId,
                     widgetsCurrentTab,
                     openInfoOnLoad: searchParams.get(URL_QUERY.OPEN_DASH_INFO) === '1',
+                    annotation: entry.annotation,
                 },
             });
 
@@ -423,13 +440,14 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
     return async function (dispatch: DashDispatch, getState: () => DatalensGlobalState) {
         try {
             const isPublishing = mode === 'publish';
-            const {entry: prevEntry, data, lockToken} = getState().dash;
+            const {entry: prevEntry, data, lockToken, annotation} = getState().dash;
 
             // TODO Refactor old api schema
             const updateData: {
                 id: string;
                 data: Partial<DashEntry> & {
                     lockToken: string | null;
+                    description?: string;
                 };
             } = {
                 id: prevEntry.entryId,
@@ -437,6 +455,9 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                     lockToken,
                     mode: mode,
                     meta: isPublishing ? {is_release: true} : {},
+                    annotation: {
+                        description: annotation?.description ?? '',
+                    },
                 },
             };
             if (isDraft && isPublishing) {
@@ -444,6 +465,7 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
             } else {
                 updateData.data.data = purgeData(data);
             }
+
             // TODO Refactor old api schema
             const entry = await (sdk.charts as any).updateDash(updateData);
 
@@ -467,6 +489,7 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                         ...prevEntry,
                         ...entry,
                     },
+                    annotation: entry.annotation,
                 },
             });
         } catch (error) {

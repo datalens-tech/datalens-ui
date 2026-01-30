@@ -1,6 +1,7 @@
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {
+    ApiV2DataExportField,
     ChartsInsight,
     DashWidgetConfig,
     EntryPublicAuthor,
@@ -23,6 +24,7 @@ export type UiTabExportsControl = {
     updateOnChange?: boolean;
     postUpdateOnChange?: boolean;
     updateControlsOnChange?: boolean;
+    disabled?: boolean;
 };
 
 export type UiTabExports =
@@ -63,12 +65,15 @@ export type ProcessorSuccessResponse = {
         chartsInsights?: ChartsInsight[];
         sideMarkdown?: string;
         exportFilename?: string;
+        colors?: string[];
     };
+    dataExport?: Record<string, ApiV2DataExportField | undefined>;
     timings: {};
     data?: {
         markdown?: string;
         html?: string;
         meta?: object;
+        original_markdown?: string;
     };
     logs_v2?: string;
     config?: string;
@@ -76,6 +81,7 @@ export type ProcessorSuccessResponse = {
     comments?: CommentsFetcherFetchResult;
     publicAuthor?: EntryPublicAuthor;
     id?: string;
+    revId?: string;
     _confStorageConfig?: object;
     key?: string;
     type?: string;
@@ -84,11 +90,12 @@ export type ProcessorSuccessResponse = {
 export type ProcessorFiles =
     | 'Shared'
     | 'Params'
-    | 'Urls'
+    | 'Sources'
     | 'Highcharts'
     | 'Config'
-    | 'JavaScript'
-    | 'UI';
+    | 'Prepare'
+    | 'Controls'
+    | 'Activities';
 export type ProcessorLogs = {modules: LogItem[][]} & Partial<
     Record<ProcessorFiles | 'failed', LogItem[][]>
 >;
@@ -157,6 +164,9 @@ export type ChartBuilder = {
         params: StringParams;
         actionParams: StringParams;
         hooks: ProcessorHooks;
+    }) => Promise<ChartBuilderResult>;
+    buildPaletteSources?: (args: {
+        sources?: Record<string, DataFetcherResult>;
     }) => Promise<ChartBuilderResult>;
     buildChartLibraryConfig: (args: {
         data?: unknown;

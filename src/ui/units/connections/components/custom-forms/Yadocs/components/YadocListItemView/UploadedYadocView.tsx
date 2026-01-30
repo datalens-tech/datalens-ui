@@ -15,6 +15,7 @@ type UploadedYadocViewProps = {
     item: UploadedYadoc;
     deleteListItem?: HandleItemClick;
     clickErrorAction?: HandleItemClick;
+    qa?: string;
 };
 
 // Forbids retry because of ...
@@ -26,7 +27,7 @@ const CODES_FORBIDING_RETRIES = [
 ];
 
 const UploadedYadocViewComponent = (props: UploadedYadocViewProps) => {
-    const {item, deleteListItem, clickErrorAction} = props;
+    const {item, deleteListItem, clickErrorAction, qa} = props;
     const actions: ListItemAction<UploadedYadocViewProps['item']>[] = React.useMemo(() => {
         const nextActions: ListItemAction<UploadedYadocViewProps['item']>[] = [
             {type: 'delete', item, onClick: deleteListItem},
@@ -60,7 +61,7 @@ const UploadedYadocViewComponent = (props: UploadedYadocViewProps) => {
         }
     }
 
-    return <ListItem title={item.data.title} description={description} actions={actions} />;
+    return <ListItem title={item.data.title} description={description} actions={actions} qa={qa} />;
 };
 
 export const UploadedYadocView = React.memo(UploadedYadocViewComponent);

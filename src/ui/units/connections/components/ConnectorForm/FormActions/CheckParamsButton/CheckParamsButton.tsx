@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps} from '@gravity-ui/uikit';
 import {Button, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -20,7 +20,7 @@ type OwnProps = {
     checkData: CheckData;
     onTooltipActionButtonClick: () => void;
 };
-type CheckParamsButtonProps = ButtonProps & OwnProps;
+type CheckParamsButtonProps = ButtonButtonProps & OwnProps;
 
 export const CheckParamsButton = (props: CheckParamsButtonProps) => {
     const {checkData, loading, disabled, onClick, onTooltipActionButtonClick} = props;
@@ -39,12 +39,15 @@ export const CheckParamsButton = (props: CheckParamsButtonProps) => {
             {checkData.status !== 'unknown' && (
                 <Popover
                     disabled={checkData.status !== 'error'}
-                    tooltipClassName={b('tooltip')}
-                    tooltipActionButton={{
-                        text: i18n('button_details'),
-                        onClick: onTooltipActionButtonClick,
-                    }}
-                    content={i18n('toast_verify-error')}
+                    className={b('tooltip')}
+                    content={
+                        <div className={b('tooltip-content')}>
+                            {i18n('toast_verify-error')}
+                            <Button onClick={onTooltipActionButtonClick}>
+                                {i18n('button_details')}
+                            </Button>
+                        </div>
+                    }
                 >
                     <Icon
                         className={b('icon')}

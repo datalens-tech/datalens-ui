@@ -23,7 +23,7 @@ const isDatasetTab = (value: unknown): value is DatasetTab => {
     return typeof value === 'string' && DATASET_TABS.includes(value);
 };
 
-const getCurrentTab = (): DatasetTab => {
+export const getCurrentTab = (): DatasetTab => {
     const defaultTab = isCreationProcess(location.pathname) ? TAB_SOURCES : TAB_DATASET;
     const queryTab = DatasetUtils.getQueryParam('tab');
 
@@ -47,12 +47,16 @@ export const initialPreview: DatasetReduxState['preview'] = {
 };
 
 export const initialState: DatasetReduxState = {
+    isRefetchingDataset: false,
     isLoading: true,
     isFavorite: false,
     isDatasetRevisionMismatch: false,
+    publishedId: null,
+    currentRevId: null,
     id: '',
     key: '',
     workbookId: null,
+    collectionId: null,
     connection: null,
     // current content of the dataset
     content: getDefaultDatasetContent(),
@@ -65,6 +69,7 @@ export const initialState: DatasetReduxState = {
         savingError: null,
         sourceLoadingError: null,
         validationError: null,
+        sourceListingOptionsError: null,
     },
     validation: {
         isLoading: false,
@@ -75,6 +80,7 @@ export const initialState: DatasetReduxState = {
         disabled: true,
         isProcessingSavingDataset: false,
         error: null,
+        delegationFromConnToSharedDataset: null,
     },
     types: {
         data: [],
@@ -82,15 +88,26 @@ export const initialState: DatasetReduxState = {
     },
     ui: {
         selectedConnectionId: null,
+        selectedConnectionDelegationStatus: null,
         isDatasetChanged: false,
         isFieldEditorModuleLoading: false,
         isSourcesLoading: false,
+        isSourcesSearchLoading: false,
+        isSourcesListingOptionsLoading: false,
     },
     editor: {
         filter: '',
         itemsToDisplay: ['hiddenFields'],
     },
     updates: [],
+    connectionsDbNames: {},
+    sourcesPagination: {
+        page: 0,
+        limit: 100,
+        isFetchingNextPage: false,
+        isFinished: false,
+        searchValue: '',
+    },
     freeformSources: [],
     selectedConnections: [],
     sourcePrototypes: [],
@@ -105,3 +122,8 @@ export const getInitialState = (extra?: Partial<DatasetReduxState>): DatasetRedu
 });
 
 export const EDIT_HISTORY_OPTIONS_KEY = '__editHistoryOptions__';
+
+export const ConnectionUpdateActions = {
+    ADD: 'add',
+    REPLACE: 'replace',
+} as const;

@@ -1,0 +1,4 @@
+{
+  "label_data-export-info": "When the option is disabled, the export data button will be hidden from charts. At the same time, it will be possible to extract data from charts, as well as take screenshots.",
+  "label_enable-data-export": "Enable data export"
+}

@@ -1,4 +1,4 @@
-import type {IChartEditor, Palette, QlConfig} from '../../../../../../../shared';
+import type {FeatureConfig, IChartEditor, Palette, QlConfig} from '../../../../../../../shared';
 import type {QLConnectionTypeMap} from '../../utils/connection';
 
 export type BuildSourcesArgs = {
@@ -6,4 +6,5 @@ export type BuildSourcesArgs = {
     ChartEditor: IChartEditor;
     palettes: Record<string, Palette>;
     qlConnectionTypeMap: QLConnectionTypeMap;
+    features: FeatureConfig;
 };

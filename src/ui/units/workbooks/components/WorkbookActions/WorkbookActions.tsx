@@ -10,12 +10,15 @@ import {
     DIALOG_MOVE_WORKBOOK,
 } from 'components/CollectionsStructure';
 import {I18N} from 'i18n';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
+import {WorkbookPageActionsMoreQA} from 'shared/constants/qa';
 import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
+import {selectCollectionBreadcrumbsError} from 'ui/units/collections-navigation/store/selectors';
+import Utils from 'ui/utils';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared';
@@ -75,9 +78,25 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
     const {useAdditionalWorkbookActions} = registry.workbooks.functions.getAll();
     const {CustomActionPanelWorkbookActions} = registry.workbooks.components.getAll();
 
+    const {getCurrentUserRights, getGloballyEntrySettings} = registry.common.functions.getAll();
+    const currentUserRights = getCurrentUserRights();
+
+    const globallyEntrySettings = getGloballyEntrySettings();
+    const isWorkbookExportDisabled = Boolean(globallyEntrySettings?.isWorkbookExportDisabled);
+
     const additionalActions = useAdditionalWorkbookActions(workbook);
+    const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
 
     const dropdownActions = [...additionalActions];
+
+    const collectionAccessPermissionDenied =
+        workbook.collectionId &&
+        breadcrumbsError &&
+        Utils.parseErrorResponse(breadcrumbsError).status === 403;
+
+    const initialCollectionId = collectionAccessPermissionDenied
+        ? undefined
+        : workbook.collectionId;
 
     if (workbook.permissions.move) {
         dropdownActions.push({
@@ -89,7 +108,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                             open: true,
                             workbookId: workbook.workbookId,
                             workbookTitle: workbook.title,
-                            initialCollectionId: workbook.collectionId,
+                            initialCollectionId,
                             onApply: refreshWorkbookInfo,
                             onClose: () => {
                                 dispatch(closeDialog());
@@ -112,7 +131,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                             open: true,
                             workbookId: workbook.workbookId,
                             workbookTitle: workbook.title,
-                            initialCollectionId: workbook.collectionId,
+                            initialCollectionId,
                             onApply: onApplyCopy,
                             onClose: () => {
                                 dispatch(closeDialog());
@@ -125,7 +144,11 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         });
     }
 
-    if (isEnabledFeature(Feature.EnableExportWorkbookFile) && workbook.permissions.update) {
+    if (
+        isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+        currentUserRights.admin &&
+        !isWorkbookExportDisabled
+    ) {
         dropdownActions.push({
             action: () => {
                 dispatch(
@@ -134,6 +157,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                         props: {
                             open: true,
                             workbookId: workbook.workbookId,
+                            workbookTitle: workbook.title,
                             onClose: () => {
                                 dispatch(closeDialog());
                             },
@@ -173,6 +197,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                 );
             },
             theme: 'danger',
+            qa: WorkbookPageActionsMoreQA.DELETE_ITEM,
         });
     }
 
@@ -184,7 +209,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         <div className={b()}>
             {Boolean(dropdownActions.length) && (
                 <DropdownMenu
-                    defaultSwitcherProps={{view: 'normal'}}
+                    defaultSwitcherProps={{view: 'normal', qa: WorkbookPageActionsMoreQA.SWITCHER}}
                     switcherWrapperClassName={b('item')}
                     items={dropdownActions}
                 />
@@ -208,7 +233,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
 
             {workbook.permissions.update && (
                 <div className={b('item')}>
-                    <CreateEntry view="action" />
+                    <CreateEntry workbook={workbook} view="action" />
                 </div>
             )}
 

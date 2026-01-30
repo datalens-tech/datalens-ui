@@ -18,7 +18,7 @@ $topExpandablePanelMargin: var(--g-spacing-2);
         flex-shrink: 0;
         display: flex;
         align-items: center;
-        padding: 0 20px;
+        padding: 0 $actionPanelHorizontalPadding;
         border-bottom: 1px solid var(--g-color-line-generic);
         background: var(--g-color-base-background);
 

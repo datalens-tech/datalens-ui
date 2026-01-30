@@ -24,9 +24,10 @@ const b = block('conn-form');
 
 type Props = {
     type: ConnectorType;
+    readonly?: boolean;
 };
 
-export const ConnectorForm = ({type}: Props) => {
+export const ConnectorForm = ({type, readonly = false}: Props) => {
     const dispatch = useDispatch();
     const schema = useSelector(formSchemaSelector);
     const isNewConnection = useSelector(newConnectionSelector);
@@ -63,7 +64,7 @@ export const ConnectorForm = ({type}: Props) => {
             <FormTitle type={type} title={schema.title} showArrow={isNewConnection} />
             <div className={b('rows')}>
                 {schema.rows.map((row, i) => (
-                    <FormRow key={`row-${i}`} {...row} />
+                    <FormRow key={`row-${i}`} {...row} queryReadonly={readonly} />
                 ))}
             </div>
             <FormActions />

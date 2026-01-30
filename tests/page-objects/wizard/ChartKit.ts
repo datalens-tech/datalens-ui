@@ -3,6 +3,7 @@ import {Page} from '@playwright/test';
 import {ChartkitMenuDialogsQA, ChartKitTableQa, ChartQa, MenuItemsQA} from '../../../src/shared';
 import {slct, waitForCondition} from '../../utils';
 import {readDownload} from '../../utils/playwright/utils';
+import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
 
 export enum DOMNamedAttributes {
     StrokeDashArray = 'stroke-dasharray',
@@ -23,7 +24,7 @@ export default class ChartKit {
     geopointSelector = '.chartkit-yandex-map-chips';
     tooltipSelector = '.chartkit-tooltip';
     yMapSelector = '.chartkit-ymap';
-    legendItemSelector = '.highcharts-legend-item';
+    legendItemSelector = COMMON_CHARTKIT_SELECTORS.chartLegendItem;
     chartMenuSwitcher = slct('chart-dropdown-switcher');
     chartMenuList = slct('chart-dropdown-menu');
     commentsSelector = '.highcharts-comment';
@@ -35,8 +36,6 @@ export default class ChartKit {
     metricItemValueSelector = '.chartkit-indicator__item-value,.markup-metric-value';
     metricItemTitleSelector = '.chartkit-indicator__item-title,.markup-metric-title';
     private drillArrowsSelector = '.chartkit-drill__drill-action';
-    private breadcrumbsItemSelector = '.chartkit-drill .g-breadcrumbs__item';
-    private breadcrumbsSwitcherSelector = '.chartkit-drill .g-breadcrumbs__switcher';
     private paginatorSelector = '.chartkit-table-paginator';
     private tableHeadCellSelector = '.data-table__head-cell';
     private layerLegendSelector = '.chartkit .chartkit-ymap-legend-layer';
@@ -50,7 +49,9 @@ export default class ChartKit {
     }
 
     async openChartMenu() {
-        await this.page.click(this.chartMenuSwitcher);
+        await this.page.hover(slct(ChartkitMenuDialogsQA.chartWidget));
+        await this.page.waitForSelector(this.chartMenuSwitcher);
+        await this.page.locator(this.chartMenuSwitcher).click();
     }
 
     async waitForItemInMenu(qaName: string) {
@@ -71,6 +72,7 @@ export default class ChartKit {
     }
 
     async clickMenuItem(qaSelector: string) {
+        await this.page.locator(slct(ChartkitMenuDialogsQA.chartWidget)).hover();
         await this.page.waitForSelector(this.chartMenuSwitcher);
         await this.openChartMenu();
         await this.waitForItemInMenu(qaSelector);
@@ -113,7 +115,9 @@ export default class ChartKit {
     }
 
     async waitForSuccessfulRender() {
-        const locator = this.page.locator('.chartkit-graph').or(this.getTableLocator());
+        const locator = this.page
+            .locator(COMMON_CHARTKIT_SELECTORS.chart)
+            .or(this.getTableLocator());
         await locator.waitFor();
     }
 
@@ -189,15 +193,6 @@ export default class ChartKit {
         await this.page.waitForSelector(this.paginatorSelector, {state: 'detached'});
     }
 
-    async getBreadcrumbs() {
-        const switchers = await this.page.$$(this.breadcrumbsSwitcherSelector);
-        const items = await this.page.$$(this.breadcrumbsItemSelector);
-        const switchersText = await Promise.all(switchers.map((el) => el.innerText()));
-        const itemsText = await Promise.all(items.map((el) => el.innerText()));
-
-        return [...switchersText, ...itemsText];
-    }
-
     async getTableRowsCount() {
         return await this.getTableLocator().locator('tbody tr').count();
     }
@@ -257,7 +252,7 @@ export default class ChartKit {
             lines = await this.page.evaluate(
                 ({attribute}: {attribute: DOMNamedAttributes}) => {
                     const lineNodes = document.querySelectorAll(
-                        '.highcharts-series .highcharts-graph',
+                        '.highcharts-series .highcharts-graph, .gcharts-line path',
                     );
                     return Array.from(lineNodes)
                         .map((lineEl) => lineEl.attributes.getNamedItem(attribute)?.value)

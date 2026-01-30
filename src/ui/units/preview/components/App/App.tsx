@@ -4,7 +4,7 @@ import block from 'bem-cn-lite';
 import once from 'lodash/once';
 import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
-import {Route, Switch, withRouter} from 'react-router-dom';
+import {Redirect, Route, Switch, withRouter} from 'react-router-dom';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
@@ -44,7 +44,14 @@ const App: React.FunctionComponent<Props> = (props) => {
         <div className={b({mobile: DL.IS_MOBILE})}>
             <Switch>
                 <Route
-                    path={`/preview/:idOrSource+`}
+                    path="/preview/:source/:id"
+                    render={({match, location}) => {
+                        const oldQueryAndHash = `${location.search}${location.hash}`;
+                        return <Redirect to={`/preview/${match.params.id}${oldQueryAndHash}`} />;
+                    }}
+                />
+                <Route
+                    path={`/preview/:id`}
                     render={(routeProps) => (
                         <Preview
                             {...routeProps}

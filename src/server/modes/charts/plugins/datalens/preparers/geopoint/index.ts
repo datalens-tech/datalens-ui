@@ -11,10 +11,13 @@ import {
     MARKUP_TYPE,
     MINIMUM_FRACTION_DIGITS,
     WRAPPED_MARKDOWN_KEY,
+    ZoomMode,
     getFakeTitleOrTitle,
+    getFormatOptions,
     isMarkupDataType,
 } from '../../../../../../../shared';
 import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
+import {getColorsSettings} from '../../../helpers/color-palettes';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL, getMountedColor} from '../../utils/constants';
 import type {Coordinate, GradientOptions} from '../../utils/geo-helpers';
@@ -24,6 +27,7 @@ import {
     getGradientMapOptions,
     getLayerAlpha,
     getMapBounds,
+    getMapState,
 } from '../../utils/geo-helpers';
 import {
     chartKitFormatNumberWrapper,
@@ -37,7 +41,7 @@ import {addActionParamValue} from '../helpers/action-params';
 import type {PrepareFunctionArgs} from '../types';
 
 import {DEFAULT_ICON_COLOR, DEFAULT_POINT_RADIUS} from './constants';
-import type {GeopointMapOptions, GeopointPointConfig} from './types';
+import type {GeopointMapOptions, GeopointPointConfig, GeopointPrepareResult} from './types';
 
 type GetPointConfigArgs = {
     stringifyedCoordinates: string;
@@ -110,7 +114,7 @@ const setPointProperty = ({
 };
 
 // eslint-disable-next-line complexity
-function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = false} = {}) {
+export function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = false} = {}) {
     const {
         colors,
         colorsConfig,
@@ -123,6 +127,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         shared,
         idToDataType,
         ChartEditor,
+        defaultColorPaletteId,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnabled = widgetConfig?.actionParams?.enable;
@@ -189,6 +194,9 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         });
     }
 
+    let mountedColors: Record<string, string> = {};
+    let paletteColors: string[] = [];
+
     if (gradientMode) {
         const gradientThresholdValues = getThresholdValues(colorsConfig, colorValues);
         const {min, rangeMiddle, max} = gradientThresholdValues;
@@ -203,6 +211,17 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
             mid: min + rangeMiddle,
             max: max,
         };
+    } else {
+        const colorSettings = getColorsSettings({
+            field: color,
+            colorsConfig,
+            defaultColorPaletteId,
+            availablePalettes: colorsConfig.availablePalettes,
+            customColorPalettes: colorsConfig.loadedColorPalettes,
+        });
+
+        mountedColors = colorSettings.mountedColors;
+        paletteColors = colorSettings.colors;
     }
 
     let colorIndex = -1;
@@ -260,13 +279,14 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
             }
 
             if (label && label.title === dataTitle) {
+                const formatting = getFormatOptions(label);
                 allPoints[`points-${valuesIndex}`].forEach((point) =>
                     setPointProperty({
                         point,
                         propName: 'label',
                         propValue: columnData,
                         propType: label.data_type,
-                        formatting: label.formatting,
+                        formatting,
                     }),
                 );
             }
@@ -285,7 +305,11 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                             iconColor = colorData[key];
                         }
                     } else {
-                        let mountedColor = getMountedColor(colorsConfig, colorValue);
+                        let mountedColor = getMountedColor({
+                            colors: paletteColors,
+                            mountedColors,
+                            value: colorValue,
+                        });
 
                         if (!mountedColor || mountedColor === 'auto') {
                             if (!colorsByValue.has(colorValue)) {
@@ -327,10 +351,11 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                     pointData.key = itemTitle;
                     pointData.value = columnData;
                 } else {
+                    const tooltipFieldFormatting = getFormatOptions(tooltipField);
                     const value = prepareValue(
                         columnData,
                         tooltipField.data_type,
-                        tooltipField.formatting,
+                        tooltipFieldFormatting,
                     );
                     const text = itemTitle ? `${itemTitle}: ${value}` : value;
 
@@ -410,6 +435,13 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         };
     }
 
+    const shouldSetBounds =
+        shared?.extraSettings?.zoomMode !== ZoomMode.Manual &&
+        shared?.extraSettings?.mapCenterMode !== ZoomMode.Manual;
+    const {zoom, center} = getMapState(shared, [leftBot, rightTop]);
+
+    ChartEditor?.updateHighchartsConfig({state: {zoom, center}});
+
     if (gradientOptions) {
         const colorTitle = color.fakeTitle || idToTitle[color.guid] || color.title;
 
@@ -418,15 +450,17 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
             ...getGradientMapOptions(colorsConfig, colorTitle, gradientOptions),
         };
 
-        return [
-            {
-                collection: {
-                    children: getFlattenCoordinates(Object.values(allPoints)),
-                },
-                options: mapOptions,
-                bounds: [leftBot, rightTop],
+        const resultData: GeopointPrepareResult = {
+            collection: {
+                children: getFlattenCoordinates(Object.values(allPoints)),
             },
-        ];
+            options: mapOptions,
+        };
+        if (shouldSetBounds) {
+            resultData.bounds = [leftBot, rightTop];
+        }
+
+        return [resultData];
     } else {
         mapOptions = {
             ...mapOptions,
@@ -439,10 +473,13 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         }
     }
 
-    const resultData = {
+    const resultData: GeopointPrepareResult = {
         options: mapOptions,
-        bounds: [leftBot, rightTop],
     };
+
+    if (shouldSetBounds) {
+        resultData.bounds = [leftBot, rightTop];
+    }
 
     const flatternCoordinates = getFlattenCoordinates(Object.values(allPoints));
 

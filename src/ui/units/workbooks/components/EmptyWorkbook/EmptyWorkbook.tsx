@@ -44,7 +44,13 @@ export const EmptyWorkbook = ({workbook, filters, onChangeFilters, scope}: Props
 
     const renderCreateEntryAction = () => {
         if (checkWbCreateEntryButtonVisibility(workbook, scope)) {
-            return <CreateEntry className={b('controls')} scope={scope || EntryScope.Connection} />;
+            return (
+                <CreateEntry
+                    workbook={workbook}
+                    className={b('controls')}
+                    scope={scope || EntryScope.Connection}
+                />
+            );
         }
         return null;
     };

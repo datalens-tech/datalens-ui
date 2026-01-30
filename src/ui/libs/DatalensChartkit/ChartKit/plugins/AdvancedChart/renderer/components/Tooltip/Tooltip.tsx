@@ -7,7 +7,7 @@ import type {PointPosition} from '../../types';
 
 import './Tooltip.scss';
 
-const b = block('advacned-chart-tooltip');
+const b = block('advanced-chart-tooltip');
 
 type TooltipProps = {
     content?: string | null;
@@ -15,7 +15,7 @@ type TooltipProps = {
     widgetContainer?: HTMLDivElement | null;
 };
 
-export const Tooltip = (props: TooltipProps) => {
+export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>((props, ref) => {
     const {content, pointerPosition, widgetContainer} = props;
 
     const containerRect = widgetContainer?.getBoundingClientRect() || {left: 0, top: 0};
@@ -30,12 +30,11 @@ export const Tooltip = (props: TooltipProps) => {
     return content ? (
         <Popup
             className={b({})}
-            contentClassName={b('popup-content')}
             open={true}
-            anchorRef={anchorRef}
-            offset={[0, 20]}
-            placement={['right', 'left', 'top', 'bottom']}
-            modifiers={[{name: 'preventOverflow', options: {padding: 10, altAxis: true}}]}
+            anchorElement={anchorRef.current}
+            offset={{mainAxis: 10, crossAxis: 0}}
+            placement={['right-end', 'left', 'top', 'bottom']}
+            floatingRef={ref}
         >
             <div
                 className={b('content')}
@@ -45,4 +44,6 @@ export const Tooltip = (props: TooltipProps) => {
             ></div>
         </Popup>
     ) : null;
-};
+});
+
+Tooltip.displayName = 'Tooltip';

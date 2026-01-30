@@ -8,6 +8,26 @@
 
 ### Start project in dev mode
 
+#### In Docker mode (easy-mode):
+
+On Linux systems:
+
+```bash
+git clone git@github.com:datalens-tech/datalens.git
+cd datalens
+./init.sh --ipv6 --docker-ipv6 --dev-light --dev-root --dev-ui
+```
+
+On macOS systems:
+
+```bash
+git clone git@github.com:datalens-tech/datalens.git
+cd datalens
+./init.sh --dev-light --dev-ui
+```
+
+#### Local mode:
+
 Install Node.js >= v18.17.0 manually or via [node version manager](https://github.com/nvm-sh/nvm).
 
 Start project in dev mode:
@@ -16,7 +36,7 @@ Start project in dev mode:
 # Start backend for datalens:
 git clone git@github.com:datalens-tech/datalens.git
 cd datalens
-docker compose -f docker-compose-dev.yml up
+docker compose -f docker-compose.dev.yaml up
 
 # Start datalens ui in dev mode:
 git clone git@github.com:datalens-tech/datalens-ui.git
@@ -25,7 +45,7 @@ npm ci
 npm run dev
 ```
 
-Now you can open datalens in dev mode at [http://localhost:3030](http://localhost:3030)
+Now you can open datalens in dev mode at [http://localhost:8080](http://localhost:8080)
 
 ### Credentials for postgres
 

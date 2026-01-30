@@ -7,7 +7,7 @@
   "label_collapse-label": "List of all aliases added",
   "label_empty": "No aliases configured",
   "label_info_1": "Aliases allow you to use matching fields to link widgets based on different datasets, as well as manual selectors.",
-  "label_info_2": "Aliases’ field types must match.",
+  "label_info_2": "Aliases' field types must match.",
   "label_link-type": "Current link type",
   "label_required-add-alias": "Add an alias to change the link type",
   "title_add-alias": "Alias setup"

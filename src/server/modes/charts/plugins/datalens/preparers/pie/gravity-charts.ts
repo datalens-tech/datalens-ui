@@ -1,0 +1,140 @@
+import type {ChartData, PieSeries, PieSeriesData} from '@gravity-ui/chartkit/gravity-charts';
+import merge from 'lodash/merge';
+
+import type {SeriesExportSettings} from '../../../../../../../shared';
+import {
+    WizardVisualizationId,
+    formatNumber,
+    getFormatOptions,
+    isMeasureValue,
+} from '../../../../../../../shared';
+import {getFakeTitleOrTitle} from '../../../../../../../shared/modules/fields';
+import {isHtmlField, isMarkdownField, isMarkupField} from '../../../../../../../shared/types/index';
+import {getBaseChartConfig} from '../../gravity-charts/utils';
+import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
+import {getExportColumnSettings} from '../../utils/export-helpers';
+import {getLegendColorScale} from '../helpers/legend';
+import type {PiePoint, PrepareFunctionArgs} from '../types';
+
+import preparePieData from './prepare-pie-data';
+import {getFormattedValue, isColoringByMeasure} from './utils';
+
+type ExtendedPieSeriesData = Omit<PieSeriesData, 'label'> & {
+    drillDownFilterValue?: string;
+    formattedValue: string | null;
+    percentage: number;
+    label?: PiePoint['label'];
+};
+
+type ExtendedPieSeries = Omit<PieSeries, 'data'> & {
+    custom?: {
+        totals?: string;
+        exportSettings?: SeriesExportSettings;
+    };
+    data: ExtendedPieSeriesData[];
+};
+
+export function prepareD3Pie(args: PrepareFunctionArgs) {
+    const {shared, labels, visualizationId, placeholders, ChartEditor, colorsConfig, idToDataType} =
+        args;
+    const {graphs, label, measure, totals, color, dimension} = preparePieData(args);
+    const isLabelsEnabled = Boolean(labels?.length && label && measure?.hideLabelMode !== 'hide');
+
+    const shouldUseHtmlForLabels =
+        isMarkupField(label) || isHtmlField(label) || isMarkdownField(label);
+    const labelField = isMeasureValue(label) ? measure : label;
+
+    let data: ExtendedPieSeries[] = [];
+
+    if (measure && graphs.length > 0) {
+        const graph = graphs[0];
+        const total = graph.data?.reduce((sum, d) => sum + (d.y || 0), 0) ?? 0;
+        const labelFormatting = labelField ? getFormatOptions(labelField) : undefined;
+        const seriesConfig: ExtendedPieSeries = {
+            type: 'pie',
+            minRadius: '50%',
+            dataLabels: {
+                enabled: isLabelsEnabled,
+                html: shouldUseHtmlForLabels,
+                format: isLabelsEnabled ? getFieldFormatOptions({field: labelField}) : undefined,
+            },
+            data:
+                graph.data?.map((item) => {
+                    const percentage = item.y / total;
+                    return {
+                        ...item,
+                        value: item.y,
+                        color: item.color,
+                        formattedValue: getFormattedValue(String(item.y), {
+                            ...measure,
+                            data_type: idToDataType[measure.guid],
+                        }),
+                        percentage,
+                        label: labelFormatting?.labelMode === 'percent' ? percentage : item.label,
+                    };
+                }) ?? [],
+        };
+
+        seriesConfig.custom = {
+            exportSettings: {
+                columns: [
+                    {
+                        name: ChartEditor.getTranslation('chartkit.data-provider', 'categories'),
+                        field: 'name',
+                    },
+                    getExportColumnSettings({path: 'value', field: measure}),
+                ],
+            },
+        };
+
+        if (visualizationId === WizardVisualizationId.Donut) {
+            seriesConfig.innerRadius = '50%';
+
+            if (measure && totals) {
+                seriesConfig.custom = {
+                    ...seriesConfig.custom,
+                    totals: formatNumber(Number(totals), getFormatOptions(measure)),
+                };
+            }
+        }
+
+        data.push(seriesConfig);
+    } else {
+        data = [];
+    }
+
+    let legend: ChartData['legend'] = {};
+    if (graphs.length && isColoringByMeasure(args)) {
+        const points = graphs
+            .map((graph) => (graph.data ?? []).map((d) => ({colorValue: d.colorValue as unknown})))
+            .flat(2);
+
+        const colorScale = getLegendColorScale({
+            colorsConfig,
+            points,
+        });
+
+        legend = {
+            enabled: true,
+            type: 'continuous',
+            title: {text: getFakeTitleOrTitle(measure), style: {fontWeight: '500'}},
+            colorScale,
+        };
+    } else {
+        const shouldUseHtmlForLegend = [dimension, color].some(isHtmlField);
+        if (shouldUseHtmlForLegend) {
+            legend.html = true;
+        }
+    }
+
+    return merge(getBaseChartConfig({shared, visualization: {placeholders, id: visualizationId}}), {
+        chart: {
+            margin: {top: 20, left: 12, right: 12, bottom: 20},
+            zoom: {enabled: false},
+        },
+        series: {
+            data: data.filter((s) => s.data.length),
+        },
+        legend,
+    });
+}

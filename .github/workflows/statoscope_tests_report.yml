@@ -4,12 +4,12 @@ on:
   workflow_run:
     workflows: ['Statoscope diff analyze']
     types:
-      - completed    
+      - completed
 
 jobs:
-  statoscope_publish_report: 
+  statoscope_publish_report:
     name: Publish Statoscope Report
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: >
       github.event.workflow_run.event == 'pull_request' &&
       (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')
@@ -66,5 +66,4 @@ jobs:
         with:
           header: statoscope-report
           number: ${{ steps.extract-data.outputs.REPORT_PR_NUMBER }}
-          message: "${{steps.create-comment-text.outputs.result}}"
-    
+          message: '${{steps.create-comment-text.outputs.result}}'

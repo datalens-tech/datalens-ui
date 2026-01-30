@@ -30,6 +30,7 @@ export enum NavigatorLinesMode {
 
 export enum PseudoFieldTitle {
     MeasureNames = 'Measure Names',
+    ColumnNames = 'Column Names',
     MeasureValues = 'Measure Values',
 }
 
@@ -69,3 +70,17 @@ export enum SortDirection {
     ASC = 'ASC',
     DESC = 'DESC',
 }
+
+export const ZoomMode = {
+    Auto: 'auto',
+    Manual: 'manual',
+} as const;
+
+export type ZoomModes = (typeof ZoomMode)[keyof typeof ZoomMode];
+
+export const MapCenterMode = {
+    Auto: 'auto',
+    Manual: 'manual',
+} as const;
+
+export type MapCenterModes = (typeof MapCenterMode)[keyof typeof MapCenterMode];

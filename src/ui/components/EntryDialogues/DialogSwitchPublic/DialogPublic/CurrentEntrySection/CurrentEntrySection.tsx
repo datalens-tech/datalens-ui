@@ -56,7 +56,7 @@ function CurrentEntrySection({
                         title={entry.key}
                         href={navigateHelper.redirectUrlSwitcher(entry)}
                     >
-                        {getEntryNameByKey({key: entry.key, index: -1})}
+                        {getEntryNameByKey({key: entry.key})}
                     </Link>
                 </div>
                 <div className={b('other')}>

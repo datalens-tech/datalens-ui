@@ -2,8 +2,10 @@ import React from 'react';
 
 import {Plus} from '@gravity-ui/icons';
 import {Button, Icon, List} from '@gravity-ui/uikit';
+import type {ListProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {ConnectionsS3BaseQA, ConnectionsYadocsQA} from 'shared/constants/qa/connections';
 import type {YadocItem} from 'ui/units/connections/store';
 
 import {YadocListItemView} from '../components';
@@ -36,8 +38,8 @@ export const DocsList = (props: Props) => {
         deleteListItem,
     } = props;
 
-    const renderItem = React.useCallback(
-        (item: YadocListItem) => {
+    const renderItem: NonNullable<ListProps<YadocListItem>['renderItem']> = React.useCallback(
+        (item, _isItemActive, itemIndex) => {
             return (
                 <YadocListItemView
                     item={item}
@@ -45,6 +47,7 @@ export const DocsList = (props: Props) => {
                     clickRenameAction={clickRenameAction}
                     clickReplaceAction={clickReplaceAction}
                     deleteListItem={deleteListItem}
+                    qa={`${ConnectionsS3BaseQA.LIST_ITEM}-${itemIndex}`}
                 />
             );
         },
@@ -52,7 +55,7 @@ export const DocsList = (props: Props) => {
     );
 
     return (
-        <div className={b('list')}>
+        <div className={b('list')} data-qa={ConnectionsYadocsQA.LIST_SECTION}>
             <List
                 className={b('list-container')}
                 itemClassName={b('list-item-wrap')}
@@ -65,7 +68,11 @@ export const DocsList = (props: Props) => {
                 onItemClick={clickListItem}
             />
             <div className={b('add-section')}>
-                <Button view="outlined" onClick={clickAddDocumentButton}>
+                <Button
+                    view="outlined"
+                    onClick={clickAddDocumentButton}
+                    qa={ConnectionsYadocsQA.ADD_DOCUMENT_BUTTON}
+                >
                     <Icon data={Plus} size={14} />
                     {i18n('label_add-file')}
                 </Button>

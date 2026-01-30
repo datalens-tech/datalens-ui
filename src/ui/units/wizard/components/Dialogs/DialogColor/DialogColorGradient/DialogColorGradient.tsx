@@ -1,8 +1,17 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
+import {FormRow} from '@gravity-ui/components';
 import {ArrowRightArrowLeft} from '@gravity-ui/icons';
-import {Button, Checkbox, Flex, Icon, RadioButton, Select, TextInput} from '@gravity-ui/uikit';
+import {
+    Button,
+    Checkbox,
+    Flex,
+    HelpMark,
+    Icon,
+    SegmentedRadioGroup as RadioButton,
+    Select,
+    TextInput,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
@@ -189,16 +198,17 @@ class DialogColorGradientBody extends React.Component<Props> {
                             >
                                 <span>
                                     {i18n('wizard', 'label_thresholds')}
-                                    <HelpPopover
-                                        delayClosing={TOOLTIP_DELAY_CLOSING}
-                                        placement={['bottom']}
+                                    <HelpMark
+                                        popoverProps={{
+                                            placement: ['bottom'],
+                                            closeDelay: TOOLTIP_DELAY_CLOSING,
+                                        }}
                                         className={b('hint-icon')}
-                                        content={
-                                            <span>
-                                                {i18n('wizard', 'label_tooltip-thresholds')}
-                                            </span>
-                                        }
-                                    />
+                                    >
+                                        <div className={b('hint-icon-tooltip')}>
+                                            {i18n('wizard', 'label_tooltip-thresholds')}
+                                        </div>
+                                    </HelpMark>
                                 </span>
                             </Checkbox>
                         }
@@ -277,7 +287,7 @@ class DialogColorGradientBody extends React.Component<Props> {
                     <FormRow className={b('row')} label={i18n('wizard', 'label_nulls')}>
                         <RadioButton
                             options={NULLS_OPTIONS}
-                            value={this.props.gradientState.nullMode}
+                            value={this.props.gradientState.nullMode ?? NULLS_OPTIONS[0].value}
                             onUpdate={(nullMode) => {
                                 this.props.setGradientState({
                                     nullMode,

@@ -1,11 +1,10 @@
 /* eslint-disable camelcase */
 
-import {DL} from 'constants/common';
-
 import type {AxiosRequestConfig, CancelTokenSource} from 'axios';
 import axios from 'axios';
-import type {DashData, EntryUpdateMode} from 'shared';
+import type {DashData, EntryAnnotationArgs, EntryUpdateMode} from 'shared';
 import {ACCEPT_LANGUAGE_HEADER, TIMEZONE_OFFSET_HEADER, oldSchema} from 'shared';
+import {DL} from 'ui/constants/common';
 
 import type {CreateWidgetArgs} from '../../../shared/old-schema/charts';
 import {registry} from '../../registry';
@@ -179,7 +178,7 @@ interface SDK {
             options: OptionsMethodGateway,
         ): Promise<Entry>;
         createDash({
-            data: {key, workbookId, name, mode, withParams, data},
+            data: {key, workbookId, name, mode, withParams, data, annotation},
         }: {
             data: {
                 key?: string;
@@ -188,6 +187,7 @@ interface SDK {
                 mode?: EntryUpdateMode;
                 withParams?: boolean;
                 data?: DashData;
+                annotation?: EntryAnnotationArgs;
             };
         }): Promise<Entry>;
         createWidget(args: CreateWidgetArgs): Promise<Entry>;
@@ -197,12 +197,14 @@ interface SDK {
             data,
             template,
             mode,
+            annotation,
         }: {
             entryId: string;
             revId?: string;
             data: Record<string, any>;
             template?: string;
             mode?: EntryUpdateMode;
+            annotation?: EntryAnnotationArgs;
         }): Promise<Entry>;
     };
 }

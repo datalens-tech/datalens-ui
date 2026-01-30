@@ -20,7 +20,7 @@ import type {AdvancedChartWidgetProps, WidgetDimensions} from '../types';
 
 import {Tooltip} from './components/Tooltip/Tooltip';
 import type {PointPosition, TooltipState} from './types';
-import {IS_TOUCH_ENABLED} from './utils';
+import {IS_TOUCH_ENABLED, validateWidgetData} from './utils';
 
 import './AdvancedChartWidget.scss';
 
@@ -36,10 +36,13 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
         data: {data: originalData},
     } = props;
 
+    React.useMemo(() => validateWidgetData(originalData), [originalData]);
+
     const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [id]);
     Performance.mark(generatedId);
 
     const ref = React.useRef<HTMLDivElement | null>(null);
+    const tooltipRef = React.useRef<HTMLDivElement | null>(null);
     const contentRef = React.useRef<HTMLDivElement | null>(null);
     const [dimensions, setDimensions] = React.useState<WidgetDimensions | undefined>();
     const handleResize = React.useCallback(() => {
@@ -58,34 +61,6 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
 
     const chartState = React.useRef<any>({});
 
-    React.useEffect(() => {
-        chartStorage.set(generatedId, {
-            chartId: generatedId,
-            getState: () => chartState.current,
-            setState: (value: any, options?: {silent: boolean}) => {
-                chartState.current = {...chartState.current, ...value};
-
-                if (!options?.silent) {
-                    render();
-                }
-            },
-            updateActionParams: (params: StringParams) => {
-                if (onChange) {
-                    const actionParams = transformParamsToActionParams(params);
-                    onChange(
-                        {type: 'PARAMS_CHANGED', data: {params: actionParams}},
-                        {forceUpdate: true},
-                        true,
-                    );
-                }
-            },
-        });
-
-        return () => {
-            chartStorage.delete(generatedId);
-        };
-    }, [generatedId, dimensions, onChange]);
-
     const render = () => {
         if (!originalData?.render) {
             return;
@@ -99,6 +74,39 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
     };
 
     React.useEffect(() => {
+        chartStorage.set(generatedId, {
+            chartId: generatedId,
+            getState: () => chartState.current,
+            setState: (value: any, options?: {silent: boolean}) => {
+                chartState.current = {...chartState.current, ...value};
+
+                if (!options?.silent) {
+                    setTimeout(render, 0);
+                }
+            },
+            updateActionParams: (params: StringParams) => {
+                if (onChange) {
+                    const actionParams = transformParamsToActionParams(params);
+                    onChange(
+                        {type: 'PARAMS_CHANGED', data: {params: actionParams}},
+                        {forceUpdate: true},
+                        true,
+                    );
+                }
+            },
+            updateParams: (params: StringParams) => {
+                if (onChange) {
+                    onChange({type: 'PARAMS_CHANGED', data: {params}}, {forceUpdate: true}, true);
+                }
+            },
+        });
+
+        return () => {
+            chartStorage.delete(generatedId);
+        };
+    }, [generatedId, dimensions, onChange]);
+
+    React.useEffect(() => {
         if (dimensions) {
             render();
             const widgetRendering = Performance.getDuration(generatedId);
@@ -108,28 +116,34 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
         }
     }, [dimensions, generatedId, onLoad, props.data]);
 
-    const handleClick = React.useCallback((event) => {
-        if (originalData?.events?.click) {
-            const context = chartStorage.get(generatedId);
-            if (context) {
-                context.__innerHTML = ref.current?.innerHTML;
-                const target = {
-                    [ATTR_DATA_ELEMENT_ID]: event.target.getAttribute(ATTR_DATA_ELEMENT_ID),
-                };
-                originalData.events.click.call(context, {
-                    target,
-                });
+    const handleClick = React.useCallback(
+        (event) => {
+            if (originalData?.events?.click) {
+                const context = chartStorage.get(generatedId);
+                if (context) {
+                    context.__innerHTML = ref.current?.innerHTML;
+                    const target = {
+                        [ATTR_DATA_ELEMENT_ID]: event.target.getAttribute(ATTR_DATA_ELEMENT_ID),
+                    };
+                    originalData.events.click.call(context, {
+                        target,
+                    });
+                }
             }
-        }
-    }, []);
+        },
+        [generatedId, originalData.events?.click],
+    );
 
-    const handleKeyDown = React.useCallback((event) => {
-        if (originalData?.events?.keydown) {
-            const context = chartStorage.get(generatedId);
-            const eventProps = pick(event, 'which');
-            originalData.events.keydown.call(context, eventProps);
-        }
-    }, []);
+    const handleKeyDown = React.useCallback(
+        (event) => {
+            if (originalData?.events?.keydown) {
+                const context = chartStorage.get(generatedId);
+                const eventProps = pick(event, 'which');
+                originalData.events.keydown.call(context, eventProps);
+            }
+        },
+        [generatedId, originalData.events?.keydown],
+    );
 
     const debuncedHandleResize = React.useMemo(() => debounce(handleResize, 100), [handleResize]);
 
@@ -166,6 +180,22 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
         if (isOutsideBounds(x, y)) {
             setTooltipState(null);
             return;
+        }
+
+        if (tooltipRef.current) {
+            const tooltipContentRect = tooltipRef.current.getBoundingClientRect();
+            const offset = ref.current?.getBoundingClientRect();
+            const currentXPosition = pointerX + (offset?.left ?? 0);
+            const currentYPosition = pointerY + (offset?.top ?? 0);
+
+            const isInsideTooltipBounds =
+                currentXPosition > tooltipContentRect.left &&
+                currentXPosition < tooltipContentRect.right &&
+                currentYPosition > tooltipContentRect.top &&
+                currentYPosition < tooltipContentRect.bottom;
+            if (isInsideTooltipBounds) {
+                return;
+            }
         }
 
         if (originalData?.tooltip?.renderer) {
@@ -221,6 +251,7 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
                 <Loader />
             </div>
             <Tooltip
+                ref={tooltipRef}
                 pointerPosition={tooltipState?.position}
                 content={tooltipState?.content}
                 widgetContainer={ref.current}

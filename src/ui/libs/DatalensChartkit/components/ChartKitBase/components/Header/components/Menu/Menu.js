@@ -1,7 +1,15 @@
 import React from 'react';
 
 import {Ellipsis} from '@gravity-ui/icons';
-import {Button, DropdownMenu, Icon, Menu as ListMenu, Portal, Sheet} from '@gravity-ui/uikit';
+import {
+    Button,
+    DropdownMenu,
+    Icon,
+    Menu as ListMenu,
+    Portal,
+    Sheet,
+    Tooltip,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
@@ -19,7 +27,7 @@ const b = block('chartkit-menu');
 
 const SwitcherButton = (props) => {
     return (
-        <Button {...props} view="flat-secondary" size="l" className={b('switcher')}>
+        <Button {...props} view="flat-secondary" size="m" className={b('switcher')}>
             <Icon data={Ellipsis} size={16} />
         </Button>
     );
@@ -35,6 +43,7 @@ export class Menu extends React.PureComponent {
         widget: PropTypes.object,
         widgetDataRef: PropTypes.object,
         loadedData: PropTypes.object,
+        chartRevIdRef: PropTypes.object,
         error: PropTypes.object,
         propsData: PropTypes.object.isRequired,
         requestId: PropTypes.string.isRequired,
@@ -59,6 +68,7 @@ export class Menu extends React.PureComponent {
         modal: null,
         isSheetVisible: false,
         sheetCloseCb: null,
+        isMenuOpened: false,
     };
 
     modalRef = React.createRef();
@@ -73,13 +83,15 @@ export class Menu extends React.PureComponent {
     };
 
     prepareItem = (item, data, onChange, index) => {
-        const {title, icon, action, id, items} = item;
+        const {title, icon, action, id, items, isDisabled} = item;
         const titleStr = typeof title === 'function' ? title(data) : title.toString();
         const itemIcon = typeof icon === 'function' ? icon(data) : icon;
         const subItems =
             items &&
             items.map((subitem, itemIndex) => this.prepareItem(subitem, data, onChange, itemIndex));
 
+        const disabledHint = isDisabled?.(data);
+        const disabled = Boolean(disabledHint);
         return {
             key: `ch-menu-item-${id}-${index}`,
             id,
@@ -97,10 +109,20 @@ export class Menu extends React.PureComponent {
 
                 this.setState({modal: component});
             },
-            text: titleStr,
-            items: subItems,
-            icon: itemIcon,
-            className: b('popup-item'),
+            disabled,
+            text: (
+                <div className={b('menu-item-content')}>
+                    {titleStr}
+                    {typeof disabledHint === 'string' ? (
+                        <Tooltip content={disabledHint} className={b('hint-tooltip')}>
+                            <div className={b('menu-item-hint')}></div>
+                        </Tooltip>
+                    ) : null}
+                </div>
+            ),
+            items: disabled ? undefined : subItems,
+            iconStart: itemIcon,
+            className: b('popup-item', {disabled}),
         };
     };
 
@@ -179,6 +201,10 @@ export class Menu extends React.PureComponent {
         };
     };
 
+    handleMenuBtnCLick = (isOpened) => {
+        this.setState({isMenuOpened: Boolean(isOpened)});
+    };
+
     renderSheet = (menuItems) => (
         <React.Fragment>
             <SwitcherButton onClick={this.handleMobileSwitchClick} />
@@ -200,7 +226,7 @@ export class Menu extends React.PureComponent {
                                     ? this.handleFullscreenOpen(item.action)
                                     : item.action
                             }
-                            iconStart={item.icon}
+                            iconStart={item.iconStart}
                         >
                             {item.text}
                         </ListMenu.Item>
@@ -216,6 +242,7 @@ export class Menu extends React.PureComponent {
             widget,
             widgetDataRef,
             loadedData,
+            chartRevIdRef,
             requestId,
             widgetRendering,
             yandexMapAPIWaiting,
@@ -237,6 +264,7 @@ export class Menu extends React.PureComponent {
             widget,
             widgetDataRef,
             loadedData,
+            chartRevIdRef,
             propsData,
             requestId,
             widgetRendering,
@@ -276,7 +304,7 @@ export class Menu extends React.PureComponent {
 
         return (
             <div
-                className={b('switcher-button')}
+                className={b('switcher-button', {['opened']: this.state.isMenuOpened})}
                 data-qa={ChartkitMenuDialogsQA.chartMenuDropDownSwitcher}
             >
                 {DL.IS_MOBILE ? (
@@ -289,6 +317,7 @@ export class Menu extends React.PureComponent {
                         menuProps={{
                             qa: ChartkitMenuDialogsQA.chartMenuDropDown,
                         }}
+                        onOpenToggle={this.handleMenuBtnCLick}
                     />
                 )}
                 <div className={b('modal-anchor')} ref={this.modalRef} />

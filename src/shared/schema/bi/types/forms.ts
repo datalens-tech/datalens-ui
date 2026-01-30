@@ -2,7 +2,7 @@ import type {DatePickerProps} from '@gravity-ui/date-components';
 import type {
     ButtonProps,
     CheckboxProps,
-    RadioButtonProps,
+    SegmentedRadioGroupProps as RadioButtonProps,
     RadioGroupProps,
     SelectProps,
     TextAreaProps,
@@ -77,6 +77,10 @@ export type RadioGroupItemOption = {
     content: {
         text: string;
         hintText?: MarkdownString;
+        textEndIcon?: {
+            name: 'CircleExclamation';
+            view?: 'error' | 'warn';
+        };
     };
     value: string;
 };
@@ -114,7 +118,7 @@ export type DescriptionItem = Pick<BaseItem, 'displayConditions'> & {
 
 export type FileInputItem = BaseItem & {
     id: 'file-input';
-    controlProps?: Partial<ButtonProps>;
+    controlProps?: Partial<ButtonProps<'input'>>;
 };
 
 export type HiddenItem = BaseItem & {
@@ -161,7 +165,15 @@ export type CollapseRowItem = BaseItem & {
     componentProps?: Partial<CollapseProps>;
 };
 
-export type PreparedRow = CacheTtlRowItem | CollapseRowItem;
+export type RawSQLLevelRowItem = Omit<BaseItem, 'inner'> & {
+    type: 'raw_sql_level';
+    label: Omit<LabelItem, 'id' | 'displayConditions'>;
+    radioGroup: Omit<RadioGroupItem, 'id' | 'displayConditions' | 'inner'>;
+    switchOffValue: string;
+    disabled?: boolean;
+};
+
+export type PreparedRow = CacheTtlRowItem | CollapseRowItem | RawSQLLevelRowItem;
 
 export type Row = CustomizableRow | PreparedRow;
 
@@ -221,4 +233,5 @@ export type GetConnectorSchemaResponse = {
 export type GetConnectorSchemaArgs = {
     type: string;
     mode: 'create' | 'edit';
+    connectionId?: string;
 };

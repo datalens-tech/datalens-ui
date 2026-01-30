@@ -1,4 +1,4 @@
-import type {ServerColor, ServerShape} from '../../../../../../../../shared';
+import {type ServerColor, type ServerShape, getFormatOptions} from '../../../../../../../../shared';
 import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
@@ -19,7 +19,7 @@ export const getItemsValues = (
 
     if (item && 'formatting' in item && isNumericalDataType(item.data_type)) {
         formattedValue = chartKitFormatNumberWrapper(value as number, {
-            ...item.formatting,
+            ...getFormatOptions(item),
             lang: 'ru',
         });
     } else {
@@ -33,13 +33,21 @@ export const getItemsValues = (
 };
 
 export const getLineKey = (args: GetLineKeyArgs) => {
-    const {shownTitle, isX2Axis, isMultiAxis, value, x2AxisValue, segmentName} = args;
+    const {
+        shownTitle,
+        isX2Axis,
+        isMultiAxis,
+        isMultiLineWithShape,
+        value,
+        x2AxisValue,
+        segmentName,
+    } = args;
     const itemTitleValue = value || shownTitle;
     let key = itemTitleValue;
 
     if (isX2Axis) {
         key = `${itemTitleValue}-${x2AxisValue}`;
-    } else if (isMultiAxis) {
+    } else if (isMultiAxis || isMultiLineWithShape) {
         key = `${itemTitleValue}-${shownTitle}`;
     }
 

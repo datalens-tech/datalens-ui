@@ -11,6 +11,7 @@ import privateModule from './private-module';
 declare const __features: FeatureConfig;
 declare const __palettes: Record<string, Palette>;
 declare const __qlConnectionTypeMap: Record<string, ConnectorType>;
+declare const __defaultColorPaletteId: string;
 
 const buildLibraryConfig = ({
     shared,
@@ -28,6 +29,7 @@ const buildSources = ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: ICh
         ChartEditor,
         palettes: __palettes,
         qlConnectionTypeMap: __qlConnectionTypeMap,
+        features: __features,
     });
 };
 
@@ -38,6 +40,7 @@ const buildGraph = ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChar
         features: __features,
         palettes: __palettes,
         qlConnectionTypeMap: __qlConnectionTypeMap,
+        defaultColorPaletteId: __defaultColorPaletteId,
     });
 };
 
@@ -50,6 +53,6 @@ export default {
     buildSources,
     buildGraph,
     buildChartConfig,
-    buildD3Config: privateModule.buildD3Config,
+    buildD3Config: () => {},
     setConsole: privateModule.setConsole,
 };

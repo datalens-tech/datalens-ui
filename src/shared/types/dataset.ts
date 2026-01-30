@@ -1,5 +1,6 @@
 import type {ConnectorType} from '../constants';
-import type {Permissions} from '../types';
+import type {SharedEntryPermissions} from '../schema';
+import type {CommonNumberFormattingOptions, Permissions} from '../types';
 
 import type {CommonUpdate} from './common-update';
 
@@ -120,15 +121,20 @@ export interface Dataset {
             };
         };
         rls: {[key: string]: string};
-        rls2: unknown[];
+        rls2: {[key: string]: string};
         source_avatars: DatasetSourceAvatar[];
-        source_features: {};
+        source_features?: {};
         sources: DatasetSource[];
-        revisionId: string;
+        revisionId?: string;
         load_preview_by_default: boolean;
+        template_enabled: boolean;
+        data_export_forbidden?: boolean;
+        description?: string;
     };
     workbook_id?: string;
+    collection_id?: string;
     permissions?: Permissions;
+    full_permissions?: SharedEntryPermissions;
 
     // This part of the fields moved to the dataset field. right here saved for backward compatibility
     avatar_relations: DatasetAvatarRelation[];
@@ -141,7 +147,7 @@ export interface Dataset {
     source_features: {};
     sources: DatasetSource[];
 }
-
+export type DatasetWithDelegation = Dataset & {isDelegated?: boolean};
 export interface ObligatoryFilter {
     id: string;
     field_guid: string;
@@ -155,6 +161,15 @@ export interface ObligatoryDefaultFilter {
     operation: string;
     values: string[];
 }
+
+export const DATASET_VALUE_CONSTRAINT_TYPE = {
+    DEFAULT: 'default',
+    NULL: 'null',
+    REGEX: 'regex',
+} as const;
+
+export type DatasetValueConstraintType =
+    (typeof DATASET_VALUE_CONSTRAINT_TYPE)[keyof typeof DATASET_VALUE_CONSTRAINT_TYPE];
 
 export interface DatasetField {
     aggregation: DatasetFieldAggregation;
@@ -181,7 +196,23 @@ export interface DatasetField {
     valid: boolean;
     hidden: boolean;
     autoaggregated: boolean;
+    template_enabled?: boolean;
+    value_constraint?:
+        | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT}
+        | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.NULL}
+        | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.REGEX; pattern: string}
+        | null;
+    ui_settings?: string;
 }
+
+export type DatasetFieldColorConfig = {
+    palette?: string;
+    colors?: Record<string, string>;
+};
+
+export type FieldUISettings = {
+    numberFormatting?: CommonNumberFormattingOptions;
+} & DatasetFieldColorConfig;
 
 export interface DatasetFieldError {
     guid: string;
@@ -207,6 +238,16 @@ export type DatasetOptionFieldItem = {
     casts: DATASET_FIELD_TYPES[];
     guid: string;
 };
+
+export interface SourceListingOptions {
+    source_listing?: {
+        supports_source_search: boolean;
+        supports_source_pagination: boolean;
+        supports_db_name_listing: boolean;
+        db_name_label: string;
+        db_name_required_for_search: boolean;
+    };
+}
 
 export interface DatasetOptions {
     connections: {
@@ -258,28 +299,28 @@ export type DatasetRawSchema = {
     has_auto_aggregation: boolean;
     native_type: {
         name: string;
-        conn_type: string;
+        conn_type?: string;
     };
 };
 
 export interface DatasetSource {
     id: string;
     connection_id: string;
-    ref_source_id: string | null;
-    name: string;
+    ref_source_id?: string | null;
+    name?: string;
     title: string;
     source_type: string;
     managed_by: string;
     parameter_hash: string;
     valid: boolean;
-    is_ref: boolean;
+    is_ref?: boolean;
     virtual: boolean;
     raw_schema: DatasetRawSchema[];
-    group: string[];
+    group?: string[];
     parameters: {
-        table_name: string;
-        db_version: string;
-        db_name: string | null;
+        table_name?: string;
+        db_version?: string;
+        db_name?: string | null;
     };
 }
 

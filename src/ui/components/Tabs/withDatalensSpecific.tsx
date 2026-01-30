@@ -5,7 +5,7 @@ import {Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DL} from 'ui/constants/common';
 
-import {DatalensTabs} from '../../../shared/constants/qa/components';
+import {DatalensTabsQa} from '../../../shared/constants/qa/components';
 
 import './Tabs.scss';
 
@@ -32,18 +32,24 @@ const handleTabLinkClick = (event: React.MouseEvent) => {
 type TabsWithDatalensSpecificProps<T> = Omit<AdaptiveTabsProps<T>, 'breakpointsConfig'> & {
     size?: TabsSize;
     disableOpacity?: boolean;
+    wrapperClassName?: string;
 };
 
 function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<T>>) {
     function WithDatalensSpecific(props: TabsWithDatalensSpecificProps<T>) {
-        const {size = 'm', disableOpacity, ...restProps} = props;
+        const {size = 'm', disableOpacity, wrapperClassName, ...restProps} = props;
 
         const breakpointsConfig = DL.IS_MOBILE
             ? breakpointsWithoutCollapse
             : defaultBreakPointsConfig;
 
         return (
-            <div className={b({size, opacity: !disableOpacity, mobile: DL.IS_MOBILE})}>
+            <div
+                className={b(
+                    {size, opacity: !disableOpacity, mobile: DL.IS_MOBILE},
+                    wrapperClassName,
+                )}
+            >
                 <Component
                     {...restProps}
                     breakpointsConfig={breakpointsConfig}
@@ -53,9 +59,9 @@ function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<
 
                         let qa;
                         if (item) {
-                            qa = DL.IS_MOBILE ? DatalensTabs.MobileItem : DatalensTabs.Item;
+                            qa = DL.IS_MOBILE ? DatalensTabsQa.MobileItem : DatalensTabsQa.Item;
                         } else {
-                            qa = DatalensTabs.SwitcherItem;
+                            qa = DatalensTabsQa.SwitcherItem;
                         }
 
                         return item?.id ? (

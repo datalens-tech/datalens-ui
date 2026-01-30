@@ -2,16 +2,18 @@ import React from 'react';
 
 import {Checkbox} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema/types';
+import {CollectionItemEntities} from 'shared';
+import type {StructureItemWithPermissions} from 'shared/schema/types';
 
 import type {SelectedMap, UpdateCheckboxArgs} from '../../CollectionPage/hooks/useSelection';
+import {getIsWorkbookItem, getItemId} from '../../helpers';
 
 import '../CollectionContentTable.scss';
 
 const b = block('dl-collection-content-table');
 
 type CollectionCheckboxCellProps = {
-    item: WorkbookWithPermissions | CollectionWithPermissions;
+    item: StructureItemWithPermissions;
     selectedMap: SelectedMap;
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
     disabled?: boolean;
@@ -25,12 +27,15 @@ export const CollectionCheckboxCell = ({
 }: CollectionCheckboxCellProps) => {
     const canMoveItem = item.permissions.move;
     const isDisabled = !canMoveItem || disabled;
+    const isWorkbook = getIsWorkbookItem(item);
+    const type =
+        item.entity ||
+        (isWorkbook ? CollectionItemEntities.WORKBOOK : CollectionItemEntities.COLLECTION);
 
     const handleUpdate = (checked: boolean) => {
-        const isWorkbook = 'workbookId' in item;
         onUpdateCheckboxClick({
-            entityId: isWorkbook ? item.workbookId : item.collectionId,
-            type: isWorkbook ? 'workbook' : 'collection',
+            entityId: getItemId(item),
+            type,
             checked,
         });
     };
@@ -57,11 +62,7 @@ export const CollectionCheckboxCell = ({
                 size="l"
                 onUpdate={handleUpdate}
                 disabled={isDisabled}
-                checked={
-                    Boolean(
-                        selectedMap['workbookId' in item ? item.workbookId : item.collectionId],
-                    ) && canMoveItem
-                }
+                checked={Boolean(selectedMap[getItemId(item)]) && canMoveItem}
             />
         </div>
     );

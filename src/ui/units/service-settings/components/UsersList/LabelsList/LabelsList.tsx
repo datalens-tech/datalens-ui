@@ -3,8 +3,10 @@ import React from 'react';
 import type {LabelProps} from '@gravity-ui/uikit';
 import {Flex, Label, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {Feature} from 'shared';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import {UserRoleLabel} from 'ui/units/auth/components/UserRoleLabel/UserRoleLabel';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import './LabelsList.scss';
 
@@ -14,12 +16,14 @@ export type LabelsListProps = {
     items: `${UserRole}`[];
     countVisibleElements: number;
     buttonTheme?: LabelProps['theme'];
+    size?: LabelProps['size'];
 };
 
 export const LabelsList = ({
     items,
     countVisibleElements = 1,
     buttonTheme = 'normal',
+    size = isEnabledFeature(Feature.EnableNewServiceSettings) ? 's' : 'xs',
 }: LabelsListProps) => {
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef<HTMLDivElement>(null);
@@ -45,26 +49,31 @@ export const LabelsList = ({
         return (
             <React.Fragment>
                 {visibleItems.map((item) => (
-                    <UserRoleLabel key={item} role={item} />
+                    <UserRoleLabel key={item} role={item} size={size} />
                 ))}
                 <Label
                     ref={anchorRef}
                     theme={buttonTheme}
                     onClick={toggleRolesPopup}
                     className={b('button')}
+                    size={size}
                 >
                     {buttonText}
                 </Label>
                 <Popup
-                    anchorRef={anchorRef}
+                    anchorElement={anchorRef.current}
                     open={open}
                     placement={['bottom-end', 'bottom', 'top-end', 'top']}
-                    onClose={handlePopupClose}
+                    onOpenChange={(isOpened) => {
+                        if (!isOpened) {
+                            handlePopupClose();
+                        }
+                    }}
                 >
                     <div className={b('popup')}>
                         <div className={b('popup-content')}>
                             {hiddenItems.map((item) => (
-                                <UserRoleLabel key={item} role={item} />
+                                <UserRoleLabel key={item} role={item} size={size} />
                             ))}
                         </div>
                     </div>
@@ -77,7 +86,7 @@ export const LabelsList = ({
         <Flex className={b()} alignItems="center" gap={2}>
             {items.length > countVisibleElements
                 ? renderList()
-                : items.map((item) => <UserRoleLabel key={item} role={item} />)}
+                : items.map((item) => <UserRoleLabel key={item} role={item} size={size} />)}
         </Flex>
     );
 };

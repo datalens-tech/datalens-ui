@@ -1,8 +1,6 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
-import {Loader, RadioButton} from '@gravity-ui/uikit';
+import {Loader, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import cn from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
@@ -12,6 +10,7 @@ import {connect} from 'react-redux';
 import {filterUsersIds, makeUserId, normalizeDestination} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import Tabs from 'ui/components/Tabs/Tabs';
+import {DL} from 'ui/constants/common';
 import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
@@ -74,17 +73,21 @@ class NavigationEntries extends React.Component {
         isMobileNavigation: PropTypes.bool,
         isOnlyCollectionsMode: PropTypes.bool,
         ignoreWorkbookEntries: PropTypes.bool,
+        ignoreSharedEntries: PropTypes.bool,
         onChangeLocation: PropTypes.func,
 
         resolveUsersByIds: PropTypes.func,
 
         onPermissionError: PropTypes.func,
+
+        renderEmptyStateAction: PropTypes.func,
     };
     static defaultProps = {
         mode: MODE_FULL,
         place: PLACE.ROOT,
         setBreadCrumbs: noop,
         onChangeLocation: noop,
+        renderEmptyStateAction: noop,
     };
     static getDerivedStateFromProps(nextProps, prevState) {
         const {scope, path, place} = nextProps;
@@ -152,7 +155,8 @@ class NavigationEntries extends React.Component {
     refSearchInput = React.createRef();
     getFilteredEntries(entries = []) {
         return entries.filter((entry) => {
-            const showEntry = !entry.hidden || this.showHidden;
+            const hideSharedEntry = entry.collectionId && this.props.ignoreSharedEntries;
+            const showEntry = !hideSharedEntry && (!entry.hidden || this.showHidden);
 
             return this.props.isMobileNavigation
                 ? showEntry && MOBILE_PLACES.includes(entry.scope)
@@ -555,7 +559,7 @@ class NavigationEntries extends React.Component {
                 <EntryContextMenuBase
                     visible={true}
                     entry={this.state.currentEntryContext}
-                    anchorRef={this.state.currentEntryContextButton}
+                    anchorElement={this.state.currentEntryContextButton.current}
                     items={this.props.getContextMenuItems({
                         entry: this.state.currentEntryContext,
                         place: this.state.place,
@@ -580,6 +584,8 @@ class NavigationEntries extends React.Component {
                     className={b('empty-entries')}
                     mode={mode}
                     isEmptyFolder={isEmptyFolder}
+                    place={place}
+                    renderAction={this.props.renderEmptyStateAction}
                 />
             );
         }
@@ -621,9 +627,11 @@ class NavigationEntries extends React.Component {
     render() {
         const {isMobileNavigation} = this.props;
         const {loading, error, hasNextPage} = this.state;
+
         if (error) {
             return <ErrorView error={error} onRetryClick={this.refresh} />;
         }
+
         return (
             <div className={b('entries')}>
                 {isMobileNavigation

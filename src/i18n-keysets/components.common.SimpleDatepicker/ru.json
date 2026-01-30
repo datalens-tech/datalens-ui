@@ -1,11 +1,11 @@
 {
+  "apply_button_text": "Применить",
+  "date_and_time_input_error": "Введите дату и время в формате \"{{format}}\"",
+  "date_input_error": "Введите дату в формате \"{{format}}\"",
   "default_date_placeholder": "ГГГГ-ММ-ДД",
   "default_ru_date_placeholder": "ДД.ММ.ГГГГ",
-  "time_placeholder": "ЧЧ:ММ",
-  "time_with_sec_placeholder": "ЧЧ:ММ:СС",
-  "date_input_error": "Введите дату в формате \"{{format}}\"",
-  "time_input_error": "Введите время в формате \"{{format}}\"",
-  "date_and_time_input_error": "Введите дату и время в формате \"{{format}}\"",
   "relative_input_error": "Введите дату в специальном формате или в формате \"{{format}}\"",
-  "apply_button_text": "Применить"
+  "time_input_error": "Введите время в формате \"{{format}}\"",
+  "time_placeholder": "ЧЧ:ММ",
+  "time_with_sec_placeholder": "ЧЧ:ММ:СС"
 }

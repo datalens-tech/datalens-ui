@@ -1,9 +1,6 @@
 export enum Feature {
     ChartkitAlerts = 'chartkitAlerts',
     UseConfigurableChartkit = 'UseConfigurableChartkit',
-    HideOldRelations = 'hideOldRelations',
-    // Show new relations button in navigation action panel
-    ShowNewRelationsButton = 'ShowNewRelationsButton',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
@@ -19,16 +16,13 @@ export enum Feature {
     UseComponentHeader = 'UseComponentHeader',
     FetchDocumentation = 'FetchDocumentation',
     Comments = 'Comments',
-    EmptySelector = 'emptySelector',
     // Check access rights when processing ChartEditor charts
     ChartEditorDeveloperModeCheck = 'ChartEditorDeveloperModeCheck',
     QLPrometheus = 'QLPrometheus',
     QLMonitoring = 'QLMonitoring',
     CollectionsEnabled = 'CollectionsEnabled',
     CollectionsAccessEnabled = 'CollectionsAccessEnabled',
-    DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
-    DashAutorefresh = 'DashAutorefresh',
     // Show request body in the Inspector dialog
     ShowInspectorDetails = 'ShowInspectorDetails',
     // Prohibiting the serialization of functions in the chart configs
@@ -44,13 +38,11 @@ export enum Feature {
     EntryMenuItemMove = 'EntryMenuItemMove',
     ExternalSelectors = 'ExternalSelectors',
     DashBoardWidgetParamsStrictValidation = 'DashBoardWidgetParamsStrictValidation',
-    D3Visualizations = 'D3Visualizations',
     HideMultiDatasets = 'HideMultiDatasets',
     ShouldCheckEditorAccess = 'ShouldCheckEditorAccess',
     HideMultitenant = 'HideMultitenant',
     EnableMobileHeader = 'EnableMobileHeader',
     UseYqlFolderKey = 'UseYqlFolderKey',
-    UseGrpcOptions = 'UseGrpcOptions',
     ShowChartsEngineDebugInfo = 'ShowChartsEngineDebugInfo',
     UseChartsEngineResponseConfig = 'UseChartsEngineResponseConfig',
     UseChartsEngineLogin = 'UseChartsEngineLogin',
@@ -64,16 +56,6 @@ export enum Feature {
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
-    /** Enable undo/redo buttons & hotkeys in datasets */
-    EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
-    /** Depends on US feature UseMovePermAction.
-     * It checks admin permission for move entries instead of edit permission.
-     */
-    UseMovePermAction = 'UseMovePermAction',
-    /** An empty chart for drawing something unusual */
-    BlankChart = 'BlankChart',
-    /** Additional chart config for making requests by widget events */
-    ChartActions = 'ChartActions',
     /** Disable the use of html and function in chart configs */
     DisableFnAndHtml = 'DisableFnAndHtml',
     /** Enable using of presigned urls for uploading files to S3 */
@@ -91,6 +73,36 @@ export enum Feature {
     EnableCustomDashMargins = 'EnableCustomDashMargins',
     /** Enabled Dash elements auto-focus */
     EnableDashAutoFocus = 'EnableDashAutoFocus',
+    /** Enable new secure parameters behavior */
+    EnableSecureParamsV2 = 'EnableSecureParamsV2',
+    /** Enable export settings in connections & datasets */
+    EnableExportSettings = 'EnableExportSettings',
+    /** Enable updating dataset settings by action ('load_preview_by_default' | 'template_enabled' | 'data_export_forbidden') */
+    EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
+    /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
+    GravityChartsForPieAndTreemap = 'GravityChartsForPieAndTreemap',
+    /** Use GravityUI Charts as the default library for some wizard visualizations(scatter and bar-y) */
+    GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
+    /** Use GravityUI Charts as the default library for some wizard visualizations(line, area and bar-x) */
+    GravityChartsForLineAreaAndBarX = 'GravityChartsForLineAreaAndBarX',
+    /** Enable shared connections and datasets */
+    EnableSharedEntries = 'EnableSharedEntries',
+
+    EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+    /** enabled redesign/moving to drawers existing settings */
+    EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
+    /** enables new dash & widgets settings */
+    EnableNewDashSettings = 'EnableNewDashSettings',
+    /** Enable color pickers with customization of values for light & dark themes separately */
+    EnableDashColorPickersByTheme = 'EnableDashColorPickersByTheme',
+    /** Shows updated settings page */
+    EnableNewServiceSettings = 'EnableNewServiceSettings',
+    /** Replace static master token with dynamic one */
+    UsDynamicMasterToken = 'UsDynamicMasterToken',
+    /** Enable using dynamic master token in proxy */
+    UsDynamicMasterTokenInProxy = 'UsDynamicMasterTokenInProxy',
+    /** Use axios instead of request-promise-native for HTTP requests in charts-engine */
+    UseAxiosRequest = 'UseAxiosRequest',
 }
 
 export type FeatureConfig = Record<string, boolean>;

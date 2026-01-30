@@ -1,11 +1,10 @@
 {
-  
-  "label_connector-file": "Файлы",
-  "label_connector-gsheets": "Google Sheets",
-  "label_connector-gsheets_v2": "Google Sheets",
   "button_retry": "Повторить",
   "label_connector-ch_over_yt": "CHYT с аутентификацией с помощью OAuth-токена",
   "label_connector-ch_over_yt_user_auth": "CHYT с аутентификацией от имени пользователя",
+  "label_connector-file": "Файлы",
+  "label_connector-gsheets": "Google Sheets",
+  "label_connector-gsheets_v2": "Google Sheets",
   "label_error-500-schema": "Не удалось загрузить форму. Пожалуйста, обновите страницу.",
   "label_error-500-title": "Не удалось загрузить список коннекторов"
 }

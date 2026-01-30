@@ -22,6 +22,7 @@ type Props = {
     size: WidgetSizeType;
     onChangeMinWidth?: (cellSizes: number[]) => void;
     width?: 'auto' | 'max-content';
+    preserveWhiteSpace?: boolean;
 };
 
 export const BackgroundTable = React.memo<Props>((props: Props) => {
@@ -31,6 +32,7 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
         onChangeMinWidth,
         size,
         width,
+        preserveWhiteSpace,
     } = props;
 
     const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -38,7 +40,11 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
     const tableMinSizes = React.useRef<null | number[]>(null);
 
     const setMinSizes = async () => {
-        const tableElement = tableRef.current as HTMLTableElement;
+        const tableElement = tableRef.current;
+        if (!tableElement) {
+            return;
+        }
+
         await waitForContent(tableElement);
         const tableColSizes = getTableSizes(tableElement);
         const prev = tableMinSizes.current;
@@ -64,14 +70,22 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
     }, [props.data.header?.rows]);
 
     React.useEffect(() => {
-        setMinSizes();
+        // On initial mount, the Portal may not be ready yet, so we need to
+        // schedule measurement after the next frame to ensure DOM is available
+        requestAnimationFrame(() => {
+            setMinSizes();
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.data]);
 
     return (
         <Portal>
             <div
-                className={b('background-table', {size}, COMPONENT_CLASSNAME)}
+                className={b(
+                    'background-table',
+                    {size, preWrap: preserveWhiteSpace},
+                    COMPONENT_CLASSNAME,
+                )}
                 style={{height: dimensions?.height, width: dimensions?.width}}
                 ref={containerRef}
             >

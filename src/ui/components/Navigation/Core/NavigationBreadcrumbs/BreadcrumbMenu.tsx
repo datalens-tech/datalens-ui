@@ -1,8 +1,7 @@
-import {DL, Scope} from 'constants/common';
-
 import React from 'react';
 
 import {Ellipsis} from '@gravity-ui/icons';
+import type {PopupPlacement} from '@gravity-ui/uikit';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {ENTRY_CONTEXT_MENU_ACTION, EntryContextMenuBase} from 'components/EntryContextMenu';
@@ -10,9 +9,15 @@ import type {EntryDialogues} from 'components/EntryDialogues';
 import {EntryDialogName, EntryDialogResolveStatus} from 'components/EntryDialogues';
 import navigateHelper from 'libs/navigateHelper';
 import {PLACE} from 'shared';
+import {EntryScope} from 'shared/types/common';
+import type {MenuClickHandler} from 'ui/components/EntryContextMenu/EntryContextMenu';
+import type {EntryContextMenuItems} from 'ui/components/EntryContextMenu/helpers';
+import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
+import {copyTextWithToast} from 'ui/utils/copyText';
 import Utils from 'utils';
 
+import {I18n} from '../../../../../i18n/index';
 import type {
     EntryFields,
     GetEntryResponse,
@@ -22,13 +27,15 @@ import type {ChangeLocation, CurrentPageEntry} from '../../types';
 
 import './BreadcrumbMenu.scss';
 
+const contextMenuI18n = I18n.keyset('component.entry-context-menu.view');
+
 const b = block('dl-core-navigation-breadcrumb-menu');
-const placement = ['bottom', 'bottom-start', 'bottom-end'];
+const placement: PopupPlacement = ['bottom', 'bottom-start', 'bottom-end'];
 
 type Props = {
     breadCrumbs: ListDirectoryBreadCrumb[];
     entryDialoguesRef: React.RefObject<EntryDialogues>;
-    getContextMenuItems: (data: {entry: unknown}) => unknown;
+    getContextMenuItems: (data: {entry: unknown}) => EntryContextMenuItems;
     currentPageEntry?: CurrentPageEntry;
     refresh?: () => void;
     onChangeLocation?: ChangeLocation;
@@ -53,7 +60,7 @@ export const BreadcrumbMenu = ({
     const breadCrumbEntry: BreadCrumbEntry = React.useMemo(() => {
         const breadCrumb = breadCrumbs[breadCrumbs.length - 1];
         return {
-            scope: Scope.Folder,
+            scope: EntryScope.Folder,
             entryId: breadCrumb.entryId,
             permissions: breadCrumb.permissions,
             type: '',
@@ -65,7 +72,7 @@ export const BreadcrumbMenu = ({
     }, [breadCrumbs]);
 
     // eslint-disable-next-line complexity
-    const handleMenuClick = async ({entry, action}: {entry: BreadCrumbEntry; action: string}) => {
+    const handleMenuClick: MenuClickHandler<BreadCrumbEntry> = async ({entry, action}) => {
         if (!entryDialoguesRef.current) {
             return;
         }
@@ -138,6 +145,15 @@ export const BreadcrumbMenu = ({
                 }
                 break;
             }
+            case ENTRY_CONTEXT_MENU_ACTION.COPY_LINK: {
+                copyTextWithToast({
+                    copyText: navigateHelper.redirectUrlSwitcher(entry),
+                    successText: contextMenuI18n('toast_copy-link-success'),
+                    errorText: contextMenuI18n('toast_copy-error'),
+                    toastName: 'toast-menu-copy-link',
+                });
+                break;
+            }
             case ENTRY_CONTEXT_MENU_ACTION.DELETE: {
                 const response = await entryDialoguesRef.current.open({
                     dialog: EntryDialogName.Delete,
@@ -181,11 +197,11 @@ export const BreadcrumbMenu = ({
             >
                 <Icon data={Ellipsis} size={16} className={b('icon')} />
             </Button>
-            {btnRef.current && (
+            {show && (
                 <EntryContextMenuBase
                     visible={show}
                     entry={breadCrumbEntry}
-                    anchorRef={btnRef}
+                    anchorElement={btnRef.current ?? undefined}
                     items={getContextMenuItems({entry: breadCrumbEntry})}
                     onMenuClick={handleMenuClick}
                     onClose={() => setShow(false)}

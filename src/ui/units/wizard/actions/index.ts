@@ -1,5 +1,3 @@
-import {GEOLAYER_VISUALIZATION} from 'constants/visualizations';
-
 import {I18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
@@ -37,17 +35,18 @@ import {
     WizardVisualizationId,
     createMeasureNames,
     filterUpdatesByDatasetId,
+    getEntryNameByKey,
     getResultSchemaFromDataset,
     isMeasureName,
     isMeasureValue,
     isParameter,
     isVisualizationWithLayers,
-    mapChartsConfigToLatestVersion,
     prepareUrlParams,
     splitParamsToParametersAndFilters,
 } from 'shared';
 import type {DataLensApiError} from 'typings';
-import type {DatalensGlobalState} from 'ui';
+import {type DatalensGlobalState, URL_QUERY} from 'ui';
+import {GEOLAYER_VISUALIZATION} from 'ui/constants/visualizations';
 import {navigateHelper} from 'ui/libs';
 import {
     getAvailableVisualizations,
@@ -58,6 +57,7 @@ import type {DatasetState} from 'units/wizard/reducers/dataset';
 import {selectDataset, selectDatasets} from 'units/wizard/selectors/dataset';
 import {v1 as uuidv1} from 'uuid';
 
+import {mapChartsConfigToLatestVersion} from '../../../../shared/modules/config/wizard';
 import {WIZARD_DATASET_ID_PARAMETER_KEY} from '../../../constants/misc';
 import type {ChartKitCustomError} from '../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import logger from '../../../libs/logger';
@@ -86,6 +86,7 @@ import {
 import {
     setDataset,
     setDatasetApiErrors,
+    setDatasetDelegation,
     setDatasetLoading,
     setDatasetSchema,
     setDatasets,
@@ -169,12 +170,10 @@ function getDataset({id, workbookId}: GetDatasetArgs) {
         .sdk.bi.getDatasetByVersion({
             datasetId: id,
             workbookId,
-            version: 'draft',
         })
         .then((dataset) => {
             if (dataset && dataset.key) {
-                const keyParts = dataset.key.split('/');
-                dataset.realName = keyParts[keyParts.length - 1];
+                dataset.realName = getEntryNameByKey({key: dataset.key});
             }
 
             if (dataset.result_schema) {
@@ -183,6 +182,36 @@ function getDataset({id, workbookId}: GetDatasetArgs) {
 
             return dataset;
         });
+}
+
+type GetDatasetDelegationArgs = {
+    datasetId: string;
+    workbookId: string;
+};
+
+function getDatasetDelegation({datasetId, workbookId}: GetDatasetDelegationArgs) {
+    return async function (dispatch: WizardDispatch) {
+        try {
+            const delegation = await getSdk().sdk.us.getSharedEntryDelegation({
+                sourceId: datasetId,
+                targetId: workbookId,
+            });
+            dispatch(
+                setDatasetDelegation({
+                    datasetId,
+                    delegation: delegation.isDelegated,
+                }),
+            );
+        } catch (error) {
+            dispatch(
+                showToast({
+                    title: error.message,
+                    type: 'danger',
+                    error,
+                }),
+            );
+        }
+    };
 }
 
 type GetDatasetsArgs = {
@@ -238,6 +267,10 @@ export function fetchDataset({id, replacing}: FetchDatasetArgs) {
                     [id]: dataset,
                 };
                 dispatch(setOriginalDatasets({originalDatasets: updatedOriginalDatasets}));
+
+                if (Object.keys(updatedOriginalDatasets).length > 1) {
+                    dispatch(setSort({sort: []}));
+                }
 
                 const {
                     dataset: {datasets, dimensions, measures} = {
@@ -303,6 +336,14 @@ export function fetchDataset({id, replacing}: FetchDatasetArgs) {
                 }
 
                 dispatch(updatePreviewAndClientChartsConfig(preview));
+                if (dataset.collection_id && workbookId) {
+                    dispatch(
+                        getDatasetDelegation({
+                            datasetId: dataset.id,
+                            workbookId,
+                        }),
+                    );
+                }
             })
             .catch((error: DataLensApiError) => {
                 logger.logError('wizard: fetchDataset failed', error as Error);
@@ -374,6 +415,7 @@ export function setVisualizationPlaceholderItems({
         const {sort} = getState().wizard.visualization;
         const stateVisualization = getState().wizard.visualization.visualization!;
         let {colors, shapes} = getState().wizard.visualization;
+        const isQL = Boolean(getState().ql?.entry);
 
         let atLeastOneHierarchyExists = false;
 
@@ -409,6 +451,7 @@ export function setVisualizationPlaceholderItems({
                 shapes,
                 sort,
                 placeholderId: placeholder.id as PlaceholderId,
+                isQL,
             });
             colors = [...colors];
             shapes = [...shapes];
@@ -1229,11 +1272,12 @@ const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[
         try {
             return await getSdk().sdk.bi.validateDataset(
                 {
-                    version: 'draft',
                     datasetId: dataset.id,
                     workbookId,
-                    dataset: dataset.dataset,
-                    updates: preparedUpdates,
+                    data: {
+                        dataset: dataset.dataset,
+                        updates: preparedUpdates,
+                    },
                 },
                 {timeout: TIMEOUT_95_SEC},
             );
@@ -1383,7 +1427,11 @@ export const createFieldFromVisualization = ({
             fieldNext.avatar_id = field.avatar_id;
         }
 
-        if (field.grouping && field.grouping !== 'none') {
+        if (field.grouping && field.grouping !== 'none' && !quickFormula) {
+            fieldNext.grouping = 'none';
+        }
+
+        if (field.grouping && field.grouping !== 'none' && quickFormula) {
             const [operation, mode] = field.grouping.split('-');
 
             let functionName;
@@ -1756,6 +1804,7 @@ type FetchWidgetArgs = {
     entryId: string;
     revId?: string;
     datasetsIds?: string[];
+    unreleased?: boolean;
 };
 
 export function resetWizardStore() {
@@ -1859,6 +1908,9 @@ function processWidget(args: ProcessWidgetArgs) {
 
             dispatch(setDatasetApiErrors({datasetApiErrors}));
             dispatch(setOriginalDatasets({originalDatasets}));
+            if (Object.keys(originalDatasets).length > 1) {
+                dispatch(setSort({sort: []}));
+            }
 
             return loadedOriginalDatasets;
         })
@@ -2051,6 +2103,16 @@ function processWidget(args: ProcessWidgetArgs) {
                     isInitialPreview: true,
                 }),
             );
+            datasets.forEach((currentDataset) => {
+                if (currentDataset.collection_id && workbookId) {
+                    dispatch(
+                        getDatasetDelegation({
+                            datasetId: currentDataset.id,
+                            workbookId,
+                        }),
+                    );
+                }
+            });
         })
         .catch((error: DataLensApiError & {handeled: boolean}) => {
             if (error.handeled) {
@@ -2094,11 +2156,9 @@ export function processCurrentWidgetWithDatasets({datasetsIds}: {datasetsIds: st
     };
 }
 
-export function fetchWidget({entryId, revId, datasetsIds}: FetchWidgetArgs) {
+export function fetchWidget({entryId, revId, datasetsIds, unreleased}: FetchWidgetArgs) {
     return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         dispatch(setWidgetLoadStatus({isLoading: true}));
-
-        const unreleased = false;
 
         oldSdk.charts
             .getWidget({entryId, unreleased, revId}, {cancelable: true})
@@ -2138,10 +2198,15 @@ export type SetDefaultsArgs = {
     entryId: string | null;
     revId?: string;
     routeWorkbookId?: WorkbookId;
+    unreleased?: boolean;
 };
 
-export function setDefaults({entryId, revId, routeWorkbookId}: SetDefaultsArgs) {
-    return function (dispatch: WizardDispatch) {
+export function setDefaults(args: SetDefaultsArgs) {
+    const {entryId, revId, routeWorkbookId, unreleased} = args;
+    return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
+        const searchPairs = new URLSearchParams(window.location.search);
+        const localConfigParam = searchPairs.get(URL_QUERY.LOCAL_CONFIG);
+
         if (routeWorkbookId) {
             dispatch(setRouteWorkbookId(routeWorkbookId));
         }
@@ -2151,21 +2216,38 @@ export function setDefaults({entryId, revId, routeWorkbookId}: SetDefaultsArgs) 
                 fetchWidget({
                     entryId,
                     revId,
+                    unreleased,
                 }),
             );
         } else {
-            const defaultVisualization = getDefaultVisualization();
+            if (localConfigParam) {
+                try {
+                    const config = JSON.parse(String(localStorage.getItem(URL_QUERY.LOCAL_CONFIG)));
+                    localStorage.removeItem(URL_QUERY.LOCAL_CONFIG);
+                    searchPairs.delete(URL_QUERY.LOCAL_CONFIG);
+                    history.replace({
+                        ...location,
+                        search: `?${searchPairs.toString()}`,
+                    });
+                    await processWidget({widget: {data: config}, dispatch, getState});
+                } catch (e) {
+                    console.error(e);
+                }
+            }
 
-            dispatch(
-                setVisualization({
-                    visualization: cloneDeep(
-                        defaultVisualization,
-                    ) as unknown as Shared['visualization'],
-                }),
-            );
+            const visualization = getState().wizard.visualization;
+            if (!visualization?.visualization) {
+                const defaultVisualization = getDefaultVisualization();
+                dispatch(
+                    setVisualization({
+                        visualization: cloneDeep(
+                            defaultVisualization,
+                        ) as unknown as Shared['visualization'],
+                    }),
+                );
+            }
         }
 
-        const searchPairs = new URLSearchParams(window.location.search);
         if (searchPairs) {
             const datasetId = searchPairs.get(WIZARD_DATASET_ID_PARAMETER_KEY);
 

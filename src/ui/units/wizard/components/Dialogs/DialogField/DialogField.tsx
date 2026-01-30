@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {RadioButtonOption} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
 import {Dialog, Icon, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
@@ -25,6 +25,7 @@ import {
     isPseudoField,
 } from 'shared';
 import type {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
+import {NumberFormatSettings} from 'ui/components/NumberFormatSettings/NumberFormatSettings';
 import {setExtraSettings} from 'ui/units/wizard/actions/widget';
 import {
     getDefaultSubTotalsSettings,
@@ -41,7 +42,7 @@ import type {
     Field as TField,
     TableBarsSettings,
 } from '../../../../../../shared/types';
-import {DATASET_FIELD_TYPES} from '../../../../../../shared/types';
+import {DATASET_FIELD_TYPES, isNumberField} from '../../../../../../shared/types';
 import {registry} from '../../../../../registry';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,
@@ -50,22 +51,19 @@ import {
     HIDE_LABEL_MODES,
 } from '../../../constants';
 import {getCommonDataType, getIconForDataType} from '../../../utils/helpers';
+import {getDefaultBarsSettings} from '../../../utils/table';
 import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
 
 import {BackgroundSettings} from './components/BackgroundSettings/BackgroundSettings';
 import {BarsSettings} from './components/BarsSettings/BarsSettings';
 import {DialogFieldMainSection} from './components/DialogFieldMainSection/DialogFieldMainSection';
 import {DialogFieldRow} from './components/DialogFieldRow/DialogFieldRow';
-import NumberComponent, {
-    isFloatNumberFormatting,
-    isIntegerNumberFormatting,
-} from './components/Number/Number';
 import {SubTotalsSettings} from './components/SubTotalsSettings/SubTotalsSettings';
 import {
     getDefaultBackgroundSettings,
     showBackgroundSettingsInDialogField,
 } from './utils/backgroundSettings';
-import {getDefaultBarsSettings, showBarsInDialogField} from './utils/barsSettings';
+import {showBarsInDialogField} from './utils/barsSettings';
 import {
     canUseStringAsHtml,
     canUseStringAsMarkdown,
@@ -291,31 +289,29 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             <Dialog
                 open={true}
                 onClose={this.props.onCancel}
-                disableFocusTrap={true}
-                className={b()}
+                className={b({[itemType]: true})}
+                disableHeightTransition={true}
             >
-                <div className={b(itemType)}>
-                    <Dialog.Header
-                        caption={item.fakeTitle || item.title}
-                        insertBefore={<Icon data={dataTypeIconData} width="16" />}
-                    />
-                    <Dialog.Body className={b('body')}>{modalBody}</Dialog.Body>
-                    <Dialog.Footer
-                        preset="default"
-                        onClickButtonCancel={() => {
-                            this.props.onCancel();
-                        }}
-                        onClickButtonApply={() => {
-                            this.props.onApply(this.state);
-                        }}
-                        textButtonApply={i18n('wizard', 'button_apply')}
-                        textButtonCancel={i18n('wizard', 'button_cancel')}
-                        propsButtonApply={{
-                            disabled: !valid || isErrorOccurred,
-                            qa: 'field-dialog-apply',
-                        }}
-                    />
-                </div>
+                <Dialog.Header
+                    caption={item.fakeTitle || item.title}
+                    insertBefore={<Icon data={dataTypeIconData} width="16" />}
+                />
+                <Dialog.Body className={b('body')}>{modalBody}</Dialog.Body>
+                <Dialog.Footer
+                    preset="default"
+                    onClickButtonCancel={() => {
+                        this.props.onCancel();
+                    }}
+                    onClickButtonApply={() => {
+                        this.props.onApply(this.state);
+                    }}
+                    textButtonApply={i18n('wizard', 'button_apply')}
+                    textButtonCancel={i18n('wizard', 'button_cancel')}
+                    propsButtonApply={{
+                        disabled: !valid || isErrorOccurred,
+                        qa: 'field-dialog-apply',
+                    }}
+                />
             </Dialog>
         );
     }
@@ -419,8 +415,8 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                 this.setState({formatting: updatedFormatting}),
         };
 
-        if (isFloatNumberFormatting(numberProps) || isIntegerNumberFormatting(numberProps)) {
-            return <NumberComponent {...numberProps} />;
+        if (isNumberField({data_type: formattingDataType})) {
+            return <NumberFormatSettings {...numberProps} />;
         }
 
         return null;
@@ -491,7 +487,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             return null;
         }
 
-        const items: RadioButtonOption[] = [
+        const items: SegmentedRadioGroupOptionProps[] = [
             {value: MARKUP_TYPE.none, content: i18n('wizard', 'label_none')},
         ];
 
@@ -512,7 +508,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                         <DialogRadioButtons
                             qa={DialogFieldSettingsQa.MarkupTypeRadioButtons}
                             items={items}
-                            value={this.state.markupType}
+                            value={this.state.markupType ?? MARKUP_TYPE.none}
                             onUpdate={(value: string) => {
                                 this.setState({markupType: value});
                             }}

@@ -1,14 +1,12 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
-import type {TabsItemProps} from '@gravity-ui/uikit';
-import {Button, Loader, Tabs} from '@gravity-ui/uikit';
+import {Button, Loader, Tab, TabList, TabProvider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
 import type {DataLensApiError} from 'ui';
 import {SHEET_IDS} from 'ui';
+import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
 import type {FetchDocumentationArgs} from 'ui/registry/units/common/types/functions/fetchDocumentation';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -36,8 +34,9 @@ enum DialogErrorTabId {
     Debug = 'tab_debug',
 }
 
-type DialogErrorTabItemProps = TabsItemProps & {
+type DialogErrorTabItemProps = {
     id: DialogErrorTabId;
+    title: string;
 };
 
 type DatabaseErrorDetails = {
@@ -52,13 +51,25 @@ type DatabaseErrorDetails = {
     code?: string;
 };
 
-type Props = {
+export type DialogErrorWithTabsProps = {
     onCancel: () => void;
     title: string | null;
-    error: DataLensApiError;
     withReport?: boolean;
     onRetry?: () => void;
-};
+    importId?: string;
+    exportId?: string;
+} & (
+    | {
+          // When providing an error object
+          error: DataLensApiError;
+          details?: never;
+      }
+    | {
+          // When providing custom debug details
+          error?: never;
+          details: string;
+      }
+);
 
 type State = {
     requestId: string;
@@ -80,10 +91,10 @@ const i18n = I18n.keyset('component.error-dialog.view');
 export const DIALOG_ERROR_WITH_TABS = Symbol('DIALOG_ERROR_WITH_TABS');
 export type OpenDialogErrorWithTabsArgs = {
     id: typeof DIALOG_ERROR_WITH_TABS;
-    props: Props;
+    props: DialogErrorWithTabsProps;
 };
 
-class DialogErrorWithTabs extends React.Component<Props, State> {
+class DialogErrorWithTabs extends React.Component<DialogErrorWithTabsProps, State> {
     TABS: Record<DialogErrorTabId, DialogErrorTabItemProps> = {
         [DialogErrorTabId.Doc]: {
             id: DialogErrorTabId.Doc,
@@ -118,9 +129,15 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
     }
 
     async componentDidMount() {
-        const error = this.props.error;
-
-        await this.prepareDialogError(error);
+        if ('error' in this.props && this.props.error) {
+            await this.prepareDialogError(this.props.error);
+        } else if ('details' in this.props && this.props.details) {
+            // If only details are provided, just show the Debug tab
+            this.setState({
+                tabsList: [this.TABS[DialogErrorTabId.Debug]],
+                activeTabId: DialogErrorTabId.Debug,
+            });
+        }
 
         this.setState({loading: false});
     }
@@ -151,7 +168,6 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                 dialogFooterProps={{
                     preset: 'default',
                     showError: false,
-                    listenKeyEnter: false,
                     onClickButtonCancel: this.onClose,
                     textButtonCancel: i18n('button_close'),
                     loading: false,
@@ -241,7 +257,8 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
     private renderTabContent(activeTabId?: DialogErrorTabId) {
         switch (activeTabId) {
             case DialogErrorTabId.Debug:
-                return <DebugTab error={this.props.error} />;
+                return <DebugTab error={this.props.error} details={this.props.details} />;
+
             case DialogErrorTabId.Doc:
                 return <DocumentationTab documentation={this.state.documentation} />;
             case DialogErrorTabId.DbRequest:
@@ -256,14 +273,24 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
     private renderDialogBody() {
         return (
             <React.Fragment>
-                <DebugInfo requestId={this.state.requestId} traceId={this.state.traceId} />
-                <Tabs
-                    items={this.state.tabsList}
-                    className={b('tab-navigation')}
-                    onSelectTab={this.onTabClick}
-                    activeTab={this.state.activeTabId}
-                    size={DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm'}
+                <DebugInfo
+                    requestId={this.state.requestId}
+                    traceId={this.state.traceId}
+                    importId={this.props.importId}
+                    exportId={this.props.exportId}
                 />
+                <TabProvider value={this.state.activeTabId} onUpdate={this.onTabClick}>
+                    <TabList
+                        className={b('tab-navigation')}
+                        size={DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm'}
+                    >
+                        {this.state.tabsList.map((item) => (
+                            <Tab key={item.id} value={item.id}>
+                                {item.title}
+                            </Tab>
+                        ))}
+                    </TabList>
+                </TabProvider>
                 {this.renderTabContent(this.state.activeTabId)}
             </React.Fragment>
         );
@@ -274,7 +301,10 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
     }
 
     private renderFooterButtons() {
-        const {title, error, withReport = true, onRetry} = this.props;
+        const {title, withReport = true, onRetry} = this.props;
+
+        // Only show report button if error is provided
+        const showReport = withReport && 'error' in this.props && this.props.error;
         const {requestId, errorWithoutDocumentation} = this.state;
 
         const {ReportButton} = registry.common.components.getAll();
@@ -283,9 +313,9 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
 
         return (
             <div className={b('footer-buttons')}>
-                {withReport && (
+                {showReport && (
                     <ReportButton
-                        error={error}
+                        error={this.props.error}
                         message={title || i18n('label_error')}
                         requestId={requestId}
                         errorWithoutDocumentation={errorWithoutDocumentation}
@@ -312,8 +342,8 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
         this.props.onCancel();
     };
 
-    private onTabClick = (tabId: DialogErrorTabId) => {
-        this.setState({activeTabId: tabId});
+    private onTabClick = (tabId: string) => {
+        this.setState({activeTabId: tabId as DialogErrorTabId});
     };
 
     private addTabToList(

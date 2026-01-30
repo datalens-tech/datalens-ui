@@ -9,24 +9,30 @@ import type {
     ServerVisualizationLayer,
 } from '../../../../../../../../shared';
 import {WizardVisualizationId, isMonitoringOrPrometheusChart} from '../../../../../../../../shared';
+import {prepareGravityChartArea} from '../../../preparers/area';
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
 import type {PivotData} from '../../../preparers/backend-pivot-table/types';
-import {prepareD3BarX, prepareHighchartsBarX} from '../../../preparers/bar-x';
-import {prepareD3BarY, prepareHighchartsBarY} from '../../../preparers/bar-y';
+import {prepareGravityChartBarX, prepareHighchartsBarX} from '../../../preparers/bar-x';
+import {prepareGravityChartsBarY, prepareHighchartsBarY} from '../../../preparers/bar-y';
 import prepareFlatTableData from '../../../preparers/flat-table';
 import prepareGeopointData from '../../../preparers/geopoint';
 import prepareGeopolygonData from '../../../preparers/geopolygon';
 import prepareHeatmapData from '../../../preparers/heatmap';
 import {prepareHighchartsLine} from '../../../preparers/line';
-import {prepareD3Line} from '../../../preparers/line/d3';
+import {prepareGravityChartLine} from '../../../preparers/line/gravity-charts';
 import prepareLineTime from '../../../preparers/line-time';
 import prepareMetricData from '../../../preparers/metric';
 import preparePivotTableData from '../../../preparers/old-pivot-table/old-pivot-table';
 import {prepareD3Pie, prepareHighchartsPie} from '../../../preparers/pie';
 import preparePolylineData from '../../../preparers/polyline';
-import {prepareD3Scatter, prepareHighchartsScatter} from '../../../preparers/scatter';
+import {prepareGravityChartsScatter, prepareHighchartsScatter} from '../../../preparers/scatter';
 import {prepareD3Treemap, prepareHighchartsTreemap} from '../../../preparers/treemap';
-import type {PrepareFunction, PrepareFunctionResultData} from '../../../preparers/types';
+import type {
+    PrepareFunction,
+    PrepareFunctionArgs,
+    PrepareFunctionResultData,
+} from '../../../preparers/types';
+import type {ChartPlugin} from '../../../types';
 import {getServerDateFormat} from '../../../utils/misc-helpers';
 import {OversizeErrorType} from '../../constants/errors';
 import {getChartColorsConfig} from '../colors';
@@ -37,7 +43,7 @@ import {
     isDefaultOversizeError,
 } from '../errors/oversize-error/utils';
 
-type PrepareSingleResultArgs = {
+export type PrepareSingleResultArgs = {
     resultData: PrepareFunctionResultData;
     visualization: ServerVisualization;
     shared: ServerChartsConfig;
@@ -49,6 +55,8 @@ type PrepareSingleResultArgs = {
     loadedColorPalettes?: Record<string, ColorPalette>;
     disableDefaultSorting?: boolean;
     features: FeatureConfig;
+    plugin?: ChartPlugin;
+    defaultColorPaletteId: string;
 };
 
 // eslint-disable-next-line complexity
@@ -64,6 +72,8 @@ export default ({
     disableDefaultSorting = false,
     palettes,
     features,
+    plugin,
+    defaultColorPaletteId,
 }: PrepareSingleResultArgs) => {
     const {
         sharedData: {drillDownData},
@@ -118,70 +128,70 @@ export default ({
     const segments = shared.segments || [];
 
     switch (visualization.id) {
-        case WizardVisualizationId.Line:
+        case WizardVisualizationId.Line: {
+            rowsLimit = 75000;
+            if (isMonitoringOrPrometheusChart(chartType)) {
+                prepare = prepareLineTime;
+            } else if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartLine;
+            } else {
+                prepare = prepareHighchartsLine;
+            }
+            break;
+        }
         case WizardVisualizationId.Area:
         case WizardVisualizationId.Area100p: {
             rowsLimit = 75000;
-            prepare = isMonitoringOrPrometheusChart(chartType)
-                ? prepareLineTime
-                : prepareHighchartsLine;
+            if (isMonitoringOrPrometheusChart(chartType)) {
+                prepare = prepareLineTime;
+            } else if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartArea;
+            } else {
+                prepare = prepareHighchartsLine;
+            }
             break;
         }
 
         case WizardVisualizationId.Column:
         case WizardVisualizationId.Column100p: {
             rowsLimit = 75000;
-            prepare = isMonitoringOrPrometheusChart(chartType)
-                ? prepareLineTime
-                : prepareHighchartsBarX;
-            break;
-        }
-
-        case WizardVisualizationId.LineD3: {
-            prepare = isMonitoringOrPrometheusChart(chartType) ? prepareLineTime : prepareD3Line;
-            rowsLimit = 75000;
+            if (isMonitoringOrPrometheusChart(chartType)) {
+                prepare = prepareLineTime;
+            } else if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartBarX;
+            } else {
+                prepare = prepareHighchartsBarX;
+            }
             break;
         }
 
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
-            prepare = prepareHighchartsBarY;
-            rowsLimit = 75000;
-            break;
-        }
-
-        case WizardVisualizationId.BarYD3:
-        case WizardVisualizationId.BarY100pD3: {
-            prepare = prepareD3BarY;
-            rowsLimit = 75000;
-            break;
-        }
-
-        case WizardVisualizationId.BarXD3: {
-            prepare = prepareD3BarX;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartsBarY;
+            } else {
+                prepare = prepareHighchartsBarY;
+            }
             rowsLimit = 75000;
             break;
         }
 
         case WizardVisualizationId.Scatter:
-            prepare = prepareHighchartsScatter;
-            rowsLimit = 75000;
-            break;
-
-        case WizardVisualizationId.ScatterD3:
-            prepare = prepareD3Scatter;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartsScatter;
+            } else {
+                prepare = prepareHighchartsScatter;
+            }
             rowsLimit = 75000;
             break;
 
         case WizardVisualizationId.Pie:
         case WizardVisualizationId.Donut:
-            prepare = prepareHighchartsPie;
-            rowsLimit = 1000;
-            break;
-
-        case WizardVisualizationId.PieD3:
-        case WizardVisualizationId.DonutD3:
-            prepare = prepareD3Pie;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Pie;
+            } else {
+                prepare = prepareHighchartsPie;
+            }
             rowsLimit = 1000;
             break;
 
@@ -191,12 +201,11 @@ export default ({
             break;
 
         case WizardVisualizationId.Treemap:
-            prepare = prepareHighchartsTreemap;
-            rowsLimit = 800;
-            break;
-
-        case WizardVisualizationId.TreemapD3:
-            prepare = prepareD3Treemap;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Treemap;
+            } else {
+                prepare = prepareHighchartsTreemap;
+            }
             rowsLimit = 800;
             break;
 
@@ -308,9 +317,10 @@ export default ({
         loadedColorPalettes,
         colorsConfig,
         availablePalettes: palettes,
+        defaultColorPaletteId,
     });
 
-    const prepareFunctionArgs = {
+    const prepareFunctionArgs: PrepareFunctionArgs = {
         placeholders: visualization.placeholders,
         fields: [],
         colors,
@@ -335,6 +345,7 @@ export default ({
 
         disableDefaultSorting,
         features,
+        defaultColorPaletteId,
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);

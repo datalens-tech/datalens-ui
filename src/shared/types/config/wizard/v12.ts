@@ -1,6 +1,13 @@
-import type {GradientNullMode, MarkupType, WidgetSizeType} from '../../..';
+import type {
+    GradientNullMode,
+    MapCenterModes,
+    MarkupType,
+    WidgetSizeType,
+    ZoomModes,
+} from '../../..';
 import type {ColorMode} from '../../../constants';
 import type {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
+import type {NumberFormatType, NumberFormatUnit} from '../../formatting';
 import type {
     AxisLabelFormatMode,
     AxisMode,
@@ -10,8 +17,6 @@ import type {
     HintSettings,
     IndicatorTitleMode,
     LabelsPositions,
-    NumberFormatType,
-    NumberFormatUnit,
     TableBarsSettings,
     TableFieldBackgroundSettings,
     TableSubTotalsSettings,
@@ -55,6 +60,7 @@ export interface V12CommonSharedExtraSettings {
     legendMode?: 'show' | 'hide';
     metricFontSize?: string;
     metricFontColor?: string;
+    metricFontColorPalette?: string;
     tooltip?: 'show' | 'hide';
     tooltipSum?: 'on' | 'off';
     limit?: number;
@@ -72,6 +78,11 @@ export interface V12CommonSharedExtraSettings {
     labelsPosition?: LabelsPositions;
     pinnedColumns?: number;
     size?: WidgetSizeType;
+    zoomMode?: ZoomModes;
+    zoomValue?: number | null;
+    mapCenterMode?: MapCenterModes;
+    mapCenterValue?: string | null;
+    preserveWhiteSpace?: boolean;
 }
 
 export type V12NavigatorSettings = {

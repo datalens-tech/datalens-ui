@@ -1,8 +1,12 @@
+import type {Request} from '@gravity-ui/expresskit';
+
 import type {ExtendedChartsConfig} from '../../../shared';
 import {
+    Feature,
+    WizardType,
     WizardVisualizationId,
     getDatasetLinks,
-    isD3Visualization,
+    isGravityChartsVisualization,
     mapChartsConfigToLatestVersion,
 } from '../../../shared';
 
@@ -11,21 +15,34 @@ export default {
     identifyParams: () => {
         return {};
     },
-    identifyChartType: (chart: ExtendedChartsConfig) => {
+    identifyChartType: (chart: ExtendedChartsConfig, req: Request) => {
+        const config = mapChartsConfigToLatestVersion(chart);
         let visualizationId;
 
-        if (
-            chart.visualization &&
-            chart.visualization.id &&
-            /[a-zA-Z]+/.test(chart.visualization.id)
-        ) {
-            visualizationId = chart.visualization.id;
+        if (config.visualization?.id && /[a-zA-Z]+/.test(chart.visualization.id)) {
+            visualizationId = config.visualization.id;
         } else {
             throw new Error('UNABLE_TO_IDENTIFY_CHART_TYPE');
         }
 
-        if (isD3Visualization(visualizationId as WizardVisualizationId)) {
-            return 'd3_wizard_node';
+        const {ctx} = req;
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+        const features = {
+            GravityChartsForPieAndTreemap: isEnabledServerFeature(
+                Feature.GravityChartsForPieAndTreemap,
+            ),
+            GravityChartsForBarYAndScatter: isEnabledServerFeature(
+                Feature.GravityChartsForBarYAndScatter,
+            ),
+            GravityChartsForLineAreaAndBarX: isEnabledServerFeature(
+                Feature.GravityChartsForLineAreaAndBarX,
+            ),
+        };
+
+        if (
+            isGravityChartsVisualization({id: visualizationId as WizardVisualizationId, features})
+        ) {
+            return WizardType.GravityChartsWizardNode;
         }
 
         switch (visualizationId) {
@@ -40,7 +57,7 @@ export default {
                 return 'ymap_wizard_node';
             }
             case WizardVisualizationId.Metric: {
-                const {placeholders} = chart.visualization;
+                const {placeholders} = config.visualization;
                 // @ts-ignore will be removed after migration to v5
                 const dataType = placeholders.find((p) => p.id === 'measures')?.items[0]?.data_type;
                 const useMarkup = dataType === 'markup';

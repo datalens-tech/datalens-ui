@@ -7,11 +7,10 @@ import {
     DL_COMPONENT_HEADER,
     DL_EMBED_TOKEN_HEADER,
     PROJECT_ID_HEADER,
-    SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
 } from '../../shared';
-import {releaseVersion} from '../app-env';
+import {docsUrl, releaseVersion} from '../app-env';
 import {SERVICE_NAME_DATALENS} from '../components';
 
 export default {
@@ -25,10 +24,14 @@ export default {
         extended: false,
     },
     expressTrustProxyNumber: 2,
-    workers: (process.env.WORKERS && parseInt(process.env.WORKERS)) || 1,
-    fetchingTimeout: 95 * 1000,
-    singleFetchingTimeout: 95 * 1000,
-    faviconUrl: '/favicon.ico',
+    workers: process.env.WORKERS ? parseInt(process.env.WORKERS, 10) : 1,
+    fetchingTimeout: process.env.DATA_FETCHING_TIMEOUT_MS
+        ? parseInt(process.env.DATA_FETCHING_TIMEOUT_MS, 10)
+        : undefined,
+    singleFetchingTimeout: process.env.DATA_SINGLE_FETCHING_TIMEOUT_MS
+        ? parseInt(process.env.DATA_SINGLE_FETCHING_TIMEOUT_MS, 10)
+        : undefined,
+    faviconUrl: '/os-favicon.ico',
     appMode: process.env.APP_MODE,
     serviceName: SERVICE_NAME_DATALENS,
     gatewayProxyHeaders: [
@@ -38,7 +41,6 @@ export default {
         SuperuserHeader.XDlAllowSuperuser,
         SuperuserHeader.XDlSudo,
         AuthHeader.Authorization,
-        SERVICE_USER_ACCESS_TOKEN_HEADER,
         CSRF_TOKEN_HEADER,
         DL_COMPONENT_HEADER,
         DL_EMBED_TOKEN_HEADER,
@@ -46,4 +48,5 @@ export default {
     headersMap: {},
     requestIdHeaderName: 'x-request-id',
     releaseVersion: releaseVersion,
+    docsUrl: docsUrl,
 } satisfies Partial<AppConfig>;

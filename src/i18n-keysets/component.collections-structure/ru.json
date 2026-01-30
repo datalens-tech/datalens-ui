@@ -1,5 +1,4 @@
 {
-  "action_add": "Добавить",
   "action_cancel": "Отменить",
   "action_copy": "Копировать",
   "action_create": "Создать",
@@ -13,6 +12,8 @@
   "action_save": "Сохранить",
   "action_stay": "Остаться",
   "button_choose-file": "Выбрать файл",
+  "button_deploy": "Развернуть",
+  "label_collection-already-exists-error": "Коллекция с таким названием уже существует",
   "label_connection": "подключения",
   "label_copy": "Куда копировать",
   "label_copy-denied-title": "Недостаточно прав для копирования",
@@ -25,9 +26,11 @@
   "label_delete-collections-workbooks": "Удаление коллекций и воркбуков",
   "label_delete-workbook": "Удаление воркбука",
   "label_delete-workbooks-for-delete": "Будут удалены воркбуки",
+  "label_deploy-denied-title": "Недостаточно прав для создания воркбука",
   "label_description": "Описание",
   "label_empty-collection": "В коллекции пусто или не удалось ничего найти по условиям в фильтрах",
   "label_error-file-type": "Файл должен быть в формате JSON",
+  "label_help-import-hint": "Используйте файл с конфигурацией воркбука в формате JSON. Получить такой файл можно при <link>экспорте воркбука</link>.",
   "label_import-exit-description": "На процесс импорта это не повлияет. Окно импорта можно снова открыть, нажав на воркбук в списке.",
   "label_import-from-file": "Импорт из файла",
   "label_move": "Куда переместить",
@@ -36,7 +39,14 @@
   "label_report": "отчёта",
   "label_title": "Название",
   "label_wizard": "чарта",
+  "label_workbook-already-exists-error": "Воркбук с таким названием уже существует",
   "section_delete-collection": "Вы действительно хотите удалить коллекцию \"{{name}}\"?",
   "section_delete-workbook": "Вы действительно хотите удалить воркбук \"{{name}}\"?",
-  "title_import-exit": "Закрыть окно импорта?"
+  "title_deploy": "Куда развернуть",
+  "title_import-exit": "Закрыть окно импорта?",
+  "toast_collection-already-exists-error": "Коллекция с таким названием уже существует",
+  "toast_get-gallery-file-error": "Ошибка при развёртывании, обратитесь в поддержку",
+  "toast_get-json-error": "Ошибка при попытке получить JSON из файла",
+  "toast_outdated-workbook-info": "Информация о воркбуке устарела. Пожалуйста, обновите страницу.",
+  "toast_workbook-already-exists-error": "Воркбук с таким названием уже существует"
 }

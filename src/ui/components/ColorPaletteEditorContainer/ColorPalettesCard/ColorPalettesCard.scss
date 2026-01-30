@@ -1,10 +1,12 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .color-palettes-card {
     &__description-wrapper {
         margin-bottom: 10px;
     }
 
     &__title {
-        font-weight: 500;
+        @include text-subheader-1();
         margin-bottom: 4px;
     }
 
@@ -30,7 +32,6 @@
     &__add-palette-button {
         margin-top: 6px;
         margin-left: 8px;
-        margin-bottom: 10px;
     }
 
     &__add-palette-button_condensed {
@@ -71,5 +72,9 @@
         right: 8px;
         align-items: center;
         display: flex;
+    }
+
+    &__tooltip-anchor {
+        width: fit-content;
     }
 }

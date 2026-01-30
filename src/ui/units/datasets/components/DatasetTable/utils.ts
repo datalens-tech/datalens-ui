@@ -1,5 +1,5 @@
 import type {SortedDataItem} from '@gravity-ui/react-data-table';
-import {get} from 'lodash';
+import get from 'lodash/get';
 import type {
     DatasetField,
     DatasetFieldAggregation,
@@ -26,6 +26,7 @@ import {
     getSourceColumn,
     getTitleColumn,
 } from './columns';
+import {getFieldSettingsColumn} from './columns/FieldSettings';
 import type {FieldAction} from './constants';
 import {FORMULA_CALC_MODE} from './constants';
 import type {ColumnItem} from './types';
@@ -44,6 +45,7 @@ type GetColumnsArgs = {
     handleTitleUpdate: (field: DatasetField, value: string) => void;
     handleIdUpdate: (field: DatasetField, value: string) => void;
     handleHiddenUpdate: (field: DatasetField) => void;
+    handleUpdateFieldSettings: (field: DatasetField) => void;
     handleRlsUpdate: (field: DatasetField) => void;
     rls: DatasetRls;
     permissions?: Permissions;
@@ -54,7 +56,13 @@ type GetColumnsArgs = {
     ) => void;
     handleDescriptionUpdate: (field: DatasetField, value: string) => void;
     handleMoreActionClick: (args: {action: FieldAction; field: DatasetField}) => void;
-    onSelectChange: (isSelected: boolean, fields: DatasetField['guid'][]) => void;
+    onSelectChange: (
+        isSelected: boolean,
+        fields: (keyof DatasetSelectionMap)[],
+        clickedIndex?: number,
+        modifier?: {shiftKey: boolean},
+    ) => void;
+    readonly: boolean;
 };
 
 export const getAggregationSwitchTo = (
@@ -101,6 +109,7 @@ export const getColumns = (args: GetColumnsArgs) => {
         handleTitleUpdate,
         handleIdUpdate,
         handleHiddenUpdate,
+        handleUpdateFieldSettings,
         handleTypeSelectUpdate,
         handleAggregationSelectUpdate,
         handleDescriptionUpdate,
@@ -108,6 +117,7 @@ export const getColumns = (args: GetColumnsArgs) => {
         handleRlsUpdate,
         rls,
         permissions,
+        readonly,
     } = args;
     const width = showFieldsId ? WIDTH_15 : WIDTH_20;
     const selectedCount = Object.keys(selectedRows).length;
@@ -122,30 +132,42 @@ export const getColumns = (args: GetColumnsArgs) => {
                 state,
                 fields.map(({guid}) => guid),
             ),
+        readonly,
     });
 
     const title = getTitleColumn({
         width,
         setActiveRow,
         onUpdate: (row, value) => handleTitleUpdate(row, value),
+        readonly,
     });
-    const source = getSourceColumn({width, avatars, openDialogFieldEditor});
-    const hidden = getHiddenColumn({onUpdate: handleHiddenUpdate});
-    const cast = getCastColumn({fields, onUpdate: handleTypeSelectUpdate});
+    const source = getSourceColumn({width, avatars, openDialogFieldEditor, readonly});
+    const hidden = getHiddenColumn({onUpdate: handleHiddenUpdate, readonly});
+    const cast = getCastColumn({fields, onUpdate: handleTypeSelectUpdate, readonly});
     const aggregation = getAggregationColumn({
         fields,
         onUpdate: handleAggregationSelectUpdate,
+        readonly,
     });
     const description = getDescriptionColumn({
         setActiveRow,
         onUpdate: (row, value) => handleDescriptionUpdate(row, value),
+        readonly,
     });
-    const more = getMoreColumn({setActiveRow, onItemClick: handleMoreActionClick});
+    const more = getMoreColumn({setActiveRow, onItemClick: handleMoreActionClick, readonly});
 
-    const columns = [index, title, source, hidden, cast, aggregation, description, more];
+    const columns = [index, title, source];
+
+    const fieldSettingsColumn = getFieldSettingsColumn({
+        onUpdate: handleUpdateFieldSettings,
+        readonly,
+    });
+    columns.push(fieldSettingsColumn);
+
+    columns.push(...[hidden, cast, aggregation, description, more]);
 
     if (isEnabledFeature(Feature.DatasetsRLS) && (permissions?.admin || permissions?.edit)) {
-        const rlsColumn = getRlsColumn({onUpdate: handleRlsUpdate, rls});
+        const rlsColumn = getRlsColumn({onUpdate: handleRlsUpdate, rls, readonly});
 
         columns.splice(4, 0, rlsColumn);
     }
@@ -155,6 +177,7 @@ export const getColumns = (args: GetColumnsArgs) => {
             width: WIDTH_15,
             setActiveRow,
             onUpdate: (row, value) => handleIdUpdate(row, value),
+            readonly,
         });
         columns.splice(2, 0, id);
     }

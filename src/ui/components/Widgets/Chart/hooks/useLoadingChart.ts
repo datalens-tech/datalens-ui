@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import type {ItemStateAndParamsChangeOptions} from '@gravity-ui/dashkit';
 import {
@@ -14,21 +15,24 @@ import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
+import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
-import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {START_PAGE} from '../../../../libs/DatalensChartkit/ChartKit/components/Widget/components/Table/Paginator/Paginator';
 import type {
     ChartKitWrapperLoadError,
     ChartKitWrapperLoadStatusUnknown,
-    ChartKitWrapperLoadSuccess,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsProps} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import DatalensChartkitCustomError, {
     ERROR_CODE,
     formatError,
 } from '../../../../libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
-import type {CombinedError, OnChangeData} from '../../../../libs/DatalensChartkit/types';
+import type {
+    CombinedError,
+    OnActivityComplete,
+    OnChangeData,
+} from '../../../../libs/DatalensChartkit/types';
 import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
@@ -43,7 +47,6 @@ import {
 import type {
     ChartContentProps,
     ChartNoWidgetProps,
-    ChartSelectorWithRefProps,
     ChartWithProviderProps,
     ChartWrapperWithRefProps,
     CurrentRequestState,
@@ -58,6 +61,7 @@ import type {
 } from '../types';
 import {cleanUpConflictingParameters} from '../utils';
 
+import {useChartActivities} from './useChartActivities';
 import {useIntersectionObserver} from './useIntersectionObserver';
 import {useMemoCallback} from './useMemoCallback';
 
@@ -73,7 +77,9 @@ export type LoadingChartHookProps = {
     hasChangedOuterProps: boolean;
     hasChangedOuterParams: boolean;
     hasChartTabChanged?: boolean;
-    chartKitRef: React.RefObject<ChartKit> | React.MutableRefObject<ChartKit | undefined>;
+    chartKitRef:
+        | React.RefObject<ChartKit | ChartKitRef>
+        | React.MutableRefObject<ChartKit | ChartKitRef | undefined>;
     resolveMetaDataRef?: React.MutableRefObject<ResolveMetaDataRef | undefined>;
     resolveWidgetDataRef?: React.MutableRefObject<
         ResolveWidgetDataRef | ResolveWidgetControlDataRef | undefined
@@ -89,11 +95,12 @@ export type LoadingChartHookProps = {
     onInnerParamsChanged?: (params: StringParams) => void;
     hasChangedActionParams?: boolean;
     enableActionParams?: boolean;
-    widgetType?: ChartSelectorWithRefProps['widgetType'];
+    widgetType?: ChartWrapperWithRefProps['widgetType'];
     isPageHidden?: boolean;
     autoupdateInterval?: number;
     forceShowSafeChart?: boolean;
     onBeforeChartLoad?: () => Promise<void>;
+    onActivityComplete?: OnActivityComplete;
 };
 
 type AutoupdateDataType = {
@@ -152,6 +159,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isPageHidden,
         forceShowSafeChart,
         onBeforeChartLoad,
+        onActivityComplete,
     } = props;
 
     const [{isInit, canBeLoaded}, setLoadingState] = React.useReducer(loadingStateReducer, {
@@ -220,82 +228,88 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         [loadedData?.params.drillDownFilters],
     );
 
-    const requestDataProps: DataProps = React.useMemo(() => {
-        let res = {...initialData};
-        let params = {...initialData.params};
-        if (!ignoreUsedParams && usedParams) {
-            params = pick(initialData.params || {}, Object.keys(usedParams));
-        }
-        let localParams = hasChartTabChanged ? {} : changedParams || {};
-
-        if (hasChangedActionParams && changedParams) {
-            const localActionParams = pickActionParamsFromParams(changedParams, true);
-            const newLocalActionParams: StringParams = {};
-
-            for (const [key, val] of Object.entries(localActionParams)) {
-                if (key in params) {
-                    newLocalActionParams[key] = val as string | string[];
-                }
+    const getRequestDataProps = React.useCallback(
+        (inputData: DataProps) => {
+            let res = {...inputData};
+            let params = {...inputData.params};
+            if (!ignoreUsedParams && usedParams) {
+                params = pick(inputData.params || {}, Object.keys(usedParams));
             }
+            let localParams = hasChartTabChanged ? {} : changedParams || {};
 
-            const localOnlyParams = pickExceptActionParamsFromParams(changedParams);
-            localParams = {...localOnlyParams, ...newLocalActionParams};
-        }
-        currentChangeParamsRef.current = localParams;
+            if (hasChangedActionParams && changedParams) {
+                const localActionParams = pickActionParamsFromParams(changedParams, true);
+                const newLocalActionParams: StringParams = {};
 
-        if (hasChangedOuterProps || hasChangedOuterParams) {
-            const filteredLocalParams = clearedOuterParams?.length
-                ? omit(localParams, clearedOuterParams)
-                : localParams;
+                for (const [key, val] of Object.entries(localActionParams)) {
+                    if (key in params) {
+                        newLocalActionParams[key] = val as string | string[];
+                    }
+                }
 
-            // when clear params of widget from outer
-            // ex cleared actionParams from other chart cause empty params in current
-            // or params contains params without local
-            const newParams =
-                hasChangedOuterParams && isEmpty(params)
-                    ? {
-                          ...params,
-                      }
-                    : {
-                          ...filteredLocalParams,
-                          ...params,
-                      };
-            res = {
-                ...res,
-                params: newParams,
-            };
-        } else {
-            res = {
-                ...res,
-                params: {
-                    ...params,
-                    ...localParams,
-                },
-            };
-        }
-        if (forceShowSafeChart) {
-            res = {
-                ...res,
-                params: {
-                    ...res.params,
-                    [SHARED_URL_OPTIONS.SAFE_CHART]: '1',
-                },
-            };
-        }
-        return res;
-    }, [
-        ignoreUsedParams,
-        hasChangedActionParams,
-        changedParams,
-        initialData,
-        usedParams,
-        hasChangedOuterProps,
-        hasChangedOuterParams,
-        hasChartTabChanged,
-        clearedOuterParams,
-        currentChangeParamsRef,
-        forceShowSafeChart,
-    ]);
+                const localOnlyParams = pickExceptActionParamsFromParams(changedParams);
+                localParams = {...localOnlyParams, ...newLocalActionParams};
+            }
+            currentChangeParamsRef.current = localParams;
+
+            if (hasChangedOuterProps || hasChangedOuterParams) {
+                const filteredLocalParams = clearedOuterParams?.length
+                    ? omit(localParams, clearedOuterParams)
+                    : localParams;
+
+                // when clear params of widget from outer
+                // ex cleared actionParams from other chart cause empty params in current
+                // or params contains params without local
+                const newParams =
+                    hasChangedOuterParams && isEmpty(params)
+                        ? {
+                              ...params,
+                          }
+                        : {
+                              ...filteredLocalParams,
+                              ...params,
+                          };
+                res = {
+                    ...res,
+                    params: newParams,
+                };
+            } else {
+                res = {
+                    ...res,
+                    params: {
+                        ...params,
+                        ...localParams,
+                    },
+                };
+            }
+            if (forceShowSafeChart) {
+                res = {
+                    ...res,
+                    params: {
+                        ...res.params,
+                        [SHARED_URL_OPTIONS.SAFE_CHART]: '1',
+                    },
+                };
+            }
+            return res;
+        },
+        [
+            ignoreUsedParams,
+            hasChangedActionParams,
+            changedParams,
+            usedParams,
+            hasChangedOuterProps,
+            hasChangedOuterParams,
+            hasChartTabChanged,
+            clearedOuterParams,
+            currentChangeParamsRef,
+            forceShowSafeChart,
+        ],
+    );
+
+    const requestDataProps: DataProps = React.useMemo(() => {
+        return getRequestDataProps(initialData);
+    }, [getRequestDataProps, initialData]);
 
     const handleError = React.useCallback(
         ({error: errorMsg}: {error: CombinedError}) => {
@@ -414,7 +428,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                           widgetConfig,
                       }
                     : {...requestDataProps, widgetConfig};
-
             /**
              * can't use debounced getWidget on dash because of widget priority setting
              * fix in CHARTS-7043
@@ -427,6 +440,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                     requestCancellationRef.current[requestId]?.requestCancellation ||
                     dataProvider.getRequestCancellation(),
                 ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
+                widgetElement: rootNodeRef.current ?? undefined,
             });
 
             const isCanceled = requestCancellationRef.current?.[requestId]?.status === 'canceled';
@@ -465,7 +479,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 data: {
                     loadedData: loadedWidgetData,
                 },
-            } as ChartKitWrapperLoadSuccess);
+            });
 
             // order is important for updateHighchartsConfig from editor
             dispatch({type: WIDGET_CHART_SET_LOADED_DATA, payload: loadedWidgetData});
@@ -510,6 +524,79 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         rootNodeRef,
         enableActionParams,
     ]);
+
+    // standalone method to get meta data for hidden chart tabs in relations dialog
+    const silentLoadChartData = React.useCallback(
+        async (
+            requestProps: DataProps,
+            silentRequestCancellationRef?: React.MutableRefObject<CurrentRequestState>,
+        ) => {
+            cleanUpConflictingParameters({
+                prev: prevInnerParamsRefCurrent,
+                current: requestProps.params,
+            });
+
+            let widgetConfig;
+            if (enableActionParams) {
+                // sending additional config for enabled filtering charts in section actionParams
+                // (will be set in dash relation dialog later), if undefined - means that using full fields list
+                widgetConfig = {
+                    actionParams: {
+                        enable: true,
+                    },
+                };
+            }
+
+            const dataProps = getRequestDataProps(requestProps);
+
+            const getWidgetProps =
+                widgetType === DashTabItemControlSourceType.External
+                    ? {
+                          ...dataProps,
+                          widgetType: DashTabItemControlSourceType.External,
+                          widgetConfig,
+                      }
+                    : {...dataProps, widgetConfig};
+
+            const requestCancellation = dataProvider.getRequestCancellation();
+
+            const id = getWidgetProps.id ?? '';
+
+            if (silentRequestCancellationRef) {
+                silentRequestCancellationRef.current[id] = {
+                    requestCancellation,
+                    status: 'loading',
+                };
+            }
+
+            const getWidget = dataProvider.getWidget.bind(dataProvider);
+
+            const loadedWidgetData = await getWidget({
+                props: getWidgetProps,
+                requestId,
+                responseOptions: {
+                    includeConfig: false,
+                },
+                requestCancellation,
+                ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
+            });
+
+            if (silentRequestCancellationRef?.current?.[id]) {
+                silentRequestCancellationRef.current[id].status = 'loaded';
+            }
+
+            return loadedWidgetData;
+        },
+        [
+            dataProvider,
+            enableActionParams,
+            getRequestDataProps,
+            prevInnerParamsRefCurrent,
+            requestHeadersGetter,
+            requestId,
+            widgetType,
+        ],
+    );
 
     /**
      * reload chart by timer when the _autoupdate param is passed
@@ -700,7 +787,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                         widgetData: renderedData.widget || null,
                         loadedData, // for ChartStats
                     },
-                } as ChartKitWrapperLoadSuccess,
+                },
                 dataProvider,
             );
         },
@@ -930,16 +1017,14 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         [loadChartData, handleChange],
     );
 
-    const runAction = React.useCallback(
-        (params: StringParams) => {
-            return dataProvider.runAction({
-                props: {...initialData, params},
-                requestId,
-                ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
-            });
-        },
-        [dataProvider, initialData, requestId, requestHeadersGetter],
-    );
+    const {runActivity} = useChartActivities({
+        requestId,
+        requestHeadersGetter,
+        dataProvider,
+        initialData,
+        onChange: handleChange,
+        onActivityComplete,
+    });
 
     return {
         loadedData,
@@ -964,6 +1049,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isInit,
         dataProps: requestDataProps,
         isWidgetMenuDataChanged,
-        runAction,
+        runActivity,
+        silentLoadChartData,
     };
 };

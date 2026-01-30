@@ -1,15 +1,19 @@
-import type {ChartData, ChartSeriesData} from '@gravity-ui/chartkit/d3';
-import {CustomShapeRenderer} from '@gravity-ui/chartkit/d3';
-import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
+import type {ChartData, ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
+import {CustomShapeRenderer} from '@gravity-ui/chartkit/gravity-charts';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
+import set from 'lodash/set';
+import type {ExtendedChartData} from 'shared/types/chartkit';
+import type {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
 
 import type {GraphWidget} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
-import {getTooltipRenderer} from '../tooltip';
-import {getNormalizedClickActions} from '../utils';
+import {getTooltipHeaderFormat, getTooltipRenderer, getTooltipRowRenderer} from '../tooltip';
+import {getEscapedActionParams, getNormalizedClickActions} from '../utils';
 
+import {convertChartCommentsToPlotBandsAndLines, shouldUseCommentsOnYAxis} from './comments';
 import {handleClick} from './event-handlers';
+import {convertHolidaysToPlotBands} from './holidays';
 import {
     getCustomShapeRenderer,
     isPointSelected,
@@ -20,10 +24,12 @@ import {
 export function getGravityChartsChartKitData(args: {
     loadedData: ChartKitAdapterProps['loadedData'];
     onChange?: ChartKitAdapterProps['onChange'];
+    runActivity?: ChartKitAdapterProps['runActivity'];
+    chartkitHolidays: ChartKitHolidays | undefined;
 }) {
-    const {loadedData, onChange} = args;
-    const widgetData = loadedData?.data as ChartData;
-    const config = loadedData?.libraryConfig as ChartData;
+    const {loadedData, chartkitHolidays, runActivity, onChange} = args;
+    const widgetData = loadedData?.data as ExtendedChartData;
+    const chartId = loadedData?.entryId;
 
     const chartWidgetData: Partial<ChartData> = {
         chart: {
@@ -37,18 +43,61 @@ export function getGravityChartsChartKitData(args: {
                         ),
                         event,
                         onChange,
+                        runActivity,
                     });
                 },
             },
         },
+        legend: {
+            justifyContent: 'start',
+            itemDistance: 24,
+            itemStyle: {
+                fontSize: '13px',
+            },
+        },
         tooltip: {
-            ...widgetData.tooltip,
-            renderer: getTooltipRenderer(widgetData),
+            pin: {enabled: true, modifierKey: 'altKey'},
         },
         series: getStyledSeries(loadedData),
     };
 
-    chartWidgetData.series?.data.forEach((s) => {
+    const result = merge({}, chartWidgetData, widgetData);
+
+    if (!result.tooltip) {
+        result.tooltip = {};
+    }
+
+    const tooltipQa = `chartkit-tooltip-entry-${chartId}`;
+    result.tooltip.qa = tooltipQa;
+    result.tooltip.renderer = getTooltipRenderer({
+        widgetData,
+        qa: tooltipQa,
+    });
+    result.tooltip.rowRenderer = getTooltipRowRenderer({
+        widgetData,
+    });
+    result.tooltip.headerFormat = getTooltipHeaderFormat({
+        widgetData,
+    });
+
+    result.series?.data.forEach((s) => {
+        set(s, 'legend.symbol', {
+            padding: 8,
+            width: 10,
+            height: 10,
+            ...s.legend?.symbol,
+        });
+
+        s.dataLabels = {
+            padding: 10,
+            ...s.dataLabels,
+            style: {
+                fontSize: '12px',
+                fontWeight: '500',
+                ...s.dataLabels?.style,
+            },
+        };
+
         switch (s.type) {
             case 'pie': {
                 const totals = get(s, 'custom.totals');
@@ -57,7 +106,10 @@ export function getGravityChartsChartKitData(args: {
                 if (renderCustomShapeFn) {
                     s.renderCustomShape = getCustomShapeRenderer(renderCustomShapeFn);
                 } else if (typeof totals !== 'undefined') {
-                    s.renderCustomShape = CustomShapeRenderer.pieCenterText(totals);
+                    s.renderCustomShape = CustomShapeRenderer.pieCenterText(totals, {
+                        padding: '25%',
+                        minFontSize: 6,
+                    });
                 }
 
                 break;
@@ -65,7 +117,28 @@ export function getGravityChartsChartKitData(args: {
         }
     });
 
-    return merge({}, config, widgetData, chartWidgetData);
+    const hideComments = get(loadedData, 'config.hideComments', false);
+    const comments = hideComments ? [] : get(loadedData, 'comments', []);
+    const {plotBands, plotLines} = convertChartCommentsToPlotBandsAndLines({comments});
+
+    const hideHolidaysBands = get(loadedData, 'config.hideHolidaysBands', false);
+    const holidaysPlotBands = hideHolidaysBands
+        ? []
+        : convertHolidaysToPlotBands({holidays: chartkitHolidays, loadedData});
+
+    if (shouldUseCommentsOnYAxis(result)) {
+        set(result, 'yAxis[0].plotBands', [...(result.yAxis?.[0]?.plotBands ?? []), ...plotBands]);
+        set(result, 'yAxis[0].plotLines', [...(result.yAxis?.[0]?.plotLines ?? []), ...plotLines]);
+    } else {
+        set(result, 'xAxis.plotBands', [
+            ...(result.xAxis?.plotBands ?? []),
+            ...holidaysPlotBands,
+            ...plotBands,
+        ]);
+        set(result, 'xAxis.plotLines', [...(result.xAxis?.plotLines ?? []), ...plotLines]);
+    }
+
+    return result;
 }
 
 function getStyledSeries(loadedData: ChartKitAdapterProps['loadedData']) {
@@ -75,7 +148,7 @@ function getStyledSeries(loadedData: ChartKitAdapterProps['loadedData']) {
         const handlers = Array.isArray(a.handler) ? a.handler : [a.handler];
         return handlers.some((h) => h.type === 'setActionParams');
     });
-    const actionParams = pickActionParamsFromParams(get(loadedData, 'unresolvedParams', {}));
+    const actionParams = getEscapedActionParams(loadedData);
 
     if (clickScope?.scope === 'point' && Object.keys(actionParams).length > 0) {
         const chartSeries = widgetData.series.data;

@@ -179,7 +179,11 @@ function DialogPublic({onClose, visible, entry: propsEntry}: Props) {
     }
 
     return (
-        <Dialog open={visible} onClose={() => onClose('close', false)}>
+        <Dialog
+            open={visible}
+            onClose={() => onClose('close', false)}
+            disableHeightTransition={true}
+        >
             <div className={b()}>
                 <Dialog.Header caption={i18n('section_main-title')} />
                 <Dialog.Body className={b('body')}>

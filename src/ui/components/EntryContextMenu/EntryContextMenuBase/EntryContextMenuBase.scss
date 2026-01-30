@@ -2,12 +2,8 @@
     &__item {
         color: var(--g-color-text-complementary);
 
-        &:hover {
+        &:not(&_danger):hover {
             color: var(--g-color-text-primary);
         }
-    }
-
-    &__item_danger {
-        color: var(--g-color-text-danger);
     }
 }

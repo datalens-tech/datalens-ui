@@ -61,6 +61,8 @@ export function csvConverter(
         formSettings.delValues = ' ';
     }
 
+    const delValues = formSettings.delValues || ';';
+
     let lines = [];
     const header = [];
 
@@ -101,6 +103,11 @@ export function csvConverter(
 
                 if (typeof currentValue === 'number') {
                     value = value.replace('.', formSettings.delNumbers || ',');
+                    if (value.includes(delValues)) {
+                        value = `"${value}"`;
+                    }
+                } else if (typeof currentValue === 'string') {
+                    value = `"${value.replace(/"/g, '""')}"`;
                 }
             }
 
@@ -111,7 +118,7 @@ export function csvConverter(
     });
 
     lines = lines.map((line) => {
-        return line.join(formSettings.delValues || ';');
+        return line.join(delValues);
     });
 
     let csvContent: Buffer | string = lines.join('\n');

@@ -15,10 +15,6 @@
         gap: var(--g-spacing-2);
     }
 
-    &__checkbox {
-        margin-block-start: var(--g-spacing-2);
-    }
-
     &__number-input {
         width: 80px;
     }
@@ -30,5 +26,13 @@
 
     &__unit {
         margin-inline-start: var(--g-spacing-1);
+    }
+
+    &__settings-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 5px;
+        gap: 8px;
     }
 }

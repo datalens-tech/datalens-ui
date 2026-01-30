@@ -29,6 +29,7 @@ export const openDialogRelations = ({
     dashKitRef,
     onApply,
     onClose,
+    loadHiddenWidgetMeta,
 }: OpenDialogRelationsProps) => {
     return function (dispatch: Dispatch, getState: () => DatalensGlobalState) {
         const state = getState();
@@ -44,7 +45,7 @@ export const openDialogRelations = ({
             },
             onApply: (newData) => {
                 onApply?.();
-                dispatch(updateCurrentTabData(newData));
+                updateCurrentTabData(newData)(dispatch);
                 onClose();
                 dispatch(closeDialog());
             },
@@ -54,6 +55,7 @@ export const openDialogRelations = ({
             widgetsCurrentTab,
             workbookId,
             allWidgets,
+            loadHiddenWidgetMeta,
         };
 
         dispatch(
@@ -92,18 +94,9 @@ export const openDialogAliases = (props: AliasClickHandlerArgs) => {
     };
 };
 
-export const SET_NEW_RELATIONS = Symbol('dash/SET_NEW_RELATIONS');
-export type SetNewRelationsAction = {
-    type: typeof SET_NEW_RELATIONS;
-    payload: boolean;
-};
-
-export const setNewRelations = (data: SetNewRelationsAction['payload']) => ({
-    type: SET_NEW_RELATIONS,
-    payload: data,
-});
-
-export const openEmptyDialogRelations = () => {
+export const openEmptyDialogRelations = ({
+    loadHiddenWidgetMeta,
+}: Pick<DialogRelationsProps, 'loadHiddenWidgetMeta'>) => {
     return function (dispatch: Dispatch, getState: () => DatalensGlobalState) {
         const state = getState();
         const dashKitRef = selectDashkitRef(state);
@@ -113,12 +106,10 @@ export const openEmptyDialogRelations = () => {
         }
 
         batch(() => {
-            dispatch(setNewRelations(true));
             openDialogRelations({
                 dashKitRef,
-                onClose: () => {
-                    dispatch(setNewRelations(false));
-                },
+                loadHiddenWidgetMeta,
+                onClose: () => {},
             })(dispatch, getState);
         });
     };

@@ -2,6 +2,8 @@ import {type ServiceSettingsActions} from '../actions/serviceSettings';
 import {
     RESET_CREATE_USER,
     RESET_SERVICE_USERS_LIST,
+    RESTORE_USERS_STATE_AFTER_FILTER,
+    SAVE_USERS_STATE_BEFORE_FILTER,
     SET_CREATE_USER_FAILED,
     SET_CREATE_USER_LOADING,
     SET_CREATE_USER_SUCCESS,
@@ -13,10 +15,13 @@ import type {ServiceSettingsState} from '../typings/serviceSettings';
 
 const initialState: ServiceSettingsState = {
     getUsersList: {
-        isLoading: false,
+        isInitialLoading: false,
+        isLoadingMore: false,
         error: null,
         users: [],
         nextPageToken: null,
+        loadedBeforeFilter: null,
+        nextPageTokenBeforeFilter: null,
     },
     createUser: {
         isLoading: false,
@@ -32,7 +37,8 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
                 ...state,
                 getUsersList: {
                     ...state.getUsersList,
-                    isLoading: true,
+                    isInitialLoading: !action.payload.isLoadMore,
+                    isLoadingMore: action.payload.isLoadMore,
                     error: null,
                 },
             };
@@ -41,8 +47,7 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
             return {
                 ...state,
                 getUsersList: {
-                    ...state.getUsersList,
-                    isLoading: false,
+                    ...initialState.getUsersList,
                     users: action.payload.isLoadMore
                         ? [...state.getUsersList.users, ...action.payload.data.users]
                         : action.payload.data.users,
@@ -55,7 +60,8 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
                 ...state,
                 getUsersList: {
                     ...state.getUsersList,
-                    isLoading: false,
+                    isInitialLoading: false,
+                    isLoadingMore: false,
                     error: action.error,
                 },
             };
@@ -105,6 +111,31 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
                     ...initialState.createUser,
                 },
             };
+        }
+        case SAVE_USERS_STATE_BEFORE_FILTER: {
+            return {
+                ...state,
+                getUsersList: {
+                    ...state.getUsersList,
+                    loadedBeforeFilter: [...state.getUsersList.users],
+                    nextPageTokenBeforeFilter: state.getUsersList.nextPageToken,
+                },
+            };
+        }
+        case RESTORE_USERS_STATE_AFTER_FILTER: {
+            if (state.getUsersList.loadedBeforeFilter) {
+                return {
+                    ...state,
+                    getUsersList: {
+                        ...state.getUsersList,
+                        users: state.getUsersList.loadedBeforeFilter,
+                        nextPageToken: state.getUsersList.nextPageTokenBeforeFilter,
+                        loadedBeforeFilter: null,
+                        nextPageTokenBeforeFilter: null,
+                    },
+                };
+            }
+            return state;
         }
         default:
             return state;

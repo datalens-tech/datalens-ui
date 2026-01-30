@@ -1,4 +1,5 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import type {ToastTheme} from '@gravity-ui/uikit';
 
 import type {WRAPPED_HTML_KEY} from '../constants';
 import type {WidgetSize} from '../constants/charts';
@@ -80,12 +81,12 @@ export interface IChartEditor {
      */
     getParam(paramName: string): string | string[];
     /**
-     * Return current page number (only for tabs 'Urls' & 'JavaScript')
+     * Return current page number (only for tabs 'Sources' & 'Prepare')
      */
     getCurrentPage(): number;
 
     /**
-     * Return current clicked column id and sort order (only for tab 'Urls')
+     * Return current clicked column id and sort order (only for tab 'Sources')
      */
     getSortParams(): SortParams;
 
@@ -107,7 +108,7 @@ export interface IChartEditor {
     resolveOperation(input: string): any;
 
     /**
-     * Update ChartKit config (only for tab 'JavaScript')
+     * Update ChartKit config (only for tab 'Prepare')
      */
     updateConfig(updatedFragment: object): void;
 
@@ -261,6 +262,7 @@ export interface ChartsStats extends Timings {
     scope: 'dash' | 'preview' | 'snapter' | null;
     entryId: string;
     query: string;
+    chartKind: 'editor' | 'wizard' | 'ql' | 'unknown';
     type: string;
     // type: 'graph' | 'table'
     widgetRendering: number | null;
@@ -283,3 +285,41 @@ export const MARKUP_TYPE = {
 };
 
 export type MarkupType = (typeof MARKUP_TYPE)[keyof typeof MARKUP_TYPE];
+
+type ChartActivityToastResult = {
+    action: 'toast';
+    title?: string;
+    type?: ToastTheme;
+    content?: string;
+};
+
+type ChartActivityPopupResult = {
+    action: 'popup';
+    title: string;
+    content: string;
+};
+
+type ChartActivitySetParamsResult = {
+    action: 'setParams';
+    params: StringParams;
+};
+
+export type ChartActivitiesActionResult =
+    | ChartActivityToastResult
+    | ChartActivitySetParamsResult
+    | ChartActivityPopupResult;
+
+export type ChartActivityResponseData = {
+    data?: ChartActivitiesActionResult | ChartActivitiesActionResult[];
+    error?: {
+        code?: string;
+        message: string;
+        details?: {
+            stackTrace?: string;
+        };
+    };
+    settings?: {logError: 'toast' | 'ignore'};
+    logs_v2?: string;
+    requestId?: string;
+    traceId?: string;
+};

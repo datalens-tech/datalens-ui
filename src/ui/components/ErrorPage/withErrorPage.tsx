@@ -12,6 +12,7 @@ interface WithErrorPageState {
 function withErrorPage<T = unknown>(
     WrappedComponent: React.ComponentType<T>,
     action?: ErrorPageProps['action'],
+    style?: React.CSSProperties,
 ) {
     const componentName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
@@ -28,7 +29,7 @@ function withErrorPage<T = unknown>(
 
         render() {
             if (this.state.error) {
-                return <ErrorPage error={this.state.error} action={action} />;
+                return <ErrorPage error={this.state.error} action={action} style={style} />;
             }
 
             return <WrappedComponent {...this.props} />;

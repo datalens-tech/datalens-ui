@@ -1,2 +1,2 @@
 export {prepareHighchartsBarY} from './highcharts';
-export * from './d3';
+export * from './gravity-charts';

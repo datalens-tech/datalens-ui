@@ -9,9 +9,9 @@ import {
     getGroupedMenu,
 } from '../../../components/EntryContextMenu/helpers';
 import type {ChartsData} from '../modules/data-provider/charts';
-import type {GraphWidget} from '../types';
+import type {GraphWidget, TableWidget} from '../types';
 
-import type {MenuItemArgs} from './MenuItems';
+import {type MenuItemArgs} from './MenuItems';
 import {getWidgetChartMenu} from './helpers';
 
 export type MenuItemsConfig = Array<MenuItemConfig>;
@@ -22,7 +22,9 @@ export type MenuItemModalProps = {
 
 export type MenuActionComponent = React.ComponentType<MenuItemModalProps>;
 
-export type MenuLoadedData = null | (GraphWidget & ChartsData);
+type ExportableWidget = GraphWidget | TableWidget;
+
+export type MenuLoadedData = null | (ExportableWidget & ChartsData);
 
 export type MenuItemData = {loadedData: MenuLoadedData};
 
@@ -31,6 +33,7 @@ export type MenuItemConfig = {
     title: string | (() => string) | ((data: MenuItemArgs) => string);
     icon?: React.ReactNode | ((data: MenuItemArgs) => React.ReactNode);
     items?: MenuItemConfig[];
+    isDisabled?: (params?: any) => boolean | string;
     isVisible: (params?: any) => boolean;
     action: (params: any) => void | Promise<void> | MenuActionComponent;
     actionWrapper?: (args: MenuItemConfig['action']) => (args: unknown) => void;
@@ -55,7 +58,11 @@ export const getChartkitMenuItems = (props: GetChartkitMenuItems) => {
         }
         case 'wizard': {
             const getWizardChartMenuFn = registry.chart.functions.get('getWizardChartMenu');
-            menuItemsGroups = getWizardChartMenuFn({chartsDataProvider, customOptions});
+            menuItemsGroups = getWizardChartMenuFn({
+                chartsDataProvider,
+                customOptions,
+                extraOptions,
+            });
             break;
         }
         case 'panePreview': {
@@ -69,6 +76,7 @@ export const getChartkitMenuItems = (props: GetChartkitMenuItems) => {
         default: {
             const getDefaultChartMenuFn = registry.chart.functions.get('getDefaultChartMenu');
             menuItemsGroups = getDefaultChartMenuFn({
+                type,
                 chartsDataProvider,
                 customOptions,
                 extraOptions,

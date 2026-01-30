@@ -227,6 +227,7 @@ export const setYadocsFormData = () => {
                 [FieldKey.Sources]: sourcesInAPIFormat,
                 [FieldKey.RefreshEnabled]: connectionData[FieldKey.RefreshEnabled],
                 [FieldKey.RefreshToken]: undefined,
+                [FieldKey.Description]: connectionData[FieldKey.Description],
             };
             innerForm = {
                 [InnerFieldKey.Authorized]: connectionData[InnerFieldKey.Authorized],

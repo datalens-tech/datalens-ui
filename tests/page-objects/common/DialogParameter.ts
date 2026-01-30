@@ -25,6 +25,23 @@ export default class DialogParameter {
         });
     }
 
+    async getNameInput() {
+        const nameInput = this.page.locator(`${slct(DialogParameterQA.NameInput)} input`);
+        return nameInput;
+    }
+
+    async getDefaultValueInput() {
+        const defaultValueInput = this.page.locator(
+            `${slct(DialogParameterQA.DefaultValueInput)} input`,
+        );
+        return defaultValueInput;
+    }
+
+    async getApplyButton() {
+        const applyButton = this.page.locator(slct(DialogParameterQA.Apply));
+        return applyButton;
+    }
+
     async setName(name: string) {
         await this.waitForDialogParameter();
         await this.page.fill(`${slct(DialogParameterQA.NameInput)} input`, name);
@@ -33,6 +50,13 @@ export default class DialogParameter {
     async setDefaultValue(value: string) {
         await this.waitForDialogParameter();
         await this.page.fill(`${slct(DialogParameterQA.DefaultValueInput)} input`, value);
+    }
+
+    async setDefaultValueBoolean(value: 'true' | 'false') {
+        await this.waitForDialogParameter();
+        await this.page.click(
+            `${slct(DialogParameterQA.DefaultValueRadioGroup)} input[value="${value}"]`,
+        );
     }
 
     async selectType(type: DialogParameterDataTypes) {

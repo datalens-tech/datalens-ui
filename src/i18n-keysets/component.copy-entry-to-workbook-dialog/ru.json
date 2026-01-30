@@ -8,6 +8,7 @@
   "label_current-entry": "Выбранный объект",
   "label_dashboards": "Дашборды",
   "label_datasets": "Датасеты",
+  "label_file-connection-warning": "Копирование файловых соединений не поддерживается.",
   "label_linked-objects": "Связанные объекты",
   "label_no-linked-objects": "Пусто",
   "label_objects": [
@@ -17,6 +18,5 @@
     "0 объектов"
   ],
   "label_unknown-error": "При копировании возникла ошибка. Пожалуйста, повторите попытку позже.",
-  "label_file-connection-warning": "Копирование файловых соединений не поддерживается.",
   "title": "Копирование в воркбук"
 }

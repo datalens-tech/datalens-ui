@@ -4,6 +4,7 @@ import {Ellipsis} from '@gravity-ui/icons';
 import type {DropdownMenuProps} from '@gravity-ui/uikit';
 import {DropdownMenu, Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import {ConnectionsS3BaseQA} from 'shared/constants/qa/connections';
 
 import type {ActionMore} from './types';
 
@@ -23,6 +24,7 @@ export const ActionMoreView = <T extends unknown>(props: ActionMoreViewProps<T>)
                 e.stopPropagation();
                 onReplace(item);
             },
+            qa: ConnectionsS3BaseQA.LIST_ITEM_ACTION_MORE_REPLACE,
         });
     }
 
@@ -33,6 +35,7 @@ export const ActionMoreView = <T extends unknown>(props: ActionMoreViewProps<T>)
                 e.stopPropagation();
                 onRename(item);
             },
+            qa: ConnectionsS3BaseQA.LIST_ITEM_ACTION_MORE_RENAME,
         });
     }
 
@@ -45,6 +48,7 @@ export const ActionMoreView = <T extends unknown>(props: ActionMoreViewProps<T>)
                     onDelete(item);
                 },
                 theme: 'danger',
+                qa: ConnectionsS3BaseQA.LIST_ITEM_ACTION_MORE_DELETE,
             },
         ]);
     }
@@ -56,7 +60,13 @@ export const ActionMoreView = <T extends unknown>(props: ActionMoreViewProps<T>)
     return (
         <DropdownMenu
             size="s"
-            icon={<Icon data={Ellipsis} size={MORE_ICON_SIZE} />}
+            icon={
+                <Icon
+                    data={Ellipsis}
+                    size={MORE_ICON_SIZE}
+                    qa={ConnectionsS3BaseQA.LIST_ITEM_ACTION_MORE}
+                />
+            }
             items={items}
             onSwitcherClick={handleSwitcherClick}
         />

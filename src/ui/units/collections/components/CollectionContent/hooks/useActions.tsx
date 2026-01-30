@@ -5,12 +5,16 @@ import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
+import {DIALOG_SHARED_ENTRY_BINDINGS} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {Feature} from '../../../../../../shared';
+import {CollectionItemEntities, Feature} from '../../../../../../shared';
 import type {
     CollectionWithPermissions,
+    SharedEntryFieldsWithPermissions,
+    StructureItemWithPermissions,
     UpdateCollectionResponse,
     UpdateWorkbookResponse,
     WorkbookWithPermissions,
@@ -20,8 +24,10 @@ import {
     DIALOG_DELETE_COLLECTION,
     DIALOG_DELETE_WORKBOOK,
     DIALOG_EDIT_COLLECTION,
+    DIALOG_EDIT_SHARED_ENTRY,
     DIALOG_EDIT_WORKBOOK,
     DIALOG_MOVE_COLLECTION,
+    DIALOG_MOVE_SHARED_ENTRY,
     DIALOG_MOVE_WORKBOOK,
 } from '../../../../../components/CollectionsStructure';
 import {DropdownAction} from '../../../../../components/DropdownAction/DropdownAction';
@@ -31,7 +37,12 @@ import {ResourceType} from '../../../../../registry/units/common/types/component
 import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
-import {deleteCollectionInItems, deleteWorkbookInItems} from '../../../store/actions';
+import {
+    deleteCollectionInItems,
+    deleteSharedEntryInItems,
+    deleteWorkbookInItems,
+} from '../../../store/actions';
+import {getIsWorkbookItem} from '../../helpers';
 
 const i18n = I18n.keyset('collections');
 
@@ -45,6 +56,9 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
 
     const {customizeWorkbooksActions, customizeCollectionsActions} =
         registry.collections.functions.getAll();
+    const {getCurrentUserRights} = registry.common.functions.getAll();
+
+    const currentUserRights = getCurrentUserRights();
 
     const history = useHistory();
 
@@ -172,6 +186,39 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
         (item: WorkbookWithPermissions): (DropdownMenuItem[] | DropdownMenuItem)[] => {
             const actions: (DropdownMenuItem[] | DropdownMenuItem)[] = [];
 
+            const {getGloballyEntrySettings} = registry.common.functions.getAll();
+            const globallyEntrySettings = getGloballyEntrySettings();
+            const isWorkbookExportDisabled = Boolean(
+                globallyEntrySettings?.isWorkbookExportDisabled,
+            );
+
+            const deleteAction: DropdownMenuItem = {
+                text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+                action: () => {
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_DELETE_WORKBOOK,
+                            props: {
+                                open: true,
+                                workbookId: item.workbookId,
+                                workbookTitle: item.title,
+                                onSuccessApply: (id) => {
+                                    dispatch(deleteWorkbookInItems(id));
+                                },
+                                onClose: () => {
+                                    dispatch(closeDialog());
+                                },
+                            },
+                        }),
+                    );
+                },
+                theme: 'danger',
+            };
+
+            if (item.status === WORKBOOK_STATUS.CREATING && item.permissions.delete) {
+                return [[deleteAction]];
+            }
+
             if (item.permissions.update) {
                 actions.push({
                     text: <DropdownAction icon={PencilToLine} text={i18n('action_edit')} />,
@@ -271,7 +318,11 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                 });
             }
 
-            if (isEnabledFeature(Feature.EnableExportWorkbookFile) && item.permissions.update) {
+            if (
+                isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+                currentUserRights.admin &&
+                !isWorkbookExportDisabled
+            ) {
                 actions.push({
                     action: () => {
                         dispatch(
@@ -280,6 +331,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                                 props: {
                                     open: true,
                                     workbookId: item.workbookId,
+                                    workbookTitle: item.title,
                                     onClose: () => {
                                         dispatch(closeDialog());
                                     },
@@ -294,28 +346,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             const otherActions: DropdownMenuItem[] = [];
 
             if (item.permissions.delete) {
-                otherActions.push({
-                    text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
-                    action: () => {
-                        dispatch(
-                            openDialog({
-                                id: DIALOG_DELETE_WORKBOOK,
-                                props: {
-                                    open: true,
-                                    workbookId: item.workbookId,
-                                    workbookTitle: item.title,
-                                    onSuccessApply: (id) => {
-                                        dispatch(deleteWorkbookInItems(id));
-                                    },
-                                    onClose: () => {
-                                        dispatch(closeDialog());
-                                    },
-                                },
-                            }),
-                        );
-                    },
-                    theme: 'danger',
-                });
+                otherActions.push(deleteAction);
             }
 
             if (otherActions.length > 0) {
@@ -331,11 +362,136 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             fetchStructureItems,
             onCloseMoveDialog,
             history,
+            currentUserRights.admin,
         ],
     );
 
-    return {
-        getCollectionActions,
-        getWorkbookActions,
-    };
+    const getEntryActions = React.useCallback(
+        (item: SharedEntryFieldsWithPermissions): (DropdownMenuItem[] | DropdownMenuItem)[] => {
+            const actions: (DropdownMenuItem[] | DropdownMenuItem)[] = [];
+
+            if (item.permissions.update) {
+                actions.push({
+                    text: <DropdownAction icon={PencilToLine} text={i18n('action_edit')} />,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_EDIT_SHARED_ENTRY,
+                                props: {
+                                    open: true,
+                                    entryId: item.entryId,
+                                    title: item.title,
+                                    onApply: () => {
+                                        fetchStructureItems();
+                                    },
+                                    onClose: () => {
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
+                });
+            }
+
+            if (item.permissions.move) {
+                actions.push({
+                    text: <DropdownAction icon={ArrowRight} text={i18n('action_move')} />,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_MOVE_SHARED_ENTRY,
+                                props: {
+                                    open: true,
+                                    entryId: item.entryId,
+                                    entryTitle: item.title,
+                                    initialParentId: item.collectionId,
+                                    onApply: fetchStructureItems,
+                                    onClose: onCloseMoveDialog,
+                                },
+                            }),
+                        );
+                    },
+                });
+            }
+
+            if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
+                actions.push({
+                    text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_IAM_ACCESS,
+                                props: {
+                                    open: true,
+                                    resourceId: item.entryId,
+                                    resourceType: ResourceType.SharedEntry,
+                                    resourceTitle: item.title,
+                                    parentId: item.collectionId,
+                                    resourceScope: item.scope,
+                                    canUpdate: item.permissions.updateAccessBindings,
+                                    onClose: () => {
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
+                });
+            }
+
+            const otherActions: DropdownMenuItem[] = [];
+
+            if (item.permissions.delete) {
+                otherActions.push({
+                    text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_SHARED_ENTRY_BINDINGS,
+                                props: {
+                                    onClose: () => dispatch(closeDialog()),
+                                    open: true,
+                                    entry: item,
+                                    isDeleteDialog: true,
+                                    onDeleteSuccess: () => {
+                                        dispatch(deleteSharedEntryInItems(item.entryId));
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
+                    theme: 'danger',
+                });
+            }
+
+            if (otherActions.length > 0) {
+                actions.push([...otherActions]);
+            }
+
+            return actions;
+        },
+        [fetchStructureItems, onCloseMoveDialog, dispatch, collectionsAccessEnabled],
+    );
+
+    const getItemActions = React.useCallback(
+        (item: StructureItemWithPermissions) => {
+            switch (item.entity) {
+                case CollectionItemEntities.COLLECTION:
+                    return getCollectionActions(item);
+                case CollectionItemEntities.WORKBOOK:
+                    return getWorkbookActions(item);
+                case CollectionItemEntities.ENTRY:
+                    return getEntryActions(item);
+                default:
+                    return getIsWorkbookItem(item)
+                        ? getWorkbookActions(item)
+                        : getCollectionActions(item);
+            }
+        },
+        [getCollectionActions, getEntryActions, getWorkbookActions],
+    );
+
+    return getItemActions;
 };

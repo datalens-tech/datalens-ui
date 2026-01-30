@@ -60,6 +60,11 @@ $labelMargin: 8px;
         &:hover {
             background-color: var(--g-color-base-simple-hover);
         }
+        &_disabled,
+        &_disabled:hover {
+            background-color: initial;
+            opacity: 0.5;
+        }
 
         &_current,
         &_current:hover {
@@ -114,5 +119,9 @@ $labelMargin: 8px;
 
     &__avatar {
         margin-right: 18px;
+    }
+
+    &__point-tooltip {
+        padding: var(--g-spacing-2) var(--g-spacing-3);
     }
 }

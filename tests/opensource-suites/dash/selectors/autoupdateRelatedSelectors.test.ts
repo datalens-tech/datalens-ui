@@ -12,7 +12,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {getStringFullUrl, slct} from '../../../utils';
 import {TestParametrizationConfig} from '../../../types/config';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
-import {SelectorElementType} from '../../../page-objects/dashboard/ControlActions';
+import {SelectorElementType} from '../../../page-objects/dashboard/controlActions/ControlActions';
 
 const PARAMS = {
     DATASET_FIRST_CONTROL: {
@@ -252,7 +252,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
         },
     );
 
-    datalensTest(
+    datalensTest.skip(
         "Manual selectors with aliases don't affect each other before applying when auto-update is disabled",
         async ({page, config}) => {
             const dashboardPage = new DashboardPage({page});

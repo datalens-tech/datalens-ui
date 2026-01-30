@@ -6,14 +6,17 @@ const regexpToMatchRelativePath = /href=(\.[^a-zA-Z0-9]+|\/|)(.+)/;
 const regexpToMatchRelativeHref = /href="((?:(?!http|"|#).)*)"/g;
 const PATH_IN_REGEXP_INDEX = 2;
 
-function formUrl(endpoint: string, path: string) {
+export function formUrl(endpoint: string, path: string) {
     const normalizedEndpoint = endpoint.slice(-1) === '/' ? endpoint.slice(0, -1) : endpoint;
     const normalizedPath = path[0] === '/' ? path : '/' + path;
     return normalizedEndpoint + normalizedPath;
 }
 
-export function formDocsEndpointDL(path: string): string {
+export function formDocsEndpointDL(path: string) {
     const {datalensDocs} = DL.ENDPOINTS;
+    if (!datalensDocs) {
+        return '';
+    }
     return formUrl(datalensDocs, path);
 }
 
@@ -28,7 +31,12 @@ export function replaceRelativeLinksToAbsoluteInHTML(doc: string) {
         const path = matchedPath[PATH_IN_REGEXP_INDEX];
         if (path) {
             const baseUrl = getDocsBaseUrl();
-            return `href="${baseUrl}/${path}"`;
+
+            const docsPath = path.toLowerCase().includes('err')
+                ? `troubleshooting/errors/${path}`
+                : path;
+
+            return `href="${baseUrl}/${docsPath}"`;
         }
         return subString;
     });

@@ -1,11 +1,15 @@
-import type {ConnectorType} from '../../../constants';
+import type z from 'zod';
+
+import type {CONNECTOR_VISIBILITY_MODE, ConnectorType} from '../../../constants';
 import type {
     ConnectionData,
     ConnectionTypedQueryApiRequest,
     ConnectionTypedQueryApiResponse,
-    TransferIdMapping,
     TransferNotification,
+    ValueOf,
+    WorkbookId,
 } from '../../../types';
+import type {deleteConnectionResultSchema} from '../schemas/connections';
 
 import type {WorkbookIdArg} from './common';
 
@@ -22,6 +26,7 @@ type BaseConnectorItem = {
     conn_type: ConnectorType;
     backend_driven_form: boolean;
     hidden: boolean;
+    history: boolean;
     title: string;
     /**
      * Controls the behavior of connector's list item in the list.
@@ -29,8 +34,9 @@ type BaseConnectorItem = {
      * 1. `free` - connector **is** shown in the list and **is** available for creation
      * 2. `hidden` - connector **is not** shown in the list and **is** available for creation
      * 3. `uncreatable` - connector **is not** shown in the list and **is not** available for creation
+     * 4. `business` - connector **is** shown in the list and **is not** available for creation
      */
-    visibility_mode: 'free' | 'hidden' | 'uncreatable';
+    visibility_mode: ValueOf<typeof CONNECTOR_VISIBILITY_MODE>;
     alias?: string;
 };
 
@@ -57,9 +63,7 @@ export type GetAvailableCountersResponse = {
 
 export type GetAvailableCountersArgs = BaseArgs;
 
-export type DeleteConnectionResponse = unknown;
-
-export type DeleteConnectionArgs = BaseArgs;
+export type DeleteConnectionResponse = z.infer<typeof deleteConnectionResultSchema>;
 
 export type GetConnectorsResponse = {
     /** @deprecated use `sections` & `uncategorized` fields instead */
@@ -72,7 +76,11 @@ export type GetConnectorsResponse = {
 
 export type GetConnectionResponse = ConnectionData;
 
-export type GetConnectionArgs = BaseArgs & WorkbookIdArg;
+export type GetConnectionArgs = BaseArgs & {
+    workbookId?: WorkbookId;
+    bindedDatasetId?: string | null;
+    rev_id?: string;
+};
 
 export type CreateConnectionResponse = {
     id: string;
@@ -88,7 +96,10 @@ export type CreateConnectionArgs = ConnectionData;
 
 export type UpdateConnectionResponse = {};
 
-export type UpdateConnectionArgs = BaseArgs & ConnectionData;
+export type UpdateConnectionArgs = {
+    connectionId: string;
+    data: ConnectionData;
+};
 
 export type VerifyConnectionResponse = {};
 
@@ -159,27 +170,21 @@ export type ListConnectorIconsResponse = {
 };
 
 export type ExportConnectionArgs = {
-    usMasterToken: string;
     connectionId: string;
-    id_mapping: TransferIdMapping;
     workbookId?: string | null;
 };
 
 export type ExportConnectionResponse = {
     connection: ConnectionData;
-    notifications: TransferNotification;
+    notifications: TransferNotification[];
 };
 
 export type ImportConnectionResponse = {
     id: string;
-    notifications: TransferNotification;
+    notifications: TransferNotification[];
 };
 
 export type ImportConnectionArgs = {
-    usMasterToken: string;
-    data: {
-        workbook_id: string;
-        connection: ConnectionData;
-    };
-    id_mapping: TransferIdMapping;
+    workbookId: string;
+    connection: ConnectionData;
 };

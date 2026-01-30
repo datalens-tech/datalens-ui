@@ -16,14 +16,14 @@ jobs:
   build:
     if: "!contains(github.event.commits[0].message, '[hotfix]') && !contains(github.event.commits[0].message, '[release]')"
     name: datalens-ui
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
           sparse-checkout: .
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
       - name: 'Get current release'
         run: |

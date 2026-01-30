@@ -3,7 +3,7 @@ services:
     container_name: e2e-datalens-postgres
     image: ghcr.io/datalens-tech/datalens-postgres:16
     healthcheck:
-      test: ["CMD", "pg_isready", "-d", "pg-us-db"]
+      test: ["CMD", "pg_isready", "-d", "pg-us-db", "-U", "pg-user"]
       interval: 5s
       retries: 10
       start_period: 3s
@@ -11,9 +11,12 @@ services:
       CONTROL_API_CRYPTO_KEY: "ZGF0YWxlbnN1bnNlY3VyZWZlcm5ldGNyeXB0b2tleQo="
       US_ENDPOINT: http://us:8080
       POSTGRES_PASSWORD: postgres
-      INIT_DEMO_DB: 1
       INIT_DEMO_DATA: 0
-      INIT_META_MANAGER: 0
+      INIT_DB_DEMO: 1
+      INIT_DB_META_MANAGER: 0
+      INIT_DB_TEMPORAL: 0
+      POST_INIT_RETRIES: ${POST_INIT_RETRIES:-30}
+      POST_INIT_SLEEP: ${POST_INIT_SLEEP:-5}
     volumes:
       - ./data:/init/post-init
     networks:
@@ -21,7 +24,7 @@ services:
 
   control-api:
     container_name: e2e-datalens-control-api
-    image: ghcr.io/datalens-tech/datalens-control-api:${CONTROL_API_VERSION:-0.2139.0}
+    image: ghcr.io/datalens-tech/datalens-control-api:${CONTROL_API_VERSION:-release}
     environment:
       BI_API_UWSGI_WORKERS_COUNT: 4
       RQE_FORCE_OFF: 1
@@ -31,14 +34,15 @@ services:
       US_HOST: http://us:8080
       US_MASTER_TOKEN: us-master-token
       CONNECTOR_AVAILABILITY_VISIBLE: "clickhouse,postgres,chyt"
-    depends_on:
-      - us
+      AUTH__TYPE: ${AUTH_TYPE:-NATIVE}
+      AUTH__JWT_ALGORITHM: 'PS256'
+      AUTH__JWT_KEY: -----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+HICDZMfimMIiGdd0dPr\n2N3zxHOJqiVXuvUj/aBBS7c8760rJUh4344sP/0Gid558yH/v1MtzZ0R9w09v6gb\nSNrSiNwIUNGPhbnm9Jf+kMezsI/rkcIdoVm3KJ8CFUYy6MRPzW7iJmIVRHBb82v1\nmAYCCQFU6IRtFIa9hQ8wedWwxqXZekSNS+6NB37dmmQB9kz2E3MY+KRLigOh4i3p\nCZ1ti3HVvMa9Rlgk9FmoWExzub5ECChqwm+vn8yFXjYW7kUSClcV2xx4nbQWqjrR\nyyLk6W2BNOuCFVvz0j+5XkpLAt7tljtVZc+572HBEKpF2mAdmAip5NzeDhKqucJ+\nZQIDAQAB\n-----END PUBLIC KEY-----
     networks:
       - default
 
   data-api:
     container_name: e2e-datalens-data-api
-    image: ghcr.io/datalens-tech/datalens-data-api:${DATA_API_VERSION:-0.2139.0}
+    image: ghcr.io/datalens-tech/datalens-data-api:${DATA_API_VERSION:-release}
     environment:
       GUNICORN_WORKERS_COUNT: 5
       RQE_FORCE_OFF: 1
@@ -50,9 +54,13 @@ services:
       BI_COMPENG_PG_ON: 1
       BI_COMPENG_PG_URL: postgresql://pg-user:postgres@postgres:5432/pg-compeng-db
       US_HOST: http://us:8080
-      US_MASTER_TOKEN: ${US_MASTER_TOKEN:-us-master-token}
+      US_MASTER_TOKEN: us-master-token
+      AUTH__TYPE: ${AUTH_TYPE:-NATIVE}
+      AUTH__JWT_ALGORITHM: 'PS256'
+      AUTH__JWT_KEY: -----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+HICDZMfimMIiGdd0dPr\n2N3zxHOJqiVXuvUj/aBBS7c8760rJUh4344sP/0Gid558yH/v1MtzZ0R9w09v6gb\nSNrSiNwIUNGPhbnm9Jf+kMezsI/rkcIdoVm3KJ8CFUYy6MRPzW7iJmIVRHBb82v1\nmAYCCQFU6IRtFIa9hQ8wedWwxqXZekSNS+6NB37dmmQB9kz2E3MY+KRLigOh4i3p\nCZ1ti3HVvMa9Rlgk9FmoWExzub5ECChqwm+vn8yFXjYW7kUSClcV2xx4nbQWqjrR\nyyLk6W2BNOuCFVvz0j+5XkpLAt7tljtVZc+572HBEKpF2mAdmAip5NzeDhKqucJ+\nZQIDAQAB\n-----END PUBLIC KEY-----
     depends_on:
-      - us
+      postgres:
+        condition: service_healthy
     networks:
       - default
 
@@ -69,6 +77,30 @@ services:
       SKIP_INSTALL_DB_EXTENSIONS: 1
       USE_DEMO_DATA: 0
       USE_E2E_MOCK_DATA: 0
+      AUTH_ENABLED: ${AUTH_ENABLED:-true}
+      AUTH_TOKEN_PUBLIC_KEY: -----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+HICDZMfimMIiGdd0dPr\n2N3zxHOJqiVXuvUj/aBBS7c8760rJUh4344sP/0Gid558yH/v1MtzZ0R9w09v6gb\nSNrSiNwIUNGPhbnm9Jf+kMezsI/rkcIdoVm3KJ8CFUYy6MRPzW7iJmIVRHBb82v1\nmAYCCQFU6IRtFIa9hQ8wedWwxqXZekSNS+6NB37dmmQB9kz2E3MY+KRLigOh4i3p\nCZ1ti3HVvMa9Rlgk9FmoWExzub5ECChqwm+vn8yFXjYW7kUSClcV2xx4nbQWqjrR\nyyLk6W2BNOuCFVvz0j+5XkpLAt7tljtVZc+572HBEKpF2mAdmAip5NzeDhKqucJ+\nZQIDAQAB\n-----END PUBLIC KEY-----
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - default
+
+  auth:
+    container_name: e2e-datalens-auth
+    image: ghcr.io/datalens-tech/datalens-auth:${AUTH_VERSION:-release}
+    environment:
+      APP_INSTALLATION: opensource
+      APP_ENV: prod
+      MASTER_TOKEN: auth-master-token
+      US_MASTER_TOKEN: us-master-token
+      POSTGRES_DSN_LIST: "postgres://pg-user:postgres@postgres:5432/pg-auth-db"
+      US_SURPRESS_DB_STATUS_LOGS: "true"
+      SKIP_INSTALL_DB_EXTENSIONS: 1
+      TOKEN_PRIVATE_KEY: -----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQD4cgINkx+KYwiI\nZ13R0+vY3fPEc4mqJVe69SP9oEFLtzzvrSslSHjfjiw//QaJ3nnzIf+/Uy3NnRH3\nDT2/qBtI2tKI3AhQ0Y+Fueb0l/6Qx7Owj+uRwh2hWbconwIVRjLoxE/NbuImYhVE\ncFvza/WYBgIJAVTohG0Uhr2FDzB51bDGpdl6RI1L7o0Hft2aZAH2TPYTcxj4pEuK\nA6HiLekJnW2LcdW8xr1GWCT0WahYTHO5vkQIKGrCb6+fzIVeNhbuRRIKVxXbHHid\ntBaqOtHLIuTpbYE064IVW/PSP7leSksC3u2WO1Vlz7nvYcEQqkXaYB2YCKnk3N4O\nEqq5wn5lAgMBAAECggEAKxtE5ewP/efe9CPTMHPvqOohwIU3bpEaHrMn8nqaubNq\nXD+Ui9x+NHOrk9KoDsXOLPRKNn0NJm7JTi869oUJbuOgweRDgRpLJ62wt+GjZqVv\ntQPToK+oinVRhTfJmb1bWe2t1vwVOwmrnPtNyPeDXkQ0mDFl9Q39CyGxwmN3SrwE\ncwKM9vFXxiH60T2UHok7/BW7Usb+4WJA4ov/bEoYAzkDQUnnRzjJO1RXFWjC8//M\nXjuI0NZsQXK3LV9yukSONInevoc1MnoGHwe9UZ67tDnJigY9rd4fT6B1yiKuzLDv\noiDPdpm3plh/JnPLM16nOm7zJkmsbKG2RwfzUmLNxQKBgQD827lAPp3ePUrmRQQb\nXwqb4zNQZgDUBQc0bU6F1BxWQtx5LTafnjOYmqqhakpZrMDh69T/TwH8kbDutXcR\nMWAO96yZ1IYRqsrorz4i4bCww1wDTpn7Aqz0xPkJqAucrfkUYoELf/Fl4P1dq4bs\n4OkuMLtHefI2qd/3utQOhEnauwKBgQD7iD94k9RHpHL0vb4n4Jb2EC4I/se3J1Ls\n0F37veMCQXOFKuWrka81DsqdRxu/wqZI4fkMnIe7NjGro2FFZg8MA3i4I6v3KRv9\nRyTrLNXspIESjZ2oAkuVT9npRf86whvZa2H3n4bIowJHwak3lF63xq6jnVZlCkQL\nTEhlRMFJXwKBgAmMlrtpYfbho7F8i8Io3bKzat2vbHqVUgdV1XBSaVuMnNzqqzRt\n+g7aUHVWGUa3snUVve6CYlXSfrcVHVEF51XJXrhUgVerdoxBCfyxP0X9qrzpPAFx\nwWxg//KwaPfazhxJ+AuiIlCxpX/jGW5atBOtfXUektojojSt1pJRxqQ/AoGAPcXd\nSKCNjratYLvEmoiGqpGYrK7dn3Zx4CTgH/YnbSNj2n2JgBQ8QjyKuAuBnhuQuO9+\nOYGrt+d8VVm/hsqkwV+M4zQnhIC9FfvF7lfJhd90r3jGEj/WDipZKvf80ZJgQooj\nuiucb2PRKIxAIZ03kcyikR4P3KqjwV6PnQdArOMCgYBwBq8mBNlJwYUuLruQ1RM7\n5LbP1e8C/YZ75N3CLPA14kDoW8qYC6X+KCQQgPXlQGDvTzAxg382NV53704H4ZAh\nPVuwnoZzVs9VgOHduu8nUHHzh8+ukl+fX9dyzq/wjulx8fXcRewTXh9I892EjcJy\nBG41O8RqoSHlssbZaJnugw==\n-----END PRIVATE KEY-----
+      TOKEN_PUBLIC_KEY: -----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+HICDZMfimMIiGdd0dPr\n2N3zxHOJqiVXuvUj/aBBS7c8760rJUh4344sP/0Gid558yH/v1MtzZ0R9w09v6gb\nSNrSiNwIUNGPhbnm9Jf+kMezsI/rkcIdoVm3KJ8CFUYy6MRPzW7iJmIVRHBb82v1\nmAYCCQFU6IRtFIa9hQ8wedWwxqXZekSNS+6NB37dmmQB9kz2E3MY+KRLigOh4i3p\nCZ1ti3HVvMa9Rlgk9FmoWExzub5ECChqwm+vn8yFXjYW7kUSClcV2xx4nbQWqjrR\nyyLk6W2BNOuCFVvz0j+5XkpLAt7tljtVZc+572HBEKpF2mAdmAip5NzeDhKqucJ+\nZQIDAQAB\n-----END PUBLIC KEY-----
+      AUTH_ADMIN_PASSWORD: admin
+      AUTH_SIGNUP_DISABLED: "false"
+      UI_APP_ENDPOINT: http://localhost:8080
     depends_on:
       postgres:
         condition: service_healthy
@@ -85,14 +117,20 @@ services:
     environment:
       APP_MODE: full
       APP_ENV: production
+      US_MASTER_TOKEN: us-master-token
       APP_INSTALLATION: opensource
       AUTH_POLICY: disabled
       US_ENDPOINT: http://us:8080
       BI_API_ENDPOINT: http://control-api:8080
       BI_DATA_ENDPOINT: http://data-api:8080
       HC: ${HC:-0}
+      AUTH_ENABLED: ${AUTH_ENABLED:-true}
+      AUTH_MASTER_TOKEN: auth-master-token
+      AUTH_TOKEN_PUBLIC_KEY: -----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+HICDZMfimMIiGdd0dPr\n2N3zxHOJqiVXuvUj/aBBS7c8760rJUh4344sP/0Gid558yH/v1MtzZ0R9w09v6gb\nSNrSiNwIUNGPhbnm9Jf+kMezsI/rkcIdoVm3KJ8CFUYy6MRPzW7iJmIVRHBb82v1\nmAYCCQFU6IRtFIa9hQ8wedWwxqXZekSNS+6NB37dmmQB9kz2E3MY+KRLigOh4i3p\nCZ1ti3HVvMa9Rlgk9FmoWExzub5ECChqwm+vn8yFXjYW7kUSClcV2xx4nbQWqjrR\nyyLk6W2BNOuCFVvz0j+5XkpLAt7tljtVZc+572HBEKpF2mAdmAip5NzeDhKqucJ+\nZQIDAQAB\n-----END PUBLIC KEY-----
+      AUTH_SIGNUP_DISABLED: "false"
     depends_on:
       - us
+      - auth
       - control-api
       - data-api
     ports:
@@ -106,14 +144,20 @@ services:
     environment:
       APP_MODE: full
       APP_ENV: production
+      US_MASTER_TOKEN: us-master-token
       APP_INSTALLATION: opensource
       AUTH_POLICY: disabled
       US_ENDPOINT: http://us:8080
       BI_API_ENDPOINT: http://control-api:8080
       BI_DATA_ENDPOINT: http://data-api:8080
       HC: ${HC:-0}
+      AUTH_ENABLED: ${AUTH_ENABLED:-true}
+      AUTH_MASTER_TOKEN: auth-master-token
+      AUTH_TOKEN_PUBLIC_KEY: -----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+HICDZMfimMIiGdd0dPr\n2N3zxHOJqiVXuvUj/aBBS7c8760rJUh4344sP/0Gid558yH/v1MtzZ0R9w09v6gb\nSNrSiNwIUNGPhbnm9Jf+kMezsI/rkcIdoVm3KJ8CFUYy6MRPzW7iJmIVRHBb82v1\nmAYCCQFU6IRtFIa9hQ8wedWwxqXZekSNS+6NB37dmmQB9kz2E3MY+KRLigOh4i3p\nCZ1ti3HVvMa9Rlgk9FmoWExzub5ECChqwm+vn8yFXjYW7kUSClcV2xx4nbQWqjrR\nyyLk6W2BNOuCFVvz0j+5XkpLAt7tljtVZc+572HBEKpF2mAdmAip5NzeDhKqucJ+\nZQIDAQAB\n-----END PUBLIC KEY-----
+      AUTH_SIGNUP_DISABLED: "false"
     depends_on:
       - us
+      - auth
       - control-api
       - data-api
     networks:
@@ -125,11 +169,19 @@ services:
     environment:
       E2E_DOMAIN: http://datalens-from-image:8080
       E2E_RETRY_TIMES: ${E2E_RETRY_TIMES:-0}
-      E2E_ACTION_TIMEOUT: ${E2E_ACTION_TIMEOUT}
-      E2E_EXPECT_TIMEOUT: ${E2E_EXPECT_TIMEOUT}
-      E2E_TEST_TIMEOUT: ${E2E_TEST_TIMEOUT}
-      NO_AUTH: true
+      E2E_ACTION_TIMEOUT: ${E2E_ACTION_TIMEOUT:-}
+      E2E_EXPECT_TIMEOUT: ${E2E_EXPECT_TIMEOUT:-}
+      E2E_TEST_TIMEOUT: ${E2E_TEST_TIMEOUT:-}
+      E2E_MAX_FAILURES: ${E2E_MAX_FAILURES:-}
+      E2E_MAX_WORKERS: ${E2E_MAX_WORKERS:-}
+      E2E_NO_AUTH: ${E2E_NO_AUTH:-false}
+      E2E_USER_LOGIN: ${E2E_USER_LOGIN:-admin}
+      E2E_USER_PASSWORD: ${E2E_USER_PASSWORD:-admin}
+      AUTH_ENABLED: ${AUTH_ENABLED:-}
     depends_on:
       - datalens-from-image
     networks:
       - default
+
+networks:
+  default:

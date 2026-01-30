@@ -1,12 +1,11 @@
 import {Page, Response, Route, expect} from '@playwright/test';
 
 import {
-    ConnectionsDialogQA,
     ControlQA,
     DashCommonQa,
     DashEntryQa,
     DashRelationTypes,
-    DatalensTabs,
+    DatalensTabsQa,
     DialogConfirmQA,
     DialogDashWidgetQA,
     DialogGroupControlQa,
@@ -14,6 +13,7 @@ import {
     EntryDialogQA,
     LOADED_DASH_CLASS,
     SelectQa,
+    WysiwygEditorQa,
     YfmQa,
 } from '../../../src/shared/constants';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -34,6 +34,7 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
+import {Locator} from 'playwright-core';
 import {
     DashboardDialogSettingsQa,
     DialogDashTitleQA,
@@ -51,22 +52,21 @@ import {
     DashboardAddWidgetQa,
     DashkitQa,
 } from '../../../src/shared/constants/qa/dash';
+import {WorkbookPageQa} from '../../../src/shared/constants/qa/workbooks';
+import {WorkbookIds, WorkbooksUrls} from '../../constants/constants';
+import {getUrlStateParam} from '../../suites/dash/helpers';
+import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
+import {CommonUrls} from '../constants/common-urls';
+import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
+import {EditEntityButton} from '../workbook/EditEntityButton';
+import {Workbook} from '../workbook/Workbook';
+import {ChartkitControl} from './ChartkitControl';
+import ControlActions from './controlActions/ControlActions';
 import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
 import Description from './Description';
-import TableOfContent from './TableOfContent';
-import {Locator} from 'playwright-core';
-import {Workbook} from '../workbook/Workbook';
-import {WorkbookPageQa} from '../../../src/shared/constants/qa/workbooks';
-import {ChartkitControl} from './ChartkitControl';
-import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
-import {WorkbookIds, WorkbooksUrls} from '../../constants/constants';
-import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
-import {CommonUrls} from '../constants/common-urls';
-import {EditEntityButton} from '../workbook/EditEntityButton';
-import ControlActions from './ControlActions';
-import {getUrlStateParam} from '../../suites/dash/helpers';
 import {FixedHeader} from './FixedHeader';
+import TableOfContent from './TableOfContent';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -181,7 +181,8 @@ class DashboardPage extends BasePage {
         waitForLoader?: boolean;
         action?: () => Promise<void>;
     }) {
-        const loader = this.page.locator(slct(ControlQA.groupCommonLoader));
+        const loader = this.page.locator(slct(ControlQA.groupCommonLockedBlock));
+
         const handler = async (route: Route) => {
             await expect(loader).toBeVisible();
 
@@ -300,6 +301,7 @@ class DashboardPage extends BasePage {
         const workbookPO = new Workbook(this.page);
 
         await workbookPO.openE2EWorkbookPage();
+        await this.page.locator(slct(DatalensTabsQa.Item), {hasText: 'Dashboards'}).click();
 
         await workbookPO.openWorkbookItemMenu(dashId);
 
@@ -369,25 +371,37 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddText));
     }
 
+    async chooseMarkupText() {
+        await this.page.click(slct(WysiwygEditorQa.SettingsButton));
+        await this.page.click(slct(WysiwygEditorQa.ModeMarkupItemMenu));
+    }
+
     async addText({
         text,
-        delay,
+        timeout,
+        markup,
         options,
     }: {
         text: string;
-        delay?: number;
+        timeout?: number;
+        markup?: boolean;
         options?: {autoHeight?: boolean};
     }) {
         await this.clickAddText();
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
+
+        if (markup) {
+            await this.chooseMarkupText();
+        }
+
         if (isEnabledCollections) {
-            await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+            await this.page.fill(`${slct(WysiwygEditorQa.Editor)} [contenteditable=true]`, text);
         } else {
-            await this.page.type(
+            await this.page.fill(
                 `${slct(DialogDashWidgetItemQA.Text)} [contenteditable=true]`,
                 text,
-                {delay},
+                {timeout},
             );
         }
         if (options) {
@@ -411,25 +425,6 @@ class DashboardPage extends BasePage {
 
     getDashKitTextItem(text: string) {
         return this.page.locator(slct(DashkitQa.GRID_ITEM)).getByText(text, {exact: true});
-    }
-
-    async getGlobalRelationsDialogType(): Promise<'new' | 'old' | null> {
-        const isEnabledShowNewRelationsButton = await isEnabledFeature(
-            this.page,
-            Feature.ShowNewRelationsButton,
-        );
-
-        if (isEnabledShowNewRelationsButton) {
-            return 'new';
-        }
-
-        const hideOldRelations = await isEnabledFeature(this.page, Feature.HideOldRelations);
-
-        if (!hideOldRelations) {
-            return 'old';
-        }
-
-        return null;
     }
 
     async deleteSelector(controlTitle: string) {
@@ -644,49 +639,6 @@ class DashboardPage extends BasePage {
         await this.applyRelationsChanges();
     }
 
-    async setupLinks({
-        selectorName,
-        linkType,
-        chartField,
-    }: {
-        selectorName: string;
-        linkType:
-            | ConnectionsDialogQA.TypeSelectConnectedOption
-            | ConnectionsDialogQA.TypeSelectInputOption
-            | ConnectionsDialogQA.TypeSelectOutputOption
-            | ConnectionsDialogQA.TypeSelectIgnoreOption;
-        chartField: string;
-    }) {
-        // click on the "connections" button
-        await this.clickOnLinksBtn();
-
-        // select the selector
-        await clickGSelectOption({
-            page: this.page,
-            key: ConnectionsDialogQA.ElementSelect,
-            optionText: selectorName,
-        });
-
-        // changing the value from "no connection" to "outgoing connection"
-        await clickGSelectOption({
-            page: this.page,
-            key: ConnectionsDialogQA.TypeSelect,
-            optionQa: linkType,
-        });
-
-        // link to the "City" field of the chart
-        await clickGSelectOption({
-            page: this.page,
-            key: 'connect-by-alias-to-select',
-            optionText: chartField,
-        });
-
-        // save
-        await this.page.click(slct('connect-by-alias-dialog-apply-button'));
-        // applying changes in the communication dialog
-        await this.page.click(slct(ConnectionsDialogQA.Apply));
-    }
-
     async hasChanges() {
         const saveButton = await this.page.locator(slct(ActionPanelDashSaveControlsQa.Save));
         const disabledAttribute = await saveButton.getAttribute('disabled');
@@ -815,20 +767,13 @@ class DashboardPage extends BasePage {
         await this.clickTabs();
         await this.page.click(slct(DialogTabsQA.RowAdd));
         if (name) {
-            await this.page
-                .locator(`${slct(DialogTabsQA.ReadOnlyTabItem)}`)
-                .last()
-                .dblclick();
+            await this.page.locator(slct(DialogTabsQA.ReadOnlyTabItem)).last().dblclick();
             await this.page.locator(`${slct(DialogTabsQA.EditTabItem)} input`).fill(name);
         }
         await this.page.click(slct(DialogTabsQA.Save));
     }
 
-    async selectTab(tabSelector: string) {
-        return this.page.$(tabSelector);
-    }
-
-    async changeTab({tabName, tabSelector}: {tabName?: string; tabSelector?: string}) {
+    async changeTab({tabName, index}: {tabName?: string; index?: number}) {
         const tabsContainerLocator = this.page.locator(slct(DashTabsQA.Root));
 
         await expect(tabsContainerLocator).toBeVisible();
@@ -836,8 +781,11 @@ class DashboardPage extends BasePage {
         let tabLocator;
         if (tabName) {
             tabLocator = tabsContainerLocator.getByText(tabName);
-        } else if (tabSelector) {
-            tabLocator = tabsContainerLocator.locator(tabSelector);
+        } else if (typeof index === 'number') {
+            tabLocator = tabsContainerLocator
+                .locator(slct(DatalensTabsQa.Item))
+                .or(tabsContainerLocator.locator(slct(DatalensTabsQa.MobileItem)))
+                .nth(index);
         } else {
             throw new Error('Tabs selector not found');
         }
@@ -850,9 +798,9 @@ class DashboardPage extends BasePage {
         }
 
         // it can be single switcher with tab name or some tabs and "more" switcher
-        const switcherLocator = tabsContainerLocator.locator(slct(DatalensTabs.SwitcherItem));
+        const switcherLocator = tabsContainerLocator.locator(slct(DatalensTabsQa.SwitcherItem));
         const switcherTabLocator = tabsContainerLocator
-            .locator(slct(DatalensTabs.MobileItem))
+            .locator(slct(DatalensTabsQa.MobileItem))
             .first();
 
         const isSwitcherVisible = await switcherLocator.isVisible();
@@ -870,10 +818,20 @@ class DashboardPage extends BasePage {
         await mobileTabLocator.click();
         await expect(this.page.locator(slct(SelectQa.SHEET))).toBeVisible();
 
-        const selector = tabSelector
-            ? tabSelector
-            : `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`;
-        await this.page.locator(selector).click();
+        if (tabName) {
+            await this.page
+                .locator(
+                    `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`,
+                )
+                .click();
+        } else if (typeof index === 'number') {
+            await this.page
+                .locator(
+                    `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle}`,
+                )
+                .nth(index)
+                .click();
+        }
         return;
     }
 
@@ -1050,11 +1008,10 @@ class DashboardPage extends BasePage {
     async disableAutoupdateInFirstControl() {
         await this.enterEditMode();
         await this.clickFirstControlSettingsButton();
-        await this.page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
+        await this.page.locator(slct(DialogGroupControlQa.groupSettingsTab)).click();
         await this.page
             .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)
             .setChecked(false);
-        await this.page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
         await this.controlActions.applyControlSettings();
         await this.saveChanges();
     }
@@ -1165,6 +1122,23 @@ class DashboardPage extends BasePage {
         });
 
         expect(hasNoScroll).toBe(true);
+    }
+
+    /**
+     * Scroll page to the bottom using keyboard End key
+     * @returns Promise that resolves when scrolling is complete
+     */
+    async scrollToBottom(): Promise<void> {
+        await this.page.locator(slct(DashBodyQa.App)).click();
+        await this.page.keyboard.press('End');
+    }
+
+    /**
+     * Click on action panel more button (ellipsis in the upper panel)
+     * @returns Promise that resolves when click is complete
+     */
+    async clickActionPanelMoreButton(): Promise<void> {
+        await this.page.click(slct(COMMON_SELECTORS.ENTRY_PANEL_MORE_BTN));
     }
 }
 

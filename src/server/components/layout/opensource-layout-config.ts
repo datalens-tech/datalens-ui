@@ -1,10 +1,15 @@
 import type {RenderParams} from '@gravity-ui/app-layout';
 
-import type {AppEnvironment, AppInstallation, DLGlobalData, DLUser} from '../../../shared';
+import type {
+    AppEnvironment,
+    AppInstallation,
+    DLGlobalData,
+    DLUser,
+    TenantSettings,
+} from '../../../shared';
 import {FALLBACK_LANGUAGES, Language, USER_SETTINGS_KEY} from '../../../shared';
 import type {AppLayoutSettings, GetLayoutConfig} from '../../types/app-layout';
 import {addTranslationsScript} from '../../utils/language';
-import {getUserInfo} from '../zitadel/utils';
 
 import {getChartkitLayoutSettings, getPlatform} from './utils';
 
@@ -38,7 +43,6 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         lang = Language.En;
     }
 
-    const isZitadelEnabled = req.ctx.config.isZitadelEnabled;
     const isAuthEnabled = req.ctx.config.isAuthEnabled;
 
     // TODO: check and remove optional props;
@@ -47,12 +51,6 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
     let iamUserId = '';
     const {scripts: chartkitScripts, inlineScripts: chartkitInlineScripts} =
         getChartkitLayoutSettings(config.chartkitSettings);
-
-    if (isZitadelEnabled) {
-        const userInfo = getUserInfo(req, res);
-        iamUserId = userInfo.uid as string;
-        user = {...user, ...userInfo};
-    }
 
     if (isAuthEnabled) {
         const authUser = req.ctx.get('user');
@@ -65,6 +63,10 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
             ...profile,
         };
     }
+
+    const tenantSettings: TenantSettings = {
+        defaultColorPaletteId: res.locals.tenantDefaultColorPaletteId,
+    };
 
     const DL: DLGlobalData = {
         user,
@@ -79,14 +81,18 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         features: config.features,
         meta: req.ctx.getMetadata(),
         chartkitSettings: config.chartkitSettings,
+        defaultColorPaletteId: config.defaultColorPaletteId,
         allowLanguages,
         headersMap: req.ctx.config.headersMap,
-        isZitadelEnabled,
         isAuthEnabled,
         ymapApiKey: config.chartkitSettings?.yandexMap?.token,
         connectorIcons: res.locals.connectorIcons,
         apiPrefix: config.apiPrefix,
         releaseVersion: config.releaseVersion,
+        docsUrl: config.docsUrl,
+        orderedAuthRoles: config.orderedAuthRoles,
+        authSignupDisabled: req.ctx.config.authSignupDisabled,
+        tenantSettings,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

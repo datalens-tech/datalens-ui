@@ -1,11 +1,10 @@
 import React from 'react';
 
-import {Flex} from '@gravity-ui/uikit';
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
+import {Breadcrumbs, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {useHistory} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
+import {BreadcrumbsItemLink} from 'ui/components/BreadcrumbsItemLink/BreadcrumbsItemLink';
 import {DL} from 'ui/constants';
 
 import {CreateUserForm} from '../../components/CreateUserForm/CreateUserForm';
@@ -19,8 +18,6 @@ const i18nMain = I18n.keyset('service-settings.main.view');
 const i18n = I18n.keyset('service-settings.create-user.view');
 
 const CreateProfilePage = () => {
-    const history = useHistory();
-
     if (!DL.IS_NATIVE_AUTH_ADMIN) {
         return <AccessErrorPage />;
     }
@@ -29,16 +26,16 @@ const CreateProfilePage = () => {
         <main className={b()}>
             <ActionPanel
                 leftItems={
-                    <Breadcrumbs navigate={(href) => history.push(href)}>
-                        <Breadcrumbs.Item href="/settings">
+                    <Breadcrumbs className={b('breadcrumbs')} itemComponent={BreadcrumbsItemLink}>
+                        <BreadcrumbsItemLink to="/settings">
                             {i18nMain('label_header')}
-                        </Breadcrumbs.Item>
-                        <Breadcrumbs.Item href="/settings/users">
+                        </BreadcrumbsItemLink>
+                        <BreadcrumbsItemLink to="/settings/users">
                             {i18nMain('section_users')}
-                        </Breadcrumbs.Item>
-                        <Breadcrumbs.Item disabled={true}>
+                        </BreadcrumbsItemLink>
+                        <BreadcrumbsItemLink disabled={true} className={b('breadcrumbs-item')}>
                             {i18n('title_create-user')}
-                        </Breadcrumbs.Item>
+                        </BreadcrumbsItemLink>
                     </Breadcrumbs>
                 }
             />

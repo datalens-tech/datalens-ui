@@ -1,16 +1,19 @@
 import React from 'react';
 
 import {LayoutRows} from '@gravity-ui/icons';
-import type {RadioButtonSize} from '@gravity-ui/uikit';
-import {Icon, RadioButton, Select, TextInput} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupSize as RadioButtonSize, SelectOption} from '@gravity-ui/uikit';
+import {Icon, SegmentedRadioGroup as RadioButton, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
 import {Feature} from 'shared';
 import type {GetStructureItemsMode} from 'shared/schema/us/types/collections';
 import type {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
+import {OrderBySelect, SORT_TYPE} from 'ui/components/OrderBySelect';
+import type {OrderBy, OrderByOptions, SortType} from 'ui/components/OrderBySelect';
 import Tabs from 'ui/components/Tabs/Tabs';
 import {DL} from 'ui/constants/common';
+import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
@@ -22,13 +25,6 @@ const i18n = I18n.keyset('component.collection-filters');
 
 const b = block('dl-collection-filters');
 
-export enum SortType {
-    FirstNew = 'firstNew',
-    FirstOld = 'firstOld',
-    AlphabetAsc = 'alphabetAsc',
-    AlphabetDesc = 'alphabetDesc',
-}
-
 export const collectionPageViewModeStore = 'collectionPageViewMode';
 
 export enum CollectionPageViewMode {
@@ -36,25 +32,26 @@ export enum CollectionPageViewMode {
     Table = 'table',
 }
 
-export const SORT_TYPE_VALUES: Record<
-    SortType,
-    {orderField: OrderBasicField; orderDirection: OrderDirection}
-> = {
-    [SortType.FirstNew]: {
-        orderField: 'createdAt',
-        orderDirection: 'desc',
+export const SORT_TYPE_VALUES: OrderByOptions<SortType, OrderBasicField, OrderDirection> = {
+    [SORT_TYPE.FIRST_NEW]: {
+        field: 'createdAt',
+        direction: 'desc',
+        content: i18n('label_sort-first-new'),
     },
-    [SortType.FirstOld]: {
-        orderField: 'createdAt',
-        orderDirection: 'asc',
+    [SORT_TYPE.FIRST_OLD]: {
+        field: 'createdAt',
+        direction: 'asc',
+        content: i18n('label_sort-first-old'),
     },
-    [SortType.AlphabetAsc]: {
-        orderField: 'title',
-        orderDirection: 'asc',
+    [SORT_TYPE.ALPHABET_ASC]: {
+        field: 'title',
+        direction: 'asc',
+        content: i18n('label_sort-first-alphabet-asc'),
     },
-    [SortType.AlphabetDesc]: {
-        orderField: 'title',
-        orderDirection: 'desc',
+    [SORT_TYPE.ALPHABET_DESC]: {
+        field: 'title',
+        direction: 'desc',
+        content: i18n('label_sort-first-alphabet-desc'),
     },
 };
 
@@ -74,6 +71,8 @@ type Props = {
     viewMode?: CollectionPageViewMode;
     onChange: (value: StructureItemsFilters) => void;
     changeViewMode?: (value: CollectionPageViewMode) => void;
+    searchRowExtendContent?: React.ReactNode;
+    canFilterOnlyEntries?: boolean;
 };
 
 const onlyMyOptions = [
@@ -90,12 +89,39 @@ export const CollectionFilters = React.memo<Props>(
         viewMode,
         changeViewMode,
         onChange,
+        canFilterOnlyEntries = false,
+        searchRowExtendContent,
     }) => {
         const {filterString, onlyMy, mode, orderField, orderDirection} = filters;
 
         const [innerFilterString, setInnerFilterString] = React.useState<string>(
             filterString || '',
         );
+
+        const selectOptions: SelectOption<StructureItemsFilters['mode']>[] = React.useMemo(() => {
+            const options = [
+                {
+                    value: 'all',
+                    content: i18n('label_filter-by-type-all'),
+                },
+                {
+                    value: 'onlyWorkbooks',
+                    content: i18n('label_filter-by-type-only-workbooks'),
+                },
+                {
+                    value: 'onlyCollections',
+                    content: i18n('label_filter-by-type-only-collections'),
+                },
+            ];
+
+            if (canFilterOnlyEntries) {
+                options.push({
+                    value: 'onlyEntries',
+                    content: getSharedEntryMockText('label_filter-by-type-only-entries'),
+                });
+            }
+            return options;
+        }, [canFilterOnlyEntries]);
 
         const handleChangeFilters = React.useCallback(
             (updatedValues: Partial<StructureItemsFilters>) =>
@@ -147,13 +173,10 @@ export const CollectionFilters = React.memo<Props>(
         );
 
         const handleChangeSort = React.useCallback(
-            (val) => {
-                const type = val[0] as SortType;
-                const sortTypeValues = SORT_TYPE_VALUES[type];
-
+            ({field, direction}: OrderBy<OrderBasicField, OrderDirection>) => {
                 handleChangeFilters({
-                    orderField: sortTypeValues.orderField,
-                    orderDirection: sortTypeValues.orderDirection,
+                    orderField: field,
+                    orderDirection: direction,
                 });
             },
             [handleChangeFilters],
@@ -165,18 +188,11 @@ export const CollectionFilters = React.memo<Props>(
             }
         }, [filterString]);
 
-        const sortType = React.useMemo<SortType | undefined>(() => {
-            const types = Object.keys(SORT_TYPE_VALUES) as SortType[];
-
-            return types.find((val) => {
-                const type = val as SortType;
-                const sortTypeValues = SORT_TYPE_VALUES[type];
-
-                return (
-                    sortTypeValues.orderField === orderField &&
-                    sortTypeValues.orderDirection === orderDirection
-                );
-            });
+        const orderBy = React.useMemo(() => {
+            return {
+                field: orderField,
+                direction: orderDirection,
+            };
         }, [orderField, orderDirection]);
 
         if (DL.IS_MOBILE) {
@@ -201,14 +217,17 @@ export const CollectionFilters = React.memo<Props>(
 
         return (
             <div className={b({'compact-mode': compactMode}, className)}>
-                <TextInput
-                    className={b('filter-string')}
-                    value={innerFilterString}
-                    size={controlSize}
-                    onUpdate={handleUpdateFilterString}
-                    placeholder={i18n('label_filter-string-placeholder')}
-                    hasClear
-                />
+                <div className={b('filter-string-container')}>
+                    <TextInput
+                        className={b('filter-string')}
+                        value={innerFilterString}
+                        size={controlSize}
+                        onUpdate={handleUpdateFilterString}
+                        placeholder={i18n('label_filter-string-placeholder')}
+                        hasClear
+                    />
+                    {searchRowExtendContent}
+                </div>
 
                 <div className={b('filters-block')}>
                     <Select
@@ -216,37 +235,16 @@ export const CollectionFilters = React.memo<Props>(
                         value={[mode]}
                         size={controlSize}
                         onUpdate={handleChangeMode}
-                    >
-                        <Select.Option value="all">
-                            {i18n('label_filter-by-type-all')}
-                        </Select.Option>
-                        <Select.Option value="onlyWorkbooks">
-                            {i18n('label_filter-by-type-only-workbooks')}
-                        </Select.Option>
-                        <Select.Option value="onlyCollections">
-                            {i18n('label_filter-by-type-only-collections')}
-                        </Select.Option>
-                    </Select>
+                        options={selectOptions}
+                    />
 
-                    <Select
+                    <OrderBySelect
                         className={b('sort')}
-                        value={[sortType ? sortType : '']}
+                        orderBy={orderBy}
+                        orderByOptions={SORT_TYPE_VALUES}
                         size={controlSize}
-                        onUpdate={handleChangeSort}
-                    >
-                        <Select.Option value={SortType.FirstNew}>
-                            {i18n('label_sort-first-new')}
-                        </Select.Option>
-                        <Select.Option value={SortType.FirstOld}>
-                            {i18n('label_sort-first-old')}
-                        </Select.Option>
-                        <Select.Option value={SortType.AlphabetAsc}>
-                            {i18n('label_sort-first-alphabet-asc')}
-                        </Select.Option>
-                        <Select.Option value={SortType.AlphabetDesc}>
-                            {i18n('label_sort-first-alphabet-desc')}
-                        </Select.Option>
-                    </Select>
+                        onChange={handleChangeSort}
+                    />
 
                     {isEnabledFeature(Feature.HideMultitenant) ? null : (
                         <RadioButton

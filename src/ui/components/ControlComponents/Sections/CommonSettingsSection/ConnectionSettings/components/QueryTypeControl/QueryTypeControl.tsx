@@ -10,7 +10,7 @@ import {
     ConnectionQueryTypeValues,
     type ConnectionRequiredParameter,
 } from 'shared';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {EditLabelControl} from './components/EditLabelControl/EditLabelControl';

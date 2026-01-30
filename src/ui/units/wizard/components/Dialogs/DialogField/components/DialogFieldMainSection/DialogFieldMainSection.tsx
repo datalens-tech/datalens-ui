@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {RadioButtonOption, SelectOptionGroup} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps, SelectOptionGroup} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import type {
     AvailableFieldType,
@@ -86,14 +86,16 @@ export class DialogFieldMainSection extends React.Component<Props> {
 
         const commonDataType = getCommonDataType(cast || data_type!);
 
+        const placeholderSettings = currentPlaceholder?.settings as PlaceholderSettings;
+        const isDateFieldItem = isDateField(item);
+        const isDiscreteMode = placeholderSettings?.axisModeMap?.[item.guid] === AxisMode.Discrete;
+        const isDateAndDiscreteMode = isDateFieldItem && isDiscreteMode;
+        const hasValidDataType = commonDataType === 'date' || item.grouping;
+
         const enableFormat =
             visualizationId &&
-            ((isDateField(item) &&
-                (currentPlaceholder?.settings as PlaceholderSettings)?.axisModeMap?.[item.guid] ===
-                    AxisMode.Discrete) ||
-                this.isTableVisualization ||
-                this.isMetricVisualization) &&
-            (commonDataType === 'date' || item.grouping);
+            hasValidDataType &&
+            (isDateAndDiscreteMode || this.isTableVisualization || this.isMetricVisualization);
 
         return (
             <React.Fragment>
@@ -305,7 +307,7 @@ export class DialogFieldMainSection extends React.Component<Props> {
     renderLabelHide() {
         const {extra, hideLabelMode} = this.props;
 
-        const radioButtons: RadioButtonOption[] = [
+        const radioButtons: SegmentedRadioGroupOptionProps[] = [
             {
                 value: 'hide',
                 content: i18n('wizard', 'label_hide'),

@@ -1,0 +1,10 @@
+.ds-param-tab-validation-column {
+    &_template-disabled {
+        color: var(--g-color-text-secondary);
+    }
+
+    &__icon {
+        height: 18px;
+        margin-right: 8px;
+    }
+}

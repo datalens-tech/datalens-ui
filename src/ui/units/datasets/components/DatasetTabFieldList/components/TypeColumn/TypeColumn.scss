@@ -1,7 +1,9 @@
 .field-list-type-column {
     white-space: nowrap;
     &__icon {
-        margin-right: 10px;
+        height: 18px;
+        margin-right: 8px;
+
         &_parameter {
             color: var(--g-color-text-utility);
         }

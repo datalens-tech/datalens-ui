@@ -15,11 +15,12 @@ export const calculateRowHeight = (props: ReactGridLayoutProps) => {
     return props;
 };
 
-export const getPropertiesWithResizeHandles =
-    (extendedProps: Partial<DashKitGroup['gridProperties']> | undefined = {}) =>
-    (props: ReactGridLayoutProps): ReactGridLayoutProps =>
-        calculateRowHeight({
-            ...props,
-            ...extendedProps,
-            resizeHandles: ['sw', 'se'],
-        });
+export const getCustomizedProperties = (
+    props: ReactGridLayoutProps,
+    extendedProps: Partial<DashKitGroup['gridProperties']> | undefined = {},
+) =>
+    calculateRowHeight({
+        ...props,
+        ...extendedProps,
+        resizeHandles: ['sw', 'se'],
+    });

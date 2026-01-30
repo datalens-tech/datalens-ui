@@ -1,10 +1,10 @@
 {
-  "label_connector-file": "Files",
-  "label_connector-gsheets": "Google Sheets",
-  "label_connector-gsheets_v2": "Google Sheets",  
+  "button_retry": "Retry",
   "label_connector-ch_over_yt": "CHYT with authentication by OAuth token",
   "label_connector-ch_over_yt_user_auth": "CHYT with authentication as user",
-  "button_retry": "Retry",
+  "label_connector-file": "Files",
+  "label_connector-gsheets": "Google Sheets",
+  "label_connector-gsheets_v2": "Google Sheets",
   "label_error-500-schema": "Couldn't load form. Please reload the page.",
   "label_error-500-title": "Failed to load list of connectors"
 }

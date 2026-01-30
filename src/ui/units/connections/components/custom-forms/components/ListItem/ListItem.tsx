@@ -14,10 +14,10 @@ const b = block('conn-list-item');
 const ICON_SIZE = 16;
 
 export const ListItem = <T extends unknown>(props: ListItemProps<T>) => {
-    const {title, description, actions} = props;
+    const {title, description, actions, qa} = props;
 
     return (
-        <div className={b()}>
+        <div className={b()} data-qa={qa}>
             <Icon className={b('icon')} data={fileItemIcon} size={ICON_SIZE} />
             <div className={b('container')}>
                 <div className={b('title')}>

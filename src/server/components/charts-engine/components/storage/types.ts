@@ -1,8 +1,10 @@
 import type {
     ControlType,
     DashData,
+    EntryAnnotation,
     EntryPublicAuthor,
     EntryScope,
+    TenantSettings,
     WorkbookId,
 } from '../../../../../shared';
 import type {ChartStorageType} from '../../types';
@@ -24,7 +26,7 @@ export type ResolvedConfig = {
         statface_graph: string;
         map?: string;
         ymap?: string;
-        actions?: string;
+        activities?: string;
     };
     key: string;
     links?: string[];
@@ -38,7 +40,7 @@ export type ResolvedConfig = {
     type: string;
     public: false;
     isFavorite?: boolean;
-    revId: string;
+    revId?: string;
     savedId: string;
     publishedId: string;
     createdAt: string;
@@ -51,6 +53,8 @@ export type ResolvedConfig = {
     publicAuthor?: EntryPublicAuthor;
     servicePlan?: string;
     tenantFeatures?: Record<string, unknown>;
+    tenantSettings?: TenantSettings;
+    annotation?: EntryAnnotation;
 };
 
 export type ReducedResolvedConfig = ResolvedConfig & {data: {shared: string | object}};
@@ -85,5 +89,5 @@ type EmbeddingToken = {
     embedId: string;
     iat: number;
     exp: number;
-    params: Record<string, unknown>;
+    params?: Record<string, unknown>;
 };

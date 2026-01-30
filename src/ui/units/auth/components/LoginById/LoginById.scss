@@ -1,0 +1,23 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.dl-login-by-id {
+    @include overflow-ellipsis();
+
+    &_view_primary {
+        color: var(--g-color-text-primary);
+    }
+
+    &_view_secondary {
+        color: var(--g-color-text-secondary);
+    }
+
+    &_view_light-primary {
+        color: var(--g-color-text-light-primary);
+    }
+
+    &__skeleton {
+        vertical-align: middle;
+        width: 80px;
+        height: 12px;
+    }
+}

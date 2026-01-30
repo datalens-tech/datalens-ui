@@ -4,9 +4,12 @@ import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplat
 import {EXAMPLE_FUNCTION} from '../common/constants/functions';
 
 import type {BeforeConnectorFormUnmount} from './types/beforeConnectorFormUnmount';
+import type {GetConnectionItemRender} from './types/getConnectionItemRender';
 import type {GetFakeEntry} from './types/getFakeEntry';
+import type {GetIsShowCreateConnectionButton} from './types/getIsShowCreateConnectionButton';
 import type {GetMockedFormArgs} from './types/getMockedForm';
 import type {GetNewConnectionDestination} from './types/getNewConnectionDestination';
+import type {GetRenderConnectionSettingsPopup} from './types/getRenderConnectionSettingsPopup';
 
 export const connectionsFunctionsMap = {
     [EXAMPLE_FUNCTION]: makeFunctionTemplate<(arg: number) => string>(),
@@ -15,4 +18,7 @@ export const connectionsFunctionsMap = {
     getNewConnectionDestination: makeFunctionTemplate<GetNewConnectionDestination>(),
     getFakeEntry: makeFunctionTemplate<GetFakeEntry>(),
     beforeConnectorFormUnmount: makeFunctionTemplate<BeforeConnectorFormUnmount>(),
+    getRenderConnectionSettingsPopup: makeFunctionTemplate<GetRenderConnectionSettingsPopup>(),
+    getIsShowCreateConnectionButton: makeFunctionTemplate<GetIsShowCreateConnectionButton>(),
+    getConnectionItemRender: makeFunctionTemplate<GetConnectionItemRender>(),
 } as const;

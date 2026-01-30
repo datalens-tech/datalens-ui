@@ -3,9 +3,10 @@ import React from 'react';
 import {useThemeType} from '@gravity-ui/uikit';
 import merge from 'lodash/merge';
 
-import {SvgImage} from './SvgImage/SvgImage';
+import {AsyncImage} from '../AsyncImage/AsyncImage';
+
 import {importContext, isContext} from './context';
-import type {CreateIllustrationProps, IllustrationStore} from './types';
+import type {IllustrationComponent, IllustrationStore} from './types';
 
 export function createIllustration(
     items: Array<__WebpackModuleApi.RequireContext | IllustrationStore> = [],
@@ -19,10 +20,10 @@ export function createIllustration(
     });
     const store: IllustrationStore = merge({}, ...getCustomStores);
 
-    function Illustration({name, ...props}: CreateIllustrationProps) {
+    function Illustration({name, ...props}: IllustrationComponent) {
         const theme = useThemeType();
         const src = store[theme] && store[theme][name];
-        return <SvgImage alt={name} src={src} {...props} />;
+        return <AsyncImage alt={props.alt || name} src={src} {...props} />;
     }
 
     return Illustration;

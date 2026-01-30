@@ -1,12 +1,12 @@
 import React from 'react';
 
-import type {PopoverInstanceProps} from '@gravity-ui/uikit';
 import {Button, Loader, Popover} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
 import logger from 'libs/logger';
 import {isEmpty} from 'lodash';
 import moment from 'moment';
 import {useDispatch} from 'react-redux';
-import type {ChartsInsightsItem} from 'shared';
+import {type ChartsInsightsItem} from 'shared';
 import {updateUserSettings} from 'store/actions/user';
 import {fetchBatchRenderedMarkdown} from 'ui/utils/sdkRequests';
 
@@ -19,11 +19,12 @@ import {getIconLevel} from './helpers/getIconLevel';
 
 type Props = ChartsInsightsData & {hidden?: boolean};
 
+const b = block('chartkit-insights');
+
 export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}: Props) => {
     const dispatch = useDispatch();
 
-    const buttonRef = React.useRef<HTMLElement>(null);
-    const tooltipRef = React.useRef<PopoverInstanceProps>(null);
+    const buttonRef = React.useRef<HTMLButtonElement>(null);
 
     const [currentItems, setCurrentItems] = React.useState<ChartsInsightsItem[]>(items);
     const [currentLocators, setCurrentLocators] = React.useState<Record<string, string>>(locators);
@@ -58,17 +59,11 @@ export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}
 
     const handleClick = () => {
         reachMetricaGoal(CounterName.Main, GoalId.ChartsInsightsIconClck, {level});
-        const tooltipInstance = tooltipRef.current;
-        if (!tooltipInstance) {
-            return;
-        }
 
         if (showTooltip) {
             setShowTooltip(false);
-            tooltipInstance.closeTooltip();
         } else {
             setShowTooltip(true);
-            tooltipInstance.openTooltip();
         }
     };
 
@@ -93,9 +88,9 @@ export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}
 
     return (
         <Popover
-            ref={tooltipRef}
-            openOnHover={false}
+            trigger="click"
             placement={['left', 'right']}
+            hasArrow={true}
             content={
                 isEmpty(messages) ? (
                     <Loader size="s" />
@@ -111,10 +106,11 @@ export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}
             <Button
                 ref={buttonRef}
                 view="flat-secondary"
-                size="s"
+                size="m"
                 width="auto"
                 onClick={handleClick}
                 onMouseEnter={handleMouseEnter}
+                className={b('button')}
             >
                 <ChartsInsightsIcon level={level} />
             </Button>

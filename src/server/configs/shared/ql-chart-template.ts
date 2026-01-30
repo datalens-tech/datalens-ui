@@ -3,9 +3,10 @@ import type {Request} from '@gravity-ui/expresskit';
 import type {ServerI18n} from '../../../i18n/types';
 import type {QlExtendedConfig} from '../../../shared';
 import {
+    Feature,
     QL_TYPE,
     WizardVisualizationId,
-    isD3Visualization,
+    isGravityChartsVisualization,
     isMonitoringOrPrometheusChart,
 } from '../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../shared/modules/config/ql';
@@ -29,9 +30,19 @@ export default {
         const {visualization, chartType} = config;
         const id = visualization.id;
 
-        if (isD3Visualization(id as WizardVisualizationId)) {
-            return QL_TYPE.D3_QL_NODE;
-        }
+        const {ctx} = req;
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+        const features = {
+            GravityChartsForPieAndTreemap: isEnabledServerFeature(
+                Feature.GravityChartsForPieAndTreemap,
+            ),
+            GravityChartsForBarYAndScatter: isEnabledServerFeature(
+                Feature.GravityChartsForBarYAndScatter,
+            ),
+            GravityChartsForLineAreaAndBarX: isEnabledServerFeature(
+                Feature.GravityChartsForLineAreaAndBarX,
+            ),
+        };
 
         switch (id) {
             case 'table': // Legacy
@@ -45,9 +56,13 @@ export default {
             case WizardVisualizationId.Column100p:
                 if (isMonitoringOrPrometheusChart(chartType)) {
                     return QL_TYPE.TIMESERIES_QL_NODE;
-                } else {
-                    return QL_TYPE.GRAPH_QL_NODE;
                 }
+
+                if (isGravityChartsVisualization({id, features})) {
+                    return QL_TYPE.D3_QL_NODE;
+                }
+
+                return QL_TYPE.GRAPH_QL_NODE;
             case WizardVisualizationId.Metric: {
                 const {placeholders} = chart.visualization;
 
@@ -69,8 +84,13 @@ export default {
                     return QL_TYPE.METRIC_QL_NODE;
                 }
             }
-            default:
+            default: {
+                if (isGravityChartsVisualization({id, features})) {
+                    return QL_TYPE.D3_QL_NODE;
+                }
+
                 return QL_TYPE.GRAPH_QL_NODE;
+            }
         }
     },
     identifyLinks: (chart: QlExtendedConfig, req: Request) => {

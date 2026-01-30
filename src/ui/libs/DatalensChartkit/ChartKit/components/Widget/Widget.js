@@ -49,6 +49,7 @@ export class Widget extends React.PureComponent {
                 onRender={this.props.onRender}
                 onError={this.props.onError}
                 onChange={this.props.onChange}
+                runActivity={this.props.runActivity}
             />
         );
     }
@@ -66,4 +67,5 @@ Widget.propTypes = {
     onRender: PropTypes.func,
     onError: PropTypes.func,
     onChange: PropTypes.func,
+    runActivity: PropTypes.func,
 };

@@ -1,19 +1,25 @@
 import type React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {CkHighchartsSeriesOptionsType, Highcharts} from '@gravity-ui/chartkit/highcharts';
+import type {StringWithSuggest} from '@gravity-ui/uikit';
 import type {CancelTokenSource} from 'axios';
 import type {Split} from 'react-split-pane';
 import type {DashTabItemControlSourceType, MenuItemsIds, StringParams} from 'shared';
+import type {OnWidgetLoadDataHandler} from 'ui/components/DashKit/context/WidgetContext';
 import type {
     Widget as ChartWidget,
     CombinedError,
     ControlWidget,
     LoadedWidget,
     LoadedWidgetData,
+    OnActivityComplete,
     OnChangeData,
+    RunActivityFn,
     WidgetDashState,
 } from 'ui/libs/DatalensChartkit/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
+import type {ExtendedDashKitContextType} from 'ui/units/dash/typings/context';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {
@@ -25,7 +31,6 @@ import type {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
 } from '../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import type {ControlProps} from '../../../libs/DatalensChartkit/components/Control/types';
 import type {Props as DrillProps} from '../../../libs/DatalensChartkit/components/Drill/Drill';
 import type {MenuItemConfig} from '../../../libs/DatalensChartkit/menu/Menu';
 import type {
@@ -117,29 +122,39 @@ type ChartKitBaseWrapperProps = ChartsProps & {
     actionParamsEnabled?: boolean;
     paneSplitOrientation?: Split;
     widgetDashState?: WidgetDashState;
+
+    showActionParamsFilter?: boolean;
+    enableAssistant?: boolean;
+    onFiltersClear?: () => void;
+
+    needRenderContentControls?: boolean;
+    reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
+    runActivity?: RunActivityFn;
+    updateTabsWithGlobalState?: ExtendedDashKitContextType['updateTabsWithGlobalState'];
 };
 
-export type ChartWidgetProviderPropsWithRefProps = Omit<
-    WidgetPluginProps,
-    'debouncedAdjustWidgetLayout'
-> &
+export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
+    Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout' | 'forwardedRef'> &
     ChartsProps & {
-        forwardedRef: React.RefObject<ChartKit>;
         usageType: 'widget';
+        onWidgetLoadData?: OnWidgetLoadDataHandler;
+        backgroundColor?: string;
+        hasInternalMargins?: boolean;
     };
 
-export type ChartProviderPropsWithRefProps = Partial<Omit<ChartKitBaseWrapperProps, 'onLoad'>> &
+export type ChartProviderPropsWithRefProps = ChartRefProp &
+    Partial<Omit<ChartKitBaseWrapperProps, 'onLoad'>> &
     ChartsProps & {
-        forwardedRef: React.RefObject<ChartKit> | React.MutableRefObject<ChartKit | null>;
         usageType: 'chart';
+        revId?: string;
         isPageHidden?: boolean;
         autoupdateInterval?: number;
     };
 
-export type ChartSelectorWithRefProps = Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout'> &
+export type ChartSelectorWithRefProps = ChartRefProp &
+    Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout'> &
     Partial<Omit<ChartKitBaseWrapperProps, 'onLoad'>> &
     ChartsProps & {
-        forwardedRef: React.RefObject<ChartKit>;
         usageType: 'control';
         widgetId: WidgetPluginProps['id'];
     };
@@ -154,7 +169,11 @@ export type ChartAlertProps = Pick<
 > &
     ChartsProps & {
         dataProvider: ChartKitDataProvider;
-        forwardedRef: React.RefObject<ChartKit>;
+        forwardedRef: React.RefObject<ChartKit | ChartKitRef>;
+        alarm?: string;
+        condition?: StringWithSuggest<'GT' | 'GTE' | 'LT' | 'LTE'>;
+        selectedSeriesNames?: string[];
+        yAxisIndex?: number | null;
     };
 
 type ChartWidgetWithProviderProps = Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout'> &
@@ -166,6 +185,8 @@ export type ChartWithProviderProps = ChartsProps & {
     dataProvider: ChartKitDataProvider;
 };
 
+type ChartRefProp = {forwardedRef: React.RefObject<ChartKit | ChartKitRef>};
+
 export type ChartWrapperWithRefProps =
     | ChartWidgetProviderPropsWithRefProps
     | ChartProviderPropsWithRefProps
@@ -173,7 +194,11 @@ export type ChartWrapperWithRefProps =
 
 export type ChartWithProviderWithRefProps = ChartProviderPropsWithRefProps;
 
-export type ChartWrapperWithProviderProps = ChartWrapperWithRefProps & {workbookId?: string | null};
+export type ChartWrapperWithProviderProps = ChartWrapperWithRefProps & {
+    workbookId?: string | null;
+    enableAssistant?: boolean;
+    onActivityComplete?: OnActivityComplete;
+};
 
 export type ChartWidgetProps = ChartWidgetProviderPropsWithRefProps &
     ChartWidgetWithProviderProps &
@@ -183,7 +208,8 @@ export type ChartNoWidgetProps = ChartProviderPropsWithRefProps &
     ChartWithProviderProps &
     Omit<ChartKitBaseWrapperProps, 'onLoad'> & {
         rootNodeRef?: React.RefObject<HTMLDivElement>;
-        chartKitRef?: React.RefObject<ChartKit>;
+        chartKitRef?: React.RefObject<ChartKit | ChartKitRef>;
+        onActivityComplete?: OnActivityComplete;
     };
 
 export type ChartWidgetPropsWithContext = ChartWidgetProviderPropsWithRefProps &
@@ -211,6 +237,7 @@ export type ChartKitWrapperParams = {
     getControls: (params: StringParams) => void;
     paneSplitOrientation?: 'vertical' | 'horizontal';
     widgetDashState?: WidgetDashState;
+    runActivity?: RunActivityFn;
 };
 
 export type ChartWidgetData =
@@ -243,6 +270,13 @@ export type ChartWidgetData =
     | null;
 export type ChartWidgetDataRef = React.MutableRefObject<ChartWidgetData> | null;
 
+/** When you try to export unsaved wizard chart, chart saving confirmation appears.
+ * After saving chart this way, if revId is passed as a primitive,
+ * its value does not updates in DownloadCsv modal.
+ * For avoiding chart export with old revision, revId is passed as ref
+ */
+export type ChartRevIdRef = React.MutableRefObject<ChartsData['revId']> | null;
+
 export type ChartContentProps = Pick<
     ChartProviderPropsWithRefProps,
     | 'widgetBodyClassName'
@@ -262,6 +296,10 @@ export type ChartContentProps = Pick<
     | 'hideMenu'
     | 'renderPluginLoader'
     | 'forceShowSafeChart'
+    | 'showActionParamsFilter'
+    | 'onFiltersClear'
+    | 'needRenderContentControls'
+    | 'reload'
 > &
     ChartKitWrapperParams & {
         hasHiddenClassMod: boolean;
@@ -278,6 +316,7 @@ export type ChartContentProps = Pick<
         widgetType?: DashTabItemControlSourceType | WidgetType | ChartWidget['type'];
         dataProps?: DataProps;
         yandexMapAPIWaiting?: number | null;
+        chartRevIdRef: ChartRevIdRef;
         widgetDataRef: ChartWidgetDataRef;
         widgetRenderTimeRef: React.MutableRefObject<number | null>;
         onFullscreenClick?: () => void;
@@ -285,8 +324,8 @@ export type ChartContentProps = Pick<
         isWidgetMenuDataChanged?: boolean;
         initialParams: StringParams;
         enableActionParams?: boolean;
+        enableAssistant?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
-        runAction?: ControlProps['runAction'];
         backgroundColor?: string;
     };
 
@@ -302,8 +341,7 @@ export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChang
         initialParams: ChartInitialParams;
         getControls?: ChartKitWrapperParams['getControls'];
         onUpdate?: (data: OnChangeData) => void;
-        runAction?: ControlProps['runAction'];
-        onAction?: ControlProps['onAction'];
+        runActivity?: RunActivityFn;
     };
 
 export type ResolveWidgetControlDataRefArgs =
@@ -329,9 +367,24 @@ export type CurrentRequestStateItem = {
 
 export type CurrentRequestState = Record<string, CurrentRequestStateItem>;
 
-export type ChartSelectorWithWrapRefProps = {
-    reflow: (args: unknown) => void;
+// common props from useImperativeHandle in ChartSelector and ChartWidget
+type ChartWidgetCommonWrapRefProps = {
+    reflow: () => void;
     reload: (arg: {silentLoading?: boolean; noVeil?: boolean}) => void;
     getCurrentTabChartId: () => string;
     getMeta: () => Promise<ResolveWidgetControlDataRefArgs | null>;
+};
+
+export type ChartWidgetWithWrapRefProps = ChartWidgetCommonWrapRefProps & {
+    props: ChartWidgetProps;
+};
+
+export type ChartSelectorWithWrapRefProps = ChartWidgetCommonWrapRefProps & {
+    props: ChartSelectorWidgetProps;
+};
+
+// props from useImperativeHandle in Chart
+export type ChartWithWrapRefProps = {
+    reflow: () => void;
+    reload: () => void;
 };

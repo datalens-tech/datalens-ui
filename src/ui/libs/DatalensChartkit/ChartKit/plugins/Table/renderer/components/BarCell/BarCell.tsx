@@ -14,6 +14,18 @@ type BarCellProps = {
 export const BarCell = (props: BarCellProps) => {
     const {cell, column} = props;
 
+    const formattedValue = React.useMemo(() => {
+        if (cell?.formattedValue) {
+            return cell.formattedValue;
+        }
+
+        if (cell?.value === null) {
+            return String(cell.value);
+        }
+
+        return undefined;
+    }, [cell?.formattedValue, cell?.value]);
+
     if (!cell) {
         return null;
     }
@@ -21,7 +33,7 @@ export const BarCell = (props: BarCellProps) => {
     return (
         <Bar
             value={Number(cell.value)}
-            formattedValue={cell.formattedValue}
+            formattedValue={formattedValue}
             align={get(cell, 'align', get(column, 'align'))}
             barHeight={get(cell, 'barHeight', get(column, 'barHeight'))}
             min={get(cell, 'min', column.min)}

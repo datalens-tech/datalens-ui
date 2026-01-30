@@ -1,2 +1,2 @@
 export {prepareHighchartsLine} from './highcharts';
-export {prepareD3Line} from './d3';
+export {prepareGravityChartLine} from './gravity-charts';

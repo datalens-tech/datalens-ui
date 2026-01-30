@@ -1,12 +1,12 @@
 .dl-core-navigation-minimal {
-    width: 416px;
-    height: 540px;
+    width: 440px;
+    height: 556px;
     display: flex;
     flex-direction: column;
     position: relative;
     max-height: 70vh;
     max-width: 80vw;
-    margin-top: 16px;
+    padding-top: 16px;
 
     .dl-core-navigation {
         height: calc(100% - 40px);
@@ -34,14 +34,22 @@
         width: 100%;
     }
 
-    &__button-place {
-        width: 50%;
-        box-shadow: inset 0 1px 0 var(--g-color-base-generic);
+    &__footer {
+        padding: 8px 16px 16px;
+        display: flex;
+        flex: 1 0 auto;
+        gap: 16px;
     }
 
-    &__footer {
+    &__footer-navigation-actions {
         display: flex;
-        flex: 0 0 auto;
+        flex: 1 0 auto;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    &__footer-button {
+        min-width: 128px;
     }
 
     &__popup {

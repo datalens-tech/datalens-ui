@@ -14,9 +14,14 @@ const i18n = I18n.keyset('dataset.dataset-editor.modify');
 type GetCastColumnArgs = {
     fields: DatasetOptionFieldItem[];
     onUpdate: (row: DatasetField, cast: DATASET_FIELD_TYPES) => void;
+    readonly: boolean;
 };
 
-export const getCastColumn = ({fields, onUpdate}: GetCastColumnArgs): Column<DatasetField> => ({
+export const getCastColumn = ({
+    fields,
+    onUpdate,
+    readonly,
+}: GetCastColumnArgs): Column<DatasetField> => ({
     name: 'cast',
     className: b('column', b('column-cast')),
     width: 206,
@@ -33,6 +38,7 @@ export const getCastColumn = ({fields, onUpdate}: GetCastColumnArgs): Column<Dat
                 selectedType={value as string}
                 types={casts}
                 onSelect={onUpdate}
+                disabled={readonly}
             />
         );
     },

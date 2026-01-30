@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
-import {Icon, useThemeType} from '@gravity-ui/uikit';
+import {HelpMark, Icon, useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {Lang} from 'shared';
@@ -49,7 +48,7 @@ export const GAuthButton = React.forwardRef<HTMLButtonElement, GAuthButtonProps>
             <button ref={ref} className={b('gauth-btn')} onClick={onClick}>
                 <Icon data={getGAuthIconData({themeType, lang: DL.USER_LANG})} />
             </button>
-            <HelpPopover className={b('help-btn')} content={i18n('label_google-auth-help')} />
+            <HelpMark className={b('help-btn')}>{i18n('label_google-auth-help')}</HelpMark>
         </React.Fragment>
     );
 });

@@ -1,11 +1,12 @@
 import type {IncomingHttpHeaders} from 'http';
 
 import type {AppContext} from '@gravity-ui/nodekit';
-import Hashids from 'hashids/cjs';
+import Hashids from 'hashids';
 import assign from 'lodash/assign';
 import intersection from 'lodash/intersection';
 
 import type {ServerI18n} from '../../../i18n/types';
+import {getAllTabItems} from '../../../shared';
 import {DASH_CURRENT_SCHEME_VERSION, DASH_DATA_REQUIRED_FIELDS} from '../../../shared/constants';
 import {DashSchemeConverter} from '../../../shared/modules';
 import type {
@@ -17,8 +18,6 @@ import type {
     DashTabItemControlData,
     Dictionary,
     EntryReadParams,
-    TransferIdMapping,
-    TransferNotification,
     UpdateEntryRequest,
 } from '../../../shared/types';
 import {
@@ -28,61 +27,56 @@ import {
     EntryUpdateMode,
     Feature,
 } from '../../../shared/types';
-import {isEnabledServerFeature} from '../../../shared/utils';
 
 import US from './us';
+
+type MatchCallback = (value: string, obj: Record<string, any>, key: string) => string;
 
 function processControlLinkToResult(
     result: Dictionary<string>,
     data: DashTabItemControlData,
-    idMapping?: TransferIdMapping,
+    matchCallback?: MatchCallback,
 ) {
     if (data.sourceType === DashTabItemControlSourceType.Dataset && 'datasetId' in data.source) {
         const {datasetId} = data.source;
-        if (idMapping?.[datasetId]) {
-            result[idMapping[datasetId]] = datasetId;
-            data.source.datasetId = idMapping[datasetId];
-        } else {
-            result[datasetId] = datasetId;
-        }
+
+        result[datasetId] = matchCallback
+            ? matchCallback(datasetId, data.source, 'datasetId')
+            : datasetId;
     }
 
     return result;
 }
 
-export function processLinksForItems(tabData: DashTab, idMapping?: TransferIdMapping) {
-    return tabData.items.reduce((result: Dictionary<string>, item) => {
+function processLinksForItems(tabData: DashTab, matchCallback?: MatchCallback) {
+    return getAllTabItems(tabData).reduce((result: Dictionary<string>, item) => {
         const {type, data} = item;
 
         if (type === DashTabItemType.Widget && 'tabs' in data) {
             return data.tabs.reduce((result, widget) => {
                 const {chartId} = widget;
-                if (idMapping?.[chartId]) {
-                    result[idMapping[chartId]] = chartId;
-                    widget.chartId = idMapping[chartId];
-                } else {
-                    result[chartId] = chartId;
-                }
+
+                result[chartId] = matchCallback
+                    ? matchCallback(chartId, widget, 'chartId')
+                    : chartId;
                 return result;
             }, result);
         } else if (type === DashTabItemType.GroupControl) {
             data.group.forEach((groupItem) => {
-                result = processControlLinkToResult(result, groupItem, idMapping);
+                result = processControlLinkToResult(result, groupItem, matchCallback);
             });
         } else if (type === DashTabItemType.Control && 'sourceType' in data) {
-            result = processControlLinkToResult(result, data);
+            result = processControlLinkToResult(result, data, matchCallback);
 
             if (
                 data.sourceType === DashTabItemControlSourceType.External &&
                 'chartId' in data.source
             ) {
                 const {chartId} = data.source;
-                if (idMapping?.[chartId]) {
-                    result[idMapping[chartId]] = chartId;
-                    data.source.chartId = idMapping[chartId];
-                } else {
-                    result[chartId] = chartId;
-                }
+
+                result[chartId] = matchCallback
+                    ? matchCallback(chartId, data.source, 'chartId')
+                    : chartId;
             }
         }
 
@@ -90,9 +84,12 @@ export function processLinksForItems(tabData: DashTab, idMapping?: TransferIdMap
     }, {});
 }
 
-export function processLinks(data: DashData, idMapping?: TransferIdMapping) {
+function processLinks(data: DashData, matchCallback?: MatchCallback) {
     return data.tabs.reduce(
-        (result: Dictionary<string>, tab) => ({...result, ...processLinksForItems(tab, idMapping)}),
+        (result: Dictionary<string>, tab) => ({
+            ...result,
+            ...processLinksForItems(tab, matchCallback),
+        }),
         {},
     );
 }
@@ -111,7 +108,7 @@ function setDefaultData(
     let counter = 2;
     if (initialData?.tabs && !initialData?.counter) {
         counter = initialData.tabs.reduce((acc, tab) => {
-            return acc + 1 + (tab.items?.length || 0); // + 1 tabId + n items ids
+            return acc + 1 + (getAllTabItems(tab)?.length || 0); // + 1 tabId + n items ids
         }, 0);
     }
     const salt = Math.random().toString();
@@ -148,7 +145,7 @@ function setDefaultData(
 const needSetDefaultData = (data: DashData) =>
     DASH_DATA_REQUIRED_FIELDS.some((fieldName) => !(fieldName in data));
 
-function validateData(data: DashData) {
+export function validateData(data: DashData) {
     const allTabsIds: Set<string> = new Set();
     const allItemsIds: Set<string> = new Set();
     const allWidgetTabsIds: Set<string> = new Set();
@@ -160,7 +157,7 @@ function validateData(data: DashData) {
         return true;
     };
 
-    data.tabs.forEach(({id: tabId, title: tabTitle, items, layout, connections}) => {
+    data.tabs.forEach(({id: tabId, title: tabTitle, items, layout, connections, globalItems}) => {
         const currentItemsIds: Set<string> = new Set();
         const currentWidgetTabsIds: Set<string> = new Set();
         const currentControlsIds: Set<string> = new Set();
@@ -168,6 +165,23 @@ function validateData(data: DashData) {
         if (isIdUniq(tabId)) {
             allTabsIds.add(tabId);
         }
+
+        globalItems?.forEach(({id: itemId, type, data}) => {
+            allItemsIds.add(itemId);
+            currentItemsIds.add(itemId);
+
+            // to avoid isIdUniq check
+            if (type === DashTabItemType.Control || type === DashTabItemType.GroupControl) {
+                // if it is group control all connections set on its items
+                if ('group' in data) {
+                    data.group.forEach((widgetItem) => {
+                        currentControlsIds.add(widgetItem.id);
+                    });
+                } else {
+                    currentControlsIds.add(itemId);
+                }
+            }
+        });
 
         items.forEach(({id: itemId, type, data}) => {
             if (isIdUniq(itemId)) {
@@ -194,10 +208,12 @@ function validateData(data: DashData) {
             }
         });
 
+        const allItemsLength = items.length + (globalItems?.length ?? 0);
+
         // checking that layout has all the ids from item, i.e. positions are set for all elements
         if (
-            items.length !== layout.length ||
-            items.length !==
+            allItemsLength !== layout.length ||
+            allItemsLength !==
                 intersection(
                     Array.from(currentItemsIds),
                     layout.map(({i}) => i),
@@ -218,6 +234,11 @@ function validateData(data: DashData) {
 }
 
 class Dash {
+    static validateData = validateData;
+    static processLinks = processLinks;
+    static processLinksForItems = processLinksForItems;
+    static gatherLinks = gatherLinks;
+
     static async create(
         data: CreateEntryRequest<DashEntry | DashEntryCreateParams>,
         headers: IncomingHttpHeaders,
@@ -242,12 +263,12 @@ class Dash {
             } else if (needSetDefaultData(usData.data)) {
                 usData.data = setDefaultData(I18n, usData.data);
             }
-
+            const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
             const isServerMigrationEnabled = Boolean(
-                isEnabledServerFeature(ctx, Feature.DashServerMigrationEnable),
+                isEnabledServerFeature(Feature.DashServerMigrationEnable),
             );
             if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(usData.data)) {
-                usData.data = await DashSchemeConverter.update(usData.data);
+                usData.data = DashSchemeConverter.update(usData.data);
             }
 
             usData.links = gatherLinks(usData.data);
@@ -260,7 +281,7 @@ class Dash {
             };
 
             const createdEntry = (await US.createEntry(
-                usData,
+                Dash.migrateDescriptionForSave(usData),
                 headersWithMetadata,
                 ctx,
             )) as DashEntry & {
@@ -269,7 +290,7 @@ class Dash {
 
             ctx.log('SDK_DASH_CREATE_SUCCESS', US.getLoggedEntry(createdEntry));
 
-            return createdEntry;
+            return Dash.migrateDescriptionForClient(createdEntry);
         } catch (error) {
             ctx.logError('SDK_DASH_CREATE_FAILED', error, US.getLoggedErrorEntry(data));
 
@@ -282,24 +303,26 @@ class Dash {
         params: EntryReadParams | null,
         headers: IncomingHttpHeaders,
         ctx: AppContext,
+        options?: {forceMigrate?: boolean},
     ): Promise<DashEntry> {
         try {
             const headersWithMetadata = {
                 ...headers,
                 ...ctx.getMetadata(),
             };
-            const result = (await US.readEntry(
-                entryId,
-                params,
-                headersWithMetadata,
-                ctx,
-            )) as DashEntry;
-
-            const isServerMigrationEnabled = Boolean(
-                isEnabledServerFeature(ctx, Feature.DashServerMigrationEnable),
+            const result = await US.readEntry(entryId, params, headersWithMetadata, ctx).then(
+                (entry) => Dash.migrateDescriptionForClient(entry as DashEntry),
             );
-            if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(result.data)) {
-                result.data = await Dash.migrate(result.data);
+
+            const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+            const isServerMigrationEnabled = Boolean(
+                isEnabledServerFeature(Feature.DashServerMigrationEnable),
+            );
+            if (
+                (options?.forceMigrate || isServerMigrationEnabled) &&
+                DashSchemeConverter.isUpdateNeeded(result.data)
+            ) {
+                result.data = Dash.migrate(result.data);
             }
 
             ctx.log('SDK_DASH_READ_SUCCESS', US.getLoggedEntry(result));
@@ -312,8 +335,85 @@ class Dash {
         }
     }
 
-    static async migrate(data: DashEntry['data']) {
+    static migrate(data: DashEntry['data']) {
         return DashSchemeConverter.update(data);
+    }
+
+    static migrateDescription<T extends Pick<DashEntry, 'data' | 'annotation'>>(prevEntry: T) {
+        if (prevEntry.data && 'description' in prevEntry.data) {
+            const entry = {
+                ...prevEntry,
+                annotation: {
+                    description: prevEntry.data.description ?? '',
+                },
+            };
+            delete entry.data.description;
+            return entry;
+        }
+
+        return prevEntry;
+    }
+
+    static migrateDescriptionForClient(prevEntry: DashEntry) {
+        if (prevEntry.data && 'description' in prevEntry.data && !prevEntry.annotation) {
+            return {
+                ...prevEntry,
+                annotation: {
+                    description: prevEntry.data.description,
+                },
+            };
+        }
+
+        if (prevEntry.annotation?.description && !prevEntry.data.description) {
+            return {
+                ...prevEntry,
+                data: {
+                    ...prevEntry.data,
+                    description: prevEntry.annotation.description,
+                },
+            };
+        }
+
+        return prevEntry;
+    }
+
+    static migrateDescriptionForSave<T extends Pick<DashEntry, 'data' | 'annotation'>>(
+        prevEntry: T,
+    ) {
+        if (prevEntry.annotation) {
+            return {
+                ...prevEntry,
+                annotation: {
+                    description: prevEntry.annotation.description ?? '',
+                },
+            };
+        }
+
+        if (prevEntry.data && 'description' in prevEntry.data) {
+            const entry = {
+                ...prevEntry,
+                annotation: {
+                    description: prevEntry.data.description ?? '',
+                },
+            };
+            delete entry.data.description;
+
+            return entry;
+        }
+
+        if (prevEntry && 'description' in prevEntry) {
+            const entry = {
+                ...prevEntry,
+                annotation: {
+                    description: prevEntry.description ?? '',
+                },
+            };
+            delete entry.description;
+
+            return entry;
+        }
+
+        return prevEntry;
     }
 
     static async update(
@@ -322,6 +422,7 @@ class Dash {
         headers: IncomingHttpHeaders,
         ctx: AppContext,
         I18n: ServerI18n,
+        options?: {forceMigrate?: boolean},
     ): Promise<DashEntry> {
         try {
             const usData: typeof data & {skipSyncLinks?: boolean} = {...data};
@@ -330,7 +431,7 @@ class Dash {
             const needDataSend = !(mode === EntryUpdateMode.Publish && data.revId);
             if (needDataSend) {
                 if (needSetDefaultData(usData.data)) {
-                    const initialData = await Dash.read(entryId, null, headers, ctx);
+                    const initialData = await Dash.read(entryId, null, headers, ctx, options);
                     usData.data = setDefaultData(I18n, usData.data, initialData.data);
                 }
 
@@ -351,14 +452,14 @@ class Dash {
             const result = (await US.updateEntry(
                 entryId,
                 mode,
-                usData,
+                Dash.migrateDescriptionForSave(usData),
                 headersWithMetadata,
                 ctx,
             )) as DashEntry;
 
             ctx.log('SDK_DASH_UPDATE_SUCCESS', US.getLoggedEntry(result));
 
-            return result;
+            return Dash.migrateDescriptionForClient(result);
         } catch (error) {
             ctx.logError('SDK_DASH_UPDATE_FAILED', error, {
                 entryId,
@@ -386,51 +487,6 @@ class Dash {
 
             throw error;
         }
-    }
-
-    static async prepareExport(entry: DashEntry, id_mapping: TransferIdMapping) {
-        const data = await Dash.migrate(entry.data);
-        const notifications: TransferNotification[] = [];
-
-        processLinks(data, id_mapping);
-
-        const nameParts = entry.key.split('/');
-        const name = nameParts[nameParts.length - 1];
-
-        const dash = {
-            name,
-            data,
-        };
-
-        return {
-            dash,
-            notifications,
-        };
-    }
-
-    static async prepareImport(importObject: {
-        dash: {data: DashEntry['data']; name: string};
-        id_mapping: TransferIdMapping;
-    }) {
-        const data = await Dash.migrate(importObject.dash.data);
-        const notifications: TransferNotification[] = [];
-
-        processLinks(data, importObject.id_mapping);
-        validateData(data);
-
-        const links = gatherLinks(data);
-
-        return {
-            dash: {
-                data,
-                name: importObject.dash.name,
-                scope: EntryScope.Dash,
-                mode: EntryUpdateMode.Publish,
-                type: '',
-                links,
-            },
-            notifications,
-        };
     }
 }
 

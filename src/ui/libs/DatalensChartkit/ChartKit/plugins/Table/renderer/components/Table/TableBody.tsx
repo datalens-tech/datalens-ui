@@ -4,6 +4,7 @@ import block from 'bem-cn-lite';
 import {ChartKitTableQa} from 'shared';
 
 import type {BodyCellViewData, BodyRowViewData, RowRef} from './types';
+import {getCellVeticalAlignmentStyle} from './utils';
 
 const b = block('dl-table');
 
@@ -17,8 +18,13 @@ type Props = {
 const TableBodyCell = (props: {
     cell: BodyCellViewData;
     onClick?: (event: React.MouseEvent) => void;
+    isLastPinnedCell?: boolean;
 }) => {
-    const {cell, onClick} = props;
+    const {cell, isLastPinnedCell, onClick} = props;
+    const contentStyle = {
+        ...cell.contentStyle,
+        ...getCellVeticalAlignmentStyle(cell),
+    };
 
     return (
         <td
@@ -40,10 +46,11 @@ const TableBodyCell = (props: {
             rowSpan={cell.rowSpan}
             colSpan={cell.colSpan}
         >
+            {isLastPinnedCell && <div className={b('shadow')} />}
             <div
                 className={b('cell-content', {type: cell.contentType})}
                 data-qa={ChartKitTableQa.CellContent}
-                style={cell.contentStyle}
+                style={contentStyle}
             >
                 {cell.content}
             </div>
@@ -59,7 +66,10 @@ export const TableBody = React.memo<Props>((props: Props) => {
             {rows.map((row) => {
                 return (
                     <tr data-index={row.index} key={row.id} className={b('tr')} ref={rowRef}>
-                        {row.cells.map((cell) => {
+                        {row.cells.map((cell, index) => {
+                            const nextCellData = row.cells[index + 1];
+                            const isLastPinnedCell = cell.pinned && !nextCellData?.pinned;
+
                             return (
                                 <TableBodyCell
                                     key={cell.id}
@@ -69,6 +79,7 @@ export const TableBody = React.memo<Props>((props: Props) => {
                                             onCellClick(event, cell.data, row.id);
                                         }
                                     }}
+                                    isLastPinnedCell={isLastPinnedCell}
                                 />
                             );
                         })}

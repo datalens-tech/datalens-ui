@@ -24,6 +24,7 @@ type OwnProps = {
     onSelect: (row: DatasetField, value: DatasetFieldAggregation) => void;
     tabIndex?: number;
     debounceTimeout?: number;
+    disabled?: boolean;
 };
 
 type Props = StateProps & OwnProps;
@@ -32,12 +33,12 @@ class AggregationSelectComponent extends React.Component<Props> {
     _aggregationSelectRef = React.createRef<any>();
 
     render() {
-        const {field, selectedAggregation} = this.props;
+        const {field, selectedAggregation, disabled} = this.props;
 
         return (
             <Select
                 ref={this._aggregationSelectRef}
-                disabled={this.disabled}
+                disabled={this.disabled || disabled}
                 options={this.aggregationList}
                 value={[selectedAggregation]}
                 onUpdate={(value) => this.onSelect(field, value as [DatasetFieldAggregation])}
@@ -121,7 +122,7 @@ class AggregationSelectComponent extends React.Component<Props> {
         this.props.onSelect(row, aggregation);
     };
 
-    private renderSelectControl = ({onClick, ref, onKeyDown}: SelectRenderControlProps) => {
+    private renderSelectControl = ({ref, triggerProps}: SelectRenderControlProps) => {
         const selectedValue = getSelectedValueForSelect(
             [this.props.selectedAggregation],
             this.aggregations,
@@ -132,9 +133,8 @@ class AggregationSelectComponent extends React.Component<Props> {
 
         return (
             <Button
-                onClick={onClick}
-                ref={ref}
-                extraProps={{onKeyDown}}
+                {...triggerProps}
+                ref={ref as React.Ref<HTMLButtonElement>}
                 view="flat"
                 className={b('select-control', {[this.type]: true})}
             >

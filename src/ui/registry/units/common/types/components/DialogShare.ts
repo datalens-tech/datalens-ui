@@ -17,4 +17,5 @@ export type DialogShareProps = {
     withEmbedLink?: boolean;
     withHideMenu?: boolean;
     withCopyAndExitBtn?: boolean;
+    currentTab?: string;
 };

@@ -1,14 +1,14 @@
-import {WIZARD_DATASET_ID_PARAMETER_KEY} from 'constants/misc';
-
 import type {AxiosError} from 'axios';
 import type {
     ChartsConfig,
     ClientChartsConfig,
     CommonSharedExtraSettings,
+    EntryAnnotationArgs,
     EntryUpdateMode,
     Shared,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
+import {WIZARD_DATASET_ID_PARAMETER_KEY} from 'ui/constants/misc';
 import {updateClientChartsConfig} from 'ui/units/wizard/actions/preview';
 
 import type {SaveWidgetArgs} from '../../../store/actions/chartWidget';
@@ -55,7 +55,9 @@ export function receiveWidgetAndPrepareMetadata({
                 resultPath += 'preview/';
             }
 
-            resultPath += entryId;
+            if (entryId) {
+                resultPath += entryId;
+            }
 
             if (!pathname.includes(entryId)) {
                 const updatedUrl = `${resultPath}${url.search}${url.hash}`;
@@ -121,11 +123,12 @@ export type UpdateWizardWidgetArgs = {
     entry: WidgetData;
     config: {shared: ClientChartsConfig} | undefined;
     mode?: EntryUpdateMode;
+    annotation?: EntryAnnotationArgs;
 };
 
 export function updateWizardWidget(args: UpdateWizardWidgetArgs) {
     return async (dispatch: WizardDispatch) => {
-        const {config, entry, mode} = args;
+        const {config, entry, mode, annotation} = args;
 
         const data = mapClientConfigToChartsConfig(config);
 
@@ -133,6 +136,7 @@ export function updateWizardWidget(args: UpdateWizardWidgetArgs) {
             data,
             entry,
             mode,
+            annotation,
             onSuccess: (responseData) => dispatch(onSuccessWizardWidgetUpdate(responseData)),
             onError: (error) => dispatch(onErrorWizardWidgetUpdate(error)),
         };

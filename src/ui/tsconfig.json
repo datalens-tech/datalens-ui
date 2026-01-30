@@ -5,6 +5,7 @@
     "resolveJsonModule": true,
     "jsx": "react",
     "module": "ESNext",
+    "moduleResolution": "bundler",
     "baseUrl": ".",
     "useUnknownInCatchVariables": false,
     "paths": {

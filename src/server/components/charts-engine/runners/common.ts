@@ -8,14 +8,14 @@ import {
     DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
     DL_EMBED_TOKEN_HEADER,
     Feature,
-    isEnabledServerFeature,
 } from '../../../../shared';
+import {registry} from '../../../registry';
 import type {ProcessorParams, SerializableProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
 import {ProcessorHooks} from '../components/processor/hooks';
 import type {ChartBuilder} from '../components/processor/types';
 import type {ResolvedConfig} from '../components/storage/types';
-import {getDuration} from '../components/utils';
+import {getDefaultColorPaletteId, getDuration} from '../components/utils';
 import type {ChartsEngine} from '../index';
 import type {ChartStorageType} from '../types';
 
@@ -34,10 +34,11 @@ export function engineProcessingCallback({
     processorParams: Omit<ProcessorParams, 'ctx'>;
     runnerType: Runners;
 }): Promise<{status: number; payload: unknown}> {
+    const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
     const enableChartEditor =
-        isEnabledServerFeature(ctx, 'EnableChartEditor') && runnerType === 'Editor';
+        isEnabledServerFeature('EnableChartEditor') && runnerType === 'Editor';
     const showChartsEngineDebugInfo = Boolean(
-        isEnabledServerFeature(ctx, Feature.ShowChartsEngineDebugInfo),
+        isEnabledServerFeature(Feature.ShowChartsEngineDebugInfo),
     );
 
     return Processor.process({...processorParams, ctx: ctx})
@@ -153,6 +154,7 @@ export const getSerializableProcessorParams = ({
     localConfig,
     subrequestHeadersKind,
     forbiddenFields,
+    secureConfig,
 }: {
     res: Response;
     req: Request;
@@ -169,6 +171,7 @@ export const getSerializableProcessorParams = ({
     workbookId?: WorkbookId;
     subrequestHeadersKind?: string;
     forbiddenFields?: ProcessorParams['forbiddenFields'];
+    secureConfig?: ProcessorParams['secureConfig'];
 }): SerializableProcessorParams => {
     const {params, actionParams, widgetConfig} = req.body;
 
@@ -179,13 +182,6 @@ export const getSerializableProcessorParams = ({
     const disableJSONFnByCookie = req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE;
 
     const isEmbed = req.headers[DL_EMBED_TOKEN_HEADER] !== undefined;
-
-    const zitadelParams = ctx.config.isZitadelEnabled
-        ? {
-              accessToken: req.user?.accessToken,
-              serviceUserAccessToken: req.serviceUserAccessToken,
-          }
-        : undefined;
 
     const authParams = ctx.config.isAuthEnabled
         ? {
@@ -213,6 +209,8 @@ export const getSerializableProcessorParams = ({
         },
     };
 
+    const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
+
     const processorParams: SerializableProcessorParams = {
         paramsOverride: params,
         actionParamsOverride: actionParams,
@@ -226,16 +224,22 @@ export const getSerializableProcessorParams = ({
         configResolving,
         cacheToken: req.headers['x-charts-cache-token'] || null,
         forbiddenFields,
+        secureConfig,
         configName,
         configId,
+        revId: localConfig?.revId,
         disableJSONFnByCookie,
         isEmbed,
-        zitadelParams,
         authParams,
         originalReqHeaders,
         adapterContext,
         hooksContext,
         configOverride: generatedConfig,
+        defaultColorPaletteId: getDefaultColorPaletteId({
+            ctx,
+            tenantSettings: localConfig?.tenantSettings,
+        }),
+        systemPalettes: getAvailablePalettesMap(),
     };
 
     const configWorkbook = workbookId ?? localConfig?.workbookId;
@@ -282,6 +286,7 @@ export function commonRunner({
     hrStart,
     subrequestHeadersKind,
     forbiddenFields,
+    secureConfig,
 }: {
     res: Response;
     req: Request;
@@ -303,7 +308,8 @@ export function commonRunner({
     hrStart: [number, number];
     subrequestHeadersKind?: string;
     forbiddenFields?: ProcessorParams['forbiddenFields'];
-}) {
+    secureConfig?: ProcessorParams['secureConfig'];
+}): Promise<void> {
     const telemetryCallbacks = chartsEngine.telemetryCallbacks;
     const cacheClient = chartsEngine.cacheClient;
     const sourcesConfig = chartsEngine.sources;
@@ -337,6 +343,7 @@ export function commonRunner({
                     builder,
                     hooks,
                     sourcesConfig,
+                    secureConfig,
                 },
                 runnerType: runnerType as Runners,
             });

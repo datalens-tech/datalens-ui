@@ -1,6 +1,6 @@
 import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import type {CancellablePromise} from '@gravity-ui/sdk';
-import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
+import type {IconData} from '@gravity-ui/uikit';
 import type {RenderHtmlOutput} from 'shared/modules/markdown/markdown';
 import type {
     BatchRenderMarkdownResponse,
@@ -14,6 +14,7 @@ import type {
     GetEntryResponse,
 } from 'shared/schema';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
+import type {DashEntry} from 'ui/units/dash/typings/entry';
 
 import type {DLUserSettings, EntryScope, IconId, formatNumber} from '../../../../shared';
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
@@ -28,10 +29,12 @@ import type {EntrySettings} from '../../../components/Navigation/Base/configure'
 import type {NavigationQuickItem} from '../../../components/Navigation/Base/types';
 import type {NavigationMinimalProps} from '../../../components/Navigation/NavigationMinimal';
 import type {PlaceParameterItem} from '../../../components/Navigation/types';
+import type {GetUsersSuggestItems} from '../../../components/UsersSuggest/types';
 import type {ConfigSdk, HeadersSdk} from '../../../libs/sdk/types';
 import type {AppThunkAction} from '../../../store';
 
 import {EXAMPLE_FUNCTION} from './constants/functions';
+import type {GetUsersById} from './types/functions/GetUsersById';
 import type {CheckCreateEntryButtonVisibility} from './types/functions/checkCreateEntryButtonVisibility';
 import type {
     FetchDocumentationArgs,
@@ -41,9 +44,17 @@ import type {FetchFunctionsDocumentationResponse} from './types/functions/fetchF
 import type {GetAdditionalChartkitErrorContent} from './types/functions/getAdditionalChartkitErrorContent';
 import type {GetBasicActionPanelItems} from './types/functions/getBasicActionPanelItems';
 import type {GetFunctionsDocumentationResponse} from './types/functions/getFunctionsDocumentation';
+import type {GloballyEntrySettings} from './types/functions/getGloballyEntrySettings';
+import type {GetHeaderWithoutHelpCenterErrorContentTypes} from './types/functions/getHeaderWithoutHelpCenterErrorContentTypes';
+import type {GetHeaderWithoutNavigationErrorContentTypes} from './types/functions/getHeaderWithoutNavigationErrorContentTypes';
 import type {GetIllustrationStore} from './types/functions/getIllustrationStore';
+import type {GetImageNameFromErrorContentType} from './types/functions/getImageNameFromErrorContentType';
 import type {GetLoginById} from './types/functions/getLoginById';
+import type {GetLogoIcon} from './types/functions/getLogoIcon';
+import type {GetNotAuthenticatedErrorContentTypes} from './types/functions/getNotAuthenticatedErrorContentTypes';
+import type {GetShouldShowAIAssistant} from './types/functions/getShouldShowAIAssistant';
 import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
+import type {IsValidLogoUrl} from './types/functions/isValidLogoUrl';
 import type {OpenDialogOrganizationInvite} from './types/functions/openDialogOrganizationInvite';
 import type {OpenDialogOrganizationInviteUsers} from './types/functions/openDialogOrganizationInviteUsers';
 import type {RenderDialogRelatedEntitiesAlertHint} from './types/functions/renderDialogRelatedEntitiesAlertHint';
@@ -58,13 +69,17 @@ export const commonFunctionsMap = {
     openDialogOrganizationInviteUsers:
         makeFunctionTemplate<() => OpenDialogOrganizationInviteUsers>(),
     getEntryMenuConfig: makeFunctionTemplate<() => MenuGroup[]>(),
-    getEntryPublishGloballyDisabled: makeFunctionTemplate<() => boolean>(),
+    getGloballyEntrySettings: makeFunctionTemplate<() => GloballyEntrySettings>(),
     getMenuGroupConfig: makeFunctionTemplate<() => Array<MenuGroup>>(),
     getSelectStateMenuItem:
         makeFunctionTemplate<
-            <T>(args: {action: () => void; hidden: boolean}) => EntryContextMenuItem<T>
+            <T>(args: {
+                action: () => void;
+                hidden: boolean;
+                entry?: DashEntry;
+            }) => EntryContextMenuItem<T>
         >(),
-    getIconDataById: makeFunctionTemplate<(arg: IconId) => SVGIconData>(),
+    getIconDataById: makeFunctionTemplate<(arg: IconId) => IconData>(),
     getIllustrationStore: makeFunctionTemplate<() => GetIllustrationStore>(),
     getAccessEntryMenuItem: makeFunctionTemplate<() => ContextMenuItem>(),
     setEntryKey: makeFunctionTemplate<SetEntryKey>(),
@@ -166,4 +181,17 @@ export const commonFunctionsMap = {
     renderDialogRelatedEntitiesAlertHint:
         makeFunctionTemplate<RenderDialogRelatedEntitiesAlertHint>(),
     getAdditionalChartkitErrorContent: makeFunctionTemplate<GetAdditionalChartkitErrorContent>(),
+    getCurrentUserRights: makeFunctionTemplate<() => {admin: boolean}>(),
+    getUsersSuggestItems: makeFunctionTemplate<GetUsersSuggestItems>(),
+    getUsersById: makeFunctionTemplate<GetUsersById>(),
+    getLogoIcon: makeFunctionTemplate<GetLogoIcon>(),
+    isValidLogoUrl: makeFunctionTemplate<IsValidLogoUrl>(),
+    getShouldShowAIAssistant: makeFunctionTemplate<GetShouldShowAIAssistant>(),
+    getNotAuthenticatedErrorContentTypes:
+        makeFunctionTemplate<GetNotAuthenticatedErrorContentTypes>(),
+    getHeaderWithoutHelpCenterErrorContentTypes:
+        makeFunctionTemplate<GetHeaderWithoutHelpCenterErrorContentTypes>(),
+    getHeaderWithoutNavigationErrorContentTypes:
+        makeFunctionTemplate<GetHeaderWithoutNavigationErrorContentTypes>(),
+    getImageNameFromErrorContentType: makeFunctionTemplate<GetImageNameFromErrorContentType>(),
 } as const;

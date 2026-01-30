@@ -9,6 +9,7 @@ const b = block('dl-workbook-icon');
 type Props = {
     title: string;
     size?: string;
+    className?: string;
 };
 
 type Size = {
@@ -21,6 +22,12 @@ type Size = {
 type SizeMap = Record<string, Size>;
 
 const sizesMap: SizeMap = {
+    xs: {
+        size: 18,
+        fontSize: 9,
+        lineHeight: 18,
+        borderRadius: 4,
+    },
     s: {
         size: 20,
         fontSize: 8,
@@ -47,12 +54,12 @@ const sizesMap: SizeMap = {
     },
 };
 
-export const WorkbookIcon: React.FC<Props> = ({title, size = 'm'}) => {
+export const WorkbookIcon: React.FC<Props> = ({title, size = 'm', className}) => {
     const letters = title.trim().slice(0, 2);
 
     return (
         <div
-            className={b()}
+            className={b(null, className)}
             style={{
                 width: `${sizesMap[size].size}px`,
                 height: `${sizesMap[size].size}px`,

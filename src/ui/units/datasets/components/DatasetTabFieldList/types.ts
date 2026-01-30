@@ -1,6 +1,6 @@
 import type React from 'react';
 
-import type {IconData} from '@gravity-ui/uikit';
+import type {IconData, MenuItemProps} from '@gravity-ui/uikit';
 import type {DatasetField} from 'shared';
 
 import type {TitleColumnProps} from './components/TitleColumn/TitleColumn';
@@ -39,7 +39,6 @@ export type ValueColumnType = {
     width?: ColumnWidth;
     getValueProps: (item: DatasetField) => ValueColumnProps;
 };
-
 export type TextColumnType = {
     columnType: DatasetFieldListColumnType.Text;
     width?: ColumnWidth;
@@ -49,18 +48,24 @@ export type CustomNodeColumnType = {
     columnType: DatasetFieldListColumnType.Custom;
     getCustomNodeProps: (item: DatasetField) => {node?: React.ReactNode; width?: number | string};
 };
+export type ValidationColumnType = {
+    columnType: DatasetFieldListColumnType.Validation;
+    getValidationProps: (item: DatasetField) => {node?: React.ReactNode; templateEnabled?: boolean};
+};
 
 export type ButtonControlArgs = {
     type: 'button';
     onButtonClick: (item: DatasetField) => void;
     icon?: IconData;
     qa?: string;
+    readonly?: boolean;
 };
 
 export type MenuControlItem = {
     action: (field: DatasetField) => void;
     text: (field: DatasetField) => string | React.ReactNode;
     qa?: string;
+    theme?: MenuItemProps['theme'];
 };
 
 export type MenuControlArgs = {
@@ -75,4 +80,5 @@ export type FieldListColumn =
     | FieldTypeColumnType
     | ValueColumnType
     | TextColumnType
-    | CustomNodeColumnType;
+    | CustomNodeColumnType
+    | ValidationColumnType;

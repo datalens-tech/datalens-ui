@@ -3,16 +3,16 @@ name: Statoscope diff analyze
 on:
   pull_request:
     branches-ignore:
-      - 'weblate-**'      
+      - 'weblate-**'
 
 jobs:
-  statoscope: 
-    runs-on: ubuntu-latest
+  statoscope:
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Install deps
         run: npm ci
       - name: Build

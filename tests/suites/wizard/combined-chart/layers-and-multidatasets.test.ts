@@ -3,16 +3,13 @@ import {Page} from '@playwright/test';
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
-import {
-    PlaceholderId,
-    RadioButtons,
-    RadioButtonsValues,
-} from '../../../page-objects/wizard/PlaceholderDialog';
+import {RadioButtons, RadioButtonsValues} from '../../../page-objects/wizard/PlaceholderDialog';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsDatasets, RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
+import {PlaceholderId} from '../../../../src/shared';
 
 const expectedLabelsTexts = [
     '01.01.1998',
@@ -80,6 +77,7 @@ const expectedLabelsTexts = [
     '01.11.2023',
 ];
 
+// todo: remove along with GravityChartsForLineAreaAndBarX feature flag
 datalensTest.describe('Multi-faceted charts with layers', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         await openTestPage(page, RobotChartsWizardUrls.Empty);

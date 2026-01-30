@@ -93,6 +93,12 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
         margin-right: $widgetIconMarginRight;
         margin-left: $widgetIconMarginLeft;
         color: var(--g-color-text-hint);
+        display: flex;
+    }
+
+    &__skeleton-icon {
+        height: $widgetIconWidth;
+        width: $widgetIconWidth;
     }
 
     &__button-link {
@@ -180,5 +186,10 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
         margin-right: 5px;
         display: inline-flex;
         min-width: 30px;
+    }
+
+    &__popover-content {
+        max-width: 300px;
+        padding: var(--g-spacing-3);
     }
 }

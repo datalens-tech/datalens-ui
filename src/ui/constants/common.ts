@@ -1,19 +1,19 @@
 import {UserRole} from 'shared/components/auth/constants/role';
+import {isNotAuthenticatedError} from 'ui/utils/errorContentTypes';
 
 import type {LineShapeType} from '../../shared';
 import {
     AppEnvironment,
     DeviceType,
-    ErrorContentTypes,
     FALLBACK_LANGUAGES,
     GRADIENT_PALETTES,
     GradientType,
+    PALETTES,
     THREE_POINT_DEFAULT_ID,
     TWO_POINT_DEFAULT_ID,
     getAvailablePalettesMap,
     selectAvailablePalettes,
     selectGradient,
-    selectPaletteById,
     selectShapes,
 } from '../../shared';
 
@@ -68,6 +68,9 @@ export const KeyCodes = {
 // and a DL structure with default values must be guaranteed to access, for example, DL.UserSettings.theme,
 // and not DL.USER_THEME (nevertheless, with frequent access, such a thing may be justified)
 export const DL = {
+    get IS_WORKBOOKS_ENABLED() {
+        return window.DL.tenantMode?.workbooksEnabled;
+    },
     get SERVICE_NAME() {
         return window.DL.serviceName;
     },
@@ -167,7 +170,7 @@ export const DL = {
         return window.DL.landingPageSettings;
     },
     get IS_NOT_AUTHENTICATED() {
-        return this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED;
+        return isNotAuthenticatedError(this.LANDING_PAGE_ERROR_TYPE);
     },
     get PUSH_SERVICE_CONFIG() {
         return window.DL.push;
@@ -183,6 +186,9 @@ export const DL = {
     },
     get AUTH_MANAGE_LOCAL_USERS_DISABLED() {
         return window.DL.authManageLocalUsersDisabled === true;
+    },
+    get AUTH_SIGNUP_DISABLED() {
+        return window.DL.authSignupDisabled === true;
     },
     get IS_AUTH_PAGE() {
         return Boolean(window.DL.authPageSettings?.isAuthPage);
@@ -205,11 +211,8 @@ export const DL = {
     get IAM_RESOURCES() {
         return window.DL.iamResources ?? undefined;
     },
-    get TEMPLATE_WORKBOOK_ID() {
-        return window.DL.templateWorkbookId;
-    },
-    get LEARNING_MATERIALS_WORKBOOK_ID() {
-        return window.DL.learningMaterialsWorkbookId;
+    get ORDERED_AUTH_ROLES() {
+        return window.DL.orderedAuthRoles ?? undefined;
     },
     get TITLE() {
         return window.DL.title || '';
@@ -232,9 +235,6 @@ export const DL = {
     get HEADERS_MAP() {
         return window.DL.headersMap || {};
     },
-    get ZITADEL_ENABLED() {
-        return window.DL.isZitadelEnabled === true;
-    },
     get HIDE_NAVIGATION() {
         return window.DL.hideNavigation;
     },
@@ -246,6 +246,9 @@ export const DL = {
     },
     get RELEASE_VERSION() {
         return window.DL.releaseVersion;
+    },
+    get DOCS_URL() {
+        return window.DL.docsUrl;
     },
     get IS_NATIVE_AUTH_ADMIN() {
         return window.DL.user.roles?.includes(UserRole.Admin);
@@ -265,6 +268,7 @@ export const DATALENS_DARK_THEME_MONACO = 'vs-dark-datalens';
 export const DATALENS_DARK_HC_THEME_MONACO = 'vs-dark-hc-datalens';
 
 export const PRODUCT_NAME = 'DataLens';
+export const FULL_PRODUCT_NAME = `Yandex ${PRODUCT_NAME}`;
 
 export const URL_OPTIONS = {
     THEME: '_theme',
@@ -305,7 +309,10 @@ export const QL_LANGUAGE_ID = 'datalens-ql';
 
 export const SPLIT_PANE_RESIZER_CLASSNAME = 'dl-resizer';
 
+export const DATALENS_IFRAME_CLASSNAME = 'dl-iframe';
+
 export const BI_ERRORS = {
+    DATA_PREPARATION_NOT_FINISHED: 'ERR.DS_API.DB.DATA_PREPARATION_NOT_FINISHED',
     MATERIALIZATION_NOT_FINISHED: 'ERR.DS_API.DB.MATERIALIZATION_NOT_FINISHED',
     NO_AVAILABLE_SUBPRODUCTS: 'ERR.DS_API.NO_AVAILABLE_SUBPRODUCTS',
     DATASET_REVISION_MISMATCH: 'ERR.DS_API.DATASET_REVISION_MISMATCH',
@@ -326,6 +333,11 @@ export const URL_QUERY = {
     CONNECTION_ID: 'connectionId',
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
+    UNRELEASED: 'unreleased',
+    LOCAL_CONFIG: '_use_local_config',
+    BINDED_WORKBOOK: 'bindedWorkbookId',
+    BINDED_DATASET_WOKRBOOK_ID: 'bindedDatasetWorkbookId',
+    BINDED_DATASET: 'bindedDatasetId',
 };
 
 const GRADIENT_ICONS = {
@@ -355,17 +367,39 @@ const GRADIENT_ICONS = {
 };
 
 export const getAvailableClientPalettesMap = () => {
-    return {
+    const palettes = {
         ...getAvailablePalettesMap(),
         ...DL.EXTRA_PALETTES,
     };
+
+    return palettes;
 };
 
-export const selectAvailableClientPalettes = () =>
-    selectAvailablePalettes(getAvailableClientPalettesMap());
+export function getDefaultColorPaletteId() {
+    return window.DL.defaultColorPaletteId ?? PALETTES.classic.id;
+}
 
-export const selectPalette = (paletteId: string) =>
-    selectPaletteById(paletteId, getAvailableClientPalettesMap());
+export function getTenantDefaultColorPaletteId() {
+    if (window.DL.tenantSettings?.defaultColorPaletteId) {
+        return window.DL.tenantSettings?.defaultColorPaletteId;
+    }
+
+    return getDefaultColorPaletteId();
+}
+
+export const selectAvailableClientPalettes = () => {
+    return selectAvailablePalettes({
+        palettes: getAvailableClientPalettesMap(),
+        defaultPaletteId: getDefaultColorPaletteId(),
+    });
+};
+
+export const selectPalette = (paletteId: string) => {
+    const palettes = getAvailableClientPalettesMap();
+    const selectedPalette = palettes[paletteId] ?? palettes[getTenantDefaultColorPaletteId()];
+
+    return selectedPalette?.scheme ?? [];
+};
 
 export const selectDefaultClientGradient = (gradientType: GradientType) => {
     const gradientId =
@@ -386,3 +420,5 @@ export const EMBEDDED_DASH_MESSAGE_NAME = 'subscribe-for-embed-height-dash';
 export const SYSTEM_GROUP_IDS = ['allUsers', 'allAuthenticatedUsers'];
 
 export const CLIPBOARD_TIMEOUT = 1000;
+
+export const APP_ROOT_CLASS = 'app-root';

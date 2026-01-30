@@ -4,7 +4,7 @@ import noop from 'lodash/noop';
 import PropTypes from 'prop-types';
 
 import {registry} from '../../registry';
-import {EntryDialogName, EntryDialogues} from '../EntryDialogues';
+import {EntryDialogName, EntryDialogResolveStatus, EntryDialogues} from '../EntryDialogues';
 
 import {getPlaceConfig} from './Base/configure';
 import NavigationMinimal from './Core/NavigationMinimal';
@@ -36,6 +36,8 @@ class NavigationMinimalService extends React.PureComponent {
         }),
         inactiveEntryIds: PropTypes.arrayOf(PropTypes.string),
         ignoreWorkbookEntries: PropTypes.bool,
+        ignoreSharedEntries: PropTypes.bool,
+        canCreateFolder: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -137,6 +139,31 @@ class NavigationMinimalService extends React.PureComponent {
         this.preventClose = false;
     }
 
+    getInitialCreateDestination = () => {
+        const {path} = this.state;
+
+        const {getInitDestination} = registry.common.functions.getAll();
+
+        return getInitDestination(path);
+    };
+
+    createFolderClick = async () => {
+        this.preventClose = true;
+
+        const response = await this.refDialogues.current.open({
+            dialog: EntryDialogName.CreateFolder,
+            dialogProps: {
+                initDestination: this.getInitialCreateDestination(),
+            },
+        });
+
+        if (response.status === EntryDialogResolveStatus.Success) {
+            this.refNavigation.current.refresh();
+        }
+
+        this.preventClose = false;
+    };
+
     render() {
         const {includeClickableType, excludeClickableType, placeSelectParameters, ...props} =
             this.props;
@@ -169,6 +196,9 @@ class NavigationMinimalService extends React.PureComponent {
                     onClose={this.onClose}
                     path={this.state.path}
                     place={this.state.root}
+                    onCreateFolderClick={
+                        this.props.canCreateFolder ? this.createFolderClick : undefined
+                    }
                     onEntryClick={this.onEntryClick}
                     onEntryParentClick={this.onEntryParentClick}
                     onCrumbClick={this.onCrumbClick}
@@ -176,6 +206,7 @@ class NavigationMinimalService extends React.PureComponent {
                     getPlaceParameters={getPlaceParameters}
                     placeSelectNode={placeSelectNode}
                     ignoreWorkbookEntries={this.props.ignoreWorkbookEntries}
+                    ignoreSharedEntries={this.props.ignoreSharedEntries}
                     onPermissionError={this.onPermissionError}
                 />
                 <EntryDialogues ref={this.refDialogues} sdk={this.props.sdk} />

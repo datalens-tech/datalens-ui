@@ -5,9 +5,13 @@ import type {
     ServerChartsConfig,
     Shared,
     StringParams,
+    TenantSettings,
 } from '../../../../../shared';
-import {getServerFeatures} from '../../../../../shared';
+import {getFieldUISettings, getServerFeatures} from '../../../../../shared';
+import type {SourceRequests} from '../../../../modes/charts/plugins/datalens/url/types';
+import {addColorPaletteRequest} from '../../../../modes/charts/plugins/helpers/color-palettes';
 import {registry} from '../../../../registry';
+import {getDefaultColorPaletteId} from '../utils';
 import type {WizardWorker} from '../wizard-worker/types';
 import {getChartApiContext} from '../wizard-worker/utils';
 
@@ -34,12 +38,13 @@ type WizardChartBuilderArgs = {
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     isScreenshoter: boolean;
     worker: Proxy<WizardWorker>;
+    tenantSettings: TenantSettings;
 };
 
 export const getWizardChartBuilder = async (
     args: WizardChartBuilderArgs,
 ): Promise<ChartBuilder> => {
-    const {config, widgetConfig, userLang, worker, timeouts = {}} = args;
+    const {config, widgetConfig, userLang, worker, timeouts = {}, tenantSettings} = args;
     const wizardWorker = worker;
     let shared: Record<string, any>;
 
@@ -47,6 +52,10 @@ export const getWizardChartBuilder = async (
     const features = getServerFeatures(app.nodekit.ctx);
     const {getAvailablePalettesMap} = registry.common.functions.getAll();
     const palettes = getAvailablePalettesMap();
+    const defaultColorPaletteId = getDefaultColorPaletteId({
+        ctx: app.nodekit.ctx,
+        tenantSettings,
+    });
 
     // Nothing happens here - just for compatibility with the editor
     const emptyStep =
@@ -111,13 +120,40 @@ export const getWizardChartBuilder = async (
                     widgetConfig,
                     userLang,
                     palettes,
+                    features,
                 })
                 .timeout(timeouts.sources || ONE_SECOND);
 
             return {
                 executionTiming: process.hrtime(timeStart),
-                name: 'Urls',
+                name: 'Sources',
                 ...execResult,
+            };
+        },
+
+        buildPaletteSources: async (options) => {
+            const {sources = {}} = options;
+            const timeStart = process.hrtime();
+
+            const result: SourceRequests = {};
+
+            addColorPaletteRequest({result, colorPaletteId: defaultColorPaletteId, palettes});
+            Object.values(sources).forEach((s) => {
+                return (s.datasetFields ?? []).forEach((d) => {
+                    const uiSettings = getFieldUISettings({field: d});
+                    const palette = uiSettings?.palette;
+
+                    if (palette) {
+                        addColorPaletteRequest({result, colorPaletteId: palette, palettes});
+                    }
+                });
+            });
+
+            return {
+                exports: result,
+                executionTiming: process.hrtime(timeStart),
+                name: 'PaletteSources',
+                runtimeMetadata: {},
             };
         },
 
@@ -176,17 +212,18 @@ export const getWizardChartBuilder = async (
                     data,
                     palettes,
                     features,
+                    defaultColorPaletteId,
                 })
                 .timeout(timeouts.prepare || PREPARE_EXECUTION_TIMEOUT);
 
             return {
                 executionTiming: process.hrtime(timeStart),
-                name: 'JavaScript',
+                name: 'Prepare',
                 ...execResult,
             };
         },
 
-        buildUI: emptyStep('UI'),
+        buildUI: emptyStep('Controls'),
         dispose: () => {},
     };
 

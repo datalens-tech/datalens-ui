@@ -15,5 +15,6 @@ declare global {
             params?: Record<string, unknown>,
         ) => void;
         __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: typeof compose;
+        clipboardData: DataTransfer;
     }
 }

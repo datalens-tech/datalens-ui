@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {Ellipsis, Globe} from '@gravity-ui/icons';
-import type {BreadcrumbsItem} from '@gravity-ui/uikit';
 import {Button, Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogName, EntryDialogResolveStatus} from 'components/EntryDialogues';
@@ -13,10 +12,16 @@ import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import {ActionPanelQA, EntryScope} from 'shared';
 import type {DatalensGlobalState, EntryDialogues} from 'ui';
+import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
-import {addWorkbookInfo, resetWorkbookPermissions} from 'units/workbooks/store/actions';
-import {selectWorkbookBreadcrumbs, selectWorkbookName} from 'units/workbooks/store/selectors';
+import type {BreadcrumbsItem} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
+import {
+    addCollectionBreadcrumbs,
+    addWorkbookInfo,
+    resetWorkbookPermissions,
+} from 'units/workbooks/store/actions';
+import {selectEntityBreadcrumbs, selectWorkbookName} from 'units/workbooks/store/selectors';
 
 import type {GetEntryResponse} from '../../../../../shared/schema';
 import {DL} from '../../../../constants/common';
@@ -46,6 +51,8 @@ type OwnProps = {
     entry?: GetEntryResponse;
     onCloseNavigation?: () => void;
     enablePublish?: boolean;
+    filterEntryContextMenuItems?: FilterEntryContextMenuItems;
+    lastCrumbAdditionalContent?: React.ReactNode;
 };
 
 type Props = OwnProps & DispatchProps & StateProps & RouteComponentProps;
@@ -69,7 +76,9 @@ class EntryPanel extends React.Component<Props, State> {
         if (entryState) {
             if (
                 entryProps &&
-                (entryState.entryId !== entryProps.entryId || entryState.key !== entryProps.key)
+                (entryState.entryId !== entryProps.entryId ||
+                    entryState.key !== entryProps.key ||
+                    entryState.collectionId !== entryProps.collectionId)
             ) {
                 return {
                     entry: {
@@ -101,18 +110,25 @@ class EntryPanel extends React.Component<Props, State> {
 
     componentDidMount() {
         const workbookId = this.state.entry?.workbookId;
+        const collectionId = this.state.entry?.collectionId;
 
         if (workbookId) {
             this.props.actions.addWorkbookInfo(workbookId, true);
+        } else if (collectionId) {
+            this.props.actions.addCollectionBreadcrumbs({collectionId});
         }
     }
 
     componentDidUpdate(prevProps: Props) {
         const workbookId = this.props.entry?.workbookId;
+        const collectionId = this.props.entry?.collectionId;
         const prevWorkbookId = prevProps.entry?.workbookId;
+        const prevCollectionId = prevProps.entry?.collectionId;
 
         if (prevWorkbookId !== workbookId && workbookId) {
             this.props.actions.addWorkbookInfo(workbookId, true);
+        } else if (prevCollectionId !== collectionId && collectionId) {
+            this.props.actions.addCollectionBreadcrumbs({collectionId});
         }
 
         if (prevWorkbookId && !workbookId) {
@@ -121,14 +137,8 @@ class EntryPanel extends React.Component<Props, State> {
     }
 
     render() {
-        const {children, workbookName, workbookBreadcrumbs} = this.props;
-        const {entry: {isFavorite} = {isFavorite: undefined}, entry} = this.state;
-
-        const isFakeEntry = (entry as any)?.fake;
-
-        const additionalItems = this.getEntryContextMenuItems();
-
-        const {EntryBreadcrumbs, ButtonFavorite} = registry.common.components.getAll();
+        const {children, workbookName, entityBreadcrumbs, lastCrumbAdditionalContent} = this.props;
+        const {EntryBreadcrumbs} = registry.common.components.getAll();
 
         return (
             <React.Fragment>
@@ -137,45 +147,67 @@ class EntryPanel extends React.Component<Props, State> {
                     renderRootContent={this.renderRootContent}
                     entry={this.state.entry}
                     workbookName={workbookName}
-                    workbookBreadcrumbs={workbookBreadcrumbs}
+                    entityBreadcrumbs={entityBreadcrumbs}
+                    endContent={
+                        <React.Fragment>
+                            {lastCrumbAdditionalContent}
+                            {this.renderControls()}
+                            <div className={b()}>{children}</div>
+                        </React.Fragment>
+                    }
                 />
-                <div className={b()}>
-                    {!DL.IS_MOBILE && (
-                        <div className={b('entry-actions')}>
-                            {!isFakeEntry && (
-                                <ButtonFavorite
-                                    className={b('action-btn', {active: isFavorite})}
-                                    onClick={this.toggleFavorite}
-                                    isFavorite={isFavorite}
-                                />
-                            )}
-                            {!isFakeEntry || additionalItems.length ? (
-                                <Button
-                                    className={b('action-btn', b('more-dropdown'))}
-                                    qa={ActionPanelQA.MoreBtn}
-                                    size="m"
-                                    view="flat"
-                                    onClick={this.toggleEntryContextMenu}
-                                    ref={this.btnEntryContextMenuRef}
-                                >
-                                    <Icon className={b('more')} data={Ellipsis} size={18} />
-                                </Button>
-                            ) : null}
-                            <EntryContextMenu
-                                entryDialogsRef={this.entryDialogsRef}
-                                forwardRef={this.entryContextMenuRef}
-                                onClose={this.onCloseEntryContextMenu}
-                                anchorRef={this.btnEntryContextMenuRef}
-                                visible={this.state.visibleEntryContextMenu}
-                                entry={entry}
-                                additionalItems={additionalItems}
-                                showSpecificItems={true}
-                            />
-                        </div>
-                    )}
-                    {children}
-                </div>
             </React.Fragment>
+        );
+    }
+
+    renderControls() {
+        if (DL.IS_MOBILE) {
+            return null;
+        }
+
+        const {entry: {isFavorite} = {isFavorite: undefined}, entry} = this.state;
+
+        const isFakeEntry = (entry as any)?.fake;
+
+        const additionalItems = this.getEntryContextMenuItems();
+
+        const {ButtonFavorite} = registry.common.components.getAll();
+
+        return (
+            <div className={b('entry-actions')}>
+                {!isFakeEntry && (
+                    <ButtonFavorite
+                        className={b('action-btn', {active: isFavorite})}
+                        onClick={this.toggleFavorite}
+                        isFavorite={isFavorite}
+                    />
+                )}
+                {!isFakeEntry || additionalItems.length ? (
+                    <Button
+                        className={b('action-btn', b('more-dropdown'))}
+                        qa={ActionPanelQA.MoreBtn}
+                        size="m"
+                        view="flat"
+                        onClick={this.toggleEntryContextMenu}
+                        ref={this.btnEntryContextMenuRef}
+                    >
+                        <Icon className={b('more')} data={Ellipsis} size={18} />
+                    </Button>
+                ) : null}
+                {this.btnEntryContextMenuRef.current && (
+                    <EntryContextMenu
+                        entryDialogsRef={this.entryDialogsRef}
+                        forwardRef={this.entryContextMenuRef}
+                        onClose={this.onCloseEntryContextMenu}
+                        anchorElement={this.btnEntryContextMenuRef.current}
+                        visible={this.state.visibleEntryContextMenu}
+                        entry={entry}
+                        additionalItems={additionalItems}
+                        showSpecificItems={true}
+                        filterEntryContextMenuItems={this.props.filterEntryContextMenuItems}
+                    />
+                )}
+            </div>
         );
     }
 
@@ -313,7 +345,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
 
     return {
         workbookName: selectWorkbookName(state, workbookId),
-        workbookBreadcrumbs: selectWorkbookBreadcrumbs(state),
+        entityBreadcrumbs: selectEntityBreadcrumbs(state),
     };
 };
 
@@ -321,6 +353,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
         actions: bindActionCreators(
             {
+                addCollectionBreadcrumbs,
                 addWorkbookInfo,
                 resetWorkbookPermissions,
             },

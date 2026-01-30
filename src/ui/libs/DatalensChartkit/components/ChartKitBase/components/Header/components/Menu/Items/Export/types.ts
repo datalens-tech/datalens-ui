@@ -1,13 +1,13 @@
 import type {AxiosError} from 'axios';
-import type {ChartWidgetDataRef} from 'ui/components/Widgets/Chart/types';
-import type {MenuLoadedData} from 'ui/libs/DatalensChartkit/menu/Menu';
-import type {ExportFormatsType} from 'ui/libs/DatalensChartkit/modules/constants/constants';
+import type {EXPORT_FORMATS, ExportParams} from 'shared';
+import type {ChartRevIdRef, ChartWidgetDataRef} from 'ui/components/Widgets/Chart/types';
+import type {MenuActionComponent, MenuLoadedData} from 'ui/libs/DatalensChartkit/menu/Menu';
 import type {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import type {WidgetBase} from 'ui/libs/DatalensChartkit/types';
 
 import type {ChartKitProps} from '../../../../../../ChartKitBase';
-import type {LoadedChartInfo} from '../../../../../../types';
+import type {ChartKitDataProvider, LoadedChartInfo} from '../../../../../../types';
 
 export type ExportResultType = {
     status: string;
@@ -16,24 +16,25 @@ export type ExportResultType = {
     error?: AxiosError<Body>;
 };
 
-export type ExportParams = {
-    format: ExportFormatsType;
-    delValues: string | null;
-    delNumbers: string | null;
-    encoding: string | null;
-};
-
 export type ExportActionArgs = {
     loadedData: MenuLoadedData & {exportFilename: string};
     propsData: ChartKitProps<ChartsProps, ChartsData>;
     widget: Highcharts.Chart & LoadedChartInfo & WidgetBase;
     widgetDataRef: ChartWidgetDataRef;
+    chartRevIdRef: ChartRevIdRef;
     event: React.MouseEvent;
     error?: DatalensChartkitCustomError;
 };
 
 export type ExportChartArgs = {
     chartData: ExportActionArgs;
-    params?: ExportParams;
+    params: ExportParams;
     onExportLoading?: (isLoading: boolean) => void;
 };
+
+export type ExportMenuAction = (
+    chartsDataProvider: ChartKitDataProvider,
+    onExportLoading?: ExportChartArgs['onExportLoading'],
+    hasAccessToBusinessFeature?: boolean,
+    format?: typeof EXPORT_FORMATS.XLSX | typeof EXPORT_FORMATS.CSV,
+) => (chartData: ExportActionArgs) => void | MenuActionComponent;

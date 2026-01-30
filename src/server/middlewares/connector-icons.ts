@@ -13,7 +13,11 @@ type GetAdditionalArgs = (req: Request, res: Response) => Partial<ActionArgs>;
 export function getConnectorIconsMiddleware({
     getAdditionalArgs,
 }: {getAdditionalArgs?: GetAdditionalArgs} = {}) {
-    return async function (req: Request, res: Response, next: NextFunction) {
+    return async function connectorIconsMiddleware(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
         let icons: ConnectorIconData[] = [];
 
         try {

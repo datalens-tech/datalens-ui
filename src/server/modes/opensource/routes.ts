@@ -1,17 +1,16 @@
 import type {AppMiddleware, Request, Response} from '@gravity-ui/expresskit';
 import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
-import type {PassportStatic} from 'passport';
 
 import {AppEnvironment} from '../../../shared';
 import {getAuthArgs} from '../../../shared/schema/gateway-utils';
 import {appEnv, isApiMode, isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAuthRoutes} from '../../components/auth/routes';
 import type {ChartsEngine} from '../../components/charts-engine';
-import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
-import {workbooksExportController} from '../../controllers/workbook-transfer';
+import {workbooksTransferController} from '../../controllers/workbook-transfer';
 import {getConnectorIconsMiddleware} from '../../middlewares';
+import {getTenantSettingsMiddleware} from '../../middlewares/tenant-settings';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
 import {getConfiguredRoute} from '../../utils/routes';
 import {applyPluginRoutes} from '../charts/init-charts-engine';
@@ -19,13 +18,11 @@ import {applyPluginRoutes} from '../charts/init-charts-engine';
 export function getRoutes({
     ctx,
     chartsEngine,
-    passport,
     beforeAuth,
     afterAuth,
 }: {
     ctx: AppContext;
     chartsEngine?: ChartsEngine;
-    passport: PassportStatic;
     beforeAuth: AppMiddleware[];
     afterAuth: AppMiddleware[];
 }) {
@@ -38,10 +35,6 @@ export function getRoutes({
             authPolicy: AuthPolicy.disabled,
         },
     };
-
-    if (ctx.config.isZitadelEnabled) {
-        routes = {...routes, ...getZitadelRoutes({passport, beforeAuth, afterAuth})};
-    }
 
     if (appEnv === AppEnvironment.Development || isApiMode) {
         routes = {
@@ -73,8 +66,16 @@ function getApiRoutes({
     afterAuth: AppMiddleware[];
 }) {
     const routes: Record<string, ExtendedAppRouteDescription> = {
+        workbooksMetaManagerCapabilities: {
+            handler: workbooksTransferController.capabilities,
+            beforeAuth,
+            afterAuth,
+            route: 'GET /api/internal/v1/workbooks/meta-manager/capabilities/',
+            authPolicy: AuthPolicy.disabled,
+            disableCsrf: true,
+        },
         workbooksExport: {
-            handler: workbooksExportController.export,
+            handler: workbooksTransferController.export,
             beforeAuth,
             afterAuth,
             route: 'POST /api/internal/v1/workbooks/export/',
@@ -82,7 +83,7 @@ function getApiRoutes({
             disableCsrf: true,
         },
         workbooksImport: {
-            handler: workbooksExportController.import,
+            handler: workbooksTransferController.import,
             beforeAuth,
             afterAuth,
             route: 'POST /api/internal/v1/workbooks/import/',
@@ -111,6 +112,7 @@ function getDataLensRoutes({
                     authArgs: getAuthArgs(req, res),
                 }),
             }),
+            getTenantSettingsMiddleware(),
         ],
         ui: true,
     };

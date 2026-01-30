@@ -1,11 +1,13 @@
 import React from 'react';
 
 import {Alert, Dialog} from '@gravity-ui/uikit';
+import type {ButtonView, DialogProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DataLensApiError} from 'typings';
 
 import {EntryDialogQA, normalizeDestination} from '../../../../shared';
+import type {EntryScope} from '../../../../shared';
 import logger from '../../../libs/logger';
 import Utils from '../../../utils';
 import type {PathSelectProps} from '../../PathSelect/PathSelect';
@@ -31,6 +33,9 @@ interface EntryDialogBaseGeneralProps<T> {
     placeholder?: string;
     inactiveEntryKeys?: string[];
     warningMessage?: React.ReactNode;
+    confirmButtonView?: ButtonView;
+    initialFocus?: DialogProps['initialFocus'];
+    entryScope?: EntryScope;
 }
 
 interface EntryDialogBaseDefaultProps {
@@ -38,6 +43,7 @@ interface EntryDialogBaseDefaultProps {
     defaultName: string;
     path: string;
     withInput: boolean;
+    confirmButtonView?: ButtonView;
 }
 
 export interface EntryDialogBaseProps<T>
@@ -65,6 +71,7 @@ export class EntryDialogBase<T> extends React.Component<
         defaultName: '',
         path: '/',
         withInput: true,
+        confirmButtonView: 'action',
     };
 
     static getDerivedStateFromProps<T>(
@@ -124,6 +131,8 @@ export class EntryDialogBase<T> extends React.Component<
             inactiveEntryKeys,
             children,
             warningMessage,
+            confirmButtonView,
+            initialFocus,
         } = this.props;
 
         return (
@@ -132,11 +141,11 @@ export class EntryDialogBase<T> extends React.Component<
                 open={visible}
                 onClose={this.onClose}
                 onEnterKeyDown={this.onApply}
-                disableFocusTrap={true}
+                initialFocus={initialFocus}
             >
                 <Dialog.Header caption={caption} />
                 <Dialog.Body>
-                    <div className={b('content')} data-qa={EntryDialogQA.Content}>
+                    <div data-qa={EntryDialogQA.Content}>
                         {children ? (
                             children
                         ) : (
@@ -151,6 +160,7 @@ export class EntryDialogBase<T> extends React.Component<
                                 onChangeInput={this.onChangeInput}
                                 placeholder={placeholder}
                                 inactiveEntryKeys={inactiveEntryKeys}
+                                entryScope={this.props.entryScope}
                             />
                         )}
                         {warningMessage && (
@@ -163,7 +173,7 @@ export class EntryDialogBase<T> extends React.Component<
                 <Dialog.Footer
                     onClickButtonCancel={this.onClose}
                     onClickButtonApply={this.onApply}
-                    propsButtonApply={{qa: EntryDialogQA.Apply}}
+                    propsButtonApply={{qa: EntryDialogQA.Apply, view: confirmButtonView}}
                     textButtonApply={textButtonApply}
                     textButtonCancel={textButtonCancel}
                     loading={this.state.progress}

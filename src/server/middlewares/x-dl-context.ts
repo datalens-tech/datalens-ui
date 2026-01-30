@@ -10,7 +10,7 @@ import {
 
 type DlContext = Record<string, string | string[] | undefined>;
 
-export default function xDlContext({
+export function xDlContext({
     plugins = [],
 }: {
     plugins?: Array<(req: Request, context: DlContext) => DlContext>;

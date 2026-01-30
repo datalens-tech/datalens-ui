@@ -152,11 +152,9 @@ class DatasetItem extends React.Component<DatasetItemInnerProps> {
                     {isDatasetParameter && hasParameterChanged && (
                         <Popover
                             content={i18n('wizard', 'tooltip_parameter-changed-icon')}
-                            openOnHover={true}
                             hasArrow={false}
                             placement="bottom"
-                            tooltipOffset={[-5, 0]}
-                            size="s"
+                            offset={{mainAxis: -5, crossAxis: 0}}
                         >
                             {
                                 // title is made an empty string in order to override the parent title.

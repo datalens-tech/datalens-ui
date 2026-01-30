@@ -34,11 +34,13 @@ $fullscreenZIndex: 999;
 
     &_fullscreen {
         position: fixed;
-        width: 100%;
-        height: 100%;
+        width: 100vw;
+        height: 100dvh;
         left: 0;
-        top: 0;
+        top: var(--fullscreen-widget-top, 0);
+        background-color: var(--g-color-base-float);
         z-index: $fullscreenZIndex;
+        transform: translateY(var(--fullscreen-widget-transform-y, 0));
     }
 
     &__description {
@@ -76,8 +78,8 @@ $fullscreenZIndex: 999;
     &__chart-header {
         z-index: 2;
         position: absolute;
-        top: -4px;
-        right: 3px;
+        top: 8px;
+        right: 8px;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -95,6 +97,10 @@ $fullscreenZIndex: 999;
         &_hidden {
             opacity: 0;
             z-index: -1;
+        }
+
+        &_d3 {
+            overflow: hidden;
         }
     }
 
@@ -127,6 +133,11 @@ $fullscreenZIndex: 999;
         top: 0;
     }
 
+    & .chartkit-loader.chartkit-loader_widget .chartkit-loader__loader_compact {
+        right: 10px;
+        top: 7px;
+    }
+
     // for widgets-metrics indentation should be different
     #{$class}__body {
         padding: 0 var(--dl-dk-charts-padding) var(--dl-dk-charts-padding);
@@ -138,7 +149,7 @@ $fullscreenZIndex: 999;
             top: calc(-1 * var(--dl-dk-charts-tabs-height) + var(--dl-dk-header-offset));
         }
 
-        & .chartkit-loader__loader_compact {
+        & .chartkit-loader__loader_compact:not(.chartkit-loader_widget) {
             right: calc(-1 * var(--dl-dk-charts-padding));
             top: -44px;
         }
@@ -180,6 +191,10 @@ $fullscreenZIndex: 999;
 
     & .chartkit {
         --highcharts-series-border: var(--g-color-base-float);
+
+        .gcharts-chart {
+            --gcharts-data-labels: var(--g-color-text-complementary);
+        }
     }
 
     &_default-mobile {
@@ -201,7 +216,7 @@ $fullscreenZIndex: 999;
 
         // block below: without tabs, maps and metrics
 
-        .chartkit-loader__loader_compact {
+        .chartkit-loader:not(.chartkit-loader_widget) .chartkit-loader__loader_compact {
             top: -2px;
         }
 
@@ -210,62 +225,39 @@ $fullscreenZIndex: 999;
         #{$class}__container {
             padding-top: var(--dl-dk-charts-padding);
 
-            .chartkit-loader__loader_compact {
+            .chartkit-loader:not(.chartkit-loader_widget) .chartkit-loader__loader_compact {
                 top: calc(-1 * var(--dl-dk-charts-padding));
-            }
-
-            #{$class}__chart-header {
-                top: calc(-1 * var(--dl-dk-charts-padding) + var(--dl-dk-header-offset));
             }
         }
 
         #{$class}__container_table {
             padding-top: var(--dl-dk-table-padding);
-
-            #{$class}__chart-header {
-                top: calc(-1 * var(--dl-dk-table-padding) + var(--dl-dk-header-offset));
-            }
         }
 
         #{$class}__container_metric2 {
             padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
-
-            #{$class}__chart-header {
-                top: calc(-1 * var(--dl-dk-metric-padding) + var(--dl-dk-header-offset));
-            }
         }
 
         #{$class}__container_markup {
             padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
-
-            #{$class}__chart-header {
-                top: calc(-1 * var(--dl-dk-metric-padding) + var(--dl-dk-header-offset));
-            }
         }
 
         #{$class}__container_ymap {
             padding: 0;
-
-            #{$class}__chart-header {
-                top: calc(-1 * var(--dl-dk-map-padding) + var(--dl-dk-header-offset));
-            }
         }
     }
 
-    // Temporarily redefine styles and use similar with production (until designers process the ellipsis in CHARTS-5432)
-    &__container &__chart-header {
-        top: -4px;
-        right: 3px;
-    }
-    & .chartkit-loader__loader_compact {
+    & .chartkit-loader:not(.chartkit-loader_widget) .chartkit-loader__loader_compact {
         top: -35px;
         right: 35px;
     }
-    &__container_table .chartkit-loader__loader_compact {
+    &__container_table
+        .chartkit-loader:not(.chartkit-loader_widget)
+        .chartkit-loader__loader_compact {
         top: -46px;
         right: 12px;
     }
-    &_no-controls .chartkit-loader__loader_compact {
+    &_no-controls .chartkit-loader:not(.chartkit-loader_widget) .chartkit-loader__loader_compact {
         right: 15px;
     }
 }

@@ -1,15 +1,28 @@
 import type {ApplyData} from 'components/DialogFilter/DialogFilter';
+import type {CloseDialogAction, OpenDialogAction} from 'ui/store/actions/dialog';
+import type {EditHistoryAction} from 'ui/store/actions/editHistory';
 
 import type {
+    CollectionId,
+    ConnectionData,
     Dataset,
     DatasetAvatarRelation,
     DatasetField,
     DatasetSource,
     DatasetSourceAvatar,
     Permissions,
+    SourceListingOptions,
     WorkbookId,
 } from '../../../../../shared';
-import type {ValidateDatasetResponse} from '../../../../../shared/schema';
+import type {
+    BaseSource,
+    EntryFieldPublishedId,
+    GetEntryResponse,
+    FormOptions as SchemaFormOptions,
+    SharedEntryPermissions,
+    ValidateDatasetResponse,
+} from '../../../../../shared/schema';
+import type {EntryContentAction} from '../../../../store/actions/entryContent';
 import type {DatasetTab} from '../../constants';
 import type {
     ADD_AVATAR_PROTOTYPES,
@@ -55,16 +68,31 @@ import type {
     RELATION_UPDATE,
     RENAME_DATASET,
     RESET_DATASET_STATE,
+    SET_CONNECTIONS_DB_NAMES,
+    SET_CURRENT_DB_NAME,
     SET_CURRENT_TAB,
+    SET_DATASET_DELEGATION,
     SET_DATASET_REVISION_MISMATCH,
+    SET_DATA_EXPORT_ENABLED,
+    SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET,
+    SET_DESCRIPTION,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
     SET_IS_DATASET_CHANGED_FLAG,
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
+    SET_SELECTED_CONNECTION_DELEGATION,
+    SET_SOURCES_LISTING_OPTIONS,
+    SET_SOURCES_LISTING_OPTIONS_ERROR,
     SET_SOURCES_LOADING_ERROR,
+    SET_SOURCES_PAGINATION,
+    SET_SOURCES_SEARCH_LOADING,
+    SET_TEMPLATE_ENABLED,
+    SET_UPDATES,
     SET_VALIDATION_STATE,
+    SOURCES_NEXT_PAGE_REQUEST,
+    SOURCES_NEXT_PAGE_SUCCESS,
     SOURCES_REFRESH,
     SOURCE_ADD,
     SOURCE_DELETE,
@@ -74,6 +102,7 @@ import type {
     TOGGLE_FIELD_EDITOR_MODULE_LOADING,
     TOGGLE_LOAD_PREVIEW_BY_DEFAULT,
     TOGGLE_PREVIEW,
+    TOGGLE_SOURCES_LISTING_OPTIONS_LOADER,
     TOGGLE_SOURCES_LOADER,
     TOGGLE_VIEW_PREVIEW,
     UPDATE_FIELD,
@@ -85,50 +114,16 @@ import type {EDIT_HISTORY_OPTIONS_KEY} from '../constants';
 // TODO: correctly describe the type
 export type DatasetError = any | null;
 
-// TODO: add and take out above
-export type ConnectionEntry = {
+export type ConnectionEntry = GetEntryResponse & {
+    data: ConnectionData;
     id?: string;
     entryId: string;
     type: string;
     permissions?: Permissions;
     workbookId: WorkbookId;
+    deleted?: boolean;
+    db_type?: string;
 };
-
-export type BaseSource = {
-    connection_id: string;
-    disabled: boolean;
-    group: []; // TODO: correctly describe the type
-    is_ref: boolean;
-    parameter_hash: string;
-    parameters: {[k: string]: string};
-    ref_source_id: string | null;
-    source_type: string; // perhaps it will be necessary to clarify the type here
-    title: string;
-    managed_by?: 'user';
-};
-
-type FieldDocKey =
-    | 'CHYT_TABLE/table_name'
-    | 'CHYT_TABLE_LIST/table_names'
-    | 'CHYT_TABLE_LIST/title'
-    | 'CHYT_TABLE_RANGE/title'
-    | 'CHYT_USER_AUTH_TABLE_LIST/title'
-    | 'CHYT_USER_AUTH_TABLE_RANGE/title'
-    | 'CHYT_USER_AUTH_TABLE/table_name'
-    | 'CHYT_USER_AUTH_TABLE/table_names'
-    | 'CHYT_TABLE_RANGE/directory_path'
-    | 'CHYDB_TABLE/table_name'
-    | 'CHYDB_TABLE/ydb_database'
-    | 'ANY_SUBSELECT/subsql'
-    | 'CHYT_SUBSELECT/subsql'
-    | 'MSSQL_SUBSELECT/subsql'
-    | 'PG_SUBSELECT/subsql'
-    | 'YTsaurus/CHYT_TABLE/table_name'
-    | 'CHYT_YTSAURUS_TABLE_LIST/title'
-    | 'YTsaurus/CHYT_TABLE_LIST/table_names'
-    | 'CHYT_YTSAURUS_TABLE_RANGE/title'
-    | 'YTsaurus/CHYT_TABLE_RANGE/directory_path'
-    | 'YTsaurus/CHYT_SUBSELECT/subsql';
 
 export type TranslatedItem = {
     en: string;
@@ -137,36 +132,14 @@ export type TranslatedItem = {
 
 export type StandaloneSource = {id: string} & BaseSource;
 
-type BaseOptions = {
-    name: string;
-    default: string;
-    title: TranslatedItem;
-    required?: boolean;
-    field_doc_key?: FieldDocKey;
+export type SourcePrototype = DatasetSource & {
+    id?: string;
+    isSource?: boolean;
+    isConnectedWithAvatar?: boolean;
 };
 
-export type TextFormOptions = {input_type: 'text'} & BaseOptions;
-
-export type TextareaFormOptions = {input_type: 'textarea'} & BaseOptions;
-
-type SqlFormOptions = {input_type: 'sql'} & BaseOptions;
-
-export type SelectFormOptions = {
-    input_type: 'select';
-    select_options: string[];
-    select_allow_user_input: boolean;
-} & BaseOptions;
-
-export type FormOptions =
-    | TextFormOptions
-    | TextareaFormOptions
-    | SqlFormOptions
-    | SelectFormOptions;
-
-export type FreeformSource = {
-    form: FormOptions[];
-    tab_title: TranslatedItem;
-} & BaseSource;
+export type FormOptions = SchemaFormOptions;
+export type FreeformSource = BaseSource;
 
 export type EditHistoryOptions = {
     stacked?: boolean;
@@ -259,7 +232,19 @@ type UpdateConnection = {
     };
 };
 
-// TODO: the same type is in the scheme, it is necessary to sleep properly
+export type UpdateSetting = {
+    action: 'update_setting';
+    setting: {
+        name: 'load_preview_by_default' | 'template_enabled' | 'data_export_forbidden';
+        value: boolean;
+    };
+};
+
+export type UpdateDescription = {
+    action: 'update_description';
+    description: string;
+};
+
 export type Update =
     | AddFieldUpdate
     | DeleteFieldUpdate
@@ -273,22 +258,41 @@ export type Update =
     | DeleteSourceAvatarUpdate
     | DeleteSourceUpdate
     | UpdateConnection
-    | SourceRefreshUpdate;
+    | SourceRefreshUpdate
+    | UpdateSetting
+    | UpdateDescription;
 
 export type EditorItemToDisplay = 'fieldsId' | 'hiddenFields';
 
+export type SourcesPagination = {
+    page: number;
+    limit: number;
+    isFetchingNextPage: boolean;
+    isFinished: boolean;
+    searchValue: string;
+};
+
 export type DatasetReduxState = {
+    isRefetchingDataset: boolean;
     isLoading: boolean;
     isFavorite: boolean;
     isDatasetRevisionMismatch: boolean;
+    publishedId: EntryFieldPublishedId;
+    currentRevId: string | null;
     id: string;
     key: string;
     workbookId: WorkbookId;
+    collectionId: CollectionId;
     permissions?: Permissions;
+    fullPermissions?: SharedEntryPermissions;
     connection: ConnectionEntry | null;
     content: Partial<Dataset['dataset']>;
     prevContent: Partial<Dataset['dataset']>;
-    options: Dataset['options'] | object;
+    options: Partial<Dataset['options']>;
+    currentDbName?: string;
+    connectionsDbNames: Record<string, string[]>;
+    sourcesPagination: SourcesPagination;
+    sourceListingOptions?: SourceListingOptions['source_listing'];
     preview: {
         previewEnabled: boolean;
         readyPreview: 'loading' | 'failed' | null;
@@ -305,6 +309,7 @@ export type DatasetReduxState = {
         savingError: DatasetError;
         sourceLoadingError: DatasetError;
         validationError: DatasetError;
+        sourceListingOptionsError: DatasetError;
     };
     validation: {
         isLoading: boolean;
@@ -315,10 +320,11 @@ export type DatasetReduxState = {
         disabled: boolean;
         isProcessingSavingDataset: boolean;
         error: DatasetError;
+        delegationFromConnToSharedDataset: boolean | null;
     };
     types: {
-        // TODO: the same type is in the scheme, it is necessary to sleep properly
         data: {
+            title: string;
             name: string;
             aggregations: string[];
         }[];
@@ -326,9 +332,12 @@ export type DatasetReduxState = {
     };
     ui: {
         selectedConnectionId: string | null;
+        selectedConnectionDelegationStatus: boolean | null;
         isDatasetChanged: boolean;
         isFieldEditorModuleLoading: boolean;
         isSourcesLoading: boolean;
+        isSourcesSearchLoading: boolean;
+        isSourcesListingOptionsLoading: boolean;
     };
     editor: {
         filter: string;
@@ -337,11 +346,12 @@ export type DatasetReduxState = {
     updates: Update[];
     freeformSources: FreeformSource[];
     selectedConnections: ConnectionEntry[];
-    sourcePrototypes: BaseSource[];
+    sourcePrototypes: SourcePrototype[];
     sourceTemplate: FreeformSource | null; // TODO: abandon this thing in favor of freeformSources
     error: DatasetError;
     currentTab: DatasetTab;
     lastModifiedTab?: DatasetTab;
+    isDelegated?: boolean;
 };
 
 type SetFreeformSources = {
@@ -364,10 +374,24 @@ type SetSourcesLoadingError = {
     };
 };
 
+type SetSourcesListingOptionsError = {
+    type: typeof SET_SOURCES_LISTING_OPTIONS_ERROR;
+    payload: {
+        error: DatasetError;
+    };
+};
+
 type ToggleSourcesLoader = {
     type: typeof TOGGLE_SOURCES_LOADER;
     payload: {
         isSourcesLoading: boolean;
+    };
+};
+
+type ToggleSourcesListingOptionsLoader = {
+    type: typeof TOGGLE_SOURCES_LISTING_OPTIONS_LOADER;
+    payload: {
+        isLoading: boolean;
     };
 };
 
@@ -389,7 +413,7 @@ type AddAvatarPrototypes = {
     type: typeof ADD_AVATAR_PROTOTYPES;
     payload: {
         list: BaseSource[];
-        templates: FreeformSource;
+        templates: FreeformSource | null;
     };
 };
 
@@ -540,21 +564,21 @@ type InitializeDataset = {
     type: typeof INITIALIZE_DATASET;
 };
 
-type DeleteObligatoryFilter = {
+export type DeleteObligatoryFilter = {
     type: typeof DELETE_OBLIGATORY_FILTER;
     payload: {
         id: string;
     } & EditHistoryOptionsProperty;
 };
 
-type UpdateObligatoryFilter = {
+export type UpdateObligatoryFilter = {
     type: typeof UPDATE_OBLIGATORY_FILTER;
     payload: {
         filter: ApplyData;
     } & EditHistoryOptionsProperty;
 };
 
-type AddObligatoryFilter = {
+export type AddObligatoryFilter = {
     type: typeof ADD_OBLIGATORY_FILTER;
     payload: {
         filter: ApplyData;
@@ -683,6 +707,9 @@ type DatasetSaveRequest = {
 
 type DatasetSaveSuccess = {
     type: typeof DATASET_SAVE_SUCCESS;
+    payload: {
+        publishedId?: EntryFieldPublishedId;
+    };
 };
 
 type DatasetSaveFailure = {
@@ -699,7 +726,13 @@ type DatasetInitialFetchRequest = {
 type DatasetInitialFetchSuccess = {
     type: typeof DATASET_INITIAL_FETCH_SUCCESS;
     payload: {
-        dataset: Dataset & {connection: ConnectionEntry | null};
+        dataset: Dataset & {
+            connection?: ConnectionEntry | null;
+        };
+        isDelegated: boolean | undefined;
+        publishedId: EntryFieldPublishedId;
+        currentRevId: string | null;
+        collectionId: CollectionId;
     };
 };
 
@@ -732,12 +765,10 @@ type FieldTypesFetchSuccess = {
     type: typeof FIELD_TYPES_FETCH_SUCCESS;
     payload: {
         types: {
-            data: {
-                name: string;
-                aggregations: string[];
-            }[];
-            error: DatasetError;
-        };
+            title: string;
+            name: string;
+            aggregations: string[];
+        }[];
     };
 };
 
@@ -786,6 +817,81 @@ export type SetValidationState = {
     payload: {
         validation: Partial<DatasetReduxState['validation']>;
     };
+};
+
+export type SetTemplateEnabled = {
+    type: typeof SET_TEMPLATE_ENABLED;
+    payload: {
+        templateEnabled: boolean;
+    } & EditHistoryOptionsProperty;
+};
+
+export type SetDataExportEnabled = {
+    type: typeof SET_DATA_EXPORT_ENABLED;
+    payload: {
+        dataExportEnabled: boolean;
+    } & EditHistoryOptionsProperty;
+};
+
+type SetUpdates = {
+    type: typeof SET_UPDATES;
+    payload: {
+        updates: Update[];
+    } & EditHistoryOptionsProperty;
+};
+
+type SetDescription = {
+    type: typeof SET_DESCRIPTION;
+    payload: string;
+};
+
+type SetConnectionDbNames = {
+    type: typeof SET_CONNECTIONS_DB_NAMES;
+    payload: Record<string, string[]>;
+};
+
+export type SetCurrentDbName = {
+    type: typeof SET_CURRENT_DB_NAME;
+    payload: string;
+};
+
+export type SetSourcesPagination = {
+    type: typeof SET_SOURCES_PAGINATION;
+    payload: Partial<SourcesPagination>;
+};
+
+type SourcesNextPageRequest = {
+    type: typeof SOURCES_NEXT_PAGE_REQUEST;
+};
+
+type SourcesNextPageSuccess = {
+    type: typeof SOURCES_NEXT_PAGE_SUCCESS;
+    payload: BaseSource[];
+};
+
+type SetSourcesSearchLoading = {
+    type: typeof SET_SOURCES_SEARCH_LOADING;
+    payload: boolean;
+};
+
+type SetSourcesListingOptions = {
+    type: typeof SET_SOURCES_LISTING_OPTIONS;
+    payload: SourceListingOptions['source_listing'];
+};
+
+export type SetDelegationFromConnToSharedDataset = {
+    type: typeof SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET;
+    payload: boolean | null;
+};
+
+export type SetSelectedConnectionDelegation = {
+    type: typeof SET_SELECTED_CONNECTION_DELEGATION;
+    payload: boolean | null;
+};
+
+export type SetDatasetDelegation = {
+    type: typeof SET_DATASET_DELEGATION;
+    payload: boolean;
 };
 
 export type DatasetReduxAction =
@@ -855,4 +961,24 @@ export type DatasetReduxAction =
     | SetEditHistoryState
     | SetCurrentTab
     | SetLastModifiedTab
-    | SetValidationState;
+    | SetValidationState
+    | SetTemplateEnabled
+    | SetDataExportEnabled
+    | SetUpdates
+    | SetDescription
+    | SetConnectionDbNames
+    | SetCurrentDbName
+    | SetSourcesPagination
+    | SourcesNextPageRequest
+    | SourcesNextPageSuccess
+    | SetSourcesSearchLoading
+    | EntryContentAction
+    | SetSourcesListingOptions
+    | SetSourcesListingOptionsError
+    | ToggleSourcesListingOptionsLoader
+    | SetDelegationFromConnToSharedDataset
+    | SetSelectedConnectionDelegation
+    | OpenDialogAction
+    | CloseDialogAction
+    | SetDatasetDelegation
+    | EditHistoryAction;

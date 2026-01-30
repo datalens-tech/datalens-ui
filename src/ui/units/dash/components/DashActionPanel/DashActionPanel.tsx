@@ -13,6 +13,7 @@ import type {DatalensGlobalState, EntryDialogues} from 'ui';
 import {ActionPanel, DL, EntryDialogName, EntryDialogResolveStatus} from 'ui';
 import {registry} from 'ui/registry';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'ui/store/actions/dialog';
+import {goBack, goForward} from 'ui/store/actions/editHistory';
 import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {isDraftVersion} from 'ui/utils/revisions';
@@ -29,6 +30,7 @@ import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {ICONS_MENU_DEFAULT_SIZE} from '../../../../libs/DatalensChartkit/menu/MenuItems';
 import navigateHelper from '../../../../libs/navigateHelper';
 import {isEmbeddedMode} from '../../../../utils/embedded';
+import {WidgetMetaContext} from '../../contexts/WidgetMetaContext';
 import {
     saveDashAsDraft,
     saveDashAsNewDash,
@@ -41,10 +43,13 @@ import {
 } from '../../store/actions/dashTyped';
 import {isDeprecatedDashData} from '../../store/actions/helpers';
 import {openEmptyDialogRelations} from '../../store/actions/relations/actions';
+import {DASH_EDIT_HISTORY_UNIT_ID} from '../../store/constants';
 import {
     selectDashAccessDescription,
+    selectDashDescription,
     selectDashShowOpenedDescription,
     selectLoadingEditMode,
+    selectSettings,
     selectStateMode,
 } from '../../store/selectors/dashTypedSelectors';
 import type {DashEntry} from '../../typings/entry';
@@ -67,6 +72,8 @@ type OwnProps = {
     canEdit: boolean;
     isEditMode: boolean;
     isDraft: boolean;
+    canGoBack: boolean;
+    canGoForward: boolean;
     hasTableOfContent: boolean;
     history: History;
     location: Location;
@@ -82,12 +89,19 @@ export type ActionPanelProps = OwnProps & StateProps & DispatchProps;
 type ActionPanelState = {};
 
 class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelState> {
+    static contextType = WidgetMetaContext;
+
+    declare context: React.ContextType<typeof WidgetMetaContext>;
+
     render() {
         const {entry, isEditMode} = this.props;
         const showHeader = !isEmbeddedMode();
         const enablePublish = isEnabledFeature(Feature.EnablePublishEntry) && !entry?.fake;
 
         const DashSelectState = registry.dash.components.get('DashSelectState');
+        const DashActionPanelAdditionalButtons = registry.dash.components.get(
+            'DashActionPanelAdditionalButtons',
+        );
 
         let deprecationWarning = null;
         if (this.isDeprecated()) {
@@ -105,6 +119,11 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                             entry={entry as GetEntryResponse}
                             additionalEntryItems={this.getAdditionalEntryItems()}
                             rightItems={[
+                                <DashActionPanelAdditionalButtons
+                                    key="additional-buttons"
+                                    dashSettings={this.props.settings}
+                                    isEditMode={this.props.isEditMode}
+                                />,
                                 <div className={b('controls')} key="controls">
                                     {this.renderControls()}
                                 </div>,
@@ -141,12 +160,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 onSaveAsNewClick={this.handlerSaveAsNewClick}
                 onCancelClick={this.handlerCancelEditClick}
                 onOpenDialogSettingsClick={this.openDialogSettings}
-                onOpenDialogConnectionsClick={
-                    !isEnabledFeature(Feature.HideOldRelations) ||
-                    isEnabledFeature(Feature.ShowNewRelationsButton)
-                        ? this.openDialogConnections
-                        : undefined
-                }
+                onOpenDialogConnectionsClick={this.openDialogConnections}
                 onOpenDialogTabsClick={this.openDialogTabs}
                 entryDialoguesRef={this.props.entryDialoguesRef}
                 isDraft={this.props.isDraft}
@@ -154,6 +168,10 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 loading={this.props.progress || this.props.isLoadingEditMode}
                 showCancel={!entry?.fake}
                 showSaveDropdown={!entry?.fake}
+                canGoBack={this.props.canGoBack}
+                canGoForward={this.props.canGoForward}
+                onGoBack={this.handleGoBack}
+                onGoForward={this.handleGoForward}
             />
         ) : (
             <ViewControls
@@ -170,13 +188,12 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     }
 
     openDialogSettings = () => this.props.openDialog(DIALOG_TYPE.SETTINGS);
-    openDialogConnections = () => {
-        if (isEnabledFeature(Feature.ShowNewRelationsButton)) {
-            this.props.openEmptyDialogRelations();
-        } else if (!isEnabledFeature(Feature.HideOldRelations)) {
-            this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
-        }
-    };
+
+    openDialogConnections = () =>
+        this.props.openEmptyDialogRelations({
+            loadHiddenWidgetMeta: this.context?.loadHiddenWidgetMeta,
+        });
+
     openDialogTabs = () => this.props.openDialog(DIALOG_TYPE.TABS);
 
     openDialogAccess = () => {
@@ -282,6 +299,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         const getSelectStateMenuItemFn = registry.common.functions.get('getSelectStateMenuItem');
 
         const selectStateMenuItem = getSelectStateMenuItemFn({
+            entry,
             action: this.onSelectStateClick,
             hidden: !canEdit || !isCurrentRevisionActual || DL.IS_MOBILE || Boolean(entry?.fake),
         });
@@ -310,6 +328,17 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         this.props.toggleTableOfContent();
     };
 
+    private handleGoBack = () => {
+        if (this.props.canGoBack) {
+            this.props.goBack({unitId: DASH_EDIT_HISTORY_UNIT_ID});
+        }
+    };
+    private handleGoForward = () => {
+        if (this.props.canGoForward) {
+            this.props.goForward({unitId: DASH_EDIT_HISTORY_UNIT_ID});
+        }
+    };
+
     private handleSaveDash = async () => {
         const {entry, data} = this.props.dashEntry;
         const {getDashEntryUrl} = registry.dash.functions.getAll();
@@ -320,6 +349,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 workbookId: entry?.workbookId,
                 initDestination: Utils.getPathBefore({path: entry.key}),
                 data,
+                annotation: {description: this.props.description},
             },
         });
 
@@ -345,6 +375,8 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         isSelectStateMode: selectStateMode(state),
         accessDescription: selectDashAccessDescription(state),
         showOpenedDescription: selectDashShowOpenedDescription(state),
+        description: selectDashDescription(state),
+        settings: selectSettings(state),
     };
 };
 
@@ -360,6 +392,8 @@ const mapDispatchToProps = {
     openDialogConfirm,
     openEmptyDialogRelations,
     closeDialogConfirm,
+    goBack,
+    goForward,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashActionPanel);

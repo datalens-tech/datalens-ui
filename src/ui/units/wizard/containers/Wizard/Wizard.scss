@@ -39,7 +39,7 @@
         height: calc(100vh - 70px - #{$actionPanelHeight});
 
         &_aside-true {
-            height: calc(100vh - #{$actionPanelHeight} - var(--gn-aside-top-panel-height));
+            height: calc(100vh - #{$actionPanelHeight} - var(--gn-top-alert-height));
         }
 
         .column {
@@ -55,7 +55,7 @@
 
             overflow-x: hidden;
 
-            .container {
+            .datasets-container {
                 .actions-container {
                     border-bottom: 1px solid var(--g-color-line-generic);
 

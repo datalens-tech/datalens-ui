@@ -36,7 +36,7 @@ export const checkEntryActivity = (
 };
 
 export const getPathDisplayName = ({path}: {path: string}) => {
-    const name = getEntryNameByKey({key: path, index: -1});
+    const name = getEntryNameByKey({key: path});
     return name === '' ? i18n('switch_root') : name;
 };
 

@@ -1,6 +1,6 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import jwt from 'jsonwebtoken';
-import {isObject} from 'lodash';
+import isObject from 'lodash/isObject';
 
 import {DL_EMBED_TOKEN_HEADER, EntryScope, ErrorCode} from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';

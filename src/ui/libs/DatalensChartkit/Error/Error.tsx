@@ -90,7 +90,6 @@ const ChartKitError: React.FC<any> = (props) => {
     const showMore = more || extraParams.showMore;
     const showRetry = !hideRetry;
     const showControls = !noControls && !isEmbeddedEntry() && (showMore || showRetry);
-    const hideDebug = hideDebugInfo || isEmbeddedEntry();
     let showSourceDetails = true;
 
     const expandMore = more && (openedMore || noControls);
@@ -309,7 +308,7 @@ const ChartKitError: React.FC<any> = (props) => {
                     )}
                 </div>
             )}
-            {!hideDebug && (
+            {!hideDebugInfo && (
                 <React.Fragment>
                     {requestId && (
                         <div className={b('request-id')}>{`Request-ID: ${requestId}`}</div>

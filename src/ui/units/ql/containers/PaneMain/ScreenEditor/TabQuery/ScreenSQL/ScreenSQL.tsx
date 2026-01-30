@@ -1,9 +1,8 @@
-import {QL_LANGUAGE_ID} from 'constants/index';
-
 import React from 'react';
 
 import block from 'bem-cn-lite';
 import {registerDatalensQLLanguage, setDatalensQLLanguageConfiguration} from 'libs/monaco';
+import debounce from 'lodash/debounce';
 import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
@@ -11,6 +10,7 @@ import {compose} from 'recompose';
 import type {QlConfig} from 'shared/types/config/ql';
 import type {DatalensGlobalState, EntryDialogues, MonacoProps, MonacoTypes} from 'ui';
 import {EntryDialogName, EntryDialogResolveStatus, Monaco} from 'ui';
+import {QL_LANGUAGE_ID} from 'ui/constants/index';
 import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
 import {QL_EDIT_HISTORY_UNIT_ID} from 'ui/units/ql/constants';
 import {prepareChartDataBeforeSave} from 'units/ql/modules/helpers';
@@ -62,6 +62,29 @@ interface ScreenSQLState {
 class ScreenSQL extends React.PureComponent<ScreenSQLInnerProps, ScreenSQLState> {
     monaco: typeof MonacoTypes | null = null;
 
+    private updateAutocomplete = debounce(async () => {
+        const {connectionSourcesSchemas, connectionSources} = this.props;
+
+        const usedTablesNames = this.identifyTableNames();
+        const tablesList = connectionSources;
+
+        let fieldsList: Record<string, string>[] = [];
+
+        usedTablesNames.forEach(async (tableName) => {
+            if (connectionSourcesSchemas[tableName]) {
+                fieldsList = [...fieldsList, ...connectionSourcesSchemas[tableName]];
+            } else {
+                const schema = await this.props.fetchConnectionSourceSchema({tableName});
+
+                if (Array.isArray(schema)) {
+                    fieldsList = [...fieldsList, ...schema];
+                }
+            }
+        });
+
+        setDatalensQLLanguageConfiguration(this.monaco!, fieldsList, tablesList);
+    }, 200);
+
     constructor(props: ScreenSQLInnerProps) {
         super(props);
 
@@ -98,36 +121,13 @@ class ScreenSQL extends React.PureComponent<ScreenSQLInnerProps, ScreenSQLState>
                             glyphMargin: true,
                             hideCursorInOverviewRuler: true,
                             lineNumbersMinChars: 1,
-                            wordWrap: 'bounded',
+                            wordWrap: 'on',
                         }}
                         onChange={this.onQueryChange}
                     />
                 </div>
             </React.Fragment>
         );
-    };
-
-    private updateAutocomplete = async () => {
-        const {connectionSourcesSchemas, connectionSources} = this.props;
-
-        const usedTablesNames = this.identifyTableNames();
-        const tablesList = connectionSources;
-
-        let fieldsList: Record<string, string>[] = [];
-
-        usedTablesNames.forEach(async (tableName) => {
-            if (connectionSourcesSchemas[tableName]) {
-                fieldsList = [...fieldsList, ...connectionSourcesSchemas[tableName]];
-            } else {
-                const schema = await this.props.fetchConnectionSourceSchema({tableName});
-
-                if (Array.isArray(schema)) {
-                    fieldsList = [...fieldsList, ...schema];
-                }
-            }
-        });
-
-        setDatalensQLLanguageConfiguration(this.monaco!, fieldsList, tablesList);
     };
 
     private identifyTableNames = () => {

@@ -26,11 +26,14 @@ import history from '../../utils/history';
 
 import {RevisionsList} from './RevisionsList/RevisionsList';
 import {REVISIONS_LIST_DEBOUNCE_DELAY} from './helpers';
+import type {GetRevisionMenuItems, GetRevisionRowExtendedProps} from './types';
 
 import './Revisions.scss';
 
 export interface OwnProps extends RouteComponentProps {
     renderItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
+    getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
+    getContextMenuItems?: GetRevisionMenuItems;
 }
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -91,8 +94,14 @@ class Revisions extends React.Component<Props, State> {
     }
 
     render() {
-        const {entryContent, entryContentCurrentRevId, revisionsItems, renderItemActions} =
-            this.props;
+        const {
+            entryContent,
+            entryContentCurrentRevId,
+            revisionsItems,
+            renderItemActions,
+            getRevisionRowExtendedProps,
+            getContextMenuItems,
+        } = this.props;
         const {status} = this.state;
 
         if (status === Status.Loading) {
@@ -129,6 +138,8 @@ class Revisions extends React.Component<Props, State> {
                             onItemClick={handlerItemClick}
                             currentRevId={entryContentCurrentRevId}
                             renderItemActions={renderItemActions}
+                            getRevisionRowExtendedProps={getRevisionRowExtendedProps}
+                            getContextMenuItems={getContextMenuItems}
                         />
                         {this.state.loadMore && (
                             <div className={b('loader-wrap')} data-qa="revisions-loader">
@@ -194,6 +205,7 @@ class Revisions extends React.Component<Props, State> {
         setCurrentRevId(revId);
 
         const searchParams = new URLSearchParams(location.search);
+        searchParams.delete(URL_QUERY.UNRELEASED);
         if (revId === actualRevId) {
             searchParams.delete(URL_QUERY.REV_ID);
         } else {

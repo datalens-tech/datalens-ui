@@ -1,20 +1,10 @@
-import {DEFAULT_GROUP} from '@gravity-ui/dashkit/helpers';
 import {i18n} from 'i18n';
 import update from 'immutability-helper';
 import {isNumber} from 'lodash';
-import type {
-    DashData,
-    DashTab,
-    DashTabItem,
-    DashTabItemBase,
-    DashTabItemWidgetTab,
-    DashTabLayout,
-} from 'shared';
-import {DashTabItemType} from 'shared';
-import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
+import type {DashData, DashTab, DashTabItem, DashTabItemBase, DashTabItemWidgetTab} from 'shared';
+import {DashTabItemType, getAllTabItems} from 'shared';
 
 import {getTextOverflowedStr} from '../../../../../../utils/stringUtils';
-import {getLayoutMap, sortByOrderIdOrLayoutComparator} from '../../../../modules/helpers';
 
 const MAX_ROW_WIDGET_TEXT_LENGTH = 100;
 
@@ -81,73 +71,6 @@ export const addOrderIds = (items: Array<DashTabItem>, fieldName: keyof DashTabI
     }) as Array<DashTabItem>;
 };
 
-export const getPreparedItems = (items: Array<DashTabItem>, layout: Array<DashTabLayout>) => {
-    const [layoutMap, layoutColumns] = getLayoutMap(layout);
-
-    const sortedItems = items.sort((a, b) =>
-        sortByOrderIdOrLayoutComparator(a, b, layoutMap, layoutColumns),
-    );
-
-    return sortedItems.map((item, index) => {
-        return {
-            ...item,
-            orderId: index,
-            defaultOrderId: index,
-        };
-    });
-};
-
-export const getGroupedItems = (items: Array<DashTabItem>, layout: Array<DashTabLayout>) => {
-    const preparedItems = getPreparedItems(items, layout);
-
-    const itemsCountByParent = {
-        [FIXED_GROUP_HEADER_ID]: 0,
-        [FIXED_GROUP_CONTAINER_ID]: 0,
-        [DEFAULT_GROUP]: 0,
-    };
-    const parentByItem = layout.reduce<Record<string, string>>((memo, item) => {
-        const parent = item.parent ?? DEFAULT_GROUP;
-
-        if (parent in itemsCountByParent) {
-            itemsCountByParent[parent as keyof typeof itemsCountByParent]++;
-        }
-
-        memo[item.i] = parent;
-
-        return memo;
-    }, {});
-
-    const getItemOrder = (item: DashTabItem, index: number) => {
-        const parent = parentByItem[item.id];
-
-        if (parent === FIXED_GROUP_HEADER_ID) {
-            return index;
-        } else if (parent === FIXED_GROUP_CONTAINER_ID) {
-            return index + itemsCountByParent[FIXED_GROUP_HEADER_ID];
-        } else {
-            return (
-                index +
-                itemsCountByParent[FIXED_GROUP_HEADER_ID] +
-                itemsCountByParent[FIXED_GROUP_CONTAINER_ID]
-            );
-        }
-    };
-
-    return [FIXED_GROUP_HEADER_ID, FIXED_GROUP_CONTAINER_ID, DEFAULT_GROUP].map((group) => {
-        return preparedItems
-            .filter((item) => parentByItem[item.id] === group)
-            .map((item, index) => {
-                const orderId = getItemOrder(item, index);
-
-                return {
-                    ...item,
-                    orderId,
-                    defaultOrderId: orderId,
-                };
-            });
-    });
-};
-
 export const getUpdatedItems = ({
     items,
     dragItem,
@@ -177,7 +100,7 @@ interface MappedItem {
 }
 
 const getMapped = (data: DashTab, id: string) =>
-    data.items.map((item) => ({
+    getAllTabItems(data).map((item) => ({
         tabId: id,
         id: item.id,
         orderId: item.orderId,

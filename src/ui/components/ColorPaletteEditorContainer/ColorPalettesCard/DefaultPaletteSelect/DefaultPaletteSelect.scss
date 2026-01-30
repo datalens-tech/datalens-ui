@@ -1,0 +1,7 @@
+@import '../../../../styles/mixins.scss';
+
+.default-color-palette-select {
+    &__select {
+        min-width: 200px;
+    }
+}

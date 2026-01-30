@@ -34,7 +34,6 @@ import {TableFooter} from './TableFooter';
 import {TableHead} from './TableHead';
 import type {TData} from './types';
 import {usePreparedTableData} from './usePreparedTableData';
-import {useTableHeight} from './useTableHeight';
 import {getTableTitle} from './utils';
 
 import './Table.scss';
@@ -47,6 +46,8 @@ type Props = {
     onChangeParams?: (params: StringParams) => void;
     onReady?: () => void;
     backgroundColor?: string;
+    disableCellFormatting?: boolean;
+    emptyDataMessage?: string;
 };
 
 export const Table = React.memo<Props>((props: Props) => {
@@ -56,6 +57,8 @@ export const Table = React.memo<Props>((props: Props) => {
         onChangeParams,
         onReady,
         backgroundColor,
+        disableCellFormatting = false,
+        emptyDataMessage,
     } = props;
     const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
     const title = getTableTitle(config);
@@ -167,21 +170,18 @@ export const Table = React.memo<Props>((props: Props) => {
         cellMinSizes,
         sortingState: initialSortingState,
         backgroundColor,
+        preserveWhiteSpace: config?.preserveWhiteSpace,
+        disableCellFormatting,
     });
 
+    const noData = !props.widgetData.data?.head?.length;
     React.useEffect(() => {
-        if (onReady && cellMinSizes) {
+        if (onReady && (cellMinSizes || noData)) {
             setTimeout(onReady, 0);
         }
-    }, [onReady, cellMinSizes]);
+    }, [onReady, cellMinSizes, noData]);
 
     const highlightRows = get(config, 'settings.highlightRows') ?? !hasGroups(data.head);
-    const tableActualHeight = useTableHeight({
-        ref: tableRef,
-        ready: Boolean(cellMinSizes),
-        totalSize,
-    });
-    const noData = !props.widgetData.data?.head?.length;
 
     const handleCellClick = React.useCallback(
         (event: React.MouseEvent, cellData: unknown, rowId: string) => {
@@ -252,6 +252,16 @@ export const Table = React.memo<Props>((props: Props) => {
         [changeParams],
     );
 
+    const tableStyle: React.CSSProperties = React.useMemo(() => {
+        const style: React.CSSProperties = {minHeight: totalSize};
+
+        if (config?.preserveWhiteSpace) {
+            style.whiteSpace = 'pre-wrap';
+        }
+
+        return style;
+    }, [totalSize, config?.preserveWhiteSpace]);
+
     return (
         <React.Fragment>
             <div
@@ -265,15 +275,11 @@ export const Table = React.memo<Props>((props: Props) => {
                 <div className={b('table-wrapper', {'highlight-rows': highlightRows, size})}>
                     {noData && (
                         <div className={b('no-data')}>
-                            {i18n('chartkit-table', 'message-no-data')}
+                            {emptyDataMessage || i18n('chartkit-table', 'message-no-data')}
                         </div>
                     )}
                     {!noData && (
-                        <table
-                            className={b({prepared: true})}
-                            style={{minHeight: totalSize}}
-                            ref={tableRef}
-                        >
+                        <table className={b({prepared: true})} style={tableStyle} ref={tableRef}>
                             {colgroup && (
                                 <colgroup>
                                     {colgroup.map((col, index) => (
@@ -287,7 +293,6 @@ export const Table = React.memo<Props>((props: Props) => {
                                         sticky={true}
                                         rows={header.rows}
                                         style={header.style}
-                                        tableHeight={tableActualHeight}
                                     />
                                     <TableBody
                                         rows={body.rows}
@@ -322,6 +327,7 @@ export const Table = React.memo<Props>((props: Props) => {
                 }}
                 size={size}
                 width={config?.settings?.width ?? 'auto'}
+                preserveWhiteSpace={config?.preserveWhiteSpace}
             />
         </React.Fragment>
     );

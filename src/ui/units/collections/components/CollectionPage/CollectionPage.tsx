@@ -2,15 +2,16 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
-import {useHistory, useParams} from 'react-router-dom';
-import {Feature} from 'shared';
+import type {RouteComponentProps} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
+import {CollectionItemEntities, EntryScope, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
+import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {CollectionFilters} from '../../../../components/CollectionFilters';
 import {
-    DIALOG_CREATE_WORKBOOK,
     DIALOG_DELETE_COLLECTIONS_WORKBOOKS,
     DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
     DIALOG_NO_CREATE_COLLECTION_PERMISSION,
@@ -19,8 +20,8 @@ import {ViewError} from '../../../../components/ViewError/ViewError';
 import type {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
-import {WORKBOOKS_PATH} from '../../../collections-navigation/constants';
 import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
+import {useRefreshPageAfterImport} from '../../hooks/useRefreshPageAfterImport';
 import {
     selectCollection,
     selectCollectionError,
@@ -31,16 +32,15 @@ import {CollectionContent} from '../CollectionContent';
 import {DEFAULT_FILTERS} from '../constants';
 
 import {useData, useFilters, useLayout, useSelection, useViewMode} from './hooks';
+import {useOpenCreateWorkbookDialog} from './hooks/useOpenCreateWorkbookDialog';
 
 import './CollectionPage.scss';
 
 const b = block('dl-collection-page');
 
-export const CollectionPage = () => {
+export const CollectionPage = (props: RouteComponentProps) => {
     const {collectionId} = useParams<{collectionId?: string}>();
     const curCollectionId = collectionId ?? null;
-
-    const history = useHistory();
 
     const dispatch: AppDispatch = useDispatch();
 
@@ -82,6 +82,19 @@ export const CollectionPage = () => {
             filters,
         });
 
+    const {refreshPageAfterImport} = useRefreshPageAfterImport({refreshPage});
+
+    const {useCreateWorkbookDialogHandlers} = registry.collections.functions.getAll();
+    const {handleOpenCreateDialog, handleOpenCreateDialogWithConnection} =
+        useCreateWorkbookDialogHandlers();
+
+    const handleCreateDialogAction = React.useCallback(() => {
+        handleOpenCreateDialog('default', {refreshPageAfterImport, initialImportStatus: null});
+    }, [handleOpenCreateDialog, refreshPageAfterImport]);
+
+    const {search} = props.location;
+    useOpenCreateWorkbookDialog({search, refreshPageAfterImport});
+
     const handeCloseMoveDialog = React.useCallback(
         (structureChanged: boolean) => {
             if (structureChanged) {
@@ -91,26 +104,6 @@ export const CollectionPage = () => {
         },
         [dispatch, refreshPage],
     );
-
-    const handleCreateWorkbook = React.useCallback(() => {
-        dispatch(
-            openDialog({
-                id: DIALOG_CREATE_WORKBOOK,
-                props: {
-                    open: true,
-                    collectionId: curCollectionId,
-                    onApply: (result) => {
-                        if (result) {
-                            history.push(`${WORKBOOKS_PATH}/${result.workbookId}`);
-                        }
-                    },
-                    onClose: () => {
-                        dispatch(closeDialog());
-                    },
-                },
-            }),
-        );
-    }, [curCollectionId, dispatch, history]);
 
     const handleShowNoPermissionsDialog = React.useCallback(() => {
         dispatch(
@@ -126,36 +119,19 @@ export const CollectionPage = () => {
         );
     }, [dispatch]);
 
-    const handleCreateWorkbookWithConnection = React.useCallback(() => {
-        dispatch(
-            openDialog({
-                id: DIALOG_CREATE_WORKBOOK,
-                props: {
-                    open: true,
-                    collectionId: curCollectionId,
-                    onApply: (result) => {
-                        if (result) {
-                            history.push(`${WORKBOOKS_PATH}/${result.workbookId}/connections/new`);
-                        }
-                    },
-                    onClose: () => {
-                        dispatch(closeDialog());
-                    },
-                },
-            }),
-        );
-    }, [curCollectionId, dispatch, history]);
-
     const handleMoveSelectedEntities = React.useCallback(() => {
         const workbookIds: string[] = [];
         const collectionIds: string[] = [];
+        const entryIds: string[] = [];
 
         Object.keys(selectedMapWithMovePermission).forEach((key) => {
             const type = selectedMap[key];
-            if (type === 'workbook') {
+            if (type === CollectionItemEntities.WORKBOOK) {
                 workbookIds.push(key);
-            } else {
+            } else if (type === CollectionItemEntities.COLLECTION) {
                 collectionIds.push(key);
+            } else if (type === CollectionItemEntities.ENTRY) {
+                entryIds.push(key);
             }
         });
 
@@ -173,6 +149,7 @@ export const CollectionPage = () => {
                     initialParentId: collection?.collectionId,
                     workbookIds,
                     collectionIds,
+                    entryIds,
                 },
             }),
         );
@@ -192,18 +169,34 @@ export const CollectionPage = () => {
         const workbookTitles: string[] = [];
         const collectionIds: string[] = [];
         const collectionTitles: string[] = [];
+        const entryIds: string[] = [];
+        const datasetTitles: string[] = [];
+        const connectionTitles: string[] = [];
 
         items.forEach((item) => {
-            if ('workbookId' in item && selectedMapWithDeletePermission[item.workbookId]) {
+            if (
+                item.entity === CollectionItemEntities.WORKBOOK &&
+                selectedMapWithDeletePermission[item.workbookId]
+            ) {
                 workbookIds.push(item.workbookId);
                 workbookTitles.push(item.title);
             } else if (
-                'collectionId' in item &&
+                item.entity === CollectionItemEntities.COLLECTION &&
                 item.collectionId &&
                 selectedMapWithDeletePermission[item.collectionId]
             ) {
                 collectionIds.push(item.collectionId);
                 collectionTitles.push(item.title);
+            } else if (
+                item.entity === CollectionItemEntities.ENTRY &&
+                selectedMapWithDeletePermission[item.entryId]
+            ) {
+                if (item.scope === EntryScope.Dataset) {
+                    datasetTitles.push(item.title);
+                } else if (item.scope === EntryScope.Connection) {
+                    connectionTitles.push(item.title);
+                }
+                entryIds.push(item.entryId);
             }
         });
 
@@ -222,6 +215,9 @@ export const CollectionPage = () => {
                     collectionTitles,
                     workbookIds,
                     workbookTitles,
+                    datasetTitles,
+                    connectionTitles,
+                    entryIds,
                 },
             }),
         );
@@ -260,7 +256,7 @@ export const CollectionPage = () => {
         fetchCollectionInfo,
         fetchStructureItems,
         handleCreateWorkbook: hasPermissionToCreate
-            ? handleCreateWorkbook
+            ? handleCreateDialogAction
             : handleShowNoPermissionsDialog,
         handeCloseMoveDialog,
         updateAllCheckboxes,
@@ -315,7 +311,7 @@ export const CollectionPage = () => {
                     onCloseMoveDialog={handeCloseMoveDialog}
                     onCreateWorkbookWithConnectionClick={
                         hasPermissionToCreate
-                            ? handleCreateWorkbookWithConnection
+                            ? handleOpenCreateDialogWithConnection
                             : handleShowNoPermissionsDialog
                     }
                     onClearFiltersClick={() => {
@@ -331,6 +327,7 @@ export const CollectionPage = () => {
                     onUpdateCheckboxClick={updateCheckbox}
                     onUpdateAllCheckboxesClick={updateAllCheckboxes}
                     isEmptyItems={items.length === 0}
+                    refreshPage={refreshPage}
                 />
             </div>
         </div>

@@ -6,6 +6,7 @@ import {useHistory} from 'react-router-dom';
 import type {DashSettings, DashTabItemControl} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 import {useBeforeLoad} from 'ui/hooks/useBeforeLoad';
+import type {ExtendedDashKitContextType} from 'ui/units/dash/typings/context';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import type {
@@ -13,13 +14,9 @@ import type {
     ChartKitWrapperOnLoadProps,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ResponseError} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {OnActivityComplete} from '../../../../libs/DatalensChartkit/types';
 import type {WidgetPluginProps} from '../../../DashKit/plugins/Widget/types';
-import {
-    getPreparedConstants,
-    getWidgetSelectorMeta,
-    getWidgetSelectorMetaOld,
-    pushStats,
-} from '../helpers/helpers';
+import {getPreparedConstants, getWidgetSelectorMeta, pushStats} from '../helpers/helpers';
 import type {
     ChartWidgetProps,
     ResolveMetaDataRef,
@@ -52,6 +49,8 @@ type LoadingChartSelectorHookProps = Pick<
     ChartWidgetProps & {
         widgetId: WidgetPluginProps['id'];
         chartId: string;
+        onActivityComplete?: OnActivityComplete;
+        updateTabsWithGlobalState?: ExtendedDashKitContextType['updateTabsWithGlobalState'];
     };
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 600;
@@ -84,6 +83,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         widgetType,
         settings,
         data,
+        onActivityComplete,
     } = props;
 
     const [isRendered, setIsRendered] = React.useState(false);
@@ -92,7 +92,6 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     const resolveWidgetDataRef = React.useRef<ResolveWidgetControlDataRef>();
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
-    const isNewRelations = extDashkitContext?.isNewRelations || false;
     const dataProviderContextGetter = extDashkitContext?.dataProviderContextGetter || undefined;
 
     const history = useHistory();
@@ -196,7 +195,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         dataProps,
         handleRenderChart,
         loadControls,
-        runAction,
+        runActivity,
     } = useLoadingChart({
         dataProvider,
         requestHeadersGetter,
@@ -217,13 +216,13 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         widgetDataRef,
         usageType,
         widgetType,
+        onActivityComplete,
     });
 
     const {
         mods,
         widgetBodyClassName,
         hasHiddenClassMod,
-        veil,
         showLoader,
         showOverlayWithControlsOnEdit,
     } = React.useMemo(
@@ -309,24 +308,6 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     );
 
     /**
-     * get dash widget meta data (current relations)
-     */
-    const resolveMeta = React.useCallback(
-        (loadedData: ResolveWidgetControlDataRefArgs | null) => {
-            const meta = getWidgetSelectorMetaOld({
-                id: widgetId,
-                chartId,
-                loadedData,
-            });
-
-            if (resolveMetaDataRef.current) {
-                resolveMetaDataRef.current(meta);
-            }
-        },
-        [resolveMetaDataRef.current, widgetId, chartId],
-    );
-
-    /**
      * get dash widget meta info (used for relations)
      */
     const handleGetWidgetMeta = React.useCallback(
@@ -335,11 +316,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
             resolveWidgetDataRef.current = (
                 resolvingData: ResolveWidgetControlDataRefArgs | null,
             ) => {
-                if (isNewRelations) {
-                    getCurrentWidgetResolvedMetaInfo(resolvingData);
-                } else {
-                    resolveMeta(resolvingData);
-                }
+                getCurrentWidgetResolvedMetaInfo(resolvingData);
             };
             if (!isInit) {
                 // initializing chart loading if it was not inited yet (ex. was not in viewport
@@ -358,10 +335,8 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         [
             error,
             loadedData,
-            isNewRelations,
             setCanBeLoaded,
             isInit,
-            resolveMeta,
             getCurrentWidgetResolvedMetaInfo,
             resolveMetaDataRef,
             resolveWidgetDataRef,
@@ -432,7 +407,6 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         mods,
         widgetBodyClassName,
         hasHiddenClassMod,
-        veil,
         showLoader,
         loadChartData,
         setLoadingProps,
@@ -440,6 +414,6 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         dataProps,
         handleRenderChart,
         getControls: loadControls,
-        runAction,
+        runActivity,
     };
 };

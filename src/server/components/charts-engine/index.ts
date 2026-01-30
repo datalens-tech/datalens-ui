@@ -89,7 +89,7 @@ class ChartsEngine {
 
         this.cacheClient = cacheClient;
 
-        Request.init({cacheClientInstance: this.cacheClient});
+        Request.init({cacheClientInstance: this.cacheClient, config});
 
         const {includeServicePlan, includeTenantFeatures} = config.chartsEngineConfig;
         this.controllers = {

@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import {createSelector} from 'reselect';
 import {Feature} from 'shared';
 import type {DatasetField} from 'shared';
@@ -5,20 +6,27 @@ import type {DatalensGlobalState} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import DatasetUtils from '../../helpers/utils';
-import type {BaseSource} from '../types';
+import type {SourcePrototype} from '../types';
 
 export const typesSelector = (state: DatalensGlobalState) => state.dataset.types.data;
 
 export const datasetKeySelector = (state: DatalensGlobalState) => state.dataset.key;
 export const datasetIdSelector = (state: DatalensGlobalState) => state.dataset.id;
 export const datasetWorkbookId = (state: DatalensGlobalState) => state.dataset.workbookId;
+export const datasetCollectionIdSelector = (state: DatalensGlobalState) =>
+    state.dataset.collectionId;
 export const datasetContentSelector = (state: DatalensGlobalState) => state.dataset.content;
+export const datasetPublishedIdSelector = (state: DatalensGlobalState) => state.dataset.publishedId;
+export const datasetCurrentRevIdSelector = (state: DatalensGlobalState) =>
+    state.dataset.currentRevId;
 
 export const previewEnabledSelector = (state: DatalensGlobalState) =>
     state.dataset.preview.previewEnabled;
 export const isDatasetChangedDatasetSelector = (state: DatalensGlobalState) =>
     state.dataset.ui.isDatasetChanged;
 export const isLoadingDatasetSelector = (state: DatalensGlobalState) => state.dataset.isLoading;
+export const isRefetchingDatasetSelector = (state: DatalensGlobalState) =>
+    state.dataset.isRefetchingDataset;
 export const isFavoriteDatasetSelector = (state: DatalensGlobalState) => state.dataset.isFavorite;
 export const isSavingDatasetSelector = (state: DatalensGlobalState) =>
     state.dataset.savingDataset.isProcessingSavingDataset;
@@ -29,7 +37,11 @@ export const isDatasetRevisionMismatchSelector = (state: DatalensGlobalState) =>
 
 export const datasetFieldsSelector = (state: DatalensGlobalState) =>
     state.dataset.content.result_schema!;
+export const dataExportEnabledSelector = (state: DatalensGlobalState) =>
+    !(state.dataset.content.data_export_forbidden ?? false);
 export const sourcesSelector = (state: DatalensGlobalState) => state.dataset.content.sources;
+export const sourcesPaginationSelector = (state: DatalensGlobalState) =>
+    state.dataset.sourcesPagination;
 export const avatarsSelector = (state: DatalensGlobalState) => state.dataset.content.source_avatars;
 export const relationsSelector = (state: DatalensGlobalState) =>
     state.dataset.content.avatar_relations;
@@ -41,6 +53,11 @@ export const rlsSelector = (state: DatalensGlobalState) => {
     return state.dataset.content.rls;
 };
 export const optionsSelector = (state: DatalensGlobalState) => state.dataset.options;
+export const sourceListingOptionsSelector = (state: DatalensGlobalState) =>
+    state.dataset.sourceListingOptions;
+export const currentDbNameSelector = (state: DatalensGlobalState) => state.dataset.currentDbName;
+export const connectionsDbNamesSelector = (state: DatalensGlobalState) =>
+    state.dataset.connectionsDbNames;
 
 export const datasetPreviewSelector = (state: DatalensGlobalState) => state.dataset.preview;
 export const isLoadPreviewByDefaultSelector = (state: DatalensGlobalState) =>
@@ -104,6 +121,7 @@ export const connectionsSelector = (state: DatalensGlobalState) => {
         };
     });
 };
+export type SelectedConnections = ReturnType<typeof connectionsSelector>;
 
 const getSourceHashTitleId = <T extends {parameter_hash: string; title: string}>({
     parameter_hash,
@@ -113,51 +131,46 @@ const getSourceHashTitleId = <T extends {parameter_hash: string; title: string}>
 };
 
 export const sourcePrototypesSelector = (state: DatalensGlobalState) => {
+    return state.dataset.sourcePrototypes;
+};
+
+export const sourcesSearchLoadingSelector = (state: DatalensGlobalState) => {
+    return state.dataset.ui.isSourcesSearchLoading;
+};
+
+export const sortedSourcePrototypesSelector = (state: DatalensGlobalState) => {
     const {
         sourcePrototypes = [],
         content: {sources = [], source_avatars: sourceAvatars = []},
     } = state.dataset;
 
-    const availableSourcesMap = new Map(
-        sourcePrototypes.map((source) => {
-            return [
-                getSourceHashTitleId(source),
-                source as
-                    | BaseSource
-                    | {id?: string; isSource?: boolean; isConnectedWithAvatar?: boolean},
-            ];
-        }),
-    );
+    const availableSourcesMap: Record<string, SourcePrototype> = {};
+
+    sourcePrototypes.forEach((source) => {
+        availableSourcesMap[getSourceHashTitleId(source)] = source;
+    });
 
     const availableSourceAvatars = sourceAvatars.map(({source_id: sourceId}) => sourceId);
 
     sources.filter(DatasetUtils.filterVirtual).forEach((source) => {
         const {id: sourceId} = source;
         const sourceHashTitleId = getSourceHashTitleId(source);
-        const sourcePrototype = availableSourcesMap.get(sourceHashTitleId);
-
-        if (sourcePrototype) {
-            availableSourcesMap.set(sourceHashTitleId, {
-                ...sourcePrototype,
-                id: sourceId,
-                isSource: true,
-            });
-        } else {
-            availableSourcesMap.set(sourceHashTitleId, {
-                ...source,
-                isSource: true,
-                isConnectedWithAvatar: availableSourceAvatars.includes(sourceId),
-            });
-        }
+        availableSourcesMap[sourceHashTitleId] = {
+            ...source,
+            isSource: true,
+            isConnectedWithAvatar: availableSourceAvatars.includes(sourceId),
+        };
     });
 
-    return Array.from(availableSourcesMap, ([, value]) => value).sort((leftItem, rightItem) => {
+    return Object.values(availableSourcesMap).sort((leftItem, rightItem) => {
         const {isSource: isSourceLeft = false} = leftItem as {isSource?: boolean};
         const {isSource: isSourceRight = false} = rightItem as {isSource?: boolean};
 
         return Number(isSourceRight) - Number(isSourceLeft);
     });
 };
+
+export type SortedSourcePrototypes = ReturnType<typeof sortedSourcePrototypesSelector>;
 
 export const selectedConnectionSelector = (state: DatalensGlobalState) => {
     const {ui: {selectedConnectionId} = {}, selectedConnections} = state.dataset;
@@ -170,6 +183,13 @@ export const selectedConnectionSelector = (state: DatalensGlobalState) => {
         return existedConnectionId === selectedConnectionId;
     });
 };
+export const currentDbNamesSelector = createSelector(
+    selectedConnectionSelector,
+    connectionsDbNamesSelector,
+    (connection, dbNames) => {
+        return dbNames?.[connection?.entryId ?? ''];
+    },
+);
 
 export const editorFilterSelector = (state: DatalensGlobalState) => state.dataset.editor.filter;
 export const editorItemsToDisplaySelector = (state: DatalensGlobalState) => {
@@ -177,9 +197,48 @@ export const editorItemsToDisplaySelector = (state: DatalensGlobalState) => {
 };
 
 export const datasetPermissionsSelector = (state: DatalensGlobalState) => state.dataset.permissions;
+export const datasetFullPermissionsSelector = (state: DatalensGlobalState) =>
+    state.dataset.fullPermissions;
+
+export const datasetDelegationSelector = (state: DatalensGlobalState) => {
+    return state.dataset.isDelegated;
+};
 
 export const workbookIdSelector = (state: DatalensGlobalState) => {
     return selectedConnectionSelector(state)?.workbookId || datasetWorkbookId(state) || null;
 };
 
 export const currentTabSelector = (state: DatalensGlobalState) => state.dataset.currentTab;
+
+export const templateEnabledSelector = (state: DatalensGlobalState) =>
+    state.dataset.content.template_enabled;
+
+export const rawSqlLevelSelector = createSelector(
+    connectionsSelector,
+    (connections: ReturnType<typeof connectionsSelector>) => {
+        let rawSqlLevel = '';
+
+        for (const connection of connections) {
+            const possibleValue = get(connection, ['data', 'raw_sql_level'], '') as string;
+            if (possibleValue) {
+                rawSqlLevel = possibleValue;
+            }
+        }
+
+        return rawSqlLevel;
+    },
+);
+
+const datasetInitialDescriptionSelector = (state: DatalensGlobalState) =>
+    state.dataset.prevContent?.description ?? '';
+
+export const datasetDescriptionSelector = (state: DatalensGlobalState) =>
+    state.dataset.content?.description ?? '';
+
+export const isDescriptionChangedSelector = createSelector(
+    [datasetInitialDescriptionSelector, datasetDescriptionSelector],
+    (initialDescription, previewDescription) => initialDescription !== previewDescription,
+);
+
+export const selectedConnectionDelegationStatusSelector = (state: DatalensGlobalState) =>
+    state.dataset.ui.selectedConnectionDelegationStatus;

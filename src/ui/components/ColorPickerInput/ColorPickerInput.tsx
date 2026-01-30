@@ -1,11 +1,12 @@
 import React from 'react';
 
-import type {InputControlSize} from '@gravity-ui/uikit';
-import {Text, TextInput} from '@gravity-ui/uikit';
-import {
-    unstable_NumberInput as NumberInput,
-    type unstable_NumberInputProps as NumberInputProps,
-} from '@gravity-ui/uikit/unstable';
+import type {
+    InputControlSize,
+    NumberInputProps,
+    RealTheme,
+    TextInputProps,
+} from '@gravity-ui/uikit';
+import {NumberInput, Text, TextInput, ThemeProvider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {color as d3Color} from 'd3-color';
 
@@ -34,7 +35,7 @@ const generatePreviewGradient = (color = 'transparent', colorWithOpacity = 'tran
     return `linear-gradient(90deg, ${color} 50%, ${colorWithOpacity} 50%)`;
 };
 
-interface ColorPickerInputProps {
+export interface ColorPickerInputProps extends Pick<TextInputProps, 'qa' | 'onFocus'> {
     required?: boolean;
     placeholder?: string;
     showPlaceholder?: boolean;
@@ -44,7 +45,9 @@ interface ColorPickerInputProps {
     hasOpacityInput?: boolean;
     autoFocus?: boolean;
     onUpdate: (value: string | null) => void;
+    onBlur?: () => void;
     onValidChange?: (isValid: boolean) => void;
+    theme?: RealTheme;
     className?: string;
 }
 
@@ -53,142 +56,181 @@ export interface ColorParts {
     opacity: number | null;
 }
 
-export function ColorPickerInput({
-    required,
-    size,
-    placeholder,
-    showPlaceholder,
-    value,
-    hasClear,
-    hasOpacityInput,
-    autoFocus,
-    onUpdate,
-    onValidChange,
-    className,
-}: ColorPickerInputProps) {
-    const [stateValue, setStateValue] = React.useState<ColorParts>(getColorParts(colorMask(value)));
-    const [isValid, setIsValid] = React.useState(true);
-    const pickerRef = React.useRef(null);
+export const ColorPickerInput = React.forwardRef<HTMLElement, ColorPickerInputProps>(
+    function ColorPickerInputComponent(
+        {
+            required,
+            size,
+            placeholder,
+            showPlaceholder,
+            value,
+            hasClear,
+            hasOpacityInput,
+            autoFocus,
+            onFocus,
+            onBlur,
+            onUpdate,
+            onValidChange,
+            theme,
+            className,
+            qa,
+        },
+        ref,
+    ) {
+        const [stateValue, setStateValue] = React.useState<ColorParts>(
+            getColorParts(colorMask(value)),
+        );
+        const [isValid, setIsValid] = React.useState(true);
+        const pickerRef = React.useRef(null);
 
-    const renderParams = React.useMemo(() => {
-        if (!isValid) {
-            return DEFAULT_PREVIEW_PARAMS;
-        }
-
-        const {solid: solidColorPart} = getColorParts(value);
-        if (!solidColorPart) {
-            if (showPlaceholder && placeholder) {
-                const {solid: placeholderSolidColorPart} = getColorParts(placeholder);
-
-                return {
-                    solidColorPart: placeholderSolidColorPart,
-                    styles: {
-                        background: generatePreviewGradient(placeholderSolidColorPart, placeholder),
-                    },
-                };
-            } else {
+        const renderParams = React.useMemo(() => {
+            if (!isValid) {
                 return DEFAULT_PREVIEW_PARAMS;
             }
-        }
 
-        return {
-            solidColorPart,
-            styles: {
-                background: generatePreviewGradient(solidColorPart, value),
-            },
-        };
-    }, [value, isValid, placeholder, showPlaceholder]);
+            const {solid: solidColorPart} = getColorParts(value);
+            if (!solidColorPart) {
+                if (showPlaceholder && placeholder) {
+                    const {solid: placeholderSolidColorPart} = getColorParts(placeholder);
 
-    React.useEffect(() => {
-        setStateValue((prevValue) => {
-            if (
-                getResultColorFromParts(prevValue) === getResultColorFromParts(getColorParts(value))
-            ) {
-                return prevValue;
-            }
-
-            return getMaskedColor(getColorParts(value));
-        });
-    }, [value]);
-
-    const setColor = React.useCallback(
-        (color: string) => {
-            let isValidValue = false;
-            const maskedColor = colorMask(color);
-            const opacity = stateValue.opacity === null ? 100 : stateValue.opacity;
-
-            if (isEmptyColor(maskedColor)) {
-                onUpdate(null);
-                isValidValue = !required;
-            } else if (isValidColor(maskedColor)) {
-                if (hasOpacityInput) {
-                    const valueWithOpacity = d3Color(maskedColor)
-                        ?.copy({opacity: opacity / 100})
-                        .formatHex8()
-                        .toLocaleUpperCase();
-
-                    onUpdate(valueWithOpacity ?? null);
+                    return {
+                        solidColorPart: placeholderSolidColorPart,
+                        styles: {
+                            background: generatePreviewGradient(
+                                placeholderSolidColorPart,
+                                placeholder,
+                            ),
+                        },
+                    };
                 } else {
-                    onUpdate(maskedColor?.toLocaleUpperCase() ?? null);
+                    return DEFAULT_PREVIEW_PARAMS;
                 }
-
-                isValidValue = true;
             }
 
-            setIsValid(isValidValue);
-            onValidChange?.(isValidValue);
-            setStateValue({...stateValue, solid: maskedColor, opacity});
-        },
-        [onUpdate, onValidChange, stateValue, required, hasOpacityInput],
-    );
+            return {
+                solidColorPart,
+                styles: {
+                    background: generatePreviewGradient(solidColorPart, value),
+                },
+            };
+        }, [value, isValid, placeholder, showPlaceholder]);
 
-    const handleOpacityChange = React.useCallback(
-        (newOpacity: number | null) => {
+        React.useEffect(() => {
             setStateValue((prevValue) => {
-                const newState = {...prevValue, opacity: newOpacity};
-                if (isValidColor(prevValue.solid)) {
-                    onUpdate(getResultColorFromParts(newState));
+                if (
+                    getResultColorFromParts(prevValue) ===
+                    getResultColorFromParts(getColorParts(value))
+                ) {
+                    return prevValue;
                 }
-                return newState;
+
+                return getMaskedColor(getColorParts(value));
             });
-        },
-        [onUpdate],
-    );
+        }, [value]);
 
-    const formattedPlaceholder = isValidColor(placeholder || '')
-        ? normalizeColor(placeholder)
-        : placeholder;
+        const setColor = React.useCallback(
+            (color: string) => {
+                let isValidValue = false;
+                const maskedColor = colorMask(color);
+                const opacity =
+                    stateValue.opacity === null || stateValue.opacity === 0
+                        ? 100
+                        : stateValue.opacity;
 
-    return (
-        <TextInput
-            className={b(null, className)}
-            size={size}
-            value={normalizeColor(stateValue.solid)}
-            placeholder={formattedPlaceholder ?? '#'}
-            onUpdate={setColor}
-            error={!isValid}
-            hasClear={hasClear}
-            autoFocus={autoFocus}
-            startContent={
-                <div className={b('preview')} style={renderParams.styles} ref={pickerRef}>
-                    <input
-                        className={b('palette', {[`size-${size}`]: true})}
-                        type="color"
-                        value={renderParams.solidColorPart}
-                        onChange={(e) => {
-                            setColor(e.target.value);
-                        }}
-                    />
-                </div>
-            }
-            endContent={
-                hasOpacityInput ? (
-                    <OpacityInput value={stateValue.opacity} onUpdate={handleOpacityChange} />
-                ) : null
-            }
-        />
-    );
-}
+                if (isEmptyColor(maskedColor)) {
+                    onUpdate(null);
+                    isValidValue = !required;
+                } else if (isValidColor(maskedColor)) {
+                    if (hasOpacityInput) {
+                        const valueWithOpacity = d3Color(maskedColor)
+                            ?.copy({opacity: opacity / 100})
+                            .formatHex8()
+                            .toLocaleUpperCase();
+
+                        onUpdate(valueWithOpacity ?? null);
+                    } else {
+                        onUpdate(maskedColor?.toLocaleUpperCase() ?? null);
+                    }
+
+                    isValidValue = true;
+                }
+
+                setIsValid(isValidValue);
+                onValidChange?.(isValidValue);
+                setStateValue({...stateValue, solid: maskedColor, opacity});
+            },
+            [onUpdate, onValidChange, stateValue, required, hasOpacityInput],
+        );
+
+        const handleOpacityChange = React.useCallback(
+            (newOpacity: number | null) => {
+                setStateValue((prevValue) => {
+                    const newState = {...prevValue, opacity: newOpacity};
+
+                    if (!prevValue.solid) {
+                        newState.solid = DEFAULT_COLOR;
+                    }
+                    if (isValidColor(newState.solid)) {
+                        onUpdate(getResultColorFromParts(newState));
+                    }
+                    return newState;
+                });
+            },
+            [onUpdate],
+        );
+
+        const formattedPlaceholder = isValidColor(placeholder || '')
+            ? normalizeColor(placeholder)
+            : placeholder;
+
+        const previewContent = (
+            <div className={b('preview')} style={renderParams.styles} ref={pickerRef}>
+                <input
+                    className={b('palette', {[`size-${size}`]: true})}
+                    type="color"
+                    value={renderParams.solidColorPart}
+                    onChange={(e) => {
+                        setColor(e.target.value);
+                    }}
+                    onBlur={onBlur}
+                />
+            </div>
+        );
+
+        return (
+            <TextInput
+                ref={ref}
+                className={b(null, className)}
+                qa={qa}
+                size={size}
+                value={normalizeColor(stateValue.solid)}
+                placeholder={formattedPlaceholder ?? '#'}
+                onUpdate={setColor}
+                error={!isValid}
+                hasClear={hasClear}
+                autoFocus={autoFocus}
+                onFocus={onFocus}
+                onBlur={onBlur}
+                startContent={
+                    <div className={b('preview-container')}>
+                        {theme ? (
+                            <ThemeProvider theme={theme} scoped rootClassName={b('theme')}>
+                                {previewContent}
+                            </ThemeProvider>
+                        ) : (
+                            previewContent
+                        )}
+                    </div>
+                }
+                endContent={
+                    hasOpacityInput ? (
+                        <OpacityInput value={stateValue.opacity} onUpdate={handleOpacityChange} />
+                    ) : null
+                }
+            />
+        );
+    },
+);
 
 function OpacityInput({value, onUpdate}: Pick<NumberInputProps, 'value' | 'onUpdate'>) {
     return (

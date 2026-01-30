@@ -1,11 +1,15 @@
 import {extractEntryId, isEntryId} from 'shared';
 import {getEntryScopesWithRevisionsList} from 'ui/components/RevisionsPanel/utils';
+import {DL} from 'ui/constants';
 import {getAdditionalChartkitErrorContent} from 'ui/libs/DatalensChartkit/Error/getAdditionalChartkitErrorContent';
 import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
+import {getLoginById} from 'ui/units/auth/components/LoginById/utils';
+import {resolveUsersByIds} from 'ui/units/auth/store/actions/usersByIds';
 import {getRestrictedParamNames} from 'ui/utils/getRestrictedParamNames';
 import {setEntryKey} from 'ui/utils/setEntryKey';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
+import {DialogEntryDescription} from '../../../components/DialogEntryDescription';
 import {EntryBreadcrumbs} from '../../../components/EntryBreadcrumbs/EntryBreadcrumbs';
 import {getEntryMenuConfig, getMenuGroupConfig} from '../../../components/EntryContextMenu/helpers';
 import {getAdditionalEntryContextMenuItems} from '../../../components/EntryContextMenu/utils';
@@ -13,7 +17,6 @@ import {getAdditionalEntryDialoguesMap} from '../../../components/EntryDialogues
 import {getEntryName} from '../../../components/EntryTitle/utils';
 import {Illustration} from '../../../components/Illustration/Illustration';
 import {getIllustrationStore} from '../../../components/Illustration/getIllustrationStore';
-import {getLoginById} from '../../../components/Login/utils';
 import {MarkdownControl} from '../../../components/MarkdownControl/MarkdownControl';
 import {MobileHeaderComponent} from '../../../components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
 import {
@@ -30,6 +33,7 @@ import {getUpdatedUserSettings} from '../../../store/utils/user';
 import {WorkbookEntriesTableTabs} from '../../../units/workbooks/components/Table/WorkbookEntriesTable/WorkbookEntriesTableTabs';
 import {getAllEntryScopes} from '../../../utils/getAllEntryScopes';
 import {getBasicActionPanelItems} from '../../../utils/getBasicActionPanelItems';
+import {getCurrentUserRights} from '../../../utils/getCurrentUserRights';
 import {getRevisionsPanelEntryScopesTexts} from '../../../utils/getRevisionsPanelEntryScopesTexts';
 import {getScopeTypeIcon} from '../../../utils/getScopeTypeIcon';
 import {getTopLevelEntryScopes} from '../../../utils/getTopLevelEntryScopes';
@@ -58,6 +62,7 @@ export const registerCommonPlugins = () => {
         DatepickerControl,
         MarkdownControl,
         WorkbookEntriesTableTabs,
+        DialogEntryDescription,
     });
 
     registry.common.functions.register({
@@ -100,5 +105,14 @@ export const registerCommonPlugins = () => {
         getRevisionsPanelEntryScopesTexts,
         getRestrictedParamNames,
         getAdditionalChartkitErrorContent,
+        getCurrentUserRights,
+        getNotAuthenticatedErrorContentTypes: () => [],
+        getHeaderWithoutHelpCenterErrorContentTypes: () => [],
+        getHeaderWithoutNavigationErrorContentTypes: () => [],
+        getImageNameFromErrorContentType: () => null,
     });
+
+    if (DL.AUTH_ENABLED) {
+        registry.common.functions.register({resolveUsersByIds});
+    }
 };

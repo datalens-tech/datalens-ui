@@ -43,11 +43,17 @@
 
     &__tabs {
         display: flex;
-        padding: 0 65px 0 16px;
+        padding-block: 0;
+        padding-inline-start: 0;
+        padding-inline-end: 65px;
         font-size: 15px;
 
+        #{$class}_with-internal-margins & {
+            padding-inline-start: var(--g-spacing-4);
+        }
+
         &_no-controls {
-            padding: 0 35px 0 16px;
+            padding-inline-end: 35px;
         }
 
         &_edit-mode.dl-draggable-handle-element {
@@ -91,20 +97,19 @@
         white-space: normal;
         word-break: break-word;
         hyphens: auto;
+
+        &_with-hint {
+            display: flex;
+            align-items: center;
+        }
     }
 
-    &__mobile-title-wrap {
-        display: flex;
-        align-items: center;
-    }
-
-    &__mobile-title-wrap &__chart-title-hint-button,
-    &__mobile-title-wrap &__chart-title-hint {
+    &__mobile-title_with-hint &__chart-title-hint {
         display: inline-flex;
         align-items: center;
     }
 
-    &__mobile-title-wrap &__chart-title-hint {
+    &__mobile-title_with-hint &__chart-title-hint {
         margin-left: 3px;
 
         & > * {
@@ -128,10 +133,25 @@
         #{$class}__mobile-title {
             line-height: $headerHeight;
             padding: 0 50px 0 45px;
+            height: $headerHeight;
+        }
+
+        #{$class}__mobile-title-wrap {
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
-            height: $headerHeight;
         }
+
+        &#{$class}_btns-full #{$class}__mobile-title {
+            padding-right: 94px;
+        }
+
+        &#{$class}_btns-partly #{$class}__mobile-title {
+            padding-right: 67px;
+        }
+    }
+
+    &:has(+ .chartkit-loader) {
+        z-index: 5;
     }
 }

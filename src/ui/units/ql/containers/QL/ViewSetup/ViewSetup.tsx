@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, RadioButton} from '@gravity-ui/uikit';
+import {Button, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
@@ -16,6 +16,7 @@ import {DL} from 'ui/constants/common';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import Utils from 'ui/utils/utils';
 
+import type {WorkbookId} from '../../../../../../shared';
 import {EntryScope, Feature, PLACE, QLChartType, ViewSetupQA} from '../../../../../../shared';
 import type {GetEntryResponse} from '../../../../../../shared/schema';
 import logger from '../../../../../libs/logger';
@@ -37,9 +38,11 @@ interface ViewSetupProps {
     setError: ({error}: {error: Error}) => void;
     performManualConfiguration: ({
         connection,
+        workbookId,
         chartType,
     }: {
         connection: QLConnectionEntry;
+        workbookId: WorkbookId;
         chartType: QLChartType;
     }) => void;
 }
@@ -226,6 +229,7 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
                                 scope="connection"
                                 startFrom={defaultPath}
                                 ignoreWorkbookEntries={true}
+                                ignoreSharedEntries={true}
                                 placeSelectParameters={getPlaceSelectParameters([
                                     PLACE.ROOT,
                                     PLACE.FAVORITES,
@@ -319,6 +323,7 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
     };
 
     private onCreateClick = () => {
+        const {entry} = this.props;
         const {connection, chartType} = this.state;
 
         if (!connection || !chartType) {
@@ -326,7 +331,11 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
                 showConnectionError: true,
             });
         } else {
-            this.props.performManualConfiguration({connection, chartType});
+            this.props.performManualConfiguration({
+                connection,
+                chartType,
+                workbookId: entry?.workbookId || null,
+            });
         }
     };
 

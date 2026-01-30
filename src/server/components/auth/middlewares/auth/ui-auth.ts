@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import requestIp from 'request-ip';
 import setCookieParser from 'set-cookie-parser';
 
+import {ErrorCode} from '../../../../../shared';
 import {
     AUTH_COOKIE_NAME,
     AUTH_EXP_COOKIE_NAME,
@@ -17,6 +18,7 @@ import {
 import {onFail} from '../../../../callbacks';
 import {registry} from '../../../../registry';
 import type {DatalensGatewaySchemas} from '../../../../types/gateway';
+import Utils from '../../../../utils';
 import {isGatewayError} from '../../../../utils/gateway';
 import {onAuthLogout, onAuthReload, onAuthSignin} from '../../callbacks';
 import type {AccessTokenPayload} from '../../types/token';
@@ -149,6 +151,13 @@ export const uiAuth = async (req: Request, res: Response, next: NextFunction) =>
             },
         });
     } catch (err) {
+        const errorCode = Utils.getErrorCode(err);
+
+        if (errorCode === ErrorCode.AuthUserNotExists) {
+            onAuthLogout(req, res);
+            return;
+        }
+
         req.ctx.logError('SET_USER_CTX_ERROR', isGatewayError(err) ? err.error : err);
         onFail(req, res);
         return;

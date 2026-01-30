@@ -176,6 +176,7 @@ export class List extends React.PureComponent<ListProps> {
                         entry={entry}
                         onMenuClick={this.props.onMenuClick}
                         isOnlyCollectionsMode={this.props.isOnlyCollectionsMode}
+                        index={index - 1}
                     />
                 )}
             </div>

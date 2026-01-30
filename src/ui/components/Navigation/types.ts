@@ -46,7 +46,7 @@ export type MenuClickArgs = {
 };
 
 export type ItemSelectArgs = {
-    selectedItemId: string;
+    selectedItemId?: string;
     selectedItemsIds: Set<string>;
 };
 

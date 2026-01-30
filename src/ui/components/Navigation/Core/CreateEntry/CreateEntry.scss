@@ -1,10 +1,14 @@
 .dl-navigation-create-entry {
-    &__switcher-wrapper {
-        margin-left: auto;
-    }
-
     &__button-create {
-        min-width: 150px;
+        &_with-menu {
+            .g-button__text {
+                padding-left: 10px;
+            }
+        }
+
+        &_action {
+            min-width: 150px;
+        }
     }
 
     &__item-title {
@@ -14,7 +18,7 @@
         padding: 0 6px;
     }
 
-    &__popup &__icon-connection {
+    &__icon-connection {
         color: var(--g-color-text-utility);
     }
 

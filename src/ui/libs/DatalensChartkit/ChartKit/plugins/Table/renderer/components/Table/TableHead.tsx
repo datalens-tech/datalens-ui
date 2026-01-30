@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {SortIcon} from '../SortIcon/SortIcon';
 
 import type {HeadRowViewData} from './types';
+import {getCellVeticalAlignmentStyle} from './utils';
 
 const b = block('dl-table');
 
@@ -12,11 +13,10 @@ type Props = {
     sticky?: boolean;
     rows: HeadRowViewData[];
     style?: React.CSSProperties;
-    tableHeight?: number;
 };
 
 export const TableHead = React.memo<Props>((props: Props) => {
-    const {sticky, rows, style, tableHeight} = props;
+    const {sticky, rows, style} = props;
 
     return (
         <thead className={b('header', {sticky})} style={style}>
@@ -31,6 +31,10 @@ export const TableHead = React.memo<Props>((props: Props) => {
                                 gridRow: th.rowSpan ? `span ${th.rowSpan}` : undefined,
                                 gridColumn: th.colSpan ? `span ${th.colSpan}` : undefined,
                             };
+                            const verticalAlignmentStyle = getCellVeticalAlignmentStyle(th);
+                            const contentStyle = verticalAlignmentStyle
+                                ? {style: verticalAlignmentStyle}
+                                : null;
 
                             return (
                                 <th
@@ -45,15 +49,9 @@ export const TableHead = React.memo<Props>((props: Props) => {
                                     rowSpan={th.rowSpan}
                                     onClick={th.onClick}
                                 >
-                                    {isLastPinnedCell && (
-                                        <div
-                                            className={b('shadow')}
-                                            style={{
-                                                height: (tableHeight || 0) - 1,
-                                            }}
-                                        />
-                                    )}
+                                    {isLastPinnedCell && <div className={b('shadow')} />}
                                     <div
+                                        {...contentStyle}
                                         className={b('th-content', {
                                             sortable: th.sortable,
                                         })}

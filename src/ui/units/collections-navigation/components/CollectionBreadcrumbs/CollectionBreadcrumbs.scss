@@ -2,6 +2,8 @@
 
 .dl-collection-breadcrumbs {
     margin-right: 5px;
+    width: 100%;
+    min-height: 24px;
 
     &__skeleton {
         display: block;
@@ -10,20 +12,6 @@
     }
 
     &__item {
-        @include dl-breadcrumbs-items-style;
-
-        &_last,
-        &_last:active,
-        &_last:visited {
-            color: var(--g-color-text-primary);
-        }
-
-        &_last:hover {
-            color: var(--g-color-text-link-hover);
-        }
-    }
-
-    &__container {
-        display: grid;
+        height: 100%;
     }
 }

@@ -3,55 +3,195 @@ import React from 'react';
 import {ChevronDown} from '@gravity-ui/icons';
 import type {ButtonSize, ButtonView} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
-import {useDispatch} from 'react-redux';
-import type {EntryScope} from 'shared';
-import {CreateEntityButton} from 'shared';
+import block from 'bem-cn-lite';
+import {useDispatch, useSelector} from 'react-redux';
+import {CollectionItemEntities, CreateEntityButton, EntryScope, Feature} from 'shared';
+import type {WorkbookWithPermissions} from 'shared/schema';
+import {DIALOG_SELECT_SHARED_ENTRY} from 'ui/components/DialogSelectSharedEntry/DialogSelectSharedEntry';
+import {DIALOG_SHARED_ENTRY_PERMISSIONS} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import {registry} from 'ui/registry';
+import type {AppDispatch} from 'ui/store';
+import {closeDialog, openDialog} from 'ui/store/actions/dialog';
+import {showToast} from 'ui/store/actions/toaster';
+import {getSharedEntriesMenuItems} from 'ui/units/collections/components/CollectionActions/utils';
+import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
+import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {CreateEntryActionType} from '../../constants';
-import {setCreateWorkbookEntryType} from '../../store/actions';
+import {
+    bindSharedEntryToWorkbook,
+    getWorkbookSharedEntries,
+    setCreateWorkbookEntryType,
+} from '../../store/actions';
+import {selectWorkbookFilters} from '../../store/selectors';
 
 import './CreateEntry.scss';
 
 type Props = {
     scope?: EntryScope;
     className?: string;
+    workbook?: WorkbookWithPermissions;
     size?: ButtonSize;
     view?: ButtonView;
 };
 
-export const CreateEntry = React.memo<Props>(({className, scope, size = 'm', view = 'normal'}) => {
-    const dispatch = useDispatch();
+const b = block('dl-workbook-create-entry');
 
-    const handleAction = (type: CreateEntryActionType) => {
-        dispatch(setCreateWorkbookEntryType(type));
-    };
+export const CreateEntry = React.memo<Props>(
+    ({className, workbook, scope, size = 'm', view = 'normal'}) => {
+        const dispatch = useDispatch<AppDispatch>();
+        const filters = useSelector(selectWorkbookFilters);
+        const handleAction = (type: CreateEntryActionType) => {
+            dispatch(setCreateWorkbookEntryType(type));
+        };
 
-    const {useCreateEntryOptions} = registry.workbooks.functions.getAll();
+        const handleSharedEntryAction = React.useCallback(
+            ({
+                scope,
+                collectionId,
+                workbookId,
+            }: {
+                scope: EntryScope.Dataset | EntryScope.Connection;
+                collectionId: string | null;
+                workbookId: string;
+            }) =>
+                () =>
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_SELECT_SHARED_ENTRY,
+                            props: {
+                                open: true,
+                                onClose: () => dispatch(closeDialog()),
+                                collectionId,
+                                dialogTitle: getSharedEntryMockText(
+                                    `title-select-shared-entry-dialog-${scope}`,
+                                ),
+                                onSelectEntry: (entry) => {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_SHARED_ENTRY_PERMISSIONS,
+                                            props: {
+                                                open: true,
+                                                onClose: () => dispatch(closeDialog()),
+                                                delegation: entry.permissions?.createEntryBinding,
+                                                entry,
+                                                onApply: async (delegation) => {
+                                                    const success = await dispatch(
+                                                        bindSharedEntryToWorkbook({
+                                                            sourceId: entry.entryId,
+                                                            targetId: workbookId,
+                                                            delegation,
+                                                        }),
+                                                    );
+                                                    if (success) {
+                                                        dispatch(closeDialog());
+                                                        dispatch(closeDialog());
 
-    const {buttonText, handleClick, items, hasMenu} = useCreateEntryOptions({scope, handleAction});
+                                                        const entries = await dispatch(
+                                                            getWorkbookSharedEntries({
+                                                                scope,
+                                                                workbookId,
+                                                                filters,
+                                                            }),
+                                                        );
 
-    return (
-        <div className={className}>
-            {hasMenu ? (
-                <DropdownMenu
-                    size="s"
-                    items={items}
-                    popupProps={{qa: CreateEntityButton.Popup}}
-                    switcher={
-                        <Button view={view} size={size} qa={CreateEntityButton.Button}>
-                            {buttonText}
-                            <Icon data={ChevronDown} size="16" />
-                        </Button>
-                    }
-                />
-            ) : (
-                <Button view={view} onClick={handleClick} size={size}>
-                    {buttonText}
-                </Button>
-            )}
-        </div>
-    );
-});
+                                                        const addedEntry = entries?.entries.find(
+                                                            (item) =>
+                                                                item.entryId === entry.entryId,
+                                                        );
+
+                                                        dispatch(
+                                                            showToast({
+                                                                type: 'success',
+                                                                title: getSharedEntryMockText(
+                                                                    `add-entry-workbook-toast-title-${scope}`,
+                                                                ),
+                                                                content: getSharedEntryMockText(
+                                                                    'add-entry-workbook-toast-message',
+                                                                    {
+                                                                        name: Utils.getEntryNameFromKey(
+                                                                            addedEntry?.key ?? '',
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                            }),
+                                                        );
+                                                    }
+                                                },
+                                            },
+                                        }),
+                                    );
+                                },
+                                getIsInactiveEntity: (entry) => {
+                                    if (entry.entity !== CollectionItemEntities.ENTRY) {
+                                        return false;
+                                    }
+
+                                    const canCreateBinding =
+                                        entry.permissions?.createEntryBinding ||
+                                        entry.permissions?.createLimitedEntryBinding;
+
+                                    return entry.scope !== scope || !canCreateBinding;
+                                },
+                            },
+                        }),
+                    ),
+            [dispatch, filters],
+        );
+
+        const {useCreateEntryOptions} = registry.workbooks.functions.getAll();
+
+        const {buttonText, handleClick, items, hasMenu} = useCreateEntryOptions({
+            scope,
+            handleAction,
+        });
+
+        if (isEnabledFeature(Feature.EnableSharedEntries) && workbook?.workbookId) {
+            items.push(
+                getSharedEntriesMenuItems({
+                    datasetAction: handleSharedEntryAction({
+                        scope: EntryScope.Dataset,
+                        collectionId: workbook.collectionId,
+                        workbookId: workbook.workbookId,
+                    }),
+                    connectionAction: handleSharedEntryAction({
+                        scope: EntryScope.Connection,
+                        collectionId: workbook.collectionId,
+                        workbookId: workbook.workbookId,
+                    }),
+                    noticeClassName: b('shared-entry-notice'),
+                }),
+            );
+        }
+
+        return (
+            <div className={className}>
+                {hasMenu ? (
+                    <DropdownMenu
+                        size="s"
+                        items={items}
+                        popupProps={{qa: CreateEntityButton.Popup}}
+                        renderSwitcher={({onClick}) => (
+                            <Button
+                                view={view}
+                                size={size}
+                                qa={CreateEntityButton.Button}
+                                onClick={onClick}
+                            >
+                                {buttonText}
+                                <Icon data={ChevronDown} size="16" />
+                            </Button>
+                        )}
+                    />
+                ) : (
+                    <Button view={view} onClick={handleClick} size={size}>
+                        {buttonText}
+                    </Button>
+                )}
+            </div>
+        );
+    },
+);
 
 CreateEntry.displayName = 'CreateEntry';

@@ -6,6 +6,7 @@ export const DATALENS_QL_CONNECTION_TYPES = {
     MYSQL: ConnectorType.Mysql,
     ORACLE: ConnectorType.Oracle,
     POSTGRESQL: ConnectorType.Postgres,
+    TRINO: ConnectorType.Trino,
     YQL: ConnectorType.Yq, // YDB, YQ
     PROMQL: ConnectorType.Promql,
     MONITORING: ConnectorType.Monitoring,

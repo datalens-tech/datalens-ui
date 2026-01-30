@@ -50,7 +50,6 @@ export {
     updateGSheetSource,
     updateGSheetItem,
     setGSheetItemsAndFormSources,
-    handleReplacedSources,
     gsheetToSourcesInfo,
 } from './misc-actions';
 export type {UpdateGSheetItemArgs} from './misc-actions';
@@ -171,6 +170,7 @@ export const setGSheetFormData = () => {
                 [FieldKey.Sources]: sourcesInAPIFormat,
                 [FieldKey.RefreshEnabled]: connectionData[FieldKey.RefreshEnabled],
                 [FieldKey.RefreshToken]: undefined,
+                [FieldKey.Description]: connectionData[FieldKey.Description],
             };
             innerForm = {
                 [InnerFieldKey.Authorized]: connectionData[InnerFieldKey.Authorized],

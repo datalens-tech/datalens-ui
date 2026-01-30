@@ -5,11 +5,12 @@ export type MinimumEntryFields = Pick<EntryMetaFields, 'entryId' | 'key' | 'type
 export type EntryPublicAuthor = {text?: string; link?: string};
 
 export type WorkbookId = string | null;
+export type CollectionId = string | null;
 
 export type TransferIdMapping = Record<string, string>;
 
 export type TransferNotification = {
     level: 'info' | 'warning' | 'critical';
-    message: 'string';
-    code: 'string';
+    code: string;
+    details?: object;
 };

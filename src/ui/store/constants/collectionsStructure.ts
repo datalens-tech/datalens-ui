@@ -68,6 +68,16 @@ export const DELETE_WORKBOOKS_LOADING = Symbol('collectionsStructure/DELETE_WORK
 export const DELETE_WORKBOOKS_SUCCESS = Symbol('collectionsStructure/DELETE_WORKBOOKS_SUCCESS');
 export const DELETE_WORKBOOKS_FAILED = Symbol('collectionsStructure/DELETE_WORKBOOKS_FAILED');
 
+export const DELETE_SHARED_ENTRIES_LOADING = Symbol(
+    'collectionsStructure/DELETE_SHARED_ENTRIES_LOADING',
+);
+export const DELETE_SHARED_ENTRIES_SUCCESS = Symbol(
+    'collectionsStructure/DELETE_SHARED_ENTRIES_SUCCESS',
+);
+export const DELETE_SHARED_ENTRIES_FAILED = Symbol(
+    'collectionsStructure/DELETE_SHARED_ENTRIES_FAILED',
+);
+
 // Moving collections
 export const MOVE_COLLECTIONS_LOADING = Symbol('collectionsStructure/MOVE_COLLECTIONS_LOADING');
 export const MOVE_COLLECTIONS_SUCCESS = Symbol('collectionsStructure/MOVE_COLLECTIONS_SUCCESS');
@@ -87,6 +97,19 @@ export const MOVE_WORKBOOKS_FAILED = Symbol('collectionsStructure/MOVE_WORKBOOKS
 export const MOVE_WORKBOOK_LOADING = Symbol('collectionsStructure/MOVE_WORKBOOK_LOADING');
 export const MOVE_WORKBOOK_SUCCESS = Symbol('collectionsStructure/MOVE_WORKBOOK_SUCCESS');
 export const MOVE_WORKBOOK_FAILED = Symbol('collectionsStructure/MOVE_WORKBOOK_FAILED');
+
+// Moving a shared entry
+export const MOVE_SHARED_ENTRY_LOADING = Symbol('collectionsStructure/MOVE_SHARED_ENTRY_LOADING');
+export const MOVE_SHARED_ENTRY_SUCCESS = Symbol('collectionsStructure/MOVE_SHARED_ENTRY_SUCCESS');
+export const MOVE_SHARED_ENTRY_FAILED = Symbol('collectionsStructure/MOVE_SHARED_ENTRY_FAILED');
+
+export const MOVE_SHARED_ENTRIES_LOADING = Symbol(
+    'collectionsStructure/MOVE_SHARED_ENTRIES_LOADING',
+);
+export const MOVE_SHARED_ENTRIES_SUCCESS = Symbol(
+    'collectionsStructure/MOVE_SHARED_ENTRIES_SUCCESS',
+);
+export const MOVE_SHARED_ENTRIES_FAILED = Symbol('collectionsStructure/MOVE_SHARED_ENTRIES_FAILED');
 
 // Copying a workbook
 export const COPY_WORKBOOK_LOADING = Symbol('collectionsStructure/COPY_WORKBOOK_LOADING');
@@ -113,11 +136,6 @@ export const DELETE_WORKBOOK_LOADING = Symbol('collectionsStructure/DELETE_WORKB
 export const DELETE_WORKBOOK_SUCCESS = Symbol('collectionsStructure/DELETE_WORKBOOK_SUCCESS');
 export const DELETE_WORKBOOK_FAILED = Symbol('collectionsStructure/DELETE_WORKBOOK_FAILED');
 
-// Adding a demo workbook
-export const ADD_DEMO_WORKBOOK_LOADING = Symbol('collections/ADD_DEMO_WORKBOOK_LOADING');
-export const ADD_DEMO_WORKBOOK_SUCCESS = Symbol('collections/ADD_DEMO_WORKBOOK_SUCCESS');
-export const ADD_DEMO_WORKBOOK_FAILED = Symbol('collections/ADD_DEMO_WORKBOOK_FAILED');
-
 // Exporting a workbook as a file
 export const EXPORT_WORKBOOK_LOADING = Symbol('collections/EXPORT_WORKBOOK_LOADING');
 export const EXPORT_WORKBOOK_SUCCESS = Symbol('collections/EXPORT_WORKBOOK_SUCCESS');
@@ -133,9 +151,17 @@ export const RESET_IMPORT_WORKBOOK = Symbol('collections/RESET_IMPORT_WORKBOOK')
 // Getting progress of workbook importing
 export const GET_IMPORT_PROGRESS_LOADING = Symbol('collections/GET_IMPORT_PROGRESS_LOADING');
 export const GET_IMPORT_PROGRESS_SUCCESS = Symbol('collections/GET_IMPORT_PROGRESS_SUCCESS');
+export const GET_IMPORT_PROGRESS_FAILED = Symbol('collections/GET_IMPORT_PROGRESS_FAILED');
 export const RESET_IMPORT_PROGRESS = Symbol('collections/RESET_IMPORT_PROGRESS');
 
 // Getting progress of workbook exporting
 export const GET_EXPORT_PROGRESS_LOADING = Symbol('collections/GET_EXPORT_PROGRESS_LOADING');
 export const GET_EXPORT_PROGRESS_SUCCESS = Symbol('collections/GET_EXPORT_PROGRESS_SUCCESS');
+export const GET_EXPORT_PROGRESS_FAILED = Symbol('collections/GET_EXPORT_PROGRESS_FAILED');
 export const RESET_EXPORT_PROGRESS = Symbol('collections/RESET_EXPORT_PROGRESS');
+
+// Getting export result
+export const GET_EXPORT_RESULT_LOADING = Symbol('collections/GET_EXPORT_RESULT_LOADING');
+export const GET_EXPORT_RESULT_SUCCESS = Symbol('collections/GET_EXPORT_RESULT_SUCCESS');
+export const GET_EXPORT_RESULT_FAILED = Symbol('collections/GET_EXPORT_RESULT_FAILED');
+export const RESET_EXPORT_RESULT = Symbol('collections/RESET_EXPORT_RESULT');

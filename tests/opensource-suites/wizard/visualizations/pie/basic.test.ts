@@ -16,13 +16,13 @@ datalensTest.describe('Wizard', () => {
             const measureField = 'OrdersCount';
             await wizardPage.createNewFieldWithFormula(measureField, 'count([order_id])');
 
-            await wizardPage.setVisualization(WizardVisualizationId.PieD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Pie);
         });
 
         datalensTest('Auto coloring @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const chart = chartContainer.locator('.chartkit-graph,.gcharts-d3');
+            const chart = chartContainer.locator('.chartkit-graph,.gcharts-chart');
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
             // 1. Only Measures placeholder is filled

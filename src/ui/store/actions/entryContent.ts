@@ -119,7 +119,7 @@ export function loadRevisions({
                 [...loadedRevisions, ...fetchedRevisions].map((item) => item.revId),
             );
             const revIdsSet: Set<string> = new Set();
-            if (!fetchedRevIdsSet.has(savedId)) {
+            if (savedId && !fetchedRevIdsSet.has(savedId)) {
                 revIdsSet.add(savedId);
             }
             if (publishedId && !fetchedRevIdsSet.has(publishedId)) {
@@ -287,6 +287,7 @@ export function setChartsEntryContent(entry: GetEntryResponse) {
         dispatch(setEntryContent(entry));
 
         const searchParams = new URLSearchParams(location.search);
+        searchParams.delete(URL_QUERY.UNRELEASED);
         if (entry.publishedId) {
             if (entry.revId === entry.publishedId) {
                 searchParams.delete(URL_QUERY.REV_ID);

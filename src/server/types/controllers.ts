@@ -13,6 +13,7 @@ export type ExtendedAppRouteDescription = AppRouteDescription & {
     disableUserSettings?: boolean;
     cspPresets?: CSPPolicies[];
     disableCsrf?: boolean;
+    guard?: AppMiddleware;
 };
 
 export type BasicControllers =

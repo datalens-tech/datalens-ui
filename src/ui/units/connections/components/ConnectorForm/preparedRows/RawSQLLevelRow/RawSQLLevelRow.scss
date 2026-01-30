@@ -1,0 +1,8 @@
+.conn-form-raw-sql-level {
+    &__control {
+        display: flex;
+        flex-direction: column;
+        margin-top: 4px;
+        row-gap: 16px;
+    }
+}

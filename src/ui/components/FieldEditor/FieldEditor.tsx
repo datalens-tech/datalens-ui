@@ -28,12 +28,13 @@ import logger from '../../libs/logger';
 import type {MonacoTypes} from '../../libs/monaco';
 import {registerDatalensFormulaLanguage} from '../../libs/monaco';
 import {getSdk} from '../../libs/schematic-sdk';
+import {registry} from '../../registry';
 import DialogConfirm from '../DialogConfirm/DialogConfirm';
 
 import DocSection from './components/DocSection';
 import type {FormulaSectionProps} from './components/FormulaSection';
 import FormulaSection from './components/FormulaSection';
-import Settings from './components/Settings';
+import {Settings} from './components/Settings';
 import SourceSection from './components/SourceSection';
 import type {Cancelable, FieldEditorErrors, ModifiedDatasetField, ModifyField} from './typings';
 import {
@@ -83,6 +84,7 @@ interface FieldEditorState {
     editor: MonacoTypes.editor.IStandaloneCodeEditor | null;
     dialogConfirmVisible: boolean;
     saveAsNewField: boolean;
+    additionalPanelVisible: boolean;
 }
 
 class FieldEditor extends React.Component<Props, FieldEditorState> {
@@ -112,6 +114,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
             saveAsNewField: Boolean(
                 this.props.field && this.props.field.formula && !this.props.field.title,
             ),
+            additionalPanelVisible: false,
         };
     }
 
@@ -125,18 +128,33 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
 
     render() {
         const {onlyFormulaEditor} = this.props;
-        const {field, errors, dialogConfirmVisible} = this.state;
+        const {field, errors, dialogConfirmVisible, saveAsNewField} = this.state;
 
         return (
-            <Dialog open={true} disableFocusTrap={true} onClose={this.onClose}>
-                <div className={b()} data-qa={FieldEditorQa.Dialog}>
-                    <Dialog.Header caption={i18n('label_title')} />
+            <Dialog
+                modalClassName={b('dialog', {
+                    'additional-panel-open': this.state.additionalPanelVisible,
+                })}
+                open={true}
+                onClose={this.onClose}
+                onTransitionInComplete={() => {
+                    // in order for the monaco editor to calculate the dimensions correctly
+                    window.dispatchEvent(new Event('resize'));
+                }}
+            >
+                <div
+                    className={b({'additional-panel-open': this.state.additionalPanelVisible})}
+                    data-qa={FieldEditorQa.Dialog}
+                >
                     <Settings
                         field={field}
                         errors={errors}
                         onlyFormulaEditor={onlyFormulaEditor}
                         modifyField={this.modifyField}
                         toggleDocumentationPanel={this.toggleDocumentationPanel}
+                        toggleAdditionalPanel={this.toggleAdditionalPanel}
+                        additionalPanelVisible={this.state.additionalPanelVisible}
+                        isNewField={!this.props.field || saveAsNewField}
                     />
                     {this.renderContent()}
                 </div>
@@ -161,8 +179,9 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
             dataTypes = [],
             docPanelVisible,
         } = this.props;
-        const {field, fieldErrors, errors} = this.state;
+        const {field, fieldErrors, errors, additionalPanelVisible} = this.state;
         const {calc_mode: calcMode} = field;
+        const {AdditionalPanel} = registry.fieldEditor.components.getAll();
 
         return (
             <div className={b('content')}>
@@ -223,6 +242,13 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                                 <div></div>
                             )}
                         </SplitPane>
+                        <AdditionalPanel
+                            visible={additionalPanelVisible}
+                            onClose={this.closeAdditionalPanel}
+                            fields={fields}
+                            field={field}
+                            fieldErrors={fieldErrors}
+                        />
                     </div>
                 )}
             </div>
@@ -274,10 +300,34 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
         const nextDocPanelVisible = !this.props.docPanelVisible;
 
         await this.props.updateUserSettings({
-            newSettings: {dlFieldEditorDocShown: nextDocPanelVisible},
+            newSettings: {
+                dlFieldEditorDocShown: nextDocPanelVisible,
+            },
         });
 
         this.state.editor?.layout();
+    };
+
+    toggleAdditionalPanel = () => {
+        this.setState(
+            {
+                additionalPanelVisible: !this.state.additionalPanelVisible,
+            },
+            () => {
+                this.state.editor?.layout();
+            },
+        );
+    };
+
+    closeAdditionalPanel = () => {
+        this.setState(
+            {
+                additionalPanelVisible: false,
+            },
+            () => {
+                this.state.editor?.layout();
+            },
+        );
     };
 
     validateFormula = async () => {

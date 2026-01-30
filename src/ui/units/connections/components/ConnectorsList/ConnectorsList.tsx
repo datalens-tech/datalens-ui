@@ -3,6 +3,7 @@ import React from 'react';
 import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import {registry} from 'ui/registry';
 
 import type {
     ConnectorItem,
@@ -20,19 +21,32 @@ type ListProps = {
     flattenConnectors: ConnectorItem[];
     groupedConnectors: GetConnectorsResponse;
     workbookId?: string;
+    collectionId?: string;
 };
 
-const UncategorizedList = (props: {connectors: ConnectorItem[]; workbookId?: string}) => {
-    const {connectors, workbookId} = props;
+const UncategorizedList = (props: {
+    connectors: ConnectorItem[];
+    workbookId?: string;
+    collectionId?: string;
+}) => {
+    const {connectors, workbookId, collectionId} = props;
 
     if (!connectors.length) {
         return null;
     }
 
+    const {getConnectionItemRender} = registry.connections.functions.getAll();
+
     return (
         <div className={b('list')}>
             {connectors.map((connector) => (
-                <ListItem key={connector.conn_type} connector={connector} workbookId={workbookId} />
+                <ListItem
+                    key={connector.conn_type}
+                    connector={connector}
+                    workbookId={workbookId}
+                    collectionId={collectionId}
+                    render={getConnectionItemRender}
+                />
             ))}
         </div>
     );
@@ -42,8 +56,9 @@ const GroupedList = (props: {
     filter: string;
     sections?: ConnectorItemSection[];
     workbookId?: string;
+    collectionId?: string;
 }) => {
-    const {filter, sections, workbookId} = props;
+    const {filter, sections, workbookId, collectionId} = props;
 
     if (!sections || !sections.length) {
         return null;
@@ -64,6 +79,7 @@ const GroupedList = (props: {
                         <UncategorizedList
                             connectors={filteredConnectors}
                             workbookId={workbookId}
+                            collectionId={collectionId}
                         />
                     </React.Fragment>
                 );
@@ -72,7 +88,12 @@ const GroupedList = (props: {
     );
 };
 
-export const ConnectorsList = ({flattenConnectors, groupedConnectors, workbookId}: ListProps) => {
+export const ConnectorsList = ({
+    flattenConnectors,
+    groupedConnectors,
+    workbookId,
+    collectionId,
+}: ListProps) => {
     const [filter, setFilter] = React.useState('');
     const showFilter = getVisibleConnectors(flattenConnectors).length >= MIN_CONNECTORS_COUNT;
 
@@ -104,6 +125,7 @@ export const ConnectorsList = ({flattenConnectors, groupedConnectors, workbookId
                                     key={`uncategorized-list-${i}`}
                                     connectors={filteredConnectors}
                                     workbookId={workbookId}
+                                    collectionId={collectionId}
                                 />
                             );
                         }
@@ -114,6 +136,7 @@ export const ConnectorsList = ({flattenConnectors, groupedConnectors, workbookId
                                     filter={filter}
                                     sections={groupedConnectors[key]}
                                     workbookId={workbookId}
+                                    collectionId={collectionId}
                                 />
                             );
                         }
@@ -125,6 +148,7 @@ export const ConnectorsList = ({flattenConnectors, groupedConnectors, workbookId
                                         key={`old-uncategorized-list-${i}`}
                                         connectors={groupedConnectors[key]}
                                         workbookId={workbookId}
+                                        collectionId={collectionId}
                                     />
                                 );
                             }

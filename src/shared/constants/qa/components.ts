@@ -1,6 +1,7 @@
 export enum ActionPanelQA {
     MoreBtn = 'entry-panel-more-btn',
     ActionPanel = 'entry-action-panel',
+    EntryBreadcrumbs = 'entry-breadcrumbs',
 }
 
 export enum RevisionsPanelQa {
@@ -27,28 +28,14 @@ export enum SaveChartControlsQa {
 }
 
 export enum DialogParameterQA {
-    Apply = 'dialog_parameter-apply-btn',
-    Cancel = 'dialog_parameter-cancel-btn',
-    Reset = 'dialog_parameter-reset-btn',
-    DefaultValueInput = 'dialog_parameter-default-value-input',
-    NameInput = 'dialog_parameter-name-input',
-    TypeSelector = 'dialog_parameter-type_selector',
+    Apply = 'dialog-parameter-apply-btn',
+    Cancel = 'dialog-parameter-cancel-btn',
+    Reset = 'dialog-parameter-reset-btn',
+    DefaultValueInput = 'dialog-parameter-default-value-input',
+    DefaultValueRadioGroup = 'dialog-parameter-default-value-radio-group',
+    NameInput = 'dialog-parameter-name-input',
+    TypeSelector = 'dialog-parameter-type_selector',
     Dialog = 'dialog-parameter',
-}
-
-export enum ConnectionsDialogQA {
-    Apply = 'connections-dialog-apply-button',
-    Cancel = 'connections-dialog-cancel-button',
-    Content = 'connections-dialog-content',
-    EmptyContent = 'connections-dialog-content-empty',
-    ElementSelect = 'connections-dialog-element-select',
-    ElementSelectItems = 'connections-dialog-element-select-items',
-    TypeSelect = 'connections-dialog-type-select',
-    TypeSelectItems = 'connections-dialog-type-select-items',
-    TypeSelectConnectedOption = 'connections-dialog-type-select-connected-option',
-    TypeSelectInputOption = 'connections-dialog-type-select-input-option',
-    TypeSelectOutputOption = 'connections-dialog-type-select-output-option',
-    TypeSelectIgnoreOption = 'connections-dialog-type-select-ignore-option',
 }
 
 export enum AddFieldQA {
@@ -140,9 +127,9 @@ export enum DialogDraftWarningQA {
 }
 
 export enum DialogDashWidgetItemQA {
-    Text = 'dialog_widget-text',
-    Title = 'dialog_widget-title',
-    Image = 'dialog_widget-image',
+    Text = 'dialog-widget-text',
+    Title = 'dialog-widget-title',
+    Image = 'dialog-widget-image',
 }
 
 export enum DialogDashTitleQA {
@@ -150,8 +137,9 @@ export enum DialogDashTitleQA {
 }
 
 export enum DialogDashWidgetQA {
-    Apply = 'dialog_widget-apply-btn',
-    Cancel = 'dialog_widget-cancel-btn',
+    Apply = 'dialog-widget-apply-btn',
+    Cancel = 'dialog-widget-cancel-btn',
+    DialogChartWidget = 'dialog-widget-chart-widget',
 }
 
 export const enum DialogFieldEditorQA {
@@ -181,6 +169,12 @@ export const enum DialogCreateWorkbookEntryQa {
     ApplyButton = 'dialog-create-workbook-entry-apply-button',
 }
 
+export const enum DialogEntryDescriptionQa {
+    Root = 'dialog-entry-description-root',
+    SaveButton = 'dialog-entry-description-save-button',
+    EditButton = 'dialog-entry-description-edit-button',
+}
+
 export const enum CreateEntityButton {
     Button = 'create-entry-button',
     Popup = 'create-entry-button-popup',
@@ -196,7 +190,7 @@ export enum PreviewQa {
     ChartWrapper = 'preview-chart-wrapper',
 }
 
-export enum DatalensTabs {
+export enum DatalensTabsQa {
     MobileItem = 'dash-mobile-tab-item',
     Item = 'dash-tab-item',
     SwitcherItem = 'dash-tab-switcher-item',
@@ -209,4 +203,15 @@ export enum DatalensHeaderQa {
 
 export enum TextWidgetQa {
     Wrapper = 'text-widget-wrapper',
+}
+
+// copied from @gravity-ui/uikit
+export enum UikitListQa {
+    ACTIVE_ITEM = 'list-active-item',
+}
+
+export enum WysiwygEditorQa {
+    Editor = 'wysiwyg-editor',
+    SettingsButton = 'g-md-settings-button',
+    ModeMarkupItemMenu = 'g-md-settings-mode-markup',
 }

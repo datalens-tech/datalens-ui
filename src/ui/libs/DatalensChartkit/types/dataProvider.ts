@@ -1,6 +1,10 @@
 import type {URL_OPTIONS} from 'ui/constants/common';
 
-import type {DashChartRequestContext, StringParams} from '../../../../shared';
+import type {
+    ChartActivityResponseData,
+    DashChartRequestContext,
+    StringParams,
+} from '../../../../shared';
 
 import type {ControlsOnlyWidget, Widget} from './widget';
 //import {ChartKitLoadSuccess, ChartKitProps} from '../components/ChartKitBase/ChartKitBase'; // TODO after remove old alternative Chartkit code, cause cycle imports
@@ -17,11 +21,17 @@ export interface DataProvider<T extends {params?: StringParams}, R, K> {
         contextHeaders,
         requestId,
         requestCancellation,
+        responseOptions,
+        widgetElement,
     }: {
         props: T;
         contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: K;
+        widgetElement?: Element;
+        responseOptions?: {
+            includeConfig?: boolean;
+        };
     }) => Promise<(Widget & R) | null>;
     getControls?: ({
         props,
@@ -34,11 +44,11 @@ export interface DataProvider<T extends {params?: StringParams}, R, K> {
         requestId: string;
         requestCancellation: K;
     }) => Promise<(ControlsOnlyWidget & R) | null>;
-    runAction: (args: {
+    makeActivityRequest: (args: {
         props: T;
         requestId: string;
         contextHeaders?: DashChartRequestContext;
-    }) => Promise<unknown | null>;
+    }) => Promise<ChartActivityResponseData | null>;
     setSettings?: <TSettings>(settings: TSettings) => void;
     pushStats?: (
         input: any, // ChartKitLoadSuccess<ChartsData>, // TODO after remove old alternative Chartkit code, cause cycle imports
@@ -50,7 +60,6 @@ export interface DataProvider<T extends {params?: StringParams}, R, K> {
             propsData: any; // ChartKitProps<ChartsProps, ChartsData>; // TODO after remove old alternative Chartkit code, cause cycle imports
         },
         params2: {
-            urlPostfix?: string;
             idPrefix: string;
             extraParams?: Partial<
                 Record<UrlKeys, string> & {

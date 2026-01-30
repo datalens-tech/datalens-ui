@@ -1,5 +1,6 @@
 import {v1 as uuidv1} from 'uuid';
-import {DatasetActionQA, EntryDialogQA} from '../../../src/shared/constants';
+import {EntryDialogQA} from '../../../src/shared/constants/qa/components';
+import {DatasetPanelQA, DatasetActionQA} from '../../../src/shared/constants/qa/datasets';
 
 import {deleteEntity, slct} from '../../utils';
 import {BasePage, BasePageProps} from '../BasePage';
@@ -46,12 +47,10 @@ class DatasetPage extends BasePage {
     }
 
     async createDatasetInFolder({name = uuidv1()}: {name?: string} = {}) {
-        const formSubmit = await this.page.waitForSelector(slct(DatasetActionQA.CreateButton));
         // open creation dialog
-        await formSubmit.click();
-        const textInput = await this.page.waitForSelector(slct('path-select'));
+        await this.page.locator(slct(DatasetActionQA.CreateButton)).click();
         // type dataset name
-        await textInput.type(name);
+        await this.page.locator(slct(EntryDialogQA.PathSelect)).locator('input').fill(name);
         const dialogApplyButton = await this.page.waitForSelector(slct(EntryDialogQA.Apply));
         // create dataset
         await dialogApplyButton.click();
@@ -64,6 +63,14 @@ class DatasetPage extends BasePage {
 
     async deleteEntry() {
         await deleteEntity(this.page);
+    }
+
+    async getCurrentTabName() {
+        const input = await this.page.waitForSelector(
+            `${slct(DatasetPanelQA.TabRadio)} input[aria-checked="true"]`,
+        );
+
+        return await input.inputValue();
     }
 }
 

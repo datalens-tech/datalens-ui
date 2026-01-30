@@ -1,13 +1,15 @@
-import type {RGBGradient} from '../../../../../../shared';
+import {
+    MapCenterMode,
+    ZoomMode,
+    getSortedData,
+    mapStringToCoordinates,
+} from '../../../../../../shared';
+import type {RGBGradient, ServerChartsConfig, ServerField} from '../../../../../../shared';
+import {getColorsSettings} from '../../helpers/color-palettes';
 import type {ChartColorsConfig} from '../types';
 
-import {
-    getCurrentGradient,
-    getRgbColors,
-    mapAndColorizeCoordinatesByDimension,
-    mapAndColorizeHashTableByGradient,
-} from './color-helpers';
-import {LAT, LONG} from './constants';
+import {getCurrentGradient, getRgbColors, mapAndColorizeHashTableByGradient} from './color-helpers';
+import {LAT, LONG, getColor, getMountedColor} from './constants';
 
 export type Coordinate = [number, number];
 
@@ -132,8 +134,18 @@ function colorizeGeoByGradient(data: GeoData, colorsConfig: ChartColorsConfig): 
     return mapAndColorizeHashTableByGradient(preparedData, colorsConfig);
 }
 
-function colorizeGeoByPalette(data: GeoData, colorsConfig: ChartColorsConfig, colorGuid: string) {
-    const preparedData = Object.entries(data).reduce((acc, [, points]) => {
+export function colorizeGeoByPalette({
+    data,
+    colorsConfig,
+    colorField,
+    defaultColorPaletteId,
+}: {
+    data: GeoData;
+    colorsConfig: ChartColorsConfig;
+    colorField: ServerField;
+    defaultColorPaletteId: string;
+}) {
+    const preparedData: Record<string, string> = Object.entries(data).reduce((acc, [, points]) => {
         points.forEach((point) => {
             if (typeof point === 'object' && point !== null) {
                 Object.assign(acc, point);
@@ -143,7 +155,48 @@ function colorizeGeoByPalette(data: GeoData, colorsConfig: ChartColorsConfig, co
         return acc;
     }, {});
 
-    return mapAndColorizeCoordinatesByDimension(preparedData, colorsConfig, colorGuid);
+    const knownValues: {point: string; value: string; backgroundColor?: string}[] = [];
+
+    const colorData: Record<string, {backgroundColor?: string; colorIndex?: number}> = {};
+    const colorDictionary: Record<string, string> = {};
+
+    const {mountedColors, colors} = getColorsSettings({
+        field: colorField,
+        colorsConfig,
+        defaultColorPaletteId,
+        availablePalettes: colorsConfig.availablePalettes,
+        customColorPalettes: colorsConfig.loadedColorPalettes,
+    });
+
+    // eslint-disable-next-line guard-for-in
+    for (const point in preparedData) {
+        const value = preparedData[point];
+        colorData[point] = {};
+        let colorIndex = knownValues.findIndex(({value: knownValue}) => knownValue === value);
+
+        if (colorIndex === -1) {
+            knownValues.push({point, value});
+            colorIndex = knownValues.length - 1;
+
+            let color;
+
+            if (mountedColors && mountedColors[value]) {
+                color = getMountedColor({mountedColors, colors, value});
+            } else {
+                color = getColor(colorIndex, colors);
+            }
+            knownValues[knownValues.length - 1].backgroundColor = color;
+            colorData[point].backgroundColor = color;
+
+            colorDictionary[value] = color;
+        } else {
+            colorData[point].backgroundColor = knownValues[colorIndex].backgroundColor;
+        }
+
+        colorData[point].colorIndex = colorIndex;
+    }
+
+    return {colorData, colorDictionary: getSortedData(colorDictionary)};
 }
 
 function getLayerAlpha(layerSettings: {alpha: number}) {
@@ -177,12 +230,35 @@ function getGradientMapOptions(
     return mapOptions;
 }
 
+export function getMapState(shared: ServerChartsConfig, bounds: (Coordinate | undefined)[]) {
+    const [leftBot, rightTop] = bounds;
+    const shouldSetBounds =
+        shared?.extraSettings?.zoomMode !== ZoomMode.Manual &&
+        shared?.extraSettings?.mapCenterMode !== ZoomMode.Manual;
+
+    let center: Coordinate = [55.76, 37.64];
+    const centerValue = shared?.extraSettings?.mapCenterValue;
+    const mapCenterValue = centerValue ? (mapStringToCoordinates(centerValue) as Coordinate) : null;
+
+    if (shared?.extraSettings?.mapCenterMode === MapCenterMode.Manual && mapCenterValue) {
+        center = mapCenterValue;
+    } else if (leftBot && rightTop && !shouldSetBounds) {
+        center = [leftBot[0] / 2 + rightTop[0] / 2, leftBot[1] / 2 + rightTop[1] / 2];
+    }
+
+    let zoom = 8;
+    if (shared?.extraSettings?.zoomMode === ZoomMode.Manual && shared?.extraSettings?.zoomValue) {
+        zoom = Math.max(1, shared.extraSettings.zoomValue);
+    }
+
+    return {zoom, center};
+}
+
 export {
     getMapBounds,
     getExtremeValues,
     getFlattenCoordinates,
     colorizeGeoByGradient,
-    colorizeGeoByPalette,
     getLayerAlpha,
     getGradientMapOptions,
 };

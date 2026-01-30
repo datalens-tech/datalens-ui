@@ -39,6 +39,7 @@ export const UPDATE_PREVIEW = Symbol('wizard/preview/UPDATE_PREVIEW');
 export const SET_HIGHCHARTS_WIDGET = Symbol('wizard/preview/SET_HIGHCHARTS_WIDGET');
 export const SET_UPDATES = Symbol('wizard/SET_UPDATES');
 export const UPDATE_CLIENT_CHARTS_CONFIG = Symbol('wizard/UPDATE_CLIENT_CHARTS_CONFIG');
+export const SET_DESCRIPTION = Symbol('wizard/SET_WIZARD_DESCRIPTION');
 
 export interface HighchartsWidget {
     chartWidth: number;
@@ -274,8 +275,21 @@ export function updateClientChartsConfig(
     };
 }
 
+export function setDescription(payload: string) {
+    return {
+        type: SET_DESCRIPTION,
+        payload,
+    };
+}
+
+export interface SetDescriptionAction {
+    type: typeof SET_DESCRIPTION;
+    payload: string;
+}
+
 export type PreviewAction =
     | UpdatePreviewAction
     | SetHighchartsWidgetAction
     | SetUpdatesAction
-    | UpdateClientChartsConfigAction;
+    | UpdateClientChartsConfigAction
+    | SetDescriptionAction;

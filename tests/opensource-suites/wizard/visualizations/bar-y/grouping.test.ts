@@ -1,15 +1,15 @@
 import {expect} from '@playwright/test';
 
-import datalensTest from '../../../../utils/playwright/globalTestDefinition';
-import {openTestPage, slct} from '../../../../utils';
 import {
     ChartKitQa,
     Operations,
     WizardPageQa,
     WizardVisualizationId,
 } from '../../../../../src/shared';
-import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
+import WizardPage from '../../../../page-objects/wizard/WizardPage';
+import {openTestPage, slct} from '../../../../utils';
+import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {SMALL_SCREENSHOT_VIEWPORT_SIZE} from '../constants';
 
 datalensTest.describe('Wizard', () => {
@@ -18,7 +18,7 @@ datalensTest.describe('Wizard', () => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.BarYD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Bar);
         });
 
         datalensTest('Grouping by Measure Names @screenshot', async ({page}) => {
@@ -49,7 +49,6 @@ datalensTest.describe('Wizard', () => {
             );
 
             await expect(previewLoader).not.toBeVisible();
-
             await expect(preview).toHaveScreenshot();
         });
     });

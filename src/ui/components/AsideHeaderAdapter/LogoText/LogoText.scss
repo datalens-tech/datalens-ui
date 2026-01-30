@@ -1,0 +1,12 @@
+@import '../../../styles/mixins.scss';
+
+.aside-header-logo-text {
+    &__title {
+        @include text-subheader-2;
+    }
+
+    &__installation-info {
+        @include installation-info-font;
+        width: fit-content;
+    }
+}

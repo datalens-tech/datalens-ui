@@ -14,6 +14,8 @@ import {removeEmptyFields} from 'ui/units/auth/utils/fields';
 import {
     RESET_CREATE_USER,
     RESET_SERVICE_USERS_LIST,
+    RESTORE_USERS_STATE_AFTER_FILTER,
+    SAVE_USERS_STATE_BEFORE_FILTER,
     SET_CREATE_USER_FAILED,
     SET_CREATE_USER_LOADING,
     SET_CREATE_USER_SUCCESS,
@@ -30,7 +32,9 @@ export type ServiceSettingsActions =
     | SetCreateUserLoadingAction
     | SetCreateUserSuccessAction
     | SetCreateUserFailedAction
-    | ResetCreateUserAction;
+    | ResetCreateUserAction
+    | SaveUsersStateBeforeFilterAction
+    | RestoreUsersStateAfterFilterAction;
 
 export type ServiceSettingsDispatch = ThunkDispatch<
     DatalensGlobalState,
@@ -40,6 +44,7 @@ export type ServiceSettingsDispatch = ThunkDispatch<
 
 type SetServiceUsersListLoadingAction = {
     type: typeof SET_SERVICE_USERS_LIST_LOADING;
+    payload: {isLoadMore?: boolean};
 };
 type SetServiceUsersListSuccessAction = {
     type: typeof SET_SERVICE_USERS_LIST_SUCCESS;
@@ -76,6 +81,7 @@ export const getUsersList = ({
         try {
             dispatch({
                 type: SET_SERVICE_USERS_LIST_LOADING,
+                payload: {isLoadMore},
             });
             const data = await getSdk().sdk.auth.getUsersList(
                 {
@@ -129,12 +135,28 @@ export const resetCreateUser = (): ResetCreateUserAction => ({
     type: RESET_CREATE_USER,
 });
 
+type SaveUsersStateBeforeFilterAction = {
+    type: typeof SAVE_USERS_STATE_BEFORE_FILTER;
+};
+
+export const saveUsersStateBeforeFilter = (): SaveUsersStateBeforeFilterAction => ({
+    type: SAVE_USERS_STATE_BEFORE_FILTER,
+});
+
+type RestoreUsersStateAfterFilterAction = {
+    type: typeof RESTORE_USERS_STATE_AFTER_FILTER;
+};
+
+export const restoreUsersStateAfterFilter = (): RestoreUsersStateAfterFilterAction => ({
+    type: RESTORE_USERS_STATE_AFTER_FILTER,
+});
+
 export const createUser = ({
     onSuccess,
     userData,
 }: {
     userData: CreateUserArgs;
-    onSuccess?: () => void;
+    onSuccess?: (userId: string) => void;
 }) => {
     return async (dispatch: ServiceSettingsDispatch) => {
         try {
@@ -147,7 +169,7 @@ export const createUser = ({
                     concurrentId: 'serviceSettings/createUser',
                 },
             );
-            onSuccess?.();
+            onSuccess?.(data.userId);
             dispatch({
                 type: SET_CREATE_USER_SUCCESS,
                 payload: data,

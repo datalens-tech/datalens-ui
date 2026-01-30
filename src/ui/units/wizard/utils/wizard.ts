@@ -1,22 +1,3 @@
-import {
-    DEFAULT_BAR_EXTRA_SETTINGS,
-    DEFAULT_DATETIME_FORMAT,
-    DEFAULT_DATE_FORMAT,
-    DEFAULT_DONUT_EXTRA_SETTINGS,
-    DEFAULT_FLAT_TABLE_EXTRA_SETTINGS,
-} from 'constants/misc';
-import {
-    AREA_VISUALIZATION,
-    COLUMN_VISUALIZATION,
-    GEOPOINT_VISUALIZATION,
-    GEOPOINT_WITH_CLUSTER_VISUALIZATION,
-    GEOPOLYGON_VISUALIZATION,
-    HEATMAP_VISUALIZATION,
-    LINE_VISUALIZATION,
-    POLYLINE_VISUALIZATION,
-    VISUALIZATION_IDS,
-} from 'constants/visualizations';
-
 import {I18n} from 'i18n';
 import lodash from 'lodash';
 import moment from 'moment';
@@ -31,7 +12,6 @@ import type {
 import {
     DATASET_FIELD_TYPES,
     DatasetFieldType,
-    Feature,
     NavigatorModes,
     Operations,
     isDateField,
@@ -39,7 +19,24 @@ import {
     resolveOperation,
     resolveRelativeDate,
 } from 'shared';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {
+    DEFAULT_BAR_EXTRA_SETTINGS,
+    DEFAULT_DATETIME_FORMAT,
+    DEFAULT_DATE_FORMAT,
+    DEFAULT_DONUT_EXTRA_SETTINGS,
+    DEFAULT_FLAT_TABLE_EXTRA_SETTINGS,
+} from 'ui/constants/misc';
+import {
+    AREA_VISUALIZATION,
+    COLUMN_VISUALIZATION,
+    GEOPOINT_VISUALIZATION,
+    GEOPOINT_WITH_CLUSTER_VISUALIZATION,
+    GEOPOLYGON_VISUALIZATION,
+    HEATMAP_VISUALIZATION,
+    LINE_VISUALIZATION,
+    POLYLINE_VISUALIZATION,
+    VISUALIZATION_IDS,
+} from 'ui/constants/visualizations';
 import {v1 as uuidv1} from 'uuid';
 
 import history from '../../../utils/history';
@@ -50,7 +47,11 @@ import {getChartFiltersWithDisabledProp} from './filters';
 
 const i18n = I18n.keyset('wizard');
 
-type DefaultExtraSettings = Partial<CommonSharedExtraSettings>;
+type DefaultExtraSettings =
+    | typeof DEFAULT_FLAT_TABLE_EXTRA_SETTINGS
+    | typeof DEFAULT_DONUT_EXTRA_SETTINGS
+    | typeof DEFAULT_BAR_EXTRA_SETTINGS
+    | Partial<CommonSharedExtraSettings>;
 
 const getVisualizationConfig = (type: VisualizationLayerType) => {
     let visualization: VisualizationLayerShared['visualization'];
@@ -348,7 +349,7 @@ export function getFiltersFields(
             isDateField(foundItem) && values.length === 1 ? Operations.EQ : undefined;
 
         values.forEach((urlValue) => {
-            if (!urlValue && isFilterAlreadyInChart && isEnabledFeature(Feature.EmptySelector)) {
+            if (!urlValue && isFilterAlreadyInChart) {
                 filtersFields.push({
                     ...foundItem,
                     unsaved: true,
@@ -419,7 +420,7 @@ export function getDefaultVisualisationExtraSettings(
 export const getDefaultExtraSettings = (
     visualisationId: string,
     prevExtraSettings?: CommonSharedExtraSettings,
-): DefaultExtraSettings => {
+): DefaultExtraSettings | {} => {
     let defaultExtraSettings = getDefaultVisualisationExtraSettings(visualisationId) || {};
 
     if (prevExtraSettings) {

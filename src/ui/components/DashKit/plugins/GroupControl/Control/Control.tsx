@@ -11,6 +11,7 @@ import type {
     DashTabItemControlDataset,
     DashTabItemControlManual,
     DashTabItemControlSingle,
+    DashTabItemGroupControlData,
     StringParams,
     WorkbookId,
 } from 'shared';
@@ -19,6 +20,7 @@ import {
     DATASET_FIELD_TYPES,
     DashTabItemControlElementType,
     DashTabItemControlSourceType,
+    DashTabItemType,
     TitlePlacementOption,
 } from 'shared';
 import {useMountedState} from 'ui/hooks';
@@ -112,7 +114,8 @@ type ControlProps = {
     needReload: boolean;
     workbookId?: WorkbookId;
     dependentSelectors?: boolean;
-    groupId: string;
+    widgetId: string;
+    groupData: DashTabItemGroupControlData;
 };
 
 export const Control = ({
@@ -127,7 +130,8 @@ export const Control = ({
     needReload,
     workbookId,
     dependentSelectors,
-    groupId,
+    widgetId,
+    groupData,
 }: ControlProps) => {
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
 
@@ -221,7 +225,7 @@ export const Control = ({
                     },
                     controlData: {
                         id,
-                        groupId,
+                        widgetId,
                         tabId: (extDashkitContext?.config as DashTab)?.id,
                     },
                     // currentParams are filled in after the first receiving of loadedData
@@ -293,7 +297,7 @@ export const Control = ({
         data,
         extDashkitContext?.config,
         extDashkitContext?.hideErrorDetails,
-        groupId,
+        widgetId,
         id,
         loadedData,
         onStatusChanged,
@@ -327,6 +331,15 @@ export const Control = ({
             dependentSelectors,
         });
         if (!needReload && !isEqual(currentSignificantParams.current, significantParams)) {
+            extDashkitContext?.updateTabsWithGlobalState?.({
+                params: significantParams,
+                selectorItem: {
+                    type: DashTabItemType.GroupControl,
+                    data: groupData,
+                    id: widgetId,
+                },
+                appliedSelectorsIds: [id],
+            });
             currentSignificantParams.current = significantParams;
             reload();
         }

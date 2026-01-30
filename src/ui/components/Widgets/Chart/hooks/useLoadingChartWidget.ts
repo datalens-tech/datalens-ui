@@ -1,5 +1,3 @@
-import {YFM_CUT_MARKDOWN_CLASSNAME, YFM_MARKDOWN_CLASSNAME} from 'constants/yfm';
-
 import React from 'react';
 
 import debounce from 'lodash/debounce';
@@ -7,6 +5,7 @@ import {useHistory} from 'react-router-dom';
 import type {DashSettings} from 'shared';
 import {FOCUSED_WIDGET_PARAM_NAME} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
+import {YFM_CUT_MARKDOWN_CLASSNAME, YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
@@ -25,7 +24,6 @@ import type {
 import {
     getPreparedConstants,
     getWidgetMeta,
-    getWidgetMetaOld,
     isWidgetTypeWithAutoHeight,
     pushStats,
     updateImmediateLayout,
@@ -115,8 +113,12 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
     const tabs = props.tabs as WidgetPluginDataWithTabs['tabs'];
 
-    const [loadedDescription, setLoadedDescription] = React.useState<string | null>(null);
+    const [loadedDescription, setLoadedDescription] = React.useState<{
+        result: string;
+        meta?: object;
+    } | null>(null);
     const [description, setDescription] = React.useState<string | null>(null);
+    const [descriptionMetaScript, setDescriptionMetaScript] = React.useState<string[] | null>(null);
     const [loadedWidgetType, setLoadedWidgetType] = React.useState<string>('');
     const [isLoadedWidgetWizard, setIsLoadedWidgetWizard] = React.useState(false);
     const [isRendered, setIsRendered] = React.useState(false);
@@ -126,7 +128,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const mutationObserver = React.useRef<MutationObserver | null>(null);
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
-    const isNewRelations = extDashkitContext?.isNewRelations || false;
     const dataProviderContextGetter = extDashkitContext?.dataProviderContextGetter || undefined;
 
     const history = useHistory();
@@ -236,6 +237,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         isInit,
         isWidgetMenuDataChanged,
         dataProps,
+        runActivity,
+        silentLoadChartData,
     } = useLoadingChart({
         dataProvider,
         requestHeadersGetter,
@@ -329,10 +332,12 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const loadDescription = React.useCallback(() => {
         if (currentTab.description) {
             getMarkdown?.({text: currentTab.description})
-                .then(({result}) => setLoadedDescription(result))
+                .then(({result, meta}) => {
+                    setLoadedDescription(meta ? {result, meta} : {result});
+                })
                 .catch((err) => {
                     logger.logError('DashKit: Widget loadDescription failed', err);
-                    setLoadedDescription(currentTab.description);
+                    setLoadedDescription({result: currentTab.description});
                     updateImmediateLayout({
                         type: loadedWidgetType,
                         autoHeight: tabs[tabIndex].autoHeight,
@@ -344,7 +349,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                     });
                 });
         } else {
-            setLoadedDescription(currentTab.description);
+            setLoadedDescription({result: currentTab.description});
             updateImmediateLayout({
                 type: loadedWidgetType,
                 autoHeight: tabs[tabIndex].autoHeight,
@@ -429,10 +434,17 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      * updating widget description by markdown
      */
     React.useEffect(() => {
-        if (loadedDescription === description) {
+        if (loadedDescription?.result === description) {
             return;
         }
-        setDescription(loadedDescription);
+
+        if (loadedDescription) {
+            setDescription(loadedDescription.result);
+        }
+
+        const metaScript = ((loadedDescription?.meta as any)?.script as string[]) ?? null;
+        setDescriptionMetaScript(metaScript);
+
         handleChartkitReflow();
     }, [loadedDescription, description, handleChartkitReflow]);
 
@@ -485,32 +497,15 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 loadData,
                 savedData: loadedData,
                 error,
+                widgetDataRef,
+                currentTabChartId: currentTab.chartId,
             });
 
             if (resolveMetaDataRef.current) {
                 resolveMetaDataRef.current(meta);
             }
         },
-        [tabs, tabIndex, resolveMetaDataRef.current, loadedData, error, widgetId],
-    );
-
-    /**
-     * get dash widget meta data (current relations)
-     */
-    const resolveMeta = React.useCallback(
-        (loadData: LoadedWidgetData<ChartsData>) => {
-            const meta = getWidgetMetaOld({
-                // @ts-expect-error
-                tabs: data.tabs,
-                tabIndex,
-                loadData,
-            });
-
-            if (resolveMetaDataRef.current) {
-                resolveMetaDataRef.current(meta);
-            }
-        },
-        [tabs, tabIndex, resolveMetaDataRef.current],
+        [data.tabs, widgetId, loadedData, error, widgetDataRef, currentTab.chartId],
     );
 
     /**
@@ -520,11 +515,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         (argResolve) => {
             resolveMetaDataRef.current = argResolve;
             resolveWidgetDataRef.current = (resolvingData: LoadedWidgetData<ChartsData>) => {
-                if (isNewRelations) {
-                    getCurrentWidgetResolvedMetaInfo(resolvingData);
-                } else {
-                    resolveMeta(resolvingData);
-                }
+                getCurrentWidgetResolvedMetaInfo(resolvingData);
             };
             if (!isInit) {
                 // initializing chart loading if it was not inited yet (ex. was not in viewport
@@ -543,10 +534,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         [
             error,
             loadedData,
-            isNewRelations,
             setCanBeLoaded,
             isInit,
-            resolveMeta,
             getCurrentWidgetResolvedMetaInfo,
             resolveMetaDataRef,
             resolveWidgetDataRef,
@@ -697,6 +686,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         error,
         handleRenderChart,
         description,
+        descriptionMetaScript,
         handleToggleFullscreenMode,
         handleSelectTab,
         handleChartkitReflow,
@@ -721,5 +711,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         isWidgetMenuDataChanged,
         dataProps,
         noControls,
+        runActivity,
+        silentLoadChartData,
     };
 };

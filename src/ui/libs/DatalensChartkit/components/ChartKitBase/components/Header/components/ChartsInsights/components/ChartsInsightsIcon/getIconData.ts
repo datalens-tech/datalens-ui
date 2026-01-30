@@ -1,12 +1,12 @@
-import {CircleExclamationFill, CircleInfo, TriangleExclamationFill} from '@gravity-ui/icons';
-import type {ChartsInsightsItemLevels} from 'shared';
+import {CircleExclamation, TriangleExclamation} from '@gravity-ui/icons';
+import {type ChartsInsightsItemLevels} from 'shared';
 
-const LevelToIcons = {
-    critical: TriangleExclamationFill,
-    warning: CircleExclamationFill,
-    info: CircleInfo,
+const insightsIconsFloat = {
+    critical: TriangleExclamation,
+    warning: CircleExclamation,
+    info: CircleExclamation,
 };
 
 export const getIconData = (level: ChartsInsightsItemLevels) => {
-    return LevelToIcons[level];
+    return insightsIconsFloat[level];
 };

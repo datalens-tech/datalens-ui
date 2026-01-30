@@ -1,3 +1,6 @@
+// All the types contains here (in constants file) because of possible circular dependencies
+
+// Constants section
 export enum ConnectorType {
     /** Special value for connectors union. Used to render nested pages with their own connectors list */
     __Meta__ = '__meta__',
@@ -35,6 +38,7 @@ export enum ConnectorType {
     Oracle = 'oracle',
     Postgres = 'postgres',
     Snowflake = 'snowflake',
+    Trino = 'trino',
     UsageAnalyticsDetailed = 'usage_analytics_detailed',
     UsageAnalyticsLight = 'usage_analytics_light',
     UsageTrackingYT = 'usage_tracking_ya_team',
@@ -53,6 +57,7 @@ export enum ConnectorType {
     Extractor1c = 'extractor1c',
     Yadocs = 'yadocs',
     MonitoringV2 = 'monitoring_v2',
+    ApiConnector = 'json_api',
 }
 
 export type ActualConnectorType =
@@ -78,13 +83,6 @@ export enum EnforceCollate {
     Off = 'off',
 }
 
-export enum RawSQLLevel {
-    Off = 'off',
-    Subselect = 'subselect',
-    Dashsql = 'dashsql',
-    Unknown = 'unknown',
-}
-
 export enum CSVEncoding {
     Utf8 = 'utf8',
     Windows1251 = 'windows1251',
@@ -97,12 +95,16 @@ export enum CSVDelimiter {
     Tab = 'tab',
 }
 
-export const MDB_AVAILABLE_BASES = [
-    ConnectorType.Clickhouse,
-    ConnectorType.Greenplum,
-    ConnectorType.Mysql,
-    ConnectorType.Postgres,
-] as const;
+export const RAW_SQL_LEVEL = {
+    OFF: 'off',
+    SUBSELECT: 'subselect',
+    TEMPLATE: 'template',
+    DASHSQL: 'dashsql',
+} as const;
 
-// This type contains here (in constants file) because of possible circular dependencies
-export type MdbAvailableDatabase = (typeof MDB_AVAILABLE_BASES)[number];
+export const CONNECTOR_VISIBILITY_MODE = {
+    FREE: 'free',
+    HIDDEN: 'hidden',
+    UNCREATABLE: 'uncreatable',
+    BUSINESS: 'business',
+} as const;

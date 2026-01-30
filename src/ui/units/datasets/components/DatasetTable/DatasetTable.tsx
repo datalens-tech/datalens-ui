@@ -17,6 +17,7 @@ import type {
     DatasetSelectionMap,
     DatasetSourceAvatar,
 } from 'shared';
+import {DatasetFieldsTabQa} from 'shared';
 import type {Permissions} from 'shared/types/permissions';
 import {Interpolate} from 'ui/components/Interpolate';
 import {DL} from 'ui/constants';
@@ -67,12 +68,14 @@ type DatasetTableProps = {
     batchRemoveFields: (data: {fields: DatasetField[]}) => void;
     onClickRow: (data: {field: DatasetField}) => void;
     openRLSDialog: (data: {field: DatasetField}) => void;
+    openFieldSettingsDialog: (data: {field: DatasetField}) => void;
     openDialog: typeof openDialog;
     openDialogConfirm: typeof openDialogConfirm;
     closeDialog: typeof closeDialog;
     onDisplaySettingsUpdate: (itemsToDisplay: string[]) => void;
     rls: DatasetRls;
     permissions?: Permissions;
+    readonly: boolean;
 };
 
 type DatasetTableState = {
@@ -90,6 +93,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         waitingForOpenFieldEditor: false,
     };
 
+    private selectionIndexAnchor: number | null = null;
+
     componentDidUpdate(prevProps: DatasetTableProps) {
         const {editableFieldGuid, waitingForOpenFieldEditor} = this.state;
 
@@ -106,7 +111,16 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             });
         }
 
-        if (this.props.fields !== prevProps.fields && Object.keys(this.state.selectedRows).length) {
+        if (
+            this.props.fields !== prevProps.fields &&
+            Object.keys(this.state.selectedRows).length &&
+            !(
+                this.props.fields.length === prevProps.fields.length &&
+                this.props.fields.every(
+                    (field, index) => field.guid === prevProps.fields[index].guid,
+                )
+            )
+        ) {
             this.resetSelection();
         }
     }
@@ -152,6 +166,10 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                                 selected: selectedRows[row.guid],
                             });
                         }}
+                        onSort={() => {
+                            this.selectionIndexAnchor = null;
+                        }}
+                        data-qa={DatasetFieldsTabQa.TableRow}
                     />
                 </div>
 
@@ -239,20 +257,36 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             handleTitleUpdate: this.handleTitleUpdate,
             handleIdUpdate: this.handleIdUpdate,
             handleHiddenUpdate: this.handleHiddenUpdate,
+            handleUpdateFieldSettings: this.handleUpdateFieldSettings,
             handleRlsUpdate: this.handleRlsUpdate,
             handleTypeSelectUpdate: this.handleTypeSelectUpdate,
             handleAggregationSelectUpdate: this.handleAggregationSelectUpdate,
             handleDescriptionUpdate: this.handleDescriptionUpdate,
             handleMoreActionClick: this.handleMoreActionClick,
             onSelectChange: this.onSelectChange,
+            readonly: this.props.readonly,
         });
     }
 
     private resetSelection = () => {
         this.setState({selectedRows: {}});
+        this.selectionIndexAnchor = null;
     };
 
-    private onSelectChange = (isSelected: boolean, guids: (keyof DatasetSelectionMap)[]) => {
+    private onSelectChange = (
+        isSelected: boolean,
+        guids: (keyof DatasetSelectionMap)[],
+        clickedIndex?: number,
+        modifier?: {shiftKey: boolean},
+    ) => {
+        if (
+            modifier?.shiftKey &&
+            this.selectionIndexAnchor !== null &&
+            clickedIndex !== undefined
+        ) {
+            return this.onSelectByShiftKey(guids[0], clickedIndex, this.selectionIndexAnchor);
+        }
+
         const selectedRows = {...this.state.selectedRows};
 
         guids.forEach((guid) => {
@@ -263,9 +297,39 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             }
         });
 
+        this.selectionIndexAnchor = clickedIndex ?? null;
+
         this.setState({
             selectedRows,
         });
+    };
+
+    private onSelectByShiftKey = (
+        guid: keyof DatasetSelectionMap,
+        index: number,
+        lastCheckedIndex: number,
+    ) => {
+        const {fields} = this.props;
+        const selectedRows = {...this.state.selectedRows};
+
+        const checked = !selectedRows[guid];
+
+        const start = Math.min(lastCheckedIndex, index);
+        const end = Math.max(lastCheckedIndex, index);
+
+        // select/deselect range from anchor to clicked row
+        for (let i = start; i <= end; i++) {
+            selectedRows[fields[i].guid] = true;
+
+            if (checked) {
+                selectedRows[fields[i].guid] = true;
+            } else {
+                delete selectedRows[fields[i].guid];
+            }
+        }
+
+        this.selectionIndexAnchor = index;
+        this.setState({selectedRows});
     };
 
     private setActiveRow = (activeRow?: number) => this.setState({activeRow});
@@ -429,6 +493,10 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             updatePreview: true,
             debounce: true,
         });
+    };
+
+    private handleUpdateFieldSettings = (field: DatasetField) => {
+        this.props.openFieldSettingsDialog({field});
     };
 
     private handleRlsUpdate = (field: DatasetField) => {

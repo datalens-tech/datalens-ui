@@ -1,4 +1,12 @@
+import clone from 'lodash/clone';
+import get from 'lodash/get';
+
+import {FieldKey} from '../../constants';
 import type {
+    ConnectionsReduxDispatch,
+    GetState,
+    HandleReplacedSourcesArgs,
+    ReplaceSource,
     ResetFormsData,
     ResetS3BasedData,
     SetBeingDeletedSourceId,
@@ -8,6 +16,7 @@ import type {
     SetConectorData,
     SetConnectionKey,
     SetEntry,
+    SetEntryDelegation,
     SetFileColumnFilter,
     SetFileReplaceSources,
     SetFileSelectedItemId,
@@ -35,6 +44,8 @@ import type {
     SetYadocsItems,
     SetYadocsSelectedItemId,
 } from '../typings';
+
+import {getFilteredReplaceSources} from './gsheet/utils';
 
 export const SET_GROUPED_CONNECTORS = Symbol('connections/SET_GROUPED_CONNECTORS');
 export const SET_FLATTEN_CONNECTORS = Symbol('connections/SET_FLATTEN_CONNECTORS');
@@ -71,9 +82,14 @@ export const SET_YADOCS_SELECTED_ITEM_ID = Symbol('connections/SET_YADOCS_SELECT
 export const SET_YADOCS_ITEMS = Symbol('connections/SET_YADOCS_ITEMS');
 export const SET_YADOCS_ACTIVE_DIALOG = Symbol('connections/SET_YADOCS_ACTIVE_DIALOG');
 export const SET_YADOCS_COLUMN_FILTER = Symbol('connections/SET_YADOCS_COLUMN_FILTER');
+export const SET_ENTRY_DELEGATION = Symbol('connections/SET_ENTRY_DELEGATION');
 
 export function setEntry(payload: SetEntry['payload']): SetEntry {
     return {type: SET_ENTRY, payload};
+}
+
+export function setEntryDelegation(payload: SetEntryDelegation['payload']): SetEntryDelegation {
+    return {type: SET_ENTRY_DELEGATION, payload};
 }
 
 export function setConnectionKey(key: SetConnectionKey['payload']): SetConnectionKey {
@@ -333,3 +349,48 @@ export function setYadocsColumnFilter(
         payload,
     };
 }
+
+export const handleReplacedSources = (args: HandleReplacedSourcesArgs) => {
+    return (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
+        const replaceSources = get(
+            getState().connections,
+            ['form', FieldKey.ReplaceSources],
+            [],
+        ) as ReplaceSource[];
+        let nextReplaceSources: ReplaceSource[] | undefined;
+
+        switch (args.action) {
+            case 'add': {
+                const replaceSource = args.replaceSource;
+                nextReplaceSources = [...replaceSources];
+                const existedReplaceSourceIndex = replaceSources.findIndex(({new_source_id}) => {
+                    return new_source_id === replaceSource.old_source_id;
+                });
+
+                if (existedReplaceSourceIndex === -1) {
+                    nextReplaceSources.push(replaceSource);
+                } else {
+                    const updatedReplaceSource = clone(replaceSources[existedReplaceSourceIndex]);
+                    updatedReplaceSource.new_source_id = replaceSource.new_source_id;
+                    nextReplaceSources.splice(existedReplaceSourceIndex, 1, updatedReplaceSource);
+                }
+
+                break;
+            }
+            case 'filter': {
+                const {filteredSources, filtered} = getFilteredReplaceSources(
+                    replaceSources,
+                    args.replacedSourceId,
+                );
+
+                if (filtered) {
+                    nextReplaceSources = [...filteredSources];
+                }
+            }
+        }
+
+        if (nextReplaceSources) {
+            dispatch(setForm({updates: {[FieldKey.ReplaceSources]: nextReplaceSources}}));
+        }
+    };
+};

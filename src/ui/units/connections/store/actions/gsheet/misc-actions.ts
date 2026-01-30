@@ -4,20 +4,19 @@ import type {RecursivePartial} from 'shared';
 
 import logger from '../../../../../libs/logger';
 import {FieldKey} from '../../../constants';
-import type {
-    ConnectionsReduxDispatch,
-    GSheetItem,
-    GSheetSourceInfo,
-    GetState,
-    ReplaceSource,
-} from '../../typings';
+import type {ConnectionsReduxDispatch, GSheetItem, GSheetSourceInfo, GetState} from '../../typings';
 import {api} from '../api';
-import {setForm, setGSheetActiveDialog, setGSheetItems, setGSheetSelectedItemId} from '../base';
+import {
+    handleReplacedSources,
+    setForm,
+    setGSheetActiveDialog,
+    setGSheetItems,
+    setGSheetSelectedItemId,
+} from '../base';
 
 import {
     findUploadedGSheet,
     getFilteredGSheetItems,
-    getFilteredReplaceSources,
     getGSheetItemIndex,
     mapGSheetItemsToAPIFormat,
     shapeGSheetEditableSourceItem,
@@ -30,10 +29,6 @@ type PollingHandlerArgs = {
     dispatch: ConnectionsReduxDispatch;
     getState: GetState;
 };
-
-type HandleReplacedSourcesArgs =
-    | {action: 'add'; replaceSource: ReplaceSource}
-    | {action: 'filter'; replacedSourceId: string};
 
 type UpdateGSheetSourceArgs = {
     fileId: string;
@@ -108,52 +103,6 @@ export const updateGSheetSource = (args: UpdateGSheetSourceArgs) => {
                     updates: {status: 'failed', error: response.error},
                 }),
             );
-        }
-    };
-};
-
-// TODO: https://github.com/datalens-tech/datalens-ui/issues/375
-export const handleReplacedSources = (args: HandleReplacedSourcesArgs) => {
-    return (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const replaceSources = get(
-            getState().connections,
-            ['form', FieldKey.ReplaceSources],
-            [],
-        ) as ReplaceSource[];
-        let nextReplaceSources: ReplaceSource[] | undefined;
-
-        switch (args.action) {
-            case 'add': {
-                const replaceSource = args.replaceSource;
-                nextReplaceSources = [...replaceSources];
-                const existedReplaceSourceIndex = replaceSources.findIndex(({new_source_id}) => {
-                    return new_source_id === replaceSource.old_source_id;
-                });
-
-                if (existedReplaceSourceIndex === -1) {
-                    nextReplaceSources.push(replaceSource);
-                } else {
-                    const updatedReplaceSource = clone(replaceSources[existedReplaceSourceIndex]);
-                    updatedReplaceSource.new_source_id = replaceSource.new_source_id;
-                    nextReplaceSources.splice(existedReplaceSourceIndex, 1, updatedReplaceSource);
-                }
-
-                break;
-            }
-            case 'filter': {
-                const {filteredSources, filtered} = getFilteredReplaceSources(
-                    replaceSources,
-                    args.replacedSourceId,
-                );
-
-                if (filtered) {
-                    nextReplaceSources = [...filteredSources];
-                }
-            }
-        }
-
-        if (nextReplaceSources) {
-            dispatch(setForm({updates: {[FieldKey.ReplaceSources]: nextReplaceSources}}));
         }
     };
 };

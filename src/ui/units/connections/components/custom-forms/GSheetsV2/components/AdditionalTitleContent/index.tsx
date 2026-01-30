@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
-import {Button, Checkbox, Icon, Popover} from '@gravity-ui/uikit';
-import type {PopoverInstanceProps} from '@gravity-ui/uikit';
+import {Button, Checkbox, HelpMark, Icon} from '@gravity-ui/uikit';
+import {Popover as LegacyPopover} from '@gravity-ui/uikit/legacy';
+import type {PopoverInstanceProps} from '@gravity-ui/uikit/legacy';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
@@ -57,10 +57,10 @@ export const AdditionalTitleContent = (props: AdditionalTitleContentProps) => {
                     authorized={authorized}
                     onClick={authorized ? clickGoogleLogoutButton : clickGoogleLoginButton}
                 />
-                <Popover
+                <LegacyPopover
                     ref={popoverRef}
                     anchorRef={loginButtonRef}
-                    tooltipClassName={b('gauth-popover')}
+                    className={b('gauth-popover')}
                     content={<div>{i18n('label_google-auth-help')}</div>}
                     placement="bottom"
                     initialOpen={initialGAuthPopoverOpen}
@@ -76,10 +76,9 @@ export const AdditionalTitleContent = (props: AdditionalTitleContentProps) => {
                 >
                     {i18n('label_auto-update')}
                 </Checkbox>
-                <HelpPopover
-                    className={b('help-btn', {'with-margin-right': true})}
-                    content={i18n('label_auto-update-help')}
-                />
+                <HelpMark className={b('help-btn', {'with-margin-right': true})}>
+                    {i18n('label_auto-update-help')}
+                </HelpMark>
                 <Button disabled={disableControls} onClick={updateData}>
                     <Icon data={iconSync} size={ICON_SIZE} />
                     {i18n('button_update')}

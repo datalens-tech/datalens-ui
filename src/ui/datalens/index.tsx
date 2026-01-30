@@ -16,8 +16,16 @@ import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAd
 import {MobileHeaderComponent} from 'ui/components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
 import {DL} from 'ui/constants';
 import {useClearReloadedQuery} from '../units/auth/hooks/useClearReloadedQuery';
+import {reducer} from 'ui/units/auth/store/reducers';
+import {useIframeRender} from './hooks';
+import {OPEN_SOURCE_INSTALLATION_INFO} from 'ui/constants/navigation';
+import {chartkitApi} from 'ui/store/toolkit/chartkit/api';
 
 reducerRegistry.register(coreReducers);
+reducerRegistry.register({auth: reducer});
+reducerRegistry.register({chartkitApi: chartkitApi.reducer});
+
+reducerRegistry.registerMiddleware(chartkitApi.middleware);
 
 const DatasetPage = React.lazy(() => import('./pages/DatasetPage/DatasetPage'));
 const PreviewPage = React.lazy(() => import('./pages/PreviewPage/PreviewPage'));
@@ -70,7 +78,13 @@ const DatalensPageView = () => {
                     path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                     component={DatasetPage}
                 />
+
                 <Route path="/preview" component={PreviewPage} />
+
+                {/* Prevent attempts to create a standalone (outside of workbook) connection */}
+                <Route path={['/connections/new/:type', '/connections/new']}>
+                    <Redirect to={`/collections${location.search}`} />
+                </Route>
                 <Route
                     path={[
                         '/connections/:id',
@@ -110,12 +124,24 @@ const DatalensPage: React.FC = () => {
     const showMobileHeader =
         !isEmbeddedMode() && DL.IS_MOBILE && !DL.IS_NOT_AUTHENTICATED && !DL.IS_AUTH_PAGE;
 
+    useIframeRender();
+
     if (showMobileHeader) {
-        return <MobileHeaderComponent renderContent={() => <DatalensPageView />} />;
+        return (
+            <MobileHeaderComponent
+                renderContent={() => <DatalensPageView />}
+                logoTextProps={{installationInfo: OPEN_SOURCE_INSTALLATION_INFO}}
+            />
+        );
     }
 
     if (showAsideHeaderAdapter) {
-        return <AsideHeaderAdapter renderContent={() => <DatalensPageView />} />;
+        return (
+            <AsideHeaderAdapter
+                renderContent={() => <DatalensPageView />}
+                logoTextProps={{installationInfo: OPEN_SOURCE_INSTALLATION_INFO}}
+            />
+        );
     }
 
     return <DatalensPageView />;

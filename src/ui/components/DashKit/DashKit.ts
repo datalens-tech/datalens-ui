@@ -1,11 +1,12 @@
 import type {Plugin, PluginDefaultLayout} from '@gravity-ui/dashkit';
 import {DashKit} from '@gravity-ui/dashkit';
+import type {BackgroundSettings, OldBackgroundSettings} from 'shared';
 import {registry} from 'ui/registry';
 
 import {DL} from '../../constants';
 import MarkdownProvider from '../../modules/markdownProvider';
 
-import {DEFAULT_DASH_MARGINS} from './constants';
+import {DEFAULT_DASH_MARGINS, OLD_DEFAULT_WIDGET_BORDER_RADIUS} from './constants';
 import {DashkitWrapper, getDashKitMenu} from './helpers';
 import pluginControl from './plugins/Control/Control';
 import pluginGroupControl from './plugins/GroupControl/GroupControl';
@@ -34,20 +35,60 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
     });
 };
 
+export interface CommonWidgetSettings {
+    background?: OldBackgroundSettings;
+    backgroundSettings?: BackgroundSettings;
+    borderRadius?: number;
+    internalMarginsEnabled?: boolean;
+}
+
+export type CommonGlobalWidgetSettings = CommonWidgetSettings;
+
+export interface CommonPluginSettings {
+    scope?: string;
+    globalWidgetSettings?: CommonGlobalWidgetSettings;
+}
+
+export interface CommonVisualSettings {
+    widgetsSettings?: CommonWidgetSettings;
+    background?: OldBackgroundSettings;
+    backgroundSettings?: BackgroundSettings;
+}
+
 export const getConfiguredDashKit = (
     pluginDefaultsGetter: typeof currentDefaultsGetter = null,
-    options?: {disableHashNavigation?: boolean},
+    options?: {
+        disableHashNavigation?: boolean;
+        disableTitleHints?: boolean;
+        scope?: string;
+        globalWidgetSettings?: CommonGlobalWidgetSettings;
+    },
+    shouldReconfigure?: boolean,
 ) => {
-    if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
+    if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured || shouldReconfigure) {
+        const commonSettings: CommonPluginSettings = {
+            scope: options?.scope,
+            globalWidgetSettings: {
+                background: options?.globalWidgetSettings?.background,
+                backgroundSettings: options?.globalWidgetSettings?.backgroundSettings,
+                borderRadius:
+                    options?.globalWidgetSettings?.borderRadius ?? OLD_DEFAULT_WIDGET_BORDER_RADIUS,
+                internalMarginsEnabled: options?.globalWidgetSettings?.internalMarginsEnabled,
+            },
+        };
         const titleSettings = {
+            ...commonSettings,
             hideAnchor: options?.disableHashNavigation,
+            hideHint: options?.disableTitleHints,
         };
 
         const textSettings = {
+            ...commonSettings,
             apiHandler: MarkdownProvider.getMarkdown,
         };
 
         const controlSettings = {
+            ...commonSettings,
             getDistincts: getDistinctsAction(),
         };
 
@@ -57,8 +98,8 @@ export const getConfiguredDashKit = (
                 textPlugin.setSettings(textSettings),
                 pluginControl.setSettings(controlSettings),
                 pluginGroupControl.setSettings(controlSettings),
-                widgetPlugin,
-                pluginImage,
+                widgetPlugin.setSettings(commonSettings),
+                pluginImage.setSettings(commonSettings),
             ],
             pluginDefaultsGetter,
         );

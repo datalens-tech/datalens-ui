@@ -1,0 +1,81 @@
+import React from 'react';
+
+import {Gear} from '@gravity-ui/icons';
+import type {SelectRenderControl} from '@gravity-ui/uikit';
+import {Button, HelpMark, Icon, Select} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
+import {useDispatch, useSelector} from 'react-redux';
+import {registry} from 'ui/registry';
+
+import {changeForm, formSelector} from '../../../store';
+
+const ITEM_DATA_EXPORT_ENABLED = 'dataExportEnabled';
+const i18nExport = I18n.keyset('exports.enable-data-export-settings');
+
+const b = block('conn-panel-actions');
+
+export function ConnSettings({
+    connectionId,
+    className,
+    disabled,
+}: {
+    connectionId: string | null;
+    className?: string;
+    disabled?: boolean;
+}) {
+    const form = useSelector(formSelector);
+    const dataExportEnabled = !form.data_export_forbidden || form.data_export_forbidden === 'off';
+
+    const dispatch = useDispatch();
+
+    const settingsValue = React.useMemo(
+        () => (dataExportEnabled ? [ITEM_DATA_EXPORT_ENABLED] : []),
+        [dataExportEnabled],
+    );
+
+    const handleUpdateSettings = React.useCallback(
+        (value: string[]) => {
+            const nextDataExportEnabled = value.includes(ITEM_DATA_EXPORT_ENABLED);
+
+            if (dataExportEnabled !== nextDataExportEnabled) {
+                dispatch(changeForm({data_export_forbidden: nextDataExportEnabled ? 'off' : 'on'}));
+            }
+        },
+        [dataExportEnabled, dispatch],
+    );
+
+    const renderSelectControl: SelectRenderControl = React.useCallback((args) => {
+        const {ref, triggerProps} = args;
+
+        return (
+            <Button ref={ref as React.Ref<HTMLButtonElement>} view="flat" {...triggerProps}>
+                <Icon data={Gear} size={18} />
+            </Button>
+        );
+    }, []);
+
+    const settingsSelectOptions = [
+        <Select.Option key={ITEM_DATA_EXPORT_ENABLED} value={ITEM_DATA_EXPORT_ENABLED}>
+            {i18nExport('label_enable-data-export')}
+            <HelpMark className={b('help-btn')}>{i18nExport('label_data-export-info')}</HelpMark>
+        </Select.Option>,
+    ];
+
+    const {getRenderConnectionSettingsPopup} = registry.connections.functions.getAll();
+
+    return (
+        <Select
+            className={className}
+            value={settingsValue}
+            multiple={true}
+            onUpdate={handleUpdateSettings}
+            popupPlacement={'bottom-end'}
+            renderControl={renderSelectControl}
+            renderPopup={getRenderConnectionSettingsPopup(connectionId)}
+            disabled={disabled}
+        >
+            {settingsSelectOptions}
+        </Select>
+    );
+}

@@ -14,7 +14,9 @@ import {
     MARKUP_TYPE,
     MINIMUM_FRACTION_DIGITS,
     WRAPPED_MARKDOWN_KEY,
+    ZoomMode,
     getFakeTitleOrTitle,
+    getFormatOptions,
     isHtmlField,
     isMarkdownField,
 } from '../../../../../../shared';
@@ -29,6 +31,7 @@ import {
     getGradientMapOptions,
     getLayerAlpha,
     getMapBounds,
+    getMapState,
 } from '../utils/geo-helpers';
 import {
     chartKitFormatNumberWrapper,
@@ -146,6 +149,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         shared,
         idToDataType,
         ChartEditor,
+        defaultColorPaletteId,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnabled = widgetConfig?.actionParams?.enable;
@@ -235,9 +239,10 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         }
 
         const tooltip = tooltips[tooltipIndex];
+        const formatting = getFormatOptions(tooltip);
         const formattedText = prepareFormattedValue({
             dataType: tooltip.data_type,
-            formatting: tooltip.formatting,
+            formatting,
             value: text,
         });
         const shouldUseFieldTitle = tooltipConfig?.fieldTitle !== 'off';
@@ -320,7 +325,12 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
 
             colorData = colorizedResult.colorData;
         } else {
-            colorizedResult = colorizeGeoByPalette(hashTable, colorsConfig, color.guid);
+            colorizedResult = colorizeGeoByPalette({
+                data: hashTable,
+                colorsConfig,
+                colorField: color,
+                defaultColorPaletteId,
+            });
 
             colorData = colorizedResult.colorData;
             colorDictionary = colorizedResult.colorDictionary;
@@ -442,6 +452,13 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         mapOptions.strokeWidth = 0;
     }
 
+    const shouldSetBounds =
+        shared?.extraSettings?.zoomMode !== ZoomMode.Manual &&
+        shared?.extraSettings?.mapCenterMode !== ZoomMode.Manual;
+    const {zoom, center} = getMapState(shared, [leftBot, rightTop]);
+
+    ChartEditor?.updateHighchartsConfig({state: {zoom, center}});
+
     if (gradientMode) {
         const colorTitle = color.fakeTitle || idToTitle[color.guid] || color.title;
 
@@ -460,7 +477,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
                     polygons,
                 },
                 options: mapOptions,
-                bounds: [leftBot, rightTop],
+                bounds: shouldSetBounds ? [leftBot, rightTop] : undefined,
             },
         ];
     } else {
@@ -479,7 +496,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
                     polygons,
                 },
                 options: mapOptions,
-                bounds: [leftBot, rightTop],
+                bounds: shouldSetBounds ? [leftBot, rightTop] : undefined,
             },
         ];
     }

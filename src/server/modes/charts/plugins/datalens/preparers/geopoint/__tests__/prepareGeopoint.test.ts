@@ -43,7 +43,7 @@ describe('prepareGeopoint', () => {
             {iconColor: DEFAULT_ICON_COLOR},
             {iconColor: DEFAULT_ICON_COLOR},
         ]);
-        expect(result[0].options.colorDictionary).not.toBeDefined();
+        expect(result[0].options?.colorDictionary).not.toBeDefined();
     });
 
     test('Colorize by dimension, colorsConfig empty: should use different colors', () => {
@@ -72,7 +72,7 @@ describe('prepareGeopoint', () => {
             {iconColor: 'blue'},
             {iconColor: 'red'},
         ]);
-        expect(result[0].options.colorDictionary).toEqual({
+        expect(result[0].options?.colorDictionary).toEqual({
             Color1: 'defaultColor',
             Color2: 'blue',
             Color3: 'red',
@@ -83,9 +83,10 @@ describe('prepareGeopoint', () => {
         const options = getPrepareFunctionArgs({
             colors: [DIMENSION_COLOR_FIELD],
             colorsConfig: {
+                fieldGuid: DIMENSION_COLOR_FIELD.guid,
                 mountedColors: {
-                    Color1: 'red',
-                    Color2: 'blue',
+                    Color1: '2',
+                    Color2: '1',
                 },
             } as unknown as PrepareFunctionArgs['colorsConfig'],
             resultData: {
@@ -110,7 +111,7 @@ describe('prepareGeopoint', () => {
             {iconColor: 'blue'},
             {iconColor: 'defaultColor'},
         ]);
-        expect(result[0].options.colorDictionary).toEqual({
+        expect(result[0].options?.colorDictionary).toEqual({
             Color1: 'red',
             Color2: 'blue',
             Color3: 'defaultColor',

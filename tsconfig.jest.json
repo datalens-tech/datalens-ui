@@ -19,7 +19,6 @@
       "store/*": ["src/ui/store/*"],
       "units/*": ["src/ui/units/*"],
       "components/*": ["src/ui/components/*"],
-      "constants/*": ["src/ui/constants/*"],
       "assets/*": ["src/ui/assets/*"],
       "hooks": ["src/ui/hooks"],
       "hooks/*": ["src/ui/hooks/*"],

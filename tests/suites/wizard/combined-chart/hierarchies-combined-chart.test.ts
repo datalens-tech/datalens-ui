@@ -6,6 +6,7 @@ import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
 
+// todo: remove along with GravityChartsForLineAreaAndBarX feature flag
 datalensTest.describe('Wizard - Combined Diagram', () => {
     datalensTest.beforeEach(async ({page}) => {
         const wizardPage = new WizardPage({page});

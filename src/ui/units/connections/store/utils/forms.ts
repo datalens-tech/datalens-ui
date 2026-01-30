@@ -5,7 +5,9 @@ import {URL_QUERY} from '../../../../constants';
 import type {FormDict} from '../../typings';
 import {getFormWithTrimmedValues, getQueryParam} from '../../utils';
 
-const getPreparedValue = (value: FormDict[keyof FormDict]) => {
+type FormDictValue = FormDict[keyof FormDict];
+
+const getPreparedValue = (value: FormDictValue) => {
     return typeof value === 'number' ? String(value) : value;
 };
 
@@ -63,6 +65,14 @@ export const getFormDefaults = (schema: FormSchema) => {
                     }
                 }
             });
+        } else if ('name' in row && 'defaultValue' in row && row.defaultValue !== undefined) {
+            const innerValue = Boolean('inner' in row && row.inner);
+
+            if (innerValue) {
+                innerForm[row.name] = row.defaultValue as FormDictValue;
+            } else {
+                form[row.name] = row.defaultValue as FormDictValue;
+            }
         }
     });
 

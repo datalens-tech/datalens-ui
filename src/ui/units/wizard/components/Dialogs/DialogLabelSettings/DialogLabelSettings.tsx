@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 
 import {Font} from '@gravity-ui/icons';
-import type {RadioButtonOption} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
 import {Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
@@ -47,12 +47,12 @@ export type OpenDialogLabelSettingsArgs = {
     props: Props;
 };
 
-const labelPositionItems: RadioButtonOption[] = [
+const labelPositionItems: SegmentedRadioGroupOptionProps[] = [
     {value: CHART_SETTINGS.LABELS_POSITION.INSIDE, content: i18n('label_on')},
     {value: CHART_SETTINGS.LABELS_POSITION.OUTSIDE, content: i18n('label_off')},
 ];
 
-const overlapItems: RadioButtonOption[] = [
+const overlapItems: SegmentedRadioGroupOptionProps[] = [
     {value: CHART_SETTINGS.OVERLAP.ON, content: i18n('label_on')},
     {value: CHART_SETTINGS.OVERLAP.OFF, content: i18n('label_off')},
 ];

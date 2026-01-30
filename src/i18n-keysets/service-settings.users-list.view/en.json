@@ -12,5 +12,6 @@
   "label_menu-delete": "Delete user",
   "label_menu-edit-profile": "Edit profile",
   "label_search-placeholder": "Search",
+  "label_user": "User",
   "label_users-empty-message": "Users not found"
 }

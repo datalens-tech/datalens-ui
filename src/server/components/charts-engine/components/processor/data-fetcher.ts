@@ -15,11 +15,10 @@ import {
     DL_CONTEXT_HEADER,
     DL_EMBED_TOKEN_HEADER,
     Feature,
-    SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     WORKBOOK_ID_HEADER,
-    isEnabledServerFeature,
 } from '../../../../../shared';
+import type {PartialDatasetField} from '../../../../../shared/schema/types';
 import {registry} from '../../../../registry';
 import type {CacheClient} from '../../../cache-client';
 import {config} from '../../constants';
@@ -75,7 +74,6 @@ type DataFetcherOptions = {
     iamToken?: string | null;
     workbookId?: WorkbookId;
     isEmbed?: boolean;
-    zitadelParams?: ZitadelParams | undefined;
     authParams?: AuthParams | undefined;
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
@@ -158,6 +156,7 @@ export type DataFetcherResult = {
     uiUrl?: string;
     dataUrl?: string;
     datasetId: string;
+    datasetFields?: PartialDatasetField[];
     hideInInspector?: boolean;
     url: string;
     message?: string;
@@ -165,29 +164,6 @@ export type DataFetcherResult = {
     data?: any;
     details?: string;
 };
-
-export type ZitadelParams = {
-    accessToken?: string;
-    serviceUserAccessToken?: string;
-};
-
-export function addZitadelHeaders({
-    headers,
-    zitadelParams,
-}: {
-    headers: OutgoingHttpHeaders;
-    zitadelParams: ZitadelParams;
-}) {
-    if (zitadelParams?.accessToken) {
-        Object.assign(headers, {authorization: `Bearer ${zitadelParams.accessToken}`});
-    }
-
-    if (zitadelParams?.serviceUserAccessToken) {
-        Object.assign(headers, {
-            [SERVICE_USER_ACCESS_TOKEN_HEADER]: zitadelParams.serviceUserAccessToken,
-        });
-    }
-}
 
 export type AuthParams = {
     accessToken?: string;
@@ -216,7 +192,6 @@ export class DataFetcher {
         iamToken,
         workbookId,
         isEmbed = false,
-        zitadelParams,
         authParams,
         originalReqHeaders,
         adapterContext,
@@ -266,7 +241,6 @@ export class DataFetcher {
                               iamToken,
                               workbookId,
                               isEmbed,
-                              zitadelParams,
                               authParams,
                               originalReqHeaders:
                                   originalReqHeaders as DataFetcherOriginalReqHeaders,
@@ -494,7 +468,6 @@ export class DataFetcher {
         iamToken,
         workbookId,
         isEmbed,
-        zitadelParams,
         authParams,
         originalReqHeaders,
         adapterContext,
@@ -515,7 +488,6 @@ export class DataFetcher {
         iamToken?: string | null;
         workbookId?: WorkbookId;
         isEmbed: boolean;
-        zitadelParams: ZitadelParams | undefined;
         authParams: AuthParams | undefined;
         originalReqHeaders: DataFetcherOriginalReqHeaders;
         adapterContext: AdapterContext;
@@ -524,6 +496,9 @@ export class DataFetcher {
     }) {
         const singleFetchingTimeout =
             ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
+
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+        const useChartsEngineLogin = Boolean(isEnabledServerFeature(Feature.UseChartsEngineLogin));
 
         try {
             source = prepareSource(source);
@@ -556,10 +531,6 @@ export class DataFetcher {
             sourceName,
             source: loggedSource,
         };
-
-        const useChartsEngineLogin = Boolean(
-            isEnabledServerFeature(ctx, Feature.UseChartsEngineLogin),
-        );
 
         if (useChartsEngineLogin && userLogin) {
             loggedInfo.login = userLogin;
@@ -740,6 +711,9 @@ export class DataFetcher {
         ];
         if (Array.isArray(proxyHeaders)) {
             proxyHeaders.forEach((headerName) => {
+                if (sourceConfig.isExternal && headerName.toLowerCase().startsWith('x-dl')) {
+                    return;
+                }
                 if (subrequestHeaders[headerName]) {
                     headers[headerName] = subrequestHeaders[headerName];
                 }
@@ -748,10 +722,6 @@ export class DataFetcher {
 
         if (workbookId) {
             headers[WORKBOOK_ID_HEADER] = workbookId;
-        }
-
-        if (zitadelParams) {
-            addZitadelHeaders({headers, zitadelParams});
         }
 
         if (authParams) {
@@ -843,7 +813,6 @@ export class DataFetcher {
                     cacheClient,
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,
-                    zitadelParams,
                     authParams,
                     requestHeaders: requestOptions.headers,
                 });
@@ -884,6 +853,7 @@ export class DataFetcher {
                 requestOptions: {...requestOptions, signal},
                 requestControl,
                 useCaching,
+                ctx,
             })
                 // eslint-disable-next-line
                 .catch((error) => {
@@ -1063,6 +1033,7 @@ export class DataFetcher {
                                 uiUrl: userTargetUriUi,
                                 dataUrl: publicTargetUri,
                                 datasetId,
+                                datasetFields: source.datasetFields,
                                 hideInInspector,
                                 data: publicSourceData,
                                 /** @deprecated use uiUrl or dataUrl */

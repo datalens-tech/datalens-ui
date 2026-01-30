@@ -6,8 +6,12 @@ import {useDispatch} from 'react-redux';
 import type {EntryScope} from 'shared';
 import {getUserId} from 'shared/modules/user';
 import {DIALOG_COPY_ENTRIES_TO_WORKBOOK} from 'ui/components/CopyEntriesToWorkbookDialog';
+import {DIALOG_SHARED_ENTRY_PERMISSIONS} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
+import {DIALOG_SHARED_RELATED_ENTITIES} from 'ui/components/DialogSharedRelatedEntities/DialogSharedRelatedEntities';
 import {EntryDialogName, EntryDialogues} from 'ui/components/EntryDialogues';
 import {DL} from 'ui/constants/common';
+import {getSdk} from 'ui/libs/schematic-sdk';
+import {showToast} from 'ui/store/actions/toaster';
 import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
 import {copyTextWithToast} from 'ui/utils/copyText';
 
@@ -16,7 +20,7 @@ import type {WorkbookWithPermissions} from '../../../../../../shared/schema/us/t
 import {registry} from '../../../../../registry';
 import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
-import type {ChunkItem, WorkbookEntry} from '../../../types';
+import type {ChunkItem, WorkbookEntry, WorkbookSharedEntry} from '../../../types';
 import {DIALOG_DELETE_ENTRY_IN_NEW_WORKBOOK} from '../../DeleteEntryDialog/DeleteEntryDialog';
 import {DIALOG_DUPLICATE_ENTRY_IN_WORKBOOK} from '../../DuplicateEntryDialog/DuplicateEntryDialog';
 import {DIALOG_RENAME_ENTRY_IN_NEW_WORKBOOK} from '../../RenameEntryDialog/RenameEntryDialog';
@@ -35,13 +39,20 @@ type WorkbookEntriesTableProps = {
     workbook: WorkbookWithPermissions;
     entries: GetEntryResponse[];
     refreshEntries: (scope: EntryScope) => void;
+    refreshSharedEntries: (scope?: EntryScope) => void;
     loadMoreEntries?: (entryScope: EntryScope) => void;
+    loadMoreSharedEntries?: (entryScope?: EntryScope) => void;
+    retryLoadSharedEntries?: (entryScope?: EntryScope) => void;
+    sharedToken?: string;
+    sharedError?: boolean;
+    sharedLoader?: boolean;
+    sharedChunks: ChunkItem<WorkbookSharedEntry>[][];
     retryLoadEntries?: (entryScope: EntryScope) => void;
     scope?: EntryScope;
     mapTokens?: Record<string, string>;
     mapErrors?: Record<string, boolean>;
     mapLoaders?: Record<string, boolean>;
-    chunks: ChunkItem[][];
+    chunks: ChunkItem<WorkbookEntry>[][];
     availableScopes?: EntryScope[];
 };
 
@@ -58,6 +69,13 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         mapLoaders,
         chunks,
         availableScopes,
+        sharedChunks,
+        loadMoreSharedEntries,
+        retryLoadSharedEntries,
+        sharedError,
+        sharedLoader,
+        sharedToken,
+        refreshSharedEntries,
     }) => {
         const dispatch: AppDispatch = useDispatch();
         const entryDialoguesRef = React.useRef<EntryDialogues>(null);
@@ -129,6 +147,67 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             [dispatch, onApplyDuplicate],
         );
 
+        const onDeleteSharedEntry = React.useCallback(
+            (entity: WorkbookSharedEntry) => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_SHARED_RELATED_ENTITIES,
+                        props: {
+                            open: true,
+                            onClose: () => dispatch(closeDialog()),
+                            entry: entity,
+                            workbookId: workbook.workbookId,
+                            isDeleteDialog: true,
+                            onDeleteSuccess: () => {
+                                dispatch(closeDialog());
+                                refreshSharedEntries(scope);
+                            },
+                        },
+                    }),
+                );
+            },
+            [dispatch, workbook, refreshSharedEntries, scope],
+        );
+
+        const onUpdateSharedEntryBindings = React.useCallback(
+            (entity: WorkbookSharedEntry) => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_SHARED_ENTRY_PERMISSIONS,
+                        props: {
+                            open: true,
+                            onClose: () => dispatch(closeDialog()),
+                            entry: entity,
+                            delegation: entity.isDelegated,
+                            onApply: async (delegation) => {
+                                if (delegation === entity.isDelegated) {
+                                    dispatch(closeDialog());
+                                    return;
+                                }
+                                try {
+                                    await getSdk().sdk.us.updateSharedEntryBinding({
+                                        sourceId: entity.entryId,
+                                        targetId: workbook.workbookId,
+                                        delegation,
+                                    });
+                                    dispatch(closeDialog());
+                                    refreshSharedEntries(scope);
+                                } catch (error) {
+                                    dispatch(
+                                        showToast({
+                                            title: error.message,
+                                            error,
+                                        }),
+                                    );
+                                }
+                            },
+                        },
+                    }),
+                );
+            },
+            [dispatch, workbook, refreshSharedEntries, scope],
+        );
+
         const onCopyEntry = React.useCallback(
             (entity: WorkbookEntry) => {
                 dispatch(
@@ -164,7 +243,8 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             });
         };
 
-        const {WorkbookEntriesTableTabs} = registry.common.components.getAll();
+        const {WorkbookEntriesTableTabs, WorkbookEntryExtended} =
+            registry.common.components.getAll();
 
         return (
             <React.Fragment>
@@ -198,6 +278,19 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             ))}
                     </div>
                 </div>
+                {scope && (
+                    <WorkbookEntryExtended
+                        sharedChunks={sharedChunks}
+                        loadMoreSharedEntries={() => loadMoreSharedEntries?.(scope)}
+                        retryLoadSharedEntries={() => retryLoadSharedEntries?.(scope)}
+                        onDeleteSharedEntry={onDeleteSharedEntry}
+                        onUpdateSharedEntryBindings={onUpdateSharedEntryBindings}
+                        sharedError={sharedError}
+                        sharedLoader={sharedLoader}
+                        sharedToken={sharedToken}
+                        workbook={workbook}
+                    />
+                )}
                 <WorkbookEntriesTableTabs
                     workbook={workbook}
                     retryLoadEntries={retryLoadEntries}
@@ -207,9 +300,17 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                     mapErrors={mapErrors}
                     mapLoaders={mapLoaders}
                     chunks={chunks}
+                    sharedChunks={sharedChunks}
+                    sharedToken={sharedToken}
+                    sharedError={sharedError}
+                    sharedLoader={sharedLoader}
+                    retryLoadSharedEntries={retryLoadSharedEntries}
+                    loadMoreSharedEntries={loadMoreSharedEntries}
                     availableScopes={availableScopes}
                     onRenameEntry={onRenameEntry}
                     onDeleteEntry={onDeleteEntry}
+                    onDeleteSharedEntry={onDeleteSharedEntry}
+                    onUpdateSharedEntryBindings={onUpdateSharedEntryBindings}
                     onDuplicateEntry={onDuplicateEntry}
                     onCopyEntry={onCopyEntry}
                     onShowRelated={onShowRelated}

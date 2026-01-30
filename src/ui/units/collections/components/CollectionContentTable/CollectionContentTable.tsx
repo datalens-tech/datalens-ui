@@ -6,24 +6,21 @@ import {Checkbox, DropdownMenu, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
-import {Feature} from 'shared';
 import {CollectionContentTableQa, DEFAULT_DATE_FORMAT} from 'shared/constants';
-import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import {DL} from 'ui/constants/common';
 import {selectDateTimeFormat} from 'ui/store/selectors/user';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import type {
-    CollectionWithPermissions,
-    WorkbookWithPermissions,
-} from '../../../../../shared/schema';
+import type {StructureItemWithPermissions} from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
+import {useRefreshPageAfterImport} from '../../hooks/useRefreshPageAfterImport';
 import {selectStructureItems} from '../../store/selectors';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
+import {getItemId} from '../helpers';
 
 import {CollectionCheckboxCell} from './TableComponents/CollectionCheckboxCell';
 import {CollectionLinkRow} from './TableComponents/CollectionLinkRow';
 import {CollectionTitleCell} from './TableComponents/CollectionTitleCell';
+import {getItemParams} from './helpers';
 
 import './CollectionContentTable.scss';
 
@@ -34,12 +31,10 @@ const b = block('dl-collection-content-table');
 type Props = {
     selectedMap: SelectedMap;
     itemsAvailableForSelectionCount: number;
-    getWorkbookActions: (
-        item: WorkbookWithPermissions,
+    getItemActions: (
+        item: StructureItemWithPermissions,
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
-    getCollectionActions: (
-        item: CollectionWithPermissions,
-    ) => (DropdownMenuItem[] | DropdownMenuItem)[];
+    refreshPage: () => void;
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
     onUpdateAllCheckboxesClick: (checked: boolean) => void;
 };
@@ -48,8 +43,8 @@ export const CollectionContentTable = React.memo<Props>(
     ({
         selectedMap,
         itemsAvailableForSelectionCount,
-        getWorkbookActions,
-        getCollectionActions,
+        getItemActions,
+        refreshPage,
         onUpdateCheckboxClick,
         onUpdateAllCheckboxesClick,
     }) => {
@@ -75,33 +70,34 @@ export const CollectionContentTable = React.memo<Props>(
 
         const dateTimeFormat = useSelector(selectDateTimeFormat);
 
+        const {refreshPageAfterImport} = useRefreshPageAfterImport({refreshPage});
+
         if (DL.IS_MOBILE) {
             return (
                 <div className={b({mobile: true})} data-qa={CollectionContentTableQa.Table}>
                     <AnimateBlock>
                         <div className={b('table')}>
                             <div className={b('content')}>
-                                {items.map((item) => (
-                                    <CollectionLinkRow
-                                        key={
-                                            'workbookId' in item
-                                                ? item.workbookId
-                                                : item.collectionId
-                                        }
-                                        item={item}
-                                    >
-                                        <CollectionTitleCell
-                                            isWorkbook={'workbookId' in item}
-                                            title={item.title}
-                                            collectionId={item.collectionId}
-                                        />
-                                        <div className={b('content-cell', {date: true})}>
-                                            {dateTime({
-                                                input: item.updatedAt,
-                                            }).format(DEFAULT_DATE_FORMAT)}
-                                        </div>
-                                    </CollectionLinkRow>
-                                ))}
+                                {items.map((item) => {
+                                    const {isCreating, isDeleting} = getItemParams(item);
+
+                                    return (
+                                        <CollectionLinkRow
+                                            key={getItemId(item)}
+                                            item={item}
+                                            isDisabled={isCreating || isDeleting}
+                                            refreshPageAfterImport={refreshPageAfterImport}
+                                        >
+                                            <CollectionTitleCell item={item} />
+
+                                            <div className={b('content-cell', {date: true})}>
+                                                {dateTime({
+                                                    input: item.updatedAt,
+                                                }).format(DEFAULT_DATE_FORMAT)}
+                                            </div>
+                                        </CollectionLinkRow>
+                                    );
+                                })}
                             </div>
                         </div>
                     </AnimateBlock>
@@ -141,41 +137,29 @@ export const CollectionContentTable = React.memo<Props>(
 
                         <div className={b('content')}>
                             {items.map((item) => {
-                                const isWorkbookItem = 'workbookId' in item;
-                                const actions = isWorkbookItem
-                                    ? getWorkbookActions(item)
-                                    : getCollectionActions(item);
+                                const {isCreating, isDeleting} = getItemParams(item);
 
-                                const isImporting =
-                                    isEnabledFeature(Feature.EnableExportWorkbookFile) &&
-                                    isWorkbookItem &&
-                                    item.status === WORKBOOK_STATUS.IMPORTING;
+                                const nonInteractive = isCreating || isDeleting;
+
+                                const actions = getItemActions(item);
 
                                 return (
                                     <CollectionLinkRow
-                                        key={
-                                            'workbookId' in item
-                                                ? item.workbookId
-                                                : item.collectionId
-                                        }
+                                        key={getItemId(item)}
                                         item={item}
-                                        isImporting={isImporting}
+                                        isDisabled={nonInteractive}
+                                        refreshPageAfterImport={refreshPageAfterImport}
                                     >
                                         <CollectionCheckboxCell
                                             item={item}
                                             onUpdateCheckboxClick={onUpdateCheckboxClick}
                                             selectedMap={selectedMap}
-                                            disabled={isImporting}
+                                            disabled={nonInteractive}
                                         />
-                                        <CollectionTitleCell
-                                            isWorkbook={'workbookId' in item}
-                                            title={item.title}
-                                            collectionId={item.collectionId}
-                                            isImporting={isImporting}
-                                        />
+                                        <CollectionTitleCell item={item} />
 
                                         <div className={b('content-cell', {date: true})}>
-                                            {!isImporting && (
+                                            {!nonInteractive && (
                                                 <Tooltip
                                                     content={dateTime({
                                                         input: item.updatedAt,
@@ -193,7 +177,7 @@ export const CollectionContentTable = React.memo<Props>(
                                         <div
                                             className={b('content-cell', {
                                                 control: true,
-                                                import: isImporting,
+                                                import: isDeleting,
                                             })}
                                             onClick={(e) => {
                                                 if (actions.length > 0) {
@@ -206,7 +190,7 @@ export const CollectionContentTable = React.memo<Props>(
                                                 <DropdownMenu
                                                     size="s"
                                                     items={actions}
-                                                    disabled={isImporting}
+                                                    disabled={isDeleting}
                                                 />
                                             )}
                                         </div>

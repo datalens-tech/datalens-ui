@@ -1,22 +1,27 @@
 import React from 'react';
 
 import {ArrowRight, ChevronDown, LockOpen, TrashBin} from '@gravity-ui/icons';
-import type {DropdownMenuItem, DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import type {
+    DropdownMenuItem,
+    DropdownMenuItemAction,
+    DropdownMenuItemMixed,
+    IconData,
+} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
-import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
+import {useHistory} from 'react-router-dom';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared';
-import {DL} from '../../../../constants';
 import {registry} from '../../../../registry';
 import {selectCollection} from '../../store/selectors';
 
+import {getSharedEntriesMenuItems} from './utils';
+
 import collectionIcon from '../../../../assets/icons/collections/collection.svg';
-import workbookDemoIcon from '../../../../assets/icons/collections/workbook-demo.svg';
 import workbookIcon from '../../../../assets/icons/collections/workbook.svg';
 
 import './CollectionActions.scss';
@@ -27,10 +32,8 @@ const b = block('dl-collection-actions');
 
 export type Props = {
     className?: string;
-    onCreateCollectionClick: () => void;
-    onAddDemoWorkbookClick: () => void;
-    onAddLearningMaterialsWorkbookClick: () => void;
-    onCreateWorkbookClick: () => void;
+    onCreateCollectionClick: DropdownMenuItemAction<void>;
+    onCreateWorkbookClick: DropdownMenuItemAction<void>;
     onEditAccessClick: () => void;
     onMoveClick: () => void;
     onDeleteClick: () => void;
@@ -41,36 +44,27 @@ export const CollectionActions = React.memo<Props>(
     ({
         className,
         onCreateCollectionClick,
-        onAddDemoWorkbookClick,
-        onAddLearningMaterialsWorkbookClick,
         onCreateWorkbookClick,
         onEditAccessClick,
         onMoveClick,
         onDeleteClick,
     }) => {
         const collection = useSelector(selectCollection);
-
+        const history = useHistory();
         const {CustomActionPanelCollectionActions} = registry.collections.components.getAll();
 
         const showCreateCollection = collection ? collection.permissions?.createCollection : true;
 
         const showCreateWorkbook = collection ? collection.permissions?.createWorkbook : true;
 
-        const showAddDemoWorkbook = showCreateWorkbook && DL.TEMPLATE_WORKBOOK_ID;
-        const showAddLearningMaterialsWorkbook =
-            showCreateWorkbook && DL.LEARNING_MATERIALS_WORKBOOK_ID;
+        const showCreateSharedEntry =
+            isEnabledFeature(Feature.EnableSharedEntries) && collection
+                ? collection.permissions?.createSharedEntry
+                : false;
 
-        const createActionItems: DropdownMenuItemMixed<unknown>[] = [];
+        const createActionItems: DropdownMenuItemMixed<void>[] = [];
 
-        const getItemText = ({
-            icon,
-            text,
-            hint,
-        }: {
-            icon: SVGIconData;
-            text: string;
-            hint?: string;
-        }) => (
+        const getItemText = ({icon, text, hint}: {icon: IconData; text: string; hint?: string}) => (
             <div className={b('dropdown-item')}>
                 <Icon className={b('dropdown-icon')} data={icon} />
                 <div className={b('dropdown-text')}>
@@ -102,33 +96,18 @@ export const CollectionActions = React.memo<Props>(
             });
         }
 
-        if (showAddDemoWorkbook || showAddLearningMaterialsWorkbook) {
-            const subItems: DropdownMenuItem<unknown>[] = [];
-
-            if (showAddDemoWorkbook) {
-                subItems.push({
-                    text: getItemText({
-                        icon: workbookDemoIcon,
-                        text: i18n('action_add-demo-workbook'),
-                        hint: i18n('action_add-demo-workbook-hint'),
-                    }),
-                    action: onAddDemoWorkbookClick,
-                });
-            }
-
-            if (showAddLearningMaterialsWorkbook) {
-                subItems.push({
-                    text: getItemText({
-                        icon: workbookDemoIcon,
-                        text: i18n('action_add-learning-materials-workbook'),
-                    }),
-                    action: onAddLearningMaterialsWorkbookClick,
-                });
-            }
-
-            if (subItems.length > 0) {
-                createActionItems.push(subItems);
-            }
+        if (showCreateSharedEntry) {
+            createActionItems.push(
+                getSharedEntriesMenuItems({
+                    connectionAction: () => {
+                        history.push(`/collections/${collection?.collectionId}/connections/new`);
+                    },
+                    datasetAction: () => {
+                        history.push(`/collections/${collection?.collectionId}/datasets/new`);
+                    },
+                    noticeClassName: b('notice'),
+                }),
+            );
         }
 
         const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);
@@ -182,15 +161,21 @@ export const CollectionActions = React.memo<Props>(
 
                 {(showCreateCollection || showCreateWorkbook) && (
                     <DropdownMenu
-                        size="s"
+                        size="m"
                         items={createActionItems}
                         switcherWrapperClassName={b('create-wrapper')}
-                        switcher={
-                            <Button view="action" className={b('create')}>
+                        popupProps={{placement: 'bottom-end'}}
+                        renderSwitcher={({onClick, onKeyDown}) => (
+                            <Button
+                                view="action"
+                                className={b('create')}
+                                onClick={onClick}
+                                onKeyDown={onKeyDown}
+                            >
                                 {i18n('action_create')}
                                 <Icon data={ChevronDown} />
                             </Button>
-                        }
+                        )}
                     />
                 )}
             </div>

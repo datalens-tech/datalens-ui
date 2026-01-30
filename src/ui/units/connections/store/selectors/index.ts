@@ -1,3 +1,4 @@
+import {createSelector} from 'reselect';
 import type {DatalensGlobalState} from 'ui';
 
 import {hasPermissionsToEdit} from '../../utils';
@@ -7,6 +8,7 @@ export {
     connectionTypeSelector,
     connectionIdSelector,
     workbookIdSelector,
+    collectionIdSelector,
 } from './connection-data';
 export * from './form';
 export {initialFormSelector} from './initial-form';
@@ -43,6 +45,25 @@ export const submitLoadingSelector = (state: DatalensGlobalState) => {
     return state.connections.ui.submitLoading;
 };
 
+export const pageLoadingSelector = (state: DatalensGlobalState) => {
+    return state.connections.ui.pageLoading;
+};
+
 export const uiSchemaSelector = (state: DatalensGlobalState) => {
     return state.connections.schema?.uiSchema;
 };
+
+export const flattenConnectorsSelector = (state: DatalensGlobalState) => {
+    return state.connections.flattenConnectors;
+};
+
+export const selectConnectionDescription = (state: DatalensGlobalState) =>
+    (state.connections.form.description as string) ?? '';
+
+const selectInitialConnectionDescription = (state: DatalensGlobalState) =>
+    state.connections.initialForm.description ?? '';
+
+export const isConnectionDescriptionChangedSelector = createSelector(
+    [selectInitialConnectionDescription, selectConnectionDescription],
+    (initialDescription, description) => initialDescription !== description,
+);

@@ -1,0 +1,23 @@
+.dl-entry-suggest {
+    &__popup {
+        height: 347px;
+        width: 392px;
+    }
+
+    &__filter {
+        padding: var(--g-spacing-2);
+
+        border-block-end: 1px solid var(--g-color-line-generic);
+    }
+
+    &__type-select {
+        width: 104px;
+        flex-shrink: 0;
+    }
+
+    &__entry-option {
+        &_disabled {
+            opacity: 0.5;
+        }
+    }
+}

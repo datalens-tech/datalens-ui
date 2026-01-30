@@ -3,6 +3,7 @@ import {transform as latex} from '@diplodoc/latex-extension/plugin';
 import {transform as mermaid} from '@diplodoc/mermaid-extension/plugin';
 import {transform as yfmTabs} from '@diplodoc/tabs-extension';
 import yfmTransform from '@diplodoc/transform';
+import code from '@diplodoc/transform/lib/plugins/code';
 import deflist from '@diplodoc/transform/lib/plugins/deflist';
 import imsize from '@diplodoc/transform/lib/plugins/imsize';
 import monospace from '@diplodoc/transform/lib/plugins/monospace';
@@ -10,7 +11,7 @@ import notes from '@diplodoc/transform/lib/plugins/notes';
 import sup from '@diplodoc/transform/lib/plugins/sup';
 import table from '@diplodoc/transform/lib/plugins/table';
 import term from '@diplodoc/transform/lib/plugins/term';
-import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
+import type {Lang, MarkdownItPluginCb, OptionsType} from '@diplodoc/transform/lib/plugins/typings';
 import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type MarkdownIt from 'markdown-it';
@@ -21,12 +22,10 @@ import MarkdonwItIns from 'markdown-it-ins';
 import Mila from 'markdown-it-link-attributes';
 import MarkdonwItMark from 'markdown-it-mark';
 import MarkdonwItSub from 'markdown-it-sub';
-import {v4 as uuidv4} from 'uuid';
 
 import {YFM_COLORIFY_MARKDOWN_CLASSNAME, YfmMetaScripts} from '../../constants';
 
 import {emojiDefs} from './emoji-defs';
-import {unifyTermIds} from './markdown-plugins/unify-terms';
 
 type RenderHtmlArgs = {
     text?: string;
@@ -39,11 +38,22 @@ export type RenderHtmlOutput = {
     meta?: object;
 };
 
-export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
-    const {text = '', lang, plugins: additionalPlugins = []} = args;
+export function getPreparedTextWithTermLinks(text: string) {
+    // temp terms bug fix until the editor supports transform plugin
+    const preparedTextWithTermDefs = text.replace(
+        /^\s*?\\\[\\\*([\wа-я]+)\\\]:(.*?\S+?.*?)$/gim,
+        '[*$1]:$2',
+    );
 
-    const uniqPrefix = uuidv4();
+    const preparedTextWithTermLinks = preparedTextWithTermDefs.replace(
+        /(\[.+?\])\(\*(%.+?)\)/g,
+        (_, p1, p2) => `${p1}(*${decodeURIComponent(p2)})`,
+    );
 
+    return preparedTextWithTermLinks;
+}
+
+function getPlugins(additionalPlugins?: MarkdownItPluginCb[]) {
     const plugins = [
         deflist,
         notes,
@@ -63,10 +73,7 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
                 .use(MarkdownItColor, {
                     defaultClassName: YFM_COLORIFY_MARKDOWN_CLASSNAME,
                 })
-                .use(MarkdownItEmoji, {defs: emojiDefs})
-                .use(unifyTermIds, {
-                    prefix: uniqPrefix,
-                }),
+                .use(MarkdownItEmoji, {defs: emojiDefs}),
         yfmTabs({
             bundle: false,
             features: {
@@ -79,7 +86,10 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
             },
         }),
         imsize,
-        table,
+        (md: MarkdownIt) =>
+            md.use(table, {
+                table_ignoreSplittersInInlineMath: true,
+            }),
         monospace,
         sup,
         MarkdonwItSub,
@@ -93,28 +103,25 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
             bundle: false,
             runtime: YfmMetaScripts.MERMAID,
         }),
+        code,
     ];
 
     if (additionalPlugins) {
         plugins.push(...additionalPlugins);
     }
 
-    // temp terms bug fix until the editor supports transform plugin
-    const preparedTextWithTermDefs = text.replace(
-        /^\s*?\\\[\\\*([\wа-я]+)\\\]:(.*?\S+?.*?)$/gim,
-        '[*$1]:$2',
-    );
+    return plugins;
+}
 
-    const preparedTextWithTermLinks = preparedTextWithTermDefs.replace(
-        /(\[.+?\])\(\*(%.+?)\)/g,
-        (_, p1, p2) => `${p1}(*${decodeURIComponent(p2)})`,
-    );
+export function getYfmTransformOptions({
+    lang,
+    plugins: additionalPlugins,
+}: Pick<RenderHtmlArgs, 'lang' | 'plugins'>): OptionsType {
+    const plugins = getPlugins(additionalPlugins);
 
-    const {
-        result: {html, meta},
-    } = yfmTransform(preparedTextWithTermLinks, {
+    return {
         plugins,
-        lang,
+        lang: lang as Lang,
         vars: {},
         disableLiquid: true,
         needToSanitizeHtml: true,
@@ -122,6 +129,17 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
             ...defaultOptions,
             disableStyleSanitizer: true,
         },
-    });
+    };
+}
+
+export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
+    const {text = '', lang, plugins = []} = args;
+
+    const transformOptions = getYfmTransformOptions({lang, plugins});
+    const preparedTextWithTermLinks = getPreparedTextWithTermLinks(text);
+
+    const {
+        result: {html, meta},
+    } = yfmTransform(preparedTextWithTermLinks, transformOptions);
     return {result: html, meta};
 }

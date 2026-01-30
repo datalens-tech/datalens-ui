@@ -40,7 +40,7 @@ export const favoritesActions = {
             entries: data.entries.map((entry) => ({
                 ...entry,
                 isFavorite: true,
-                name: getEntryNameByKey({key: entry.key, index: -1}),
+                name: getEntryNameByKey({key: entry.key}),
                 displayAlias: entry.displayAlias ?? entry.alias,
             })),
         }),

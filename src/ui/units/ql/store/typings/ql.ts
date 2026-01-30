@@ -3,6 +3,7 @@ import type {AnyAction} from 'redux';
 import type {ThunkDispatch} from 'redux-thunk';
 import type {
     CommonSharedExtraSettings,
+    EntryAnnotation,
     QLChartType,
     QlConfigPreviewTableData,
     Shared,
@@ -38,6 +39,7 @@ import type {
     SET_CONNECTION_SOURCE_SCHEMA,
     SET_CONNECTION_STATUS,
     SET_DEFAULT_PATH,
+    SET_DESCRIPTION,
     SET_ENTRY,
     SET_ENTRY_KEY,
     SET_ERROR,
@@ -46,6 +48,7 @@ import type {
     SET_QUERY_METADATA,
     SET_QUERY_VALUE,
     SET_SETTINGS,
+    SET_SHARED_CONNECTION_DELEGATION_STATUS,
     SET_STATUS,
     SET_TABLE_PREVIEW_DATA,
     SET_VISUALIZATION_STATUS,
@@ -70,6 +73,7 @@ export interface QLEntryData {
 // QLConnectionEntry - the connection used in the QL chart
 export interface QLConnectionEntry extends GetEntryResponse {
     name: string;
+    isDelegated?: boolean;
 }
 
 export interface QLState {
@@ -105,6 +109,7 @@ export interface QLState {
     queries: QLConfigQuery[];
     paneViews: QLPaneViews;
     redirectUrl?: string;
+    annotation: EntryAnnotation | null;
 }
 
 export interface QLActionResetQLStore {
@@ -262,6 +267,11 @@ export interface QLActionSetConnectionStatus {
     connectionStatus: ConnectionStatus;
 }
 
+export interface QLActionSetSharedConnectionDelegationStatus {
+    type: typeof SET_SHARED_CONNECTION_DELEGATION_STATUS;
+    isDelegated: boolean;
+}
+
 export interface QLActionSetQueryValue {
     type: typeof SET_QUERY_VALUE;
     newValue: string;
@@ -279,6 +289,11 @@ export interface QLActionToggleTablePreview {
 
 export interface ResetWizardStoreAction {
     type: typeof RESET_WIZARD_STORE;
+}
+
+interface QLActionSetDescription {
+    type: typeof SET_DESCRIPTION;
+    payload: string;
 }
 
 export type QLAction =
@@ -299,6 +314,7 @@ export type QLAction =
     | QLActionSetColumnsOrder
     | QLActionSetConnection
     | QLActionSetConnectionStatus
+    | QLActionSetSharedConnectionDelegationStatus
     | QLActionSetQueryValue
     | QLActionDrawPreview
     | VisualizationAction
@@ -318,7 +334,8 @@ export type QLAction =
     | QLActionDuplcateQuery
     | QLActionToggleTablePreview
     | CloseDialogAction
-    | OpenDialogAction;
+    | OpenDialogAction
+    | QLActionSetDescription;
 
 export type QLDispatch = ThunkDispatch<DatalensGlobalState, void, AnyAction>;
 

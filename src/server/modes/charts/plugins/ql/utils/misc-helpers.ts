@@ -2,6 +2,8 @@ import type {YagrConfig} from '@gravity-ui/chartkit/yagr';
 import {dateTimeParse} from '@gravity-ui/date-utils';
 
 import type {
+    ApiV2DataExportField,
+    FeatureConfig,
     IChartEditor,
     QLChartType,
     QlConfigPreviewTableData,
@@ -13,7 +15,6 @@ import {
     DATALENS_QL_CONNECTION_TYPES,
     DATALENS_QL_TYPES,
     QLParamType,
-    WizardVisualizationId,
     biToDatalensQL,
     getDatalensQLTypeName,
     getUtcDateTime,
@@ -28,6 +29,7 @@ import type {
     QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
+import {CONNECTIONS_DASHSQL, CONNECTION_ID_PLACEHOLDER} from '../../control/url/constants';
 
 import type {QLConnectionTypeMap} from './connection';
 import {convertConnectionType} from './connection';
@@ -61,6 +63,7 @@ export interface QLResultEntryMetadata {
         driver_types: (string | number)[];
         postgresql_typnames?: string[];
         bi_types: string[];
+        data_export: ApiV2DataExportField;
     };
 }
 
@@ -398,6 +401,7 @@ export function buildSource({
     params: StringParams;
     paramsDescription: QlConfigParam[];
     qlConnectionTypeMap: QLConnectionTypeMap;
+    features: FeatureConfig;
 }) {
     let sqlQuery = query;
 
@@ -491,8 +495,10 @@ export function buildSource({
         params: QLRequestParams,
     };
 
+    const connectionsUrl = CONNECTIONS_DASHSQL;
+
     return {
-        url: `/_bi_connections/${id}/dashsql`,
+        url: connectionsUrl.replace(CONNECTION_ID_PLACEHOLDER, id),
         method: 'post',
         data: payload,
     };
@@ -747,8 +753,5 @@ export const doesQueryContainOrderBy = (query: string) => {
 };
 
 export const visualizationCanHaveContinuousAxis = (visualization: ServerVisualization) => {
-    return (
-        LINEAR_VISUALIZATIONS.has(visualization.id) ||
-        visualization.id === WizardVisualizationId.BarXD3
-    );
+    return LINEAR_VISUALIZATIONS.has(visualization.id);
 };

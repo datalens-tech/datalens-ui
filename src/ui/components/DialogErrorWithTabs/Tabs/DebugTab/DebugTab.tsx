@@ -7,9 +7,7 @@ import ErrorText from '../../ErrorText/ErrorText';
 
 import {hasAtLeastOneFilledValue} from './utils';
 
-type Props = {
-    error: DataLensApiError;
-};
+type Props = {error?: DataLensApiError; details?: string};
 
 const flatDetails = (details: object) => {
     const values = Object.values(details);
@@ -20,29 +18,35 @@ const flatDetails = (details: object) => {
     return JSON.stringify(details, null, 4);
 };
 
-const DebugTab: React.FC<Props> = ({error}: Props) => {
-    if (!error) {
-        return null;
+const DebugTab: React.FC<Props> = (props: Props) => {
+    if ('details' in props && props.details) {
+        return <ErrorText errorMessage={props.details} />;
     }
-    const errorDetails = Utils.getErrorDetails(error);
 
-    if (!errorDetails) {
-        return null;
-    }
-    const errorContent: string[] = [];
+    if ('error' in props && props.error) {
+        const errorDetails = Utils.getErrorDetails(props.error);
 
-    const errorValues = Object.values(errorDetails);
-    errorValues.forEach((value) => {
-        if (typeof value === 'string') {
-            errorContent.push(value);
-        } else if (typeof value === 'object' && hasAtLeastOneFilledValue(value)) {
-            errorContent.push(flatDetails(value));
+        if (!errorDetails) {
+            return null;
         }
-    });
 
-    const errorMessage = errorContent.join('\n\n');
+        const errorContent: string[] = [];
 
-    return <ErrorText errorMessage={errorMessage} />;
+        const errorValues = Object.values(errorDetails);
+        errorValues.forEach((value) => {
+            if (typeof value === 'string') {
+                errorContent.push(value);
+            } else if (typeof value === 'object' && hasAtLeastOneFilledValue(value)) {
+                errorContent.push(flatDetails(value));
+            }
+        });
+
+        const errorMessage = errorContent.join('\n\n');
+
+        return <ErrorText errorMessage={errorMessage} />;
+    }
+
+    return null;
 };
 
 export default DebugTab;

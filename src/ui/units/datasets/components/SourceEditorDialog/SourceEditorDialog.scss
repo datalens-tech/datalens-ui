@@ -1,6 +1,8 @@
 .source-editor-dialog {
     width: 800px;
 
+    $baseClass: &;
+
     &__label {
         height: 24px;
         display: inline-flex;
@@ -25,6 +27,65 @@
         &_with-monaco {
             flex: 1 1 auto;
         }
+    }
+
+    &__param-content {
+        display: flex;
+        gap: 8px;
+
+        &_column {
+            flex-direction: column;
+        }
+    }
+
+    &__param-add-button {
+        width: fit-content;
+    }
+
+    &__param-add-button-sql {
+        margin-top: 8px;
+    }
+
+    &__param-select-popup {
+        border-radius: var(--g-border-radius-m);
+        width: 320px;
+    }
+
+    &__param-select-filter {
+        padding: 8px;
+        border-bottom: 1px solid var(--g-color-line-generic);
+
+        &_empty {
+            border-bottom: none;
+        }
+    }
+
+    &__param-select-add-button {
+        --g-button-height: 44px;
+        border-top: 1px solid var(--g-color-line-generic);
+
+        &:active {
+            transform: scale(1);
+        }
+    }
+
+    &__param-select-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        &:hover #{$baseClass}__param-select-option-dropdown {
+            opacity: 1;
+        }
+    }
+
+    &__param-select-option-dropdown {
+        opacity: 0;
+        margin-left: auto;
+    }
+
+    &__param-select-empty-placeholder {
+        color: var(--g-color-text-primary);
     }
 
     &__chover-yt-switcher {

@@ -1,21 +1,26 @@
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import {type AppContext, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
 import JSONfn from 'json-fn';
-import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
+import {isEmpty, isNumber, isObject, isString, mapValues, merge, mergeWith} from 'lodash';
 import get from 'lodash/get';
 
 import type {ChartsEngine} from '../..';
 import type {
+    ApiV2DataExportField,
     ControlType,
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
+    Palette,
     StringParams,
     WorkbookId,
 } from '../../../../../shared';
-import {DL_CONTEXT_HEADER, Feature, isEnabledServerFeature} from '../../../../../shared';
+import {DL_CONTEXT_HEADER, Feature, WizardType} from '../../../../../shared';
 import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
+import {selectServerPalette} from '../../../../constants';
+import {extractColorPalettesFromData} from '../../../../modes/charts/plugins/helpers/color-palettes';
 import {registry} from '../../../../registry';
 import type {CacheClient} from '../../../cache-client';
 import {config as configConstants} from '../../constants';
@@ -26,15 +31,11 @@ import {getDuration, normalizeParams, resolveParams} from '../utils';
 import type {CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
 import {CommentsFetcher} from './comments-fetcher';
 import type {LogItem} from './console';
-import type {
-    AuthParams,
-    DataFetcherOriginalReqHeaders,
-    DataFetcherResult,
-    ZitadelParams,
-} from './data-fetcher';
+import type {AuthParams, DataFetcherOriginalReqHeaders, DataFetcherResult} from './data-fetcher';
 import {DataFetcher} from './data-fetcher';
 import {ProcessorHooks} from './hooks';
 import {updateActionParams, updateParams} from './paramsUtils';
+import {getSourcesErrorStatusCode} from './sources';
 import {StackTracePreparer} from './stack-trace-prepaper';
 import type {
     ChartBuilder,
@@ -55,9 +56,6 @@ const {
     DEFAULT_OVERSIZE_ERROR_STATUS,
     DEFAULT_RUNTIME_ERROR_STATUS,
     DEFAULT_RUNTIME_TIMEOUT_STATUS,
-    DEFAULT_SOURCE_FETCHING_ERROR_STATUS_400,
-    DEFAULT_SOURCE_FETCHING_ERROR_STATUS_500,
-    DEFAULT_SOURCE_FETCHING_LIMIT_EXCEEDED_STATUS,
     DEPS_RESOLVE_ERROR,
     HOOKS_ERROR,
     ROWS_NUMBER_OVERSIZE,
@@ -65,8 +63,6 @@ const {
     RUNTIME_TIMEOUT_ERROR,
     SEGMENTS_OVERSIZE,
     TABLE_OVERSIZE,
-    REQUEST_SIZE_LIMIT_EXCEEDED,
-    ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
 } = configConstants;
 
 export class SandboxError extends Error {
@@ -109,6 +105,36 @@ function collectModulesLogs({
     });
 }
 
+export function stringifyLogs({
+    logs,
+    hooks,
+    ctx,
+}: {
+    logs: ProcessorLogs;
+    hooks: ProcessorHooks;
+    ctx: AppContext;
+}) {
+    try {
+        const formatter = hooks.getLogsFormatter();
+        return JSON.stringify(logs, (_, value: string | number) => {
+            if (typeof value === 'number' && isNaN(value)) {
+                return '__special_value__NaN';
+            }
+            if (value === Infinity) {
+                return '__special_value__Infinity';
+            }
+            if (value === -Infinity) {
+                return '__special_value__-Infinity';
+            }
+            return formatter ? formatter(value) : value;
+        });
+    } catch (e) {
+        ctx.logError('Error during formatting logs', e);
+
+        return '';
+    }
+}
+
 function mergeArrayWithObject(a: [], b: {}) {
     // for example, for xAxis/yAxis, when there is one axis on one side and several on the other
     // typeof === 'object' check in case there is, for example, a string
@@ -147,6 +173,7 @@ export type ProcessorParams = {
 } & SerializableProcessorParams;
 
 export type SerializableProcessorParams = {
+    secureConfig?: {privateParams?: string[]};
     subrequestHeaders: Record<string, string>;
     paramsOverride: Record<string, string | string[]>;
     actionParamsOverride: Record<string, string | string[]>;
@@ -173,12 +200,14 @@ export type SerializableProcessorParams = {
     disableJSONFnByCookie: boolean;
     configName: string;
     configId: string;
+    revId?: string;
     isEmbed: boolean;
-    zitadelParams: ZitadelParams | undefined;
     authParams: AuthParams | undefined;
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
     hooksContext: HooksContext;
+    defaultColorPaletteId?: string;
+    systemPalettes?: Record<string, Palette>;
 };
 
 export class Processor {
@@ -203,8 +232,8 @@ export class Processor {
         disableJSONFnByCookie,
         configName,
         configId,
+        revId,
         isEmbed,
-        zitadelParams,
         authParams,
         originalReqHeaders,
         adapterContext,
@@ -213,6 +242,9 @@ export class Processor {
         cacheClient,
         hooks,
         sourcesConfig,
+        secureConfig,
+        defaultColorPaletteId,
+        systemPalettes,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -227,6 +259,8 @@ export class Processor {
         let params: Record<string, string | string[]> | StringParams;
         let actionParams: Record<string, string | string[]>;
         let usedParams: Record<string, string | string[]>;
+
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
 
         const timings: {
             configResolving: number;
@@ -244,7 +278,7 @@ export class Processor {
         function injectConfigAndParams({target}: {target: ProcessorSuccessResponse}) {
             let responseConfig;
             const useChartsEngineResponseConfig = Boolean(
-                isEnabledServerFeature(ctx, Feature.UseChartsEngineResponseConfig),
+                isEnabledServerFeature(Feature.UseChartsEngineResponseConfig),
             );
 
             if (useChartsEngineResponseConfig && responseOptions.includeConfig && config) {
@@ -255,16 +289,19 @@ export class Processor {
                     meta: config.meta,
                     entryId: config.entryId,
                     key: config.key,
+                    revId: config.revId,
                 };
             }
             responseConfig.key = config.key || configName;
             responseConfig.entryId = config.entryId || configId;
+            responseConfig.revId = config.revId || revId;
 
             target._confStorageConfig = responseConfig;
 
             target.key = responseConfig.key;
             target.id = responseConfig.entryId;
             target.type = responseConfig.type;
+            target.revId = responseConfig.revId;
 
             if (params) {
                 target.params = params;
@@ -276,35 +313,13 @@ export class Processor {
             return target;
         }
 
-        function stringifyLogs(localLogs: ProcessorLogs, localHooks: ProcessorHooks) {
-            try {
-                const formatter = localHooks.getLogsFormatter();
-                return JSON.stringify(localLogs, (_, value: string | number) => {
-                    if (typeof value === 'number' && isNaN(value)) {
-                        return '__special_value__NaN';
-                    }
-                    if (value === Infinity) {
-                        return '__special_value__Infinity';
-                    }
-                    if (value === -Infinity) {
-                        return '__special_value__-Infinity';
-                    }
-                    return formatter ? formatter(value) : value;
-                });
-            } catch (e) {
-                ctx.logError('Error during formatting logs', e);
-
-                return '';
-            }
-        }
-
         function injectLogs({
             target,
         }: {
             target: ProcessorSuccessResponse | Partial<ProcessorErrorResponse>;
         }) {
             if (responseOptions.includeLogs) {
-                target.logs_v2 = stringifyLogs(logs, hooks);
+                target.logs_v2 = stringifyLogs({logs, hooks, ctx});
             }
         }
 
@@ -510,8 +525,8 @@ export class Processor {
             });
 
             logSandboxDuration(sourcesTabResults.executionTiming, sourcesTabResults.name, ctx);
-            ctx.log('EditorEngine::Urls', {duration: getDuration(hrStart)});
-            logs.Urls = sourcesTabResults.logs;
+            ctx.log('EditorEngine::Sources', {duration: getDuration(hrStart)});
+            logs.Sources = sourcesTabResults.logs;
 
             try {
                 hrStart = process.hrtime();
@@ -553,8 +568,7 @@ export class Processor {
                     subrequestHeaders[DL_CONTEXT_HEADER] = JSON.stringify(dlContext);
                 }
 
-                resolvedSources = await DataFetcher.fetch({
-                    sources,
+                const dataFetcherOptions = {
                     ctx,
                     iamToken,
                     subrequestHeaders,
@@ -562,14 +576,28 @@ export class Processor {
                     userLogin,
                     workbookId,
                     isEmbed,
-                    zitadelParams,
                     authParams,
                     originalReqHeaders,
                     adapterContext,
                     telemetryCallbacks,
                     cacheClient,
                     sourcesConfig,
+                };
+                resolvedSources = await DataFetcher.fetch({
+                    sources,
+                    ...dataFetcherOptions,
                 });
+
+                if (builder.buildPaletteSources) {
+                    const paletteSourcesResult = await builder.buildPaletteSources({
+                        sources: resolvedSources,
+                    });
+                    const resolvedPalettes = await DataFetcher.fetch({
+                        sources: paletteSourcesResult.exports as Record<string, Source>,
+                        ...dataFetcherOptions,
+                    });
+                    Object.assign(resolvedSources, resolvedPalettes);
+                }
 
                 if (Object.keys(resolvedSources).length) {
                     timings.dataFetching = getDuration(hrStart);
@@ -614,33 +642,7 @@ export class Processor {
                         sources: error,
                     };
 
-                    let maybe400 = false;
-                    let maybe500 = false;
-                    let requestSizeLimitExceeded = false;
-                    Object.values(error).forEach((sourceResult) => {
-                        const possibleStatus = sourceResult && sourceResult.status;
-
-                        if (399 < possibleStatus && possibleStatus < 500) {
-                            maybe400 = true;
-                        } else {
-                            maybe500 = true;
-                        }
-
-                        if (
-                            sourceResult.code === REQUEST_SIZE_LIMIT_EXCEEDED ||
-                            sourceResult.code === ALL_REQUESTS_SIZE_LIMIT_EXCEEDED
-                        ) {
-                            requestSizeLimitExceeded = true;
-                        }
-                    });
-
-                    if (maybe400 && !maybe500) {
-                        response.error.statusCode = DEFAULT_SOURCE_FETCHING_ERROR_STATUS_400;
-                    } else if (requestSizeLimitExceeded) {
-                        response.error.statusCode = DEFAULT_SOURCE_FETCHING_LIMIT_EXCEEDED_STATUS;
-                    } else {
-                        response.error.statusCode = DEFAULT_SOURCE_FETCHING_ERROR_STATUS_500;
-                    }
+                    response.error.statusCode = getSourcesErrorStatusCode(error);
                 }
 
                 return response;
@@ -656,6 +658,8 @@ export class Processor {
                 }
                 return acc;
             }, {});
+
+            const {colorPalettes: tenantColorPalettes} = extractColorPalettesFromData(data);
 
             hrStart = process.hrtime();
             const libraryTabResult = await builder.buildChartLibraryConfig({
@@ -721,10 +725,10 @@ export class Processor {
                     latency: (hrDuration[0] * 1e9 + hrDuration[1]) / 1e6,
                 });
 
-                ctx.log('EditorEngine::JS', {duration: getDuration(hrStart)});
+                ctx.log('EditorEngine::Prepare', {duration: getDuration(hrStart)});
 
                 processedData = jsTabResults.exports;
-                logs.JavaScript = jsTabResults.logs;
+                logs.Prepare = jsTabResults.logs;
 
                 const jsError = jsTabResults.runtimeMetadata.error;
                 if (jsError) {
@@ -760,10 +764,20 @@ export class Processor {
                         Array.isArray(uiTabExports.controls)))
             ) {
                 uiScheme = uiTabExports as UiTabExports;
+
+                if (secureConfig?.privateParams) {
+                    const controls = Array.isArray(uiScheme) ? uiScheme : uiScheme.controls;
+
+                    controls.forEach((control) => {
+                        if (secureConfig.privateParams?.includes(control.param)) {
+                            control.disabled = true;
+                        }
+                    });
+                }
             }
 
-            logs.UI = uiTabResults.logs;
-            ctx.log('EditorEngine::UI', {duration: getDuration(hrStart)});
+            logs.Controls = uiTabResults.logs;
+            ctx.log('EditorEngine::Controls', {duration: getDuration(hrStart)});
 
             // Editor.updateParams() has the highest priority,
             // so now we take the parameters set through this method
@@ -825,7 +839,7 @@ export class Processor {
                     entryId: config.entryId || configId,
                 });
 
-                const disableFnAndHtml = isEnabledServerFeature(ctx, Feature.DisableFnAndHtml);
+                const disableFnAndHtml = isEnabledServerFeature(Feature.DisableFnAndHtml);
                 if (
                     disableFnAndHtml ||
                     !isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})
@@ -834,7 +848,7 @@ export class Processor {
                 }
                 const enableJsAndHtml = get(resultConfig, 'enableJsAndHtml', false);
                 const disableJSONFn =
-                    isEnabledServerFeature(ctx, Feature.NoJsonFn) ||
+                    isEnabledServerFeature(Feature.NoJsonFn) ||
                     disableJSONFnByCookie ||
                     enableJsAndHtml === false;
                 const stringify = disableJSONFn ? JSON.stringify : JSONfn.stringify;
@@ -851,6 +865,41 @@ export class Processor {
                 result.extra.chartsInsights = jsTabResults.runtimeMetadata.chartsInsights;
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
 
+                result.dataExport = mapValues(data, (sourceResponse) => {
+                    if (sourceResponse) {
+                        if (Array.isArray(sourceResponse)) {
+                            const meta = sourceResponse.find(
+                                (node) =>
+                                    node &&
+                                    typeof node === 'object' &&
+                                    'event' in node &&
+                                    node.event === 'metadata',
+                            );
+                            if (
+                                meta &&
+                                typeof meta === 'object' &&
+                                'data' in meta &&
+                                'data_export' in meta.data
+                            ) {
+                                return meta.data.data_export as ApiV2DataExportField;
+                            }
+                        }
+                        if (typeof sourceResponse === 'object' && 'data_export' in sourceResponse) {
+                            return sourceResponse.data_export as ApiV2DataExportField;
+                        }
+                    }
+                    return undefined;
+                });
+
+                const colors = selectServerPalette({
+                    defaultColorPaletteId: defaultColorPaletteId ?? '',
+                    customColorPalettes: tenantColorPalettes,
+                    availablePalettes: systemPalettes ?? {},
+                });
+                if (!isEmpty(colors)) {
+                    result.extra.colors = colors;
+                }
+
                 result.sources = merge(
                     resolvedSources,
                     jsTabResults.runtimeMetadata.dataSourcesInfos,
@@ -866,7 +915,8 @@ export class Processor {
                     ctx.config.chartsEngineConfig.flags?.chartComments &&
                     (type === CONFIG_TYPE.GRAPH_NODE ||
                         type === CONFIG_TYPE.GRAPH_WIZARD_NODE ||
-                        type === CONFIG_TYPE.GRAPH_QL_NODE)
+                        type === CONFIG_TYPE.GRAPH_QL_NODE ||
+                        type === WizardType.GravityChartsWizardNode)
                 ) {
                     try {
                         const chartName =
@@ -876,16 +926,29 @@ export class Processor {
 
                         hrStart = process.hrtime();
 
-                        result.comments = await CommentsFetcher.prepareComments(
-                            {
-                                chartName,
-                                config: resultConfig.comments,
-                                data: result.data as CommentsFetcherPrepareCommentsParams['data'],
-                                params,
-                            },
-                            subrequestHeaders,
-                            ctx,
-                        );
+                        if (type === WizardType.GravityChartsWizardNode) {
+                            result.comments = await CommentsFetcher.prepareGravityChartsComments(
+                                {
+                                    chartName,
+                                    config: resultConfig.comments,
+                                    data: result.data as ChartData,
+                                    params,
+                                },
+                                subrequestHeaders,
+                                ctx,
+                            );
+                        } else {
+                            result.comments = await CommentsFetcher.prepareComments(
+                                {
+                                    chartName,
+                                    config: resultConfig.comments,
+                                    data: result.data as CommentsFetcherPrepareCommentsParams['data'],
+                                    params,
+                                },
+                                subrequestHeaders,
+                                ctx,
+                            );
+                        }
 
                         ctx.log('EditorEngine::Comments', {duration: getDuration(hrStart)});
                     } catch (error) {
@@ -904,6 +967,7 @@ export class Processor {
                             lang: userLang || '',
                             plugins: registry.getYfmPlugins(),
                         });
+                        result.data.original_markdown = markdown;
                         delete result.data.markdown;
                         result.data.html = html.result;
                         result.data.meta = html.meta;

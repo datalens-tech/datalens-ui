@@ -17,6 +17,6 @@
   "error-runtime-timeout": "Response processing timeout",
   "error-secrets-access": "No write access on chart with secrets",
   "error-too-many-rows": "Too many series on the chart",
-  "error-unsupported-type": "Unsupported chart type",
-  "error-unsupported-data-type": "Unsupported data type"
+  "error-unsupported-data-type": "Unsupported data type",
+  "error-unsupported-type": "Unsupported chart type"
 }

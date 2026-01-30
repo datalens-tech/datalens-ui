@@ -3,14 +3,12 @@ import isNil from 'lodash/isNil';
 import type {DatasetField} from 'shared';
 import {DatasetFieldType, DatasetTabSectionQA} from 'shared';
 
-import {openDialogParameter} from '../../../../store/actions/dialog';
 import {TAB_PARAMETERS} from '../../constants';
 import type {DatasetDispatch} from '../../store/actions/creators';
 import {
     deleteFieldWithValidation,
     duplicateFieldWithValidation,
-    updateFieldWithValidation,
-    updateFieldWithValidationByMultipleUpdates,
+    openDialogParameterEdit,
 } from '../../store/actions/creators';
 import {DatasetFieldListColumnType} from '../DatasetTabFieldList/constants';
 import type {
@@ -23,8 +21,9 @@ import type {
 import {renderClipboardButton} from './components/CopyToClipboard/CopyToClipboardMenuItem';
 import {getHeaderWithTooltipNode} from './components/HeaderWithTooltip/HeaderWithTooltip';
 
-const PARAMETER_NAME_COLUMN_WIDTH = 355;
-const PARAMETER_TYPE_COLUMN_WIDTH = 190;
+const PARAMETER_NAME_COLUMN_WIDTH = 254;
+const PARAMETER_TYPE_COLUMN_WIDTH = 140;
+const PARAMETER_VALUE_COLUMN_WIDTH = 254;
 
 export const getParametersTableHeaders = async (): Promise<FieldHeaderColumn[]> => {
     return [
@@ -42,11 +41,16 @@ export const getParametersTableHeaders = async (): Promise<FieldHeaderColumn[]> 
             columnType: DatasetFieldListColumnType.Type,
         },
         {
+            width: PARAMETER_VALUE_COLUMN_WIDTH,
             node: await getHeaderWithTooltipNode(
                 i18n('dataset.parameters-tab.modify', 'label_parameter-value-column'),
                 i18n('dataset.parameters-tab.modify', 'label_parameter-value-column-description'),
             ),
             columnType: DatasetFieldListColumnType.Value,
+        },
+        {
+            text: i18n('dataset.parameters-tab.modify', 'label_parameter-validation-column'),
+            columnType: DatasetFieldListColumnType.Validation,
         },
     ];
 };
@@ -81,61 +85,49 @@ export const getParameterRowColumn = (
                     datasetFieldType: DatasetFieldType.Parameter,
                 }),
             };
+        case DatasetFieldListColumnType.Validation:
+            return {
+                columnType: DatasetFieldListColumnType.Validation,
+                getValidationProps: (item: DatasetField) => ({
+                    templateEnabled: item.template_enabled,
+                }),
+            };
         default:
             return null;
     }
 };
 
-export const getParameterRowMenuItems = (dispatch: DatasetDispatch): MenuControlItem[] => {
-    return [
-        {
-            text: () => i18n('dataset.dataset-editor.modify', 'button_duplicate'),
-            action: (field: DatasetField) =>
-                dispatch(duplicateFieldWithValidation(field, {tab: TAB_PARAMETERS})),
-            qa: DatasetTabSectionQA.DuplicateRow,
-        },
-        {
-            qa: DatasetTabSectionQA.EditRow,
-            text: () => i18n('dataset.dataset-editor.modify', 'button_edit'),
-            action: (field: DatasetField) =>
-                dispatch(
-                    openDialogParameter({
-                        type: 'edit',
-                        field,
-                        onApply: (updatedField) => {
-                            if (updatedField.guid === field.guid) {
-                                dispatch(
-                                    updateFieldWithValidation(updatedField, {tab: TAB_PARAMETERS}),
-                                );
-                            } else {
-                                // We send two field updates. Since title === is the guid for the parameter, you need to update both title and guid at the same time.
-                                // Beck does not know how to do this, so we send 2 updates. First we update the guid, and with the second update we update the rest of the entire field.
-                                const fieldWithNewGuid = {
-                                    ...updatedField,
-                                    guid: field.guid,
-                                    new_id: updatedField.guid,
-                                };
-                                dispatch(
-                                    updateFieldWithValidationByMultipleUpdates(
-                                        [fieldWithNewGuid, updatedField],
-                                        {tab: TAB_PARAMETERS},
-                                    ),
-                                );
-                            }
-                        },
-                    }),
-                ),
-        },
-        {
-            text: renderClipboardButton,
-            action: () => {},
-            qa: DatasetTabSectionQA.Copy,
-        },
-        {
-            text: () => i18n('dataset.dataset-editor.modify', 'button_remove'),
-            action: (field: DatasetField) =>
-                dispatch(deleteFieldWithValidation(field, {tab: TAB_PARAMETERS})),
-            qa: DatasetTabSectionQA.RemoveRow,
-        },
-    ];
+export const getParameterRowMenuItems = (
+    dispatch: DatasetDispatch,
+    readonly: boolean,
+): MenuControlItem[] => {
+    const DUPLICATE_FIELD = {
+        text: () => i18n('dataset.dataset-editor.modify', 'button_duplicate'),
+        action: (field: DatasetField) =>
+            dispatch(duplicateFieldWithValidation(field, {tab: TAB_PARAMETERS})),
+        qa: DatasetTabSectionQA.DuplicateRow,
+    };
+    const EDIT_FIELD = {
+        qa: DatasetTabSectionQA.EditRow,
+        text: () => i18n('dataset.dataset-editor.modify', 'button_edit'),
+        action: (field: DatasetField) =>
+            dispatch(openDialogParameterEdit({field, tab: TAB_PARAMETERS})),
+    };
+    const COPY_FIELD = {
+        text: renderClipboardButton,
+        action: () => {},
+        qa: DatasetTabSectionQA.Copy,
+    };
+    const REMOVE_FIELD = {
+        text: () => i18n('dataset.dataset-editor.modify', 'button_remove'),
+        action: (field: DatasetField) =>
+            dispatch(deleteFieldWithValidation(field, {tab: TAB_PARAMETERS})),
+        qa: DatasetTabSectionQA.RemoveRow,
+        theme: 'danger',
+    };
+    if (readonly) {
+        return [COPY_FIELD];
+    } else {
+        return [DUPLICATE_FIELD, EDIT_FIELD, COPY_FIELD, REMOVE_FIELD];
+    }
 };

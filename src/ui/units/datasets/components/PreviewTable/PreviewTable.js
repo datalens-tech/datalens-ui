@@ -28,7 +28,7 @@ class PreviewTable extends React.Component {
 
         switch (readyPreview.toLowerCase()) {
             case 'pending':
-                return i18n('dataset.dataset-editor.modify', 'label_materialization-preview');
+                return i18n('dataset.dataset-editor.modify', 'label_data-preparation-preview');
             case 'loading':
             default:
                 return i18n('dataset.dataset-editor.modify', 'label_loading-dataset-preview');
@@ -142,9 +142,10 @@ class PreviewTable extends React.Component {
     getErrorMessage(code) {
         switch (code) {
             case BI_ERRORS.MATERIALIZATION_NOT_FINISHED:
+            case BI_ERRORS.DATA_PREPARATION_NOT_FINISHED:
                 return i18n(
                     'component.chartkit-error.codes',
-                    'ERR.DS_API.DB.MATERIALIZATION_NOT_FINISHED',
+                    'ERR.DS_API.DB.DATA_PREPARATION_NOT_FINISHED',
                 );
             case BI_ERRORS.NO_AVAILABLE_SUBPRODUCTS:
                 return i18n(
@@ -165,26 +166,27 @@ class PreviewTable extends React.Component {
                 <div className={b('error')}>
                     <span className={b('error-msg-text')}>{this.getErrorMessage(code)}</span>
                     {/*
-                        For incomplete materialization, we do not show the button with details
+                        For incomplete data preparation, we do not show the button with details
                         because it's kind of not a mistake
                     */}
-                    {code !== BI_ERRORS.MATERIALIZATION_NOT_FINISHED && (
-                        <Button
-                            className={b('details-btn')}
-                            view="outlined"
-                            onClick={() => {
-                                this.props.openDialogErrorWithTabs({
-                                    error,
-                                    title: i18n(
-                                        'dataset.dataset-editor.modify',
-                                        'label_request-dataset-preview-error',
-                                    ),
-                                });
-                            }}
-                        >
-                            {i18n('dataset.notifications.view', 'toast_error-action-label')}
-                        </Button>
-                    )}
+                    {code !== BI_ERRORS.DATA_PREPARATION_NOT_FINISHED &&
+                        code !== BI_ERRORS.MATERIALIZATION_NOT_FINISHED && (
+                            <Button
+                                className={b('details-btn')}
+                                view="outlined"
+                                onClick={() => {
+                                    this.props.openDialogErrorWithTabs({
+                                        error,
+                                        title: i18n(
+                                            'dataset.dataset-editor.modify',
+                                            'label_request-dataset-preview-error',
+                                        ),
+                                    });
+                                }}
+                            >
+                                {i18n('dataset.notifications.view', 'toast_error-action-label')}
+                            </Button>
+                        )}
                 </div>
             </div>
         );

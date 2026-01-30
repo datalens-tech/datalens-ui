@@ -31,6 +31,7 @@ type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 
 type OwnPops<T> = {
     tabs: TabItem<T>[];
+    className?: string;
 };
 
 type TabsProps<T> = OwnPops<T> & StateProps & DispatchProps;
@@ -44,7 +45,7 @@ function TabsComponent<T>(props: TabsProps<T>) {
     const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'l';
 
     return props.tabs.length > 1 ? (
-        <div className={b()} data-qa={DashTabsQA.Root}>
+        <div className={b(null, props.className)} data-qa={DashTabsQA.Root}>
             <DataLensTabs
                 size={size}
                 activeTab={props.currentTabId || undefined}

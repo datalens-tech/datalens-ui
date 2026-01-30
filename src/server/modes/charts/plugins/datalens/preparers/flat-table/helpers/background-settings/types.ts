@@ -13,6 +13,7 @@ export interface GetFlatTableCellBackgroundSettingsStylesArgs {
     backgroundColorsByMeasure: Record<string, (null | number)[]>;
     loadedColorPalettes: Record<string, ColorPalette>;
     availablePalettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 }
 
 export interface GetContinuousBackgroundColorStyle {
@@ -30,6 +31,7 @@ export interface GetDiscreteBackgroundColorStyle {
     backgroundSettings: TableFieldBackgroundSettings;
     loadedColorPalettes: Record<string, ColorPalette>;
     availablePalettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 }
 
 export interface GetBackgroundColorsMapByContinuousColumn {

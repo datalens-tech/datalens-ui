@@ -26,10 +26,12 @@ const vendors = (vendorsList: string[]) => {
         'react-dnd',
         'react-grid-layout',
         'react-beautiful-dnd',
-        '@popperjs/core',
-        'focus-trap',
+        '@floating-ui/react',
     ]);
 };
+
+const devClientPort = process.env?.['DEV_CLIENT_PORT'];
+const devServerPort = process.env?.['DEV_SERVER_PORT'];
 
 const config: ServiceConfig = {
     client: {
@@ -77,9 +79,22 @@ const config: ServiceConfig = {
             'highlight.js': false,
             buffer: false,
         },
+        javaScriptLoader: 'swc',
+        ...(devClientPort
+            ? {
+                  devServer: {
+                      port: parseInt(devClientPort, 10),
+                  },
+              }
+            : {}),
     },
     server: {
         watch: ['dist/i18n', 'dist/shared'],
+        ...(devServerPort
+            ? {
+                  port: parseInt(devServerPort, 10),
+              }
+            : {}),
     },
 };
 

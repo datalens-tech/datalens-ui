@@ -7,9 +7,10 @@ import {
     CSP_REPORT_TO_HEADER,
     DL_CONTEXT_HEADER,
     Language,
-    SERVICE_USER_ACCESS_TOKEN_HEADER,
+    PALETTE_ID,
     isTrueArg,
 } from '../../../shared';
+import {UserRole} from '../../../shared/components/auth/constants/role';
 import {resolveSource} from '../../../shared/endpoints/sources';
 import type {SourceConfig} from '../../components/charts-engine/types';
 import {SERVICE_NAME_DATALENS} from '../../constants';
@@ -50,6 +51,7 @@ export default {
         limit: '21mb',
     },
     usMasterToken: process.env.US_MASTER_TOKEN || 'fake-us-master-token',
+    usDynamicMasterTokenPrivateKey: getEnvCert(process.env.US_DYNAMIC_MASTER_TOKEN_PRIVATE_KEY),
 
     // CHARTS MODE
 
@@ -137,6 +139,8 @@ export default {
                 editor: 'datalens.collections.editor',
                 viewer: 'datalens.collections.viewer',
                 limitedViewer: 'datalens.collections.limitedViewer',
+                entryBindingCreator: 'datalens.collections.entryBindingCreator',
+                limitedEntryBindingCreator: 'datalens.collections.limitedEntryBindingCreator',
             },
         },
         workbook: {
@@ -147,7 +151,19 @@ export default {
                 limitedViewer: 'datalens.workbooks.limitedViewer',
             },
         },
+        sharedEntry: {
+            roles: {
+                admin: 'datalens.sharedEntries.admin',
+                editor: 'datalens.sharedEntries.editor',
+                viewer: 'datalens.sharedEntries.viewer',
+                limitedViewer: 'datalens.sharedEntries.limitedViewer',
+                entryBindingCreator: 'datalens.sharedEntries.entryBindingCreator',
+                limitedEntryBindingCreator: 'datalens.sharedEntries.limitedEntryBindingCreator',
+            },
+        },
     },
+
+    orderedAuthRoles: [UserRole.Admin, UserRole.Editor, UserRole.Viewer],
 
     chartsEngineConfig: {
         secrets: {},
@@ -195,26 +211,16 @@ export default {
             token: process.env.YANDEX_MAP_TOKEN,
         },
     },
+    defaultColorPaletteId: PALETTE_ID.DEFAULT_20,
 
-    appSensitiveKeys: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
-    appSensitiveHeaders: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
-
-    // zitadel
-    isZitadelEnabled: isTrueArg(process.env.ZITADEL),
-    clientId: process.env.CLIENT_ID || '',
-    clientSecret: process.env.CLIENT_SECRET || '',
-    zitadelProjectId: process.env.ZITADEL_PROJECT_ID || '',
-    zitadelUri: process.env.ZITADEL_URI || '',
-    zitadelInternalUri: process.env.ZITADEL_INTERNAL_URI || process.env.ZITADEL_URI,
-    appHostUri: process.env.APP_HOST_URI || '',
-    zitadelCookieSecret: process.env.ZITADEL_COOKIE_SECRET || '',
-    serviceClientId: process.env.SERVICE_CLIENT_ID || '',
-    serviceClientSecret: process.env.SERVICE_CLIENT_SECRET || '',
+    appSensitiveKeys: [CSP_HEADER, CSP_REPORT_TO_HEADER],
+    appSensitiveHeaders: [CSP_HEADER, CSP_REPORT_TO_HEADER],
 
     // auth
     isAuthEnabled: isTrueArg(process.env.AUTH_ENABLED),
     authTokenPublicKey: getEnvCert(process.env.AUTH_TOKEN_PUBLIC_KEY),
     authManageLocalUsersDisabled: isTrueArg(process.env.AUTH_MANAGE_LOCAL_USERS_DISABLED),
+    authSignupDisabled: isTrueArg(process.env.AUTH_SIGNUP_DISABLED),
 
     apiPrefix: '/api',
 } satisfies Partial<AppConfig>;

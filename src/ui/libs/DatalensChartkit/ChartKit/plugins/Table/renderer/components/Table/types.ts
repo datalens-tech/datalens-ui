@@ -1,6 +1,7 @@
 import type React from 'react';
 
 import type {RowData, SortingFnOption} from '@tanstack/react-table';
+import type {TableCellVeticalAlignment} from 'shared/types/chartkit/table';
 
 declare module '@tanstack/react-table' {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -20,6 +21,7 @@ export interface CellData {
     className?: string | (() => string);
     rowSpan?: number;
     isVisible?: boolean;
+    verticalAlignment?: TableCellVeticalAlignment;
 }
 
 export type RenderCellFn<T extends CellData> = (cellData: T) => React.ReactElement | null;
@@ -37,6 +39,7 @@ export type THead = {
     columns?: THead[];
     left?: number;
     index?: number;
+    verticalAlignment?: TableCellVeticalAlignment;
 };
 
 export type TData = CellData[];
@@ -81,6 +84,7 @@ export type HeadCellViewData = {
     sortable: boolean;
     pinned: boolean;
     style?: React.CSSProperties;
+    verticalAlignment?: TableCellVeticalAlignment;
     sorting: 'asc' | 'desc' | false;
     content: JSX.Element | React.ReactNode;
     onClick: () => void;
@@ -95,6 +99,7 @@ export type BodyCellViewData = {
     id: string;
     style?: React.CSSProperties;
     contentStyle?: React.CSSProperties;
+    verticalAlignment?: TableCellVeticalAlignment;
     contentType?: 'null';
     content: JSX.Element | React.ReactNode;
     className?: string;

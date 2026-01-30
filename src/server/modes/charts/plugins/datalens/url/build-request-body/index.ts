@@ -13,19 +13,18 @@ import type {
     ServerChartsConfig,
     ServerDatasetField,
     ServerField,
+    ServerVisualizationLayer,
     Shared,
     SharedData,
     StringParams,
     V4Layer,
 } from '../../../../../../../shared';
 import {
-    Feature,
     Operations,
     WizardVisualizationId,
     filterUpdatesByDatasetId,
     getItemLinkWithDatasets,
     isDateField,
-    isEnabledServerFeature,
     isMeasureField,
     isParameter,
     prepareFilterValues,
@@ -35,7 +34,6 @@ import {
     transformParamsToUrlParams,
     transformUrlParamsToParams,
 } from '../../../../../../../shared';
-import {registry} from '../../../../../../registry';
 import type {ApiVersion, BaseUrlPayload, PayloadParameter} from '../../types';
 import {mapChartsConfigToServerConfig} from '../../utils/config-helpers';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT, SORT_ORDER} from '../../utils/constants';
@@ -238,7 +236,6 @@ function formatFilters({
     filterParams: StringParams;
     drillDownData?: DrillDownData;
 }): PayloadFilter[] | undefined {
-    const app = registry.getApp();
     let chartFilters: PayloadFilter[] = [];
 
     let paramsFilters = formatParamsFilters({
@@ -370,10 +367,8 @@ function formatFilters({
             .filter((filter): filter is PayloadFilter => filter !== null);
     }
 
-    let resultFilters = getMergedChartAndParamsFilters({chartFilters, paramsFilters});
-
-    if (isEnabledServerFeature(app.nodekit.ctx, Feature.EmptySelector)) {
-        resultFilters = resultFilters.filter((filter) => {
+    const resultFilters = getMergedChartAndParamsFilters({chartFilters, paramsFilters}).filter(
+        (filter) => {
             if (filter.operation === Operations.NO_SELECTED_VALUES) {
                 return false;
             }
@@ -393,8 +388,8 @@ function formatFilters({
             }
 
             return true;
-        });
-    }
+        },
+    );
 
     return resultFilters.length ? resultFilters : undefined;
 }
@@ -438,7 +433,7 @@ export function prepareSingleRequest({
     layerId: string | undefined;
     extraSettings?: ServerChartsConfig['extraSettings'];
     sharedData: SharedData;
-    revisionId: string;
+    revisionId?: string;
 }): ApiV2RequestBody {
     preprocessHierarchies({
         visualizationId: visualization.id,
@@ -479,7 +474,6 @@ export function prepareSingleRequest({
     const withTotals =
         (visualization.id === WizardVisualizationId.FlatTable ||
             visualization.id === WizardVisualizationId.Donut ||
-            visualization.id === WizardVisualizationId.DonutD3 ||
             visualization.id === WizardVisualizationId.PivotTable) &&
         extraSettings?.totals === 'on' &&
         isMeasureInFields;
@@ -687,7 +681,7 @@ export const getUrlsRequestBody = (args: {
     datasetFields: ServerDatasetField[];
     datasetId: string;
     layerId: string;
-    revisionId: string;
+    revisionId?: string;
 }): ApiV2RequestBody => {
     const {params, shared, datasetId, layerId, revisionId} = args;
 
@@ -707,13 +701,14 @@ export const getUrlsRequestBody = (args: {
     const placeholders = currentLayer.placeholders;
     const currentDatasetIndex = config.datasetsIds.findIndex((value) => value === datasetId);
     const currentLocalFields =
-        currentDatasetIndex >= 0 ? config.datasetsPartialFields[currentDatasetIndex] : [];
+        currentDatasetIndex >= 0 ? config.datasetsPartialFields?.[currentDatasetIndex] : [];
 
-    const datasetSchema = [...args.datasetFields, ...currentLocalFields];
+    const datasetSchema = [...args.datasetFields, ...(currentLocalFields ?? [])];
 
     const links = config.links;
     const segments = config.segments;
-    const sort = config.sort;
+    const sort =
+        (currentLayer as ServerVisualizationLayer)?.commonPlaceholders?.sort ?? config.sort;
     const updates = config.updates;
     const extraSettings = config.extraSettings;
     const sharedData = shared.sharedData;

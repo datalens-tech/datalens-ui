@@ -1,16 +1,21 @@
 import {createUikitPlugin} from '@gravity-ui/app-layout';
-import type {AppMiddleware, AppRoutes} from '@gravity-ui/expresskit';
-import {AuthPolicy, ExpressKit} from '@gravity-ui/expresskit';
+import type {AppMiddleware} from '@gravity-ui/expresskit';
+import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {NodeKit} from '@gravity-ui/nodekit';
-import passport from 'passport';
 
-import {DASH_API_BASE_URL, PUBLIC_API_DASH_API_BASE_URL} from '../../../shared';
-import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
+import {
+    DASH_API_BASE_URL,
+    Feature,
+    PUBLIC_API_DASH_API_BASE_URL,
+    isEnabledServerFeature,
+} from '../../../shared';
+import {isApiMode, isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAppLayoutSettings} from '../../components/app-layout/app-layout-settings';
 import {createLayoutPlugin} from '../../components/app-layout/plugins/layout';
 import type {ChartsEngine} from '../../components/charts-engine';
-import {initZitadel} from '../../components/zitadel/init-zitadel';
+import {createAuthArgsMiddleware} from '../../components/gateway-auth-helpers';
 import {xlsxConverter} from '../../controllers/xlsx-converter';
+import {getExpressKit} from '../../expresskit';
 import {
     beforeAuthDefaults,
     createAppLayoutMiddleware,
@@ -33,12 +38,12 @@ export default function initApp(nodekit: NodeKit) {
 
     registry.setupXlsxConverter(xlsxConverter);
 
-    if (nodekit.config.isZitadelEnabled) {
-        initZitadel({nodekit, beforeAuth});
+    if (isEnabledServerFeature(nodekit.ctx, Feature.UsDynamicMasterToken)) {
+        beforeAuth.push(createAuthArgsMiddleware(nodekit.config));
     }
 
     if (isFullMode || isDatalensMode) {
-        initDataLensApp({beforeAuth, afterAuth});
+        initDataLensApp({beforeAuth, afterAuth, nodekit});
     }
 
     let chartsEngine: ChartsEngine | undefined;
@@ -47,21 +52,18 @@ export default function initApp(nodekit: NodeKit) {
         chartsEngine = initChartsApp({nodekit, beforeAuth, afterAuth});
     }
 
+    if (isFullMode || isApiMode) {
+        initApiApp({beforeAuth, afterAuth});
+    }
+
     const extendedRoutes = getRoutes({
         ctx: nodekit.ctx,
         chartsEngine,
-        passport,
         beforeAuth,
         afterAuth,
     });
 
-    const routes: AppRoutes = {};
-    Object.keys(extendedRoutes).forEach((key) => {
-        const {route, ...params} = extendedRoutes[key];
-        routes[route] = params;
-    });
-
-    return new ExpressKit(nodekit, routes);
+    return getExpressKit({extendedRoutes, nodekit});
 }
 
 function initDataLensApp({
@@ -70,6 +72,7 @@ function initDataLensApp({
 }: {
     beforeAuth: AppMiddleware[];
     afterAuth: AppMiddleware[];
+    nodekit: NodeKit;
 }) {
     beforeAuth.push(
         createAppLayoutMiddleware({
@@ -98,10 +101,9 @@ function initChartsApp({
             configuredDashApiPlugin({
                 basePath: DASH_API_BASE_URL,
                 routeParams: {
-                    authPolicy:
-                        nodekit.config.isZitadelEnabled || nodekit.config.isAuthEnabled
-                            ? AuthPolicy.required
-                            : AuthPolicy.disabled,
+                    authPolicy: nodekit.config.isAuthEnabled
+                        ? AuthPolicy.required
+                        : AuthPolicy.disabled,
                 },
                 privatePath: PUBLIC_API_DASH_API_BASE_URL,
                 privateRouteParams: {
@@ -131,4 +133,18 @@ function initChartsApp({
         chartsEngine.initPreloading(nodekit.ctx);
     }
     return chartsEngine;
+}
+
+function initApiApp({
+    beforeAuth,
+    afterAuth,
+}: {
+    beforeAuth: AppMiddleware[];
+    afterAuth: AppMiddleware[];
+}) {
+    // As charts app except chartEngine
+    if (isApiMode) {
+        afterAuth.push(xDlContext(), setSubrequestHeaders, patchLogger, getCtxMiddleware());
+        beforeAuth.push(beforeAuthDefaults);
+    }
 }

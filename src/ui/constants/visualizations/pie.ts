@@ -31,7 +31,7 @@ export const PIE_VISUALIZATION: GraphShared['visualization'] = {
     availableLabelModes: ['absolute', 'percent'],
     placeholders: [
         {
-            allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
+            allowedTypes: ITEM_TYPES.DIMENSIONS,
             allowedFinalTypes: ITEM_TYPES.DIMENSIONS,
             allowedDataTypes: PRIMITIVE_DATA_TYPES,
             id: PlaceholderId.Dimensions,
@@ -68,9 +68,4 @@ export const PIE_VISUALIZATION: GraphShared['visualization'] = {
             transform: prepareFieldToMeasureTransformation,
         },
     ],
-};
-
-export const PIE_D3_VISUALIZATION: GraphShared['visualization'] = {
-    ...PIE_VISUALIZATION,
-    id: WizardVisualizationId.PieD3,
 };

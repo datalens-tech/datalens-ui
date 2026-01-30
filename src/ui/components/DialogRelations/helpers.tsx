@@ -1,11 +1,16 @@
 import React from 'react';
 
 import type {Config, ConfigConnection, DashKit} from '@gravity-ui/dashkit';
+import {TriangleExclamation} from '@gravity-ui/icons';
 import type {SelectOption} from '@gravity-ui/uikit';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
+import {
+    isGlobalWidgetVisibleByMainSetting,
+    isGroupItemVisibleOnTab,
+} from 'ui/units/dash/utils/selectors';
 
 import type {DashTabItem} from '../../../shared';
 import {DashTabItemType} from '../../../shared';
@@ -66,6 +71,10 @@ export const getRelationsIcon = (
 ) => {
     if (!widgetMeta) {
         return null;
+    }
+
+    if (widgetMeta.loadError) {
+        return <Icon data={TriangleExclamation} size={DEFAULT_ICON_SIZE} className={className} />;
     }
 
     if (widgetMeta.visualizationType) {
@@ -281,7 +290,7 @@ export const getUpdatedPreparedRelations = (props: {
     changedWidgetsData?: WidgetsTypes;
     dashkitData: DashKit | null;
     dashWidgetsMeta: Omit<DashkitMetaDataItem, 'relations'>[] | null;
-    preparedRelations: DashMetaData;
+    relations: DashMetaData;
     datasets: DatasetsListData | null;
     type?: 'aliases' | 'connections';
 }) => {
@@ -292,7 +301,7 @@ export const getUpdatedPreparedRelations = (props: {
         changedWidgetsData,
         dashkitData,
         dashWidgetsMeta,
-        preparedRelations,
+        relations,
         datasets,
         type = 'connections',
     } = props;
@@ -309,7 +318,7 @@ export const getUpdatedPreparedRelations = (props: {
         return null;
     }
 
-    const newPreparedRelations = [...preparedRelations];
+    const newPreparedRelations = [...relations];
     const changedRelationsItem = newPreparedRelations.find(
         (item) => (item.itemId || item.widgetId) === currentWidgetId,
     );
@@ -328,7 +337,7 @@ export const getUpdatedPreparedRelations = (props: {
                 );
             })
             .forEach((item) => {
-                const relations = getRelationsInfo({
+                const relationsData = getRelationsInfo({
                     aliases: newAliases,
                     connections: (dashkitData?.props.config.connections || []) as ConnectionsData,
                     datasets,
@@ -338,7 +347,7 @@ export const getUpdatedPreparedRelations = (props: {
 
                 relationsItems.push({
                     ...item,
-                    relations,
+                    relations: relationsData,
                 });
             });
 
@@ -373,16 +382,24 @@ export const getPairedRelationType = (type: RelationType): RelationType => {
     return RELATION_TYPES.unknown as RelationType;
 };
 
-export const getWidgetsOptions = (
-    widgetsIconMap: Record<string, JSX.Element | null>,
-    widgets?: DashTabItem[],
-    showDebugInfo?: boolean,
-) => {
-    const options: SelectOption<{
-        widgetId?: string;
-        isItem?: boolean;
-        icon: JSX.Element | null;
-    }>[] = [];
+type WidgetOption = SelectOption<{
+    widgetId?: string;
+    isItem?: boolean;
+    icon: JSX.Element | null;
+}>;
+
+export const getWidgetsOptions = ({
+    widgetsIconMap,
+    widgets,
+    showDebugInfo,
+    tabId,
+}: {
+    widgetsIconMap: Record<string, JSX.Element | null>;
+    widgets?: DashTabItem[];
+    showDebugInfo?: boolean;
+    tabId: string | null;
+}) => {
+    const options: WidgetOption[] = [];
 
     if (!widgets) {
         return options;
@@ -393,19 +410,34 @@ export const getWidgetsOptions = (
 
         switch (widgetItem.type) {
             case DashTabItemType.GroupControl:
-                widgetItem.data.group.forEach((item) => {
-                    options.push({
-                        value: item.id,
-                        content: showDebugInfo
-                            ? `(${widgetItem.id} ${item.id}) ${item.title}`
-                            : item.title,
-                        data: {
-                            widgetId: widgetItem.id,
-                            isItem: true,
-                            icon: widgetsIconMap[widgetItem.id],
-                        },
+                {
+                    const isVisibleByMainSetting = isGlobalWidgetVisibleByMainSetting(
+                        tabId,
+                        widgetItem.data.impactType,
+                        widgetItem.data.impactTabsIds,
+                    );
+
+                    widgetItem.data.group.forEach((item) => {
+                        const isItemVisible = isGroupItemVisibleOnTab({
+                            tabId,
+                            item,
+                            isVisibleByMainSetting,
+                        });
+
+                        if (isItemVisible)
+                            options.push({
+                                value: item.id,
+                                content: showDebugInfo
+                                    ? `(${widgetItem.id} ${item.id}) ${item.title}`
+                                    : item.title,
+                                data: {
+                                    widgetId: widgetItem.id,
+                                    isItem: true,
+                                    icon: widgetsIconMap[widgetItem.id],
+                                },
+                            });
                     });
-                });
+                }
                 break;
             case DashTabItemType.Widget:
                 widgetItem.data.tabs.forEach((item) => {
@@ -416,22 +448,49 @@ export const getWidgetsOptions = (
                             : item.title,
                         data: {
                             widgetId: widgetItem.id,
+                            isItem: true,
                             icon: widgetsIconMap[item.id],
                         },
                     });
                 });
                 break;
             case DashTabItemType.Control:
-                options.push({
-                    value: widgetItem.id,
-                    content: showDebugInfo
-                        ? `(${widgetItem.id}) ${widgetItem.data.title}`
-                        : widgetItem.data.title,
-                    data: {icon: widgetsIconMap[widgetItem.id]},
-                });
+                {
+                    const isVisibleByMainSetting = isGlobalWidgetVisibleByMainSetting(
+                        tabId,
+                        widgetItem.data.impactType,
+                        widgetItem.data.impactTabsIds,
+                    );
+                    if (isVisibleByMainSetting) {
+                        options.push({
+                            value: widgetItem.id,
+                            content: showDebugInfo
+                                ? `(${widgetItem.id}) ${widgetItem.data.title}`
+                                : widgetItem.data.title,
+                            data: {icon: widgetsIconMap[widgetItem.id]},
+                        });
+                    }
+                }
                 break;
         }
     }
 
     return options;
+};
+
+export const getInitialSubItemId = (
+    widget: DashTabItem | null,
+    widgetsCurrentTab: Record<string, string>,
+) => {
+    if (!widget) {
+        return null;
+    }
+    switch (widget.type) {
+        case DashTabItemType.GroupControl:
+            return widget.data.group[0].id;
+        case DashTabItemType.Widget:
+            return widgetsCurrentTab[widget.id] || null;
+    }
+
+    return null;
 };

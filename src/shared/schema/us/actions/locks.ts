@@ -25,6 +25,12 @@ export const locksActions = {
     deleteLock: createAction<DeleteLockResponse, DeleteLockArgs>({
         method: 'DELETE',
         path: ({entryId}) => `${PATH_PREFIX}/locks/${filterUrlFragment(entryId)}`,
-        params: ({params: query}, headers) => ({query, headers}),
+        params: ({params: query}, headers) => {
+            if (typeof query !== 'object') {
+                return {headers};
+            }
+
+            return {query, headers};
+        },
     }),
 };

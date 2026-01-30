@@ -1,7 +1,6 @@
-import {getAvailableClientPalettesMap, selectDefaultClientGradient} from 'constants/common';
-
 import {i18n} from 'i18n';
-import {DEFAULT_PALETTE, GradientNullModes, GradientType, WizardVisualizationId} from 'shared';
+import {GradientNullModes, GradientType, WizardVisualizationId} from 'shared';
+import {getAvailableClientPalettesMap, selectDefaultClientGradient} from 'ui/constants/common';
 
 export const DEFAULT_BORDERS = 'show';
 export const DEFAULT_THRESHOLDS_MODE = 'auto';
@@ -12,7 +11,7 @@ export const DEFAULT_TWO_POINT_GRADIENT = selectDefaultClientGradient(DEFAULT_GR
 
 export const DEFAULT_PALETTE_STATE = {
     mountedColors: {},
-    palette: DEFAULT_PALETTE.id,
+    palette: '',
     selectedValue: null,
     polygonBorders: DEFAULT_BORDERS,
 };

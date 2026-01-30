@@ -5,6 +5,7 @@ export enum ErrorCode {
     DbCannotParseDatetime = 'ERR.DS_API.DB.CANNOT_PARSE.DATETIME',
     DbCannotParseNumber = 'ERR.DS_API.DB.CANNOT_PARSE.NUMBER',
     DbJoinColumnTypeMismatch = 'ERR.DS_API.DB.JOIN_COLUMN_TYPE_MISMATCH',
+    DbDataPreparationNotFinished = 'ERR.DS_API.DB.DATA_PREPARATION_NOT_FINISHED',
     DbMaterizalizationNotFinished = 'ERR.DS_API.DB.MATERIALIZATION_NOT_FINISHED',
     DbMemoryLimitExceeded = 'ERR.DS_API.DB.MEMORY_LIMIT_EXCEEDED',
     ChytTableAccessDenied = 'ERR.DS_API.DB.CHYT.TABLE_ACCESS_DENIED',
@@ -27,6 +28,7 @@ export enum ErrorCode {
     PlatformPermissionRequired = 'ERR.DS_API.PLATFORM_PERMISSION_REQUIRED',
     NeedReset = 'NEED_RESET',
     AuthNeedReset = 'AUTH.NEED_RESET',
+    AuthUserNotExists = 'AUTH.USER_NOT_EXISTS',
     EntryIsLocked = 'ERR.US.ENTRY_IS_LOCKED',
     EntryAlreadyExists = 'ERR.US.ENTRY_ALREADY_EXISTS',
     UsUniqViolation = 'ERR.US.DB.UNIQUE_VIOLATION',
@@ -43,26 +45,22 @@ export enum ErrorCode {
 
     ChartEditorNotAvailable = 'ERR.CHARTS.CHART_EDITOR_NOT_AVAILABLE',
     InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
-
-    TransferInvalidEntryScope = 'ERR.DS_API.UI.INVALID_ENTRY_SCOPE',
-    TransferInvalidToken = 'ERR.DS_API.UI.INVALID_TOKEN',
+    WorkbookAlreadyExists = 'WORKBOOK_ALREADY_EXISTS',
+    MetaManagerWorkbookAlreadyExists = 'META_MANAGER.WORKBOOK_ALREADY_EXISTS',
+    CollectionAlreadyExists = 'COLLECTION_ALREADY_EXISTS',
 }
 
 export const ErrorContentTypes = {
     NOT_FOUND: 'not-found',
     NOT_FOUND_BY_RESOLVE_TENANT: 'not-found-by-resolve-tenant',
-    NOT_FOUND_CURRENT_CLOUD_FOLDER: 'not-found-current-cloud-folder',
-    CLOUD_FOLDER_ACCESS_DENIED: 'cloud-folder-access-denied',
     NO_ACCESS: 'no-access',
     NO_ENTRY_ACCESS: 'no-entry-access',
     ERROR: 'error',
     CREDENTIALS: 'credentials',
     AUTH_FAILED: 'auth-failed',
     AUTH_DENIED: 'auth-denied',
-    NEW_ORGANIZATION_USER: 'new-organization-user',
-    NEW_LOCAL_FEDERATION_USER: 'new-local-federation-user',
     INACCESSIBLE_ON_MOBILE: 'inaccessible-on-mobile',
     NOT_AUTHENTICATED: 'not-authenticated',
-    FORBIDDEN_SSO: 'forbidden-sso',
-    FORBIDDEN_REPORT_ENTRY: 'forbidden-report-entry',
+    FORBIDDEN_BY_PLAN: 'forbidden-by-plan',
+    FORBIDDEN_AUTH: 'forbidden-auth',
 };

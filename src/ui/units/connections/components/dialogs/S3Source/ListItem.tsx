@@ -10,17 +10,18 @@ const b = block('conn-dialog-s3-source');
 type ListItemProps = {
     item: DialogS3SourceItem;
     batch?: boolean;
+    qa?: string;
 };
 
-const ListItemComponent = ({item, batch}: ListItemProps) => {
+const ListItemComponent = ({item, batch, qa}: ListItemProps) => {
     const {title, source_id, disabled, selected = false} = item;
 
     return (
         <div className={b('list-row', {disabled, selected})}>
             {batch ? (
-                <Checkbox size="l" checked={selected} disabled={disabled} />
+                <Checkbox size="l" checked={selected} disabled={disabled} qa={qa} />
             ) : (
-                <Radio size="l" value={source_id} checked={selected} />
+                <Radio size="l" value={source_id} checked={selected} qa={qa} />
             )}
             <span>{title}</span>
         </div>

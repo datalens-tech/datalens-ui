@@ -1,0 +1,10 @@
+.wizard-chart-settings__settings .zoom-setting {
+    --gc-form-row-label-width: 140px;
+
+    &__input {
+        width: 170px;
+        margin-left: 12px;
+        display: inline-block;
+        vertical-align: top;
+    }
+}

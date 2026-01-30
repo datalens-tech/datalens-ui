@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import LocationChange from 'components/LocationChange/LocationChange';
 import {usePrevious} from 'hooks/usePrevious';
@@ -20,7 +21,7 @@ import {isEmbeddedMode} from '../../../../utils/embedded';
 import {useIframeFeatures} from '../../hooks/useIframeFeatures';
 import {dispatchResize} from '../../modules/helpers';
 import {PostMessage, PostMessageCode} from '../../modules/postMessage';
-import {setTabHashState} from '../../store/actions/dashTyped';
+import {initDashEditHistory, setTabHashState} from '../../store/actions/dashTyped';
 import {
     selectDashEntry,
     selectEntryId,
@@ -58,6 +59,12 @@ export function App({...routeProps}: RouteComponentProps) {
 
     const showAsideHeader = !isEmbedded && !isFullscreenMode && isAsideHeaderEnabled;
     const showMobileHeader = !isFullscreenMode && DL.IS_MOBILE;
+
+    const themeType = useThemeType();
+
+    React.useMemo(() => {
+        dispatch(initDashEditHistory());
+    }, []);
 
     React.useEffect(() => {
         if (!isMounted && (showAsideHeader || showMobileHeader)) {
@@ -107,7 +114,7 @@ export function App({...routeProps}: RouteComponentProps) {
         >
             <LocationChange onLocationChanged={locationChangeHandler} />
             <div className={b('content')} data-qa={DashBodyQa.App}>
-                <DashWrapper {...routeProps} />
+                <DashWrapper {...routeProps} themeType={themeType} />
             </div>
             {showFooter && <Footer />}
         </div>

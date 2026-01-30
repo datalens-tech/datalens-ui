@@ -31,4 +31,13 @@
         flex: 1;
         margin-left: 8px;
     }
+
+    &__entry-icon {
+        width: 20px;
+        height: 20px;
+        .custom-color-box {
+            width: 20px;
+            height: 20px;
+        }
+    }
 }

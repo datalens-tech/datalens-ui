@@ -11,12 +11,31 @@ import './DebugInfo.scss';
 type Props = {
     requestId: string;
     traceId?: string;
+    importId?: string;
+    exportId?: string;
 };
 
 const b = block('debug-info');
 const i18n = I18n.keyset('component.error-dialog.view');
 
-const DebugInfo: React.FC<Props> = ({requestId, traceId}: Props) => {
+const DebugInfo: React.FC<Props> = ({requestId, traceId, importId, exportId}: Props) => {
+    const getClipboardText = () => {
+        const parts = [`${i18n('label_request-id')} ${requestId}`];
+
+        if (traceId) {
+            parts.push(`${i18n('label_trace-id')} ${traceId}`);
+        }
+
+        if (importId) {
+            parts.push(`${i18n('label_import-id')} ${importId}`);
+        }
+
+        if (exportId) {
+            parts.push(`${i18n('label_export-id')} ${exportId}`);
+        }
+
+        return parts.join(', ');
+    };
     return (
         <div className={b({mobile: DL.IS_MOBILE})}>
             <div className={b('info-values')}>
@@ -34,14 +53,25 @@ const DebugInfo: React.FC<Props> = ({requestId, traceId}: Props) => {
                         </span>
                     </div>
                 )}
+                {importId && (
+                    <div className={b('info-line')}>
+                        <span className={b('caption')}>{i18n('label_import-id')}</span>
+                        <span className={b('value')} title={importId}>
+                            {importId}
+                        </span>
+                    </div>
+                )}
+                {exportId && (
+                    <div className={b('info-line')}>
+                        <span className={b('caption')}>{i18n('label_export-id')}</span>
+                        <span className={b('value')} title={exportId}>
+                            {exportId}
+                        </span>
+                    </div>
+                )}
             </div>
             <div className={b('copy-btn')}>
-                <CopyToClipboard
-                    text={`${i18n('label_request-id')} ${requestId}, ${i18n(
-                        'label_trace-id',
-                    )} ${traceId}`}
-                    timeout={1000}
-                >
+                <CopyToClipboard text={getClipboardText()} timeout={1000}>
                     {() => (
                         <Button
                             view={DL.IS_MOBILE ? 'flat' : 'flat-secondary'}

@@ -1,8 +1,8 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import {pickExceptActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
+import {Loader as CommonLoader} from '@gravity-ui/uikit';
 import type {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';
@@ -12,12 +12,12 @@ import pick from 'lodash/pick';
 import {useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
 import {DashTabItemControlSourceType} from 'shared';
+import {DL} from 'ui/constants/common';
 import {useChangedValue} from 'ui/hooks/useChangedProp';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {ChartInitialParams} from '../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {DatalensChartkitContent} from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
-import Loader from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
 import type {ResponseError} from '../../../libs/DatalensChartkit/modules/data-provider/charts';
 import ExtensionsManager from '../../../libs/DatalensChartkit/modules/extensions-manager/extensions-manager';
@@ -26,7 +26,6 @@ import type {ControlsOnlyWidget} from '../../../libs/DatalensChartkit/types';
 import {selectSkipReload} from '../../../units/dash/store/selectors/dashTypedSelectors';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 
-import {useChartActions} from './helpers/chart-actions';
 import {COMPONENT_CLASSNAME, removeEmptyNDatasetFieldsProperties} from './helpers/helpers';
 import {useLoadingChartSelector} from './hooks/useLoadingChartSelector';
 import type {
@@ -67,7 +66,6 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         dataProvider,
         forwardedRef,
         nonBodyScroll,
-        loaderDelay,
         id: chartId,
         config,
         widgetId,
@@ -216,7 +214,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
     }, [requestCancellationRef, dataProvider, requestId]);
 
     const rootNodeRef = React.useRef<HTMLDivElement>(null);
-    const chartKitRef = React.useRef<ChartKit>(); // ref is forwarded to ChartKit
+    const chartKitRef = React.useRef<ChartKit | ChartKitRef>(); // ref is forwarded to ChartKit
     const widgetDataRef = React.useRef<ChartWidgetData>(null);
 
     const [initialParams, setInitialParams] = React.useState<StringParams>(
@@ -236,7 +234,6 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         mods,
         widgetBodyClassName,
         hasHiddenClassMod,
-        veil,
         showLoader,
         handleGetWidgetMeta,
         handleChartkitReflow,
@@ -248,7 +245,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         setLoadingProps,
         getControls,
         isAutoHeightEnabled,
-        runAction,
+        runActivity,
     } = useLoadingChartSelector({
         ...props,
         chartKitRef,
@@ -266,10 +263,6 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         widgetType,
     });
 
-    const {onAction} = useChartActions({
-        onChange: handleChange,
-    });
-
     const hasControl = Boolean((loadedData as ControlsOnlyWidget)?.controls?.controls?.length);
 
     /**
@@ -283,7 +276,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         setInitialParams({...loadedData?.defaultParams, ...props.defaults});
     }, [hasCurrentDefaultsChanged, props.defaults, loadedData?.defaultParams]);
 
-    React.useImperativeHandle<ChartSelectorWithWrapRefProps, ChartSelectorWithWrapRefProps>(
+    React.useImperativeHandle<ChartKit | ChartKitRef, ChartSelectorWithWrapRefProps>(
         forwardedRef,
         () => ({
             props,
@@ -314,12 +307,17 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         error || (loadedData as unknown as AxiosResponse<ResponseError>)?.data?.error,
     );
 
+    const isLoading = showLoader && !hasError;
+    const pulsate = isLoading && hasControl;
+    const showSpinner = isLoading && !hasControl;
+
     return (
         <div
             ref={rootNodeRef}
             className={`${b({
                 ...mods,
                 autoheight: isAutoHeightEnabled,
+                pulsate,
             })}`}
             data-qa="chart-widget-selectors"
         >
@@ -330,7 +328,11 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                 ]}
             />
             <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
-                <Loader visible={showLoader} veil={veil} delay={loaderDelay} />
+                {showSpinner && (
+                    <div className={b('loader')}>
+                        <CommonLoader size="s" />
+                    </div>
+                )}
                 <div
                     className={b(
                         'body',
@@ -350,8 +352,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                             getControls={getControls}
                             nonBodyScroll={nonBodyScroll}
                             initialParams={controlInitialParams}
-                            runAction={runAction}
-                            onAction={onAction}
+                            runActivity={runActivity}
                         />
                     )}
                     {/* DatalensChartkitContent for error displaying & retry */}

@@ -8,7 +8,7 @@ import {getAppEndpointsConfig} from '../shared/endpoints';
 import {appEnv} from './app-env';
 import {appAuth} from './components/auth/middlewares/auth';
 import {getOpensourceLayoutConfig} from './components/layout/opensource-layout-config';
-import authZitadel from './middlewares/auth-zitadel';
+import {serverFeatureWithBoundedContext} from './middlewares';
 import {getConnectorToQlConnectionTypeMap} from './modes/charts/plugins/ql/utils/connection';
 import initOpensourceApp from './modes/opensource/app';
 import {nodekit} from './nodekit';
@@ -24,16 +24,14 @@ nodekit.config.endpoints = getAppEndpointsConfig(
     appEnv as AppEnvironment.Production | AppEnvironment.Development,
 );
 
-if (nodekit.config.isZitadelEnabled) {
-    nodekit.config.appAuthHandler = authZitadel;
-}
-
 if (nodekit.config.isAuthEnabled) {
     nodekit.config.appAuthHandler = appAuth;
 }
 
 nodekit.config.appAllowedLangs = nodekit.config.regionalEnvConfig?.allowLanguages;
 nodekit.config.appDefaultLang = nodekit.config.regionalEnvConfig?.defaultLang;
+
+nodekit.config.appBeforeAuthMiddleware = [serverFeatureWithBoundedContext];
 
 const app = initOpensourceApp(nodekit);
 registry.setupApp(app);

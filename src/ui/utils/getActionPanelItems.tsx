@@ -28,7 +28,7 @@ export type ActionPanelItemParams = {
     copiedData: CopiedConfigData | null;
     onPasteItem: (item: CopiedConfigData) => void;
     openDialog: (
-        dialogType: 'tabs' | 'connections' | 'settings' | 'selectState' | 'edit' | DashTabItemType,
+        dialogType: 'tabs' | 'settings' | 'selectState' | 'edit' | DashTabItemType,
         dragOperationProps?: ItemDropProps | undefined,
     ) => void;
     filterItem?: (item: DashkitActionPanelItem) => boolean;

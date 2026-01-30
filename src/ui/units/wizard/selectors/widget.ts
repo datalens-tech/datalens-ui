@@ -3,7 +3,7 @@ import type {DatalensGlobalState} from 'ui';
 import {DL, URL_QUERY} from 'ui';
 
 export const selectWidget = (state: DatalensGlobalState) => {
-    if (state.wizard.widget.widget) {
+    if (state.wizard.widget.widget?.key) {
         return state.wizard.widget.widget;
     } else {
         const fakeWidget = {
@@ -36,3 +36,6 @@ export const selectWidgetHash = (state: DatalensGlobalState) => state.wizard.wid
 
 export const selectExtraSettings = (state: DatalensGlobalState) =>
     state.wizard.widget.extraSettings;
+
+export const selectInitialDescription = (state: DatalensGlobalState): string =>
+    state.wizard.widget.widget?.annotation?.description ?? '';

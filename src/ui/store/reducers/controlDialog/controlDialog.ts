@@ -1,0 +1,689 @@
+import type {
+    DashTab,
+    DashTabItem,
+    DashTabItemControlData,
+    DashTabItemGroupControlData,
+    EntryScope,
+    StringParams,
+} from 'shared';
+import type {TabsHashStates} from 'ui/units/dash/store/actions/dashTyped';
+import {DashTabItemControlSourceType, DashTabItemType, TitlePlacements} from 'shared';
+import type {
+    DialogEditItemFeaturesProp,
+    SelectorDialogState,
+    SelectorsGroupDialogState,
+} from '../../typings/controlDialog';
+import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
+import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
+import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
+import {
+    ADD_SELECTOR_TO_GROUP,
+    INIT_DIALOG,
+    RESET_DIALOG,
+    SET_ACTIVE_SELECTOR_INDEX,
+    SET_SELECTOR_DIALOG_ITEM,
+    UPDATE_SELECTORS_GROUP,
+    SET_LAST_USED_DATASET_ID,
+    SET_LAST_USED_CONNECTION_ID,
+    UPDATE_CONTROLS_VALIDATION,
+    SET_ACTIVE_TAB,
+    SET_NEED_SIMILAR_SELECTORS_CHECK,
+    INIT_DASH_CHANGES_BUFFER,
+    UPDATE_DASH_CHANGES_BUFFER,
+} from '../../actions/controlDialog/controlDialog';
+
+import type {
+    SetLastUsedDatasetIdAction,
+    SetLastUsedConnectionIdAction,
+    InitDialogAction,
+    ResetDialogAction,
+    SetSelectorDialogItemAction,
+    SetActiveSelectorIndexAction,
+    UpdateSelectorsGroupAction,
+    AddSelectorToGroupAction,
+    UpdateControlsValidationAction,
+    SetActiveTabAction,
+    SetNeedSimilarSelectorsCheckAction,
+    InitDashChangesBufferAction,
+    UpdateDashChangesBufferAction,
+} from '../../actions/controlDialog/controlDialog';
+import {
+    getActualUniqueFieldNameValidation,
+    getInitialDefaultValue,
+} from '../../utils/controlDialog';
+import {
+    getSelectorDialogValidation,
+    getSelectorsGroupValidation,
+    getUpdatedAutoHeight,
+} from './helpers';
+
+import {I18n} from 'i18n';
+import {ELEMENT_TYPE} from '../../constants/controlDialog';
+import {type RealTheme} from '@gravity-ui/uikit';
+
+const i18n = I18n.keyset('dash.store.view');
+
+export type ControlDialogStateItemMeta = {
+    scope: EntryScope;
+    currentTabId: string | null;
+    entryId: string | null;
+    workbookId: string | null;
+    namespace: string | null;
+};
+export interface DashChangesBuffer {
+    tabs: DashTab[];
+    hashStates: TabsHashStates;
+}
+
+export interface ControlDialogState {
+    activeSelectorIndex: number;
+    activeTab: string | null;
+    selectorsGroup: SelectorsGroupDialogState;
+    selectorDialog: SelectorDialogState;
+    openedDialog: DashTabItemType | null;
+    openedItemId: string | null;
+    openedItemData: DashTabItem['data'] | null;
+    openedItemMeta: ControlDialogStateItemMeta | null;
+
+    features: DialogEditItemFeaturesProp;
+    titlePlaceholder: string | null;
+    theme?: RealTheme;
+
+    lastUsedDatasetId?: string;
+    lastUsedConnectionId?: string;
+    needSimilarSelectorsCheck: boolean;
+    dashChangesBuffer: DashChangesBuffer | null;
+}
+
+export function getSelectorDialogInitialState(
+    args: {
+        title?: string | null;
+        lastUsedDatasetId?: string;
+        lastUsedConnectionId?: string;
+        openedDialog?: DashTabItemType.Control | DashTabItemType.GroupControl;
+    } = {},
+): SelectorDialogState {
+    const sourceType =
+        args.openedDialog === DashTabItemType.Control
+            ? DashTabItemControlSourceType.External
+            : DashTabItemControlSourceType.Dataset;
+
+    return {
+        elementType: ELEMENT_TYPE.SELECT,
+        validation: {},
+        sourceType,
+        defaults: {},
+        datasetId: args.lastUsedDatasetId,
+        connectionId: args.lastUsedConnectionId,
+        titlePlacement: TitlePlacements.Left,
+        accentType: null,
+        placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
+        width: '',
+        required: false,
+        showHint: false,
+        draftId: getRandomKey(),
+        impactType: undefined,
+        impactTabsIds: undefined,
+        ...(args.title ? {title: args.title} : {}),
+    };
+}
+
+export function getGroupSelectorDialogInitialState(): SelectorsGroupDialogState {
+    return {
+        showGroupName: false,
+        autoHeight: false,
+        buttonApply: false,
+        buttonReset: false,
+        updateControlsOnChange: true,
+        impactType: undefined,
+        impactTabsIds: undefined,
+        group: [],
+        validation: {},
+    };
+}
+
+export function getSelectorDialogFromData(
+    data: DashTabItemControlData & {source: {[key: string]: any}},
+    defaults?: StringParams | null,
+): SelectorDialogState {
+    let selectorParameters;
+
+    switch (data.sourceType) {
+        case DashTabItemControlSourceType.Connection:
+            selectorParameters = extractTypedQueryParams(defaults ?? {}, data.source.fieldName);
+            break;
+        case DashTabItemControlSourceType.External:
+            selectorParameters = defaults ?? {};
+            break;
+        default:
+            selectorParameters = {};
+    }
+
+    return {
+        validation: {},
+        isManualTitle: true,
+
+        defaults: defaults ?? {},
+
+        title: data.title,
+        sourceType: data.sourceType,
+        autoHeight: data.autoHeight,
+
+        datasetId: data.source.datasetId,
+        connectionId: data.source.connectionId,
+        selectorParameters,
+        connectionQueryType: data.source.connectionQueryType,
+        connectionQueryTypes: data.source.connectionQueryTypes,
+        connectionQueryContent: data.source.connectionQueryContent,
+        elementType: data.source.elementType || ELEMENT_TYPE.SELECT,
+        defaultValue: data.source.defaultValue,
+        datasetFieldId: data.source.datasetFieldId,
+        titlePlacement:
+            data.source.showTitle === false || data.source.titlePlacement === TitlePlacements.Hide
+                ? TitlePlacements.Hide
+                : data.source.titlePlacement ?? TitlePlacements.Left,
+        accentType: data.source.accentType,
+        multiselectable: data.source.multiselectable,
+        isRange: data.source.isRange,
+        fieldName: data.source.fieldName,
+        fieldType: data.source.fieldType,
+        datasetFieldType: data.source.datasetFieldType,
+        acceptableValues: data.source.acceptableValues,
+        chartId: data.source.chartId,
+        operation: data.source.operation,
+        innerTitle: data.source.innerTitle,
+        showInnerTitle: data.source.showInnerTitle,
+        required: data.source.required,
+        showHint: data.source.showHint,
+        hint: data.source.hint,
+
+        placementMode: data.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
+        width: data.width || '',
+
+        id: data.id,
+        namespace: data.namespace,
+        impactType: data.impactType,
+        impactTabsIds: data.impactTabsIds,
+    };
+}
+
+export function getSelectorGroupDialogFromData(data: DashTabItemGroupControlData) {
+    return {
+        updateControlsOnChange: false,
+        validation: {},
+        ...data,
+        group: data.group.map((item) => getSelectorDialogFromData(item)),
+    };
+}
+
+const getInitialState = (): ControlDialogState => ({
+    activeSelectorIndex: 0,
+    activeTab: null,
+    selectorsGroup: getGroupSelectorDialogInitialState(),
+    selectorDialog: getSelectorDialogInitialState(),
+    openedDialog: null,
+    openedItemId: null,
+    openedItemData: null,
+    openedItemMeta: null,
+    titlePlaceholder: null,
+    features: {},
+    needSimilarSelectorsCheck: false,
+    dashChangesBuffer: null,
+});
+
+// eslint-disable-next-line complexity
+export function controlDialog(
+    state: ControlDialogState = getInitialState(),
+    action:
+        | InitDialogAction
+        | ResetDialogAction
+        | SetSelectorDialogItemAction
+        | SetActiveSelectorIndexAction
+        | UpdateSelectorsGroupAction
+        | AddSelectorToGroupAction
+        | SetLastUsedDatasetIdAction
+        | SetLastUsedConnectionIdAction
+        | UpdateControlsValidationAction
+        | SetActiveTabAction
+        | SetNeedSimilarSelectorsCheckAction
+        | InitDashChangesBufferAction
+        | UpdateDashChangesBufferAction,
+): ControlDialogState {
+    const {type} = action;
+
+    const currentTabId = state?.openedItemMeta?.currentTabId;
+
+    switch (type) {
+        case INIT_DIALOG: {
+            const payload = action.payload;
+            const {
+                id: openedItemId,
+                type: openedDialog,
+                data,
+                defaults,
+                openedItemMeta,
+                features,
+                titlePlaceholder,
+                theme,
+            } = payload;
+
+            const newState = {
+                ...state,
+                openedItemData: {...data},
+                openedDialog,
+                openedItemId,
+                openedItemMeta,
+                activeSelectorIndex: 0,
+            };
+
+            if (features) {
+                newState.features = features;
+            }
+
+            if (theme) {
+                newState.theme = theme;
+            }
+
+            if (titlePlaceholder) {
+                newState.titlePlaceholder = titlePlaceholder;
+            }
+
+            if (
+                openedItemId === null &&
+                (openedDialog === DashTabItemType.Control ||
+                    openedDialog === DashTabItemType.GroupControl)
+            ) {
+                newState.selectorDialog = getSelectorDialogInitialState({
+                    title:
+                        openedDialog === DashTabItemType.GroupControl
+                            ? i18n('label_selector-dialog')
+                            : null,
+                    lastUsedDatasetId: state.lastUsedDatasetId,
+                    lastUsedConnectionId: state.lastUsedConnectionId,
+                    openedDialog,
+                });
+                newState.selectorsGroup = {
+                    ...getGroupSelectorDialogInitialState(),
+                    group: [newState.selectorDialog],
+                };
+            } else if (
+                openedDialog === DashTabItemType.Control &&
+                (data as unknown as DashTabItemControlData).sourceType !== 'external'
+            ) {
+                const selectorDialog = getSelectorDialogFromData(
+                    data as unknown as DashTabItemControlData,
+                );
+
+                // migration forward to group
+                newState.openedDialog = DashTabItemType.GroupControl;
+                newState.selectorsGroup = {
+                    ...getGroupSelectorDialogInitialState(),
+                    group: [selectorDialog],
+                };
+                newState.selectorDialog = selectorDialog;
+            } else if (openedDialog === DashTabItemType.GroupControl) {
+                newState.selectorsGroup = getSelectorGroupDialogFromData(
+                    data as unknown as DashTabItemGroupControlData,
+                );
+                newState.selectorDialog = newState.selectorsGroup.group[0];
+            } else if (openedDialog === DashTabItemType.Control) {
+                newState.selectorDialog = getSelectorDialogFromData(
+                    data as unknown as DashTabItemControlData,
+                    defaults,
+                );
+            }
+
+            const currentFeatures = features?.[newState.openedDialog] ?? {};
+            if (
+                'enableAutoheightDefault' in currentFeatures &&
+                currentFeatures.enableAutoheightDefault
+            ) {
+                if (openedDialog === DashTabItemType.GroupControl) {
+                    newState.selectorsGroup.autoHeight = true;
+                } else if (openedDialog === DashTabItemType.Control) {
+                    newState.selectorDialog.autoHeight = true;
+                }
+            }
+
+            // Enable show group control title for new group control
+            if (
+                openedItemId === null &&
+                openedDialog === DashTabItemType.GroupControl &&
+                titlePlaceholder
+            ) {
+                newState.selectorsGroup.showGroupName = true;
+            }
+
+            return newState;
+        }
+
+        case SET_SELECTOR_DIALOG_ITEM: {
+            const {selectorDialog, selectorsGroup, activeSelectorIndex} = state;
+            const {payload} = action;
+
+            const elementTypeChanged =
+                payload.elementType && selectorDialog.elementType !== payload.elementType;
+            const defaultValue = elementTypeChanged
+                ? getInitialDefaultValue(payload.elementType!)
+                : selectorDialog.defaultValue;
+            const isElementTypeWithoutRequired =
+                elementTypeChanged && payload.elementType === ELEMENT_TYPE.CHECKBOX;
+            const required = isElementTypeWithoutRequired ? false : selectorDialog.required;
+
+            const validation: SelectorDialogState['validation'] = {
+                title:
+                    selectorDialog.title === payload.title
+                        ? selectorDialog.validation.title
+                        : undefined,
+                uniqueFieldName:
+                    selectorDialog.fieldName === payload.fieldName
+                        ? getActualUniqueFieldNameValidation(
+                              selectorsGroup.group,
+                              payload.fieldName,
+                              selectorDialog.validation.fieldName,
+                          )
+                        : undefined,
+                fieldName:
+                    selectorDialog.fieldName === payload.fieldName
+                        ? selectorDialog.validation.fieldName
+                        : undefined,
+                datasetFieldId:
+                    selectorDialog.datasetFieldId === payload.datasetFieldId
+                        ? selectorDialog.validation.datasetFieldId
+                        : undefined,
+                defaultValue:
+                    !isElementTypeWithoutRequired &&
+                    selectorDialog.defaultValue === payload.defaultValue
+                        ? selectorDialog.validation.defaultValue
+                        : undefined,
+                impactType:
+                    selectorDialog.impactType === payload.impactType
+                        ? selectorDialog.validation.impactType
+                        : undefined,
+                impactTabsIds:
+                    selectorDialog.impactTabsIds === payload.impactTabsIds
+                        ? selectorDialog.validation.impactTabsIds
+                        : undefined,
+            };
+
+            const newSelectorState = {
+                ...state.selectorDialog,
+                defaultValue,
+                validation: {...state.selectorDialog.validation, ...validation},
+                required,
+                ...payload,
+            };
+
+            const newSelectorsGroupState = {
+                ...selectorsGroup,
+            };
+
+            if (state.selectorsGroup.group.length) {
+                newSelectorsGroupState.group = [...selectorsGroup.group];
+                newSelectorsGroupState.group[activeSelectorIndex] = newSelectorState;
+            }
+
+            return {
+                ...state,
+                selectorDialog: newSelectorState,
+                selectorsGroup: newSelectorsGroupState,
+            };
+        }
+
+        case ADD_SELECTOR_TO_GROUP: {
+            const {payload} = action;
+            const newSelector = getSelectorDialogInitialState(
+                state.lastUsedDatasetId
+                    ? {
+                          lastUsedDatasetId: state.lastUsedDatasetId,
+                      }
+                    : {},
+            );
+            const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {};
+
+            // if current length is 1, the added selector will be the second
+            const isBecomeGroup = state.selectorsGroup.group.length === 1;
+
+            let autoHeight: boolean;
+            if (enableAutoheightDefault) {
+                autoHeight = true;
+            } else {
+                // we enable autoHeight for multiple selectors
+                autoHeight = isBecomeGroup ? true : state.selectorsGroup.autoHeight;
+            }
+
+            const fallbackImpactTabsIds = currentTabId ? [currentTabId] : undefined;
+
+            let updatedGroup = [...state.selectorsGroup.group];
+            let groupImpactType = state.selectorsGroup.impactType;
+            let groupImpactTabsIds = state.selectorsGroup.impactTabsIds;
+
+            // reset the validation when the number of selectors changes
+            if (
+                state.selectorsGroup.validation.currentTabVisibility ||
+                state.selectorDialog.validation.currentTabVisibility
+            ) {
+                updatedGroup = state.selectorsGroup.group.map((selector) => {
+                    return {
+                        ...selector,
+                        validation: {...selector.validation, currentTabVisibility: undefined},
+                    };
+                });
+            }
+
+            // set the default value for the former single selector
+            if (isBecomeGroup) {
+                const hasSelectorCorrectGroupType =
+                    updatedGroup[0].impactType && updatedGroup[0].impactType !== 'asGroup';
+
+                groupImpactType = hasSelectorCorrectGroupType
+                    ? updatedGroup[0].impactType
+                    : 'currentTab';
+                groupImpactTabsIds = hasSelectorCorrectGroupType
+                    ? updatedGroup[0].impactTabsIds
+                    : fallbackImpactTabsIds;
+                updatedGroup[0].impactType = 'asGroup';
+                updatedGroup[0].impactTabsIds = null;
+            }
+
+            return {
+                ...state,
+                selectorsGroup: {
+                    ...state.selectorsGroup,
+                    group: updatedGroup.concat([{...newSelector, title: payload.title}]),
+                    autoHeight,
+                    // The settings of the first selector are applied to the group
+                    impactType: groupImpactType,
+                    impactTabsIds: groupImpactTabsIds,
+                    validation: {
+                        ...state.selectorsGroup.validation,
+                        currentTabVisibility: undefined,
+                    },
+                },
+            };
+        }
+
+        case UPDATE_SELECTORS_GROUP: {
+            const {selectorsGroup, selectorDialog} = state;
+            const {group, autoHeight, impactTabsIds} = action.payload;
+
+            const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {};
+
+            const isSingleSelectorLeft = selectorsGroup.group.length > 1 && group.length === 1;
+            const hasLengthChanged = selectorsGroup.group.length !== group.length;
+
+            const singleSelectorsGroupSettings: Partial<SelectorsGroupDialogState> = {
+                buttonApply: false,
+                buttonReset: false,
+                impactType: undefined,
+                impactTabsIds: undefined,
+            };
+
+            const updatedAutoHeight = getUpdatedAutoHeight({
+                enableAutoheightDefault,
+                hasLengthChanged,
+                isSingleSelectorLeft,
+                autoHeight,
+            });
+
+            const validation = getSelectorDialogValidation({
+                selectorDialog,
+                isSingleSelectorLeft,
+                hasLengthChanged,
+            });
+
+            const groupValidation = getSelectorsGroupValidation({
+                selectorsGroup,
+                impactTabsIds,
+                hasLengthChanged,
+                payloadValidation: action.payload.validation,
+            });
+
+            const selectorDialogUpdatedState = {
+                ...state.selectorDialog,
+                validation: {...state.selectorDialog.validation, ...validation},
+                ...(isSingleSelectorLeft && group[0].impactType === 'asGroup'
+                    ? {
+                          impactTabsIds: selectorsGroup.impactTabsIds,
+                          impactType: selectorsGroup.impactType,
+                      }
+                    : {}),
+            };
+
+            const selectorsGroupUpdatedState = {
+                ...selectorsGroup,
+                ...action.payload,
+                ...(isSingleSelectorLeft ? {singleSelectorsGroupSettings} : {}),
+                autoHeight: updatedAutoHeight,
+                validation: {...selectorsGroup.validation, ...groupValidation},
+            };
+
+            if (isSingleSelectorLeft && group[0].impactType === 'asGroup') {
+                selectorsGroupUpdatedState.group[0].impactType = selectorsGroup.impactType;
+                selectorsGroupUpdatedState.group[0].impactTabsIds = selectorsGroup.impactTabsIds;
+            }
+
+            return {
+                ...state,
+                selectorsGroup: selectorsGroupUpdatedState,
+                selectorDialog: selectorDialogUpdatedState,
+            };
+        }
+
+        case SET_ACTIVE_SELECTOR_INDEX: {
+            const newCurrentSelector =
+                state.selectorsGroup.group[action.payload.activeSelectorIndex];
+
+            return {
+                ...state,
+                activeSelectorIndex: action.payload.activeSelectorIndex,
+                selectorDialog: {
+                    ...newCurrentSelector,
+                    validation: {
+                        ...newCurrentSelector.validation,
+                        // check if validation with non-unique uniqueFieldName is still valid
+                        uniqueFieldName: getActualUniqueFieldNameValidation(
+                            state.selectorsGroup.group,
+                            newCurrentSelector.fieldName,
+                            newCurrentSelector.validation.uniqueFieldName,
+                        ),
+                    },
+                },
+                needSimilarSelectorsCheck: false,
+            };
+        }
+
+        case RESET_DIALOG: {
+            return getInitialState();
+        }
+
+        case SET_LAST_USED_DATASET_ID:
+            return {
+                ...state,
+                lastUsedDatasetId: action.payload,
+            };
+
+        case SET_LAST_USED_CONNECTION_ID:
+            return {
+                ...state,
+                lastUsedConnectionId: action.payload,
+            };
+
+        case UPDATE_CONTROLS_VALIDATION: {
+            const {groupValidation, itemsValidation} = action.payload;
+            const {selectorsGroup, selectorDialog, openedDialog} = state;
+
+            const isGroupControl = openedDialog === DashTabItemType.GroupControl;
+
+            const updatedSelectorDialog = {
+                ...selectorDialog,
+                validation: {
+                    ...selectorDialog.validation,
+                    ...(itemsValidation || {}),
+                },
+            };
+
+            if (isGroupControl) {
+                return {
+                    ...state,
+                    selectorsGroup: {
+                        ...selectorsGroup,
+                        validation: {
+                            ...selectorsGroup.validation,
+                            ...(groupValidation || {}),
+                        },
+                        group: selectorsGroup.group.map((item) => ({
+                            ...item,
+                            validation: {
+                                ...item.validation,
+                                ...(itemsValidation || {}),
+                            },
+                        })),
+                    },
+                    selectorDialog: updatedSelectorDialog,
+                };
+            } else {
+                return {
+                    ...state,
+                    selectorDialog: updatedSelectorDialog,
+                };
+            }
+        }
+
+        case SET_ACTIVE_TAB:
+            return {
+                ...state,
+                activeTab: action.payload,
+            };
+
+        case SET_NEED_SIMILAR_SELECTORS_CHECK:
+            return {
+                ...state,
+                needSimilarSelectorsCheck: action.payload,
+            };
+
+        case INIT_DASH_CHANGES_BUFFER:
+            return {
+                ...state,
+                dashChangesBuffer: {
+                    tabs: action.payload.tabs,
+                    hashStates: action.payload.hashStates,
+                },
+            };
+
+        case UPDATE_DASH_CHANGES_BUFFER:
+            return {
+                ...state,
+                dashChangesBuffer: state.dashChangesBuffer
+                    ? {
+                          tabs: action.payload.tabs ?? state.dashChangesBuffer.tabs,
+                          hashStates:
+                              action.payload.hashStates ?? state.dashChangesBuffer.hashStates,
+                      }
+                    : null,
+            };
+
+        default:
+            return state;
+    }
+}

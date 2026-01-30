@@ -26,9 +26,9 @@ type FixedHeaderContainerProps = CommonFixedHeaderProps & {
 const b = block('dash-fixed-header');
 const i18n = I18n.keyset('dash.empty-state.view');
 
-const calculateOffset = (dashBodyRef: React.RefObject<HTMLDivElement>) => {
+const calculateOffset = (dashBodyEl: HTMLDivElement | null) => {
     const pageBodyY = document.body.getBoundingClientRect().y;
-    const dashBodyY = dashBodyRef.current?.getBoundingClientRect()?.y ?? pageBodyY;
+    const dashBodyY = dashBodyEl?.getBoundingClientRect()?.y ?? pageBodyY;
 
     return dashBodyY - pageBodyY;
 };
@@ -48,7 +48,11 @@ const EmptyPlaceholder = ({
     </React.Fragment>
 );
 
-const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset = 0) => {
+const useFixedHeaderRef = (
+    rootRef: React.RefObject<HTMLDivElement>,
+    topOffset = 0,
+    scrollableContainer: HTMLDivElement | Window | null = window,
+) => {
     const [isFixed, setIsFixed] = React.useState(false);
     const [leftOffset, setLeftOffset] = React.useState(0);
     const [width, setWidth] = React.useState<number | string>(0);
@@ -68,7 +72,7 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
             setLeftOffset(rect?.left || 0);
         });
 
-        window.document?.addEventListener('scroll', handler);
+        scrollableContainer?.addEventListener('scroll', handler);
 
         if (rootRef.current) {
             resizeObserver.observe(rootRef.current);
@@ -77,10 +81,10 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
         setTimeout(handler);
 
         return () => {
-            window.document?.removeEventListener('scroll', handler);
+            scrollableContainer?.removeEventListener('scroll', handler);
             resizeObserver.disconnect();
         };
-    }, [rootRef, topOffset]);
+    }, [rootRef, topOffset, scrollableContainer]);
 
     return {isFixed, leftOffset, width};
 };
@@ -158,28 +162,44 @@ type FixedHeaderWrapperProps = CommonFixedHeaderProps & {
     isCollapsed: boolean;
     isControlsGroupEmpty?: boolean;
     isContainerGroupEmpty?: boolean;
-    dashBodyRef: React.RefObject<HTMLDivElement>;
+    isSplitPaneContainer?: boolean;
+    backgroundColor?: string;
+    dashBodyEl: HTMLDivElement | null;
     controlsRef: React.Ref<HTMLDivElement>;
     containerRef: React.Ref<HTMLDivElement>;
+    className?: string;
 };
 
 export function FixedHeaderWrapper({
-    dashBodyRef,
+    backgroundColor,
+    dashBodyEl,
     controlsRef,
     containerRef,
     editMode,
     isCollapsed,
     isControlsGroupEmpty,
     isContainerGroupEmpty,
+    isSplitPaneContainer,
+    className,
 }: FixedHeaderWrapperProps) {
     const rootRef = React.useRef<HTMLDivElement>(null);
     const wrapperRef = React.useRef<HTMLDivElement>(null);
+    const scrollableContainerRef = React.useRef<HTMLDivElement>(null);
 
     const [containerHeight, setContainerHeight] = React.useState<'auto' | number>('auto');
+    const [scrollableContainerOverflow, setScrollableContainerOverflow] =
+        React.useState<React.CSSProperties['overflow']>('auto');
 
-    const topOffset = calculateOffset(dashBodyRef);
-    const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
-    const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, width} : {};
+    const topOffset = calculateOffset(dashBodyEl);
+    const {isFixed, leftOffset, width} = useFixedHeaderRef(
+        rootRef,
+        topOffset,
+        isSplitPaneContainer ? dashBodyEl : undefined,
+    );
+    const style =
+        isFixed && !editMode
+            ? {left: leftOffset, top: topOffset, width, backgroundColor}
+            : {backgroundColor};
 
     React.useEffect(() => {
         const observer = new ResizeObserver(([el]) => {
@@ -198,13 +218,37 @@ export function FixedHeaderWrapper({
         };
     }, [wrapperRef, topOffset]);
 
+    React.useEffect(() => {
+        if (scrollableContainerRef.current) {
+            const observer = new ResizeObserver(([entity]) => {
+                if (entity) {
+                    const {target} = entity;
+                    setScrollableContainerOverflow(
+                        target.scrollHeight > target.clientHeight ? 'auto' : 'visible',
+                    );
+                }
+            });
+
+            observer.observe(scrollableContainerRef.current);
+
+            return () => {
+                observer.disconnect();
+            };
+        }
+
+        return () => {};
+    }, [scrollableContainerRef]);
+
     return (
         <div
-            className={b({
-                'no-content': isControlsGroupEmpty && (isContainerGroupEmpty || isCollapsed),
-                'edit-mode': editMode,
-                collapsed: isCollapsed,
-            })}
+            className={b(
+                {
+                    'no-content': isControlsGroupEmpty && (isContainerGroupEmpty || isCollapsed),
+                    'edit-mode': editMode,
+                    collapsed: isCollapsed,
+                },
+                className,
+            )}
             ref={rootRef}
             style={{
                 height: isFixed ? containerHeight : 'auto',
@@ -219,7 +263,11 @@ export function FixedHeaderWrapper({
                 data-qa={FixedHeaderQa.Wrapper}
             >
                 <div className={b('content')}>
-                    <div className={b('scrollable-container')}>
+                    <div
+                        className={b('scrollable-container')}
+                        ref={scrollableContainerRef}
+                        style={{overflow: scrollableContainerOverflow}}
+                    >
                         <div ref={controlsRef} className={b('controls-placeholder')}></div>
                         <div
                             ref={containerRef}

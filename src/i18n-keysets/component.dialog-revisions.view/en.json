@@ -9,6 +9,7 @@
   "label_status-draft": "Draft",
   "label_status-published": "Actual",
   "label_status-tooltip-current": "Current",
+  "label_status-tooltip-disable": "Not available for view",
   "label_status-tooltip-draft": "Draft",
   "label_status-tooltip-not-actual": "Not actual",
   "label_status-tooltip-published": "Actual",

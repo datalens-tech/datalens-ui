@@ -6,4 +6,5 @@ import type {MenuItemConfig} from '../../../../../libs/DatalensChartkit/menu/Men
 export type GetWizardChartMenuArgs = {
     chartsDataProvider: ChartKitDataProvider;
     customOptions: Record<MenuItemsIds, Partial<MenuItemConfig>>;
+    extraOptions?: Record<string, unknown>;
 };

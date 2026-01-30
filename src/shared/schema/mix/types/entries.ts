@@ -7,6 +7,8 @@ import type {CheckStatReportExistsArgs, CheckStatReportExistsResponse} from '../
 import type {
     DeleteUSEntryResponse,
     EntryByKeyPattern,
+    GetEntriesArgs,
+    GetEntriesResponse,
     GetEntryByKeyArgs,
     GetEntryByKeyResponse,
     GetEntryMetaArgs,
@@ -89,6 +91,8 @@ export type GetEntryMetaStatusResponse = {
 
 export type GetEntryMetaStatusArgs = {
     entryId: string;
+    bindedWorkbookId?: string;
+    bindedDatasetId?: string;
 };
 
 export type GetEntriesInFolderArgs = {
@@ -96,3 +100,28 @@ export type GetEntriesInFolderArgs = {
 };
 
 export type GetEntriesInFolderResponse = EntryByKeyPattern[];
+
+export type GetBatchEntriesByIdsArgs = Omit<GetEntriesArgs, 'ids'> & {ids: string[]};
+
+export type GetBatchEntriesByIdsResponse = Pick<GetEntriesResponse, 'entries'>;
+
+export interface EnrichedLinkNode {
+    entryId: string;
+    description?: string;
+    links: Record<string, EnrichedLinkNode>;
+}
+
+export interface EnrichedLinksTree {
+    [entryId: string]: {
+        description?: string;
+        links: Record<string, EnrichedLinkNode>;
+    };
+}
+
+export interface GetEnrichedLinksTreeResponse {
+    linksTree: EnrichedLinksTree;
+}
+
+export interface GetEnrichedLinksTreeArgs {
+    entryId: string;
+}

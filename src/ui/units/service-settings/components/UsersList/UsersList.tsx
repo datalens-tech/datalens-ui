@@ -17,20 +17,27 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useLocation} from 'react-router';
 import {Link} from 'react-router-dom';
+import {Waypoint} from 'react-waypoint';
+import {Feature} from 'shared';
 import type {ListUser} from 'shared/schema/auth/types/users';
 import {DL} from 'ui/constants';
 import {registry} from 'ui/registry';
-import {reducerRegistry} from 'ui/store';
 import {ChangePasswordDialog} from 'ui/units/auth/components/ChangePasswordDialog/ChangePasswordDialog';
 import {ChangeUserRoleDialog} from 'ui/units/auth/components/ChangeUserRoleDialog/ChangeUserRoleDialog';
 import {DeleteUserDialog} from 'ui/units/auth/components/DeleteUserDialog/DeleteUserDialog';
 import {EditUserProfileDialog} from 'ui/units/auth/components/EditUserProfileDialog/EditUserProfileDialog';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {reducer} from '../../../../units/auth/store/reducers';
 import type {ServiceSettingsDispatch} from '../../store/actions/serviceSettings';
-import {getUsersList, resetServiceUsersList} from '../../store/actions/serviceSettings';
 import {
-    selectServiceUsersListIsLoading,
+    getUsersList,
+    resetServiceUsersList,
+    restoreUsersStateAfterFilter,
+    saveUsersStateBeforeFilter,
+} from '../../store/actions/serviceSettings';
+import {
+    selectServiceUsersListIsInitialLoading,
+    selectServiceUsersListIsLoadingMore,
     selectServiceUsersListPageToken,
     selectServiceUsersListUsers,
 } from '../../store/selectors/serviceSettings';
@@ -40,7 +47,6 @@ import type {BaseFiltersNames} from './constants';
 
 import './UsersList.scss';
 
-reducerRegistry.register({auth: reducer});
 const b = block('service-settings-users-list');
 const i18nMain = I18n.keyset('service-settings.main.view');
 const i18n = I18n.keyset('service-settings.users-list.view');
@@ -60,15 +66,27 @@ const prepareFilterValue = (filterValue: string | string[]) => {
     return filterValue.length ? filterValue : undefined;
 };
 
+const hasActiveFilters = (filters: Record<string, string | string[]>) => {
+    return Object.values(filters).some((value) => {
+        if (typeof value === 'string') {
+            return Boolean(value);
+        }
+        return Array.isArray(value) && value.length;
+    });
+};
+
 const UsersList = () => {
     const history = useHistory();
     const location = useLocation();
+    const newServiceSettingsEnabled = isEnabledFeature(Feature.EnableNewServiceSettings);
 
     const [filters, setFilters] = React.useState<
         Record<BaseFiltersNames | string, string | string[]>
     >({});
 
-    const isDataLoading = useSelector(selectServiceUsersListIsLoading);
+    const isInitialLoading = useSelector(selectServiceUsersListIsInitialLoading);
+    const isLoadingMore = useSelector(selectServiceUsersListIsLoadingMore);
+
     const nextPageToken = useSelector(selectServiceUsersListPageToken);
     const displayedUsers = useSelector(selectServiceUsersListUsers);
 
@@ -87,7 +105,7 @@ const UsersList = () => {
     const [deleteUserDialogOpenForUser, setDeleteUserDialogOpenForUser] = React.useState<
         ListUser | undefined
     >();
-    const [editProfileDialogOpenForUser, setEditProfileeDialogOpenForUser] = React.useState<
+    const [editProfileDialogOpenForUser, setEditProfileDialogOpenForUser] = React.useState<
         ListUser | undefined
     >();
     const [changePasswordDialogOpenForUser, setChangePasswordUserDialogOpenForUser] =
@@ -102,11 +120,24 @@ const UsersList = () => {
     }, [dispatch]);
 
     const handleFilterChange = React.useCallback(
-        (filternName, filterValue) => {
-            dispatch(resetServiceUsersList());
+        (filterName, filterValue) => {
             setFilters((oldFilters) => {
+                const hadActiveFilters = hasActiveFilters(oldFilters);
                 const validatedFilterValue = prepareFilterValue(filterValue);
-                const updatedFilters = {...oldFilters, [filternName]: validatedFilterValue};
+                const updatedFilters = {...oldFilters, [filterName]: validatedFilterValue};
+                const willHaveActiveFilters = hasActiveFilters(updatedFilters);
+
+                // Save state before first filter
+                if (!hadActiveFilters && willHaveActiveFilters) {
+                    dispatch(saveUsersStateBeforeFilter());
+                }
+
+                // Restore state when clearing all filters
+                if (hadActiveFilters && !willHaveActiveFilters) {
+                    dispatch(restoreUsersStateAfterFilter());
+                    return updatedFilters;
+                }
+
                 dispatch(
                     getUsersList({
                         pageSize: USERS_PAGE_SIZE,
@@ -161,7 +192,7 @@ const UsersList = () => {
         const menuItems: TableAction<ListUser>[] = [
             {
                 text: i18n('label_menu-edit-profile'),
-                handler: () => setEditProfileeDialogOpenForUser(item),
+                handler: () => setEditProfileDialogOpenForUser(item),
             },
             {
                 text: i18n('label_menu-change-role'),
@@ -185,9 +216,11 @@ const UsersList = () => {
     }, []);
 
     const renderTable = () => {
-        if (isDataLoading && !displayedUsers.length) {
+        if (isInitialLoading && !displayedUsers.length) {
             return <Loader className={b('data-loader')} size="m" />;
         }
+
+        const canLoadMore = !isInitialLoading && !isLoadingMore && nextPageToken;
 
         return (
             <React.Fragment>
@@ -220,7 +253,7 @@ const UsersList = () => {
                 {editProfileDialogOpenForUser && (
                     <EditUserProfileDialog
                         open
-                        onClose={() => setEditProfileeDialogOpenForUser(undefined)}
+                        onClose={() => setEditProfileDialogOpenForUser(undefined)}
                         userId={editProfileDialogOpenForUser.userId}
                         email={editProfileDialogOpenForUser.email}
                         firstName={editProfileDialogOpenForUser.firstName}
@@ -236,15 +269,21 @@ const UsersList = () => {
                     emptyMessage={i18n('label_users-empty-message')}
                     onRowClick={handleRowClick}
                 />
-
-                {nextPageToken && (
-                    <Button
-                        className={b('load-button')}
-                        loading={isDataLoading}
-                        onClick={handleLoadMoreClick}
-                    >
-                        {i18n('button_load-more')}
-                    </Button>
+                {newServiceSettingsEnabled ? (
+                    <React.Fragment>
+                        {isLoadingMore && <Loader size="s" className={b('lazy-loader')} />}
+                        {canLoadMore && <Waypoint onEnter={handleLoadMoreClick} />}
+                    </React.Fragment>
+                ) : (
+                    nextPageToken && (
+                        <Button
+                            className={b('load-button')}
+                            loading={isInitialLoading || isLoadingMore}
+                            onClick={handleLoadMoreClick}
+                        >
+                            {i18n('button_load-more')}
+                        </Button>
+                    )
                 )}
             </React.Fragment>
         );
@@ -253,16 +292,23 @@ const UsersList = () => {
     const showAddUser = !DL.AUTH_MANAGE_LOCAL_USERS_DISABLED;
 
     return (
-        <div className={b()}>
-            <Text variant="subheader-3">{i18nMain('section_users')}</Text>
+        <div className={b({new: newServiceSettingsEnabled})}>
+            {!newServiceSettingsEnabled && (
+                <Text variant="subheader-3">{i18nMain('section_users')}</Text>
+            )}
             <div className={b('content')}>
-                <Flex justifyContent="space-between" wrap gap={2}>
+                <Flex
+                    justifyContent="space-between"
+                    wrap
+                    className={b('filters', {new: newServiceSettingsEnabled})}
+                >
                     <UsersFilter onChange={handleFilterChange} />
                     {showAddUser && (
                         <Link
                             to={{pathname: '/settings/users/new', state: {from: location.pathname}}}
+                            className={b('add-link', {new: newServiceSettingsEnabled})}
                         >
-                            <Button view="action">
+                            <Button view="action" size={newServiceSettingsEnabled ? 'l' : 'm'}>
                                 <Icon data={Plus} />
                                 {i18n('button_add-user')}
                             </Button>
