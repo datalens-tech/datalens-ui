@@ -376,7 +376,17 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(WysiwygEditorQa.ModeMarkupItemMenu));
     }
 
-    async addText({text, timeout, markup}: {text: string; timeout?: number; markup?: boolean}) {
+    async addText({
+        text,
+        timeout,
+        markup,
+        options,
+    }: {
+        text: string;
+        timeout?: number;
+        markup?: boolean;
+        options?: {autoHeight?: boolean};
+    }) {
         await this.clickAddText();
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
@@ -394,7 +404,11 @@ class DashboardPage extends BasePage {
                 {timeout},
             );
         }
-
+        if (options) {
+            if (options.autoHeight) {
+                await this.page.click(slct(DashCommonQa.WidgetEnableAutoHeightCheckbox));
+            }
+        }
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
 
@@ -1096,6 +1110,20 @@ class DashboardPage extends BasePage {
         const jsonState = await responseState?.json();
 
         return jsonState?.hash;
+    }
+
+    async checkNoScroll({selector, locator}: {selector?: string; locator?: Locator}) {
+        const elementLocator = selector ? this.page.locator(selector) : locator;
+        if (!elementLocator) {
+            return;
+        }
+
+        await waitForCondition(async () => {
+            const hasNoScroll = await elementLocator.evaluate((element) => {
+                return element?.clientHeight === element?.scrollHeight;
+            });
+            return hasNoScroll;
+        });
     }
 
     /**

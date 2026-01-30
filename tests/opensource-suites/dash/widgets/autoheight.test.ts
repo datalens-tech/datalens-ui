@@ -2,19 +2,12 @@ import type {Page} from '@playwright/test';
 
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {slct, waitForCondition} from '../../../utils';
+import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {TabMenuQA} from '../../../../src/shared';
 import {TestParametrizationConfig} from '../../../types/config';
 
 const CHARTKIT_SELECTOR = 'chartkit-body-entry-q9z7zsseqg2qf';
-
-const hasNoScroll = async (page: Page, selector: string) => {
-    return await page.evaluate((selector) => {
-        const body = document.querySelector(selector);
-        return body?.clientHeight === body?.scrollHeight;
-    }, selector);
-};
 
 datalensTest.describe('Dashboards - Auto-height of widgets', () => {
     datalensTest.beforeEach(
@@ -64,11 +57,7 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
 
             await page.reload();
 
-            // check that there is no scroll
-            await waitForCondition(async () => {
-                const noScroll = await hasNoScroll(page, selector);
-                return noScroll === true;
-            });
+            await dashboardPage.checkNoScroll({selector});
         },
     );
     datalensTest(
@@ -85,22 +74,14 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
             const selector = `.${COMMON_CHARTKIT_SELECTORS.scrollableNode}`;
             await page.waitForSelector(selector);
 
-            // check that there is no scroll
-            await waitForCondition(async () => {
-                const noScroll = await hasNoScroll(page, selector);
-                return noScroll === true;
-            });
+            await dashboardPage.checkNoScroll({selector});
 
             // go back to the first tab
             await dashboardPage.changeWidgetTab(config.dash.charts.ChartCityPie.name);
             // waiting for the widget content to load
             await page.waitForSelector(slct(CHARTKIT_SELECTOR));
 
-            // check that there is no scroll
-            await waitForCondition(async () => {
-                const noScroll = await hasNoScroll(page, slct(CHARTKIT_SELECTOR));
-                return noScroll === true;
-            });
+            await dashboardPage.checkNoScroll({selector: slct(CHARTKIT_SELECTOR)});
 
             // check that there is no scroll
             await expect(page.locator(selector)).not.toBeVisible();
