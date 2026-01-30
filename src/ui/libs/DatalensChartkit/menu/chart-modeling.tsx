@@ -31,8 +31,10 @@ const dispatchAction = (action: any) => {
 
 export const getChartModelingMenuItem = ({
     chartState,
+    widgetName,
 }: {
     chartState: ChartStateSettings | undefined;
+    widgetName?: string;
 }): MenuItemConfig => {
     const hasTrendsOnChart = chartState?.trends?.enabled ?? false;
     const hasSmoothingLinesOnChart = chartState?.smoothing?.enabled ?? false;
@@ -111,6 +113,7 @@ export const getChartModelingMenuItem = ({
                     return dispatchAction(
                         chartModelingActions.openChartModelingDialog({
                             id: widgetId,
+                            widgetName,
                         }),
                     );
                 },

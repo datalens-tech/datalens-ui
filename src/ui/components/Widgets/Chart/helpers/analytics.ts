@@ -59,23 +59,23 @@ function generateTrendLine({
 }
 
 function sma({data, windowSize}: {data: PointData[]; windowSize: number}) {
-    const result: PointData[] = [];
+    const result = [];
     let sum = 0;
-    let count = 0;
 
     for (let i = 0; i < data.length; i++) {
         sum += data[i].y;
-        count++;
 
-        if (count > windowSize) {
-            sum -= data[i - windowSize].y;
-            count--;
+        if (i < windowSize - 1) {
+            result.push({...data[i]});
+        } else {
+            if (i >= windowSize) {
+                sum -= data[i - windowSize].y;
+            }
+            result.push({
+                x: data[i].x,
+                y: sum / windowSize,
+            });
         }
-
-        result.push({
-            x: data[i].x,
-            y: sum / count,
-        });
     }
 
     return result;
@@ -106,6 +106,11 @@ function createTrendSeries({
     settings: TrendLineSettings | undefined;
 }) {
     const regressionMethod = settings?.method ?? DEFAULT_TREND_SETTINGS.method;
+    const lineWidth = settings?.lineWidth ?? DEFAULT_TREND_SETTINGS.lineWidth;
+    let dashStyle = settings?.dashStyle;
+    if (dashStyle === 'auto') {
+        dashStyle = undefined;
+    }
 
     switch (chartData?.type) {
         case WidgetKind.GravityCharts: {
@@ -123,9 +128,10 @@ function createTrendSeries({
                     ...cloneDeep(s),
                     type: 'line',
                     name: `${originalSeriesName}: тренд`,
-                    color: settings?.color ?? getDarkenColor(s.color),
-                    dashStyle: (settings?.dashStyle ?? 'Dash') as LineSeries['dashStyle'],
+                    color: getDarkenColor(s.color),
+                    dashStyle: (dashStyle ?? 'Dash') as LineSeries['dashStyle'],
                     data: trendData,
+                    lineWidth,
                 };
             });
         }
@@ -148,9 +154,10 @@ function createTrendSeries({
                     id: name,
                     type: 'line',
                     name: name,
-                    color: settings?.color ?? getDarkenColor(s.color),
-                    dashStyle: settings?.dashStyle ?? 'Dash',
+                    color: getDarkenColor(s.color),
+                    dashStyle: dashStyle ?? 'Dash',
                     data: trendData,
+                    lineWidth,
                 };
             });
         }
@@ -169,6 +176,11 @@ function createSmoothingSeries({
     const method = settings?.method ?? 'sma';
     const windowSize = Number(settings?.windowSize ?? DEFAULT_SMOOTHING.windowSize);
     const colorMode = settings?.colorMode ?? DEFAULT_SMOOTHING.colorMode;
+    const lineWidth = settings?.lineWidth ?? DEFAULT_SMOOTHING.lineWidth;
+    let dashStyle = settings?.dashStyle;
+    if (dashStyle === 'auto') {
+        dashStyle = undefined;
+    }
 
     switch (chartData?.type) {
         case WidgetKind.GravityCharts: {
@@ -190,8 +202,9 @@ function createSmoothingSeries({
                     type: 'line',
                     name: `${originalSeriesName}: сглаживание`,
                     color,
-                    dashStyle: (settings?.dashStyle ?? s.dashStyle) as LineSeries['dashStyle'],
+                    dashStyle: (dashStyle ?? s.dashStyle) as LineSeries['dashStyle'],
                     data: trendData,
+                    lineWidth,
                 };
             });
         }
@@ -218,8 +231,9 @@ function createSmoothingSeries({
                     type: 'line',
                     name,
                     color,
-                    dashStyle: settings?.dashStyle ?? s.dashStyle,
+                    dashStyle: dashStyle ?? s.dashStyle,
                     data: trendData,
+                    lineWidth,
                 };
             });
         }

@@ -326,16 +326,17 @@ export type ChartActivityResponseData = {
 
 export type TrendLineSettings = {
     method?: 'linear' | 'quadratic' | 'cubic';
-    color?: string;
+    colorMode?: 'similar' | 'contrast';
     dashStyle?: string;
+    lineWidth?: number;
 };
 
 export type SmoothingLineSettings = {
     method?: 'sma';
     windowSize?: number;
     colorMode?: 'similar' | 'contrast';
-    color?: string;
     dashStyle?: string;
+    lineWidth?: number;
 };
 
 export type ChartStateSettings = {

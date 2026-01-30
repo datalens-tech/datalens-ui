@@ -8,9 +8,10 @@ import type {ChartStateSettings, SmoothingLineSettings} from 'shared';
 import {DEFAULT_SMOOTHING} from 'shared/constants/chart-modeling';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 
-import {RangeInputPicker} from '../common/RangeInputPicker';
+import {RangeInputPicker} from '../../common/RangeInputPicker';
+import {COLOR_MODE_SELECT_OPTION, SMOOTHING_SELECT_OPTION} from '../constants';
 
-import {COLOR_MODE_SELECT_OPTION, SHAPE_SELECT_OPTION, SMOOTHING_SELECT_OPTION} from './constants';
+import {ShapeSelect} from './ShapeSelect/ShapeSelect';
 
 const b = block('chart-modeling-settings');
 const i18n = I18n.keyset('component.chart-modeling-settings');
@@ -27,6 +28,9 @@ export const SmothSettings = (props: Props) => {
     const enabled = chartState.smoothing?.enabled ?? false;
     const windowSize = chartState.smoothing?.settings?.windowSize ?? DEFAULT_SMOOTHING.windowSize;
     const colorMode = chartState.smoothing?.settings?.colorMode ?? DEFAULT_SMOOTHING.colorMode;
+    const dashStyle =
+        chartState.smoothing?.settings?.dashStyle ?? DEFAULT_SMOOTHING.dashStyle ?? 'auto';
+    const lineWidth = chartState.smoothing?.settings?.lineWidth ?? DEFAULT_SMOOTHING.lineWidth;
 
     const handleEnableSmoothing = React.useCallback(() => {
         dispatch(
@@ -75,9 +79,20 @@ export const SmothSettings = (props: Props) => {
         [updateSettings],
     );
 
-    const handleUpdateShape = React.useCallback(() => {}, []);
+    const handleUpdateShape = React.useCallback(
+        (values: string[]) => {
+            const value = values[0] === 'auto' ? undefined : values[0];
+            updateSettings({dashStyle: value});
+        },
+        [updateSettings],
+    );
 
-    const handleUpdateLineWidth = React.useCallback(() => {}, []);
+    const handleUpdateLineWidth = React.useCallback(
+        (value: number | null) => {
+            updateSettings({lineWidth: value ?? undefined});
+        },
+        [updateSettings],
+    );
 
     return (
         <React.Fragment>
@@ -102,8 +117,8 @@ export const SmothSettings = (props: Props) => {
                         <RangeInputPicker
                             size="s"
                             value={windowSize}
-                            minValue={2}
-                            maxValue={100}
+                            minValue={1}
+                            maxValue={15}
                             step={1}
                             onUpdate={handleChangeWindowSize}
                         />
@@ -124,16 +139,14 @@ export const SmothSettings = (props: Props) => {
                     <div className={b('form-row')}>
                         <Text>{i18n('label_shape-and-width')}</Text>
                         <div className={b('shape-and-width-controls')}>
-                            <Select value={['auto']} onUpdate={handleUpdateShape}>
-                                {SHAPE_SELECT_OPTION.map((item) => (
-                                    <Select.Option key={item.value} value={item.value}>
-                                        {item.label}
-                                    </Select.Option>
-                                ))}
-                            </Select>
+                            <ShapeSelect value={dashStyle} onChange={handleUpdateShape} />
                             <NumberInput
+                                min={1}
+                                max={12}
+                                step={1}
+                                value={lineWidth}
                                 className={b('line-width-input')}
-                                onChange={handleUpdateLineWidth}
+                                onUpdate={handleUpdateLineWidth}
                             />
                         </div>
                     </div>

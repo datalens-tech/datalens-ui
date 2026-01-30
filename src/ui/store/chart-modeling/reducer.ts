@@ -14,8 +14,17 @@ export const chartModelingSlice = createSlice({
     name: 'chart-modeling',
     initialState,
     reducers: {
-        openChartModelingDialog: (state, action: PayloadAction<{id: string}>) => {
-            state.editingWidgetId = action.payload.id;
+        openChartModelingDialog: (
+            state,
+            action: PayloadAction<{id: string; widgetName?: string}>,
+        ) => {
+            const {id: widgetId, widgetName} = action.payload;
+            state.editingWidgetId = widgetId;
+
+            if (!state.widgets[widgetId]) {
+                state.widgets[widgetId] = {};
+            }
+            state.widgets[widgetId].widgetName = widgetName;
         },
         closeChartModelingDialog: (state) => {
             state.editingWidgetId = undefined;

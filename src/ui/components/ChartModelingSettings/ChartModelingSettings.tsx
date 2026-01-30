@@ -10,8 +10,10 @@ import type {DatalensGlobalState} from 'ui/index';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 import {getChartModelingState, getEditingWidgetId} from 'ui/store/chart-modeling/selectors';
 
-import {SmothSettings} from './SmothSettings';
-import {TrendSettings} from './TrendSettings';
+import {EntityIcon} from '../EntityIcon/EntityIcon';
+
+import {SmothSettings} from './components/SmothSettings';
+import {TrendSettings} from './components/TrendSettings';
 
 import './ChartModelingSettings.scss';
 
@@ -26,6 +28,7 @@ export const ChartModelingSettings = () => {
     const chartState = useSelector((state: DatalensGlobalState) =>
         getChartModelingState(state, widgetId),
     );
+    const widgetName = chartState?.widgetName;
 
     const handleClose = React.useCallback(() => {
         dispatch(chartModelingActions.closeChartModelingDialog());
@@ -47,6 +50,12 @@ export const ChartModelingSettings = () => {
                             <Icon data={Xmark} />
                         </Button>
                     </div>
+                    {widgetName && (
+                        <div className={b('widget-name')}>
+                            <EntityIcon size="m" type={'chart-wizard'} iconSize={12} />
+                            <Text>{widgetName}</Text>
+                        </div>
+                    )}
                 </div>
                 {Boolean(widgetId) && (
                     <React.Fragment>

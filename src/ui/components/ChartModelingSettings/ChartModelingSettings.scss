@@ -1,13 +1,10 @@
 .chart-modeling-settings {
-    height: 100%;
-    overflow-x: hidden;
-    --gn-drawer-item-position: fixed;
-
     &__container {
         top: 40px;
         width: 280px;
         z-index: 2;
         background: var(--g-color-base-float);
+        overflow: auto;
     }
 
     &__section {
@@ -41,5 +38,21 @@
 
     &__line-width-input {
         width: 120px;
+    }
+
+    &__shape-select {
+        width: 112px;
+    }
+
+    &__shape-select-icon {
+        display: flex;
+        overflow: hidden;
+    }
+
+    &__widget-name {
+        display: flex;
+        align-items: center;
+        gap: var(--g-spacing-1);
+        padding-top: var(--g-spacing-2);
     }
 }

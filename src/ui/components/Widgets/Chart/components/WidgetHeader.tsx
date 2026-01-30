@@ -251,7 +251,10 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                     onFiltersClear={onFiltersClear}
                     canBeDisplayedFilters={true}
                     reload={headerWithControlsProps.reload}
-                    extraOptions={{chartStateData: headerWithControlsProps.chartStateData}}
+                    extraOptions={{
+                        chartStateData: headerWithControlsProps.chartStateData,
+                        widgetTitle,
+                    }}
                 />
             </div>
         </React.Fragment>

@@ -4,13 +4,13 @@
   "label_smoothing": "Smoothing",
   "label_method": "Function",
   "label_color": "Color",
-  "label_shape-and-width": "Shape and width",
-  "label_simple-moving-average": "Simple moving average",
+  "label_shape-and-width": "Line's shape and width",
+  "label_simple-moving-average": "Moving average",
   "label_linear": "Linear",
   "label_quadratic": "Quadratic",
   "label_cubic": "Cubic",
   "label_auto": "Auto",
-  "label_window-size": "Window size",
+  "label_window-size": "Step (points count)",
   "label_similar": "Simalar",
   "label_contrasted": "Contrasted"
 }
