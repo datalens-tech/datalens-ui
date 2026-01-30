@@ -107,6 +107,7 @@ function createTrendSeries({
 }) {
     const regressionMethod = settings?.method ?? DEFAULT_TREND_SETTINGS.method;
     const lineWidth = settings?.lineWidth ?? DEFAULT_TREND_SETTINGS.lineWidth;
+    const colorMode = settings?.colorMode ?? DEFAULT_TREND_SETTINGS.colorMode;
     let dashStyle = settings?.dashStyle;
     if (dashStyle === 'auto') {
         dashStyle = undefined;
@@ -123,12 +124,14 @@ function createTrendSeries({
                     method: regressionMethod,
                 });
                 const originalSeriesName = s.name;
+                const color =
+                    colorMode === 'similar' ? getDarkenColor(s.color) : getComplementary(s.color);
 
                 return {
                     ...cloneDeep(s),
                     type: 'line',
                     name: `${originalSeriesName}: тренд`,
-                    color: getDarkenColor(s.color),
+                    color,
                     dashStyle: (dashStyle ?? 'Dash') as LineSeries['dashStyle'],
                     data: trendData,
                     lineWidth,
@@ -148,13 +151,15 @@ function createTrendSeries({
                 });
                 const originalSeriesName = s.name ?? s.title ?? s.id;
                 const name = `${originalSeriesName}: тренд`;
+                const color =
+                    colorMode === 'similar' ? getDarkenColor(s.color) : getComplementary(s.color);
 
                 return {
                     ...cloneDeep(s),
                     id: name,
                     type: 'line',
                     name: name,
-                    color: getDarkenColor(s.color),
+                    color,
                     dashStyle: dashStyle ?? 'Dash',
                     data: trendData,
                     lineWidth,

@@ -111,10 +111,7 @@ export const TrendSettings = (props: Props) => {
                     </div>
                     <div className={b('form-row')}>
                         <Text>{i18n('label_color')}</Text>
-                        <SegmentedRadioGroup
-                            defaultValue={colorMode}
-                            onUpdate={handleUpdateColorMode}
-                        >
+                        <SegmentedRadioGroup value={colorMode} onUpdate={handleUpdateColorMode}>
                             {COLOR_MODE_SELECT_OPTION.map((item) => (
                                 <SegmentedRadioGroup.Option key={item.value} value={item.value}>
                                     {item.label}
