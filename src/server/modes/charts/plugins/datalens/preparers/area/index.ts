@@ -235,6 +235,8 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
                 },
                 plotIndex: d.index,
                 title: axisTitle,
+                startOnTick: isSplitEnabled,
+                endOnTick: isSplitEnabled,
             });
         }),
         legend,

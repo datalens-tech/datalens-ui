@@ -26,13 +26,14 @@ import history from '../../utils/history';
 
 import {RevisionsList} from './RevisionsList/RevisionsList';
 import {REVISIONS_LIST_DEBOUNCE_DELAY} from './helpers';
-import type {GetRevisionRowExtendedProps} from './types';
+import type {GetRevisionMenuItems, GetRevisionRowExtendedProps} from './types';
 
 import './Revisions.scss';
 
 export interface OwnProps extends RouteComponentProps {
     renderItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
     getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
+    getContextMenuItems?: GetRevisionMenuItems;
 }
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -99,6 +100,7 @@ class Revisions extends React.Component<Props, State> {
             revisionsItems,
             renderItemActions,
             getRevisionRowExtendedProps,
+            getContextMenuItems,
         } = this.props;
         const {status} = this.state;
 
@@ -137,6 +139,7 @@ class Revisions extends React.Component<Props, State> {
                             currentRevId={entryContentCurrentRevId}
                             renderItemActions={renderItemActions}
                             getRevisionRowExtendedProps={getRevisionRowExtendedProps}
+                            getContextMenuItems={getContextMenuItems}
                         />
                         {this.state.loadMore && (
                             <div className={b('loader-wrap')} data-qa="revisions-loader">
