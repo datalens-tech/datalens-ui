@@ -8,14 +8,18 @@ import {
     pickExceptActionParamsFromParams,
 } from '@gravity-ui/dashkit/helpers';
 import {useMountedState, usePrevious} from 'hooks';
+import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
+import {useSelector} from 'react-redux';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
+import type {DatalensGlobalState} from 'ui/index';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
+import {getChartModelingState} from 'ui/store/chart-modeling/selectors';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import {START_PAGE} from '../../../../libs/DatalensChartkit/ChartKit/components/Widget/components/Table/Paginator/Paginator';
@@ -33,6 +37,7 @@ import type {
     OnActivityComplete,
     OnChangeData,
 } from '../../../../libs/DatalensChartkit/types';
+import {addChartAnalyticsSeries} from '../helpers/analytics';
 import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
@@ -1026,6 +1031,25 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         onActivityComplete,
     });
 
+    const widgetId = requestId;
+    const chartStateData = useSelector((state: DatalensGlobalState) =>
+        getChartModelingState(state, widgetId),
+    );
+
+    const chartData = React.useMemo(() => {
+        if (!loadedData) {
+            return null;
+        }
+
+        const updatedChartData = cloneDeep(loadedData);
+        addChartAnalyticsSeries({
+            chartData: updatedChartData,
+            chartStateData,
+        });
+
+        return updatedChartData;
+    }, [loadedData, chartStateData]);
+
     return {
         loadedData,
         isLoading,
@@ -1051,5 +1075,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isWidgetMenuDataChanged,
         runActivity,
         silentLoadChartData,
+        chartData,
+        chartStateData,
     };
 };

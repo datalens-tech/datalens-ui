@@ -1,0 +1,16 @@
+{
+  "title_modeling": "Моделирование",
+  "label_trend": "Тренд",
+  "label_smoothing": "Сглаживание",
+  "label_method": "Функция",
+  "label_color": "Цвет",
+  "label_shape-and-width": "Форма и толщина линий",
+  "label_simple-moving-average": "Cкользящее среднее",
+  "label_linear": "Линейная",
+  "label_quadratic": "Квадратичная",
+  "label_cubic": "Кубическая",
+  "label_auto": "Авто",
+  "label_window-size": "Шаг (количество точек)",
+  "label_similar": "Близкие",
+  "label_contrasted": "Контрастные"
+}
