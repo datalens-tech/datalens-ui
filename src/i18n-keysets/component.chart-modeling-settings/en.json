@@ -1,0 +1,13 @@
+{
+  "title_modeling": "Modeling",
+  "label_trend": "Trend",
+  "label_smoothing": "Smoothing",
+  "label_method": "Function",
+  "label_color": "Color",
+  "label_shape-and-width": "Shape and width",
+  "label_moving-average": "Moving average",
+  "label_linear": "Linear",
+  "label_quadratic": "Quadratic",
+  "label_cubic": "Cubic",
+  "label_auto": "Auto"
+}

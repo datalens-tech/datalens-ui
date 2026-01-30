@@ -3,6 +3,8 @@ import React from 'react';
 import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import {ChartLine} from '@gravity-ui/icons';
 import {i18n} from 'i18n';
+import {useDispatch} from 'react-redux';
+import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 
 import type {ChartStateSettings} from '../../../../shared';
 import {MenuItemsIds, WidgetKind} from '../../../../shared';
@@ -68,6 +70,23 @@ export const getChartModelingMenuItem = ({
                     updateChartData({
                         smoothing: {enabled: !hasSmoothingLinesOnChart},
                     });
+                },
+            },
+            {
+                id: MenuItemsIds.CHART_MODELING_SETTINGS,
+                title: i18n('chartkit.menu', 'modeling-settings'),
+                isVisible: () => true,
+                action: () => {
+                    return ({onClose}: {onClose: () => void}) => {
+                        const dispatch = useDispatch();
+
+                        React.useEffect(() => {
+                            dispatch(chartModelingActions.setOpen(true));
+                            onClose();
+                        }, [dispatch, onClose]);
+
+                        return null;
+                    };
                 },
             },
         ],

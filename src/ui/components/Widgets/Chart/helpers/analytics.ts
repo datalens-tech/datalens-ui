@@ -258,6 +258,11 @@ export function addChartAnalyticsSeries({
                     s.visible = false;
                 });
             }
+            if (shouldHideOriginalLines) {
+                (gChartData.series.data as LineSeries[]).forEach((s) => {
+                    s.opacity = 0.3;
+                });
+            }
             gChartData.series.data.push(...(newChartSeries as LineSeries[]));
             break;
         }
@@ -271,7 +276,7 @@ export function addChartAnalyticsSeries({
             }
             if (shouldHideOriginalLines) {
                 series.forEach((s) => {
-                    s.visible = false;
+                    s.opacity = 0.3;
                 });
             }
             series.push(...(newChartSeries as GraphWidgetSeriesOptions[]));

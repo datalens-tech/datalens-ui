@@ -27,4 +27,5 @@ export enum MenuItemsIds {
     CHART_MODELING = 'modeling',
     CHART_MODELING_TREND = 'trend',
     CHART_MODELING_SMOOTHING = 'smoothing',
+    CHART_MODELING_SETTINGS = 'modelingSettings',
 }

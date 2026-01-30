@@ -28,5 +28,6 @@
   "add-trend": "Add trend",
   "add-smoothing": "Add smoothing",
   "remove-trend": "Remove trend",
-  "remove-smoothing": "Remove smoothing"
+  "remove-smoothing": "Remove smoothing",
+  "modeling-settings": "Settings"
 }

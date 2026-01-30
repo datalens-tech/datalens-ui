@@ -1,0 +1,45 @@
+.chart-modeling-settings {
+    height: 100%;
+    overflow-x: hidden;
+    --gn-drawer-item-position: fixed;
+
+    &__container {
+        top: 40px;
+        width: 280px;
+        z-index: 2;
+        background: var(--g-color-base-float);
+    }
+
+    &__section {
+        border-bottom: 1px solid var(--g-color-line-generic-solid);
+        padding: var(--g-spacing-4);
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__form-row {
+        padding: var(--g-spacing-5) 0 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--g-spacing-2);
+    }
+
+    &__shape-and-width-controls {
+        display: flex;
+        gap: var(--g-spacing-2);
+    }
+
+    &__line-width-input {
+        width: 120px;
+    }
+}
