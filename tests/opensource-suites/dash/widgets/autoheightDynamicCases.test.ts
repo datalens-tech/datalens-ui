@@ -62,6 +62,7 @@ datalensTest.describe('Dashboards - Auto-height of widgets with dynamic content'
                     await dashboardPage.addText({
                         text: PARAMS_CODE.CUT,
                         options: {autoHeight: true},
+                        markup: true,
                     });
                 },
             });
@@ -92,6 +93,7 @@ datalensTest.describe('Dashboards - Auto-height of widgets with dynamic content'
                     await dashboardPage.addText({
                         text: PARAMS_CODE.TABS,
                         options: {autoHeight: true},
+                        markup: true,
                     });
                 },
             });
@@ -123,6 +125,7 @@ datalensTest.describe('Dashboards - Auto-height of widgets with dynamic content'
                     await dashboardPage.addText({
                         text: PARAMS_CODE.MERMAID,
                         options: {autoHeight: true},
+                        markup: true,
                     });
                 },
             });
