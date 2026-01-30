@@ -42,7 +42,7 @@ export interface GetEntryResponse extends EntryFields {
 }
 export interface GetSharedEntryResponse extends GetEntryResponse {
     isDelegated: boolean;
-    isRestricted?: boolean;
+    isRestricted?: false;
 }
 
 export interface RestrictedSharedEntry

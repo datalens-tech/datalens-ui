@@ -20,7 +20,7 @@ export type WorkbookEntry = Exclude<
 export type WorkbookSharedEntry = Exclude<WorkbookUnionEntry, RestrictedSharedEntry> & {
     isDelegated?: boolean;
     scope: SharedScope;
-}; //(GetSharedEntryResponse | RestrictedSharedEntry) & {name: string; scope: SharedScope};
+};
 
 export type EntryChunkItem<T extends WorkbookUnionEntry> = {
     type: 'entry';
