@@ -10,3 +10,7 @@ const getWidgetId = (_state: DatalensGlobalState, widgetId: string | undefined) 
 export const getChartModelingState = createSelector(selectState, getWidgetId, (state, widgetId) => {
     return widgetId ? state.widgets[widgetId] : {};
 });
+
+export const getIsChartModelingViewOpen = createSelector(getEditingWidgetId, (widgetId) => {
+    return Boolean(widgetId);
+});

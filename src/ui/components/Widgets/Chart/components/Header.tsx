@@ -8,11 +8,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, type StringParams} from 'shared';
 import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
 import {URL_OPTIONS} from 'ui/constants';
-import type {DatalensGlobalState} from 'ui/index';
+import {type DatalensGlobalState, usePrevious} from 'ui/index';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
-import {getChartModelingState} from 'ui/store/chart-modeling/selectors';
+import {getChartModelingState, getIsChartModelingViewOpen} from 'ui/store/chart-modeling/selectors';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
 
 import {
@@ -161,14 +161,26 @@ export const Header = (props: HeaderProps) => {
         getChartModelingState(state, widgetId),
     );
     const shouldShowChartModelingIcon = Boolean(chartStateData);
+    const isChartModelingViewOpen = useSelector(getIsChartModelingViewOpen);
     const handleChartModelingIconClick = React.useCallback(() => {
-        dispatch(
-            chartModelingActions.openChartModelingDialog({
-                id: widgetId,
-                widgetName: extraOptions?.widgetTitle as string,
-            }),
-        );
-    }, [dispatch, extraOptions?.widgetTitle, widgetId]);
+        if (isChartModelingViewOpen) {
+            dispatch(chartModelingActions.closeChartModelingDialog());
+        } else {
+            dispatch(
+                chartModelingActions.openChartModelingDialog({
+                    id: widgetId,
+                    widgetName: extraOptions?.widgetTitle as string,
+                }),
+            );
+        }
+    }, [dispatch, extraOptions?.widgetTitle, isChartModelingViewOpen, widgetId]);
+
+    const prevWidgetId = usePrevious(widgetId);
+    React.useEffect(() => {
+        if (prevWidgetId && prevWidgetId !== widgetId) {
+            dispatch(chartModelingActions.removeChartSettings({id: prevWidgetId}));
+        }
+    }, [dispatch, prevWidgetId, widgetId]);
 
     return (
         <div className={b('chart-header')}>

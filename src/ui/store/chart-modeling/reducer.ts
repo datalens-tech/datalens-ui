@@ -24,7 +24,10 @@ export const chartModelingSlice = createSlice({
             if (!state.widgets[widgetId]) {
                 state.widgets[widgetId] = {};
             }
-            state.widgets[widgetId].widgetName = widgetName;
+
+            if (widgetName) {
+                state.widgets[widgetId].widgetName = widgetName;
+            }
         },
         closeChartModelingDialog: (state) => {
             state.editingWidgetId = undefined;
@@ -37,6 +40,15 @@ export const chartModelingSlice = createSlice({
             const prev = {...state.widgets[widgetId]};
 
             state.widgets[widgetId] = {...prev, ...settings};
+        },
+        removeChartSettings: (state, action: PayloadAction<{id: string}>) => {
+            const {id: widgetId} = action.payload;
+
+            if (state.editingWidgetId === widgetId) {
+                state.editingWidgetId = undefined;
+            }
+
+            delete state.widgets[widgetId];
         },
     },
 });
