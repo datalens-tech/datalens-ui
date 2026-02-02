@@ -65,6 +65,12 @@ export const ChartModelingSettings = () => {
         );
     }, [chartState, dispatch, shouldLinkSeries, widgetId]);
 
+    React.useEffect(() => {
+        return () => {
+            dispatch(chartModelingActions.closeChartModelingDialog());
+        };
+    }, [dispatch]);
+
     return (
         <Drawer className={b()} hideVeil={true} keepMounted={true}>
             <DrawerItem

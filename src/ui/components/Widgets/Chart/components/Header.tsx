@@ -12,7 +12,7 @@ import {type DatalensGlobalState, usePrevious} from 'ui/index';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
-import {getChartModelingState, getIsChartModelingViewOpen} from 'ui/store/chart-modeling/selectors';
+import {getChartModelingState, getEditingWidgetId} from 'ui/store/chart-modeling/selectors';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
 
 import {
@@ -160,10 +160,12 @@ export const Header = (props: HeaderProps) => {
     const chartStateData = useSelector((state: DatalensGlobalState) =>
         getChartModelingState(state, widgetId),
     );
-    const shouldShowChartModelingIcon = Boolean(chartStateData);
-    const isChartModelingViewOpen = useSelector(getIsChartModelingViewOpen);
+    const shouldShowChartModelingIcon = Boolean(
+        chartStateData?.smoothing?.enabled || chartStateData?.trends?.enabled,
+    );
+    const chartModelingDialogWidgetId = useSelector(getEditingWidgetId);
     const handleChartModelingIconClick = React.useCallback(() => {
-        if (isChartModelingViewOpen) {
+        if (chartModelingDialogWidgetId && chartModelingDialogWidgetId === widgetId) {
             dispatch(chartModelingActions.closeChartModelingDialog());
         } else {
             dispatch(
@@ -173,7 +175,7 @@ export const Header = (props: HeaderProps) => {
                 }),
             );
         }
-    }, [dispatch, extraOptions?.widgetTitle, isChartModelingViewOpen, widgetId]);
+    }, [chartModelingDialogWidgetId, dispatch, extraOptions?.widgetTitle, widgetId]);
 
     const prevWidgetId = usePrevious(widgetId);
     React.useEffect(() => {

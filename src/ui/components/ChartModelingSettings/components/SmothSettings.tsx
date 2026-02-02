@@ -9,7 +9,7 @@ import {DEFAULT_SMOOTHING} from 'shared/constants/chart-modeling';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 
 import {RangeInputPicker} from '../../common/RangeInputPicker';
-import {COLOR_MODE_SELECT_OPTION, SMOOTHING_SELECT_OPTION} from '../constants';
+import {COLOR_MODE_SELECT_OPTION, MAX_LINE_WIDTH, SMOOTHING_SELECT_OPTION} from '../constants';
 
 import {ShapeSelect} from './ShapeSelect/ShapeSelect';
 
@@ -89,7 +89,9 @@ export const SmothSettings = (props: Props) => {
 
     const handleUpdateLineWidth = React.useCallback(
         (value: number | null) => {
-            updateSettings({lineWidth: value ?? undefined});
+            const lineWidthValue =
+                value === null ? undefined : Math.max(1, Math.min(MAX_LINE_WIDTH, value));
+            updateSettings({lineWidth: lineWidthValue});
         },
         [updateSettings],
     );

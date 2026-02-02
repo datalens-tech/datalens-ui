@@ -8,7 +8,7 @@ import type {ChartStateSettings, TrendLineSettings} from 'shared';
 import {DEFAULT_TREND_SETTINGS} from 'shared/constants/chart-modeling';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 
-import {COLOR_MODE_SELECT_OPTION, TREND_SELECT_OPTION} from '../constants';
+import {COLOR_MODE_SELECT_OPTION, MAX_LINE_WIDTH, TREND_SELECT_OPTION} from '../constants';
 
 import {ShapeSelect} from './ShapeSelect/ShapeSelect';
 
@@ -86,7 +86,9 @@ export const TrendSettings = (props: Props) => {
 
     const handleUpdateLineWidth = React.useCallback(
         (value: number | null) => {
-            updateSettings({lineWidth: value ?? undefined});
+            const lineWidthValue =
+                value === null ? undefined : Math.max(1, Math.min(MAX_LINE_WIDTH, value));
+            updateSettings({lineWidth: lineWidthValue});
         },
         [updateSettings],
     );

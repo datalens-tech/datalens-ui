@@ -1,6 +1,6 @@
 .chart-modeling-settings {
     &__container {
-        top: 40px;
+        top: var(--dl-chart-modelling-settings-top, 40px);
         width: 280px;
         z-index: 2;
         background: var(--g-color-base-float);

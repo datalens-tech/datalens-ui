@@ -33,6 +33,7 @@ import DatalensChartkitCustomError, {
     formatError,
 } from '../../../../libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import type {
+    ChartContentWidgetData,
     CombinedError,
     OnActivityComplete,
     OnChangeData,
@@ -1036,19 +1037,21 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         getChartModelingState(state, widgetId),
     );
 
-    const chartData = React.useMemo(() => {
-        if (!loadedData) {
-            return null;
+    const [chartData, setChartData] = React.useState<ChartContentWidgetData | null>(null);
+    React.useEffect(() => {
+        let updatedChartData: ChartContentWidgetData | null = null;
+        if (loadedData) {
+            updatedChartData = cloneDeep(loadedData);
+            addChartAnalyticsSeries({
+                chartData: updatedChartData,
+                chartStateData,
+            });
         }
 
-        const updatedChartData = cloneDeep(loadedData);
-        addChartAnalyticsSeries({
-            chartData: updatedChartData,
-            chartStateData,
-        });
-
-        return updatedChartData;
-    }, [loadedData, chartStateData]);
+        if (!isEqual(chartData, updatedChartData)) {
+            setChartData(updatedChartData);
+        }
+    }, [loadedData, chartStateData, chartData]);
 
     return {
         loadedData,

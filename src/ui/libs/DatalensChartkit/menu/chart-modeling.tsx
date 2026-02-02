@@ -50,12 +50,19 @@ export const getChartModelingMenuItem = ({
 
             switch (loadedData.type) {
                 case WidgetKind.GravityCharts: {
-                    return (loadedData.data as ChartData).series.data.every(
-                        (s) => s.type === 'line',
+                    const chartData = loadedData.data as ChartData;
+                    return (
+                        chartData.series.data.every((s) => s.type === 'line') &&
+                        chartData.xAxis?.type !== 'category'
                     );
                 }
                 case WidgetKind.Graph: {
-                    return (loadedData as GraphWidget).libraryConfig.chart?.type === 'line';
+                    const graphWidget = loadedData as GraphWidget;
+                    const xAxes = [graphWidget.libraryConfig.xAxis].flat();
+                    return (
+                        graphWidget.libraryConfig.chart?.type === 'line' &&
+                        !xAxes.some((xAxis) => xAxis?.type === 'category')
+                    );
                 }
                 default: {
                     return false;

@@ -30,9 +30,15 @@ function generateTrendLine({
     method: TrendLineSettings['method'];
 }) {
     const trendLine: PointData[] = [];
+    const xValues: number[] = [];
+    const yValues: number[] = [];
 
-    const xValues = data.map((point) => point.x);
-    const yValues = data.map((point) => point.y);
+    data.forEach((point) => {
+        if (typeof point.x === 'number' && typeof point.y === 'number') {
+            xValues.push(point.x);
+            yValues.push(point.y);
+        }
+    });
     let regression: PolynomialRegression;
     switch (method) {
         case 'quadratic': {
@@ -164,7 +170,7 @@ function createTrendSeries({
 
                 return {
                     ...cloneDeep(s),
-                    id: name,
+                    id: settings?.linked ? s.id : name,
                     type: 'line',
                     name: name,
                     color,
@@ -249,7 +255,7 @@ function createSmoothingSeries({
 
                 return {
                     ...cloneDeep(s),
-                    id: name,
+                    id: settings?.linked ? s.id : name,
                     type: 'line',
                     name,
                     color,
