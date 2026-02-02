@@ -16,3 +16,7 @@ export const SharedEntriesAddFromLinkDialogQa = {
     LintTextInput: 'shared-entries-add-from-link-dialog-text-input',
     ApplyBtn: 'shared-entries-add-from-link-dialog-apply',
 } as const;
+
+export const SharedEntriesBaseQa = {
+    OpenOriginalBtn: 'shared-entries-open-original-btn',
+} as const;

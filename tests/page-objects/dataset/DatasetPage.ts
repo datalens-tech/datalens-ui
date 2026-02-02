@@ -7,6 +7,8 @@ import {
     DatasetPanelQA,
     DatasetActionQA,
     DatasetSourcesTableQa,
+    DatasetSourcesLeftPanelQA,
+    AvatarQA,
 } from '../../../src/shared/constants/qa/datasets';
 
 import {deleteEntity, slct} from '../../utils';
@@ -14,9 +16,57 @@ import {BasePage, BasePageProps} from '../BasePage';
 import DialogParameter from '../common/DialogParameter';
 
 import DatasetTabSection from './DatasetTabSection';
-import {SharedEntriesPermissionsDialogQa} from '../../../src/shared';
+import {
+    DialogCollectionStructureQa,
+    SharedEntriesBaseQa,
+    SharedEntriesPermissionsDialogQa,
+    ValueOf,
+} from '../../../src/shared';
+import {Page, Response} from '@playwright/test';
 
 export interface DatasetPageProps extends BasePageProps {}
+
+export const waitForBiValidateDatasetResponses = (page: Page, timeout: number): Promise<void> => {
+    return new Promise((resolve: any) => {
+        const timerId = setTimeout(() => {
+            page.off('response', onResponse);
+            resolve();
+        }, timeout);
+
+        async function onResponse(response: Response) {
+            if (!response.url().match('validateDataset')) {
+                return;
+            }
+
+            const request = await response.request();
+            const requestData = JSON.parse(request.postData() || '');
+
+            // When the page loads, the validation request with empty updates initially goes away
+            // We are only interested in the one that leaves after the avatar is deleted
+            if (!requestData.data.updates.length) {
+                return;
+            }
+
+            clearTimeout(timerId);
+
+            if (response.status() !== 200) {
+                throw new Error(
+                    'After deleting the avatar, the dataset validation returned an error',
+                );
+            }
+
+            resolve();
+        }
+
+        page.on('response', onResponse);
+    });
+};
+
+export const SET_CONNECTION_METHODS = {
+    ADD: 'add',
+    REPLACE: 'replace',
+    DELETE: 'delete',
+} as const;
 
 class DatasetPage extends BasePage {
     datasetTabSection: DatasetTabSection;
@@ -117,15 +167,11 @@ class DatasetPage extends BasePage {
         return await input.inputValue();
     }
 
-    async setDelegationAndSaveSharedDataset({
-        name,
+    async setConnectionDelegation({
         delegation = true,
-        collectionId,
     }: {
-        name?: string;
         delegation?: boolean;
-        collectionId: string;
-    }) {
+    } = {}) {
         if (delegation) {
             const delegateBtn = await this.page.waitForSelector(
                 slct(SharedEntriesPermissionsDialogQa.DelegateBtn),
@@ -142,7 +188,9 @@ class DatasetPage extends BasePage {
             slct(SharedEntriesPermissionsDialogQa.ApplyBtn),
         );
         await delegationApplyBtn.click();
+    }
 
+    async saveSharedDataset({name, collectionId}: {name?: string; collectionId: string}) {
         await this.page.waitForSelector(slct(DatasetSourcesTableQa.Source));
 
         await this.addAvatarByDragAndDrop();
@@ -153,6 +201,97 @@ class DatasetPage extends BasePage {
         });
 
         return dsName;
+    }
+
+    async openCurrentConnection() {
+        const newTabPagePromise: Promise<Page> = new Promise((resolve) =>
+            this.page.context().on('page', resolve),
+        );
+        const contextMenu = await this.page.waitForSelector(
+            slct(DatasetSourcesLeftPanelQA.ConnContextMenuBtn),
+        );
+        await contextMenu.click();
+        const openConnectionBtn = await this.page.waitForSelector(
+            slct(DatasetSourcesLeftPanelQA.ConnContextMenuOpen),
+        );
+        await openConnectionBtn.click();
+        const newPage = await newTabPagePromise;
+        return newPage;
+    }
+
+    async setSharedConnection({
+        connectionName,
+        method,
+    }: {
+        connectionName: string;
+        method: ValueOf<typeof SET_CONNECTION_METHODS>;
+    }) {
+        switch (method) {
+            case SET_CONNECTION_METHODS.ADD: {
+                const connSelectionButton = await this.page.waitForSelector(
+                    slct(DatasetSourcesLeftPanelQA.ConnSelection),
+                );
+                await connSelectionButton.click();
+                break;
+            }
+            case SET_CONNECTION_METHODS.REPLACE: {
+                const contextMenu = await this.page.waitForSelector(
+                    slct(DatasetSourcesLeftPanelQA.ConnContextMenuBtn),
+                );
+                await contextMenu.click();
+                const replaceBtn = await this.page.waitForSelector(
+                    slct(DatasetSourcesLeftPanelQA.ConnContextMenuReplace),
+                );
+                await replaceBtn.click();
+                break;
+            }
+            case SET_CONNECTION_METHODS.DELETE: {
+                await this.page.waitForSelector(slct(AvatarQA.Avatar));
+                await this.page.waitForSelector(slct(DatasetSourcesTableQa.Source));
+                const deleteAvatarSelector = slct(AvatarQA.DeleteButton);
+                const sourceMenuSelector = slct(DatasetSourcesTableQa.SourceContextMenuBtn);
+
+                // delete all avatars
+                while ((await this.page.locator(deleteAvatarSelector).count()) > 0) {
+                    await this.page.locator(deleteAvatarSelector).first().click();
+                    await waitForBiValidateDatasetResponses(this.page, 5000);
+                }
+                // delete all sources
+                while ((await this.page.locator(sourceMenuSelector).count()) > 0) {
+                    await this.page.locator(sourceMenuSelector).first().click();
+                    await this.page
+                        .locator(slct(DatasetSourcesTableQa.SourceContextMenuDelete))
+                        .first()
+                        .click();
+                    await waitForBiValidateDatasetResponses(this.page, 5000);
+                }
+
+                const contextMenu = await this.page.waitForSelector(
+                    slct(DatasetSourcesLeftPanelQA.ConnContextMenuBtn),
+                );
+                await contextMenu.click();
+                const deleteBtn = await this.page.waitForSelector(
+                    slct(DatasetSourcesLeftPanelQA.ConnContextMenuDelete),
+                );
+                await deleteBtn.click();
+                const connSelectionButton = await this.page.waitForSelector(
+                    slct(DatasetSourcesLeftPanelQA.ConnSelection),
+                );
+                await connSelectionButton.click();
+                break;
+            }
+        }
+
+        await this.page.waitForSelector(slct(DialogCollectionStructureQa.ListItem));
+
+        const sharedConn = this.page
+            .locator(slct(DialogCollectionStructureQa.ListItem))
+            .filter({hasText: connectionName});
+        await sharedConn.click();
+    }
+
+    async checkIsReadonlyState() {
+        await this.page.waitForSelector(slct(SharedEntriesBaseQa.OpenOriginalBtn));
     }
 }
 

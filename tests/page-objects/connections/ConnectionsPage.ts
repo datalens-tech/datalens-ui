@@ -2,10 +2,12 @@ import {
     ActionPanelQA,
     ConnectionsActionPanelControls,
     ConnectionsBaseQA,
+    ConnectionsFormQA,
     ConnectionsS3BaseQA,
     ConnectionsYadocsQA,
     DialogCreateWorkbookEntryQa,
     EntryDialogQA,
+    SharedEntriesBaseQa,
 } from '../../../src/shared/constants';
 import {ActionPanelEntryContextMenuQa} from '../../../src/shared/constants/qa/action-panel';
 import {v1 as uuidv1} from 'uuid';
@@ -34,6 +36,10 @@ class ConnectionsPage extends BasePage {
     constructor({page}: ConnectionsPageProps) {
         super({page});
         this.revisions = new Revisions(page);
+    }
+
+    async checkIsReadonlyState() {
+        await this.page.waitForSelector(slct(SharedEntriesBaseQa.OpenOriginalBtn));
     }
 
     async createQlChart() {
@@ -195,6 +201,13 @@ class ConnectionsPage extends BasePage {
         expect(applyButton).toBeVisible();
 
         await applyButton.click();
+    }
+
+    async disableAutoCreateDashInBillingConnection() {
+        const checkbox = await this.page.waitForSelector(
+            slct(ConnectionsFormQA.AUTO_CREATE_DASH_CHECKBOX),
+        );
+        await checkbox.click();
     }
 }
 

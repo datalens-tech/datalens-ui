@@ -40,11 +40,20 @@ function SourceMenu(props) {
             size="s"
             switcherWrapperClassName={b('btn-menu-control')}
             renderSwitcher={({onClick, onKeyDown}) => (
-                <Button size="s" view="flat" onClick={onClick} onKeyDown={onKeyDown}>
+                <Button
+                    size="s"
+                    view="flat"
+                    onClick={onClick}
+                    onKeyDown={onKeyDown}
+                    qa={DatasetSourcesTableQa.SourceContextMenuBtn}
+                >
                     <Icon className={b('icon-more')} data={Ellipsis} width={14} />
                 </Button>
             )}
-            popupProps={{placement: ['bottom-start', 'top-start'], qa: 'ds-source-menu'}}
+            popupProps={{
+                placement: ['bottom-start', 'top-start'],
+                qa: DatasetSourcesTableQa.SourceMenu,
+            }}
             items={[
                 {
                     text: i18n('label_menu-popup-modify-source'),
@@ -53,6 +62,7 @@ function SourceMenu(props) {
                         e.stopPropagation();
                         onClickEditBtn(avatar);
                     },
+                    qa: DatasetSourcesTableQa.SourceContextMenuModify,
                 },
                 {
                     text: i18n('label_menu-popup-delete-source'),
@@ -61,6 +71,7 @@ function SourceMenu(props) {
                         e.stopPropagation();
                         onDelete({id});
                     },
+                    qa: DatasetSourcesTableQa.SourceContextMenuDelete,
                 },
             ]}
         />

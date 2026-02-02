@@ -1,8 +1,8 @@
 import {Page} from '@playwright/test';
 
 import {WorkbookPageQa} from '../../../src/shared/constants/qa/workbooks';
-import {createSharedEntry, getStringFullUrl, openTestPage, slct} from '../../utils';
-import {SharedEntryIds, WorkbooksUrls} from '../../constants/constants';
+import {createSharedEntry, openTestPage, slct} from '../../utils';
+import {WorkbooksUrls} from '../../constants/constants';
 import DashboardPage from '../../page-objects/dashboard/DashboardPage';
 
 import {ActionsMoreDropdown} from './ActionsMoreDropdown';
@@ -96,7 +96,13 @@ export class Workbook {
         await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
     }
 
-    async addSharedEntryIntoWorkbook({scope}: {scope: EntryScope.Dataset | EntryScope.Connection}) {
+    async addSharedEntryFromLinkIntoWorkbook({
+        scope,
+        entryUrl,
+    }: {
+        scope: EntryScope.Dataset | EntryScope.Connection;
+        entryUrl: string;
+    }) {
         await this.createEntryButton.waitForVisible();
         await this.createEntryButton.click();
         await createSharedEntry({page: this.page, scope});
@@ -109,8 +115,7 @@ export class Workbook {
             .locator('input');
         await textInput.press('Meta+A');
         await textInput.press('Backspace');
-        const url = getStringFullUrl(`${scope}s/${SharedEntryIds[scope]}`);
-        await textInput.fill(url);
+        await textInput.fill(entryUrl);
         const addLinkApplyBtn = this.page.locator(slct(SharedEntriesAddFromLinkDialogQa.ApplyBtn));
         await addLinkApplyBtn.click();
     }

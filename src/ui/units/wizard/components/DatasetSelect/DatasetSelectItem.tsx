@@ -113,7 +113,7 @@ const DatasetSelectItem = (props: DatasetSelectItemProps) => {
                 selected: props.selected,
                 error: Boolean(props.error),
             })}
-            data-qa="dataset-select-item"
+            data-qa={SectionDatasetQA.DatasetSelectItem}
         >
             {props.secondary ? (
                 <SecondaryItemContent {...props} />
