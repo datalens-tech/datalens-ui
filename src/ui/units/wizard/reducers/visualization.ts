@@ -25,6 +25,7 @@ import {
     WizardVisualizationId,
     getXAxisMode,
     isDimensionField,
+    isFieldHierarchy,
     isMeasureField,
     isMeasureValue,
     isVisualizationWithLayers,
@@ -675,9 +676,12 @@ export function visualization(
                         shapes,
                         sort,
                     } as Partial<ServerChartsConfig>;
+                    // Extract actual field from hierarchy for correct axisMode calculation
+                    const firstField = placeholder.items[0];
+                    const xField = isFieldHierarchy(firstField) ? firstField.fields[0] : firstField;
                     const axisModeMap = getPlaceholderAxisModeMap({
                         placeholder,
-                        axisMode: getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete,
+                        axisMode: getXAxisMode({config: chartConfig, xField}) ?? AxisMode.Discrete,
                     });
                     placeholder.settings = Object.assign({}, placeholder.settings, {
                         axisModeMap,

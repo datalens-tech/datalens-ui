@@ -39,14 +39,14 @@ export const getAxisModePlaceholderSettings = ({
     }
 
     if (currentField) {
+        // Calculate axisMode once for the first field and apply to all fields in hierarchy
+        const axisMode = getXAxisMode({config: chartConfig, xField: currentField});
         fields.forEach((field) => {
-            settings.axisModeMap[field.guid] = getXAxisMode({config: chartConfig, xField: field});
+            settings.axisModeMap[field.guid] = axisMode;
         });
 
-        const currentAxisMode = settings.axisModeMap[currentField.guid];
-
         if (
-            currentAxisMode === SETTINGS.AXIS_MODE.DISCRETE &&
+            axisMode === SETTINGS.AXIS_MODE.DISCRETE &&
             placeholder.settings?.gridStep === SETTINGS.GRID_STEP.MANUAL
         ) {
             settings.gridStep = SETTINGS.GRID_STEP.AUTO;

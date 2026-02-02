@@ -1,6 +1,6 @@
 import {PlaceholderId, WizardVisualizationId} from '../../constants';
 import type {ServerChartsConfig, ServerField, ServerPlaceholder, ServerSort} from '../../types';
-import {AxisMode} from '../../types';
+import {AxisMode, isDateField, isNumberField} from '../../types';
 import {isMeasureField} from '../helpers';
 import {isContinuousAxisModeDisabled} from '../wizard-helpers';
 
@@ -52,6 +52,12 @@ export function getXAxisMode(args: GetXAxisModeArgs): AxisMode {
 
         if (isContinuousModeRestricted) {
             return AxisMode.Discrete;
+        }
+
+        // For date/number fields without restrictions, always use Continuous
+        // This fixes incorrect 'discrete' values in axisModeMap for existing charts
+        if (isDateField(field) || isNumberField(field)) {
+            return AxisMode.Continuous;
         }
 
         return axisSettings?.axisModeMap?.[field.guid] ?? AxisMode.Continuous;
