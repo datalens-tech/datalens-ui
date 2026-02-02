@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {ChartLine} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
@@ -7,8 +8,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, type StringParams} from 'shared';
 import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
 import {URL_OPTIONS} from 'ui/constants';
+import type {DatalensGlobalState} from 'ui/index';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
+import {chartModelingActions} from 'ui/store/chart-modeling/actions';
+import {getChartModelingState} from 'ui/store/chart-modeling/selectors';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
 
 import {
@@ -152,6 +156,20 @@ export const Header = (props: HeaderProps) => {
 
     const showFiltersClear = showActionParamsFilter && onFiltersClear;
 
+    const widgetId = requestId;
+    const chartStateData = useSelector((state: DatalensGlobalState) =>
+        getChartModelingState(state, widgetId),
+    );
+    const shouldShowChartModelingIcon = Boolean(chartStateData);
+    const handleChartModelingIconClick = React.useCallback(() => {
+        dispatch(
+            chartModelingActions.openChartModelingDialog({
+                id: widgetId,
+                widgetName: extraOptions?.widgetTitle as string,
+            }),
+        );
+    }, [dispatch, extraOptions?.widgetTitle, widgetId]);
+
     return (
         <div className={b('chart-header')}>
             {safeChartWarning && <ChartInfoIcon msg={safeChartWarning} />}
@@ -209,6 +227,13 @@ export const Header = (props: HeaderProps) => {
                         messagesByLocator={chartsInsightsData.messagesByLocator}
                         locators={chartsInsightsData.locators}
                     />
+                )}
+                {shouldShowChartModelingIcon && (
+                    <div className={b('icons')}>
+                        <Button onClick={handleChartModelingIconClick} view="flat-info">
+                            <Icon data={ChartLine} size={16} className={b('icon-chart-modeling')} />
+                        </Button>
+                    </div>
                 )}
             </div>
         </div>
