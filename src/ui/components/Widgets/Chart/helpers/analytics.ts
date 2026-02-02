@@ -127,7 +127,7 @@ function createTrendSeries({
                 const color =
                     colorMode === 'similar' ? getDarkenColor(s.color) : getComplementary(s.color);
 
-                return {
+                const newSeries = {
                     ...cloneDeep(s),
                     type: 'line',
                     name: `${originalSeriesName}: тренд`,
@@ -136,6 +136,14 @@ function createTrendSeries({
                     data: trendData,
                     lineWidth,
                 };
+
+                if (!settings?.linked) {
+                    if (newSeries.legend?.groupId) {
+                        newSeries.legend.groupId += 'smoothing';
+                    }
+                }
+
+                return newSeries;
             });
         }
         case WidgetKind.Graph: {
@@ -163,6 +171,7 @@ function createTrendSeries({
                     dashStyle: dashStyle ?? 'Dash',
                     data: trendData,
                     lineWidth,
+                    linkedTo: settings?.linked ? s.id : undefined,
                 };
             });
         }
@@ -193,7 +202,7 @@ function createSmoothingSeries({
             const series = gChartsData?.series?.data as LineSeries[];
             return series.map((s) => {
                 const originalLineData = (s.data ?? []) as PointData[];
-                const trendData = generateSmoothingLine({
+                const seriesData = generateSmoothingLine({
                     data: originalLineData,
                     method,
                     windowSize,
@@ -202,15 +211,23 @@ function createSmoothingSeries({
                 const color =
                     colorMode === 'similar' ? getDarkenColor(s.color) : getComplementary(s.color);
 
-                return {
+                const newSeries = {
                     ...cloneDeep(s),
                     type: 'line',
                     name: `${originalSeriesName}: сглаживание`,
                     color,
                     dashStyle: (dashStyle ?? s.dashStyle) as LineSeries['dashStyle'],
-                    data: trendData,
+                    data: seriesData,
                     lineWidth,
                 };
+
+                if (!settings?.linked) {
+                    if (newSeries.legend?.groupId) {
+                        newSeries.legend.groupId += 'smoothing';
+                    }
+                }
+
+                return newSeries;
             });
         }
         case WidgetKind.Graph: {
@@ -239,6 +256,7 @@ function createSmoothingSeries({
                     dashStyle: dashStyle ?? s.dashStyle,
                     data: trendData,
                     lineWidth,
+                    linkedTo: settings?.linked ? s.id : undefined,
                 };
             });
         }

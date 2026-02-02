@@ -12,5 +12,10 @@
   "label_auto": "Auto",
   "label_window-size": "Step (points count)",
   "label_similar": "Simalar",
-  "label_contrasted": "Contrasted"
+  "label_contrasted": "Contrasted",
+  "tooltip_trend-method": "Selects the method used to calculate the trend line",
+  "tooltip_smoothing-method": "Selects the method used to calculate the smoothing line",
+  "tooltip_smoothing-window-size": "Number of preceding data points to average. More points create a smoother line.",
+  "label_additional-settings": "Additional settings",
+  "label_link-series": "Link series lines"
 }

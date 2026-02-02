@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {NumberInput, SegmentedRadioGroup, Select, Switch, Text} from '@gravity-ui/uikit';
+import {HelpMark, NumberInput, SegmentedRadioGroup, Select, Switch, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
@@ -37,11 +37,11 @@ export const SmothSettings = (props: Props) => {
             chartModelingActions.updateChartSettings({
                 id: widgetId,
                 settings: {
-                    smoothing: {enabled: !enabled},
+                    smoothing: {...chartState.smoothing, enabled: !enabled},
                 },
             }),
         );
-    }, [dispatch, enabled, widgetId]);
+    }, [chartState.smoothing, dispatch, enabled, widgetId]);
 
     const updateSettings = React.useCallback(
         (updates: Partial<SmoothingLineSettings>) => {
@@ -97,13 +97,22 @@ export const SmothSettings = (props: Props) => {
     return (
         <React.Fragment>
             <div className={b('section-header')}>
-                <Text>{i18n('label_smoothing')}</Text>
+                <Text
+                    variant="subheader-1"
+                    className={b('control-label')}
+                    onClick={handleEnableSmoothing}
+                >
+                    {i18n('label_smoothing')}
+                </Text>
                 <Switch onChange={handleEnableSmoothing} size="l" checked={enabled}></Switch>
             </div>
             {enabled && (
                 <React.Fragment>
                     <div className={b('form-row')}>
-                        <Text>{i18n('label_method')}</Text>
+                        <div className={b('label-with-hint')}>
+                            <Text>{i18n('label_method')}</Text>
+                            <HelpMark>{i18n('tooltip_smoothing-method')}</HelpMark>
+                        </div>
                         <Select value={['sma']} onUpdate={handleUpdateMethod}>
                             {SMOOTHING_SELECT_OPTION.map((item) => (
                                 <Select.Option key={item.value} value={item.value}>
@@ -113,7 +122,10 @@ export const SmothSettings = (props: Props) => {
                         </Select>
                     </div>
                     <div className={b('form-row')}>
-                        <Text>{i18n('label_window-size')}</Text>
+                        <div className={b('label-with-hint')}>
+                            <Text>{i18n('label_window-size')}</Text>
+                            <HelpMark>{i18n('tooltip_smoothing-window-size')}</HelpMark>
+                        </div>
                         <RangeInputPicker
                             size="s"
                             value={windowSize}

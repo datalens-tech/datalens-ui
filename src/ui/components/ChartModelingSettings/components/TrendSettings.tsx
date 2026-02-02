@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {NumberInput, SegmentedRadioGroup, Select, Switch, Text} from '@gravity-ui/uikit';
+import {HelpMark, NumberInput, SegmentedRadioGroup, Select, Switch, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
@@ -36,11 +36,11 @@ export const TrendSettings = (props: Props) => {
             chartModelingActions.updateChartSettings({
                 id: widgetId,
                 settings: {
-                    trends: {enabled: !enabled},
+                    trends: {...chartState.trends, enabled: !enabled},
                 },
             }),
         );
-    }, [dispatch, enabled, widgetId]);
+    }, [chartState.trends, dispatch, enabled, widgetId]);
 
     const updateSettings = React.useCallback(
         (updates: Partial<TrendLineSettings>) => {
@@ -94,13 +94,22 @@ export const TrendSettings = (props: Props) => {
     return (
         <React.Fragment>
             <div className={b('section-header')}>
-                <Text>{i18n('label_trend')}</Text>
+                <Text
+                    variant="subheader-1"
+                    className={b('control-label')}
+                    onClick={handleEnableTrends}
+                >
+                    {i18n('label_trend')}
+                </Text>
                 <Switch onChange={handleEnableTrends} size="l" checked={enabled}></Switch>
             </div>
             {enabled && (
                 <React.Fragment>
                     <div className={b('form-row')}>
-                        <Text>{i18n('label_method')}</Text>
+                        <div className={b('label-with-hint')}>
+                            <Text>{i18n('label_method')}</Text>
+                            <HelpMark>{i18n('tooltip_trend-method')}</HelpMark>
+                        </div>
                         <Select value={[method]} onUpdate={handleUpdateMethod}>
                             {TREND_SELECT_OPTION.map((item) => (
                                 <Select.Option key={item.value} value={item.value}>

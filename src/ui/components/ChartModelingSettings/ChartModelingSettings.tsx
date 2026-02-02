@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Xmark} from '@gravity-ui/icons';
 import {Drawer, DrawerItem} from '@gravity-ui/navigation';
-import {Button, Icon, Text} from '@gravity-ui/uikit';
+import {Button, Icon, Switch, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -34,6 +34,37 @@ export const ChartModelingSettings = () => {
         dispatch(chartModelingActions.closeChartModelingDialog());
     }, [dispatch]);
 
+    const shouldLinkSeries = Boolean(
+        chartState?.smoothing?.settings?.linked || chartState?.trends?.settings?.linked,
+    );
+    const handleLinkSeries = React.useCallback(() => {
+        if (!widgetId) {
+            return;
+        }
+
+        dispatch(
+            chartModelingActions.updateChartSettings({
+                id: widgetId,
+                settings: {
+                    smoothing: {
+                        ...chartState.smoothing,
+                        settings: {
+                            ...chartState.smoothing?.settings,
+                            linked: !shouldLinkSeries,
+                        },
+                    },
+                    trends: {
+                        ...chartState.trends,
+                        settings: {
+                            ...chartState.trends?.settings,
+                            linked: !shouldLinkSeries,
+                        },
+                    },
+                },
+            }),
+        );
+    }, [chartState, dispatch, shouldLinkSeries, widgetId]);
+
     return (
         <Drawer className={b()} hideVeil={true} keepMounted={true}>
             <DrawerItem
@@ -64,6 +95,23 @@ export const ChartModelingSettings = () => {
                         </div>
                         <div className={b('section')}>
                             <TrendSettings chartState={chartState} widgetId={String(widgetId)} />
+                        </div>
+                        <div className={b('section')}>
+                            <div className={b('section-header')}>
+                                <Text variant="subheader-1">
+                                    {i18n('label_additional-settings')}
+                                </Text>
+                            </div>
+                            <div className={b('form-row', {switch: true})}>
+                                <Text className={b('control-label')} onClick={handleLinkSeries}>
+                                    {i18n('label_link-series')}
+                                </Text>
+                                <Switch
+                                    onChange={handleLinkSeries}
+                                    size="l"
+                                    checked={shouldLinkSeries}
+                                ></Switch>
+                            </div>
                         </div>
                     </React.Fragment>
                 )}

@@ -329,6 +329,8 @@ export type TrendLineSettings = {
     colorMode?: 'similar' | 'contrast';
     dashStyle?: string;
     lineWidth?: number;
+    /** new series linked with original (e.g., shown/hidden together)) */
+    linked?: boolean;
 };
 
 export type SmoothingLineSettings = {
@@ -337,6 +339,8 @@ export type SmoothingLineSettings = {
     colorMode?: 'similar' | 'contrast';
     dashStyle?: string;
     lineWidth?: number;
+    /** new series linked with original (e.g., shown/hidden together)) */
+    linked?: boolean;
 };
 
 export type ChartStateSettings = {

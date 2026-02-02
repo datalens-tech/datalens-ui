@@ -3,6 +3,9 @@
   "label_trend": "Тренд",
   "label_smoothing": "Сглаживание",
   "label_method": "Функция",
+  "tooltip_trend-method": "Определяет способ расчета линии тренда",
+  "tooltip_smoothing-method": "Определяет способ расчета линии сглаживания",
+  "tooltip_smoothing-window-size": "Определяет, сколько последних точек используется для сглаживания. Больше точек — линия плавнее",
   "label_color": "Цвет",
   "label_shape-and-width": "Форма и толщина линий",
   "label_simple-moving-average": "Cкользящее среднее",
@@ -12,5 +15,7 @@
   "label_auto": "Авто",
   "label_window-size": "Шаг (количество точек)",
   "label_similar": "Близкие",
-  "label_contrasted": "Контрастные"
+  "label_contrasted": "Контрастные",
+  "label_additional-settings": "Дополнительные настройки",
+  "label_link-series": "Связать отображение линий"
 }
