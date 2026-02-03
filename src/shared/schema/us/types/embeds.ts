@@ -41,3 +41,15 @@ export type DeleteEmbedArgs = {
 export type DeleteEmbedResponse = {
     embedId: string;
 };
+
+export type EmbedUsage = {
+    tenantId: string;
+    monthStart: string;
+    count: number;
+    updatedAt: string;
+};
+
+export type GetEmbedUsageResponse = {
+    embedUsage: EmbedUsage | null;
+    limit: number;
+};
