@@ -16,10 +16,12 @@ import {
     ScreenEditorQA,
     NavigationMinimalPlaceSelectQa,
     DlNavigationQA,
+    WorkbookNavigationMinimalQa,
 } from '../../../src/shared';
 import SectionVisualization from '../wizard/SectionVisualization';
 import {ColumnSettings} from '../wizard/ColumnSettings';
 import PlaceholderDialog from '../wizard/PlaceholderDialog';
+import {NavigationMinimalPopup} from '../workbook/NavigationMinimalPopup';
 
 interface QLPageProps extends BasePageProps {}
 
@@ -34,10 +36,12 @@ class QLPage extends ChartPage {
 
     private selectConnectionButtonSelector = slct(TabQueryQA.SelectConnection);
     private navigationMinimal: NavigationMinimal;
+    private navigationMinimalPopup: NavigationMinimalPopup;
 
     constructor({page}: QLPageProps) {
         super({page});
         this.navigationMinimal = new NavigationMinimal(page);
+        this.navigationMinimalPopup = new NavigationMinimalPopup(page);
         this.chartkit = new ChartKit(page);
         this.chartSettings = new ChartSettings(page);
         this.previewTable = new PreviewTable(page);
@@ -51,25 +55,30 @@ class QLPage extends ChartPage {
         await this.page.click(slct(ViewSetupQA.ViewSetupCreate));
     }
 
-    async selectConnection(connectionName: string) {
+    async selectConnection(connectionName: string, isWorkbook = false) {
         await this.page.click(this.selectConnectionButtonSelector);
 
         const list = this.page
-            .locator(`${slct('navigation-minimal')} ${slct(DlNavigationQA.List)}`)
+            .locator(
+                `${slct(isWorkbook ? WorkbookNavigationMinimalQa.Popup : 'navigation-minimal')} ${slct(isWorkbook ? WorkbookNavigationMinimalQa.List : DlNavigationQA.List)}`,
+            )
             .first();
         await list.waitFor({state: 'visible'});
+        if (isWorkbook) {
+            await this.navigationMinimalPopup.selectListItem({innerText: connectionName});
+        } else {
+            await this.page
+                .locator(slct('navigation-minimal'))
+                .locator(slct('navigation-minimal-place-select'))
+                .click();
+            await this.page.locator(slct(NavigationMinimalPlaceSelectQa.Connections)).click();
 
-        await this.page
-            .locator(slct('navigation-minimal'))
-            .locator(slct('navigation-minimal-place-select'))
-            .click();
-        await this.page.locator(slct(NavigationMinimalPlaceSelectQa.Connections)).click();
+            await this.navigationMinimal.typeToSearch(connectionName);
 
-        await this.navigationMinimal.typeToSearch(connectionName);
+            await this.navigationMinimal.selectOwnership(Ownership.All);
 
-        await this.navigationMinimal.selectOwnership(Ownership.All);
-
-        await this.navigationMinimal.clickToItem(connectionName);
+            await this.navigationMinimal.clickToItem(connectionName);
+        }
     }
 
     async waitForConnectionName(expectedName: string) {

@@ -4,7 +4,7 @@ import {Button, Dialog, Icon, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import type {CollectionId} from 'shared';
-import {CollectionItemEntities} from 'shared';
+import {CollectionItemEntities, SharedEntriesSelectDialogQa} from 'shared';
 import type {
     GetEntryResponse,
     SharedEntryFieldsWithOptionalPermissions,
@@ -138,7 +138,10 @@ export const DialogSelectSharedEntry = ({
                                 <Text variant="body-1">
                                     {getSharedEntryMockText('or-select-shared-entry-dialog')}
                                 </Text>
-                                <Button onClick={onAddFromLinkClick}>
+                                <Button
+                                    onClick={onAddFromLinkClick}
+                                    qa={SharedEntriesSelectDialogQa.PastLinkToEntryBtn}
+                                >
                                     <Icon data={LinkIcon} size={16} />
                                     {getSharedEntryMockText(
                                         'past-link-btn-select-shared-entry-dialog',

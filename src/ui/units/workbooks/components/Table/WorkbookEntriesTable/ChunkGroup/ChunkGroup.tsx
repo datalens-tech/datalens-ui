@@ -2,12 +2,12 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useInView} from 'react-intersection-observer';
-import {WorkbookPageQa} from 'shared/constants';
 import type {ChunkItem, WorkbookUnionEntry} from 'ui/units/workbooks/types';
 
 import {EmptyRow, Row} from '../Row/Row';
 import {ROW_HEIGHT, options} from '../constants';
 import type {WorkbookEntriesTableProps} from '../types';
+import {getChunkScopeQa} from '../utils';
 
 import './ChunkGroup.scss';
 
@@ -32,10 +32,7 @@ export function ChunkGroup<T extends WorkbookUnionEntry>({
 
     const height = chunk.length * ROW_HEIGHT;
 
-    const chunkScopeQa =
-        chunk[0]?.type === 'entry'
-            ? `${WorkbookPageQa.ChunkScope}${chunk[0].item.scope}`
-            : undefined;
+    const chunkScopeQa = chunk[0]?.type === 'entry' ? getChunkScopeQa(chunk[0]) : undefined;
 
     const renderContent = () =>
         chunk.map((chunkItem) => {
