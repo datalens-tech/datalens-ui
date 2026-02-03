@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Alert, Dialog, Link, Text, TextInput, spacing} from '@gravity-ui/uikit';
 import {useDispatch} from 'react-redux';
-import {CollectionItemEntities} from 'shared';
+import {CollectionItemEntities, SharedEntriesAddFromLinkDialogQa} from 'shared';
 import type {GetEntryResponse, StructureItem} from 'shared/schema';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {registry} from 'ui/registry';
@@ -161,6 +161,7 @@ export const DialogAddSharedEntryFromLink: React.FC<DialogAddSharedEntryFromLink
                     )}
                     error={error}
                     disabled={isLoading}
+                    qa={SharedEntriesAddFromLinkDialogQa.LintTextInput}
                 />
             </Dialog.Body>
             <Dialog.Footer
@@ -172,6 +173,7 @@ export const DialogAddSharedEntryFromLink: React.FC<DialogAddSharedEntryFromLink
                 }}
                 loading={isLoading}
                 propsButtonApply={{
+                    qa: SharedEntriesAddFromLinkDialogQa.ApplyBtn,
                     disabled: Boolean(error) || !textValue,
                 }}
                 textButtonCancel={getSharedEntryMockText('cancel-unbind-dialog')}

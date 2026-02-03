@@ -3,6 +3,7 @@ import React from 'react';
 import {ShieldCheck, ShieldKeyhole} from '@gravity-ui/icons';
 import {Dialog, Divider, Link, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {SharedEntriesPermissionsDialogQa} from 'shared';
 import type {SharedEntryBindingsItem} from 'shared/schema';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
@@ -97,6 +98,7 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                         disabled={!canCreateEntryBinding}
                         checked={delegate}
                         onCheck={() => setDelegate(true)}
+                        qa={SharedEntriesPermissionsDialogQa.DelegateBtn}
                     />
                     <PermissionButton
                         icon={<ShieldKeyhole />}
@@ -105,6 +107,7 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                         disabled={!canCreateLimitedEntryBinding}
                         checked={!delegate}
                         onCheck={() => setDelegate(false)}
+                        qa={SharedEntriesPermissionsDialogQa.NotDelegateBtn}
                     />
                 </div>
             </Dialog.Body>
@@ -115,6 +118,7 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                 }}
                 propsButtonApply={{
                     disabled: delegate ? !canCreateEntryBinding : !canCreateLimitedEntryBinding,
+                    qa: SharedEntriesPermissionsDialogQa.ApplyBtn,
                 }}
                 loading={isLoading}
                 textButtonCancel={getSharedEntryMockText('cancel-unbind-dialog')}

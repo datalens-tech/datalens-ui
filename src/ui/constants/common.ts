@@ -336,7 +336,6 @@ export const URL_QUERY = {
     UNRELEASED: 'unreleased',
     LOCAL_CONFIG: '_use_local_config',
     BINDED_WORKBOOK: 'bindedWorkbookId',
-    BINDED_DATASET_WOKRBOOK_ID: 'bindedDatasetWorkbookId',
     BINDED_DATASET: 'bindedDatasetId',
 };
 

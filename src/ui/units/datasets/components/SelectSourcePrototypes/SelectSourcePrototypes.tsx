@@ -166,6 +166,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                         view="flat"
                         onClick={onClick}
                         onKeyDown={onKeyDown}
+                        qa={DatasetSourcesLeftPanelQA.ConnContextMenuBtn}
                     >
                         <Icon className={b('icon-more')} data={Ellipsis} width={14} />
                     </Button>
@@ -179,6 +180,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                             e.stopPropagation();
                             onClickOpenConnection(connectionId);
                         },
+                        qa: DatasetSourcesLeftPanelQA.ConnContextMenuOpen,
                     },
                     {
                         text: i18n('label_menu-popup-replace-connection'),
@@ -187,6 +189,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                             e.stopPropagation();
                             onReplaceConnectionClick();
                         },
+                        qa: DatasetSourcesLeftPanelQA.ConnContextMenuReplace,
                     },
                     {
                         text: i18n('label_menu-popup-delete-connection'),
@@ -195,6 +198,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                             e.stopPropagation();
                             onClickDeleteConnection({connectionId});
                         },
+                        qa: DatasetSourcesLeftPanelQA.ConnContextMenuDelete,
                     },
                 ]}
             />

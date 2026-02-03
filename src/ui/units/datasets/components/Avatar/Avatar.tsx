@@ -157,7 +157,7 @@ function Avatar(props: AvatarProps) {
                 drag_disabled: isDragDisabled,
             })}
             style={position}
-            data-qa="ds-avatar"
+            data-qa={AvatarQA.Avatar}
         >
             <Icon className={b('icon-avatar')} data={iconAvatarTable} width={16} height={16} />
             <span className={b('avatar-title')} title={avatarTitle}>

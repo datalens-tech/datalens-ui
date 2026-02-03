@@ -4,7 +4,7 @@ import {Alert, Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import isEmpty from 'lodash/isEmpty';
 import {useDispatch} from 'react-redux';
-import {EntryScope} from 'shared';
+import {EntryDialogQA, EntryScope} from 'shared';
 import type {SharedEntryRelationFields} from 'shared/schema';
 import DialogManager from 'ui/components/DialogManager/DialogManager';
 import {EntitiesList} from 'ui/components/EntitiesList/EntitiesList';
@@ -218,6 +218,7 @@ const SharedRelatedEntitiesDialog = React.memo<Props>(
                     <Dialog.Footer
                         textButtonApply={getSharedEntryMockText('apply-bindings-dialog-delete')}
                         propsButtonApply={{
+                            qa: EntryDialogQA.Apply,
                             view: 'outlined-danger',
                         }}
                         propsButtonCancel={{
