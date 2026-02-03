@@ -14,7 +14,7 @@
   "label_simple-moving-average": "Moving average",
   "label_smoothing": "Smoothing",
   "label_trend": "Trend",
-  "label_window-size": "Step (points count)",
+  "label_window-size": "Window (points count)",
   "title_modeling": "Modeling",
   "tooltip_smoothing-method": "Selects the method used to calculate the smoothing line",
   "tooltip_smoothing-window-size": "Number of preceding data points to average. More points create a smoother line.",

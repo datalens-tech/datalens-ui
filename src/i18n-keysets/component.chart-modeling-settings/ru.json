@@ -14,7 +14,7 @@
   "label_simple-moving-average": "Cкользящее среднее",
   "label_smoothing": "Сглаживание",
   "label_trend": "Тренд",
-  "label_window-size": "Шаг (количество точек)",
+  "label_window-size": "Окно (количество точек)",
   "title_modeling": "Моделирование",
   "tooltip_smoothing-method": "Определяет способ расчета линии сглаживания",
   "tooltip_smoothing-window-size": "Определяет, сколько последних точек используется для сглаживания. Больше точек — линия плавнее",
