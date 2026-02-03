@@ -14,10 +14,12 @@ import {
     Feature,
     PlaceholderId,
     VISUALIZATION_IDS,
+    WizardVisualizationId,
     isMonitoringOrPrometheusChart,
 } from '../../../../../../../shared';
 import {isChartSupportMultipleColors} from '../../../../../../../shared/modules/colors/common-helpers';
 import {mapQlConfigToLatestVersion} from '../../../../../../../shared/modules/config/ql';
+import type {QlConfigResultEntryMetadataDataColumn} from '../../../../../../../shared/types/config/ql';
 import type {PrepareSingleResultArgs} from '../../../datalens/js/helpers/misc/prepare-single-result';
 import prepareSingleResult from '../../../datalens/js/helpers/misc/prepare-single-result';
 import type {ChartPlugin} from '../../../datalens/types';
@@ -43,6 +45,213 @@ import {
     mapVisualizationPlaceholdersItems,
     migrateOrAutofillVisualization,
 } from './../../utils/visualization-utils';
+
+// Visualization templates for gravity-charts rendering
+function getVisualizationTemplate(visualizationId: string): ServerVisualization | null {
+    switch (visualizationId) {
+        case VISUALIZATION_IDS.LINE:
+            return {
+                id: WizardVisualizationId.Line,
+                placeholders: [
+                    {id: PlaceholderId.X, items: [], settings: {}},
+                    {id: PlaceholderId.Y, items: [], settings: {}},
+                ],
+            } as ServerVisualization;
+
+        case VISUALIZATION_IDS.AREA:
+            return {
+                id: WizardVisualizationId.Area,
+                placeholders: [
+                    {id: PlaceholderId.X, items: [], settings: {}},
+                    {id: PlaceholderId.Y, items: [], settings: {}},
+                ],
+            } as ServerVisualization;
+
+        case VISUALIZATION_IDS.AREA_100P:
+            return {
+                id: WizardVisualizationId.Area100p,
+                placeholders: [
+                    {id: PlaceholderId.X, items: [], settings: {}},
+                    {id: PlaceholderId.Y, items: [], settings: {}},
+                ],
+            } as ServerVisualization;
+
+        case VISUALIZATION_IDS.COLUMN:
+            return {
+                id: WizardVisualizationId.Column,
+                placeholders: [
+                    {id: PlaceholderId.X, items: [], settings: {}},
+                    {id: PlaceholderId.Y, items: [], settings: {}},
+                ],
+            } as ServerVisualization;
+
+        case VISUALIZATION_IDS.COLUMN_100P:
+            return {
+                id: WizardVisualizationId.Column100p,
+                placeholders: [
+                    {id: PlaceholderId.X, items: [], settings: {}},
+                    {id: PlaceholderId.Y, items: [], settings: {}},
+                ],
+            } as ServerVisualization;
+
+        case VISUALIZATION_IDS.PIE:
+            return {
+                id: WizardVisualizationId.Pie,
+                placeholders: [
+                    {id: PlaceholderId.Colors, items: [], settings: {}},
+                    {id: PlaceholderId.Measures, items: [], settings: {}},
+                ],
+            } as ServerVisualization;
+
+        case VISUALIZATION_IDS.DONUT:
+            return {
+                id: WizardVisualizationId.Donut,
+                placeholders: [
+                    {id: PlaceholderId.Colors, items: [], settings: {}},
+                    {id: PlaceholderId.Measures, items: [], settings: {}},
+                ],
+            } as ServerVisualization;
+
+        default:
+            return null;
+    }
+}
+
+// Get rows limit for visualization type
+function getRowsLimitForVisualization(visualizationId: string): number {
+    switch (visualizationId) {
+        case VISUALIZATION_IDS.PIE:
+        case VISUALIZATION_IDS.DONUT:
+            return 1000;
+        default:
+            return 75000;
+    }
+}
+
+// Helper function to transform columns/rows to the format expected by prepareSingleResult
+function prepareDataForGravityCharts({
+    columns,
+    rows,
+}: {
+    columns: QlConfigResultEntryMetadataDataColumn[];
+    rows: string[][];
+}) {
+    const datasetId = 'ql-mocked-dataset';
+
+    const order: {
+        datasetId: string;
+        title: string;
+    }[] = [];
+
+    const resultData = {
+        data: rows,
+        order,
+        totals: [],
+    };
+
+    const orderedColumns = [...columns].sort((columnA, columnB) => {
+        return columnA.name > columnB.name ? 1 : -1;
+    });
+
+    const columnNames = new Set();
+
+    // Converting dashsql columns to wizard fields
+    const fields = columns.map((column) => {
+        const guessedType = (column.biType || DATASET_FIELD_TYPES.STRING) as DATASET_FIELD_TYPES;
+
+        let fieldGuid;
+
+        if (columnNames.has(column.name)) {
+            const orderedIndex = orderedColumns.findIndex(
+                (orderedColumn) => orderedColumn.name === column.name,
+            );
+
+            fieldGuid = `${column.name}-${orderedIndex}`;
+        } else {
+            columnNames.add(column.name);
+
+            fieldGuid = column.name;
+        }
+
+        return {
+            guid: fieldGuid,
+            title: column.name,
+            datasetId,
+            data_type: guessedType,
+            cast: guessedType,
+            type: DatasetFieldType.Dimension,
+            calc_mode: 'direct',
+
+            inspectHidden: true,
+            formulaHidden: true,
+            noEdit: true,
+        };
+    }) as unknown as Field[];
+
+    // Adding pseudo column named "Column names"
+    if (
+        fields.length > 1 &&
+        fields.findIndex(({type}) => type === DatasetFieldType.Pseudo) === -1
+    ) {
+        fields.push({
+            title: 'Column Names',
+            type: DatasetFieldType.Pseudo,
+            data_type: DATASET_FIELD_TYPES.STRING,
+
+            inspectHidden: true,
+            formulaHidden: true,
+            noEdit: true,
+            guid: '',
+            datasetId: '',
+            cast: DATASET_FIELD_TYPES.STRING,
+            calc_mode: 'direct',
+        } as unknown as Field);
+    }
+
+    const distincts: Set<string>[] = [];
+
+    // Generating distincts from data
+    rows.forEach((row) => {
+        row.forEach((value, j) => {
+            if (!distincts[j]) {
+                distincts[j] = new Set();
+            }
+
+            if (!distincts[j].has(value)) {
+                distincts[j].add(String(value));
+            }
+        });
+    });
+
+    const resultDistincts: Record<string, string[]> = {};
+
+    fields.forEach((column, i) => {
+        if (distincts[i]) {
+            resultDistincts[column.guid] = Array.from(distincts[i]).sort();
+        }
+    });
+
+    const idToTitle: Record<string, string> = {};
+    const idToDataType: Record<string, DATASET_FIELD_TYPES> = {};
+
+    fields.forEach((column) => {
+        idToTitle[column.guid] = column.title;
+        idToDataType[column.guid] = column.data_type;
+        order.push({
+            datasetId,
+            title: column.title,
+        });
+    });
+
+    return {
+        fields,
+        resultData,
+        idToTitle,
+        idToDataType,
+        resultDistincts,
+        datasetId,
+    };
+}
 
 type BuildGraphArgs = {
     shared: QlConfig;
@@ -403,11 +612,99 @@ export function buildGraph(args: BuildGraphArgs) {
         // Deprecated
         // Works only for old-saved charts from dashboards
 
+        const {id} = config.visualization;
+
+        if (plugin === 'gravity-charts') {
+            const visualization = getVisualizationTemplate(id);
+
+            if (visualization) {
+                const rowsLimit = getRowsLimitForVisualization(id);
+
+                if (rows.length > rowsLimit) {
+                    ChartEditor._setError({
+                        code: 'ERR.CHARTS.ROWS_NUMBER_OVERSIZE',
+                        details: {
+                            rowsLength: rows.length,
+                            rowsLimit: rowsLimit,
+                        },
+                    });
+
+                    return {};
+                }
+
+                const {fields, resultData, idToTitle, idToDataType, resultDistincts, datasetId} =
+                    prepareDataForGravityCharts({columns, rows});
+                const {colors: newColors, visualization: newVisualization} =
+                    migrateOrAutofillVisualization({
+                        visualization,
+                        fields,
+                        rows,
+                        order: config.order,
+                        colors: [],
+                    });
+                const available = [...fields];
+                const disableDefaultSorting = doesQueryContainOrderBy(shared.queryValue);
+                const datasetsIds: string[] = [];
+                const prepareSingleResultArgs: PrepareSingleResultArgs = {
+                    resultData,
+                    shared: {
+                        ...config,
+                        available,
+                        colors: newColors,
+                        labels: [],
+                        shapes: [],
+                        sort: [],
+                        sharedData: {},
+                    } as unknown as ServerChartsConfig,
+                    visualization: newVisualization,
+                    idToTitle,
+                    idToDataType,
+                    ChartEditor,
+                    datasetsIds,
+                    loadedColorPalettes,
+                    disableDefaultSorting,
+                    palettes,
+                    features,
+                    plugin,
+                    defaultColorPaletteId,
+                };
+
+                result = prepareSingleResult(prepareSingleResultArgs);
+
+                if (config.preview) {
+                    result.tablePreviewData = preparePreviewTable({
+                        shared: config,
+                        columns,
+                        rows,
+                        ChartEditor,
+                    });
+                }
+
+                result.metadata = {
+                    visualization: newVisualization,
+                    available,
+                    colors: newColors,
+                    labels: [],
+                    shapes: [],
+                    distincts: resultDistincts,
+                };
+
+                ChartEditor.setExtra('datasets', [
+                    {
+                        id: datasetId,
+                        fieldsList: getFieldList(fields, newVisualization.placeholders),
+                    },
+                ]);
+
+                log('RESULT:', result);
+
+                return result;
+            }
+        }
+
         if (config.preview) {
             tablePreviewData = preparePreviewTable({shared: config, columns, rows, ChartEditor});
         }
-
-        const {id} = config.visualization;
 
         let rowsLimit;
 
