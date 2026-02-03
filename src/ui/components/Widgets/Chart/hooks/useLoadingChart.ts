@@ -14,11 +14,12 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
 import type {DatalensGlobalState} from 'ui/index';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
+import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 import {getChartModelingState} from 'ui/store/chart-modeling/selectors';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
@@ -205,6 +206,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         },
         dispatch,
     ] = React.useReducer(reducer, getInitialState());
+
+    const globalDispatch = useDispatch();
 
     const [renderedCallbackCalledOnce, setRenderedCallbackCalledOnce] = React.useState(false);
     const [changedInnerFlag, setChangedInnerFlag] = React.useState<boolean>(false);
@@ -1042,16 +1045,27 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         let updatedChartData: ChartContentWidgetData | null = null;
         if (loadedData) {
             updatedChartData = cloneDeep(loadedData);
-            addChartAnalyticsSeries({
+            const {warnings} = addChartAnalyticsSeries({
                 chartData: updatedChartData,
                 chartStateData,
             });
+
+            if (!isEqual(warnings, chartStateData?.warnings)) {
+                globalDispatch(
+                    chartModelingActions.updateChartSettings({
+                        id: widgetId,
+                        settings: {
+                            warnings,
+                        },
+                    }),
+                );
+            }
         }
 
         if (!isEqual(chartData, updatedChartData)) {
             setChartData(updatedChartData);
         }
-    }, [loadedData, chartStateData, chartData]);
+    }, [loadedData, chartStateData, chartData, widgetId, globalDispatch]);
 
     return {
         loadedData,

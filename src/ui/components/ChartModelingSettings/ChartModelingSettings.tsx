@@ -2,10 +2,11 @@ import React from 'react';
 
 import {Xmark} from '@gravity-ui/icons';
 import {Drawer, DrawerItem} from '@gravity-ui/navigation';
-import {Button, Icon, Switch, Text} from '@gravity-ui/uikit';
+import {Alert, Button, Icon, Switch, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {DEFAULT_SMOOTHING, DEFAULT_TREND_SETTINGS} from 'shared/constants/chart-modeling';
 import type {DatalensGlobalState} from 'ui/index';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 import {getChartModelingState, getEditingWidgetId} from 'ui/store/chart-modeling/selectors';
@@ -29,13 +30,25 @@ export const ChartModelingSettings = () => {
         getChartModelingState(state, widgetId),
     );
     const widgetName = chartState?.widgetName;
+    const warning = React.useMemo(() => {
+        const warningCode = chartState?.warnings?.[0];
+        switch (warningCode) {
+            case 'dataWithNull': {
+                return i18n('label_null-data-warning');
+            }
+            default: {
+                return null;
+            }
+        }
+    }, [chartState?.warnings]);
 
     const handleClose = React.useCallback(() => {
         dispatch(chartModelingActions.closeChartModelingDialog());
     }, [dispatch]);
 
     const shouldLinkSeries = Boolean(
-        chartState?.smoothing?.settings?.linked || chartState?.trends?.settings?.linked,
+        (chartState?.smoothing?.settings?.linked ?? DEFAULT_SMOOTHING.linked) ||
+            (chartState?.trends?.settings?.linked ?? DEFAULT_TREND_SETTINGS.linked),
     );
     const handleLinkSeries = React.useCallback(() => {
         if (!widgetId) {
@@ -96,6 +109,7 @@ export const ChartModelingSettings = () => {
                 </div>
                 {Boolean(widgetId) && (
                     <React.Fragment>
+                        {warning && <Alert theme="warning" message={warning} corners="square" />}
                         <div className={b('section')}>
                             <SmothSettings chartState={chartState} widgetId={String(widgetId)} />
                         </div>

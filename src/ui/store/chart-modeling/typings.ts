@@ -1,6 +1,9 @@
-import type {ChartStateSettings} from 'shared';
+import type {ChartStateSettings, ChartStateWarning} from 'shared';
 
-export type ChartWidgetState = ChartStateSettings & {widgetName?: string};
+export type ChartWidgetState = ChartStateSettings & {
+    widgetName?: string;
+    warnings?: ChartStateWarning[];
+};
 
 export type ChartModelingState = {
     /** the widget that is currently being edited (for which we show a dialog with settings) */

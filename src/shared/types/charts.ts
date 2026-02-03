@@ -343,6 +343,8 @@ export type SmoothingLineSettings = {
     linked?: boolean;
 };
 
+export type ChartStateWarning = 'dataWithNull';
+
 export type ChartStateSettings = {
     trends?: {
         enabled?: boolean;

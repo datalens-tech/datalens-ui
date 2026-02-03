@@ -1,8 +1,7 @@
 import type {PayloadAction} from '@reduxjs/toolkit';
 import {createSlice} from '@reduxjs/toolkit';
 
-import type {ChartModelingState} from './typings';
-import type {ChartStateSettings} from 'shared';
+import type {ChartModelingState, ChartWidgetState} from './typings';
 
 const initialState: ChartModelingState = {
     editingWidgetId: undefined,
@@ -34,7 +33,7 @@ export const chartModelingSlice = createSlice({
         },
         updateChartSettings: (
             state,
-            action: PayloadAction<{id: string; settings: ChartStateSettings}>,
+            action: PayloadAction<{id: string; settings: ChartWidgetState}>,
         ) => {
             const {id: widgetId, settings} = action.payload;
             const prev = {...state.widgets[widgetId]};

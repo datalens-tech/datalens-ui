@@ -6,6 +6,7 @@ export const DEFAULT_SMOOTHING: SmoothingLineSettings = {
     windowSize: 7,
     colorMode: 'similar',
     lineWidth: 2,
+    linked: true,
 };
 
 export const DEFAULT_TREND_SETTINGS: TrendLineSettings = {
@@ -13,4 +14,5 @@ export const DEFAULT_TREND_SETTINGS: TrendLineSettings = {
     colorMode: 'similar',
     dashStyle: LineShapeType.Dash,
     lineWidth: 2,
+    linked: true,
 };
