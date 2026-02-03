@@ -46,7 +46,6 @@ import {
     migrateOrAutofillVisualization,
 } from './../../utils/visualization-utils';
 
-// Visualization templates for gravity-charts rendering
 function getVisualizationTemplate(visualizationId: string): ServerVisualization | null {
     switch (visualizationId) {
         case VISUALIZATION_IDS.LINE:
@@ -117,7 +116,6 @@ function getVisualizationTemplate(visualizationId: string): ServerVisualization 
     }
 }
 
-// Get rows limit for visualization type
 function getRowsLimitForVisualization(visualizationId: string): number {
     switch (visualizationId) {
         case VISUALIZATION_IDS.PIE:
@@ -128,7 +126,6 @@ function getRowsLimitForVisualization(visualizationId: string): number {
     }
 }
 
-// Helper function to transform columns/rows to the format expected by prepareSingleResult
 function prepareDataForGravityCharts({
     columns,
     rows,
@@ -154,8 +151,6 @@ function prepareDataForGravityCharts({
     });
 
     const columnNames = new Set();
-
-    // Converting dashsql columns to wizard fields
     const fields = columns.map((column) => {
         const guessedType = (column.biType || DATASET_FIELD_TYPES.STRING) as DATASET_FIELD_TYPES;
 
@@ -188,7 +183,6 @@ function prepareDataForGravityCharts({
         };
     }) as unknown as Field[];
 
-    // Adding pseudo column named "Column names"
     if (
         fields.length > 1 &&
         fields.findIndex(({type}) => type === DatasetFieldType.Pseudo) === -1
@@ -210,7 +204,6 @@ function prepareDataForGravityCharts({
 
     const distincts: Set<string>[] = [];
 
-    // Generating distincts from data
     rows.forEach((row) => {
         row.forEach((value, j) => {
             if (!distincts[j]) {
