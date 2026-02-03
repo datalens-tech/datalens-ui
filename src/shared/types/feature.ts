@@ -101,8 +101,6 @@ export enum Feature {
     UsDynamicMasterToken = 'UsDynamicMasterToken',
     /** Enable using dynamic master token in proxy */
     UsDynamicMasterTokenInProxy = 'UsDynamicMasterTokenInProxy',
-    /** Use axios instead of request-promise-native for HTTP requests in charts-engine */
-    UseAxiosRequest = 'UseAxiosRequest',
 }
 
 export type FeatureConfig = Record<string, boolean>;
