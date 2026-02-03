@@ -24,7 +24,7 @@ datalensTest.describe('Wizard - loading dataset during chart opening', () => {
 
             // checking the display of the icon with information about the error
             await wizardPage.page.waitForSelector(
-                `${slct('dataset-select-item')} ${wizardPage.datasetSelector.errorIconSelector}`,
+                `${slct(SectionDatasetQA.DatasetSelectItem)} ${wizardPage.datasetSelector.errorIconSelector}`,
             );
 
             // check the display of menu items for deleting and replacing the dataset

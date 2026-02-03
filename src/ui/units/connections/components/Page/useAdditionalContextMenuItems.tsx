@@ -5,6 +5,7 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router';
 import {EntryScope, getEntryNameByKey} from 'shared';
+import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {DIALOG_SHARED_ENTRY_BINDINGS} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import {DIALOG_SHARED_RELATED_ENTITIES} from 'ui/components/DialogSharedRelatedEntities/DialogSharedRelatedEntities';
@@ -98,6 +99,7 @@ export const useAdditionalContextMenuItems = ({
             if (entry.fullPermissions.delete) {
                 items.push({
                     id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
+                    qa: ActionPanelEntryContextMenuQa.Remove,
                     action: () => {
                         dispatch(
                             openDialog({
@@ -168,6 +170,7 @@ export const useAdditionalContextMenuItems = ({
             if (entry.fullPermissions.delete) {
                 items.push({
                     id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
+                    qa: ActionPanelEntryContextMenuQa.Remove,
                     action: () => {
                         dispatch(
                             openDialog({
