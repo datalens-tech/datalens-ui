@@ -14,7 +14,6 @@ import {
     Feature,
     PlaceholderId,
     VISUALIZATION_IDS,
-    WizardVisualizationId,
     isMonitoringOrPrometheusChart,
 } from '../../../../../../../shared';
 import {isChartSupportMultipleColors} from '../../../../../../../shared/modules/colors/common-helpers';
@@ -50,7 +49,7 @@ function getVisualizationTemplate(visualizationId: string): ServerVisualization 
     switch (visualizationId) {
         case VISUALIZATION_IDS.LINE:
             return {
-                id: WizardVisualizationId.Line,
+                id: VISUALIZATION_IDS.LINE,
                 placeholders: [
                     {id: PlaceholderId.X, items: [], settings: {}},
                     {id: PlaceholderId.Y, items: [], settings: {}},
@@ -59,7 +58,7 @@ function getVisualizationTemplate(visualizationId: string): ServerVisualization 
 
         case VISUALIZATION_IDS.AREA:
             return {
-                id: WizardVisualizationId.Area,
+                id: VISUALIZATION_IDS.AREA,
                 placeholders: [
                     {id: PlaceholderId.X, items: [], settings: {}},
                     {id: PlaceholderId.Y, items: [], settings: {}},
@@ -68,7 +67,7 @@ function getVisualizationTemplate(visualizationId: string): ServerVisualization 
 
         case VISUALIZATION_IDS.AREA_100P:
             return {
-                id: WizardVisualizationId.Area100p,
+                id: VISUALIZATION_IDS.AREA_100P,
                 placeholders: [
                     {id: PlaceholderId.X, items: [], settings: {}},
                     {id: PlaceholderId.Y, items: [], settings: {}},
@@ -77,7 +76,7 @@ function getVisualizationTemplate(visualizationId: string): ServerVisualization 
 
         case VISUALIZATION_IDS.COLUMN:
             return {
-                id: WizardVisualizationId.Column,
+                id: VISUALIZATION_IDS.COLUMN,
                 placeholders: [
                     {id: PlaceholderId.X, items: [], settings: {}},
                     {id: PlaceholderId.Y, items: [], settings: {}},
@@ -86,7 +85,7 @@ function getVisualizationTemplate(visualizationId: string): ServerVisualization 
 
         case VISUALIZATION_IDS.COLUMN_100P:
             return {
-                id: WizardVisualizationId.Column100p,
+                id: VISUALIZATION_IDS.COLUMN_100P,
                 placeholders: [
                     {id: PlaceholderId.X, items: [], settings: {}},
                     {id: PlaceholderId.Y, items: [], settings: {}},
@@ -95,7 +94,7 @@ function getVisualizationTemplate(visualizationId: string): ServerVisualization 
 
         case VISUALIZATION_IDS.PIE:
             return {
-                id: WizardVisualizationId.Pie,
+                id: VISUALIZATION_IDS.PIE,
                 placeholders: [
                     {id: PlaceholderId.Colors, items: [], settings: {}},
                     {id: PlaceholderId.Measures, items: [], settings: {}},
@@ -104,7 +103,7 @@ function getVisualizationTemplate(visualizationId: string): ServerVisualization 
 
         case VISUALIZATION_IDS.DONUT:
             return {
-                id: WizardVisualizationId.Donut,
+                id: VISUALIZATION_IDS.DONUT,
                 placeholders: [
                     {id: PlaceholderId.Colors, items: [], settings: {}},
                     {id: PlaceholderId.Measures, items: [], settings: {}},
