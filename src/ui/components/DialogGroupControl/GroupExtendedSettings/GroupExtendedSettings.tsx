@@ -246,7 +246,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
 
     return (
         <React.Fragment>
-            <FormSection title={i18n('label_group-display')}>
+            <FormSection title={i18n('label_group-display')} className={b('form-section')}>
                 {showSelectorsGroupTitle && (
                     <FormRow className={b('row')} label={i18n('label_group-name')}>
                         <Flex gap={2}>
@@ -343,7 +343,10 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                 )}
             </FormSection>
             {isMultipleSelectors && (
-                <FormSection title={i18n('label_selectors-representation')}>
+                <FormSection
+                    title={i18n('label_selectors-representation')}
+                    className={b('form-section')}
+                >
                     <div className={b('note')}>{i18n('label_note')}</div>
                     <div className={b('selectors')}>
                         <List
