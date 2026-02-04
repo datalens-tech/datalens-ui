@@ -624,7 +624,7 @@ export function buildGraph(args: BuildGraphArgs) {
                     return {};
                 }
 
-                const {fields, resultData, idToTitle, idToDataType, resultDistincts, datasetId} =
+                const {fields, resultData, idToTitle, idToDataType, resultDistincts} =
                     prepareDataForGravityCharts({columns, rows});
                 const {colors: newColors, visualization: newVisualization} =
                     migrateOrAutofillVisualization({
@@ -662,16 +662,6 @@ export function buildGraph(args: BuildGraphArgs) {
                 };
 
                 result = prepareSingleResult(prepareSingleResultArgs);
-
-                if (config.preview) {
-                    result.tablePreviewData = preparePreviewTable({
-                        shared: config,
-                        columns,
-                        rows,
-                        ChartEditor,
-                    });
-                }
-
                 result.metadata = {
                     visualization: newVisualization,
                     available,
@@ -680,13 +670,6 @@ export function buildGraph(args: BuildGraphArgs) {
                     shapes: [],
                     distincts: resultDistincts,
                 };
-
-                ChartEditor.setExtra('datasets', [
-                    {
-                        id: datasetId,
-                        fieldsList: getFieldList(fields, newVisualization.placeholders),
-                    },
-                ]);
 
                 log('RESULT:', result);
 
