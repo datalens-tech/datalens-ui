@@ -35,6 +35,7 @@ export const enum ChartKitQa {
 
 export const enum ChartQa {
     Chart = 'chartkit-chart',
+    CommentLabel = 'chartkit-comment',
 }
 
 export const enum ChartKitTreeNodeStateQa {
