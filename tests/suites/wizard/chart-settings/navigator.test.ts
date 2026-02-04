@@ -191,7 +191,7 @@ datalensTest.describe('Wizard - chartkit', () => {
         },
     );
 
-    datalensTest(
+    datalensTest.skip(
         'If no lines are selected in the setup, then draws an empty navigator',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});

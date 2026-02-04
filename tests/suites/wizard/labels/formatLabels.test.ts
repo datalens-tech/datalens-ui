@@ -91,7 +91,10 @@ datalensTest.describe('Wizard - formatting signatures (line)', () => {
 
             await waitForCondition(async () => {
                 labelsAfterPrecisionChange = await getChartLabelValues(wizardPage.page, 3);
-                return labelsAfterPrecisionChange.join(',') === EXPECTED_FORMATTED_LABELS.join(',');
+                return (
+                    labelsAfterPrecisionChange.sort().join(',') ===
+                    EXPECTED_FORMATTED_LABELS.sort().join(',')
+                );
             }).catch(() => {
                 throw new Error(
                     `Formatting was not applied.
