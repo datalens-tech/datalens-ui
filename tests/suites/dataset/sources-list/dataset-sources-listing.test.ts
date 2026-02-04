@@ -12,42 +12,55 @@ import {mockResponseBody} from './helpers';
 import {RobotChartsDatasetUrls} from '../../../utils/constants';
 
 const SEARCH_VALUE = 'abcd';
+const PAGINATION_LIMIT = 101;
+const PAGINATION_OFFSET = 100;
+
+const setupMocks = async (page: Parameters<typeof mockResponseBody>[0]['page']) => {
+    await mockResponseBody({
+        page,
+        url: `**/${requestUrls.listingOptions}`,
+        body: getSourceListingOptionsMock,
+    });
+    await mockResponseBody({page, url: `**/${requestUrls.dbNames}`, body: dbNamesMock});
+    await mockResponseBody({page, url: `**/${requestUrls.getSources}`, body: getSourcesMock});
+};
 
 datalensTest.describe('Dataset sources listing', () => {
+    datalensTest.afterEach(async ({page}) => {
+        await page.unrouteAll({behavior: 'ignoreErrors'});
+    });
+
     datalensTest('Should request sources with server pagination', async ({page}) => {
         const datasetPage = new DatasetPage({page});
-        await mockResponseBody({
-            page,
-            url: `**/${requestUrls.listingOptions}`,
-            body: getSourceListingOptionsMock,
-        });
-        await mockResponseBody({page, url: `**/${requestUrls.dbNames}`, body: dbNamesMock});
-        await mockResponseBody({page, url: `**/${requestUrls.getSources}`, body: getSourcesMock});
-        const sourcesRequest = page.waitForRequest((request) => {
+        await setupMocks(page);
+
+        const initialSourcesRequest = page.waitForRequest((request) => {
             return request.url().includes(`/${requestUrls.getSources}`);
         });
 
         await openTestPage(page, RobotChartsDatasetUrls.DatasetSourcesListing, {tab: 'sources'});
 
-        const sourcesResult = await sourcesRequest;
-        const sourcesResultBody = sourcesResult.postDataJSON();
+        const initialSourcesResult = await initialSourcesRequest;
+        const initialSourcesBody = initialSourcesResult.postDataJSON();
 
-        expect(sourcesResultBody.db_name).toBe(dbNamesMock.db_names[0]);
-        expect(sourcesResultBody.limit).toBe(101);
+        expect(initialSourcesBody.db_name).toBe(dbNamesMock.db_names[0]);
+        expect(initialSourcesBody.limit).toBe(PAGINATION_LIMIT);
 
-        const paginationRequest = page.waitForRequest((request) => {
+        const nextPageRequest = page.waitForRequest((request) => {
             const url = request.url();
             const postData = request.postDataJSON();
             return url.includes('/getSources') && postData.offset !== undefined;
         });
 
-        await datasetPage.scrollSourcesList();
-        const paginationRequestResult = await paginationRequest;
-        const paginationRequestBody = paginationRequestResult.postDataJSON();
+        const [nextPageResult] = await Promise.all([
+            nextPageRequest,
+            datasetPage.scrollSourcesList(),
+        ]);
+        const nextPageBody = nextPageResult.postDataJSON();
 
-        expect(paginationRequestBody.offset).toBe(100);
-        expect(paginationRequestBody.db_name).toBe(dbNamesMock.db_names[0]);
-        expect(paginationRequestBody.limit).toBe(101);
+        expect(nextPageBody.offset).toBe(PAGINATION_OFFSET);
+        expect(nextPageBody.db_name).toBe(dbNamesMock.db_names[0]);
+        expect(nextPageBody.limit).toBe(PAGINATION_LIMIT);
     });
 
     datalensTest('Should not request sources when count < limit', async ({page}) => {
@@ -58,9 +71,10 @@ datalensTest.describe('Dataset sources listing', () => {
             body: getSourceListingOptionsMock,
         });
         await mockResponseBody({page, url: `**/${requestUrls.dbNames}`, body: dbNamesMock});
+
         let sourcesRequestCount = 0;
         await page.route(`**/${requestUrls.getSources}`, async (route) => {
-            const body = getSourcesMock({length: 100});
+            const body = getSourcesMock({length: PAGINATION_OFFSET});
             sourcesRequestCount++;
             await route.fulfill({
                 status: 200,
@@ -71,7 +85,6 @@ datalensTest.describe('Dataset sources listing', () => {
 
         await openTestPage(page, RobotChartsDatasetUrls.DatasetSourcesListing, {tab: 'sources'});
 
-        // Do not request until scroll end
         await datasetPage.scrollSourcesList({scrollHeight: 1000});
         expect(sourcesRequestCount).toBe(1);
 
@@ -79,148 +92,216 @@ datalensTest.describe('Dataset sources listing', () => {
         expect(sourcesRequestCount).toBe(1);
     });
 
-    datalensTest('Should request sources with another db name', async ({page}) => {
+    datalensTest('Should reset offset when changing db_name', async ({page}) => {
         const datasetPage = new DatasetPage({page});
-        await mockResponseBody({
-            page,
-            url: `**/${requestUrls.listingOptions}`,
-            body: getSourceListingOptionsMock,
-        });
-        await mockResponseBody({page, url: `**/${requestUrls.dbNames}`, body: dbNamesMock});
-        await mockResponseBody({page, url: `**/${requestUrls.getSources}`, body: getSourcesMock});
+        await setupMocks(page);
+
         const initialRequest = page.waitForRequest((request) => {
             return request.url().includes('/getSources');
         });
 
-        await openTestPage(page, RobotChartsDatasetUrls.DatasetSourcesListing, {tab: 'sources'});
+        await openTestPage(page, RobotChartsDatasetUrls.DatasetSourcesListing, {
+            tab: 'sources',
+        });
 
         await page.waitForSelector(slct(AvatarQA.Avatar));
         await page.waitForSelector(slct(DatasetSourcesTableQa.Source));
+
         const initialRequestResult = await initialRequest;
         const initialRequestBody = initialRequestResult.postDataJSON();
 
         expect(initialRequestBody.db_name).toBe(dbNamesMock.db_names[0]);
-        expect(initialRequestBody.limit).toBe(101);
+        expect(initialRequestBody.limit).toBe(PAGINATION_LIMIT);
 
-        const paginationRequest = page.waitForRequest((request) => {
+        const firstPageRequest = page.waitForRequest((request) => {
             return (
                 request.url().includes('/getSources') && request.postDataJSON().offset !== undefined
             );
         });
-        await datasetPage.scrollSourcesList();
 
-        const paginationRequestResult = await paginationRequest;
-        const paginationRequestBody = paginationRequestResult.postDataJSON();
+        const [firstPageResult] = await Promise.all([
+            firstPageRequest,
+            datasetPage.scrollSourcesList(),
+        ]);
+        const firstPageBody = firstPageResult.postDataJSON();
 
-        expect(paginationRequestBody.offset).toBe(100);
-        expect(paginationRequestBody.db_name).toBe(dbNamesMock.db_names[0]);
-        expect(paginationRequestBody.limit).toBe(101);
+        expect(firstPageBody.offset).toBe(PAGINATION_OFFSET);
+        expect(firstPageBody.db_name).toBe(dbNamesMock.db_names[0]);
+        expect(firstPageBody.limit).toBe(PAGINATION_LIMIT);
 
-        const newDbNameRequest = page.waitForRequest((request) => {
+        const dbChangeRequest = page.waitForRequest((request) => {
             return (
                 request.url().includes('/getSources') &&
                 request.postDataJSON().db_name === dbNamesMock.db_names[2]
             );
         });
 
-        await datasetPage.changeDbName({namePattern: dbNamesMock.db_names[2]});
+        const [dbChangeResult] = await Promise.all([
+            dbChangeRequest,
+            datasetPage.changeDbName({namePattern: dbNamesMock.db_names[2]}),
+        ]);
+        const dbChangeBody = dbChangeResult.postDataJSON();
 
-        const newDbNameRequestResult = await newDbNameRequest;
-        const newDbNameRequestBody = newDbNameRequestResult.postDataJSON();
-
-        expect(newDbNameRequestBody.offset).toBe(0);
-        expect(newDbNameRequestBody.db_name).toBe(dbNamesMock.db_names[2]);
-        expect(newDbNameRequestBody.limit).toBe(101);
-
-        const paginationRequest2 = page.waitForRequest((request) => {
-            return (
-                request.url().includes('/getSources') &&
-                request.postDataJSON().offset === 100 &&
-                request.postDataJSON().db_name === dbNamesMock.db_names[2]
-            );
-        });
-        await datasetPage.scrollSourcesList();
-
-        const paginationRequestResult2 = await paginationRequest2;
-        const paginationRequestBody2 = paginationRequestResult2.postDataJSON();
-
-        expect(paginationRequestBody2.offset).toBe(100);
-        expect(paginationRequestBody2.db_name).toBe(dbNamesMock.db_names[2]);
-        expect(paginationRequestBody2.limit).toBe(101);
+        expect(dbChangeBody.offset).toBe(0);
+        expect(dbChangeBody.db_name).toBe(dbNamesMock.db_names[2]);
+        expect(dbChangeBody.limit).toBe(PAGINATION_LIMIT);
     });
 
-    datalensTest('Should request sources with server search', async ({page}) => {
+    datalensTest('Should paginate with new db_name', async ({page}) => {
         const datasetPage = new DatasetPage({page});
-        await mockResponseBody({
-            page,
-            url: `**/${requestUrls.listingOptions}`,
-            body: getSourceListingOptionsMock,
-        });
-        await mockResponseBody({page, url: `**/${requestUrls.dbNames}`, body: dbNamesMock});
-        await mockResponseBody({page, url: `**/${requestUrls.getSources}`, body: getSourcesMock});
-        const initialRequest = page.waitForRequest((request) => {
-            return request.url().includes('/getSources');
-        });
+        await setupMocks(page);
 
-        await openTestPage(page, RobotChartsDatasetUrls.DatasetSourcesListing, {tab: 'sources'});
+        await openTestPage(page, RobotChartsDatasetUrls.DatasetSourcesListing, {
+            tab: 'sources',
+        });
 
         await page.waitForSelector(slct(AvatarQA.Avatar));
         await page.waitForSelector(slct(DatasetSourcesTableQa.Source));
-        const initialRequestResult = await initialRequest;
-        const initialRequestBody = initialRequestResult.postDataJSON();
 
-        expect(initialRequestBody.db_name).toBe(dbNamesMock.db_names[0]);
-        expect(initialRequestBody.limit).toBe(101);
-
-        const paginationRequest = page.waitForRequest((request) => {
-            return (
-                request.url().includes('/getSources') && request.postDataJSON().offset !== undefined
-            );
-        });
-        await datasetPage.scrollSourcesList();
-
-        const paginationRequestResult = await paginationRequest;
-
-        const paginationRequestBody = paginationRequestResult.postDataJSON();
-
-        expect(paginationRequestBody.offset).toBe(100);
-        expect(paginationRequestBody.db_name).toBe(dbNamesMock.db_names[0]);
-        expect(paginationRequestBody.limit).toBe(101);
-
-        const searchRequest = page.waitForRequest((request) => {
+        const dbChangeRequest = page.waitForRequest((request) => {
             return (
                 request.url().includes('/getSources') &&
-                request.postDataJSON().search_text === SEARCH_VALUE
+                request.postDataJSON().db_name === dbNamesMock.db_names[2]
             );
         });
 
-        const searchInput = await page.waitForSelector(
-            slct(DatasetSourcesLeftPanelQA.SourcesServerSearchInput),
-        );
-        await searchInput.click();
-        await searchInput.type(SEARCH_VALUE);
+        const [dbChangeResult] = await Promise.all([
+            dbChangeRequest,
+            datasetPage.changeDbName({namePattern: dbNamesMock.db_names[2]}),
+        ]);
+        const dbChangeBody = dbChangeResult.postDataJSON();
 
-        const searchRequestResult = await searchRequest;
-        const searchRequestBody = searchRequestResult.postDataJSON();
+        expect(dbChangeBody.offset).toBe(0);
+        expect(dbChangeBody.db_name).toBe(dbNamesMock.db_names[2]);
 
-        expect(searchRequestBody.offset).toBe(0);
-        expect(searchRequestBody.search_text).toBe(SEARCH_VALUE);
-        expect(searchRequestBody.limit).toBe(101);
-
-        const paginationRequest2 = page.waitForRequest((request) => {
+        const paginationAfterDbChangeRequest = page.waitForRequest((request) => {
+            const postData = request.postDataJSON();
             return (
                 request.url().includes('/getSources') &&
-                request.postDataJSON().offset === 100 &&
-                request.postDataJSON().search_text === SEARCH_VALUE
+                postData.offset === PAGINATION_OFFSET &&
+                postData.db_name === dbNamesMock.db_names[2]
             );
         });
-        await datasetPage.scrollSourcesList();
 
-        const paginationRequestResult2 = await paginationRequest2;
-        const paginationRequestBody2 = paginationRequestResult2.postDataJSON();
+        const [paginationAfterDbChangeResult] = await Promise.all([
+            paginationAfterDbChangeRequest,
+            datasetPage.scrollSourcesList(),
+        ]);
+        const paginationAfterDbChangeBody = paginationAfterDbChangeResult.postDataJSON();
 
-        expect(paginationRequestBody2.offset).toBe(100);
-        expect(paginationRequestBody2.search_text).toBe(SEARCH_VALUE);
-        expect(paginationRequestBody2.limit).toBe(101);
+        expect(paginationAfterDbChangeBody.offset).toBe(PAGINATION_OFFSET);
+        expect(paginationAfterDbChangeBody.db_name).toBe(dbNamesMock.db_names[2]);
+        expect(paginationAfterDbChangeBody.limit).toBe(PAGINATION_LIMIT);
+    });
+
+    datalensTest.describe('Server search', () => {
+        datalensTest('Should reset offset when searching', async ({page}) => {
+            const datasetPage = new DatasetPage({page});
+            await setupMocks(page);
+
+            const initialRequest = page.waitForRequest((request) => {
+                return request.url().includes('/getSources');
+            });
+
+            await openTestPage(page, RobotChartsDatasetUrls.DatasetSourcesListing, {
+                tab: 'sources',
+            });
+
+            await page.waitForSelector(slct(AvatarQA.Avatar));
+            await page.waitForSelector(slct(DatasetSourcesTableQa.Source));
+
+            const initialRequestResult = await initialRequest;
+            const initialRequestBody = initialRequestResult.postDataJSON();
+
+            expect(initialRequestBody.db_name).toBe(dbNamesMock.db_names[0]);
+            expect(initialRequestBody.limit).toBe(PAGINATION_LIMIT);
+
+            const firstPageRequest = page.waitForRequest((request) => {
+                return (
+                    request.url().includes('/getSources') &&
+                    request.postDataJSON().offset !== undefined
+                );
+            });
+
+            const [firstPageResult] = await Promise.all([
+                firstPageRequest,
+                datasetPage.scrollSourcesList(),
+            ]);
+            const firstPageBody = firstPageResult.postDataJSON();
+
+            expect(firstPageBody.offset).toBe(PAGINATION_OFFSET);
+            expect(firstPageBody.db_name).toBe(dbNamesMock.db_names[0]);
+            expect(firstPageBody.limit).toBe(PAGINATION_LIMIT);
+
+            const searchRequest = page.waitForRequest((request) => {
+                return (
+                    request.url().includes('/getSources') &&
+                    request.postDataJSON().search_text === SEARCH_VALUE
+                );
+            });
+
+            const searchInput = await page.waitForSelector(
+                slct(DatasetSourcesLeftPanelQA.SourcesServerSearchInput),
+            );
+            await searchInput.click();
+            await searchInput.type(SEARCH_VALUE);
+
+            const searchRequestResult = await searchRequest;
+            const searchRequestBody = searchRequestResult.postDataJSON();
+
+            expect(searchRequestBody.offset).toBe(0);
+            expect(searchRequestBody.search_text).toBe(SEARCH_VALUE);
+            expect(searchRequestBody.limit).toBe(PAGINATION_LIMIT);
+        });
+
+        datalensTest('Should paginate with search filter', async ({page}) => {
+            const datasetPage = new DatasetPage({page});
+            await setupMocks(page);
+
+            await openTestPage(page, RobotChartsDatasetUrls.DatasetSourcesListing, {
+                tab: 'sources',
+            });
+
+            await page.waitForSelector(slct(AvatarQA.Avatar));
+            await page.waitForSelector(slct(DatasetSourcesTableQa.Source));
+
+            const searchRequest = page.waitForRequest((request) => {
+                return (
+                    request.url().includes('/getSources') &&
+                    request.postDataJSON().search_text === SEARCH_VALUE
+                );
+            });
+
+            const searchInput = await page.waitForSelector(
+                slct(DatasetSourcesLeftPanelQA.SourcesServerSearchInput),
+            );
+            await searchInput.click();
+            await searchInput.type(SEARCH_VALUE);
+
+            const searchRequestResult = await searchRequest;
+            const searchRequestBody = searchRequestResult.postDataJSON();
+
+            expect(searchRequestBody.offset).toBe(0);
+            expect(searchRequestBody.search_text).toBe(SEARCH_VALUE);
+
+            const paginationWithSearchRequest = page.waitForRequest((request) => {
+                const postData = request.postDataJSON();
+                return (
+                    request.url().includes('/getSources') &&
+                    postData.offset === PAGINATION_OFFSET &&
+                    postData.search_text === SEARCH_VALUE
+                );
+            });
+
+            const [paginationWithSearchResult] = await Promise.all([
+                paginationWithSearchRequest,
+                datasetPage.scrollSourcesList(),
+            ]);
+            const paginationWithSearchBody = paginationWithSearchResult.postDataJSON();
+
+            expect(paginationWithSearchBody.offset).toBe(PAGINATION_OFFSET);
+            expect(paginationWithSearchBody.search_text).toBe(SEARCH_VALUE);
+            expect(paginationWithSearchBody.limit).toBe(PAGINATION_LIMIT);
+        });
     });
 });

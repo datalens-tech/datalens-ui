@@ -5,18 +5,15 @@ export const mockResponseBody = async <T extends Record<string, any>>({
     url,
     body,
     times,
-    reauestDelay = 300,
 }: {
     page: Page;
     url: string;
     body: T | (() => T);
     times?: number;
-    reauestDelay?: number;
 }) => {
     await page.route(
         url,
         async (route) => {
-            await new Promise((resolve) => setTimeout(resolve, reauestDelay));
             const payload = typeof body === 'function' ? body() : body;
             await route.fulfill({
                 status: 200,
