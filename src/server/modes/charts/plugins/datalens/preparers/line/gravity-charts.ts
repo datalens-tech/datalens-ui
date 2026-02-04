@@ -36,7 +36,10 @@ import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
-import {mapToGravityChartValueFormat} from '../utils';
+import {
+    mapChartkitFormatSettingsToGravityChartValueFormat,
+    mapToGravityChartValueFormat,
+} from '../utils';
 
 import {prepareLineData} from './prepare-line-data';
 
@@ -199,6 +202,13 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 itemText: graph.legendTitle,
             },
             dashStyle: graph.dashStyle,
+            tooltip: graph.tooltip?.chartKitFormatting
+                ? {
+                      valueFormat: mapChartkitFormatSettingsToGravityChartValueFormat({
+                          chartkitFormatSettings: graph.tooltip,
+                      }),
+                  }
+                : undefined,
             yAxis: graph.yAxis,
             custom: {
                 ...graph.custom,
