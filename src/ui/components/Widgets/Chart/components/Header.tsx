@@ -4,6 +4,7 @@ import {ChartLine} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, type StringParams} from 'shared';
 import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
@@ -179,10 +180,10 @@ export const Header = (props: HeaderProps) => {
 
     const prevWidgetId = usePrevious(widgetId);
     React.useEffect(() => {
-        if (prevWidgetId && prevWidgetId !== widgetId) {
+        if (prevWidgetId && prevWidgetId !== widgetId && !isEmpty(chartStateData)) {
             dispatch(chartModelingActions.removeChartSettings({id: prevWidgetId}));
         }
-    }, [dispatch, prevWidgetId, widgetId]);
+    }, [chartStateData, dispatch, prevWidgetId, widgetId]);
 
     return (
         <div className={b('chart-header')}>
