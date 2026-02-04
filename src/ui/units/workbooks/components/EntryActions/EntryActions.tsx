@@ -15,7 +15,7 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {DropdownAction} from '../../../../components/DropdownAction/DropdownAction';
 import {registry} from '../../../../registry';
-import type {WorkbookEntry} from '../../types';
+import type {WorkbookUnionEntry} from '../../types';
 
 import iconId from 'ui/assets/icons/id-square.svg';
 
@@ -26,7 +26,7 @@ const copyEntriesToWorkbookEnabled = isEnabledFeature(Feature.CopyEntriesToWorkb
 
 type EntryActionsProps = {
     workbook: WorkbookWithPermissions;
-    entry: WorkbookEntry;
+    entry: WorkbookUnionEntry;
     onRenameClick?: () => void;
     onDeleteClick?: () => void;
     onDuplicateEntry?: () => void;

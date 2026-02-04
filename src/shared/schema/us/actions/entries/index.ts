@@ -43,6 +43,8 @@ import type {
     GetRevisionsResponse,
     GetSharedEntryBindingsArgs,
     GetSharedEntryBindingsResponse,
+    GetSharedEntryInfoArgs,
+    GetSharedEntryInfoResponse,
     GetSharedEntryWorkbookRelationsArgs,
     GetSharedEntryWorkbookRelationsResponse,
     MoveEntryArgs,
@@ -347,6 +349,12 @@ export const entriesActions = {
         method: 'DELETE',
         path: () => `${PATH_PREFIX}/shared-entries/delete-entries`,
         params: ({entryIds}, headers) => ({headers, body: {entryIds}}),
+        timeout: TIMEOUT_60_SEC,
+    }),
+    getSharedEntryInfo: createAction<GetSharedEntryInfoResponse, GetSharedEntryInfoArgs>({
+        method: 'GET',
+        path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${entryId}/info`,
+        params: ({includePermissionsInfo}, headers) => ({headers, query: {includePermissionsInfo}}),
         timeout: TIMEOUT_60_SEC,
     }),
 };

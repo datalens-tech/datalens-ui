@@ -5,6 +5,7 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router';
 import {EntryScope, getEntryNameByKey} from 'shared';
+import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {DIALOG_SHARED_ENTRY_BINDINGS} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import {DIALOG_SHARED_RELATED_ENTITIES} from 'ui/components/DialogSharedRelatedEntities/DialogSharedRelatedEntities';
@@ -48,10 +49,7 @@ export const useAdditionalContextMenuItems = ({
         }
         const items: (EntryContextMenuItem & {theme?: string})[] = [];
         if (isWorkbookSharedEntry) {
-            if (
-                entry.fullPermissions.createEntryBinding ||
-                entry.fullPermissions.createLimitedEntryBinding
-            ) {
+            if (entry.permissions?.admin || entry.fullPermissions?.updateAccessBindings) {
                 items.push({
                     id: ENTRY_CONTEXT_MENU_ACTION.ACCESS,
                     action: () => {
@@ -62,6 +60,10 @@ export const useAdditionalContextMenuItems = ({
                                     onClose: () => dispatch(closeDialog()),
                                     open: true,
                                     onApply: async (delegate) => {
+                                        if (delegate === entry.isDelegated) {
+                                            dispatch(closeDialog());
+                                            return;
+                                        }
                                         try {
                                             const delegation =
                                                 await getSdk().sdk.us.updateSharedEntryBinding({
@@ -97,6 +99,7 @@ export const useAdditionalContextMenuItems = ({
             if (entry.fullPermissions.delete) {
                 items.push({
                     id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
+                    qa: ActionPanelEntryContextMenuQa.Remove,
                     action: () => {
                         dispatch(
                             openDialog({
@@ -121,23 +124,25 @@ export const useAdditionalContextMenuItems = ({
                 });
             }
         } else {
-            items.push({
-                id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
-                action: () => {
-                    dispatch(
-                        openDialog({
-                            id: DIALOG_SHARED_ENTRY_BINDINGS,
-                            props: {
-                                onClose: () => dispatch(closeDialog()),
-                                open: true,
-                                entry,
-                            },
-                        }),
-                    );
-                },
-                icon: <CodeTrunk />,
-                text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
-            });
+            if (entry.permissions?.admin || entry.fullPermissions?.updateAccessBindings) {
+                items.push({
+                    id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_SHARED_ENTRY_BINDINGS,
+                                props: {
+                                    onClose: () => dispatch(closeDialog()),
+                                    open: true,
+                                    entry,
+                                },
+                            }),
+                        );
+                    },
+                    icon: <CodeTrunk />,
+                    text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
+                });
+            }
             if (entry.fullPermissions.listAccessBindings) {
                 items.push({
                     id: ENTRY_CONTEXT_MENU_ACTION.ACCESS,
@@ -165,6 +170,7 @@ export const useAdditionalContextMenuItems = ({
             if (entry.fullPermissions.delete) {
                 items.push({
                     id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
+                    qa: ActionPanelEntryContextMenuQa.Remove,
                     action: () => {
                         dispatch(
                             openDialog({

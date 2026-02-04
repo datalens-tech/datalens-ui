@@ -866,12 +866,27 @@ export class Processor {
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
 
                 result.dataExport = mapValues(data, (sourceResponse) => {
-                    if (
-                        typeof sourceResponse === 'object' &&
-                        sourceResponse &&
-                        'data_export' in sourceResponse
-                    ) {
-                        return sourceResponse.data_export as ApiV2DataExportField;
+                    if (sourceResponse) {
+                        if (Array.isArray(sourceResponse)) {
+                            const meta = sourceResponse.find(
+                                (node) =>
+                                    node &&
+                                    typeof node === 'object' &&
+                                    'event' in node &&
+                                    node.event === 'metadata',
+                            );
+                            if (
+                                meta &&
+                                typeof meta === 'object' &&
+                                'data' in meta &&
+                                'data_export' in meta.data
+                            ) {
+                                return meta.data.data_export as ApiV2DataExportField;
+                            }
+                        }
+                        if (typeof sourceResponse === 'object' && 'data_export' in sourceResponse) {
+                            return sourceResponse.data_export as ApiV2DataExportField;
+                        }
                     }
                     return undefined;
                 });

@@ -48,6 +48,7 @@ import type {
     SET_QUERY_METADATA,
     SET_QUERY_VALUE,
     SET_SETTINGS,
+    SET_SHARED_CONNECTION_DELEGATION_STATUS,
     SET_STATUS,
     SET_TABLE_PREVIEW_DATA,
     SET_VISUALIZATION_STATUS,
@@ -72,6 +73,7 @@ export interface QLEntryData {
 // QLConnectionEntry - the connection used in the QL chart
 export interface QLConnectionEntry extends GetEntryResponse {
     name: string;
+    isDelegated?: boolean;
 }
 
 export interface QLState {
@@ -265,6 +267,11 @@ export interface QLActionSetConnectionStatus {
     connectionStatus: ConnectionStatus;
 }
 
+export interface QLActionSetSharedConnectionDelegationStatus {
+    type: typeof SET_SHARED_CONNECTION_DELEGATION_STATUS;
+    isDelegated: boolean;
+}
+
 export interface QLActionSetQueryValue {
     type: typeof SET_QUERY_VALUE;
     newValue: string;
@@ -307,6 +314,7 @@ export type QLAction =
     | QLActionSetColumnsOrder
     | QLActionSetConnection
     | QLActionSetConnectionStatus
+    | QLActionSetSharedConnectionDelegationStatus
     | QLActionSetQueryValue
     | QLActionDrawPreview
     | VisualizationAction

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {CodeTrunk} from '@gravity-ui/icons';
+import {CollectionActionsQa} from 'shared';
 import {EntryIcon} from 'ui/components/EntryIcon/EntryIcon';
 
 import {getSharedEntryMockText} from '../helpers';
@@ -22,6 +23,7 @@ export const getSharedEntriesMenuItems = ({
         {
             text: getSharedEntryMockText('collection-actions-menu-item'),
             iconStart: <CodeTrunk />,
+            qa: CollectionActionsQa.SharedObjectsMenuItem,
             items: [
                 {
                     text: <SharedEntryNotice />,
@@ -35,11 +37,13 @@ export const getSharedEntriesMenuItems = ({
                     ),
                     text: getSharedEntryMockText('label-shared-connection'),
                     action: connectionAction,
+                    qa: CollectionActionsQa.SharedConnectionCreateBtn,
                 },
                 {
                     iconStart: <EntryIcon entry={{scope: 'dataset'}} />,
                     text: getSharedEntryMockText('label-shared-dataset'),
                     action: datasetAction,
+                    qa: CollectionActionsQa.SharedDatasetCreateBtn,
                 },
             ],
         },

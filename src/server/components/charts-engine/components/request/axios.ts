@@ -432,12 +432,20 @@ export class RequestAxios {
     }
 
     private static mapRequestOptions(options: RequestOptions): AxiosRequestConfig {
+        const normalizedHeaders = normalizeHeaders(options.headers);
+
         const axiosConfig: AxiosRequestConfig = {
             url: options.uri || options.url,
             method: options.method,
-            headers: normalizeHeaders(options.headers),
+            headers: normalizedHeaders,
             timeout: options.timeout,
-            maxRedirects: options.maxRedirects ?? 10,
+            maxRedirects: options.maxRedirects ?? 0,
+            beforeRedirect: (redirectOptions) => {
+                // Preserve all original headers on redirect (matches request-promise-native behavior)
+                if (normalizedHeaders) {
+                    Object.assign(redirectOptions.headers, normalizedHeaders);
+                }
+            },
         };
 
         if (options.body !== undefined) {

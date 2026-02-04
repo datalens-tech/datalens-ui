@@ -2,7 +2,12 @@ import React from 'react';
 
 import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
-import type {ChartActivityResponseData, DashChartRequestContext, StringParams} from 'shared';
+import type {
+    ChartActivitiesActionResult,
+    ChartActivityResponseData,
+    DashChartRequestContext,
+    StringParams,
+} from 'shared';
 import {DIALOG_DEFAULT} from 'ui/components/DialogDefault/DialogDefault';
 import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
 import type {ResponseError} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
@@ -43,60 +48,72 @@ export const useChartActivities = ({
 
     const handleActivityCompleteSuccess = React.useCallback(
         async (responseData: ChartActivityResponseData) => {
-            switch (responseData?.data?.action) {
-                case 'toast': {
-                    const {title = '', type, content = ''} = responseData.data;
-                    const renderMarkdown = await getRenderMarkdownFn();
-                    dispatch(
-                        showToast({
-                            title,
-                            type,
-                            content: (
-                                <YfmWrapper
-                                    setByInnerHtml={true}
-                                    content={renderMarkdown(content)}
-                                />
-                            ),
-                        }),
-                    );
-                    break;
-                }
-                case 'popup': {
-                    const {title = '', content = ''} = responseData.data;
-                    const renderMarkdown = await getRenderMarkdownFn();
+            if (!responseData?.data) {
+                return;
+            }
 
-                    dispatch(
-                        openDialog({
-                            id: DIALOG_DEFAULT,
-                            props: {
-                                open: true,
-                                onApply: () => {
-                                    dispatch(closeDialog());
-                                },
-                                onCancel: () => dispatch(closeDialog()),
-                                caption: title,
-                                message: (
+            const handleAction = async (activityAction: ChartActivitiesActionResult) => {
+                switch (activityAction?.action) {
+                    case 'toast': {
+                        const {title = '', type, content = ''} = activityAction;
+                        const renderMarkdown = await getRenderMarkdownFn();
+                        dispatch(
+                            showToast({
+                                title,
+                                type,
+                                content: (
                                     <YfmWrapper
                                         setByInnerHtml={true}
                                         content={renderMarkdown(content)}
                                     />
                                 ),
-                            },
-                        }),
-                    );
-                    break;
-                }
-                case 'setParams': {
-                    if (onChange) {
-                        onChange(
-                            {type: 'PARAMS_CHANGED', data: {params: responseData.data.params}},
-                            {forceUpdate: true},
-                            true,
+                            }),
                         );
+                        break;
                     }
+                    case 'popup': {
+                        const {title = '', content = ''} = activityAction;
+                        const renderMarkdown = await getRenderMarkdownFn();
 
-                    break;
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_DEFAULT,
+                                props: {
+                                    open: true,
+                                    onApply: () => {
+                                        dispatch(closeDialog());
+                                    },
+                                    onCancel: () => dispatch(closeDialog()),
+                                    caption: title,
+                                    message: (
+                                        <YfmWrapper
+                                            setByInnerHtml={true}
+                                            content={renderMarkdown(content)}
+                                        />
+                                    ),
+                                },
+                            }),
+                        );
+                        break;
+                    }
+                    case 'setParams': {
+                        if (onChange) {
+                            onChange(
+                                {type: 'PARAMS_CHANGED', data: {params: activityAction.params}},
+                                {forceUpdate: true},
+                                true,
+                            );
+                        }
+
+                        break;
+                    }
                 }
+            };
+
+            if (Array.isArray(responseData?.data)) {
+                responseData.data.forEach(handleAction);
+            } else {
+                handleAction(responseData.data);
             }
         },
         [dispatch, onChange],

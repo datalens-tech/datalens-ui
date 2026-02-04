@@ -16,12 +16,12 @@ export const csvExportAction: ExportMenuAction = (_chartsDataProvider, onExportL
 
         const chartType = loadedData.type;
 
-        const onSubmit = (params: ExportParams) => {
-            downloadData({chartData, params, onExportLoading});
-        };
-
         if (!event.ctrlKey && !event.metaKey) {
             return function DownloadCsvModalRenderer(props: MenuItemModalProps) {
+                const onSubmit = (params: ExportParams) => {
+                    downloadData({chartData, params, onExportLoading});
+                    props.onClose();
+                };
                 return (
                     <DownloadCsv
                         onClose={props.onClose}

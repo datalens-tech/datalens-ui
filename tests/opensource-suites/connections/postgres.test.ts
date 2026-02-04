@@ -15,7 +15,7 @@ datalensTest.describe('Postgres connector interactions', () => {
             {id: 'input', name: 'username', value: 'abc'},
             {id: 'input', name: 'password', value: 'abc'},
         ]);
-        await connectionsPage.createConnectionInWorkbook();
+        await connectionsPage.createConnectionInWorkbookOrCollection();
     });
     datalensTest(
         'Client validation errors should be displayed after creation attempt',

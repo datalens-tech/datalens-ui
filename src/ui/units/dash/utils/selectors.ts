@@ -1,6 +1,5 @@
-import {DashTabItemType, Feature} from 'shared';
+import {DashTabItemType} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {GlobalItem, GroupGlobalItemData} from '../typings/dash';
 
@@ -60,7 +59,7 @@ export const isGroupItemVisibleOnTab = ({
     isVisibleByMainSetting?: boolean;
     isGlobal?: boolean;
 }): boolean => {
-    if (!isGlobal || !isEnabledFeature(Feature.EnableGlobalSelectors) || !tabId) {
+    if (!isGlobal || !tabId) {
         return true;
     }
 
@@ -77,10 +76,6 @@ export const isGroupItemVisibleOnTab = ({
         isItemVisibleOnTabByGroup(isVisibleByGroupSetting, item.impactType) ||
         isItemVisibleOnTab(tabId, item.impactType, item.impactTabsIds)
     );
-};
-
-export const getAllTabItems = <T>(tab: {items: T[]; globalItems?: T[]}) => {
-    return tab.items.concat(tab.globalItems || []);
 };
 
 function isControlGlobal(impactType?: ImpactType, impactTabsIds?: ImpactTabsIds): boolean {

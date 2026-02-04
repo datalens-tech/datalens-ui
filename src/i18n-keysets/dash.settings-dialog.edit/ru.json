@@ -10,6 +10,7 @@
   "label_autoupdate": "Автообновление",
   "label_autoupdate-interval": "Интервал",
   "label_border-radius": "Скругление",
+  "label_dash-background": "Фон дашборда",
   "label_dependent-selectors": "Зависимые селекторы",
   "label_display": "Внешний вид",
   "label_display-info": "Выберите элементы, которые должны отображаться на дашборде",
@@ -18,6 +19,7 @@
   "label_global-params": "Параметры дашборда",
   "label_hide-tabs": "Скрыть табы",
   "label_hide-title": "Скрыть заголовок",
+  "label_internal-margins": "Отступы внутри виджетов",
   "label_load-only-visible-charts": "Загружать только видимые чарты",
   "label_load-priority": "Приоритет загрузки",
   "label_load-priority-hint": "Определяет порядок загрузки виджетов на дашборде. Например, если приоритет отдать чартам, сначала будут загружаться все попавшие на экран чарты, а затем селекторы",
@@ -32,6 +34,7 @@
   "label_tabs": "Табы",
   "label_title": "Заголовок",
   "label_toc": "Оглавление",
+  "label_widgets-background": "Фон виджетов",
   "value_load-priority-charts": "Чарты",
   "value_load-priority-selectors": "Селекторы"
 }

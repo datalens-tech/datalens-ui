@@ -13,16 +13,18 @@ import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry/index';
 import type {AppDispatch} from 'ui/store';
 import {changeFavoriteEntry} from 'ui/units/workbooks/store/actions';
-import type {WorkbookEntry} from 'ui/units/workbooks/types/index';
+import type {WorkbookUnionEntry} from 'ui/units/workbooks/types/index';
+import {getIsRestrictedSharedEntry} from 'ui/utils';
 
 import {EntryActions} from '../../../EntryActions/EntryActions';
 import {defaultRowStyle, mobileRowStyle} from '../constants';
+import {getIsCanShowContextMenu, getIsCanUpdateSharedEntryBindings} from '../utils';
 
 import './Row.scss';
 
 const i18n = I18n.keyset('new-workbooks');
 
-type RowProps<T extends WorkbookEntry> = {
+type RowProps<T extends WorkbookUnionEntry> = {
     item: T;
     workbook: WorkbookWithPermissions;
     isOpen?: boolean;
@@ -42,7 +44,7 @@ const onClickStopPropogation: React.MouseEventHandler = (e) => {
 
 const b = block('dl-content-row');
 
-const Row = <T extends WorkbookEntry>({
+const Row = <T extends WorkbookUnionEntry>({
     item,
     workbook,
     onRenameEntry,
@@ -58,14 +60,19 @@ const Row = <T extends WorkbookEntry>({
     const {getLoginById} = registry.common.functions.getAll();
     const dispatch: AppDispatch = useDispatch();
     const isSharedEntry = Boolean(item.collectionId);
-
-    const url = getWorkbookEntryUrl(item, workbook, isSharedEntry);
+    const isRestricted = getIsRestrictedSharedEntry(item);
+    const isCanUpdateSharedEntryBindings = getIsCanUpdateSharedEntryBindings(item);
+    const url = getWorkbookEntryUrl({workbookEntry: item, workbook, isSharedEntry});
+    const updatedAt = isRestricted ? null : dateTime({input: item.updatedAt});
 
     const LoginById = getLoginById();
 
-    const isShowLogin = LoginById && item.createdBy;
+    const isShowLogin = !isRestricted && LoginById && item.createdBy;
 
     const onChangeFavorite = () => {
+        if (isRestricted) {
+            return;
+        }
         const {entryId, isFavorite} = item;
 
         dispatch(
@@ -100,9 +107,7 @@ const Row = <T extends WorkbookEntry>({
                     </div>
                 </div>
                 <div className={b('content-cell', {date: true})}>
-                    {dateTime({
-                        input: item.updatedAt,
-                    }).format(DEFAULT_DATE_FORMAT)}
+                    {updatedAt?.format(DEFAULT_DATE_FORMAT)}
                 </div>
             </Link>
         );
@@ -124,13 +129,15 @@ const Row = <T extends WorkbookEntry>({
                         item={item}
                         workbook={workbook}
                         onUpdateSharedEntryBindings={
-                            onUpdateSharedEntryBindings && (() => onUpdateSharedEntryBindings(item))
+                            isCanUpdateSharedEntryBindings &&
+                            onUpdateSharedEntryBindings &&
+                            (() => onUpdateSharedEntryBindings(item))
                         }
                     />
                 </div>
             </div>
             <div className={b('content-cell', {author: true})}>
-                {isShowLogin && (
+                {isShowLogin && !isRestricted && (
                     <LoginById
                         className={b('author-text')}
                         loginOrId={item.createdBy}
@@ -138,20 +145,18 @@ const Row = <T extends WorkbookEntry>({
                     />
                 )}
             </div>
-            <div className={b('content-cell', {date: true})}>
-                {dateTime({
-                    input: item.updatedAt,
-                }).fromNow()}
-            </div>
+            <div className={b('content-cell', {date: true})}>{updatedAt?.fromNow()}</div>
 
             <div className={b('content-cell', {controls: true})} onClick={onClickStopPropogation}>
                 <div className={b('control-col')}>
-                    <ButtonFavorite
-                        className={b('btn-favorite', {'is-favorite': item.isFavorite})}
-                        onClick={onChangeFavorite}
-                        isFavorite={item.isFavorite}
-                    />
-                    {workbook.permissions.update && (
+                    {!isRestricted && (
+                        <ButtonFavorite
+                            className={b('btn-favorite', {'is-favorite': item.isFavorite})}
+                            onClick={onChangeFavorite}
+                            isFavorite={item.isFavorite}
+                        />
+                    )}
+                    {getIsCanShowContextMenu(item, workbook.permissions) && (
                         <div className={b('btn-actions')}>
                             <EntryActions
                                 workbook={workbook}
@@ -167,6 +172,7 @@ const Row = <T extends WorkbookEntry>({
                                 }
                                 onCopyId={onCopyId && (() => onCopyId(item))}
                                 onUpdateSharedEntryBindings={
+                                    isCanUpdateSharedEntryBindings &&
                                     onUpdateSharedEntryBindings &&
                                     (() => onUpdateSharedEntryBindings(item))
                                 }

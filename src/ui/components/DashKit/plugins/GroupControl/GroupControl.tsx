@@ -15,7 +15,7 @@ import type {
     DashTabItemGroupControlData,
     StringParams,
 } from 'shared';
-import {ControlQA, DashTabItemType, Feature} from 'shared';
+import {ControlQA, DashTabItemType} from 'shared';
 import {DL} from 'ui/constants/common';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
@@ -29,10 +29,9 @@ import {
     isItemGlobal,
 } from 'ui/units/dash/utils/selectors';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
-import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
+import type {CommonGlobalWidgetSettings} from '../../DashKit';
 import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout} from '../../utils';
@@ -56,7 +55,6 @@ const GROUP_CONTROL_LOADING_EMULATION_TIMEOUT = 100;
 
 type OwnProps = ControlSettings &
     ContextProps &
-    Omit<CommonPluginProps, 'background' | 'backgroundSettings'> &
     PluginWidgetProps<Record<string, StringParams>> & {
         settings: SettingsProps & {
             dependentSelectors?: boolean;
@@ -66,7 +64,7 @@ type OwnProps = ControlSettings &
 type PluginGroupControlProps = OwnProps;
 
 type PluginGroupControl = Plugin<PluginGroupControlProps, Record<string, StringParams>> & {
-    globalWidgetSettings?: CommonPluginSettings['globalWidgetSettings'];
+    globalWidgetSettings?: CommonGlobalWidgetSettings;
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: ControlSettings['getDistincts'];
 };
@@ -270,10 +268,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.state.quickActionLoader ||
             this.state.localUpdateLoader;
 
-        const {borderRadius, globalWidgetSettings} = this.props;
-        const resultedBorderRadius = borderRadius ?? globalWidgetSettings?.borderRadius;
+        const borderRadius = this.props?.globalWidgetSettings?.borderRadius;
 
-        const style = resultedBorderRadius ? {borderRadius: resultedBorderRadius} : undefined;
+        const style: React.CSSProperties | undefined = borderRadius ? {borderRadius} : undefined;
 
         return (
             <GroupControlWrapper
@@ -333,7 +330,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const currentTabId = this.props.context.currentTabId;
 
         if (
-            !isEnabledFeature(Feature.EnableGlobalSelectors) ||
             !currentTabId ||
             !isItemGlobal({
                 data: controlData,
@@ -522,16 +518,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             const appliedControlsIds = this.getControlsIds({data: controlData, controlId});
             this.props.onStateAndParamsChange({params}, {groupItemIds: appliedControlsIds});
             this.localMeta.queue = [];
-
-            this.context?.updateTabsWithGlobalState?.({
-                params,
-                selectorItem: {
-                    type: DashTabItemType.GroupControl,
-                    data: controlData,
-                    id: this.props.id,
-                },
-                appliedSelectorsIds: appliedControlsIds,
-            });
             return;
         }
 
@@ -592,6 +578,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             config: {
                 ...this.getCurrentTabConfig(),
                 items: [currentConfigItem],
+                globalItems: [],
             } as Config,
             itemsStateAndParams: {
                 [this.props.id]: {params},
@@ -806,6 +793,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 dependentSelectors={this.dependentSelectors}
                 widgetId={this.props.id}
                 requestHeaders={this.requestHeadersGetter}
+                groupData={this.propsControlData}
             />
         );
     }

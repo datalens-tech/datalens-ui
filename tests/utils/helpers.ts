@@ -2,6 +2,7 @@ import {Page} from '@playwright/test';
 
 import {slct, waitForCondition} from './index';
 import {COMMON_CHARTKIT_SELECTORS} from '../page-objects/constants/chartkit';
+import {CollectionActionsQa, EntryScope} from '../../src/shared';
 
 export const getStylesFromString = (string = '') => {
     return string
@@ -112,3 +113,30 @@ export function expectArraysEqualUnordered(actual: unknown[], expected: unknown[
         expect(expected).toContainEqual(actualItem);
     });
 }
+
+export const createSharedEntry = async ({
+    page,
+    scope,
+}: {
+    page: Page;
+    scope: EntryScope.Dataset | EntryScope.Connection;
+}) => {
+    const sharedObjectsMenuItem = page.locator(slct(CollectionActionsQa.SharedObjectsMenuItem));
+    await sharedObjectsMenuItem.hover();
+    switch (scope) {
+        case EntryScope.Connection: {
+            const sharedConnectionCreateBtn = page.locator(
+                slct(CollectionActionsQa.SharedConnectionCreateBtn),
+            );
+            await sharedConnectionCreateBtn.click();
+            break;
+        }
+        case EntryScope.Dataset: {
+            const sharedDatasetCreateBtn = page.locator(
+                slct(CollectionActionsQa.SharedDatasetCreateBtn),
+            );
+            await sharedDatasetCreateBtn.click();
+            break;
+        }
+    }
+};

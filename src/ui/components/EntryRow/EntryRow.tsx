@@ -112,8 +112,8 @@ export const EntryRow = ({
                         {renderIcon()}
                         <div className={b('name')} title={entryName}>
                             {entryName}
-                            {renderLock()}
                         </div>
+                        {renderLock()}
                     </React.Fragment>
                 ) : (
                     <Link

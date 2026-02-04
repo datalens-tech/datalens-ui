@@ -11,7 +11,7 @@ import notes from '@diplodoc/transform/lib/plugins/notes';
 import sup from '@diplodoc/transform/lib/plugins/sup';
 import table from '@diplodoc/transform/lib/plugins/table';
 import term from '@diplodoc/transform/lib/plugins/term';
-import type {Lang, MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
+import type {Lang, MarkdownItPluginCb, OptionsType} from '@diplodoc/transform/lib/plugins/typings';
 import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type MarkdownIt from 'markdown-it';
@@ -38,9 +38,22 @@ export type RenderHtmlOutput = {
     meta?: object;
 };
 
-export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
-    const {text = '', lang, plugins: additionalPlugins = []} = args;
+export function getPreparedTextWithTermLinks(text: string) {
+    // temp terms bug fix until the editor supports transform plugin
+    const preparedTextWithTermDefs = text.replace(
+        /^\s*?\\\[\\\*([\wа-я]+)\\\]:(.*?\S+?.*?)$/gim,
+        '[*$1]:$2',
+    );
 
+    const preparedTextWithTermLinks = preparedTextWithTermDefs.replace(
+        /(\[.+?\])\(\*(%.+?)\)/g,
+        (_, p1, p2) => `${p1}(*${decodeURIComponent(p2)})`,
+    );
+
+    return preparedTextWithTermLinks;
+}
+
+function getPlugins(additionalPlugins?: MarkdownItPluginCb[]) {
     const plugins = [
         deflist,
         notes,
@@ -97,20 +110,16 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
         plugins.push(...additionalPlugins);
     }
 
-    // temp terms bug fix until the editor supports transform plugin
-    const preparedTextWithTermDefs = text.replace(
-        /^\s*?\\\[\\\*([\wа-я]+)\\\]:(.*?\S+?.*?)$/gim,
-        '[*$1]:$2',
-    );
+    return plugins;
+}
 
-    const preparedTextWithTermLinks = preparedTextWithTermDefs.replace(
-        /(\[.+?\])\(\*(%.+?)\)/g,
-        (_, p1, p2) => `${p1}(*${decodeURIComponent(p2)})`,
-    );
+export function getYfmTransformOptions({
+    lang,
+    plugins: additionalPlugins,
+}: Pick<RenderHtmlArgs, 'lang' | 'plugins'>): OptionsType {
+    const plugins = getPlugins(additionalPlugins);
 
-    const {
-        result: {html, meta},
-    } = yfmTransform(preparedTextWithTermLinks, {
+    return {
         plugins,
         lang: lang as Lang,
         vars: {},
@@ -120,6 +129,17 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
             ...defaultOptions,
             disableStyleSanitizer: true,
         },
-    });
+    };
+}
+
+export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
+    const {text = '', lang, plugins = []} = args;
+
+    const transformOptions = getYfmTransformOptions({lang, plugins});
+    const preparedTextWithTermLinks = getPreparedTextWithTermLinks(text);
+
+    const {
+        result: {html, meta},
+    } = yfmTransform(preparedTextWithTermLinks, transformOptions);
     return {result: html, meta};
 }

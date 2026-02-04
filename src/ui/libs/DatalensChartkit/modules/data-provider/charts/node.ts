@@ -23,6 +23,7 @@ import {
     WRAPPED_MARKDOWN_KEY,
     WRAPPED_MARKUP_KEY,
     isMarkupItem,
+    isTrueArg,
 } from '../../../../../../shared';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
@@ -59,9 +60,14 @@ function isNodeResponse(loaded: CurrentResponse): loaded is ResponseSuccessNode 
 }
 
 function shouldShowSafeChartInfo(params: StringParams) {
-    if (!isEnabledFeature('ShowSafeChartInfo')) {
-        return false;
+    const ignoreSafeChartWarningParamValue = String(params?.['ignore_safe_chart_warning']?.[0]);
+    const hideSafeChartWarning =
+        isTrueArg(ignoreSafeChartWarningParamValue) &&
+        !isEnabledFeature('DisableIgnoreSafeChartWarningParam');
+    if (isEnabledFeature('ShowUnsafeChartIcon') && !hideSafeChartWarning) {
+        return true;
     }
+
     return (
         Utils.getOptionsFromSearch(window.location.search).showSafeChartInfo ||
         (params &&

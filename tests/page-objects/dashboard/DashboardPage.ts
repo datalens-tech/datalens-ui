@@ -13,6 +13,7 @@ import {
     EntryDialogQA,
     LOADED_DASH_CLASS,
     SelectQa,
+    WysiwygEditorQa,
     YfmQa,
 } from '../../../src/shared/constants';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -370,18 +371,43 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddText));
     }
 
-    async addText(text: string, delay?: number) {
+    async chooseMarkupText() {
+        await this.page.click(slct(WysiwygEditorQa.SettingsButton));
+        await this.page.click(slct(WysiwygEditorQa.ModeMarkupItemMenu));
+    }
+
+    async addText({
+        text,
+        timeout,
+        markup,
+        options,
+    }: {
+        text: string;
+        timeout?: number;
+        markup?: boolean;
+        options?: {autoHeight?: boolean};
+    }) {
         await this.clickAddText();
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
+
+        if (markup) {
+            await this.chooseMarkupText();
+        }
+
         if (isEnabledCollections) {
-            await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+            await this.page.fill(`${slct(WysiwygEditorQa.Editor)} [contenteditable=true]`, text);
         } else {
-            await this.page.type(
+            await this.page.fill(
                 `${slct(DialogDashWidgetItemQA.Text)} [contenteditable=true]`,
                 text,
-                {delay},
+                {timeout},
             );
+        }
+        if (options) {
+            if (options.autoHeight) {
+                await this.page.click(slct(DashCommonQa.WidgetEnableAutoHeightCheckbox));
+            }
         }
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
@@ -1084,6 +1110,20 @@ class DashboardPage extends BasePage {
         const jsonState = await responseState?.json();
 
         return jsonState?.hash;
+    }
+
+    async checkNoScroll({selector, locator}: {selector?: string; locator?: Locator}) {
+        const elementLocator = selector ? this.page.locator(selector) : locator;
+        if (!elementLocator) {
+            return;
+        }
+
+        await waitForCondition(async () => {
+            const hasNoScroll = await elementLocator.evaluate((element) => {
+                return element?.clientHeight === element?.scrollHeight;
+            });
+            return hasNoScroll;
+        });
     }
 
     /**

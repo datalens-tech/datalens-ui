@@ -11,7 +11,7 @@ import {
 } from 'shared/constants/widgets';
 import type {ColorPickerInputProps} from 'ui/components/ColorPickerInput/ColorPickerInput';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
-import {computeColorFromToken} from 'ui/utils/widgetColors';
+import {computeColorFromToken} from 'ui/utils/widgets/colors';
 
 import {ColorInputsGroup} from '../ColorInputsGroup/ColorInputsGroup';
 import {ColorPicker} from '../ColorPicker/ColorPicker';
@@ -20,7 +20,7 @@ type PaletteBackgroundProps = Pick<ColorPickerInputProps, 'placeholder'> & {
     color: ColorSettings | undefined;
     oldColor: string | undefined;
     onSelect: (color: ColorSettings | undefined) => void;
-    onSelectOldColor: (color: string) => void;
+    onSelectOldColor: ((color: string) => void) | undefined;
     onBlur?: () => void;
     enableCustomBgColorSelector?: boolean;
     theme?: RealTheme;
@@ -43,6 +43,8 @@ const PALETTE_OPTIONS = [
     'var(--g-color-private-red-50)',
     'var(--g-color-private-purple-50)',
 ];
+
+const noop = () => {};
 
 export const PaletteBackground = ({
     onSelect,
@@ -90,7 +92,7 @@ export const PaletteBackground = ({
 
     return (
         <ColorPicker
-            onSelect={onSelectOldColor}
+            onSelect={onSelectOldColor ?? noop}
             onBlur={onBlur}
             color={oldColor}
             enableCustomColorSelector={enableCustomBgColorSelector}
