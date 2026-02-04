@@ -4,6 +4,7 @@ export enum AccessServiceResourceType {
     Organization = 'organization-manager.organization',
     Collection = 'datalens.collection',
     Workbook = 'datalens.workbook',
+    SharedEntry = 'datalens.sharedEntry',
 }
 
 type ResourcePathItem = {

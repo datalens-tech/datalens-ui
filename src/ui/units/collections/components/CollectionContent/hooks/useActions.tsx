@@ -11,6 +11,7 @@ import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportW
 import {DIALOG_SHARED_ENTRY_BINDINGS} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
+import type {SharedScope} from '../../../../../../shared';
 import {CollectionItemEntities, Feature} from '../../../../../../shared';
 import type {
     CollectionWithPermissions,
@@ -59,6 +60,7 @@ const openAccessDialog = (
         resourceId: string;
         resourceType: ResourceType;
         resourceTitle?: string;
+        resourceScope?: SharedScope;
         canUpdateAccessBindings?: boolean;
     },
 ) => {
@@ -69,6 +71,7 @@ const openAccessDialog = (
                 parentId: params.parentId,
                 resourceId: params.resourceId,
                 resourceType: params.resourceType,
+                resourceScope: params.resourceScope,
                 resourceTitle: params.resourceTitle,
                 canUpdateAccessBindings: params.canUpdateAccessBindings ?? false,
                 onClose: () => {
@@ -464,11 +467,23 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                     },
                 });
             }
+            const isNewAccessDialogEnabled = isEnabledFeature(Feature.EnableNewAccessDialog);
 
             if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
                 actions.push({
                     text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
                     action: () => {
+                        if (isNewAccessDialogEnabled) {
+                            openAccessDialog(dispatch, {
+                                resourceId: item.entryId,
+                                resourceType: ResourceType.SharedEntry,
+                                parentId: item.collectionId,
+                                resourceTitle: item.title,
+                                resourceScope: item.scope,
+                                canUpdateAccessBindings: item.permissions.updateAccessBindings,
+                            });
+                            return;
+                        }
                         dispatch(
                             openDialog({
                                 id: DIALOG_IAM_ACCESS,

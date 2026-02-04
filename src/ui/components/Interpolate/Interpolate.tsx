@@ -5,9 +5,14 @@ export interface InterpolateProps {
     matches: {
         [key: string]: (match: string, index?: number) => React.ReactNode;
     };
+    ChunkWrapper?: React.ComponentType<{children: React.ReactNode}>;
 }
 
-export const Interpolate: React.FC<InterpolateProps> = ({text, matches}) => {
+export const Interpolate: React.FC<InterpolateProps> = ({
+    text,
+    matches,
+    ChunkWrapper = React.Fragment,
+}) => {
     const children = React.useMemo(() => {
         const keys = Object.keys(matches).join('|');
         const reg = new RegExp(`<(${keys})>(.*?)</\\1>`);
@@ -46,7 +51,7 @@ export const Interpolate: React.FC<InterpolateProps> = ({text, matches}) => {
     return (
         <React.Fragment>
             {children.map((child, key) => (
-                <React.Fragment key={key}>{child}</React.Fragment>
+                <ChunkWrapper key={key}>{child}</ChunkWrapper>
             ))}
         </React.Fragment>
     );
