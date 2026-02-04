@@ -1,15 +1,16 @@
 import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 import jwt from 'jsonwebtoken';
 
-import {AUTH_COOKIE_NAME} from '../../../../../shared/components/auth/constants/cookie';
+import {getAuthCookieName} from '../../../../../shared/components/auth/utils';
 import type {AccessTokenPayload} from '../../types/token';
 
 import {ALGORITHMS} from './constants';
 
 export const apiAuth = async (req: Request, res: Response, next: NextFunction) => {
     req.ctx.log('API_AUTH');
+    const authCookieName = getAuthCookieName(req.ctx.config.authCookieName);
 
-    const authCookie = req.cookies[AUTH_COOKIE_NAME];
+    const authCookie = req.cookies[authCookieName];
 
     if (!authCookie) {
         req.ctx.logError('API_AUTH_NO_COOKIE');
