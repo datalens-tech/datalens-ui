@@ -1,9 +1,11 @@
 import React from 'react';
 
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import {Dialog, Loader, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
 import _pick from 'lodash/pick';
 import {connect} from 'react-redux';
@@ -28,6 +30,7 @@ import {
     MapCenterMode,
     NavigatorLinesMode,
     PlaceholderId,
+    WidgetKind,
     WidgetSize,
     WizardVisualizationId,
     ZoomMode,
@@ -35,7 +38,9 @@ import {
     isDateField,
     isTreeField,
 } from 'shared';
+import {isTooltipSumEnabled} from 'shared/modules/wizard';
 import type {DatalensGlobalState} from 'ui';
+import type {Widget} from 'ui/libs/DatalensChartkit/types/widget';
 import {getFirstFieldInPlaceholder} from 'ui/units/wizard/utils/placeholder';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import type {WidgetData} from 'units/wizard/actions/widget';
@@ -89,7 +94,6 @@ const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteC
 
 const VISUALIZATION_WITH_TOOLTIP_AVAILABLE = new Set<string>([
     WizardVisualizationId.Line,
-    WizardVisualizationId.LineD3,
     WizardVisualizationId.Area,
     WizardVisualizationId.Area100p,
     WizardVisualizationId.Column,
@@ -103,22 +107,11 @@ const VISUALIZATION_WITH_TOOLTIP_AVAILABLE = new Set<string>([
     WizardVisualizationId.CombinedChart,
 ]);
 
-const TOOLTIP_SUM_SUPPORTED_VISUALIZATION = new Set([
-    'line',
-    'area',
-    'area100p',
-    'column',
-    'column100p',
-    'bar',
-    'bar100p',
-]);
-
 const DEFAULT_PERIOD: Period = 'day';
 
 const visualizationsWithLegendDict = (
     [
         VISUALIZATION_IDS.LINE,
-        WizardVisualizationId.LineD3,
 
         VISUALIZATION_IDS.AREA,
         VISUALIZATION_IDS.AREA_100P,
@@ -140,13 +133,6 @@ const visualizationsWithLegendDict = (
         VISUALIZATION_IDS.COMBINED_CHART,
 
         VISUALIZATION_IDS.POLYLINE,
-
-        VISUALIZATION_IDS.SCATTER_D3,
-        VISUALIZATION_IDS.PIE_D3,
-        VISUALIZATION_IDS.BAR_X_D3,
-        WizardVisualizationId.DonutD3,
-        WizardVisualizationId.BarYD3,
-        WizardVisualizationId.BarY100pD3,
     ] as string[]
 ).reduce((acc: Record<string, boolean>, item) => {
     acc[item] = true;
@@ -219,9 +205,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
 
         const isFlatTable = visualization.id === 'flatTable';
         const isPivotTable = visualization.id === 'pivotTable';
-        const isDonut = [WizardVisualizationId.Donut, WizardVisualizationId.DonutD3].includes(
-            visualization.id as WizardVisualizationId,
-        );
+        const isDonut = visualization.id === WizardVisualizationId.Donut;
 
         if (isFlatTable) {
             const placeholderWithGrouppingSettings = visualization.placeholders.find(
@@ -348,28 +332,39 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         if (!isNavigatorAvailable) {
             return [];
         }
-        const highchartsWidget = this.props?.highchartsWidget;
-        const userSeries = highchartsWidget?.userOptions?.series || [];
-        const graphs = highchartsWidget?.series || [];
 
-        const seriesNames = userSeries.map(
-            (userSeria) => userSeria.legendTitle || userSeria.title || userSeria.name,
-        );
-        return graphs
-            .filter((series: Highcharts.Series) => {
-                const axisExtremes = series.yAxis.getExtremes();
+        const widgetData = this.props?.highchartsWidget;
 
-                if (!series.data.length) {
-                    return false;
-                }
+        const widgetType = get(widgetData, 'type');
+        switch (widgetType) {
+            case WidgetKind.GravityCharts: {
+                const chartData = (widgetData as unknown as Widget).data as ChartData;
+                return chartData.series.data.map((s) => get(s, 'name'));
+            }
+            default: {
+                const userSeries = widgetData?.userOptions?.series || [];
+                const graphs = widgetData?.series || [];
 
-                if (axisExtremes.dataMin === null && axisExtremes.dataMax === null) {
-                    return false;
-                } else {
-                    return seriesNames.includes(series.name);
-                }
-            })
-            .map((series) => series.name);
+                const seriesNames = userSeries.map(
+                    (userSeria) => userSeria.legendTitle || userSeria.title || userSeria.name,
+                );
+                return graphs
+                    .filter((series: Highcharts.Series) => {
+                        const axisExtremes = series.yAxis.getExtremes();
+
+                        if (!series.data.length) {
+                            return false;
+                        }
+
+                        if (axisExtremes.dataMin === null && axisExtremes.dataMax === null) {
+                            return false;
+                        } else {
+                            return seriesNames.includes(series.name);
+                        }
+                    })
+                    .map((series) => series.name);
+            }
+        }
     }
 
     prepareNavigatorSettings(
@@ -684,9 +679,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const {visualization} = this.props;
         const {tooltip, tooltipSum = CHART_SETTINGS.TOOLTIP_SUM.ON} = this.state;
 
-        const tooltipSumEnabled = TOOLTIP_SUM_SUPPORTED_VISUALIZATION.has(visualization.id);
-
-        if (!tooltipSumEnabled) {
+        if (!isTooltipSumEnabled({visualizationId: visualization.id})) {
             return null;
         }
 
@@ -830,7 +823,6 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const shouldRenderTotal = [
             WizardVisualizationId.FlatTable,
             WizardVisualizationId.Donut,
-            WizardVisualizationId.DonutD3,
         ].includes(visualizationId);
 
         if (!shouldRenderTotal || qlMode) {

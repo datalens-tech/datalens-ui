@@ -20,6 +20,7 @@ import type {
     ServerSort,
 } from 'shared';
 import {
+    AxisAutoScaleModes,
     DialogPlaceholderQa,
     Feature,
     PlaceholderId,
@@ -28,7 +29,6 @@ import {
     getAxisNullsSettings,
     hasSortThanAffectAxisMode,
     isContinuousAxisModeDisabled,
-    isD3Visualization,
     isDateField,
     isFieldHierarchy,
     isNumberField,
@@ -60,14 +60,7 @@ import {
     SCALE_RADIO_BUTTON_OPTIONS,
     SCALE_VALUE_RADIO_BUTTON_OPTIONS,
 } from './constants/radio-buttons';
-import {
-    getAxisModeTooltipContent,
-    isAxisFormatEnabled,
-    isAxisLabelsRotationEnabled,
-    isAxisScaleEnabled,
-    isAxisTypeEnabled,
-    isHolidaysEnabled,
-} from './utils';
+import {getAxisModeTooltipContent} from './utils';
 
 import './DialogPlaceholder.scss';
 
@@ -248,15 +241,14 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     }
 
     renderHolidaysRadioButtons() {
-        const {item, visualizationId} = this.props;
+        const {item} = this.props;
         const {settings, firstField} = this.state;
         const holidays = item.settings?.holidays;
 
         if (
             !isEnabledFeature(Feature.HolidaysOnChart) ||
             typeof holidays === 'undefined' ||
-            typeof settings.holidays === 'undefined' ||
-            !isHolidaysEnabled(visualizationId)
+            typeof settings.holidays === 'undefined'
         ) {
             return null;
         }
@@ -347,8 +339,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
 
         const isYagr = qlChartType && isYAGRVisualization(qlChartType, visualizationId);
 
-        const isAixsTypeNotExist =
-            typeof type === 'undefined' || !isAxisTypeEnabled(visualizationId) || isYagr;
+        const isAixsTypeNotExist = typeof type === 'undefined' || isYagr;
 
         if (isAixsTypeNotExist) {
             return null;
@@ -376,7 +367,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const {axisFormatMode} = this.state.settings;
         const {visualizationId, item, qlChartType} = this.props;
 
-        if (typeof axisFormatMode === 'undefined' || !isAxisFormatEnabled(visualizationId)) {
+        if (typeof axisFormatMode === 'undefined') {
             return null;
         }
 
@@ -391,14 +382,13 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const section = `section_${item.id}`;
 
         const isYagr = qlChartType && isYAGRVisualization(qlChartType, visualizationId);
-        const isD3 = isD3Visualization(visualizationId);
 
         const radioOptions = AXIS_FORMAT_MODE_RADIO_BUTTON_OPTIONS.reduce<
             SegmentedRadioGroupOptionProps[]
         >((acc, option) => {
             switch (option.value) {
                 case SETTINGS.AXIS_FORMAT_MODE.MANUAL:
-                    if (!isYagr && !isD3) {
+                    if (!isYagr) {
                         acc.push({
                             ...option,
                             disabled: isAxisWithPercent || isFormatless,
@@ -683,10 +673,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     }
 
     renderLabelsViewSettings() {
-        const {visualizationId} = this.props;
         const {labelsView, hideLabels} = this.state.settings;
 
-        if (typeof labelsView === 'undefined' || !isAxisLabelsRotationEnabled(visualizationId)) {
+        if (typeof labelsView === 'undefined') {
             return null;
         }
 
@@ -703,6 +692,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                         value={labelsView}
                         onUpdate={this.handleLabelsViewRadioButtonUpdate}
                         disabled={disabled}
+                        qa={DialogPlaceholderQa.LabelsViewRadioButtons}
                     />
                 }
             />
@@ -710,10 +700,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     }
 
     renderScaleSettings() {
-        const {visualizationId} = this.props;
         const {scale, scaleValue} = this.state.settings;
 
-        if (typeof scale === 'undefined' || !isAxisScaleEnabled(visualizationId)) {
+        if (typeof scale === 'undefined') {
             return null;
         }
 
@@ -729,6 +718,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                             items={SCALE_RADIO_BUTTON_OPTIONS}
                             value={scale}
                             onUpdate={this.handleScaleRadioButtonsUpdate}
+                            qa={DialogPlaceholderQa.AxisScaleModeRadioButtons}
                         />
                     }
                 />
@@ -766,6 +756,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                                             onUpdate={(value) => {
                                                 this.handleManualScaleValueUpdate(value, 'min');
                                             }}
+                                            qa={DialogPlaceholderQa.AxisMinInput}
                                         />
                                     }
                                 />
@@ -784,6 +775,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                                             onUpdate={(value) => {
                                                 this.handleManualScaleValueUpdate(value, 'max');
                                             }}
+                                            qa={DialogPlaceholderQa.AxisMaxInput}
                                         />
                                     }
                                 />
@@ -945,7 +937,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                 : ['0', '100'];
 
         const scaleValue =
-            scaleMode === SETTINGS.SCALE.MANUAL ? defaultManualValue : SETTINGS.SCALE_VALUE.MIN_MAX;
+            scaleMode === SETTINGS.SCALE.MANUAL ? defaultManualValue : AxisAutoScaleModes.Auto;
 
         this.setState({
             settings: {
@@ -972,10 +964,10 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         updatedState.tooltipContent = '';
 
         if (axisType === SETTINGS.TYPE.LOGARITHMIC) {
-            if (settings.scaleValue === SETTINGS.SCALE_VALUE.ZERO_MAX) {
+            if (settings.scaleValue === AxisAutoScaleModes.ZeroMax) {
                 updatedState.settings = {
                     ...updatedState.settings,
-                    scaleValue: SETTINGS.SCALE_VALUE.MIN_MAX,
+                    scaleValue: AxisAutoScaleModes.Auto,
                 };
                 updatedState.tooltipType = 'scaleValue';
                 updatedState.tooltipContent = (
@@ -990,7 +982,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                 updatedState.settings = {
                     ...updatedState.settings,
                     scale: SETTINGS.SCALE.AUTO,
-                    scaleValue: SETTINGS.SCALE_VALUE.MIN_MAX,
+                    scaleValue: AxisAutoScaleModes.Auto,
                 };
 
                 updatedState.tooltipType = 'scale';
@@ -1019,7 +1011,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         };
 
         if (
-            scaleValue === SETTINGS.SCALE_VALUE.ZERO_MAX &&
+            scaleValue === AxisAutoScaleModes.ZeroMax &&
             settings.type === SETTINGS.TYPE.LOGARITHMIC
         ) {
             updatedState.settings = {

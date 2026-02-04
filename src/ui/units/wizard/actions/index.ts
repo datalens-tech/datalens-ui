@@ -86,6 +86,7 @@ import {
 import {
     setDataset,
     setDatasetApiErrors,
+    setDatasetDelegation,
     setDatasetLoading,
     setDatasetSchema,
     setDatasets,
@@ -169,7 +170,6 @@ function getDataset({id, workbookId}: GetDatasetArgs) {
         .sdk.bi.getDatasetByVersion({
             datasetId: id,
             workbookId,
-            version: 'draft',
         })
         .then((dataset) => {
             if (dataset && dataset.key) {
@@ -182,6 +182,36 @@ function getDataset({id, workbookId}: GetDatasetArgs) {
 
             return dataset;
         });
+}
+
+type GetDatasetDelegationArgs = {
+    datasetId: string;
+    workbookId: string;
+};
+
+function getDatasetDelegation({datasetId, workbookId}: GetDatasetDelegationArgs) {
+    return async function (dispatch: WizardDispatch) {
+        try {
+            const delegation = await getSdk().sdk.us.getSharedEntryDelegation({
+                sourceId: datasetId,
+                targetId: workbookId,
+            });
+            dispatch(
+                setDatasetDelegation({
+                    datasetId,
+                    delegation: delegation.isDelegated,
+                }),
+            );
+        } catch (error) {
+            dispatch(
+                showToast({
+                    title: error.message,
+                    type: 'danger',
+                    error,
+                }),
+            );
+        }
+    };
 }
 
 type GetDatasetsArgs = {
@@ -306,6 +336,14 @@ export function fetchDataset({id, replacing}: FetchDatasetArgs) {
                 }
 
                 dispatch(updatePreviewAndClientChartsConfig(preview));
+                if (dataset.collection_id && workbookId) {
+                    dispatch(
+                        getDatasetDelegation({
+                            datasetId: dataset.id,
+                            workbookId,
+                        }),
+                    );
+                }
             })
             .catch((error: DataLensApiError) => {
                 logger.logError('wizard: fetchDataset failed', error as Error);
@@ -1234,11 +1272,12 @@ const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[
         try {
             return await getSdk().sdk.bi.validateDataset(
                 {
-                    version: 'draft',
                     datasetId: dataset.id,
                     workbookId,
-                    dataset: dataset.dataset,
-                    updates: preparedUpdates,
+                    data: {
+                        dataset: dataset.dataset,
+                        updates: preparedUpdates,
+                    },
                 },
                 {timeout: TIMEOUT_95_SEC},
             );
@@ -1388,7 +1427,11 @@ export const createFieldFromVisualization = ({
             fieldNext.avatar_id = field.avatar_id;
         }
 
-        if (field.grouping && field.grouping !== 'none') {
+        if (field.grouping && field.grouping !== 'none' && !quickFormula) {
+            fieldNext.grouping = 'none';
+        }
+
+        if (field.grouping && field.grouping !== 'none' && quickFormula) {
             const [operation, mode] = field.grouping.split('-');
 
             let functionName;
@@ -2060,6 +2103,16 @@ function processWidget(args: ProcessWidgetArgs) {
                     isInitialPreview: true,
                 }),
             );
+            datasets.forEach((currentDataset) => {
+                if (currentDataset.collection_id && workbookId) {
+                    dispatch(
+                        getDatasetDelegation({
+                            datasetId: currentDataset.id,
+                            workbookId,
+                        }),
+                    );
+                }
+            });
         })
         .catch((error: DataLensApiError & {handeled: boolean}) => {
             if (error.handeled) {
@@ -2152,7 +2205,7 @@ export function setDefaults(args: SetDefaultsArgs) {
     const {entryId, revId, routeWorkbookId, unreleased} = args;
     return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const searchPairs = new URLSearchParams(window.location.search);
-        const entryConfigParam = searchPairs.get(URL_QUERY.ENTRY_CONFIG);
+        const localConfigParam = searchPairs.get(URL_QUERY.LOCAL_CONFIG);
 
         if (routeWorkbookId) {
             dispatch(setRouteWorkbookId(routeWorkbookId));
@@ -2167,9 +2220,15 @@ export function setDefaults(args: SetDefaultsArgs) {
                 }),
             );
         } else {
-            if (entryConfigParam) {
+            if (localConfigParam) {
                 try {
-                    const config = JSON.parse(entryConfigParam);
+                    const config = JSON.parse(String(localStorage.getItem(URL_QUERY.LOCAL_CONFIG)));
+                    localStorage.removeItem(URL_QUERY.LOCAL_CONFIG);
+                    searchPairs.delete(URL_QUERY.LOCAL_CONFIG);
+                    history.replace({
+                        ...location,
+                        search: `?${searchPairs.toString()}`,
+                    });
                     await processWidget({widget: {data: config}, dispatch, getState});
                 } catch (e) {
                     console.error(e);

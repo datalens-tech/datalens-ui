@@ -1,14 +1,19 @@
 import type React from 'react';
 
 import type {StringParams} from '@gravity-ui/dashkit';
-import type {AccentTypeValue, TitlePlacementOption} from 'shared';
+import type {AccentTypeValue, DatasetFieldType, TitlePlacementOption} from 'shared';
 import type {
     GetDistinctsApiV2Args,
     GetDistinctsApiV2InfoHeadersArg,
     GetDistinctsApiV2TransformedResponse,
 } from 'shared/schema/types';
 import type {ServerFilter} from 'shared/types/config/wizard';
-import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {
+    DatasetFieldsListItem,
+    ResponseSuccessControls,
+} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
+
+import type {CommonGlobalWidgetSettings} from '../../DashKit';
 
 export type ControlType = 'select' | 'input' | 'datepicker' | 'range-datepicker' | 'checkbox';
 export type LoadStatus = 'pending' | 'success' | 'fail' | 'initial' | 'destroyed';
@@ -53,10 +58,17 @@ export type SelectorError = {
     };
 };
 
+export type GetDistinctsOptions = {
+    datasetSourceInfo: DatasetSourceInfo;
+    searchPattern: string;
+};
+
 export interface ControlSettings {
+    globalWidgetSettings?: Omit<CommonGlobalWidgetSettings, 'background' | 'backgroundSettings'>;
     getDistincts?: (
         params: GetDistinctsApiV2Args,
         headers?: GetDistinctsApiV2InfoHeadersArg,
+        options?: GetDistinctsOptions,
     ) => Promise<GetDistinctsApiV2TransformedResponse>;
 }
 
@@ -127,4 +139,18 @@ export type ValidationErrorData = {
               to: string | string[];
           };
     index?: string;
+};
+
+export type DatasetSourceInfo = {
+    datasetId: string;
+    datasetFieldId: string;
+    datasetFieldType: string | null;
+    datasetFields: DatasetFieldsListItem[];
+    datasetFieldsMap: Record<
+        string,
+        {
+            guid: string;
+            fieldType: DatasetFieldType;
+        }
+    >;
 };

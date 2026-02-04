@@ -5,7 +5,12 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DashCommonQa} from 'shared';
 
-import type {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
+import type {
+    AliasClickHandlerData,
+    DashkitMetaDataItem,
+    OnLoadMetaType,
+    RelationType,
+} from '../../types';
 
 import {Row} from './Row';
 
@@ -28,6 +33,8 @@ type ContentProps = {
     onAliasClick: (props: AliasClickHandlerData) => void;
     showDebugInfo: boolean;
     widgetIcon: React.ReactNode;
+    onLoadMeta?: OnLoadMetaType;
+    silentFetchingWidgets: Set<string>;
 };
 
 export const Content = ({
@@ -38,6 +45,8 @@ export const Content = ({
     onAliasClick,
     showDebugInfo,
     widgetIcon,
+    onLoadMeta,
+    silentFetchingWidgets,
 }: ContentProps) => {
     if (isLoading) {
         return (
@@ -70,6 +79,8 @@ export const Content = ({
             onAliasClick={onAliasClick}
             showDebugInfo={showDebugInfo}
             widgetIcon={widgetIcon}
+            onLoadMeta={onLoadMeta}
+            silentFetchingWidgets={silentFetchingWidgets}
         />
     ));
 

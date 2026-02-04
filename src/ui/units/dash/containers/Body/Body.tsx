@@ -3,147 +3,86 @@ import React from 'react';
 import type {
     ConfigItem,
     ConfigLayout,
-    DashKit as DashKitComponent,
     DashKitGroup,
     DashKitProps,
     DashkitGroupRenderProps,
-    ItemDropProps,
-    PreparedCopyItemOptions,
     ReactGridLayoutProps,
 } from '@gravity-ui/dashkit';
-import {
-    DashKitDnDWrapper,
-    ActionPanel as DashkitActionPanel,
-    DashKit as GravityDashkit,
-} from '@gravity-ui/dashkit';
-import {DEFAULT_GROUP, MenuItems} from '@gravity-ui/dashkit/helpers';
+import {DEFAULT_GROUP} from '@gravity-ui/dashkit/helpers';
 import {
     ChevronsDown,
     ChevronsLeft,
     ChevronsRight,
     ChevronsUp,
     Gear,
-    Pin,
     PinSlash,
     Square,
     SquareCheck,
 } from '@gravity-ui/icons';
-import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
+import type {ThemeType} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon, useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
 import {i18n} from 'i18n';
 import PaletteEditor from 'libs/DatalensChartkit/components/Palette/PaletteEditor/PaletteEditor';
 import logger from 'libs/logger';
-import {getSdk} from 'libs/schematic-sdk';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
-import {createPortal} from 'react-dom';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import type {DashTab, DashTabItem, DashTabLayout} from 'shared';
+import type {DashTab, DashTabLayout} from 'shared';
 import {
-    ControlQA,
-    DASH_INFO_HEADER,
-    DashBodyQa,
-    DashEntryQa,
-    DashKitOverlayMenuQa,
-    DashTabItemType,
-    EntryScope,
-    FOCUSED_WIDGET_PARAM_NAME,
     Feature,
     FixedHeaderQa,
-    LOADED_DASH_CLASS,
     SCROLL_TITLE_DEBOUNCE_TIME,
-    UPDATE_STATE_DEBOUNCE_TIME,
+    SCR_USER_AGENT_HEADER_VALUE,
 } from 'shared';
+import {getAllTabItems} from 'shared/utils/dash';
 import type {DatalensGlobalState} from 'ui';
 import {
     DEFAULT_DASH_MARGINS,
     FIXED_GROUP_CONTAINER_ID,
     FIXED_GROUP_HEADER_ID,
 } from 'ui/components/DashKit/constants';
-import {WidgetContextProvider} from 'ui/components/DashKit/context/WidgetContext';
-import {getDashKitMenu} from 'ui/components/DashKit/helpers';
 import {registry} from 'ui/registry';
-import {showToast} from 'ui/store/actions/toaster';
-import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
-import {selectUserSettings} from 'ui/store/selectors/user';
-import {isEmbeddedMode} from 'ui/utils/embedded';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
-import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
-import {DL} from '../../../../constants';
-import Utils from '../../../../utils';
-import {TYPES_TO_DIALOGS_MAP, getActionPanelItems} from '../../../../utils/getActionPanelItems';
-import {EmptyState} from '../../components/EmptyState/EmptyState';
-import Loader from '../../components/Loader/Loader';
 import {Mode} from '../../modules/constants';
-import type {CopiedConfigContext, CopiedConfigData} from '../../modules/helpers';
+import type {CopiedConfigData} from '../../modules/helpers';
+import {getLayoutMap, getLayoutParentId} from '../../modules/helpers';
+import {setCurrentTabData, setErrorMode} from '../../store/actions/dashTyped';
 import {
-    getGroupedItems,
-    getLayoutMap,
-    getLayoutParentId,
-    getPastedWidgetData,
-    getPreparedCopyItemOptions,
-    memoizedGetLocalTabs,
-} from '../../modules/helpers';
-import type {TabsHashStates} from '../../store/actions/dashTyped';
-import {
-    setCurrentTabData,
-    setDashKitRef,
-    setErrorMode,
-    setHashState,
-    setStateHashId,
-    setWidgetCurrentTab,
-    toggleTableOfContent,
-} from '../../store/actions/dashTyped';
-import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
-import {closeDialogRelations, openDialogRelations} from '../../store/actions/relations/actions';
-import {
-    canEdit,
     selectCurrentTab,
     selectCurrentTabId,
-    selectDashError,
-    selectDashWorkbookId,
     selectEntryId,
     selectLastModifiedItemId,
     selectSettings,
-    selectShowTableOfContent,
-    selectSkipReload,
-    selectTabHashState,
-    selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {dispatchDashLoadedEvent} from '../../utils/customEvents';
 import {getCustomizedProperties} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
-import {DashError} from '../DashError/DashError';
-import {
-    FixedHeaderContainer,
-    FixedHeaderControls,
-    FixedHeaderWrapper,
-} from '../FixedHeader/FixedHeader';
-import type {MobileFloatMenuProps} from '../MobileFloatMenu/MobileFloatMenu';
-import {MobileFloatMenu} from '../MobileFloatMenu/MobileFloatMenu';
-import TableOfContent from '../TableOfContent/TableOfContent';
-import {Tabs} from '../Tabs/Tabs';
+import {FixedHeaderContainer, FixedHeaderControls} from '../FixedHeader/FixedHeader';
 
-import {RefsContext, RefsContextProvider} from './context';
-
-import iconRelations from 'ui/assets/icons/relations.svg';
+import Content from './components/Content/Content';
+import {FixedContainerWrapperWithContext, FixedControlsWrapperWithContext} from './context';
 
 import './Body.scss';
 
+const VIEWPORT_DASH_LOADED_EVENT_DEBOUNCE_TIME = 1000;
+
+// Do not change class name, the snapter service uses
 const b = block('dash-body');
 
 const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHeader);
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
-type OwnProps = {
+export type OwnProps = {
     isPublicMode?: boolean;
+    isSplitPaneLayout?: boolean;
     hideErrorDetails?: boolean;
     onRetry: () => void;
     globalParams: DashKitProps['globalParams'];
@@ -157,6 +96,10 @@ type OwnProps = {
     | NoEditProps
 );
 
+type BodyInternalOwnProps = {
+    themeType: ThemeType;
+} & OwnProps;
+
 type EditProps = {
     handlerEditClick: () => void;
     onPasteItem: (data: CopiedConfigData, newLayout?: ConfigLayout[]) => void;
@@ -169,11 +112,8 @@ type NoEditProps = {
 
 type DashBodyState = {
     fixedHeaderCollapsed: Record<string, boolean>;
-    fixedHeaderControlsEl: HTMLDivElement | null;
-    fixedHeaderContainerEl: HTMLDivElement | null;
     dashEl: HTMLDivElement | null;
     isGlobalDragging: boolean;
-    hasCopyInBuffer: CopiedConfigData | null;
     loaded: boolean;
     prevMeta: {tabId: string | null; entryId: string | null};
     loadedItemsMap: Map<string, boolean>;
@@ -184,13 +124,11 @@ type DashBodyState = {
         margins: [number, number];
         renderers: DashKitGroup[];
     };
+    totalItemsCount: number;
 };
 
+type BodyInternalProps = StateProps & DispatchProps & RouteComponentProps & BodyInternalOwnProps;
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
-
-// TODO: add issue
-type OverlayControls = NonNullable<DashKitProps['overlayControls']>;
-type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
 
 type MemoContext = {
     fixedHeaderCollapsed?: boolean;
@@ -198,15 +136,13 @@ type MemoContext = {
     isPublicMode?: boolean;
     workbookId?: string | null;
     enableAssistant?: boolean;
+    // used in group selectors plugin
+    currentTabId?: string | null;
 };
 type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
 
-type GetPreparedCopyItemOptions<T extends object = {}> = (
-    itemToCopy: PreparedCopyItemOptions<T>,
-) => PreparedCopyItemOptions<T>;
-
 // Body is used as a core in different environments
-class Body extends React.PureComponent<BodyProps, DashBodyState> {
+class BodyInternal extends React.PureComponent<BodyInternalProps, DashBodyState> {
     static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
         let updatedState: Partial<DashBodyState> = {};
 
@@ -223,6 +159,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             };
 
             isTabUnmount = true;
+        }
+
+        const newTotalItemsCount = getAllTabItems(props.tabData).length;
+        if (newTotalItemsCount !== state.totalItemsCount) {
+            updatedState.totalItemsCount = newTotalItemsCount;
         }
 
         const currentHash = props.location.hash;
@@ -251,66 +192,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         return Object.keys(updatedState).length ? updatedState : null;
     }
 
-    dashKitRef = React.createRef<DashKitComponent>();
     entryDialoguesRef = React.createRef<EntryDialogues>();
-
-    updateUrlHashState = debounce(async (data, tabId) => {
-        if (!this.props.entryId) {
-            return;
-        }
-
-        try {
-            const {hash} = await getSdk().sdk.us.createDashState({
-                entryId: this.props.entryId,
-                data,
-            });
-            // check if we are still on the same tab (user could switch to another when request is still in progress)
-            if (tabId !== this.props.tabId) {
-                this.props.setStateHashId({hash, tabId});
-                return;
-            }
-            const {history, location} = this.props;
-
-            const searchParams = new URLSearchParams(location.search);
-
-            if (hash) {
-                searchParams.set('state', hash);
-            } else {
-                searchParams.delete('state');
-            }
-
-            this.props.setStateHashId({hash, tabId});
-
-            history.push({
-                ...location,
-                search: `?${searchParams.toString()}`,
-            });
-        } catch (error) {
-            const details = error?.details?.details;
-            const isStateLimitError = details?.some(
-                ({params, path}: {path?: string[]; params?: {code?: string}}) =>
-                    path?.length === 1 &&
-                    path[0] === 'data' &&
-                    params?.code === 'OBJECT_SIZE_LIMIT_EXCEEDED',
-            );
-
-            const title = isStateLimitError
-                ? i18n('dash.main.view', 'value_state-limit-error')
-                : error.message;
-
-            const message = isStateLimitError
-                ? i18n('dash.main.view', 'value_state-limit-error-message')
-                : error.message;
-
-            this.props.showToast({
-                title,
-                content: message,
-                error: {...error, message},
-                withReport: true,
-            });
-            throw error;
-        }
-    }, UPDATE_STATE_DEBOUNCE_TIME);
 
     scrollIntoViewWithDebounce = debounce(() => {
         if (this.state.delayedScrollElement) {
@@ -322,9 +204,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         }
     }, SCROLL_TITLE_DEBOUNCE_TIME);
 
-    _memoizedContext: MemoContext = {};
-    _memoizedControls: DashKitProps['overlayControls'];
-    _memoizedMenu: DashKitProps['overlayMenuItems'];
+    dispatchViewportDashLoadedEventDebounced = debounce(() => {
+        return this.dispatchViewportDashLoadedEvent();
+    }, VIEWPORT_DASH_LOADED_EVENT_DEBOUNCE_TIME);
+
     _memoizedWidgetsMap: {
         layout: DashTabLayout[] | null;
         byGroup: Record<string, DashTabLayout[]>;
@@ -336,24 +219,19 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         byId: {},
         columns: 0,
     };
-    _memoizedOrderedConfig?: {
-        key: DashKitProps['config'];
-        config: DashKitProps['config'];
-    };
     _memoizedPropertiesCache: Map<string, ReactGridLayoutProps> = new Map();
+
+    _memoizedDashStyles: React.CSSProperties | undefined = undefined;
 
     state: DashBodyState;
 
-    constructor(props: BodyProps) {
+    constructor(props: BodyInternalProps) {
         super(props);
 
         this.state = {
             fixedHeaderCollapsed: {},
-            fixedHeaderControlsEl: null,
-            fixedHeaderContainerEl: null,
             dashEl: null,
             isGlobalDragging: false,
-            hasCopyInBuffer: null,
             prevMeta: {tabId: null, entryId: null},
             loaded: false,
             loadedItemsMap: new Map<string, boolean>(),
@@ -379,18 +257,17 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     },
                 ],
             },
+            totalItemsCount: 0,
         };
+
+        this.updateDashBgColors();
     }
 
     componentDidMount() {
-        // if localStorage already have a dash item, we need to set it to state
-        this.storageHandler();
-
         if (this.props.location.hash && !this.props.disableHashNavigation) {
             this.setState({delayedScrollElement: this.props.location.hash.replace('#', '')});
         }
 
-        window.addEventListener('storage', this.storageHandler);
         window.addEventListener('wheel', this.interruptAutoScroll);
         window.addEventListener('touchmove', this.interruptAutoScroll);
 
@@ -398,11 +275,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     }
 
     componentDidUpdate() {
-        if (this.dashKitRef !== this.props.dashKitRef) {
-            this.props.setDashKitRef(this.dashKitRef);
-        }
-
         this.updateMargins();
+        this.updateDashBgColors();
     }
 
     componentDidCatch(error: Error) {
@@ -411,32 +285,89 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('storage', this.storageHandler);
         window.removeEventListener('wheel', this.interruptAutoScroll);
         window.removeEventListener('touchmove', this.interruptAutoScroll);
+        this.scrollIntoViewWithDebounce.cancel();
+        this.dispatchViewportDashLoadedEventDebounced.cancel();
     }
 
     render() {
-        const {DashBodyAdditionalControls} = registry.dash.components.getAll();
-
         return (
-            <div className={b()} ref={this._dashBodyRef}>
-                {this.renderBody()}
+            <div
+                style={this._memoizedDashStyles}
+                className={b({'split-pane': this.props.isSplitPaneLayout})}
+                ref={this._dashBodyRef}
+            >
+                <Content
+                    dashEntryKey={this.props.entry?.key}
+                    disableHashNavigation={this.props.disableHashNavigation}
+                    hideErrorDetails={this.props.hideErrorDetails}
+                    isCondensed={this.isCondensed()}
+                    loaded={this.state.loaded}
+                    mode={this.props.mode}
+                    onDragEnd={this.handleDragEnd}
+                    onDragStart={this.handleDragStart}
+                    onItemClick={this.handleTocItemClick}
+                    onRetry={this.props.onRetry}
+                    dashEl={this.state.dashEl}
+                    dashkitSettings={this.props.dashkitSettings}
+                    disableUrlState={this.props.disableUrlState}
+                    globalParams={this.props.globalParams}
+                    groupsRenderers={this.state.groups.renderers}
+                    hasFixedHeaderContainerElements={Boolean(
+                        this.getWidgetLayoutByGroup(FIXED_GROUP_CONTAINER_ID)?.length,
+                    )}
+                    hasFixedHeaderControlsElements={Boolean(
+                        this.getWidgetLayoutByGroup(FIXED_GROUP_HEADER_ID)?.length,
+                    )}
+                    isEditModeLoading={this.props.isEditModeLoading}
+                    isFixedHeaderCollapsed={this.getFixedHeaderCollapsedState()}
+                    isPublicMode={this.props.isPublicMode}
+                    isSplitPaneLayout={this.props.isSplitPaneLayout}
+                    isGlobalDragging={this.state.isGlobalDragging}
+                    getGroupsInsertCoords={this.getGroupsInsertCoords}
+                    getWidgetLayoutById={this.getWidgetLayoutById}
+                    handleEditClick={this.props.handlerEditClick}
+                    onItemMountChange={this.handleItemMountChange}
+                    onItemRender={this.handleItemRender}
+                    onWidgetMountChange={this.itemAddHandler}
+                    {...(this.props.onlyView
+                        ? {onlyView: this.props.onlyView, onPasteItem: undefined}
+                        : {onlyView: this.props.onlyView, onPasteItem: this.props.onPasteItem})}
+                />
                 <PaletteEditor />
                 <EntryDialogues ref={this.entryDialoguesRef} />
-                <DashBodyAdditionalControls />
             </div>
         );
     }
 
-    _fixedHeaderControlsRef: React.RefCallback<HTMLDivElement> = (el) => {
-        this.setState({fixedHeaderControlsEl: el});
-    };
-    _fixedHeaderContainerRef: React.RefCallback<HTMLDivElement> = (el) => {
-        this.setState({fixedHeaderContainerEl: el});
-    };
     _dashBodyRef: React.RefCallback<HTMLDivElement> = (el) => {
         this.setState({dashEl: el});
+    };
+
+    updateDashBgColors = () => {
+        const dashEl = this.state.dashEl;
+        const {
+            settings: {backgroundSettings},
+            themeType,
+        } = this.props;
+        const dashBgColor =
+            typeof backgroundSettings?.color === 'string'
+                ? backgroundSettings?.color
+                : backgroundSettings?.color?.[themeType];
+        if (dashBgColor && dashEl) {
+            const {getFixedHeaderBackgroundColor} = registry.dash.functions.getAll();
+            const fixedHeaderBgColor = getFixedHeaderBackgroundColor(dashBgColor, themeType);
+
+            const newStyles = {
+                ['--dl-dash-background-color' as any]: dashBgColor,
+                ['--dl-fixed-header-background-color' as any]: fixedHeaderBgColor,
+            };
+
+            if (!isEqual(this._memoizedDashStyles, newStyles)) {
+                this._memoizedDashStyles = newStyles;
+            }
+        }
     };
 
     updateMargins() {
@@ -482,66 +413,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
     isCondensed = () => {
         return this.state.groups.margins[0] === 0 || this.state.groups.margins[1] === 0;
-    };
-
-    onChange = ({
-        config,
-        itemsStateAndParams,
-    }: {
-        config: DashKitProps['config'];
-        itemsStateAndParams: DashKitProps['itemsStateAndParams'];
-    }) => {
-        if (
-            this.props.hashStates !== itemsStateAndParams &&
-            itemsStateAndParams &&
-            Object.keys(itemsStateAndParams).length
-        ) {
-            this.onStateChange(itemsStateAndParams as TabsHashStates, config as unknown as DashTab);
-        } else if (config) {
-            this.props.setCurrentTabData(config as unknown as DashTab);
-        }
-    };
-
-    onItemCopy = (error: null | Error) => {
-        if (error === null) {
-            this.props.showToast({
-                name: 'successCopyElement',
-                type: 'success',
-                title: i18n('component.entry-context-menu.view', 'value_copy-success'),
-            });
-        }
-    };
-
-    onDropElement = (dropProps: ItemDropProps) => {
-        if (this.props.onlyView) {
-            return;
-        }
-
-        if (dropProps.dragProps.extra) {
-            this.props.onPasteItem(
-                {
-                    ...dropProps.dragProps.extra,
-                    layout: dropProps.itemLayout,
-                },
-                dropProps.newLayout,
-            );
-            dropProps.commit();
-        } else {
-            this.props.openDialog(
-                TYPES_TO_DIALOGS_MAP[
-                    dropProps?.dragProps?.type as keyof typeof TYPES_TO_DIALOGS_MAP
-                ],
-                dropProps,
-            );
-        }
-    };
-
-    onStateChange = (hashStates: TabsHashStates, config: DashTab) => {
-        this.props.setHashState(hashStates, config);
-        if (this.props.disableUrlState) {
-            return;
-        }
-        this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
     getGroupsInsertCoords = (forSingleInsert = false) => {
@@ -609,56 +480,12 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         return widgetsMap;
     }
 
-    getWidgetLayoutById(widgetId: string) {
+    getWidgetLayoutById = (widgetId: string) => {
         return this.getMemoLayoutMap().byId[widgetId];
-    }
+    };
 
-    getWidgetLayoutByGroup(groupId: string) {
+    getWidgetLayoutByGroup = (groupId: string) => {
         return this.getMemoLayoutMap().byGroup[groupId];
-    }
-
-    togglePinElement = (widget: ConfigItem) => {
-        const tabDataConfig = this.getTabConfig();
-        const groupCoords = this.getGroupsInsertCoords(true);
-
-        let movedItem: ConfigLayout | null = null;
-        const newLayout = tabDataConfig.layout.reduce<ConfigLayout[]>((memo, item) => {
-            if (item.i === widget.id) {
-                const {parent, ...itemCopy} = item;
-                const isFixed =
-                    parent === FIXED_GROUP_CONTAINER_ID || parent === FIXED_GROUP_HEADER_ID;
-
-                if (isFixed) {
-                    movedItem = {
-                        ...itemCopy,
-                        ...groupCoords[DEFAULT_GROUP],
-                    };
-                } else {
-                    const parentId = FIXED_GROUP_HEADER_ID;
-
-                    movedItem = {
-                        ...itemCopy,
-                        parent: FIXED_GROUP_HEADER_ID,
-                        ...groupCoords[parentId],
-                    };
-                }
-            } else {
-                memo.push(item);
-            }
-
-            return memo;
-        }, []);
-
-        if (movedItem) {
-            this.props.setCurrentTabData({
-                ...tabDataConfig,
-                layout: GravityDashkit.reflowLayout({
-                    newLayoutItem: movedItem,
-                    layout: newLayout,
-                    groups: this.state.groups.renderers,
-                }),
-            });
-        }
     };
 
     unpinAllElements = () => {
@@ -899,206 +726,15 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         return <FixedContainerWrapperWithContext content={content} />;
     };
 
-    storageHandler = () => {
-        this.setState({hasCopyInBuffer: getPastedWidgetData()});
-    };
-
     interruptAutoScroll = (event: Event) => {
         if (event.isTrusted && this.state.delayedScrollElement) {
             this.setState({delayedScrollElement: null, lastDelayedScrollTop: null});
         }
     };
 
-    getContext = () => {
-        const memoContext = this._memoizedContext;
-        const isCollapsed = this.getFixedHeaderCollapsedState();
-        const enableAssistant = this.props.settings.enableAssistant ?? true;
-
-        if (
-            memoContext.workbookId !== this.props.workbookId ||
-            memoContext.fixedHeaderCollapsed !== isCollapsed ||
-            memoContext.enableAssistant !== enableAssistant
-        ) {
-            this._memoizedContext = {
-                ...(memoContext || {}),
-                workbookId: this.props.workbookId,
-                fixedHeaderCollapsed: isCollapsed,
-                isEmbeddedMode: isEmbeddedMode(),
-                isPublicMode: Boolean(this.props.isPublicMode),
-                enableAssistant,
-            };
-        }
-
-        return this._memoizedContext;
-    };
-
-    getPreparedCopyItemOptionsFn = (itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>) => {
-        return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
-            workbookId: this.props.workbookId ?? null,
-            fromScope: this.props.entry.scope,
-            targetEntryId: this.props.entryId,
-            targetDashTabId: this.props.tabId,
-        });
-    };
-
-    getOverlayControls = (): DashKitProps['overlayControls'] => {
-        if (!this._memoizedControls) {
-            this._memoizedControls = {
-                overlayControls: [
-                    {
-                        id: 'pin',
-                        title: i18n('dash.main.view', 'label_pin'),
-                        icon: Pin,
-                        handler: this.togglePinElement,
-                        visible: (configItem) => {
-                            const parent = this.getWidgetLayoutById(configItem.id)?.parent;
-                            const isSelector =
-                                configItem.type === DashTabItemType.GroupControl ||
-                                configItem.type === DashTabItemType.Control;
-
-                            return (
-                                isSelector &&
-                                parent !== FIXED_GROUP_HEADER_ID &&
-                                parent !== FIXED_GROUP_CONTAINER_ID
-                            );
-                        },
-                        qa: DashKitOverlayMenuQa.PinButton,
-                    },
-                    {
-                        id: 'unpin',
-                        title: i18n('dash.main.view', 'label_unpin'),
-                        icon: PinSlash,
-                        handler: this.togglePinElement,
-                        visible: (configItem) => {
-                            const parent = this.getWidgetLayoutById(configItem.id)?.parent;
-
-                            return (
-                                parent === FIXED_GROUP_HEADER_ID ||
-                                parent === FIXED_GROUP_CONTAINER_ID
-                            );
-                        },
-                        qa: DashKitOverlayMenuQa.UnpinButton,
-                    },
-                    {
-                        allWidgetsControls: true,
-                        id: MenuItems.Settings,
-                        title: i18n('dash.settings-dialog.edit', 'label_settings'),
-                        icon: Gear,
-                        qa: ControlQA.controlSettings,
-                    },
-                    {
-                        allWidgetsControls: true,
-                        title: i18n('dash.main.view', 'button_links'),
-                        excludeWidgetsTypes: [
-                            DashTabItemType.Text,
-                            DashTabItemType.Title,
-                            DashTabItemType.Image,
-                        ],
-                        icon: iconRelations,
-                        qa: ControlQA.controlLinks,
-                        handler: (widget: DashTabItem) => {
-                            this.props.openDialogRelations({
-                                widget,
-                                dashKitRef: this.dashKitRef,
-                                onClose: () => {},
-                            });
-                        },
-                    } as OverlayControlItem,
-                ],
-            };
-        }
-
-        return this._memoizedControls;
-    };
-
-    getOverlayMenu = () => {
-        if (!this._memoizedMenu) {
-            const dashkitMenu = getDashKitMenu();
-
-            this._memoizedMenu = [
-                ...dashkitMenu.slice(0, -1),
-                {
-                    id: 'pin',
-                    title: i18n('dash.main.view', 'label_pin'),
-                    icon: <Icon data={Pin} size={16} />,
-                    handler: this.togglePinElement,
-                    visible: (configItem) => {
-                        const parent = this.getWidgetLayoutById(configItem.id)?.parent;
-                        const isSelector =
-                            configItem.type === DashTabItemType.GroupControl ||
-                            configItem.type === DashTabItemType.Control;
-
-                        return (
-                            !isSelector &&
-                            parent !== FIXED_GROUP_HEADER_ID &&
-                            parent !== FIXED_GROUP_CONTAINER_ID
-                        );
-                    },
-                    qa: DashKitOverlayMenuQa.PinButton,
-                },
-
-                ...dashkitMenu.slice(-1),
-            ];
-        }
-
-        return this._memoizedMenu;
-    };
-
-    dataProviderContextGetter = () => {
-        const {tabId, entryId} = this.props;
-
-        const dashInfo = {
-            dashId: entryId || '',
-            dashTabId: tabId || '',
-        };
-
-        return {
-            [DASH_INFO_HEADER]: new URLSearchParams(dashInfo).toString(),
-        };
-    };
-
     private isEditMode() {
         return this.props.mode === Mode.Edit;
     }
-
-    private getConfig = () => {
-        const {tabData} = this.props;
-        const tabDataConfig = tabData;
-
-        if (!tabDataConfig || !DL.IS_MOBILE) {
-            return tabDataConfig;
-        }
-
-        const memoItems = this._memoizedOrderedConfig;
-
-        if (!memoItems || memoItems.key !== tabDataConfig) {
-            const layoutIndex: Record<string, number> = {};
-            const sortedItems = getGroupedItems(tabDataConfig.items, tabDataConfig.layout)
-                .reduce((list, group) => {
-                    group.forEach((item) => {
-                        layoutIndex[item.id] = item.orderId;
-                    });
-                    list.push(...group);
-                    return list;
-                }, [])
-                .sort((a, b) => a.orderId - b.orderId);
-            const sortedLayout = tabDataConfig.layout.reduce<ConfigLayout[]>((memo, item) => {
-                memo[layoutIndex[item.i]] = item;
-                return memo;
-            }, []);
-
-            this._memoizedOrderedConfig = {
-                key: tabDataConfig as DashKitProps['config'],
-                config: {
-                    ...tabDataConfig,
-                    layout: sortedLayout,
-                    items: sortedItems as ConfigItem[],
-                },
-            };
-        }
-
-        return this._memoizedOrderedConfig?.config;
-    };
 
     private itemAddHandler = (isMounted: boolean, id: string, domElement: HTMLElement) => {
         if (
@@ -1116,133 +752,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         }
     };
 
-    private renderDashkit = () => {
-        const {isGlobalDragging} = this.state;
-        const {
-            settings,
-            tabs,
-            handlerEditClick,
-            isEditModeLoading,
-            globalParams,
-            dashkitSettings,
-            disableHashNavigation,
-        } = this.props;
-
-        const context = this.getContext();
-
-        const tabDataConfig = this.getConfig();
-        const fixedHeaderCollapsed = context.fixedHeaderCollapsed || false;
-        const isEditMode = this.isEditMode();
-
-        const isEmptyTab = !tabDataConfig?.items.length;
-
-        const DashKit = getConfiguredDashKit(undefined, {disableHashNavigation});
-
-        const hasFixedHeaderControlsElements = Boolean(
-            this.getWidgetLayoutByGroup(FIXED_GROUP_HEADER_ID)?.length,
-        );
-        const hasFixedHeaderContainerElements = Boolean(
-            this.getWidgetLayoutByGroup(FIXED_GROUP_CONTAINER_ID)?.length,
-        );
-
-        const fixedHeaderHasNoVisibleContent =
-            !hasFixedHeaderControlsElements &&
-            (!hasFixedHeaderContainerElements || fixedHeaderCollapsed);
-
-        if (isEmptyTab && !isGlobalDragging) {
-            return (
-                <EmptyState
-                    canEdit={this.props.canEdit}
-                    isEditMode={isEditMode}
-                    isTabView={!settings.hideTabs && tabs.length > 1}
-                    onEditClick={handlerEditClick}
-                    isEditModeLoading={isEditModeLoading}
-                />
-            );
-        }
-
-        const shouldRenderMobileMenu = DL.IS_MOBILE && isMobileFixedHeaderEnabled;
-        const searchParams = new URLSearchParams(location.search);
-        const focusedWidget = searchParams.get(FOCUSED_WIDGET_PARAM_NAME);
-        const focusedWidgetParent = focusedWidget
-            ? tabDataConfig?.layout?.find((item) => item.i === focusedWidget)?.parent
-            : undefined;
-        const isFixedHeaderWidgetFocused = Boolean(
-            focusedWidgetParent &&
-                [FIXED_GROUP_HEADER_ID, FIXED_GROUP_CONTAINER_ID].includes(focusedWidgetParent),
-        );
-        const mobileFixedHeaderInitiallyOpened =
-            shouldRenderMobileMenu && isFixedHeaderWidgetFocused;
-
-        return (
-            <RefsContextProvider
-                fixedHeaderControlsEl={this.state.fixedHeaderControlsEl}
-                fixedHeaderContainerEl={this.state.fixedHeaderContainerEl}
-                dashEl={this.state.dashEl}
-            >
-                <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
-                    {shouldRenderMobileMenu && this.props.entryId && (
-                        <FloatingMobileMenuWithContext
-                            entryId={this.props.entryId}
-                            hasFixedContent={
-                                hasFixedHeaderContainerElements || hasFixedHeaderControlsElements
-                            }
-                            fixedContentInitiallyOpened={mobileFixedHeaderInitiallyOpened}
-                            fixedContentWidgetFocused={isFixedHeaderWidgetFocused}
-                            fixedHeaderControlsRef={this._fixedHeaderControlsRef}
-                            fixedHeaderContainerRef={this._fixedHeaderContainerRef}
-                        />
-                    )}
-
-                    {!DL.IS_MOBILE && (
-                        <FixedHeaderWrapper
-                            className={b('fixed-header', {
-                                'no-content': fixedHeaderHasNoVisibleContent,
-                            })}
-                            dashBodyEl={this.state.dashEl}
-                            controlsRef={this._fixedHeaderControlsRef}
-                            containerRef={this._fixedHeaderContainerRef}
-                            isCollapsed={fixedHeaderCollapsed}
-                            editMode={isEditMode}
-                            isControlsGroupEmpty={!hasFixedHeaderControlsElements}
-                            isContainerGroupEmpty={!hasFixedHeaderContainerElements}
-                        />
-                    )}
-                    <DashKit
-                        ref={this.dashKitRef}
-                        config={tabDataConfig as DashKitProps['config']}
-                        editMode={isEditMode}
-                        focusable={true}
-                        onDrop={this.onDropElement}
-                        itemsStateAndParams={
-                            this.props.hashStates as DashKitProps['itemsStateAndParams']
-                        }
-                        groups={this.state.groups.renderers}
-                        context={context}
-                        getPreparedCopyItemOptions={
-                            this
-                                .getPreparedCopyItemOptionsFn satisfies GetPreparedCopyItemOptions<any> as GetPreparedCopyItemOptions<{}>
-                        }
-                        onCopyFulfill={this.onItemCopy}
-                        onItemEdit={this.props.openItemDialogAndSetData}
-                        onChange={this.onChange}
-                        settings={dashkitSettings}
-                        defaultGlobalParams={settings.globalParams}
-                        globalParams={globalParams}
-                        overlayControls={this.getOverlayControls()}
-                        overlayMenuItems={this.getOverlayMenu()}
-                        skipReload={this.props.skipReload}
-                        onItemMountChange={this.handleItemMountChange}
-                        onItemRender={this.handleItemRender}
-                        hideErrorDetails={this.props.hideErrorDetails}
-                        setWidgetCurrentTab={this.props.setWidgetCurrentTab}
-                        dataProviderContextGetter={this.dataProviderContextGetter}
-                    />
-                </WidgetContextProvider>
-            </RefsContextProvider>
-        );
-    };
-
     private handleDragStart = () => {
         this.setState({isGlobalDragging: true});
     };
@@ -1255,9 +764,50 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         if (isMounted) {
             this.state.loadedItemsMap.set(item.id, false);
 
-            if (this.state.loadedItemsMap.size === this.props.tabData?.items.length) {
+            if (this.state.loadedItemsMap.size === this.state.totalItemsCount) {
                 this.scrollIntoViewWithDebounce();
             }
+        }
+    };
+
+    private isElementOutsideViewport = (element: Element): boolean => {
+        const rect = element.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
+        return (
+            rect.bottom < 0 ||
+            rect.top > viewportHeight ||
+            rect.right < 0 ||
+            rect.left > viewportWidth
+        );
+    };
+
+    private dispatchViewportDashLoadedEvent = () => {
+        const {loadedItemsMap, dashEl} = this.state;
+
+        if (!dashEl) {
+            return;
+        }
+
+        const unloadedItemIds: string[] = [];
+        loadedItemsMap.forEach((isLoaded, itemId) => {
+            if (isLoaded !== true) {
+                unloadedItemIds.push(itemId);
+            }
+        });
+
+        const allViewportItemsLoaded = unloadedItemIds.every((itemId) => {
+            const itemElement = document.getElementById(itemId);
+            if (!itemElement) {
+                return false;
+            }
+            const result = this.isElementOutsideViewport(itemElement);
+            return result;
+        });
+
+        if (allViewportItemsLoaded) {
+            dispatchDashLoadedEvent();
         }
     };
 
@@ -1268,7 +818,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             loadedItemsMap.set(item.id, true);
 
             const isLoaded =
-                loadedItemsMap.size === this.props.tabData?.items.length &&
+                loadedItemsMap.size === this.state.totalItemsCount &&
                 Array.from(loadedItemsMap.values()).every(Boolean);
 
             if (isLoaded && this.state.delayedScrollElement) {
@@ -1279,6 +829,14 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 // that will try to scroll to the title after each item rendering
                 this.scrollIntoViewWithDebounce();
             }
+
+            if (isLoaded) {
+                this.dispatchViewportDashLoadedEventDebounced.cancel();
+                dispatchDashLoadedEvent();
+            } else if (navigator.userAgent === SCR_USER_AGENT_HEADER_VALUE) {
+                this.dispatchViewportDashLoadedEventDebounced();
+            }
+
             this.setState({loaded: isLoaded});
         }
     };
@@ -1295,169 +853,29 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             });
         }
     };
-
-    private renderBody() {
-        const {
-            mode,
-            settings,
-            tabs,
-            showTableOfContent,
-            isSidebarOpened,
-            hideErrorDetails,
-            onRetry,
-            error,
-            disableHashNavigation,
-        } = this.props;
-
-        const {loaded, hasCopyInBuffer} = this.state;
-
-        switch (mode) {
-            case Mode.Loading:
-            case Mode.Updating:
-                return <Loader size="l" />;
-            case Mode.Error:
-                return <DashError error={error} hideDetails={hideErrorDetails} onRetry={onRetry} />;
-        }
-
-        const localTabs = memoizedGetLocalTabs(tabs);
-
-        const hasTableOfContentForTab = !(localTabs.length === 1 && !localTabs[0].items.length);
-
-        const showEditActionPanel = this.isEditMode();
-
-        const loadedMixin = loaded ? LOADED_DASH_CLASS : undefined;
-
-        const showDashTitle =
-            !settings.hideDashTitle && (!DL.IS_MOBILE || isMobileFixedHeaderEnabled);
-
-        const content = (
-            <div
-                data-qa={DashBodyQa.ContentWrapper}
-                className={b('content-wrapper', {mobile: DL.IS_MOBILE, mode}, loadedMixin)}
-            >
-                <div
-                    className={b('content-container', {
-                        mobile: DL.IS_MOBILE,
-                        'no-title':
-                            settings.hideDashTitle && (settings.hideTabs || tabs.length === 1),
-                        'no-title-with-tabs':
-                            settings.hideDashTitle && !settings.hideTabs && tabs.length > 1,
-                    })}
-                >
-                    <TableOfContent
-                        disableHashNavigation={disableHashNavigation}
-                        onItemClick={this.handleTocItemClick}
-                    />
-                    <div
-                        className={b('content', {
-                            condensed: this.isCondensed(),
-                            'with-table-of-content': showTableOfContent && hasTableOfContentForTab,
-                            mobile: DL.IS_MOBILE,
-                            aside: getIsAsideHeaderEnabled(),
-                            'with-edit-panel': showEditActionPanel,
-                            'with-footer': isEnabledFeature(Feature.EnableFooter),
-                        })}
-                    >
-                        {showDashTitle && (
-                            <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
-                                {Utils.getEntryNameFromKey(this.props.entry?.key)}
-                            </div>
-                        )}
-                        {!settings.hideTabs && <Tabs className={b('tabs')} />}
-                        {this.renderDashkit()}
-                        {!this.props.onlyView && (
-                            <DashkitActionPanel
-                                toggleAnimation={true}
-                                disable={!showEditActionPanel}
-                                items={getActionPanelItems({
-                                    copiedData: hasCopyInBuffer,
-                                    onPasteItem: this.props.onPasteItem,
-                                    openDialog: this.props.openDialog,
-                                    filterItem: (item) => item.id === DashTabItemType.Image,
-                                    userSettings: this.props.userSettings,
-                                    scope: EntryScope.Dash,
-                                })}
-                                className={b('edit-panel', {
-                                    'aside-opened': isSidebarOpened,
-                                })}
-                            />
-                        )}
-                    </div>
-                </div>
-            </div>
-        );
-
-        return (
-            <DashKitDnDWrapper onDragStart={this.handleDragStart} onDragEnd={this.handleDragEnd}>
-                {content}
-            </DashKitDnDWrapper>
-        );
-    }
 }
+
+const Body = (props: BodyProps) => {
+    const themeType = useThemeType();
+    return <BodyInternal {...props} themeType={themeType} />;
+};
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
     entryId: selectEntryId(state),
     lastModifiedItem: selectLastModifiedItemId(state),
     entry: state.dash.entry,
     mode: state.dash.mode,
-    showTableOfContent: selectShowTableOfContent(state),
-    hashStates: selectTabHashState(state),
     settings: selectSettings(state),
     tabData: selectCurrentTab(state),
-    dashKitRef: state.dash.dashKitRef,
-    canEdit: canEdit(state),
-    tabs: selectTabs(state),
     tabId: selectCurrentTabId(state),
-    isSidebarOpened: !selectAsideHeaderIsCompact(state),
-    workbookId: selectDashWorkbookId(state),
-    error: selectDashError(state),
-    skipReload: selectSkipReload(state),
-    userSettings: selectUserSettings(state),
 });
 
 const mapDispatchToProps = {
     setErrorMode,
     setCurrentTabData,
-    openItemDialogAndSetData,
-    setHashState,
-    setStateHashId,
-    setDashKitRef,
-    openDialogRelations,
-    closeDialogRelations,
-    openDialog,
-    showToast,
-    setWidgetCurrentTab,
-    toggleTableOfContent,
 };
 
 export default compose<BodyProps, OwnProps>(
     withRouter,
     connect(mapStateToProps, mapDispatchToProps),
 )(Body);
-
-function FixedControlsWrapperWithContext({content}: {content: React.ReactNode}) {
-    const {fixedHeaderControlsEl} = React.useContext(RefsContext);
-
-    if (fixedHeaderControlsEl) {
-        return createPortal(content, fixedHeaderControlsEl, 'fixed-header-controls-mounted');
-    }
-    return null;
-}
-
-function FixedContainerWrapperWithContext({content}: {content: React.ReactNode}) {
-    const {fixedHeaderContainerEl} = React.useContext(RefsContext);
-
-    if (fixedHeaderContainerEl) {
-        return createPortal(content, fixedHeaderContainerEl, 'fixed-header-container-mounted');
-    }
-    return null;
-}
-
-function FloatingMobileMenuWithContext(props: Omit<MobileFloatMenuProps, 'dashEl'>) {
-    const {dashEl} = React.useContext(RefsContext);
-
-    if (dashEl) {
-        return <MobileFloatMenu {...props} dashEl={dashEl} />;
-    }
-    return null;
-}

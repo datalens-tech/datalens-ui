@@ -38,7 +38,7 @@ function TabSwitch(props: TabSwitchProps) {
         <RadioButton
             qa={DatasetPanelQA.TabRadio}
             value={tab}
-            onChange={(e) => switchTab(e.target.value)}
+            onUpdate={(value) => switchTab(value)}
         >
             {tabs.map(({value, label, disabled}) => (
                 <RadioButton.Option
@@ -57,10 +57,11 @@ type DatasetPanelProps = StateProps & {
     isCreationProcess: boolean;
     previewEnabled: boolean;
     tab: DatasetTab;
-    switchTab: (tab: string) => void;
+    switchTab: (tab: DatasetTab) => void;
     refreshSources: () => void;
     openDialogFieldEditor: () => void;
     togglePreview: () => void;
+    readonly: boolean;
 };
 
 const DatasetPanel = (props: DatasetPanelProps) => {
@@ -75,6 +76,7 @@ const DatasetPanel = (props: DatasetPanelProps) => {
         openDialogFieldEditor,
         togglePreview,
         refreshSources,
+        readonly,
     } = props;
     const dispatch = useDispatch();
 
@@ -92,7 +94,7 @@ const DatasetPanel = (props: DatasetPanelProps) => {
         <div className={b()}>
             <TabSwitch tab={tab} switchTab={switchTab} isCreationProcess={isCreationProcess} />
             <React.Fragment>
-                {isDatasetTab && (
+                {isDatasetTab && !readonly && (
                     <Button
                         className={b('btn-update-fields')}
                         disabled={!(options as DatasetOptions).schema_update_enabled}
@@ -108,7 +110,7 @@ const DatasetPanel = (props: DatasetPanelProps) => {
                     </Button>
                 )}
                 {(isDatasetTab || isSourceTab) && (
-                    <div className={b('preview-btn', {tab}, b('item'))}>
+                    <div className={b('preview-btn', {tab, readonly}, b('item'))}>
                         <Button disabled={!previewEnabled} onClick={togglePreview}>
                             <span>{i18n('button_preview')}</span>
                             {/* Omit the empty div in order to reserve a place for the tooltip icon */}
@@ -131,7 +133,7 @@ const DatasetPanel = (props: DatasetPanelProps) => {
                         )}
                     </div>
                 )}
-                {isDatasetTab && (
+                {isDatasetTab && !readonly && (
                     <Button
                         className={b('add-field-btn', b('item'))}
                         loading={isFieldEditorModuleLoading}

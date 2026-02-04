@@ -7,7 +7,11 @@ import {TAB_PARAMETERS} from '../../constants';
 import {openDialogParameterCreate} from '../../store/actions/creators';
 import {datasetValidationSelector, filteredDatasetParametersSelector} from '../../store/selectors';
 
-export const DatasetParameters: React.FC = () => {
+type DatasetParametersProps = {
+    readonly: boolean;
+};
+
+export const DatasetParameters = ({readonly}: DatasetParametersProps) => {
     const dispatch = useDispatch();
 
     const parameters = useSelector(filteredDatasetParametersSelector);
@@ -19,6 +23,7 @@ export const DatasetParameters: React.FC = () => {
 
     return (
         <ParametersSection
+            readonly={readonly}
             parameters={parameters}
             isLoading={validation.isLoading}
             onOpenDialogClick={handleOpenDialogClick}

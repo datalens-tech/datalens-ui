@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {DropdownMenuProps} from '@gravity-ui/uikit';
+import {type DropdownMenuProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import type {ClientChartsConfigWithDataset, WizardType} from 'shared';

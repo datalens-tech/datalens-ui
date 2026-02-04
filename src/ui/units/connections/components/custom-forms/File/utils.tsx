@@ -1,15 +1,16 @@
 import React from 'react';
 
-import type {Column} from '@gravity-ui/react-data-table';
 import type {ListItemData, ListProps} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {flow, get} from 'lodash';
 import {Feature} from 'shared';
 import type {DATASET_FIELD_TYPES, NonNullableBy} from 'shared';
+import type {TableHead} from 'shared/types/chartkit/table';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {DataLensApiError} from '../../../../../typings';
 import type {FileSourceItem, ListItemProps} from '../../../store';
+import {getFileSourcePreviewTableCellCss} from '../utils/render';
 
 import {TypeSelect} from './components/Workspace/TypeSelect';
 import type {FileListItem, HandleFileSourceUpdate} from './types';
@@ -111,44 +112,45 @@ export const getCreatingSourceColumns = (args: {
     handleFileSourceUpdate: HandleFileSourceUpdate;
     item: NonNullableBy<FileSourceItem, 'options'>;
     filter: string;
-}): Column<(string | number)[]>[] => {
+}): TableHead[] => {
     const {handleFileSourceUpdate, item, filter} = args;
     const sourceColumns = get(item, ['options', 'columns']);
     const rawSchema = get(item, ['source', 'raw_schema']);
 
-    return sourceColumns.reduce(
-        (acc, column, index) => {
-            const schema = (rawSchema || []).find(({name}) => name === column.name);
-            const title = schema?.title || column.name;
+    return sourceColumns.reduce((acc, column, index) => {
+        const schema = (rawSchema || []).find(({name}) => name === column.name);
+        const title = schema?.title || column.name;
 
-            if (!filter || isTitleMatchedByFilter(title, filter)) {
-                acc.push({
-                    name: column.name,
-                    header: (
-                        <React.Fragment>
-                            {schema && (
-                                <TypeSelect
-                                    types={column.user_type}
-                                    value={schema.user_type}
-                                    onUpdate={getSelectUpdateHandler(
-                                        handleFileSourceUpdate,
-                                        item,
-                                        column.name,
-                                    )}
-                                />
-                            )}
-                            {title}
-                        </React.Fragment>
-                    ),
-                    sortable: false,
-                    render: ({row}) => row[index],
-                });
-            }
+        if (!filter || isTitleMatchedByFilter(title, filter)) {
+            acc.push({
+                id: column.name,
+                name: column.name,
+                type: 'text',
+                formattedName: (
+                    <>
+                        {schema && (
+                            <TypeSelect
+                                types={column.user_type}
+                                value={schema.user_type}
+                                onUpdate={getSelectUpdateHandler(
+                                    handleFileSourceUpdate,
+                                    item,
+                                    column.name,
+                                )}
+                            />
+                        )}
+                        {title}
+                    </>
+                ),
+                sortable: false,
+                css: getFileSourcePreviewTableCellCss(acc.length === 0),
+                verticalAlignment: 'center',
+                custom: {originalIndex: index},
+            });
+        }
 
-            return acc;
-        },
-        [] as Column<(string | number)[]>[],
-    );
+        return acc;
+    }, [] as TableHead[]);
 };
 
 export const getListItemId = (item?: ListItemProps) => {

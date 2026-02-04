@@ -24,7 +24,7 @@
             max-height: 3000px;
         }
 
-        --ck-split-pane-background: var(--g-color-base-float);
+        --ck-split-pane-background: var(--dl-color-widget-background, var(--g-color-base-float));
     }
 }
 
@@ -47,7 +47,7 @@
 
 .dl-chart-tooltip-content {
     font-size: 13px;
-    padding: 8px 14px;
+    padding: 0 14px;
 
     &_mobile {
         padding: var(--g-spacing-3);

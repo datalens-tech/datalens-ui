@@ -13,7 +13,7 @@ import type {
     DatasetUpdate,
     FieldUISettings,
 } from 'shared';
-import {isDimensionField, isNumberField} from 'shared';
+import {DatasetFieldSettingsDialogQa, isDimensionField, isNumberField} from 'shared';
 import {getFieldUISettings, isFieldWithDisplaySettings} from 'shared/utils';
 import {NumberFormatSettings} from 'ui/components/NumberFormatSettings/NumberFormatSettings';
 import {fetchColorPalettes} from 'ui/store/actions/colorPaletteEditor';
@@ -118,7 +118,10 @@ export const FieldSettingsDialog = (props: Props) => {
 
             return (
                 <FormRow className={b('row')} label={i18n('label_colors')}>
-                    <Button onClick={() => setColorDialogOpened(true)}>
+                    <Button
+                        qa={DatasetFieldSettingsDialogQa.ColorSettingsButton}
+                        onClick={() => setColorDialogOpened(true)}
+                    >
                         <Icon data={BucketPaint} width="16" height="16" />
                         {i18n('button_colors')}
                     </Button>
@@ -187,7 +190,13 @@ export const FieldSettingsDialog = (props: Props) => {
     };
 
     return (
-        <Dialog onClose={onClose} open={open} className={b()} disableHeightTransition={true}>
+        <Dialog
+            qa={DatasetFieldSettingsDialogQa.Dialog}
+            onClose={onClose}
+            open={open}
+            className={b()}
+            disableHeightTransition={true}
+        >
             <Dialog.Header caption={i18n('label_title')} />
             <Dialog.Body>
                 {renderColorsSection()}

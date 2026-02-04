@@ -7,19 +7,59 @@ import get from 'lodash/get';
 import isObject from 'lodash/isObject';
 
 import type {ChartsEngine} from '..';
-import type {DashTabItemControlData} from '../../../../shared';
+import type {
+    DashTab,
+    DashTabItemControlData,
+    DashTabItemControlDataset,
+    DashTabItemControlManual,
+} from '../../../../shared';
 import {
     ControlType,
     DL_EMBED_TOKEN_HEADER,
+    DashTabItemControlSourceType,
     DashTabItemType,
     EntryScope,
     ErrorCode,
     Feature,
+    getAllTabItems,
 } from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 import type {EmbeddingInfo, ReducedResolvedConfig} from '../components/storage/types';
 import {getDuration, isDashEntry} from '../components/utils';
+
+const isControlDisabled = (
+    controlData: DashTabItemControlData,
+    embeddingInfo: EmbeddingInfo,
+    controlTab: DashTab,
+): boolean => {
+    if (
+        (controlData.sourceType !== DashTabItemControlSourceType.Dataset &&
+            controlData.sourceType !== DashTabItemControlSourceType.Manual) ||
+        // dash doesn't support publicParamsMode
+        embeddingInfo.embed.publicParamsMode
+    ) {
+        return false;
+    }
+    const controlSource = controlData.source as
+        | DashTabItemControlDataset['source']
+        | DashTabItemControlManual['source'];
+
+    const controlParam =
+        'datasetFieldId' in controlSource ? controlSource.datasetFieldId : controlSource.fieldName;
+
+    const tabAliases = controlTab.aliases[controlData.namespace];
+
+    const aliasesParamsList = tabAliases?.find((alias) => alias.includes(controlParam));
+
+    const forbiddenParams = embeddingInfo.embed.privateParams.concat(
+        embeddingInfo.token.params ? Object.keys(embeddingInfo.token.params) : [],
+    );
+
+    return aliasesParamsList
+        ? aliasesParamsList.some((alias) => forbiddenParams.includes(alias))
+        : forbiddenParams.includes(controlParam);
+};
 
 const isResponseError = (error: unknown): error is AxiosError<{code: string}> => {
     return Boolean(isObject(error) && 'response' in error && error.response);
@@ -41,7 +81,6 @@ function validateEmbedToken(
             extra: {
                 message: 'You must provide embedToken',
                 hideRetry: true,
-                hideDebugInfo: true,
             },
         });
         return null;
@@ -53,7 +92,7 @@ function validateEmbedToken(
         ctx.log('CHARTS_ENGINE_WRONG_TOKEN');
         res.status(400).send({
             code: ErrorCode.InvalidToken,
-            extra: {message: 'Wrong token format', hideRetry: true, hideDebugInfo: true},
+            extra: {message: 'Wrong token format', hideRetry: true},
         });
         return null;
     }
@@ -87,7 +126,6 @@ function handleError(
             extra: {
                 message: 'Dependencies of embed are outdated',
                 hideRetry: true,
-                hideDebugInfo: true,
             },
         });
         return;
@@ -112,7 +150,6 @@ function handleError(
             },
             extra: {
                 hideRetry: false,
-                hideDebugInfo: true,
             },
         },
     });
@@ -138,7 +175,7 @@ function processControlWidget(
     // Support group and old single selectors
     const controlWidgetId = controlData.widgetId || controlData.id;
 
-    const controlWidgetConfig = controlTab?.items.find(
+    const controlWidgetConfig = getAllTabItems(controlTab).find(
         ({id}: {id: string}) => id === controlWidgetId,
     );
 
@@ -155,7 +192,7 @@ function processControlWidget(
         return null;
     }
 
-    const sharedData: DashTabItemControlData | undefined =
+    const sharedData: (DashTabItemControlData & {disabled?: boolean}) | undefined =
         controlWidgetConfig.type === DashTabItemType.GroupControl
             ? controlWidgetConfig.data.group.find(({id}: {id: string}) => id === controlData.id)
             : controlWidgetConfig.data;
@@ -166,6 +203,8 @@ function processControlWidget(
         });
         return null;
     }
+
+    sharedData.disabled = isControlDisabled(sharedData, embeddingInfo, controlTab);
 
     return {
         data: {shared: sharedData},
@@ -198,7 +237,6 @@ function processEntry(
         extra: {
             message: 'Invalid token',
             hideRetry: true,
-            hideDebugInfo: true,
         },
     });
     return null;
@@ -251,6 +289,10 @@ async function filterParams({
         }
 
         forbiddenParamsSet = fillingForbiddenParamsSet;
+    }
+
+    if (embeddingInfo.token.params) {
+        Object.keys(embeddingInfo.token.params).forEach((param) => forbiddenParamsSet?.add(param));
     }
 
     let finalParams;

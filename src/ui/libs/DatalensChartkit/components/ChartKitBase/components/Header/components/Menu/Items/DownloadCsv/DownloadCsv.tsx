@@ -5,25 +5,21 @@ import type {SelectOption} from '@gravity-ui/uikit';
 import {Dialog, Select, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {ChartkitMenuDialogsQA, EXPORT_FORMATS} from 'shared';
-
-import type {ExportActionArgs, ExportChartArgs} from '../Export/types';
+import {ChartkitMenuDialogsQA, EXPORT_FORMATS, type ExportParams} from 'shared';
 
 import './DownloadCsv.scss';
 
 const b = block('download-csv-modal');
 
-const i18n = I18n.keyset('chartkit.menu.download-csv');
+const i18n = I18n.keyset('chartkit.menu.download-dialog');
 
 type DownloadCsvProps = {
-    onApply: ({chartData, params}: ExportChartArgs) => void;
+    onSubmit: (params: ExportParams) => void;
     loading?: boolean;
     onClose: () => void;
     footerContent?: React.ReactNode;
     chartType?: string;
-    chartData: ExportActionArgs;
     path?: string;
-    onExportLoading?: (isLoading: boolean) => void;
     additionalControls?: React.ReactNode;
     showWarning?: boolean;
     showHint?: boolean;
@@ -78,12 +74,10 @@ const encodingOptions = [
 ];
 
 export const DownloadCsv = ({
-    onApply,
+    onSubmit,
     loading,
     onClose,
     footerContent,
-    chartData,
-    onExportLoading,
     additionalControls,
     className,
     showHint = true,
@@ -100,9 +94,8 @@ export const DownloadCsv = ({
             encoding,
         };
 
-        onApply({chartData, params, onExportLoading});
-        onClose();
-    }, [chartData, delNumber, delValue, encoding, onApply]);
+        onSubmit(params);
+    }, [delNumber, delValue, encoding, onSubmit]);
 
     return (
         <Dialog
@@ -111,7 +104,7 @@ export const DownloadCsv = ({
             className={b(null, className)}
             qa={ChartkitMenuDialogsQA.chartMenuExportCsvDialog}
         >
-            <Dialog.Header caption={i18n('label_title')} />
+            <Dialog.Header caption={i18n('label_title-csv')} />
             <Dialog.Body className={b('content')}>
                 {additionalControls}
                 <FormRow label={i18n('label_values-delimiter')} className={b('row')}>

@@ -1,5 +1,4 @@
-import type {OpenAPIRegistry, ZodMediaTypeObject} from '@asteasolutions/zod-to-openapi';
-import z from 'zod/v4';
+import type {OpenAPIRegistry} from '@asteasolutions/zod-to-openapi';
 
 import {getValidationSchema} from '../../../../shared/schema/gateway-utils';
 import {registry} from '../../../registry';
@@ -10,6 +9,7 @@ import {
     PUBLIC_API_HTTP_METHOD,
     PUBLIC_API_URL,
 } from '../constants';
+import type {PublicApiActionOpenApi} from '../types';
 
 const resolveUrl = ({actionName}: {actionName: string}) => {
     return PUBLIC_API_URL.replace(':action', actionName);
@@ -23,10 +23,7 @@ export const registerActionToOpenApi = ({
 }: {
     actionConfig: AnyApiServiceActionConfig;
     actionName: string;
-    openApi: {
-        summary: string;
-        tags?: string[];
-    };
+    openApi: PublicApiActionOpenApi;
     openApiRegistry: OpenAPIRegistry;
 }) => {
     const {securityTypes} = registry.getPublicApiConfig();
@@ -40,31 +37,35 @@ export const registerActionToOpenApi = ({
         throw new Error(`Action schema not found for action: ${actionName}`);
     }
 
+    const {summary, tags, experimental, headers} = openApi;
+
     openApiRegistry.registerPath({
         method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase() as Lowercase<
             typeof PUBLIC_API_HTTP_METHOD
         >,
         path: resolveUrl({actionName}),
-        ...openApi,
+        tags,
+        summary: experimental ? `🚧 [Experimental] ${summary}` : summary,
         request: {
-            body: {
-                content: {
-                    [CONTENT_TYPE_JSON]: {
-                        schema: z.toJSONSchema(
-                            actionSchema.paramsSchema,
-                        ) as ZodMediaTypeObject['schema'],
-                    },
-                },
-            },
+            ...(actionSchema.paramsSchema
+                ? {
+                      body: {
+                          content: {
+                              [CONTENT_TYPE_JSON]: {
+                                  schema: actionSchema.paramsSchema,
+                              },
+                          },
+                      },
+                  }
+                : {}),
+            headers,
         },
         responses: {
             200: {
                 description: 'Response',
                 content: {
                     [CONTENT_TYPE_JSON]: {
-                        schema: z.toJSONSchema(
-                            actionSchema.resultSchema,
-                        ) as ZodMediaTypeObject['schema'],
+                        schema: actionSchema.resultSchema,
                     },
                 },
             },

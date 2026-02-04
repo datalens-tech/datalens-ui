@@ -45,24 +45,22 @@ export enum ErrorCode {
 
     ChartEditorNotAvailable = 'ERR.CHARTS.CHART_EDITOR_NOT_AVAILABLE',
     InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
+    WorkbookAlreadyExists = 'WORKBOOK_ALREADY_EXISTS',
+    MetaManagerWorkbookAlreadyExists = 'META_MANAGER.WORKBOOK_ALREADY_EXISTS',
+    CollectionAlreadyExists = 'COLLECTION_ALREADY_EXISTS',
 }
 
 export const ErrorContentTypes = {
     NOT_FOUND: 'not-found',
     NOT_FOUND_BY_RESOLVE_TENANT: 'not-found-by-resolve-tenant',
-    NOT_FOUND_CURRENT_CLOUD_FOLDER: 'not-found-current-cloud-folder',
-    CLOUD_FOLDER_ACCESS_DENIED: 'cloud-folder-access-denied',
     NO_ACCESS: 'no-access',
     NO_ENTRY_ACCESS: 'no-entry-access',
     ERROR: 'error',
     CREDENTIALS: 'credentials',
     AUTH_FAILED: 'auth-failed',
     AUTH_DENIED: 'auth-denied',
-    NEW_ORGANIZATION_USER: 'new-organization-user',
-    NEW_LOCAL_FEDERATION_USER: 'new-local-federation-user',
     INACCESSIBLE_ON_MOBILE: 'inaccessible-on-mobile',
     NOT_AUTHENTICATED: 'not-authenticated',
     FORBIDDEN_BY_PLAN: 'forbidden-by-plan',
     FORBIDDEN_AUTH: 'forbidden-auth',
-    NOT_AUTHENTICATED_GALLERY: 'not-authenticated-gallery',
 };

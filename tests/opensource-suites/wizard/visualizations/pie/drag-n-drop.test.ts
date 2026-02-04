@@ -11,7 +11,7 @@ datalensTest.describe('Wizard', () => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
 
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.PieD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Pie);
 
             await wizardPage.createNewFieldWithFormula('Dimension', '[Category]');
             await wizardPage.createNewFieldWithFormula('Measure', 'sum([Sales])');
@@ -25,7 +25,6 @@ datalensTest.describe('Wizard', () => {
             // It should be possible to drag any type of field except hierarchy into the Categories placeholder
             await checkIfFieldCanBeDragged(wizardPage, PlaceholderName.Dimensions, [
                 'Dimension',
-                'Measure',
                 'Parameter',
             ]);
             await checkIfFieldCantBeDragged(wizardPage, PlaceholderName.Dimensions, 'Hierarchy');

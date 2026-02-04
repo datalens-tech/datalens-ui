@@ -196,6 +196,8 @@ export type DLGlobalData = {
                 editor: string;
                 viewer: string;
                 limitedViewer?: string;
+                entryBindingCreator?: string;
+                limitedEntryBindingCreator?: string;
             };
         };
         workbook: {
@@ -204,6 +206,16 @@ export type DLGlobalData = {
                 editor: string;
                 viewer: string;
                 limitedViewer?: string;
+            };
+        };
+        sharedEntry: {
+            roles: {
+                admin: string;
+                editor: string;
+                viewer: string;
+                limitedViewer?: string;
+                entryBindingCreator?: string;
+                limitedEntryBindingCreator?: string;
             };
         };
     };
@@ -220,7 +232,6 @@ export type DLGlobalData = {
     defaultColorPaletteId?: string;
     extraPalettes?: Record<string, Palette>;
     headersMap?: Record<string, string>;
-    isZitadelEnabled?: boolean;
     hideNavigation?: boolean;
     connectorIcons?: ConnectorIconData[];
     releaseVersion?: string;
@@ -228,6 +239,7 @@ export type DLGlobalData = {
     isAuthEnabled?: boolean;
     authManageLocalUsersDisabled?: boolean;
     authSignupDisabled?: boolean;
+    authCookieName?: string;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {
@@ -269,7 +281,7 @@ export enum EntryScope {
     Folder = 'folder',
     Connection = 'connection',
 }
-
+export type SharedScope = EntryScope.Dataset | EntryScope.Connection;
 export interface EntryAnnotation {
     description?: string;
 }
@@ -310,7 +322,7 @@ export type EntryType = '' | WidgetType;
 
 export interface EntryReadParams {
     revId?: string;
-    includePermissions: string;
+    includePermissionsInfo: string;
     includeLinks: string;
     includeFavorite?: boolean;
     branch?: string;

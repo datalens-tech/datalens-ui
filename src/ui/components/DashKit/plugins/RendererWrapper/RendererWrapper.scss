@@ -3,19 +3,12 @@
 .dashkit-plugin-container {
     &__wrapper {
         height: 100%;
+        background-color: var(--dl-color-widget-background);
+        border-radius: var(--dl-widget-border-radius);
 
         &_widget {
             width: 100%;
             position: relative;
-        }
-
-        &_with-default-color {
-            background-color: var(--g-color-base-float);
-        }
-
-        .dashkit-grid-item__item_editMode &_text,
-        .dashkit-grid-item__item_editMode &_title {
-            background-color: var(--g-color-base-float);
         }
 
         &_title {

@@ -5,10 +5,12 @@ import {Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
+import type {SharedScope} from 'shared';
+import type {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 
 import type {AccessBindingDelta, SubjectClaims} from '../../../../shared/schema/extensions/types';
 import {AccessBindingAction} from '../../../../shared/schema/extensions/types';
-import type {IamAccessDialogDispatch, ResourceType} from '../../../store/actions/iamAccessDialog';
+import type {IamAccessDialogDispatch} from '../../../store/actions/iamAccessDialog';
 import {updateAccessBindings} from '../../../store/actions/iamAccessDialog';
 import {getAccessSubjectType, getResourceRoles} from '../utils';
 
@@ -24,13 +26,14 @@ const i18n = I18n.keyset('component.iam-access-dialog');
 export type Props = {
     resourceId: string;
     resourceType: ResourceType;
+    resourceScope?: SharedScope;
     resourceTitle: string;
     refetch: () => void;
     onBack: () => void;
 };
 
 export const AddSubjects = React.memo<Props>(
-    ({resourceId, resourceType, resourceTitle, refetch, onBack}) => {
+    ({resourceId, resourceType, resourceTitle, refetch, resourceScope, onBack}) => {
         const dispatch = useDispatch<IamAccessDialogDispatch>();
 
         const options = getResourceRoles(resourceType);
@@ -89,6 +92,7 @@ export const AddSubjects = React.memo<Props>(
                     <ActionPanel
                         type={resourceType}
                         title={resourceTitle}
+                        resourceScope={resourceScope}
                         options={options}
                         role={role}
                         onChangeRole={setRole}

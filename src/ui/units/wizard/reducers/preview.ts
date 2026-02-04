@@ -17,11 +17,9 @@ import type {
     TableShared,
     Update,
     VisualizationWithLayersShared,
-    WizardVisualizationId,
 } from 'shared';
 import {
     WizardType,
-    isD3Visualization,
     isDimensionField,
     isMeasureField,
     isPseudoField,
@@ -272,11 +270,7 @@ function mutateAndValidateVisualization({
     return everythingIsOk;
 }
 
-const getChartTypeByVisualizationId = (visualizationId: string): WizardType => {
-    if (isD3Visualization(visualizationId as WizardVisualizationId)) {
-        return WizardType.GravityChartsWizardNode;
-    }
-
+export const getChartTypeByVisualizationId = (visualizationId: string): WizardType => {
     switch (visualizationId) {
         case VISUALIZATION_IDS.FLAT_TABLE:
         case VISUALIZATION_IDS.PIVOT_TABLE: {

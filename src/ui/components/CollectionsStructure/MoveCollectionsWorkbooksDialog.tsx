@@ -4,8 +4,12 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
 import type {CollectionsStructureDispatch} from '../../store/actions/collectionsStructure';
-import {moveCollections, moveWorkbooks} from '../../store/actions/collectionsStructure';
-import {selectMoveIsLoading} from '../../store/selectors/collectionsStructure';
+import {
+    moveCollections,
+    moveSharedEntries,
+    moveWorkbooks,
+} from '../../store/actions/collectionsStructure';
+import {selectBatchMoveIsLoading} from '../../store/selectors/collectionsStructure';
 import DialogManager from '../DialogManager/DialogManager';
 
 import {CollectionStructureDialog, ResourceType} from './CollectionStructureDialog';
@@ -16,6 +20,7 @@ export type Props = {
     open: boolean;
     collectionIds?: string[];
     workbookIds?: string[];
+    entryIds?: string[];
     initialParentId?: string | null;
     onApply: () => void;
     onClose: (structureChanged: boolean) => void;
@@ -32,18 +37,24 @@ export const MoveCollectionsWorkbooksDialog: React.FC<Props> = ({
     open,
     collectionIds,
     workbookIds,
+    entryIds,
     initialParentId = null,
     onApply,
     onClose,
 }) => {
     const dispatch = useDispatch<CollectionsStructureDispatch>();
 
-    const moveIsLoading = useSelector(selectMoveIsLoading);
+    const moveIsLoading = useSelector(selectBatchMoveIsLoading);
 
     const handleMove = React.useCallback(
         async ({targetCollectionId}: {targetCollectionId: string | null}) => {
             let moveCollectionsPromise: Promise<unknown> = Promise.resolve();
             let moveWorkbooksPromise: Promise<unknown> = Promise.resolve();
+            let moveEntriesPromise: Promise<unknown> = Promise.resolve();
+
+            if (!targetCollectionId) {
+                return;
+            }
 
             if (collectionIds?.length) {
                 moveCollectionsPromise = dispatch(
@@ -63,11 +74,20 @@ export const MoveCollectionsWorkbooksDialog: React.FC<Props> = ({
                 );
             }
 
-            await Promise.all([moveCollectionsPromise, moveWorkbooksPromise]);
+            if (entryIds?.length) {
+                moveEntriesPromise = dispatch(
+                    moveSharedEntries({
+                        entryIds,
+                        collectionId: targetCollectionId,
+                    }),
+                );
+            }
+
+            await Promise.all([moveCollectionsPromise, moveWorkbooksPromise, moveEntriesPromise]);
 
             onApply();
         },
-        [dispatch, collectionIds, workbookIds, onApply],
+        [dispatch, collectionIds, workbookIds, entryIds, onApply],
     );
 
     return (

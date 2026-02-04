@@ -51,9 +51,13 @@ import {
     RELATION_DELETE,
     RELATION_UPDATE,
     RENAME_DATASET,
+    SET_CONNECTIONS_DB_NAMES,
+    SET_CURRENT_DB_NAME,
     SET_CURRENT_TAB,
+    SET_DATASET_DELEGATION,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
+    SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET,
     SET_DESCRIPTION,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
@@ -61,10 +65,17 @@ import {
     SET_IS_DATASET_CHANGED_FLAG,
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
+    SET_SELECTED_CONNECTION_DELEGATION,
+    SET_SOURCES_LISTING_OPTIONS,
+    SET_SOURCES_LISTING_OPTIONS_ERROR,
     SET_SOURCES_LOADING_ERROR,
+    SET_SOURCES_PAGINATION,
+    SET_SOURCES_SEARCH_LOADING,
     SET_TEMPLATE_ENABLED,
     SET_UPDATES,
     SET_VALIDATION_STATE,
+    SOURCES_NEXT_PAGE_REQUEST,
+    SOURCES_NEXT_PAGE_SUCCESS,
     SOURCES_REFRESH,
     SOURCE_ADD,
     SOURCE_DELETE,
@@ -74,6 +85,7 @@ import {
     TOGGLE_FIELD_EDITOR_MODULE_LOADING,
     TOGGLE_LOAD_PREVIEW_BY_DEFAULT,
     TOGGLE_PREVIEW,
+    TOGGLE_SOURCES_LISTING_OPTIONS_LOADER,
     TOGGLE_SOURCES_LOADER,
     TOGGLE_VIEW_PREVIEW,
     UPDATE_FIELD,
@@ -260,7 +272,10 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     dataset: content,
                     workbook_id: workbookId,
                     permissions,
+                    full_permissions,
                 },
+                isDelegated,
+                collectionId,
                 publishedId,
                 currentRevId,
             } = action.payload;
@@ -275,8 +290,10 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 workbookId,
                 connection,
                 content,
+                collectionId,
                 prevContent: content,
                 options,
+                isDelegated,
                 preview: {
                     ...state.preview,
                     previewEnabled,
@@ -287,6 +304,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     isDatasetChanged: false,
                 },
                 permissions,
+                fullPermissions: full_permissions,
                 isLoading: false,
                 isRefetchingDataset: false,
             };
@@ -323,6 +341,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 savingDataset: {
                     ...state.savingDataset,
                     isProcessingSavingDataset: false,
+                    sharedDatasetDelegationState: undefined,
                 },
                 ui: {
                     ...state.ui,
@@ -1258,15 +1277,21 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 ...state,
                 sourcePrototypes: sourcePrototypesNext,
                 selectedConnections: selectedConnectionsNext,
+                currentDbName: undefined,
+                options: {
+                    ...state.options,
+                },
+                sourceListingOptions: undefined,
                 ui: {
                     ...state.ui,
                     selectedConnectionId: selectedConnectionIdNext,
+                    isSourcesSearchLoading: false,
+                    isSourcesLoading: false,
                 },
             };
         }
         case ADD_AVATAR_PROTOTYPES: {
             const {list, templates: sourceTemplate} = action.payload;
-
             return {
                 ...state,
                 sourceTemplate,
@@ -1300,6 +1325,17 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 ui: {
                     ...state.ui,
                     isSourcesLoading,
+                },
+            };
+        }
+        case TOGGLE_SOURCES_LISTING_OPTIONS_LOADER: {
+            const {isLoading} = action.payload;
+
+            return {
+                ...state,
+                ui: {
+                    ...state.ui,
+                    isSourcesListingOptionsLoading: isLoading,
                 },
             };
         }
@@ -1395,7 +1431,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 updates: [...state.updates, ...updates],
             };
         }
-        // TODO: Will be fixed in CHARTS-11898
         case SET_DESCRIPTION: {
             return {
                 ...state,
@@ -1403,6 +1438,104 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     ...state.content,
                     description: action.payload,
                 },
+            };
+        }
+        case SET_CONNECTIONS_DB_NAMES: {
+            return {
+                ...state,
+                connectionsDbNames: action.payload,
+            };
+        }
+        case SET_CURRENT_DB_NAME: {
+            return {
+                ...state,
+                currentDbName: action.payload,
+            };
+        }
+        case SET_SOURCES_PAGINATION: {
+            return {
+                ...state,
+                sourcesPagination: {
+                    ...state.sourcesPagination,
+                    ...action.payload,
+                },
+            };
+        }
+        case SOURCES_NEXT_PAGE_REQUEST: {
+            return {
+                ...state,
+                sourcesPagination: {
+                    ...state.sourcesPagination,
+                    isFetchingNextPage: true,
+                },
+            };
+        }
+        case SET_SOURCES_SEARCH_LOADING: {
+            return {
+                ...state,
+                ui: {
+                    ...state.ui,
+                    isSourcesSearchLoading: action.payload,
+                },
+            };
+        }
+        case SOURCES_NEXT_PAGE_SUCCESS: {
+            const isLastPage = action.payload.length <= state.sourcesPagination.limit;
+            const sourcePrototypes = [
+                ...state.sourcePrototypes,
+                ...(isLastPage ? action.payload : action.payload.slice(0, -1)),
+            ];
+            return {
+                ...state,
+                sourcesPagination: {
+                    ...state.sourcesPagination,
+                    limit: state.sourcesPagination.limit,
+                    page: state.sourcesPagination.page + 1,
+                    isFetchingNextPage: false,
+                    isFinished: isLastPage,
+                },
+                sourcePrototypes,
+            };
+        }
+        case SET_SOURCES_LISTING_OPTIONS: {
+            return {
+                ...state,
+                sourceListingOptions: action.payload,
+            };
+        }
+        case SET_SOURCES_LISTING_OPTIONS_ERROR: {
+            const {error} = action.payload;
+
+            return {
+                ...state,
+                errors: {
+                    ...state.errors,
+                    sourceListingOptionsError: error,
+                },
+            };
+        }
+        case SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET: {
+            return {
+                ...state,
+                savingDataset: {
+                    ...state.savingDataset,
+                    delegationFromConnToSharedDataset: action.payload,
+                },
+            };
+        }
+        case SET_SELECTED_CONNECTION_DELEGATION: {
+            return {
+                ...state,
+                ui: {
+                    ...state.ui,
+                    selectedConnectionDelegationStatus: action.payload,
+                },
+            };
+        }
+        case SET_DATASET_DELEGATION: {
+            return {
+                ...state,
+                isDelegated: action.payload,
             };
         }
         default: {

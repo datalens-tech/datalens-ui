@@ -1,18 +1,21 @@
 import React from 'react';
 
 import {Pencil, TrashBin} from '@gravity-ui/icons';
-import {Button, Dialog, Icon, Loader} from '@gravity-ui/uikit';
+import {Button, Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {DialogEntryDescriptionQa} from 'shared';
+import {DL, SHEET_IDS} from 'ui/constants';
 import {useMountedState} from 'ui/hooks';
 import {MarkdownProvider} from 'ui/modules';
 import type {DialogEntryDescriptionProps} from 'ui/registry/units/common/types/components/DialogEntryDescription';
 import {closeDialog} from 'ui/store/actions/dialog';
 
 import logger from '../../libs/logger';
-import {TextEditor} from '../TextEditor/TextEditor';
+import {AdaptiveDialog} from '../AdaptiveDialog/AdaptiveDialog';
+import type {WysiwygEditorRef} from '../WysiwygEditor/WysiwygEditor';
+import {WysiwygEditor} from '../WysiwygEditor/WysiwygEditor';
 import {YfmWrapper} from '../YfmWrapper/YfmWrapper';
 
 import './DialogEntryDescription.scss';
@@ -36,11 +39,14 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
     const isMounted = useMountedState();
     const dispatch = useDispatch();
 
+    const editorRef = React.useRef<WysiwygEditorRef>(null);
+
     const isEditable = canEdit && isEditMode;
 
     const [text, setText] = React.useState(description || '');
     const [markdown, setMarkdown] = React.useState('');
     const [loading, setLoading] = React.useState(false);
+    const [isError, setIsError] = React.useState(false);
 
     React.useEffect(() => {
         if (!isEditable) {
@@ -77,7 +83,12 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
     }, [onEdit, text]);
 
     const handleClear = React.useCallback(() => {
+        editorRef.current?.clear();
         setText('');
+    }, []);
+
+    const handleMarkupChange = React.useCallback((editor: WysiwygEditorRef) => {
+        setText(editor.getValue());
     }, []);
 
     const renderSymbolsCounter = maxLength
@@ -85,72 +96,96 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
         : null;
     const isExceedLimit = maxLength ? text.length > maxLength : false;
 
+    const dialogFooterProps = isEditable
+        ? {
+              onClickButtonApply: handleApply,
+              textButtonApply: i18n('button_save'),
+              propsButtonApply: {
+                  disabled: isError || isExceedLimit,
+                  qa: DialogEntryDescriptionQa.SaveButton,
+              },
+              onClickButtonCancel: handleClose,
+              textButtonCancel: i18n('button_cancel'),
+          }
+        : undefined;
+
+    const renderDialogFooter = () => {
+        if (isEditable) {
+            return (
+                <Button view="flat-danger" disabled={isError} onClick={handleClear}>
+                    <Icon data={TrashBin} size={16} />
+                    {i18n('button_clear')}
+                </Button>
+            );
+        }
+
+        if (!loading && canEdit) {
+            return (
+                <Button
+                    view="flat-secondary"
+                    onClick={handleEdit}
+                    qa={DialogEntryDescriptionQa.EditButton}
+                >
+                    <Icon data={Pencil} size={16} />
+                    {i18n('button_edit')}
+                </Button>
+            );
+        }
+        return null;
+    };
+
     return (
-        <Dialog
-            open={true}
+        <AdaptiveDialog
+            visible={true}
             onClose={handleClose}
-            disableOutsideClick={true}
+            id={SHEET_IDS.DIALOG_ENTRY_DESCRIPTION}
+            dialogProps={{
+                disableOutsideClick: true,
+                // TODO: remove after https://github.com/gravity-ui/uikit/issues/2361
+                disableHeightTransition: true,
+            }}
+            dialogBodyClassName={b()}
+            sheetContentClassName={b({mobile: DL.IS_MOBILE})}
+            title={title}
+            dialogFooterProps={dialogFooterProps}
+            renderDialogFooter={renderDialogFooter}
             qa={DialogEntryDescriptionQa.Root}
         >
-            <Dialog.Header caption={title} />
             {isEditable ? (
                 <React.Fragment>
-                    <Dialog.Body className={b()}>
-                        {props.subTitle && <div className={b('subtitle')}>{props.subTitle}</div>}
-                        <TextEditor autofocus onTextUpdate={setText} text={text} />
-                        {Boolean(maxLength) && (
-                            <div
-                                className={b('length-counter', {
-                                    error: isExceedLimit,
-                                })}
-                            >
-                                <span>{renderSymbolsCounter}</span>
-                            </div>
-                        )}
-                    </Dialog.Body>
-                    <Dialog.Footer
-                        onClickButtonApply={handleApply}
-                        textButtonApply={i18n('button_save')}
-                        propsButtonApply={{
-                            disabled: isExceedLimit,
-                            qa: DialogEntryDescriptionQa.SaveButton,
+                    {props.subTitle && <div className={b('subtitle')}>{props.subTitle}</div>}
+                    <WysiwygEditor
+                        ref={editorRef}
+                        autofocus={true}
+                        onMarkupChange={handleMarkupChange}
+                        initial={{
+                            markup: text,
                         }}
-                        onClickButtonCancel={handleClose}
-                        textButtonCancel={i18n('button_cancel')}
-                    >
-                        <Button view="flat-danger" onClick={handleClear}>
-                            <Icon data={TrashBin} size={16} />
-                            {i18n('button_clear')}
-                        </Button>
-                    </Dialog.Footer>
+                        onError={() => setIsError(true)}
+                    />
+                    {Boolean(maxLength) && (
+                        <div
+                            className={b('length-counter', {
+                                error: isExceedLimit,
+                            })}
+                        >
+                            <span>{renderSymbolsCounter}</span>
+                        </div>
+                    )}
                 </React.Fragment>
             ) : (
                 <React.Fragment>
-                    <Dialog.Body className={b()}>
-                        <div className={b('content')}>
-                            {loading ? (
-                                <div className={b('yfm-loader')}>
-                                    <Loader size="m" />
-                                </div>
-                            ) : (
-                                <YfmWrapper className={b()} content={markdown} setByInnerHtml />
-                            )}
-                        </div>
-                    </Dialog.Body>
-                    <Dialog.Footer>
-                        {!loading && canEdit && (
-                            <Button
-                                view="flat-secondary"
-                                onClick={handleEdit}
-                                qa={DialogEntryDescriptionQa.EditButton}
-                            >
-                                <Icon data={Pencil} size={16} />
-                                {i18n('button_edit')}
-                            </Button>
+                    <div className={b('content')}>
+                        {loading ? (
+                            <div className={b('yfm-loader')}>
+                                <Loader size="m" />
+                            </div>
+                        ) : (
+                            <YfmWrapper className={b()} content={markdown} setByInnerHtml />
                         )}
-                    </Dialog.Footer>
+                    </div>
                 </React.Fragment>
             )}
-        </Dialog>
+        </AdaptiveDialog>
     );
 };

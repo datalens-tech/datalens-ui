@@ -8,16 +8,18 @@ import {
 import type {Plugin, PluginTitleProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
-import {type DashTabItemTitle, EXPORT_PRINT_HIDDEN_ATTR} from 'shared';
-import {CustomPaletteBgColors} from 'shared/constants/widgets';
+import {CustomPaletteBgColors, EXPORT_PRINT_HIDDEN_ATTR} from 'shared';
+import type {DashTabItemTitle} from 'shared';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
-    getPreparedWrapSettings,
+    usePreparedWrapSettings,
+    useTextColorStyles,
 } from 'ui/components/DashKit/utils';
 import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {DL} from 'ui/constants';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
+import type {CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
@@ -33,15 +35,19 @@ import './Title.scss';
 
 const b = block('dashkit-plugin-title-container');
 
-type PluginTitleObjectSettings = {hideAnchor?: boolean; hideHint?: boolean};
-
-type Props = PluginTitleProps & PluginTitleObjectSettings;
-
-type PluginTitle = Plugin<Props> & {
-    setSettings: (settings: PluginTitleObjectSettings) => PluginTitle;
+type PluginTitleObjectSettings = CommonPluginSettings & {
     hideAnchor?: boolean;
     hideHint?: boolean;
 };
+
+type Props = PluginTitleProps & PluginTitleObjectSettings;
+
+type PluginTitle = Plugin<Props> &
+    CommonPluginSettings & {
+        setSettings: (settings: PluginTitleObjectSettings) => PluginTitle;
+        hideAnchor?: boolean;
+        hideHint?: boolean;
+    };
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
 
@@ -52,14 +58,14 @@ const MIN_AVAILABLE_TOP_OFFSET = -5;
 const titlePlugin: PluginTitle = {
     ...pluginTitle,
     setSettings(settings: PluginTitleObjectSettings) {
-        const {hideAnchor, hideHint} = settings;
+        const {hideAnchor, hideHint, globalWidgetSettings} = settings;
 
         titlePlugin.hideAnchor = hideAnchor;
         titlePlugin.hideHint = hideHint;
-
+        titlePlugin.globalWidgetSettings = globalWidgetSettings;
         return titlePlugin;
     },
-    renderer: function Wrapper(
+    renderer: function PluginTitleRenderer(
         props: Props,
         forwardedRef: React.LegacyRef<DashKitPluginTitle> | undefined,
     ) {
@@ -118,12 +124,6 @@ const titlePlugin: PluginTitle = {
 
         const content = <DashKitPluginTitle {...props} ref={forwardedRef} />;
 
-        const showBgColor = Boolean(
-            data.background?.enabled !== false &&
-                data.background?.color &&
-                data.background?.color !== CustomPaletteBgColors.NONE,
-        );
-
         const showHint = Boolean(!titlePlugin.hideHint && data.hint?.enabled && data.hint.text);
         const showAnchor = !titlePlugin.hideAnchor && !DL.IS_MOBILE;
 
@@ -131,15 +131,23 @@ const titlePlugin: PluginTitle = {
 
         const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
         const withAbsoluteHint = showHint && !isInlineExtraElements;
-
-        const {classMod, style} = getPreparedWrapSettings(
-            showBgColor,
-            data.background?.color,
-            {
-                position: showAnchor ? undefined : 'relative',
+        const {style, hasInternalMargins} = usePreparedWrapSettings({
+            ownWidgetSettings: {
+                background: data.background,
+                backgroundSettings: data.backgroundSettings,
+                borderRadius: data.borderRadius,
+                internalMarginsEnabled: data.internalMarginsEnabled,
             },
-            data.textColor,
-        );
+            dashVisualSettings: {
+                background: undefined,
+                backgroundSettings: undefined,
+                widgetsSettings: titlePlugin.globalWidgetSettings,
+            },
+            defaultOldColor: CustomPaletteBgColors.NONE,
+        });
+
+        const textColorStyles = useTextColorStyles(data.textColor, data.textSettings?.color);
+        const wrapperStyles = {...style, ...textColorStyles};
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,
@@ -156,8 +164,7 @@ const titlePlugin: PluginTitle = {
             currentLayout.y,
             currentLayout.h,
             currentLayout.w,
-            classMod,
-            data.background?.color,
+            data.background,
             data.size,
             data.text,
         ]);
@@ -225,22 +232,18 @@ const titlePlugin: PluginTitle = {
 
             return {
                 ...fontStyles,
-                top: showAnchor ? extraElementsTop : getTopOffsetBySize(data.size, showBgColor),
+                top: showAnchor
+                    ? extraElementsTop
+                    : getTopOffsetBySize(data.size, hasInternalMargins),
             };
         };
 
         return (
-            <RendererWrapper
-                id={props.id}
-                type="title"
-                nodeRef={rootNodeRef}
-                style={style as React.StyleHTMLAttributes<HTMLDivElement>}
-                classMod={classMod}
-            >
+            <RendererWrapper id={props.id} type="title" nodeRef={rootNodeRef} style={wrapperStyles}>
                 <div
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
-                        'with-color': Boolean(showBgColor),
+                        'with-internal-margins': Boolean(hasInternalMargins),
                         'with-inline-extra-elements': Boolean(withInlineExtraElements),
                         'with-absolute-anchor': withAbsoluteAnchor && !withAbsoluteHint,
                         'with-absolute-hint': withAbsoluteHint && !withAbsoluteAnchor,

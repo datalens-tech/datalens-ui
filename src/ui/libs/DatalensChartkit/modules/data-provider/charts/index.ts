@@ -11,6 +11,7 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {stringify} from 'qs';
 import type {
+    ChartActivityResponseData,
     ChartsStats,
     DashChartRequestContext,
     StringParams,
@@ -416,6 +417,11 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                         denormalizedParams[URL_OPTIONS.HIDE_COMMENTS] !== '0'),
                 hideHolidays: denormalizedParams[URL_OPTIONS.HIDE_HOLIDAYS] === '1',
             };
+            const withoutLineLimit = denormalizedParams[URL_OPTIONS.WITHOUT_LINE_LIMIT];
+
+            if (withoutLineLimit !== undefined) {
+                newConfig.withoutLineLimit = Boolean(withoutLineLimit);
+            }
 
             return {
                 ...processed,
@@ -616,17 +622,24 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         contextHeaders,
         requestId,
         requestCancellation,
+        widgetElement,
+        responseOptions,
     }: {
         props: ChartsProps;
         contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
+        responseOptions?: {
+            includeConfig?: boolean;
+        };
+        widgetElement?: Element;
     }) {
         const loaded = await this.load({
             data: props,
             contextHeaders,
             requestId,
             requestCancellation,
+            includeConfig: responseOptions?.includeConfig,
         });
 
         if (loaded) {
@@ -642,7 +655,11 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             }
 
             const processed = isResponseSuccessNode(loaded)
-                ? await processNode<ResponseSuccessNode, Widget>(loaded, this.settings.noJsonFn)
+                ? await processNode<ResponseSuccessNode, Widget>({
+                      loaded,
+                      noJsonFn: this.settings.noJsonFn,
+                      widgetElement,
+                  })
                 : // @ts-ignore Types from the js file are incorrect
                   processWizard(loaded);
 
@@ -652,7 +669,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return null;
     }
 
-    async runAction({
+    async makeActivityRequest({
         props,
         contextHeaders,
         requestId,
@@ -675,7 +692,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
         try {
             const result = await this.makeRequest({
-                url: `${this.requestEndpoint}${DL.API_PREFIX}/run-action`,
+                url: `${this.requestEndpoint}${DL.API_PREFIX}/run-activity`,
                 data: {
                     id,
                     key,
@@ -696,11 +713,19 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 },
                 headers: this.getLoadHeaders(requestId, contextHeaders),
             });
-            const responseData: ResponseSuccess = result.data;
+            const responseData: ChartActivityResponseData = result.data;
             const headers = result.headers;
 
             return this.getExtendedResponse({responseData, headers, includeLogs});
         } catch (error) {
+            if (error.response?.data) {
+                return this.getExtendedResponse({
+                    responseData: error.response.data,
+                    headers: error.response.headers,
+                    includeLogs,
+                });
+            }
+
             return this.processError({
                 error,
                 requestId,
@@ -730,7 +755,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         });
 
         if (loaded) {
-            return processNode<ResponseSuccessControls, ControlsOnlyWidget>(loaded);
+            return processNode<ResponseSuccessControls, ControlsOnlyWidget>({loaded});
         }
 
         return null;
@@ -850,11 +875,9 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return url + query;
     }
 
-    private getExtendedResponse<T extends ResponseSuccess | ResponseSuccessControls>(args: {
-        responseData: T;
-        headers: AxiosResponse<any, any>['headers'];
-        includeLogs: boolean;
-    }) {
+    private getExtendedResponse<
+        T extends ResponseSuccess | ResponseSuccessControls | ChartActivityResponseData,
+    >(args: {responseData: T; headers: AxiosResponse<any, any>['headers']; includeLogs: boolean}) {
         const {responseData, headers, includeLogs} = args;
 
         // TODO: return output when receiving onLoad
@@ -953,12 +976,14 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         requestId,
         requestCancellation,
         onlyControls = false,
+        includeConfig = true,
     }: {
         data: ChartsProps;
         contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
         onlyControls?: boolean;
+        includeConfig?: boolean;
     }) {
         const {
             id,
@@ -994,7 +1019,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                     : undefined,
                 responseOptions: {
                     // relevant for graph_wizard and metric_wizard
-                    includeConfig: true,
+                    includeConfig,
                     includeLogs,
                 },
                 uiOnly: onlyControls || undefined,

@@ -1,16 +1,13 @@
 import type {ChartData, ChartSeries, ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
-import {
-    pickActionParamsFromParams,
-    transformParamsToActionParams,
-} from '@gravity-ui/dashkit/helpers';
+import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 
 import type {GraphWidgetEventScope, StringParams} from '../../../../../../shared';
-import type {GraphWidget, LoadedWidgetData} from '../../../types';
+import type {GraphWidget, LoadedWidgetData, RunActivityFn} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
 import {addParams, subtractParameters} from '../action-params-handlers';
-import {getNormalizedClickActions} from '../utils';
+import {getEscapedActionParams, getNormalizedClickActions} from '../utils';
 
 import {getPointActionParams, isPointSelected} from './utils';
 
@@ -20,10 +17,11 @@ type OnClickHandlerArgs = {
     series: unknown;
     event: PointerEvent;
     onChange?: ChartKitAdapterProps['onChange'];
+    runActivity?: RunActivityFn;
 };
 
 export function handleClick(args: OnClickHandlerArgs) {
-    const {widgetData, event, onChange, point, series} = args;
+    const {widgetData, event, point, series, onChange, runActivity} = args;
     const drillDownData = widgetData?.config?.drillDown;
 
     if (drillDownData) {
@@ -72,9 +70,7 @@ export function handleClick(args: OnClickHandlerArgs) {
         handlers.forEach((handler) => {
             switch (handler.type) {
                 case 'setActionParams': {
-                    const actionParams = pickActionParamsFromParams(
-                        get(widgetData, 'unresolvedParams', {}),
-                    );
+                    const actionParams = getEscapedActionParams(widgetData);
                     const clickScope: GraphWidgetEventScope = get(action, 'scope', 'point');
                     setActionParamsByClick({
                         event,
@@ -85,6 +81,16 @@ export function handleClick(args: OnClickHandlerArgs) {
                         point: point as ChartSeriesData,
                         series: series as ChartSeries,
                     });
+                    break;
+                }
+                case 'runActivity': {
+                    if (runActivity) {
+                        runActivity({
+                            params: point as ChartSeriesData,
+                        });
+                    }
+
+                    break;
                 }
             }
         });

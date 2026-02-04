@@ -474,7 +474,6 @@ export function prepareSingleRequest({
     const withTotals =
         (visualization.id === WizardVisualizationId.FlatTable ||
             visualization.id === WizardVisualizationId.Donut ||
-            visualization.id === WizardVisualizationId.DonutD3 ||
             visualization.id === WizardVisualizationId.PivotTable) &&
         extraSettings?.totals === 'on' &&
         isMeasureInFields;
@@ -702,9 +701,9 @@ export const getUrlsRequestBody = (args: {
     const placeholders = currentLayer.placeholders;
     const currentDatasetIndex = config.datasetsIds.findIndex((value) => value === datasetId);
     const currentLocalFields =
-        currentDatasetIndex >= 0 ? config.datasetsPartialFields[currentDatasetIndex] : [];
+        currentDatasetIndex >= 0 ? config.datasetsPartialFields?.[currentDatasetIndex] : [];
 
-    const datasetSchema = [...args.datasetFields, ...currentLocalFields];
+    const datasetSchema = [...args.datasetFields, ...(currentLocalFields ?? [])];
 
     const links = config.links;
     const segments = config.segments;

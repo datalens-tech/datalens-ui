@@ -2,7 +2,12 @@ import type {ChartData, PieSeries, PieSeriesData} from '@gravity-ui/chartkit/gra
 import merge from 'lodash/merge';
 
 import type {SeriesExportSettings} from '../../../../../../../shared';
-import {formatNumber, getFormatOptions, isMeasureValue} from '../../../../../../../shared';
+import {
+    WizardVisualizationId,
+    formatNumber,
+    getFormatOptions,
+    isMeasureValue,
+} from '../../../../../../../shared';
 import {getFakeTitleOrTitle} from '../../../../../../../shared/modules/fields';
 import {isHtmlField, isMarkdownField, isMarkupField} from '../../../../../../../shared/types/index';
 import {getBaseChartConfig} from '../../gravity-charts/utils';
@@ -12,7 +17,7 @@ import {getLegendColorScale} from '../helpers/legend';
 import type {PiePoint, PrepareFunctionArgs} from '../types';
 
 import preparePieData from './prepare-pie-data';
-import {getFormattedValue, isColoringByMeasure, isDonut} from './utils';
+import {getFormattedValue, isColoringByMeasure} from './utils';
 
 type ExtendedPieSeriesData = Omit<PieSeriesData, 'label'> & {
     drillDownFilterValue?: string;
@@ -30,7 +35,8 @@ type ExtendedPieSeries = Omit<PieSeries, 'data'> & {
 };
 
 export function prepareD3Pie(args: PrepareFunctionArgs) {
-    const {shared, labels, visualizationId, ChartEditor, colorsConfig, idToDataType} = args;
+    const {shared, labels, visualizationId, placeholders, ChartEditor, colorsConfig, idToDataType} =
+        args;
     const {graphs, label, measure, totals, color, dimension} = preparePieData(args);
     const isLabelsEnabled = Boolean(labels?.length && label && measure?.hideLabelMode !== 'hide');
 
@@ -81,7 +87,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
             },
         };
 
-        if (isDonut({visualizationId})) {
+        if (visualizationId === WizardVisualizationId.Donut) {
             seriesConfig.innerRadius = '50%';
 
             if (measure && totals) {
@@ -121,12 +127,13 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
         }
     }
 
-    return merge(getBaseChartConfig(shared), {
+    return merge(getBaseChartConfig({shared, visualization: {placeholders, id: visualizationId}}), {
         chart: {
             margin: {top: 20, left: 12, right: 12, bottom: 20},
+            zoom: {enabled: false},
         },
         series: {
-            data,
+            data: data.filter((s) => s.data.length),
         },
         legend,
     });

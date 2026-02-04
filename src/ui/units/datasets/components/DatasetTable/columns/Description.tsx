@@ -15,10 +15,11 @@ const i18n = I18n.keyset('dataset.dataset-editor.modify');
 type GetDescriptionColumnArgs = {
     setActiveRow: ColumnItem['setActiveRow'];
     onUpdate: (row: DatasetField, description: string) => void;
+    readonly: boolean;
 };
 
 export const getDescriptionColumn = (args: GetDescriptionColumnArgs) => {
-    const {setActiveRow, onUpdate} = args;
+    const {setActiveRow, onUpdate, readonly} = args;
 
     const getUpdateHandler = (row: DatasetField) => {
         return (nextDescription: string) => onUpdate(row, nextDescription);
@@ -40,6 +41,7 @@ export const getDescriptionColumn = (args: GetDescriptionColumnArgs) => {
                     index={index}
                     setActiveRow={setActiveRow}
                     onUpdate={getUpdateHandler(row)}
+                    disabled={readonly}
                 />
             );
         },

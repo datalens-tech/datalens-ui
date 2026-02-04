@@ -5,6 +5,7 @@ export interface ListSuggestUser {
     email?: string;
     meta?: string;
     avatarUrl?: string;
+    type?: string;
 }
 
 export type GetUsersSuggestItems = (

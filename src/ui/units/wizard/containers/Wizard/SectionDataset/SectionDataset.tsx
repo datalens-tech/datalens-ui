@@ -28,7 +28,7 @@ import {
 } from 'shared';
 import {closeDialog, openDialog, openDialogParameter} from 'store/actions/dialog';
 import type {DatalensGlobalState} from 'ui';
-import {DL, EntryDialogName, NavigationMinimal} from 'ui';
+import {DL, EntryDialogName, NavigationMinimal, URL_QUERY} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {selectDebugMode} from 'ui/store/selectors/user';
 import {matchDatasetFieldFilter} from 'ui/utils/helpers';
@@ -452,8 +452,12 @@ class SectionDataset extends React.Component<Props, State> {
         this.props.toggleNavigation();
     };
 
-    onOpenDatasetClick = (id: string) => {
-        window.open(`${DL.ENDPOINTS.dataset}/${id}`);
+    onOpenDatasetClick = (id: string, isSharedDataset: boolean) => {
+        const url = new URL(`${DL.ENDPOINTS.dataset}/${id}`, window.location.origin);
+        if (isSharedDataset && this.props.workbookId) {
+            url.searchParams.set(URL_QUERY.BINDED_WORKBOOK, this.props.workbookId);
+        }
+        window.open(url);
     };
 
     onAddDatasetClick = () => {
@@ -988,7 +992,7 @@ class SectionDataset extends React.Component<Props, State> {
 
         return (
             <div
-                className={`container datasets-container${!datasetLoaded ? ' blank' : ''}`}
+                className={`datasets-container${!datasetLoaded ? ' blank' : ''}`}
                 data-qa={SectionDatasetQA.DatasetContainer}
             >
                 <div
@@ -1035,6 +1039,7 @@ class SectionDataset extends React.Component<Props, State> {
                                     scope="dataset"
                                     startFrom={startFrom}
                                     ignoreWorkbookEntries={true}
+                                    ignoreSharedEntries={true}
                                     placeSelectParameters={getPlaceSelectParameters([
                                         PLACE.ROOT,
                                         PLACE.FAVORITES,

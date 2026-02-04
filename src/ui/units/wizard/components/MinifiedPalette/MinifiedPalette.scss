@@ -8,23 +8,11 @@ $paletteItemSizeM: 28px;
     }
 
     &__color-input-wrapper {
+        width: 128px;
         display: flex;
         align-items: center;
         margin-top: 12px;
         margin-bottom: 5px;
-    }
-
-    &__color-input {
-        width: 164px;
-        height: 28px;
-    }
-
-    &__color-input-icon {
-        margin-right: 4px;
-        height: $paletteItemSizeM;
-        width: $paletteItemSizeM;
-        border-radius: 6px;
-        pointer-events: none;
     }
 
     &__palette {

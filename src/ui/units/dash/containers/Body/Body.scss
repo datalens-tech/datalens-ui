@@ -25,6 +25,11 @@ $actionPanelDefaultBottom: 20px;
     text-size-adjust: none;
     $bodyClass: &;
 
+    &_split-pane {
+        height: 100%;
+        overflow-y: auto;
+    }
+
     // redefining the style of the internal header at the dashboard level by design so that it looks the same with the headers
     & .yc-select-control__label {
         font-weight: 500;
@@ -34,7 +39,6 @@ $actionPanelDefaultBottom: 20px;
         width: 100%;
         transition: width 0.1s;
         padding: 20px #{$contentPadding} 48px;
-        background-color: var(--dash-current-background);
 
         &_with-table-of-content:not(&_mobile) {
             width: calc(100% - 250px);
@@ -106,6 +110,10 @@ $actionPanelDefaultBottom: 20px;
         }
     }
 
+    &_split-pane &__content-wrapper {
+        overflow-y: unset;
+    }
+
     &__content-container {
         position: relative;
         display: flex;
@@ -128,11 +136,14 @@ $actionPanelDefaultBottom: 20px;
         }
     }
 
+    &_split-pane &__content-container {
+        overflow-y: unset;
+    }
+
     &__entry-name {
         font-size: var(--g-text-header-2-font-size);
         line-height: var(--g-text-header-2-line-height);
         font-weight: 500;
-        background-color: var(--_--dash-background);
         padding: 16px 0 4px;
     }
 

@@ -8,6 +8,7 @@ export {
     connectionTypeSelector,
     connectionIdSelector,
     workbookIdSelector,
+    collectionIdSelector,
 } from './connection-data';
 export * from './form';
 export {initialFormSelector} from './initial-form';

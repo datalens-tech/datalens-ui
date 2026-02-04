@@ -4,7 +4,6 @@ import {TriangleExclamationFill} from '@gravity-ui/icons';
 import {Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import type {StringParams} from 'shared';
 import {isValidRequiredValue} from 'ui/components/DashKit/plugins/Control/utils';
@@ -94,6 +93,7 @@ class Control<TProviderData> extends React.PureComponent<
         params: this.props.data.params,
         statePriority: false,
         validationErrors: {},
+        loading: false,
     };
 
     componentDidMount() {
@@ -153,16 +153,7 @@ class Control<TProviderData> extends React.PureComponent<
         );
     }
 
-    async runAction(args: StringParams) {
-        if (!this.props.runAction || !this.props.onAction) {
-            return;
-        }
-
-        const responseData = await this.props.runAction({...this.state.params, ...args});
-        this.props.onAction({data: get(responseData, 'data')});
-    }
-
-    onChange(control: ActiveControl, value: SimpleControlValue, index: number) {
+    async onChange(control: ActiveControl, value: SimpleControlValue, index: number) {
         const {type, updateControlsOnChange, updateOnChange, postUpdateOnChange} = control;
 
         const {newParams, callExternalOnChange, callChangeByClick} = this.getChangedParams(
@@ -184,8 +175,14 @@ class Control<TProviderData> extends React.PureComponent<
             return;
         }
 
-        if (type === 'button' && control.onClick?.action === CLICK_ACTION_TYPE.RUN_ACTION) {
-            this.runAction(control.onClick.args);
+        if (type === 'button' && control.onClick?.action === CLICK_ACTION_TYPE.RUN_ACTIVITY) {
+            this.setState({loading: true});
+            try {
+                await this.props.runActivity?.({params: {...newParams, ...control.onClick.args}});
+            } catch (e) {
+            } finally {
+                this.setState({loading: false});
+            }
             return;
         }
 
@@ -240,6 +237,7 @@ class Control<TProviderData> extends React.PureComponent<
             key: index + (param || (isNotSingleParam(control) && control.paramFrom) || label),
             value: control.disabled ? '' : value,
             onChange: (value: SimpleControlValue) => this.onChange(control, value, index),
+            loading: this.state.loading,
         };
 
         if ('required' in control) {

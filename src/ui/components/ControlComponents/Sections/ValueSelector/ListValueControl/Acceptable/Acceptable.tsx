@@ -5,7 +5,7 @@ import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA} from 'shared';
 import {DashboardDialogControl} from 'shared/constants/qa/dash';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import type {AcceptableValue} from 'ui/store/typings/controlDialog';
 

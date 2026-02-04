@@ -5,7 +5,7 @@ import {Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DL} from 'ui/constants/common';
 
-import {DatalensTabs} from '../../../shared/constants/qa/components';
+import {DatalensTabsQa} from '../../../shared/constants/qa/components';
 
 import './Tabs.scss';
 
@@ -59,9 +59,9 @@ function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<
 
                         let qa;
                         if (item) {
-                            qa = DL.IS_MOBILE ? DatalensTabs.MobileItem : DatalensTabs.Item;
+                            qa = DL.IS_MOBILE ? DatalensTabsQa.MobileItem : DatalensTabsQa.Item;
                         } else {
-                            qa = DatalensTabs.SwitcherItem;
+                            qa = DatalensTabsQa.SwitcherItem;
                         }
 
                         return item?.id ? (

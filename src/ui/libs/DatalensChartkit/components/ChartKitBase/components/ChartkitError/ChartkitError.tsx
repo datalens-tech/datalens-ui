@@ -10,8 +10,8 @@ import type {ChartKitBaseWrapperProps, ChartKitWrapperState} from '../../types';
 type ChartkitErrorProps = {
     onRetry?: (data?: OnChangeData['data']) => void;
     error: CombinedError;
-    requestId: ChartKitWrapperState['requestId'];
-    noControls: ChartKitBaseWrapperProps['noControls'];
+    requestId?: ChartKitWrapperState['requestId'];
+    noControls?: ChartKitBaseWrapperProps['noControls'];
 };
 
 export const ChartkitError = ({error, onRetry, requestId, noControls}: ChartkitErrorProps) => {

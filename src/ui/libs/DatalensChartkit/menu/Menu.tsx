@@ -11,7 +11,7 @@ import {
 import type {ChartsData} from '../modules/data-provider/charts';
 import type {GraphWidget, TableWidget} from '../types';
 
-import type {MenuItemArgs} from './MenuItems';
+import {type MenuItemArgs} from './MenuItems';
 import {getWidgetChartMenu} from './helpers';
 
 export type MenuItemsConfig = Array<MenuItemConfig>;
@@ -37,6 +37,7 @@ export type MenuItemConfig = {
     isVisible: (params?: any) => boolean;
     action: (params: any) => void | Promise<void> | MenuActionComponent;
     actionWrapper?: (args: MenuItemConfig['action']) => (args: unknown) => void;
+    extraOptions?: Record<string, unknown>;
     onExportLoading?: (isLoading: boolean) => void;
     onFullscreenClick?: () => void;
 };
@@ -76,6 +77,7 @@ export const getChartkitMenuItems = (props: GetChartkitMenuItems) => {
         default: {
             const getDefaultChartMenuFn = registry.chart.functions.get('getDefaultChartMenu');
             menuItemsGroups = getDefaultChartMenuFn({
+                type,
                 chartsDataProvider,
                 customOptions,
                 extraOptions,

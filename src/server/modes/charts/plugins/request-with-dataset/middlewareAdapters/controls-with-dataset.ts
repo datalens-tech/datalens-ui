@@ -18,7 +18,6 @@ export default async (
         workbookId,
         rejectFetchingSource,
         pluginOptions,
-        zitadelParams,
         authParams,
         requestHeaders,
     } = args;
@@ -34,7 +33,6 @@ export default async (
         iamToken,
         rejectFetchingSource,
         pluginOptions,
-        zitadelParams,
         authParams,
         requestHeaders,
     });

@@ -9,6 +9,7 @@ import {
     SET_CONNECTION_KEY,
     SET_CONNECTOR_DATA,
     SET_ENTRY,
+    SET_ENTRY_DELEGATION,
     SET_FILE_COLUMN_FILTER,
     SET_FILE_REPLACE_SOURCES,
     SET_FILE_SELECTED_ITEM_ID,
@@ -81,6 +82,16 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                     entry: error,
                 },
             };
+        }
+        case SET_ENTRY_DELEGATION: {
+            const delegation = action.payload;
+            if (state.entry) {
+                return {
+                    ...state,
+                    entry: {...state.entry, isDelegated: delegation},
+                };
+            }
+            return state;
         }
         case SET_CONNECTION_KEY: {
             if (!state.entry) {

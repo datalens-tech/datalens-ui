@@ -3,12 +3,12 @@ import React from 'react';
 import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import type {DashTabItemImage} from 'shared';
-import {DashTabItemType} from 'shared';
-import {CustomPaletteBgColors} from 'shared/constants/widgets';
+import {CustomPaletteBgColors, DashTabItemType} from 'shared';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
+import type {CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
-import {getPreparedWrapSettings} from '../../utils';
+import {usePreparedWrapSettings} from '../../utils';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Image.scss';
@@ -19,10 +19,35 @@ type Props = PluginWidgetProps & {
     data: DashTabItemImage['data'] & PluginWidgetProps['data'];
 };
 
-function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
+type PluginImageObjectSettings = CommonPluginSettings;
+
+type PluginImage = Plugin<Props> &
+    CommonPluginSettings & {
+        setSettings: (settings: PluginImageObjectSettings) => PluginImage;
+    };
+
+export const pluginImage: PluginImage = {
+    type: DashTabItemType.Image,
+    defaultLayout: {w: 12, h: 12, minH: 1, minW: 1},
+    setSettings: (settings: PluginImageObjectSettings) => {
+        pluginImage.globalWidgetSettings = settings.globalWidgetSettings;
+        return pluginImage;
+    },
+    renderer: PluginImageRenderer,
+};
+
+function PluginImageRenderer(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
     const {
         id,
-        data: {alt, background, src, preserveAspectRatio},
+        data: {
+            alt,
+            background,
+            backgroundSettings,
+            borderRadius,
+            internalMarginsEnabled,
+            src,
+            preserveAspectRatio,
+        },
         layout,
     } = props;
 
@@ -39,14 +64,21 @@ function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
         h: null,
         w: null,
     };
-    const backgroundEnabled = Boolean(
-        background?.enabled !== false &&
-            background?.color &&
-            background?.color !== CustomPaletteBgColors.NONE,
-    );
-    const {classMod, style} = React.useMemo(() => {
-        return getPreparedWrapSettings(backgroundEnabled, background?.color);
-    }, [backgroundEnabled, background?.color]);
+
+    const {style} = usePreparedWrapSettings({
+        ownWidgetSettings: {
+            background: background,
+            backgroundSettings: backgroundSettings,
+            borderRadius: borderRadius,
+            internalMarginsEnabled: internalMarginsEnabled,
+        },
+        dashVisualSettings: {
+            background: undefined,
+            backgroundSettings: undefined,
+            widgetsSettings: pluginImage.globalWidgetSettings,
+        },
+        defaultOldColor: CustomPaletteBgColors.NONE,
+    });
 
     React.useEffect(() => {
         handleUpdate?.();
@@ -61,13 +93,7 @@ function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
     ]);
 
     return (
-        <RendererWrapper
-            id={id}
-            type={DashTabItemType.Image}
-            nodeRef={rootNodeRef}
-            classMod={classMod}
-            style={style}
-        >
+        <RendererWrapper id={id} type={DashTabItemType.Image} nodeRef={rootNodeRef} style={style}>
             <img
                 className={b({'preserve-aspect-ratio': preserveAspectRatio})}
                 alt={alt}
@@ -76,9 +102,3 @@ function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
         </RendererWrapper>
     );
 }
-
-export const pluginImage: Plugin<Props> = {
-    type: DashTabItemType.Image,
-    defaultLayout: {w: 12, h: 12, minH: 1, minW: 1},
-    renderer: PluginImage,
-};

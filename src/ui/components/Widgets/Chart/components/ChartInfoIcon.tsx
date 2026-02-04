@@ -11,17 +11,17 @@ import './ChartInfoIcon.scss';
 
 const b = block('chart-info');
 
-const MarkdownContent = (props: {value: string; onRender: () => void}) => {
-    const {value, onRender} = props;
+const MarkdownContent = (props: {value: string; className?: string; onRender?: () => void}) => {
+    const {value, className, onRender} = props;
     const {markdown, isLoading} = useMarkdown({value});
 
     React.useEffect(() => {
         if (!isLoading) {
-            onRender();
+            onRender?.();
         }
     }, [isLoading, onRender]);
 
-    return <React.Fragment>{markdown}</React.Fragment>;
+    return <div className={className}>{markdown}</div>;
 };
 
 type Props = {
@@ -38,10 +38,13 @@ export const ChartInfoIcon = (props: Props) => {
 
     return (
         <Popover
-            content={<MarkdownContent value={content} onRender={() => setLoaded(true)} />}
-            key={String(isLoaded)}
-            open={isLoaded}
-            className={b('tooltip', {hidden: !isLoaded})}
+            content={
+                <MarkdownContent
+                    className={b('tooltip-content', {hidden: !isLoaded})}
+                    value={content}
+                    onRender={() => setLoaded(true)}
+                />
+            }
         >
             <Icon size={20} data={ShieldExclamation} className={b('icon')} />
         </Popover>

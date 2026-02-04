@@ -21,7 +21,6 @@ export default async (
         workbookId,
         rejectFetchingSource,
         pluginOptions,
-        zitadelParams,
         authParams,
         requestHeaders,
     } = args;
@@ -52,7 +51,6 @@ export default async (
             iamToken,
             rejectFetchingSource,
             pluginOptions,
-            zitadelParams,
             authParams,
             requestHeaders,
         });
@@ -77,5 +75,5 @@ export default async (
 
     ctx.log('CHARTS_DATASET_FIELDS_PROCESSED');
 
-    return {...source, data};
+    return {...source, data, datasetFields};
 };

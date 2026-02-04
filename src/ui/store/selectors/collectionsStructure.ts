@@ -1,6 +1,7 @@
 import {createSelector} from 'reselect';
 import type {DatalensGlobalState} from 'index';
 import {getStatusFromOperation} from '../utils/collectionStructure';
+import {CollectionItemEntities} from 'shared';
 
 export const selectGetRootCollectionPermissions = (state: DatalensGlobalState) =>
     state.collectionsStructure.getRootCollectionPermissions;
@@ -15,7 +16,12 @@ export const selectGetStructureItems = (state: DatalensGlobalState) =>
     state.collectionsStructure.getStructureItems;
 
 export const selectStructureItems = (state: DatalensGlobalState) =>
-    state.collectionsStructure.items;
+    state.collectionsStructure.items ?? [];
+
+export const selectFilteredStructureItems = (state: DatalensGlobalState) =>
+    state.collectionsStructure.items?.filter(
+        (item) => item.entity !== CollectionItemEntities.ENTRY,
+    ) ?? [];
 
 export const selectCopyTemplate = (state: DatalensGlobalState) =>
     state.collectionsStructure.copyTemplate;
@@ -31,6 +37,18 @@ export const selectMoveCollection = (state: DatalensGlobalState) =>
 
 export const selectMoveWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.moveWorkbook;
+
+export const selectMoveSharedEntry = (state: DatalensGlobalState) =>
+    state.collectionsStructure.moveSharedEntry;
+
+export const selectMoveCollections = (state: DatalensGlobalState) =>
+    state.collectionsStructure.moveCollections;
+
+export const selectMoveWorkbooks = (state: DatalensGlobalState) =>
+    state.collectionsStructure.moveWorkbooks;
+
+export const selectMoveSharedEntries = (state: DatalensGlobalState) =>
+    state.collectionsStructure.moveSharedEntries;
 
 export const selectCopyWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.copyWorkbook;
@@ -49,6 +67,9 @@ const selectDeleteWorkbook = (state: DatalensGlobalState) =>
 
 const selectDeleteCollections = (state: DatalensGlobalState) =>
     state.collectionsStructure.deleteCollections;
+
+const selectDeleteSharedEntries = (state: DatalensGlobalState) =>
+    state.collectionsStructure.deleteSharedEntries;
 
 const selectDeleteWorkbooks = (state: DatalensGlobalState) =>
     state.collectionsStructure.deleteWorkbooks;
@@ -169,7 +190,7 @@ export const selectBreadcrumbsIsLoading = createSelector(
 // The result of loading the bread crumbs of the collection
 export const selectBreadcrumbs = createSelector(
     [selectGetCollectionBreadcrumbs],
-    (getCollectionBreadcrumbs) => getCollectionBreadcrumbs.data,
+    (getCollectionBreadcrumbs) => getCollectionBreadcrumbs.data ?? [],
 );
 
 // Status of loading information about the contents of the collection
@@ -206,10 +227,17 @@ export const selectCreateWorkbookIsLoading = createSelector(
     (createWorkbook) => createWorkbook.isLoading,
 );
 
-// Status of the request to move the collection / workbook
+// Status of the request to move the collection / workbook / shared entry
 export const selectMoveIsLoading = createSelector(
-    [selectMoveCollection, selectMoveWorkbook],
-    (moveCollection, moveWorkbook) => moveCollection.isLoading || moveWorkbook.isLoading,
+    [selectMoveCollection, selectMoveWorkbook, selectMoveSharedEntry],
+    (moveCollection, moveWorkbook, moveSharedEntry) =>
+        moveCollection.isLoading || moveWorkbook.isLoading || moveSharedEntry.isLoading,
+);
+
+export const selectBatchMoveIsLoading = createSelector(
+    [selectMoveCollections, selectMoveWorkbooks, selectMoveSharedEntries],
+    (moveCollections, moveWorkbooks, moveSharedEntries) =>
+        moveCollections.isLoading || moveWorkbooks.isLoading || moveSharedEntries.isLoading,
 );
 
 // Status of the workbook copy request
@@ -230,11 +258,11 @@ export const selectUpdateWorkbookIsLoading = createSelector(
     (result) => result.isLoading,
 );
 
-// Indication of the collections and workbooks deletion process
+// Indication of the collections, shared entries and workbooks deletion process
 export const selectDeleteIsLoading = createSelector(
-    [selectDeleteCollections, selectDeleteWorkbooks],
-    (deleteCollections, deleteWorkbooks) =>
-        deleteCollections.isLoading || deleteWorkbooks.isLoading,
+    [selectDeleteCollections, selectDeleteWorkbooks, selectDeleteSharedEntries],
+    (deleteCollections, deleteWorkbooks, deleteSharedEntries) =>
+        deleteCollections.isLoading || deleteWorkbooks.isLoading || deleteSharedEntries.isLoading,
 );
 
 // Indication of the collection deletion process

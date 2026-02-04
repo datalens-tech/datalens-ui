@@ -6,6 +6,7 @@ import assign from 'lodash/assign';
 import intersection from 'lodash/intersection';
 
 import type {ServerI18n} from '../../../i18n/types';
+import {getAllTabItems} from '../../../shared';
 import {DASH_CURRENT_SCHEME_VERSION, DASH_DATA_REQUIRED_FIELDS} from '../../../shared/constants';
 import {DashSchemeConverter} from '../../../shared/modules';
 import type {
@@ -48,7 +49,7 @@ function processControlLinkToResult(
 }
 
 function processLinksForItems(tabData: DashTab, matchCallback?: MatchCallback) {
-    return tabData.items.reduce((result: Dictionary<string>, item) => {
+    return getAllTabItems(tabData).reduce((result: Dictionary<string>, item) => {
         const {type, data} = item;
 
         if (type === DashTabItemType.Widget && 'tabs' in data) {
@@ -93,7 +94,7 @@ function processLinks(data: DashData, matchCallback?: MatchCallback) {
     );
 }
 
-function gatherLinks(data: DashData) {
+export function gatherLinks(data: DashData) {
     return processLinks(data);
 }
 
@@ -107,7 +108,7 @@ function setDefaultData(
     let counter = 2;
     if (initialData?.tabs && !initialData?.counter) {
         counter = initialData.tabs.reduce((acc, tab) => {
-            return acc + 1 + (tab.items?.length || 0); // + 1 tabId + n items ids
+            return acc + 1 + (getAllTabItems(tab)?.length || 0); // + 1 tabId + n items ids
         }, 0);
     }
     const salt = Math.random().toString();
@@ -144,7 +145,7 @@ function setDefaultData(
 const needSetDefaultData = (data: DashData) =>
     DASH_DATA_REQUIRED_FIELDS.some((fieldName) => !(fieldName in data));
 
-function validateData(data: DashData) {
+export function validateData(data: DashData) {
     const allTabsIds: Set<string> = new Set();
     const allItemsIds: Set<string> = new Set();
     const allWidgetTabsIds: Set<string> = new Set();
@@ -156,7 +157,7 @@ function validateData(data: DashData) {
         return true;
     };
 
-    data.tabs.forEach(({id: tabId, title: tabTitle, items, layout, connections}) => {
+    data.tabs.forEach(({id: tabId, title: tabTitle, items, layout, connections, globalItems}) => {
         const currentItemsIds: Set<string> = new Set();
         const currentWidgetTabsIds: Set<string> = new Set();
         const currentControlsIds: Set<string> = new Set();
@@ -164,6 +165,23 @@ function validateData(data: DashData) {
         if (isIdUniq(tabId)) {
             allTabsIds.add(tabId);
         }
+
+        globalItems?.forEach(({id: itemId, type, data}) => {
+            allItemsIds.add(itemId);
+            currentItemsIds.add(itemId);
+
+            // to avoid isIdUniq check
+            if (type === DashTabItemType.Control || type === DashTabItemType.GroupControl) {
+                // if it is group control all connections set on its items
+                if ('group' in data) {
+                    data.group.forEach((widgetItem) => {
+                        currentControlsIds.add(widgetItem.id);
+                    });
+                } else {
+                    currentControlsIds.add(itemId);
+                }
+            }
+        });
 
         items.forEach(({id: itemId, type, data}) => {
             if (isIdUniq(itemId)) {
@@ -190,10 +208,12 @@ function validateData(data: DashData) {
             }
         });
 
+        const allItemsLength = items.length + (globalItems?.length ?? 0);
+
         // checking that layout has all the ids from item, i.e. positions are set for all elements
         if (
-            items.length !== layout.length ||
-            items.length !==
+            allItemsLength !== layout.length ||
+            allItemsLength !==
                 intersection(
                     Array.from(currentItemsIds),
                     layout.map(({i}) => i),
@@ -248,7 +268,7 @@ class Dash {
                 isEnabledServerFeature(Feature.DashServerMigrationEnable),
             );
             if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(usData.data)) {
-                usData.data = await DashSchemeConverter.update(usData.data);
+                usData.data = DashSchemeConverter.update(usData.data);
             }
 
             usData.links = gatherLinks(usData.data);
@@ -302,7 +322,7 @@ class Dash {
                 (options?.forceMigrate || isServerMigrationEnabled) &&
                 DashSchemeConverter.isUpdateNeeded(result.data)
             ) {
-                result.data = await Dash.migrate(result.data);
+                result.data = Dash.migrate(result.data);
             }
 
             ctx.log('SDK_DASH_READ_SUCCESS', US.getLoggedEntry(result));
@@ -315,7 +335,7 @@ class Dash {
         }
     }
 
-    static async migrate(data: DashEntry['data']) {
+    static migrate(data: DashEntry['data']) {
         return DashSchemeConverter.update(data);
     }
 

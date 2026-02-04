@@ -25,15 +25,14 @@
         width: 100%;
     }
 
-    &_with-default-color,
-    &_with-color {
+    &_with-internal-margins {
         .dashkit-plugin-title {
             padding: 5px 10px;
             align-items: center;
         }
 
         #{$class}__anchor {
-            padding: 5px 0 5px 5px;
+            padding-block: 5px;
         }
 
         #{$class}__extra-elements-container {
@@ -51,11 +50,6 @@
         .dashkit-plugin-title {
             padding-right: 0;
         }
-    }
-
-    .dashkit-grid-item__item_editMode .dashkit-plugin-container__wrapper_with-color & {
-        // it has own color bg for contrast in edit mod
-        background-color: transparent;
     }
 
     &__extra-elements-container {

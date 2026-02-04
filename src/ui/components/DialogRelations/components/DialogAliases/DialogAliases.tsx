@@ -244,12 +244,13 @@ const DialogAliases = (props: DialogAliasesProps) => {
         });
     }, [
         forceAddAlias,
-        aliasAdded,
+        aliasAdded.length,
         updateAliases,
         dashTabAliasesByNamespace,
         onClose,
         changedWidgetsData,
         changedWidgetId,
+        changedItemId,
     ]);
 
     const handleAddAlias = React.useCallback(() => {

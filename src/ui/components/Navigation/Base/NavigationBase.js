@@ -437,8 +437,16 @@ class NavigationBase extends React.Component {
             case ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES: {
                 return this.showRelatedEntities(entry);
             }
-            default:
+            default: {
+                const {getAdditionalEntryContextMenuAction} = registry.common.functions.getAll();
+
+                getAdditionalEntryContextMenuAction(action, {
+                    entry,
+                    entryDialoguesRef: this.refDialogues,
+                });
+
                 return false;
+            }
         }
     };
     onEntryClick = (entry, event) => {

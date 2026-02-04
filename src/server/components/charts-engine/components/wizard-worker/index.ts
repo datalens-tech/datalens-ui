@@ -4,6 +4,7 @@ import type {ServerChartsConfig, Shared} from '../../../../../shared';
 import {WizardVisualizationId, isGravityChartsVisualization} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {datalensModule} from '../../../../modes/charts/plugins/datalens/private-module';
+import {mapChartsConfigToServerConfig} from '../../../../modes/charts/plugins/datalens/utils/config-helpers';
 import {createI18nInstance} from '../../../../utils/language';
 import {getChartApiContext} from '../processor/chart-api-context';
 import {Console} from '../processor/console';
@@ -57,7 +58,7 @@ const worker: WizardWorker = {
         datalensModule.setConsole(console);
 
         let result;
-        const serverChartConfig = shared as ServerChartsConfig;
+        const serverChartConfig = mapChartsConfigToServerConfig(shared as ServerChartsConfig);
         const visualizationId = serverChartConfig?.visualization?.id;
         switch (visualizationId) {
             case WizardVisualizationId.FlatTable:
@@ -142,7 +143,7 @@ const worker: WizardWorker = {
         const console = new Console({});
         datalensModule.setConsole(console);
 
-        const serverChartConfig = shared as ServerChartsConfig;
+        const serverChartConfig = mapChartsConfigToServerConfig(shared as ServerChartsConfig);
         const shouldUseGravityCharts = isGravityChartsVisualization({
             features,
             id: serverChartConfig?.visualization?.id,

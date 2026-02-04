@@ -2,10 +2,29 @@ export enum AvatarQA {
     DeleteButton = 'ds-avatar-delete-button',
     RelationsMapContainer = 'ds-avatar-relations-map-container',
     RelationsMapCanvas = 'ds-avatar-relations-map-canvas',
+    Avatar = 'ds-avatar',
 }
 
 export enum ParametersQA {
     ParametersTabSection = 'parameters-tab-section',
+}
+
+export enum DatasetFieldsTabQa {
+    TableRow = 'dataset-fields-table-row',
+    FieldNameColumnInput = 'dataset-fields-name-column-input',
+    FieldSettingsColumnIcon = 'dataset-fields-settings-column-icon',
+}
+
+export enum DatasetFieldSettingsDialogQa {
+    Dialog = 'dataset-field-settings-dialog',
+    ColorSettingsButton = 'dataset-field-settings-dialog-color-settings-btn',
+}
+
+export enum DatasetFieldColorsDialogQa {
+    Dialog = 'dataset-field-colors-dialog',
+    ValueItem = 'dataset-field-colors-dialog_value-item',
+    ValueItemColorIcon = 'dataset-field-colors-dialog_value-color',
+    PaleteItem = 'dataset-field-colors-dialog_palette-item',
 }
 
 export enum DatasetTabSectionQA {
@@ -25,6 +44,10 @@ export enum DatasetPanelQA {
 
 export enum DatasetSourcesLeftPanelQA {
     ConnSelection = 'dataset-sources-conn-selection',
+    ConnContextMenuBtn = 'dataset-sources-conn-context-menu-btn',
+    ConnContextMenuOpen = 'dataset-sources-conn-context-menu-open',
+    ConnContextMenuReplace = 'dataset-sources-conn-context-menu-replace',
+    ConnContextMenuDelete = 'dataset-sources-conn-context-menu-delete',
 }
 
 export enum DatasetActionQA {
@@ -42,4 +65,12 @@ export const DATASET_TAB = {
     FILTERS: 'filters',
     SOURCES: 'sources',
     PARAMETERS: 'parameters',
+} as const;
+
+export const DatasetSourcesTableQa = {
+    Source: 'ds-source',
+    SourceMenu: 'ds-source-menu',
+    SourceContextMenuBtn: 'ds-source-context-menu-btn',
+    SourceContextMenuDelete: 'ds-source-context-menu-delete',
+    SourceContextMenuModify: 'ds-source-context-menu-modify',
 } as const;

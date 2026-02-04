@@ -5,7 +5,7 @@ import {
     DashCommonQa,
     DashEntryQa,
     DashRelationTypes,
-    DatalensTabs,
+    DatalensTabsQa,
     DialogConfirmQA,
     DialogDashWidgetQA,
     DialogGroupControlQa,
@@ -13,6 +13,7 @@ import {
     EntryDialogQA,
     LOADED_DASH_CLASS,
     SelectQa,
+    WysiwygEditorQa,
     YfmQa,
 } from '../../../src/shared/constants';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -60,7 +61,7 @@ import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
 import {EditEntityButton} from '../workbook/EditEntityButton';
 import {Workbook} from '../workbook/Workbook';
 import {ChartkitControl} from './ChartkitControl';
-import ControlActions from './ControlActions';
+import ControlActions from './controlActions/ControlActions';
 import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
 import Description from './Description';
@@ -300,7 +301,7 @@ class DashboardPage extends BasePage {
         const workbookPO = new Workbook(this.page);
 
         await workbookPO.openE2EWorkbookPage();
-        await this.page.locator(slct(DatalensTabs.Item), {hasText: 'Dashboards'}).click();
+        await this.page.locator(slct(DatalensTabsQa.Item), {hasText: 'Dashboards'}).click();
 
         await workbookPO.openWorkbookItemMenu(dashId);
 
@@ -370,18 +371,43 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddText));
     }
 
-    async addText(text: string, delay?: number) {
+    async chooseMarkupText() {
+        await this.page.click(slct(WysiwygEditorQa.SettingsButton));
+        await this.page.click(slct(WysiwygEditorQa.ModeMarkupItemMenu));
+    }
+
+    async addText({
+        text,
+        timeout,
+        markup,
+        options,
+    }: {
+        text: string;
+        timeout?: number;
+        markup?: boolean;
+        options?: {autoHeight?: boolean};
+    }) {
         await this.clickAddText();
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
+
+        if (markup) {
+            await this.chooseMarkupText();
+        }
+
         if (isEnabledCollections) {
-            await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+            await this.page.fill(`${slct(WysiwygEditorQa.Editor)} [contenteditable=true]`, text);
         } else {
-            await this.page.type(
+            await this.page.fill(
                 `${slct(DialogDashWidgetItemQA.Text)} [contenteditable=true]`,
                 text,
-                {delay},
+                {timeout},
             );
+        }
+        if (options) {
+            if (options.autoHeight) {
+                await this.page.click(slct(DashCommonQa.WidgetEnableAutoHeightCheckbox));
+            }
         }
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
@@ -741,20 +767,13 @@ class DashboardPage extends BasePage {
         await this.clickTabs();
         await this.page.click(slct(DialogTabsQA.RowAdd));
         if (name) {
-            await this.page
-                .locator(`${slct(DialogTabsQA.ReadOnlyTabItem)}`)
-                .last()
-                .dblclick();
+            await this.page.locator(slct(DialogTabsQA.ReadOnlyTabItem)).last().dblclick();
             await this.page.locator(`${slct(DialogTabsQA.EditTabItem)} input`).fill(name);
         }
         await this.page.click(slct(DialogTabsQA.Save));
     }
 
-    async selectTab(tabSelector: string) {
-        return this.page.$(tabSelector);
-    }
-
-    async changeTab({tabName, tabSelector}: {tabName?: string; tabSelector?: string}) {
+    async changeTab({tabName, index}: {tabName?: string; index?: number}) {
         const tabsContainerLocator = this.page.locator(slct(DashTabsQA.Root));
 
         await expect(tabsContainerLocator).toBeVisible();
@@ -762,8 +781,11 @@ class DashboardPage extends BasePage {
         let tabLocator;
         if (tabName) {
             tabLocator = tabsContainerLocator.getByText(tabName);
-        } else if (tabSelector) {
-            tabLocator = tabsContainerLocator.locator(tabSelector);
+        } else if (typeof index === 'number') {
+            tabLocator = tabsContainerLocator
+                .locator(slct(DatalensTabsQa.Item))
+                .or(tabsContainerLocator.locator(slct(DatalensTabsQa.MobileItem)))
+                .nth(index);
         } else {
             throw new Error('Tabs selector not found');
         }
@@ -776,9 +798,9 @@ class DashboardPage extends BasePage {
         }
 
         // it can be single switcher with tab name or some tabs and "more" switcher
-        const switcherLocator = tabsContainerLocator.locator(slct(DatalensTabs.SwitcherItem));
+        const switcherLocator = tabsContainerLocator.locator(slct(DatalensTabsQa.SwitcherItem));
         const switcherTabLocator = tabsContainerLocator
-            .locator(slct(DatalensTabs.MobileItem))
+            .locator(slct(DatalensTabsQa.MobileItem))
             .first();
 
         const isSwitcherVisible = await switcherLocator.isVisible();
@@ -796,10 +818,20 @@ class DashboardPage extends BasePage {
         await mobileTabLocator.click();
         await expect(this.page.locator(slct(SelectQa.SHEET))).toBeVisible();
 
-        const selector = tabSelector
-            ? tabSelector
-            : `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`;
-        await this.page.locator(selector).click();
+        if (tabName) {
+            await this.page
+                .locator(
+                    `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`,
+                )
+                .click();
+        } else if (typeof index === 'number') {
+            await this.page
+                .locator(
+                    `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle}`,
+                )
+                .nth(index)
+                .click();
+        }
         return;
     }
 
@@ -976,11 +1008,10 @@ class DashboardPage extends BasePage {
     async disableAutoupdateInFirstControl() {
         await this.enterEditMode();
         await this.clickFirstControlSettingsButton();
-        await this.page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
+        await this.page.locator(slct(DialogGroupControlQa.groupSettingsTab)).click();
         await this.page
             .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)
             .setChecked(false);
-        await this.page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
         await this.controlActions.applyControlSettings();
         await this.saveChanges();
     }
@@ -1079,6 +1110,37 @@ class DashboardPage extends BasePage {
         const jsonState = await responseState?.json();
 
         return jsonState?.hash;
+    }
+
+    async checkNoScroll({selector, locator}: {selector?: string; locator?: Locator}) {
+        const elementLocator = selector ? this.page.locator(selector) : locator;
+        if (!elementLocator) {
+            return;
+        }
+
+        await waitForCondition(async () => {
+            const hasNoScroll = await elementLocator.evaluate((element) => {
+                return element?.clientHeight === element?.scrollHeight;
+            });
+            return hasNoScroll;
+        });
+    }
+
+    /**
+     * Scroll page to the bottom using keyboard End key
+     * @returns Promise that resolves when scrolling is complete
+     */
+    async scrollToBottom(): Promise<void> {
+        await this.page.locator(slct(DashBodyQa.App)).click();
+        await this.page.keyboard.press('End');
+    }
+
+    /**
+     * Click on action panel more button (ellipsis in the upper panel)
+     * @returns Promise that resolves when click is complete
+     */
+    async clickActionPanelMoreButton(): Promise<void> {
+        await this.page.click(slct(COMMON_SELECTORS.ENTRY_PANEL_MORE_BTN));
     }
 }
 

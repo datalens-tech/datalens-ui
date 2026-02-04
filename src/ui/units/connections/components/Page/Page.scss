@@ -5,3 +5,11 @@
         display: none;
     }
 }
+
+.conn-page {
+    &__action-panel {
+        &_readonly {
+            background-color: var(--g-color-base-misc-medium);
+        }
+    }
+}

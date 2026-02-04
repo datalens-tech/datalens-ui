@@ -6,8 +6,6 @@ import {registry} from 'ui/registry';
 import type {RefreshPageAfterImport} from '../../../hooks/useRefreshPageAfterImport';
 import {PUBLIC_GALLERY_ID_SEARCH_PARAM} from '../../constants';
 
-import {useCreateWorkbookDialogHandlers} from './useCreateWorkbookDialogHandlers';
-
 type LocationImportState = {
     importId?: string;
 };
@@ -21,7 +19,7 @@ export const useOpenCreateWorkbookDialog = ({search, refreshPageAfterImport}: Ar
     const {state: locationState} = useLocation<LocationImportState>();
 
     const history = useHistory();
-
+    const {useCreateWorkbookDialogHandlers} = registry.collections.functions.getAll();
     const {handleOpenCreateDialog, handleOpenCreatePublicGalleryDialog} =
         useCreateWorkbookDialogHandlers();
 
@@ -54,16 +52,10 @@ export const useOpenCreateWorkbookDialog = ({search, refreshPageAfterImport}: Ar
             return;
         }
 
-        const {getPublicGalleryEntry} = registry.collections.functions.getAll();
-
-        getPublicGalleryEntry(publicGalleryId).then(({publicGallery}) => {
-            if (publicGallery) {
-                handleOpenCreatePublicGalleryDialog({
-                    publicGallery,
-                    refreshPageAfterImport,
-                    initialImportStatus: null,
-                });
-            }
+        handleOpenCreatePublicGalleryDialog?.({
+            publicGalleryId,
+            refreshPageAfterImport,
+            initialImportStatus: null,
         });
-    }, [handleOpenCreatePublicGalleryDialog, refreshPageAfterImport, search]);
+    }, [refreshPageAfterImport, search, handleOpenCreatePublicGalleryDialog]);
 };

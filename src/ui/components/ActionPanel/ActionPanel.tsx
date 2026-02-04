@@ -30,7 +30,7 @@ import {getSdk} from '../../libs/schematic-sdk';
 import type {EntryContextMenuItems} from '../EntryContextMenu/helpers';
 import ExpandablePanel from '../ExpandablePanel/ExpandablePanel';
 import Revisions from '../Revisions/Revisions';
-import type {GetRevisionRowExtendedProps} from '../Revisions/types';
+import type {GetRevisionMenuItems, GetRevisionRowExtendedProps} from '../Revisions/types';
 import RevisionsPanel from '../RevisionsPanel/RevisionsPanel';
 
 import EntryPanel from './components/EntryPanel/EntryPanel';
@@ -63,6 +63,8 @@ type OwnProps = {
     expandablePanelDescription?: string;
     getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
     filterEntryContextMenuItems?: FilterEntryContextMenuItems;
+    lastCrumbAdditionalContent?: React.ReactNode;
+    getRevisionContextMenuItems?: GetRevisionMenuItems;
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -165,6 +167,8 @@ class ActionPanel extends React.Component<Props, State> {
             expandablePanelDescription,
             getRevisionRowExtendedProps,
             filterEntryContextMenuItems,
+            lastCrumbAdditionalContent,
+            getRevisionContextMenuItems,
         } = this.props;
 
         const style: React.CSSProperties = {left: sidebarSize, ...externalStyle};
@@ -187,6 +191,7 @@ class ActionPanel extends React.Component<Props, State> {
                         {entry && (
                             <EntryPanel
                                 entry={entry}
+                                lastCrumbAdditionalContent={lastCrumbAdditionalContent}
                                 additionalEntryItems={additionalEntryItems}
                                 enablePublish={this.getEnablePublish()}
                                 filterEntryContextMenuItems={filterEntryContextMenuItems}
@@ -222,6 +227,7 @@ class ActionPanel extends React.Component<Props, State> {
                             <Revisions
                                 getRevisionRowExtendedProps={getRevisionRowExtendedProps}
                                 renderItemActions={renderRevisionItemActions}
+                                getContextMenuItems={getRevisionContextMenuItems}
                             />
                         </ExpandablePanel>
                     </React.Fragment>

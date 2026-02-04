@@ -7,7 +7,7 @@ import {DashTabItemControlSourceType, TitlePlacements} from '../../../../src/sha
 import {
     SelectorElementType,
     type SelectorSettings,
-} from '../../../page-objects/dashboard/ControlActions';
+} from '../../../page-objects/dashboard/controlActions/ControlActions';
 
 const TITLE = 'City';
 const INNER_TITLE = 'innerCity';

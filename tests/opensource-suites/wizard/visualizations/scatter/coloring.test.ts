@@ -6,6 +6,7 @@ import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {SMALL_SCREENSHOT_VIEWPORT_SIZE} from '../constants';
+import {ColorValue} from '../../../../page-objects/wizard/ColorDialog';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Scatter chart', () => {
@@ -14,7 +15,7 @@ datalensTest.describe('Wizard', () => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             const wizardPage = new WizardPage({page});
             await wizardPage.createNewFieldWithFormula('sum', 'sum([Sales])');
-            await wizardPage.setVisualization(WizardVisualizationId.ScatterD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Scatter);
         });
 
         datalensTest(
@@ -38,10 +39,12 @@ datalensTest.describe('Wizard', () => {
 
                 // set color by fake title
                 await wizardPage.colorDialog.open();
-                await wizardPage.colorDialog.selectColor('#FF8C00');
+                await wizardPage.colorDialog.selectColor(ColorValue.DEFAULT_20_DarkOrange);
                 await wizardPage.colorDialog.apply();
 
                 await expect(previewLoader).not.toBeVisible();
+                // move the cursor so that there are no hovered elements on the chart
+                await page.mouse.move(0, 0);
                 await expect(chart).toHaveScreenshot();
             },
         );

@@ -1,4 +1,4 @@
-import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/gravity-charts';
+import type {BarYSeries, BarYSeriesData, ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
@@ -7,27 +7,36 @@ import {
     PERCENT_VISUALIZATIONS,
     PlaceholderId,
     getFakeTitleOrTitle,
+    isDateField,
     isHtmlField,
     isMarkdownField,
     isMarkupField,
 } from '../../../../../../../shared';
+import type {ExtendedChartData} from '../../../../../../../shared/types/chartkit';
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
+import {colorizeByColorValues} from '../../utils/color-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting} from '../helpers/axis';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
+import {
+    mapChartkitFormatSettingsToGravityChartValueFormat,
+    mapToGravityChartValueFormat,
+} from '../utils';
 
 import {prepareBarYData} from './prepare-bar-y-data';
 
 type BarYPoint = {x: number; y: number} & Record<string, unknown>;
 
+// eslint-disable-next-line complexity
 export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     const {shared, visualizationId, colors, colorsConfig, labels, placeholders} = args;
     const {graphs, categories} = prepareBarYData(args);
     const hasCategories = Boolean(categories?.length);
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
+    const isLogXAxis = xPlaceholder?.settings?.type === 'logarithmic';
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yField: ServerField | undefined = yPlaceholder?.items?.[0];
     const labelField = labels?.[0];
@@ -49,36 +58,113 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
 
-    const dataLabelFormat = getFieldFormatOptions({field: labelField});
     const shouldUsePercentStacking = PERCENT_VISUALIZATIONS.has(visualizationId);
     const dataLabelsInside =
         shouldUsePercentStacking ||
         shared.extraSettings?.labelsPosition !== LabelsPositions.Outside;
-    const series = graphs.map<BarYSeries>((graph) => {
-        return {
+
+    let gradientColorMap: Record<string, string | null> = {};
+    const shouldSetColorByValues = graphs.some((s) =>
+        s.data.some((d: any) => !d.color && d.colorValue),
+    );
+    if (shouldSetColorByValues) {
+        const colorValues: number[] = [];
+        graphs.forEach((s) => {
+            s.data.forEach((d: any) => {
+                const colorValue = Number(d.colorValue);
+                if (Number.isFinite(colorValue)) {
+                    colorValues.push(colorValue);
+                }
+            });
+        });
+
+        const gradientColors = colorizeByColorValues({colorsConfig, colorValues});
+
+        gradientColorMap = gradientColors.reduce(
+            (acc, color, index) => {
+                acc[String(colorValues[index])] = color;
+
+                return acc;
+            },
+            {} as Record<string, string | null>,
+        );
+    }
+
+    const series = graphs.reduce<BarYSeries[]>((items, graph) => {
+        const labelFormatting = graph.dataLabels
+            ? mapToGravityChartValueFormat({field: labelField, formatSettings: graph.dataLabels})
+            : undefined;
+        const shouldUsePercentageAsLabel =
+            labelFormatting &&
+            'labelMode' in labelFormatting &&
+            labelFormatting?.labelMode === 'percent';
+
+        const seriesData = graph.data.reduce((acc: BarYSeriesData[], d: BarYPoint) => {
+            const {x, y, label: originalLabel, ...other} = d;
+            const xValue: number | null = y;
+
+            if (isLogXAxis && xValue <= 0) {
+                return acc;
+            }
+
+            const total =
+                graphs.reduce(
+                    (sum, g) => sum + (g.data.find((point: BarYPoint) => point.x === x)?.y ?? 0),
+                    0,
+                ) ?? 0;
+            const percentage = (d.y / total) * 100;
+            const label = shouldUsePercentageAsLabel ? percentage : (originalLabel as string);
+
+            let color = d.color;
+            if (!color && typeof d.colorValue === 'number') {
+                color = gradientColorMap[String(d.colorValue)] ?? undefined;
+            }
+
+            acc.push({
+                ...other,
+                y: x,
+                x: xValue,
+                label,
+                total,
+                percentage,
+                color,
+            } as BarYSeriesData);
+            return acc;
+        }, []);
+
+        if (!seriesData.length) {
+            return items;
+        }
+
+        items.push({
             ...graph,
             type: 'bar-y',
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             name: graph.title,
-            data: graph.data.map((d: BarYPoint) => {
-                const {x, y, ...other} = d;
-
-                return {y: x, x: y, ...other};
-            }),
+            data: seriesData,
             dataLabels: {
                 enabled: graph.dataLabels?.enabled,
                 inside: dataLabelsInside,
                 html: shouldUseHtmlForLabels,
-                format: dataLabelFormat,
+                format: labelFormatting,
             },
+            tooltip: graph.tooltip?.chartKitFormatting
+                ? {
+                      valueFormat: mapChartkitFormatSettingsToGravityChartValueFormat({
+                          chartkitFormatSettings: graph.tooltip,
+                      }),
+                  }
+                : undefined,
             custom: {
                 ...graph.custom,
                 colorValue: graph.colorValue,
                 exportSettings,
             },
-        } as BarYSeries;
-    });
+        } as BarYSeries);
+
+        return items;
+    }, [] as BarYSeries[]);
 
     const xAxisLabelNumberFormat = xPlaceholder
         ? getAxisFormatting({
@@ -86,10 +172,11 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
               visualizationId,
           })
         : undefined;
+    const xAxisType = isLogXAxis ? 'logarithmic' : 'linear';
 
-    const config: ChartData = {
+    const config: ExtendedChartData = {
         series: {
-            data: series.filter((s) => s.data.length),
+            data: series,
             options: {
                 'bar-y': {
                     stackGap: 0,
@@ -98,10 +185,15 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             },
         },
         xAxis: {
-            min: 0,
-            type: 'linear',
+            type: xAxisType,
             labels: {
                 numberFormat: xAxisLabelNumberFormat ?? undefined,
+            },
+        },
+        custom: {
+            tooltip: {
+                headerLabel:
+                    isDateField(yField) && !hasCategories ? undefined : getFakeTitleOrTitle(yField),
             },
         },
     };
@@ -117,19 +209,24 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         });
 
         config.legend = {
-            enabled: true,
+            enabled: shared.extraSettings?.legendMode !== 'hide',
             type: 'continuous',
             title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
             colorScale,
         };
-    } else if (graphs.length <= 1) {
-        config.legend = {enabled: false};
+    } else {
+        const shouldUseHtmlForLegend = isHtmlField(colorItem);
+        config.legend = {html: shouldUseHtmlForLegend};
+
+        if (graphs.length <= 1) {
+            config.legend.enabled = false;
+        }
     }
 
     if (xField) {
         config.tooltip = {
+            ...config.tooltip,
             valueFormat: getFieldFormatOptions({field: xField}),
-            totals: {enabled: true},
         };
     }
 
@@ -142,6 +239,8 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 labels: {
                     enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
                     html: isHtmlField(yField) || isMarkdownField(yField) || isMarkupField(yField),
+                    maxWidth: '33%',
+                    padding: 0,
                 },
             },
         ];
@@ -165,5 +264,8 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         ];
     }
 
-    return merge(getBaseChartConfig(shared), config);
+    return merge(
+        getBaseChartConfig({shared, visualization: {placeholders, id: visualizationId}}),
+        config,
+    );
 }

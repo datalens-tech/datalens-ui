@@ -4,6 +4,7 @@ import {CommonSelectors} from '../../page-objects/constants/common-selectors';
 import {openTestPage, slct} from '../../utils';
 import datalensTest from '../../utils/playwright/globalTestDefinition';
 import {RobotChartsDatasetUrls} from '../../utils/constants';
+import {DatasetSourcesTableQa} from '../../../src/shared';
 
 const checkSourceType = async (page: Page, expectedSourceType: string) => {
     const promise = page.waitForRequest(/validateDataset/, {
@@ -13,7 +14,7 @@ const checkSourceType = async (page: Page, expectedSourceType: string) => {
     await page.waitForTimeout(1000);
 
     const request = await promise;
-    expect(request.postDataJSON().updates[0].source.source_type).toEqual(expectedSourceType);
+    expect(request.postDataJSON().data.updates[0].source.source_type).toEqual(expectedSourceType);
 };
 
 const YT_PATH = process.env.E2E_YT_PATH as string;
@@ -32,8 +33,8 @@ datalensTest.describe('Datasets - source editor dialog', () => {
 
         await inputLocator.fill(ytPath);
         await page.click('.g-dialog-footer__button_action_apply');
-        await page.click(`${slct('ds-source')} .g-button`);
-        await page.click(`${slct('ds-source-menu')} .g-menu__list-item`);
+        await page.click(`${slct(DatasetSourcesTableQa.Source)} .g-button`);
+        await page.click(`${slct(DatasetSourcesTableQa.SourceMenu)} .g-menu__list-item`);
 
         const titleInputLocator = page.locator(`${slct('source-editor-title')} input`);
 
@@ -49,8 +50,8 @@ datalensTest.describe('Datasets - source editor dialog', () => {
         await titleInputLocator.fill('test name');
 
         await page.click('.g-dialog-footer__button_action_apply');
-        await page.click(`${slct('ds-source')} .g-button`);
-        await page.click(`${slct('ds-source-menu')} .g-menu__list-item`);
+        await page.click(`${slct(DatasetSourcesTableQa.Source)} .g-button`);
+        await page.click(`${slct(DatasetSourcesTableQa.SourceMenu)} .g-menu__list-item`);
 
         await page.waitForSelector(slct('source-editor-title'));
 

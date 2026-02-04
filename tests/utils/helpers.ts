@@ -1,6 +1,8 @@
 import {Page} from '@playwright/test';
 
 import {slct, waitForCondition} from './index';
+import {COMMON_CHARTKIT_SELECTORS} from '../page-objects/constants/chartkit';
+import {CollectionActionsQa, EntryScope} from '../../src/shared';
 
 export const getStylesFromString = (string = '') => {
     return string
@@ -76,7 +78,7 @@ export async function waitForValidSearchParams({
 export const hoverTooltip = async (page: Page, chartId: string) => {
     const plot = page
         .locator(slct(`chartkit-body-entry-${chartId}`))
-        .locator('.chartkit-graph, .gcharts-chart');
+        .locator(COMMON_CHARTKIT_SELECTORS.chart);
     await plot.waitFor({state: 'visible'});
 
     const plotBox = await plot.boundingBox();
@@ -95,3 +97,30 @@ export async function isEnabledFeature(page: Page, featureName: string) {
     const isFeature = await page.evaluate(`window.DL.features?.${featureName}`);
     return Boolean(typeof isDynamicFeature === 'undefined' ? isFeature : isDynamicFeature);
 }
+
+export const createSharedEntry = async ({
+    page,
+    scope,
+}: {
+    page: Page;
+    scope: EntryScope.Dataset | EntryScope.Connection;
+}) => {
+    const sharedObjectsMenuItem = page.locator(slct(CollectionActionsQa.SharedObjectsMenuItem));
+    await sharedObjectsMenuItem.hover();
+    switch (scope) {
+        case EntryScope.Connection: {
+            const sharedConnectionCreateBtn = page.locator(
+                slct(CollectionActionsQa.SharedConnectionCreateBtn),
+            );
+            await sharedConnectionCreateBtn.click();
+            break;
+        }
+        case EntryScope.Dataset: {
+            const sharedDatasetCreateBtn = page.locator(
+                slct(CollectionActionsQa.SharedDatasetCreateBtn),
+            );
+            await sharedDatasetCreateBtn.click();
+            break;
+        }
+    }
+};

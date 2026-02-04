@@ -47,6 +47,7 @@
     &__name {
         flex: 3 1 30%;
         display: flex;
+        align-items: center;
         overflow: hidden;
         min-width: 100px;
         color: var(--g-color-text-primary);
@@ -93,5 +94,26 @@
 
     &__sort-select {
         min-width: 140px;
+    }
+
+    &__items {
+        display: flex;
+        gap: var(--g-spacing-4);
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    &__items-box {
+        display: flex;
+        flex-direction: column;
+        gap: var(--g-spacing-1);
+    }
+
+    &__list-title {
+        margin-left: var(--g-spacing-4);
+    }
+
+    &__shared-item-icon {
+        margin-left: var(--g-spacing-2);
     }
 }

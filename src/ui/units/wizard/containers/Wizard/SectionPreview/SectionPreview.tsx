@@ -77,22 +77,28 @@ class SectionPreview extends Component<Props> {
     getCustomMenuOptions() {
         const {isChartSaved, widget, configForSaving} = this.props;
 
+        const onSaveChart = async () => {
+            if (configForSaving) {
+                await this.props.updateWizardWidgetAndUpdateConfig({
+                    config: configForSaving,
+                    entry: widget,
+                });
+
+                this.props.reloadRevisionsOnSave();
+            }
+        };
+
         const args = {
             canBeSaved: !isChartSaved,
-            onApply: async () => {
-                if (configForSaving) {
-                    await this.props.updateWizardWidgetAndUpdateConfig({
-                        config: configForSaving,
-                        entry: widget,
-                    });
-
-                    this.props.reloadRevisionsOnSave();
-                }
-            },
+            onApply: onSaveChart,
         };
 
         return {
             [MenuItemsIds.EXPORT]: {
+                extraOptions: {
+                    canBeSaved: !isChartSaved,
+                    onSaveChart,
+                },
                 actionWrapper: getCustomExportActionWrapperWithSave.bind(null, {
                     message: i18n('wizard', 'confirm_chart-save_message'),
                     ...args,
@@ -115,7 +121,8 @@ class SectionPreview extends Component<Props> {
     ) => {
         const widgetData =
             (result as ChartKitWrapperLoadSuccess).data?.widgetData ||
-            (result as ChartKitLoadSuccess<unknown>).data?.widget;
+            (result as ChartKitLoadSuccess<unknown>).data?.widget ||
+            (result as ChartKitLoadSuccess<unknown>).data?.loadedData;
 
         this.props.setHighchartsWidget({
             // TODO: probably highchartsWidget should be renamed to something like widgetData,
@@ -194,7 +201,7 @@ class SectionPreview extends Component<Props> {
 
     render() {
         return (
-            <div className={'container preview-container'}>
+            <div className="preview-container">
                 <div className="preview-chartkit" data-qa={WizardPageQa.SectionPreview}>
                     {this.renderChartkit()}
                 </div>

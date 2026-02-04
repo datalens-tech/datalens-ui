@@ -16,6 +16,7 @@ export const enum ScreenEditorQA {
 export const enum TabQueryQA {
     AddPromQLQueryBtn = 'add-promql-query-btn',
     SelectConnection = 'select-connection',
+    GoToConnectionContextMenuBtn = 'go-to-connection-context-menu-btn',
 }
 
 export const enum TabParamsQA {

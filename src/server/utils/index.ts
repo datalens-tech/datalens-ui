@@ -8,18 +8,21 @@ import axios from 'axios';
 import pick from 'lodash/pick';
 
 import {
+    AUDIT_MODE_HEADER,
     AuthHeader,
     DL_CONTEXT_HEADER,
     FORWARDED_FOR_HEADER,
     PROJECT_ID_HEADER,
     REQUEST_ID_HEADER,
-    SERVICE_USER_ACCESS_TOKEN_HEADER,
+    REQUEST_SOURCE_HEADER,
+    RequestSourceHeaderValue,
     SuperuserHeader,
     TENANT_ID_HEADER,
     US_MASTER_TOKEN_HEADER,
     makeTenantIdFromOrgId,
 } from '../../shared';
 import {isOpensourceInstallation} from '../app-env';
+import {PUBLIC_API_VERSION_HEADER} from '../components/public-api/constants';
 import {PUBLIC_API_ORG_ID_HEADER} from '../constants/public-api';
 
 import {isGatewayError} from './gateway';
@@ -49,13 +52,6 @@ class Utils {
         return pick(headers, headersList);
     }
 
-    static pickZitadelHeaders(req: Request) {
-        return {
-            authorization: 'Bearer ' + req.user?.accessToken,
-            [SERVICE_USER_ACCESS_TOKEN_HEADER]: req.serviceUserAccessToken,
-        };
-    }
-
     static pickAuthHeaders(req: Request) {
         return {
             [AuthHeader.Authorization]: 'Bearer ' + req.ctx.get('user')?.accessToken,
@@ -80,22 +76,27 @@ class Utils {
             ...Utils.pickSuperuserHeaders(req.headers),
             ...Utils.pickDlContextHeaders(req.headers),
             ...Utils.pickForwardHeaders(req.headers),
-            ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
             ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
             [REQUEST_ID_HEADER]: req.id,
         };
     }
 
-    static pickRpcHeaders(req: Request) {
+    static pickPublicApiHeaders(req: Request) {
         const headersMap = req.ctx.config.headersMap;
 
         const orgId = req.headers[PUBLIC_API_ORG_ID_HEADER];
         const tenantId = orgId && !Array.isArray(orgId) ? makeTenantIdFromOrgId(orgId) : undefined;
 
         return {
-            ...pick(req.headers, [AuthHeader.Authorization, headersMap.subjectToken]),
+            ...pick(req.headers, [
+                AuthHeader.Authorization,
+                headersMap.subjectToken,
+                PUBLIC_API_VERSION_HEADER,
+                AUDIT_MODE_HEADER,
+            ]),
             ...Utils.pickForwardHeaders(req.headers),
             [TENANT_ID_HEADER]: tenantId,
+            [REQUEST_SOURCE_HEADER]: RequestSourceHeaderValue.PublicApi,
         };
     }
 

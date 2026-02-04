@@ -12,7 +12,7 @@ on:
       - 'weblate-**'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -92,6 +92,11 @@ jobs:
             FARM_URL=$(echo "${FARM_DATA}" | jq -r '.url')
             if [ "${FARM_STATUS}" = "running" ]; then
               break
+            fi
+            if [ "${FARM_STATUS}" = "errored" ]; then
+              echo "  status [${FARM_STATUS}], exit..."
+              echo "  ⚠️ please check build farm logs on farm instance..."
+              exit 1
             fi
             echo "  retry, status [${FARM_STATUS}]..."
             sleep "${FARM_POLL_SLEEP_SEC}"

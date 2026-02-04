@@ -1,33 +1,53 @@
 import {
+    ActionPanelQA,
     ConnectionsActionPanelControls,
     ConnectionsBaseQA,
+    ConnectionsFormQA,
     ConnectionsS3BaseQA,
     ConnectionsYadocsQA,
     DialogCreateWorkbookEntryQa,
     EntryDialogQA,
+    SharedEntriesBaseQa,
 } from '../../../src/shared/constants';
+import {ActionPanelEntryContextMenuQa} from '../../../src/shared/constants/qa/action-panel';
 import {v1 as uuidv1} from 'uuid';
 
 import {slct, waitForCondition} from '../../utils';
 import {BasePage} from '../BasePage';
 import type {BasePageProps} from '../BasePage';
 import type {ConsoleMessage, Request} from '@playwright/test';
+import Revisions from '../common/Revisions';
 
 type ConnectionsPageProps = BasePageProps;
 type FillInputArgs = {name: string; value: string};
 type FillFormInputArgs = {id: 'input'} & FillInputArgs;
 
 class ConnectionsPage extends BasePage {
+    revisions: Revisions;
+
     private createQlChartButtonSelector = slct(
         ConnectionsActionPanelControls.CREATE_QL_CHART_BUTTON,
     );
 
+    private createDatasetButtonSelector = slct(
+        ConnectionsActionPanelControls.CREATE_DATASET_BUTTON,
+    );
+
     constructor({page}: ConnectionsPageProps) {
         super({page});
+        this.revisions = new Revisions(page);
+    }
+
+    async checkIsReadonlyState() {
+        await this.page.waitForSelector(slct(SharedEntriesBaseQa.OpenOriginalBtn));
     }
 
     async createQlChart() {
         await this.page.click(this.createQlChartButtonSelector);
+    }
+
+    async createDataset() {
+        await this.page.click(this.createDatasetButtonSelector);
     }
 
     async fillCreateConnectionInFolder({name}: {name: string}) {
@@ -51,7 +71,10 @@ class ConnectionsPage extends BasePage {
         await this.fillCreateConnectionInFolder({name});
     }
 
-    async createConnectionInWorkbook({name = uuidv1()}: {name?: string} = {}) {
+    async createConnectionInWorkbookOrCollection({
+        name = uuidv1(),
+        collectionId,
+    }: {name?: string; collectionId?: string} = {}) {
         const formSubmit = await this.page.waitForSelector(
             slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON),
         );
@@ -71,9 +94,16 @@ class ConnectionsPage extends BasePage {
         // create connection
         await dialogApplyButton.click();
         try {
-            await this.page.waitForURL(() => {
-                return this.page.url().includes(name);
-            });
+            if (collectionId) {
+                await this.page.waitForURL(() => {
+                    return this.page.url().endsWith(collectionId);
+                });
+            } else {
+                await this.page.waitForURL(() => {
+                    return this.page.url().includes(name);
+                });
+            }
+            return name;
         } catch {
             throw new Error("Connection wasn't created");
         }
@@ -97,8 +127,12 @@ class ConnectionsPage extends BasePage {
         this.page.off('console', onConsoleLog);
     }
 
+    getFieldSelector(name: string) {
+        return `conn-input-${name}`;
+    }
+
     async fillInput({name, value}: {name: string; value: string}) {
-        const selector = `conn-input-${name}`;
+        const selector = this.getFieldSelector(name);
         const input = await this.page.waitForSelector(slct(selector));
         // focus input
         await input.click();
@@ -146,6 +180,34 @@ class ConnectionsPage extends BasePage {
                 expect(response?.status()).toBe(200);
             }),
         );
+    }
+
+    async saveUpdatedConnection() {
+        await this.page.locator(slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON)).click();
+    }
+
+    async removeConnection() {
+        const moreButton = this.page.locator(slct(ActionPanelQA.MoreBtn));
+        expect(moreButton).toBeVisible();
+        await moreButton.click();
+
+        const menuItemRemove = this.page
+            .locator(slct(ActionPanelEntryContextMenuQa.Menu))
+            .locator(slct(ActionPanelEntryContextMenuQa.Remove));
+        expect(menuItemRemove).toBeVisible();
+        await menuItemRemove.click();
+
+        const applyButton = this.page.locator(slct(EntryDialogQA.Apply));
+        expect(applyButton).toBeVisible();
+
+        await applyButton.click();
+    }
+
+    async disableAutoCreateDashInBillingConnection() {
+        const checkbox = await this.page.waitForSelector(
+            slct(ConnectionsFormQA.AUTO_CREATE_DASH_CHECKBOX),
+        );
+        await checkbox.click();
     }
 }
 

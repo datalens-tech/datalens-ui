@@ -12,7 +12,13 @@ import {useVirtualizer} from '@tanstack/react-virtual';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
+import {
+    TRANSPARENT_COLOR_HEX,
+    type TableCell,
+    type TableCellsRow,
+    type TableCommonCell,
+    type TableHead,
+} from 'shared';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 import {getRandomCKId} from 'ui/libs/DatalensChartkit/helpers/helpers';
 
@@ -269,7 +275,7 @@ export const usePreparedTableData = (props: {
                     return rowSpan <= 1;
                 });
 
-                return simpleCell?.getBoundingClientRect()?.height ?? 0;
+                return simpleCell?.offsetHeight ?? 0;
             };
 
             if (rowId && typeof rowMeasures[rowId] === 'undefined') {
@@ -331,9 +337,10 @@ export const usePreparedTableData = (props: {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [colSizes, data.head]);
 
-    const tableBgColor = backgroundColor
-        ? toSolidColor(backgroundColor)
-        : getElementBackgroundColor(tableContainerRef.current);
+    const tableBgColor =
+        backgroundColor && !['transparent', TRANSPARENT_COLOR_HEX].includes(backgroundColor)
+            ? toSolidColor(backgroundColor)
+            : getElementBackgroundColor(tableContainerRef.current);
 
     const whiteSpace = preserveWhiteSpace ? 'pre-wrap' : 'normal';
 
@@ -383,6 +390,7 @@ export const usePreparedTableData = (props: {
                             sortable,
                             pinned,
                             style: cellStyle,
+                            verticalAlignment: originalCellData?.verticalAlignment,
                             sorting: header.column.getIsSorted(),
                             content: flexRender(
                                 header.column.columnDef.header,
@@ -486,12 +494,14 @@ export const usePreparedTableData = (props: {
                     typeof cell.column.columnDef.cell === 'function'
                         ? cell.column.columnDef.cell
                         : () => cell.column.columnDef.cell;
+                const {verticalAlignment} = originalCellData;
 
                 const cellData: BodyCellViewData = {
                     id: cell.id,
                     index,
                     style: cellStyle,
                     contentStyle,
+                    verticalAlignment,
                     content: renderCell(cell.getContext()),
                     type: get(originalCellData, 'type', get(originalHeadData, 'type')),
                     contentType: originalCellData?.value === null ? 'null' : undefined,

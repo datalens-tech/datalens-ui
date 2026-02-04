@@ -12,20 +12,20 @@ import {updateDialogProps} from 'ui/store/actions/dialog';
 
 import {setDatasetDescription} from '../../store/actions/creators';
 import {
-    datasetDescrioptionSelector,
+    datasetDescriptionSelector,
     datasetPermissionsSelector,
     isDescriptionChangedSelector,
 } from '../../store/selectors';
 
 const i18n = I18n.keyset('dataset.dataset-editor.modify');
 
-export const DescriptionButton = () => {
+export const DescriptionButton = ({readonly}: {readonly: boolean}) => {
     const dispatch = useDispatch();
-    const description = useSelector(datasetDescrioptionSelector);
+    const description = useSelector(datasetDescriptionSelector);
     const isDescriptionChanged = useSelector(isDescriptionChangedSelector);
 
     const permissions = useSelector(datasetPermissionsSelector);
-    const canEdit = Boolean(!permissions || permissions?.edit);
+    const canEdit = Boolean(!permissions || permissions?.edit) && !readonly;
 
     const handleOnApplyClick = React.useCallback(
         (text: string) => {

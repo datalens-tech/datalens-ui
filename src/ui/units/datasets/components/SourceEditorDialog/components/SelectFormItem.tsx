@@ -4,8 +4,8 @@ import type {SelectOption} from '@gravity-ui/uikit';
 import {Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
+import type {SelectFormOptions} from 'shared/schema';
 
-import type {SelectFormOptions} from '../../../store/types';
 import type {OnSourceUpdate} from '../types';
 import {getTranslate} from '../utils';
 

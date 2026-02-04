@@ -1,5 +1,14 @@
+@import '../WysiwygEditor/mixins.scss';
+
 .markdown-control {
-    &__textarea {
-        max-height: 40vh;
+    &__wrapper {
+        width: 100%;
     }
+
+    &__wysiwyg-editor {
+        --g-md-editor-padding: var(--g-spacing-1) 0 0;
+        padding: 0 var(--g-spacing-2);
+    }
+
+    @include yfm-editor-height(200px);
 }

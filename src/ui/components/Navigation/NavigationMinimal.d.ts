@@ -15,6 +15,7 @@ export interface NavigationMinimalProps {
     onEntryClick?: (entry: NavigationEntry) => void;
     scope?: string;
     ignoreWorkbookEntries?: boolean;
+    ignoreSharedEntries?: boolean;
     clickableScope?: string;
     hasTail?: boolean;
     anchor?: React.RefObject<HTMLElement>;
@@ -29,6 +30,7 @@ export interface NavigationMinimalProps {
     excludeClickableType?: string | string[];
     inactiveEntryIds?: string[];
     resolvePathMode?: ResolvePathMode;
+    canCreateFolder?: boolean;
 }
 
 export default class NavigationMinimal extends React.Component<NavigationMinimalProps> {}

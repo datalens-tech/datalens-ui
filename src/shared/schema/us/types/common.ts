@@ -3,8 +3,8 @@ export interface EntriesFilters {
 }
 
 export interface EntriesOrderBy {
-    field?: 'createdAt' | 'name';
-    direction?: 'desc' | 'asc';
+    field: 'createdAt' | 'name';
+    direction: 'desc' | 'asc';
 }
 
 export interface EntriesCommonArgs {

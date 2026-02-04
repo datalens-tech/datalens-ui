@@ -5,9 +5,11 @@ import {Button} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
+import type {WorkbookId} from 'shared';
+import {ConnectionsActionPanelControls} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 
-import {workbookIdSelector} from '../../../store';
+import {collectionIdSelector, workbookIdSelector} from '../../../store';
 
 const i18n = I18n.keyset('connections.form');
 const KEY_PARTS_DELIMITER = '/';
@@ -17,6 +19,7 @@ type CreateDatasetButtonProps = DispatchState &
     Partial<ButtonProps> & {
         entryId?: string | null;
         entryKey?: string;
+        externalWorkbookId?: WorkbookId;
     };
 
 const getPathFromEntryKey = (key = '') => {
@@ -24,7 +27,15 @@ const getPathFromEntryKey = (key = '') => {
 };
 
 const CreateDatasetButtonComponent = (props: CreateDatasetButtonProps) => {
-    const {visible, entryKey, entryId, workbookId, size = 'm'} = props;
+    const {
+        visible,
+        entryKey,
+        entryId,
+        workbookId,
+        externalWorkbookId,
+        collectionId,
+        size = 'm',
+    } = props;
 
     if (!entryId || !visible) {
         return null;
@@ -34,16 +45,23 @@ const CreateDatasetButtonComponent = (props: CreateDatasetButtonProps) => {
     let pathname = '/datasets/new';
     let query = `?id=${entryId}`;
 
-    if (workbookId) {
-        pathname = `/workbooks/${workbookId}${pathname}`;
+    if (workbookId || externalWorkbookId) {
+        pathname = `/workbooks/${workbookId || externalWorkbookId}${pathname}`;
+    } else if (collectionId) {
+        pathname = `/collections/${collectionId}${pathname}`;
     }
 
-    if (currentPath && !workbookId) {
+    if (currentPath && !workbookId && !collectionId) {
         query += `&currentPath=${encodeURIComponent(currentPath)}`;
     }
 
     return (
-        <Button target="_blank" size={size} href={`${pathname}${query}`}>
+        <Button
+            target="_blank"
+            size={size}
+            href={`${pathname}${query}`}
+            qa={ConnectionsActionPanelControls.CREATE_DATASET_BUTTON}
+        >
             {i18n('button_create-dataset')}
         </Button>
     );
@@ -64,6 +82,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         visible: isCreateDatasetButtonVisible(state),
         workbookId: workbookIdSelector(state),
+        collectionId: collectionIdSelector(state),
     };
 };
 

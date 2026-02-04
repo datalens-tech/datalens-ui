@@ -1,17 +1,19 @@
 import type {ChartData, ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
 import {CustomShapeRenderer} from '@gravity-ui/chartkit/gravity-charts';
-import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import set from 'lodash/set';
+import type {ExtendedChartData} from 'shared/types/chartkit';
+import type {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
 
 import type {GraphWidget} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
-import {getTooltipRenderer, getTooltipRowRenderer} from '../tooltip';
-import {getNormalizedClickActions} from '../utils';
+import {getTooltipHeaderFormat, getTooltipRenderer, getTooltipRowRenderer} from '../tooltip';
+import {getEscapedActionParams, getNormalizedClickActions} from '../utils';
 
 import {convertChartCommentsToPlotBandsAndLines, shouldUseCommentsOnYAxis} from './comments';
 import {handleClick} from './event-handlers';
+import {convertHolidaysToPlotBands} from './holidays';
 import {
     getCustomShapeRenderer,
     isPointSelected,
@@ -22,9 +24,11 @@ import {
 export function getGravityChartsChartKitData(args: {
     loadedData: ChartKitAdapterProps['loadedData'];
     onChange?: ChartKitAdapterProps['onChange'];
+    runActivity?: ChartKitAdapterProps['runActivity'];
+    chartkitHolidays: ChartKitHolidays | undefined;
 }) {
-    const {loadedData, onChange} = args;
-    const widgetData = loadedData?.data as ChartData;
+    const {loadedData, chartkitHolidays, runActivity, onChange} = args;
+    const widgetData = loadedData?.data as ExtendedChartData;
     const chartId = loadedData?.entryId;
 
     const chartWidgetData: Partial<ChartData> = {
@@ -39,6 +43,7 @@ export function getGravityChartsChartKitData(args: {
                         ),
                         event,
                         onChange,
+                        runActivity,
                     });
                 },
             },
@@ -61,11 +66,17 @@ export function getGravityChartsChartKitData(args: {
     if (!result.tooltip) {
         result.tooltip = {};
     }
+
+    const tooltipQa = `chartkit-tooltip-entry-${chartId}`;
+    result.tooltip.qa = tooltipQa;
     result.tooltip.renderer = getTooltipRenderer({
         widgetData,
-        qa: `chartkit-tooltip-entry-${chartId}`,
+        qa: tooltipQa,
     });
     result.tooltip.rowRenderer = getTooltipRowRenderer({
+        widgetData,
+    });
+    result.tooltip.headerFormat = getTooltipHeaderFormat({
         widgetData,
     });
 
@@ -110,11 +121,20 @@ export function getGravityChartsChartKitData(args: {
     const comments = hideComments ? [] : get(loadedData, 'comments', []);
     const {plotBands, plotLines} = convertChartCommentsToPlotBandsAndLines({comments});
 
+    const hideHolidaysBands = get(loadedData, 'config.hideHolidaysBands', false);
+    const holidaysPlotBands = hideHolidaysBands
+        ? []
+        : convertHolidaysToPlotBands({holidays: chartkitHolidays, loadedData});
+
     if (shouldUseCommentsOnYAxis(result)) {
         set(result, 'yAxis[0].plotBands', [...(result.yAxis?.[0]?.plotBands ?? []), ...plotBands]);
         set(result, 'yAxis[0].plotLines', [...(result.yAxis?.[0]?.plotLines ?? []), ...plotLines]);
     } else {
-        set(result, 'xAxis.plotBands', [...(result.xAxis?.plotBands ?? []), ...plotBands]);
+        set(result, 'xAxis.plotBands', [
+            ...(result.xAxis?.plotBands ?? []),
+            ...holidaysPlotBands,
+            ...plotBands,
+        ]);
         set(result, 'xAxis.plotLines', [...(result.xAxis?.plotLines ?? []), ...plotLines]);
     }
 
@@ -128,7 +148,7 @@ function getStyledSeries(loadedData: ChartKitAdapterProps['loadedData']) {
         const handlers = Array.isArray(a.handler) ? a.handler : [a.handler];
         return handlers.some((h) => h.type === 'setActionParams');
     });
-    const actionParams = pickActionParamsFromParams(get(loadedData, 'unresolvedParams', {}));
+    const actionParams = getEscapedActionParams(loadedData);
 
     if (clickScope?.scope === 'point' && Object.keys(actionParams).length > 0) {
         const chartSeries = widgetData.series.data;

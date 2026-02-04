@@ -5,7 +5,7 @@ import {CopyToClipboard, DropdownMenu} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import type {DatasetField} from 'shared';
 
-import {FieldAction, GROUPED_ITEMS} from '../constants';
+import {FieldAction, GROUPED_ITEMS, READONLY_AVAILABLE_ITEMS} from '../constants';
 import type {MenuItem} from '../types';
 
 export type FieldActionsPopupProps = {
@@ -14,6 +14,7 @@ export type FieldActionsPopupProps = {
     className?: string;
     setActiveRow: (index?: number) => void;
     onItemClick: (data: {action: FieldAction; field: DatasetField}) => void;
+    readonly: boolean;
 };
 
 const MenuItemText = ({
@@ -41,10 +42,15 @@ const MenuItemText = ({
 const getMenuItems = (
     field: DatasetField,
     onClick: FieldActionsPopupProps['onItemClick'],
+    readonly: boolean,
 ): DropdownMenuItemMixed<MenuItem>[] => {
     return GROUPED_ITEMS.reduce<DropdownMenuItemMixed<MenuItem>[]>((items, group) => {
         const groupWithoutHidden = group.reduce<DropdownMenuItem<MenuItem>[]>(
             (group, {action, label, theme, hidden = false}) => {
+                if (readonly && !READONLY_AVAILABLE_ITEMS.includes(action)) {
+                    return group;
+                }
+
                 if (!hidden) {
                     group.push({
                         theme,
@@ -67,7 +73,7 @@ const getMenuItems = (
 };
 
 export function FieldActionsPopup(props: FieldActionsPopupProps) {
-    const {className, field, index, setActiveRow, onItemClick} = props;
+    const {className, field, index, setActiveRow, onItemClick, readonly} = props;
     const [open, setOpen] = React.useState(false);
 
     const handleMenuToggle = () => {
@@ -79,7 +85,7 @@ export function FieldActionsPopup(props: FieldActionsPopupProps) {
         <DropdownMenu
             size="s"
             switcherWrapperClassName={className}
-            items={getMenuItems(field, onItemClick)}
+            items={getMenuItems(field, onItemClick, readonly)}
             popupProps={{
                 placement: ['bottom-end', 'top-end'],
             }}

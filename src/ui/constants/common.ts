@@ -1,10 +1,10 @@
 import {UserRole} from 'shared/components/auth/constants/role';
+import {isNotAuthenticatedError} from 'ui/utils/errorContentTypes';
 
 import type {LineShapeType} from '../../shared';
 import {
     AppEnvironment,
     DeviceType,
-    ErrorContentTypes,
     FALLBACK_LANGUAGES,
     GRADIENT_PALETTES,
     GradientType,
@@ -68,6 +68,9 @@ export const KeyCodes = {
 // and a DL structure with default values must be guaranteed to access, for example, DL.UserSettings.theme,
 // and not DL.USER_THEME (nevertheless, with frequent access, such a thing may be justified)
 export const DL = {
+    get IS_WORKBOOKS_ENABLED() {
+        return window.DL.tenantMode?.workbooksEnabled;
+    },
     get SERVICE_NAME() {
         return window.DL.serviceName;
     },
@@ -167,10 +170,7 @@ export const DL = {
         return window.DL.landingPageSettings;
     },
     get IS_NOT_AUTHENTICATED() {
-        return (
-            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED ||
-            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED_GALLERY
-        );
+        return isNotAuthenticatedError(this.LANDING_PAGE_ERROR_TYPE);
     },
     get PUSH_SERVICE_CONFIG() {
         return window.DL.push;
@@ -189,6 +189,9 @@ export const DL = {
     },
     get AUTH_SIGNUP_DISABLED() {
         return window.DL.authSignupDisabled === true;
+    },
+    get AUTH_COOKIE_NAME() {
+        return window.DL.authCookieName;
     },
     get IS_AUTH_PAGE() {
         return Boolean(window.DL.authPageSettings?.isAuthPage);
@@ -235,9 +238,6 @@ export const DL = {
     get HEADERS_MAP() {
         return window.DL.headersMap || {};
     },
-    get ZITADEL_ENABLED() {
-        return window.DL.isZitadelEnabled === true;
-    },
     get HIDE_NAVIGATION() {
         return window.DL.hideNavigation;
     },
@@ -271,7 +271,7 @@ export const DATALENS_DARK_THEME_MONACO = 'vs-dark-datalens';
 export const DATALENS_DARK_HC_THEME_MONACO = 'vs-dark-hc-datalens';
 
 export const PRODUCT_NAME = 'DataLens';
-export const REBRANDING_PRODUCT_NAME = `Yandex ${PRODUCT_NAME}`;
+export const FULL_PRODUCT_NAME = `Yandex ${PRODUCT_NAME}`;
 
 export const URL_OPTIONS = {
     THEME: '_theme',
@@ -337,7 +337,9 @@ export const URL_QUERY = {
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
     UNRELEASED: 'unreleased',
-    ENTRY_CONFIG: '_entry_config',
+    LOCAL_CONFIG: '_use_local_config',
+    BINDED_WORKBOOK: 'bindedWorkbookId',
+    BINDED_DATASET: 'bindedDatasetId',
 };
 
 const GRADIENT_ICONS = {

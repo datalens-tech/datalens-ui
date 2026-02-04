@@ -1,34 +1,34 @@
 import React from 'react';
 
 import _ from 'lodash';
-import type {EntryScope} from 'shared';
-import type {GetEntryResponse} from 'shared/schema';
-import Utils from 'utils';
+import type {EntryScope, WorkbookEntry} from 'shared';
+import Utils, {getIsRestrictedSharedEntry} from 'utils';
 
 import {CHUNK_SIZE} from '../../constants';
-import type {ChunkItem, EntryChunkItem, WorkbookEntry} from '../../types';
+import type {ChunkItem, EntryChunkItem, WorkbookUnionEntry} from '../../types';
 
-export const useChunkedEntries = ({
+export const useChunkedEntries = <T extends WorkbookUnionEntry>({
     entries,
     availableScopes,
 }: {
-    entries: GetEntryResponse[];
+    entries: WorkbookEntry[];
     availableScopes: EntryScope[];
-}): ChunkItem[][] => {
+}): ChunkItem<T>[][] => {
     const chunks = React.useMemo(() => {
         const allowedScopes = new Set(availableScopes);
 
         const workbookEntries = entries
             .filter((item) => allowedScopes.has(item.scope as EntryScope))
             .map((item) => {
-                const workbookEntry: WorkbookEntry = {
-                    name: Utils.getEntryNameFromKey(item.key),
+                const isRestricted = getIsRestrictedSharedEntry(item);
+                const workbookEntry = {
+                    name: isRestricted ? item.entryId : Utils.getEntryNameFromKey(item.key),
                     ...item,
-                };
+                } as T;
                 return workbookEntry;
             });
 
-        const items: ChunkItem[] = [];
+        const items: ChunkItem<T>[] = [];
 
         if (workbookEntries.length === 0) {
             items.push({
@@ -37,7 +37,7 @@ export const useChunkedEntries = ({
             });
         } else {
             items.push(
-                ...workbookEntries.map<EntryChunkItem>((item) => ({
+                ...workbookEntries.map<EntryChunkItem<T>>((item) => ({
                     type: 'entry',
                     item,
                     key: item.entryId,

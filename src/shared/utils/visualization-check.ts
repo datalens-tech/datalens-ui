@@ -29,20 +29,6 @@ export function getItemLinkWithDatasets(
     return targetLink;
 }
 
-export function isD3Visualization(id: string) {
-    const d3Visualizations = [
-        WizardVisualizationId.ScatterD3,
-        WizardVisualizationId.PieD3,
-        WizardVisualizationId.BarXD3,
-        WizardVisualizationId.LineD3,
-        WizardVisualizationId.DonutD3,
-        WizardVisualizationId.BarYD3,
-        WizardVisualizationId.BarY100pD3,
-        WizardVisualizationId.TreemapD3,
-    ];
-    return d3Visualizations.includes(id as WizardVisualizationId);
-}
-
 export function isGravityChartsVisualization({
     id,
     features,
@@ -68,5 +54,17 @@ export function isGravityChartsVisualization({
         return true;
     }
 
-    return isD3Visualization(id);
+    const isLineAreaOrBarX = [
+        WizardVisualizationId.Line,
+        WizardVisualizationId.Area,
+        WizardVisualizationId.Area100p,
+        WizardVisualizationId.Column,
+        WizardVisualizationId.Column100p,
+        WizardVisualizationId.CombinedChart,
+    ].includes(id as WizardVisualizationId);
+    if (isLineAreaOrBarX && features?.[Feature.GravityChartsForLineAreaAndBarX]) {
+        return true;
+    }
+
+    return false;
 }

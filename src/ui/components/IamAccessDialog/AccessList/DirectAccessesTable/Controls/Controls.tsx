@@ -3,13 +3,11 @@ import React from 'react';
 import {Button, Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
+import type {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 
 import type {SubjectClaims} from '../../../../../../shared/schema/extensions/types';
 import {AccessBindingAction} from '../../../../../../shared/schema/extensions/types';
-import type {
-    IamAccessDialogDispatch,
-    ResourceType,
-} from '../../../../../store/actions/iamAccessDialog';
+import type {IamAccessDialogDispatch} from '../../../../../store/actions/iamAccessDialog';
 import {
     updateAccessBindings,
     updateListAccessBindingsInline,

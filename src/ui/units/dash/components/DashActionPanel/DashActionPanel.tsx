@@ -30,6 +30,7 @@ import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {ICONS_MENU_DEFAULT_SIZE} from '../../../../libs/DatalensChartkit/menu/MenuItems';
 import navigateHelper from '../../../../libs/navigateHelper';
 import {isEmbeddedMode} from '../../../../utils/embedded';
+import {WidgetMetaContext} from '../../contexts/WidgetMetaContext';
 import {
     saveDashAsDraft,
     saveDashAsNewDash,
@@ -48,6 +49,7 @@ import {
     selectDashDescription,
     selectDashShowOpenedDescription,
     selectLoadingEditMode,
+    selectSettings,
     selectStateMode,
 } from '../../store/selectors/dashTypedSelectors';
 import type {DashEntry} from '../../typings/entry';
@@ -87,6 +89,10 @@ export type ActionPanelProps = OwnProps & StateProps & DispatchProps;
 type ActionPanelState = {};
 
 class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelState> {
+    static contextType = WidgetMetaContext;
+
+    declare context: React.ContextType<typeof WidgetMetaContext>;
+
     render() {
         const {entry, isEditMode} = this.props;
         const showHeader = !isEmbeddedMode();
@@ -113,7 +119,11 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                             entry={entry as GetEntryResponse}
                             additionalEntryItems={this.getAdditionalEntryItems()}
                             rightItems={[
-                                <DashActionPanelAdditionalButtons key="additional-buttons" />,
+                                <DashActionPanelAdditionalButtons
+                                    key="additional-buttons"
+                                    dashSettings={this.props.settings}
+                                    isEditMode={this.props.isEditMode}
+                                />,
                                 <div className={b('controls')} key="controls">
                                     {this.renderControls()}
                                 </div>,
@@ -178,7 +188,12 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     }
 
     openDialogSettings = () => this.props.openDialog(DIALOG_TYPE.SETTINGS);
-    openDialogConnections = () => this.props.openEmptyDialogRelations();
+
+    openDialogConnections = () =>
+        this.props.openEmptyDialogRelations({
+            loadHiddenWidgetMeta: this.context?.loadHiddenWidgetMeta,
+        });
+
     openDialogTabs = () => this.props.openDialog(DIALOG_TYPE.TABS);
 
     openDialogAccess = () => {
@@ -284,6 +299,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         const getSelectStateMenuItemFn = registry.common.functions.get('getSelectStateMenuItem');
 
         const selectStateMenuItem = getSelectStateMenuItemFn({
+            entry,
             action: this.onSelectStateClick,
             hidden: !canEdit || !isCurrentRevisionActual || DL.IS_MOBILE || Boolean(entry?.fake),
         });
@@ -360,6 +376,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         accessDescription: selectDashAccessDescription(state),
         showOpenedDescription: selectDashShowOpenedDescription(state),
         description: selectDashDescription(state),
+        settings: selectSettings(state),
     };
 };
 
