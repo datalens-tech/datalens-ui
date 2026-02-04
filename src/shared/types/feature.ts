@@ -97,6 +97,8 @@ export enum Feature {
     EnableDashColorPickersByTheme = 'EnableDashColorPickersByTheme',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
+    /** Funnel chart visualization */
+    FunnelChart = 'FunnelChart',
     /** Replace static master token with dynamic one */
     UsDynamicMasterToken = 'UsDynamicMasterToken',
     /** Enable using dynamic master token in proxy */
