@@ -24,10 +24,11 @@ import {ALGORITHMS} from './constants';
 
 export const uiAuth = async (req: Request, res: Response, next: NextFunction) => {
     req.ctx.log('UI_AUTH');
-    const authCookieName = req.ctx.config.authCookieName;
+    const authCookieName = getAuthCookieName(req.ctx.config.authCookieName);
+    const authExpCookieName = getAuthExpCookieName(req.ctx.config.authCookieName);
 
-    let authCookie = req.cookies[getAuthCookieName(authCookieName)];
-    let authExpCookie = req.cookies[getAuthExpCookieName(authCookieName)];
+    let authCookie = req.cookies[authCookieName];
+    let authExpCookie = req.cookies[authExpCookieName];
 
     if (!authCookie || !authExpCookie) {
         req.ctx.log('SIGNIN');
@@ -71,11 +72,9 @@ export const uiAuth = async (req: Request, res: Response, next: NextFunction) =>
                                 );
 
                                 settedCookies.forEach((cookie) => {
-                                    if (cookie.name === getAuthCookieName(authCookieName)) {
+                                    if (cookie.name === authCookieName) {
                                         authCookie = cookie.value;
-                                    } else if (
-                                        cookie.name === getAuthExpCookieName(authCookieName)
-                                    ) {
+                                    } else if (cookie.name === authExpCookieName) {
                                         authExpCookie = cookie.value;
                                     }
                                 });

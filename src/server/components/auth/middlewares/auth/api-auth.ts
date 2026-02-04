@@ -8,9 +8,9 @@ import {ALGORITHMS} from './constants';
 
 export const apiAuth = async (req: Request, res: Response, next: NextFunction) => {
     req.ctx.log('API_AUTH');
-    const authCookieName = req.ctx.config.authCookieName;
+    const authCookieName = getAuthCookieName(req.ctx.config.authCookieName);
 
-    const authCookie = req.cookies[getAuthCookieName(authCookieName)];
+    const authCookie = req.cookies[authCookieName];
 
     if (!authCookie) {
         req.ctx.logError('API_AUTH_NO_COOKIE');
