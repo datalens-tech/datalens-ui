@@ -34,6 +34,7 @@ export function convertChartCommentsToPlotBandsAndLines({comments}: {comments: C
                     layerPlacement: comment.meta.zIndex === 0 ? 'before' : 'after',
                     label: {
                         text: comment.text,
+                        qa: ChartQa.CommentLabel,
                     },
                 });
                 break;
