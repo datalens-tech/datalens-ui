@@ -94,6 +94,7 @@ export interface SharedAppConfig {
     authTokenPublicKey?: string;
     authManageLocalUsersDisabled?: boolean;
     authSignupDisabled?: boolean;
+    authCookieName?: string;
     // sorted roles from the role with the most rights to the role with the least
     orderedAuthRoles?: `${UserRole}`[];
 

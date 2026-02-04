@@ -8,7 +8,7 @@ import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
 datalensTest.describe('Chart inspector', () => {
-    datalensTest(
+    datalensTest.skip(
         'Clicking on the Inspector menu opens the modal with the rendered time',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});

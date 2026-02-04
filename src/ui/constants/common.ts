@@ -190,6 +190,9 @@ export const DL = {
     get AUTH_SIGNUP_DISABLED() {
         return window.DL.authSignupDisabled === true;
     },
+    get AUTH_COOKIE_NAME() {
+        return window.DL.authCookieName;
+    },
     get IS_AUTH_PAGE() {
         return Boolean(window.DL.authPageSettings?.isAuthPage);
     },
