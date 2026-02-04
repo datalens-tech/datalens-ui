@@ -70,6 +70,7 @@ type DashkitWrapperProps = {
     globalParams: DashKitProps['globalParams'];
     groupsRenderers: DashKitGroup[];
     handleEditClick?: () => void;
+    fixedHeaderBgColor?: string;
     hasFixedHeaderContainerElements: boolean;
     hasFixedHeaderControlsElements: boolean;
     hideErrorDetails?: boolean;
@@ -98,6 +99,7 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
         globalParams,
         groupsRenderers,
         handleEditClick,
+        fixedHeaderBgColor,
         hasFixedHeaderContainerElements,
         hasFixedHeaderControlsElements,
         hideErrorDetails,
@@ -321,6 +323,7 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
 
                 {!DL.IS_MOBILE && (
                     <FixedHeaderWrapper
+                        backgroundColor={fixedHeaderBgColor}
                         className={b('fixed-header', {
                             'no-content': fixedHeaderHasNoVisibleContent,
                         })}

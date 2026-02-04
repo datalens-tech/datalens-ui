@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import SplitPane from 'react-split-pane';
 import {createStructuredSelector} from 'reselect';
 import type {DatasetSource, DatasetSourceAvatar} from 'shared';
-import {EntryScope, ErrorCode, ErrorContentTypes} from 'shared';
+import {EntryScope, ErrorCode, ErrorContentTypes, SharedEntriesBaseQa} from 'shared';
 import type {GetRevisionsEntry} from 'shared/schema';
 import type {DataLensApiError, SDK} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
@@ -582,6 +582,7 @@ class Dataset extends React.Component<Props, State> {
                     onClick={() => {
                         this.props.history.push(location.pathname);
                     }}
+                    qa={SharedEntriesBaseQa.OpenOriginalBtn}
                 >
                     {i18nSharedEntry('workbook-shared-entry-original-link')}
                 </Button>,

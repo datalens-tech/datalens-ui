@@ -14,3 +14,4 @@ export * from './sign-in';
 export * from './uikit';
 export * from './wizard';
 export * from './workbooks';
+export * from './shared-entries';

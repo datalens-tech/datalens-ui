@@ -10,6 +10,7 @@
   "label_autoupdate": "Auto update",
   "label_autoupdate-interval": "Interval",
   "label_border-radius": "Rounding",
+  "label_dash-background": "Dashboard background",
   "label_dependent-selectors": "Dependent selectors",
   "label_display": "Appearance",
   "label_display-info": "Select elements to display on the dashboard",
@@ -33,6 +34,7 @@
   "label_tabs": "Tabs",
   "label_title": "Title",
   "label_toc": "Contents",
+  "label_widgets-background": "Widget background",
   "value_load-priority-charts": "Charts",
   "value_load-priority-selectors": "Selectors"
 }

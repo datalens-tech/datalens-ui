@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {CollectionId} from 'shared';
-import {CollectionItemEntities} from 'shared';
+import {CollectionItemEntities, SharedEntriesSelectDialogQa} from 'shared';
 import type {
     GetEntryResponse,
     SharedEntryFieldsWithOptionalPermissions,
@@ -137,7 +137,10 @@ export const DialogSelectSharedEntry = ({
                         searchRowExtendContent={
                             <div className={b('extend-filters')}>
                                 <Text variant="body-1">{i18n('or')}</Text>
-                                <Button onClick={onAddFromLinkClick}>
+                                <Button
+                                    onClick={onAddFromLinkClick}
+                                    qa={SharedEntriesSelectDialogQa.PastLinkToEntryBtn}
+                                >
                                     <Icon data={LinkIcon} size={16} />
                                     {i18n('past-link-btn')}
                                 </Button>

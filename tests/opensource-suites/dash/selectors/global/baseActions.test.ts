@@ -1,8 +1,8 @@
 import {Page, expect} from '@playwright/test';
 
-import {ControlQA, DialogControlQa, Feature, UikitListQa} from '../../../../../src/shared';
+import {ControlQA, DialogControlQa, UikitListQa} from '../../../../../src/shared';
 import DashboardPage from '../../../../page-objects/dashboard/DashboardPage';
-import {isEnabledFeature, openTestPage, slct} from '../../../../utils';
+import {slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 
 const PARAMS = {
@@ -19,18 +19,6 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Global selectors with impact type base actions', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        // some page need to be loaded so we can get data of feature flag from DL var
-        await openTestPage(page, '/');
-        const isEnabledGlobalSelectors = await isEnabledFeature(
-            page,
-            Feature.EnableGlobalSelectors,
-        );
-
-        if (!isEnabledGlobalSelectors) {
-            datalensTest.skip();
-        }
-    });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
         await dashboardPage.deleteDash();

@@ -1,7 +1,7 @@
 import {Page} from '@playwright/test';
 
 import {WorkbookPageQa} from '../../../src/shared/constants/qa/workbooks';
-import {openTestPage, slct} from '../../utils';
+import {createSharedEntry, openTestPage, slct} from '../../utils';
 import {WorkbooksUrls} from '../../constants/constants';
 import DashboardPage from '../../page-objects/dashboard/DashboardPage';
 
@@ -14,7 +14,12 @@ import {EditEntityButton} from './EditEntityButton';
 import {FiltersPO} from './Filters';
 import {NavigationMinimalPopup} from './NavigationMinimalPopup';
 import {DialogCollectionStructure} from './DialogCollectionStructure';
-import {DashEntryQa} from '../../../src/shared';
+import {
+    DashEntryQa,
+    EntryScope,
+    SharedEntriesAddFromLinkDialogQa,
+    SharedEntriesSelectDialogQa,
+} from '../../../src/shared';
 
 export class Workbook {
     actionsMoreDropdown: ActionsMoreDropdown;
@@ -70,8 +75,10 @@ export class Workbook {
         await menuDropDownBtn.click();
     }
 
-    async findFirstItemByScope(scope: string) {
-        const chunk = this.page.locator(slct(`${WorkbookPageQa.ChunkScope}${scope}`));
+    async findFirstItemByScope(scope: string, isSharedEntry = false) {
+        const chunk = isSharedEntry
+            ? this.page.locator(slct(`${WorkbookPageQa.ChunkSharedEntryScope}${scope}`))
+            : this.page.locator(slct(`${WorkbookPageQa.ChunkScope}${scope}`));
 
         return chunk.locator(slct(WorkbookPageQa.ListItem)).first();
     }
@@ -87,5 +94,29 @@ export class Workbook {
 
         // check that the dashboard has loaded by its name
         await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
+    }
+
+    async addSharedEntryFromLinkIntoWorkbook({
+        scope,
+        entryUrl,
+    }: {
+        scope: EntryScope.Dataset | EntryScope.Connection;
+        entryUrl: string;
+    }) {
+        await this.createEntryButton.waitForVisible();
+        await this.createEntryButton.click();
+        await createSharedEntry({page: this.page, scope});
+        const pasteLinkBtn = await this.page.waitForSelector(
+            slct(SharedEntriesSelectDialogQa.PastLinkToEntryBtn),
+        );
+        await pasteLinkBtn.click();
+        const textInput = this.page
+            .locator(slct(SharedEntriesAddFromLinkDialogQa.LintTextInput))
+            .locator('input');
+        await textInput.press('Meta+A');
+        await textInput.press('Backspace');
+        await textInput.fill(entryUrl);
+        const addLinkApplyBtn = this.page.locator(slct(SharedEntriesAddFromLinkDialogQa.ApplyBtn));
+        await addLinkApplyBtn.click();
     }
 }

@@ -4,6 +4,7 @@ import {ShieldCheck, ShieldKeyhole} from '@gravity-ui/icons';
 import {Dialog, Divider, Link, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {SharedEntriesPermissionsDialogQa} from 'shared';
 import type {SharedEntryBindingsItem} from 'shared/schema';
 
 import DialogManager from '../DialogManager/DialogManager';
@@ -46,6 +47,12 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
     const [delegate, setDelegate] = React.useState(delegation);
     const [isLoading, setIsLoading] = React.useState(false);
 
+    const canCreateEntryBinding =
+        entry.fullPermissions?.createEntryBinding || entry.permissions?.createEntryBinding;
+    const canCreateLimitedEntryBinding =
+        entry.fullPermissions?.createLimitedEntryBinding ||
+        entry.permissions?.createLimitedEntryBinding;
+
     const onSubmit = async () => {
         setIsLoading(true);
         await onApply(delegate);
@@ -87,23 +94,19 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                         icon={<ShieldCheck />}
                         title={i18n('delegate-title')}
                         message={i18n('delegate-message')}
-                        disabled={
-                            !entry.fullPermissions?.createEntryBinding &&
-                            !entry.permissions?.createEntryBinding
-                        }
+                        disabled={!canCreateEntryBinding}
                         checked={delegate}
                         onCheck={() => setDelegate(true)}
+                        qa={SharedEntriesPermissionsDialogQa.DelegateBtn}
                     />
                     <PermissionButton
                         icon={<ShieldKeyhole />}
                         title={i18n('not-delegate-title')}
                         message={i18n('not-delegate-message')}
-                        disabled={
-                            !entry.fullPermissions?.createLimitedEntryBinding &&
-                            !entry.permissions?.createLimitedEntryBinding
-                        }
+                        disabled={!canCreateLimitedEntryBinding}
                         checked={!delegate}
                         onCheck={() => setDelegate(false)}
+                        qa={SharedEntriesPermissionsDialogQa.NotDelegateBtn}
                     />
                 </div>
             </Dialog.Body>
@@ -111,6 +114,10 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                 textButtonApply={i18n('apply-text')}
                 propsButtonCancel={{
                     view: 'flat',
+                }}
+                propsButtonApply={{
+                    disabled: delegate ? !canCreateEntryBinding : !canCreateLimitedEntryBinding,
+                    qa: SharedEntriesPermissionsDialogQa.ApplyBtn,
                 }}
                 loading={isLoading}
                 textButtonCancel={i18n('cancel-text')}

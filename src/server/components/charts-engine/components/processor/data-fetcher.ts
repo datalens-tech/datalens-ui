@@ -853,7 +853,6 @@ export class DataFetcher {
                 requestOptions: {...requestOptions, signal},
                 requestControl,
                 useCaching,
-                ctx,
             })
                 // eslint-disable-next-line
                 .catch((error) => {

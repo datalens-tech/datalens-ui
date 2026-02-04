@@ -57,6 +57,10 @@ export const getAdditionalContextMenuItems = ({
                             onClose: closeDialog,
                             open: true,
                             onApply: async (delegate) => {
+                                if (delegate === entry.isDelegated) {
+                                    closeDialog();
+                                    return;
+                                }
                                 const result = await updateDatasetDelegation({
                                     sourceId: entry.entryId,
                                     targetId: bindedWorkbookId,
