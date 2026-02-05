@@ -35,8 +35,6 @@ const b = block('group-extended-settings');
 
 const i18n = I18n.keyset('dash.extended-settings-dialog.edit');
 
-const SELECTOR_WIDTH = 336;
-
 const resetAutoValues = (group: SelectorDialogState[]) =>
     group.map((item) =>
         item.placementMode === CONTROLS_PLACEMENT_MODE.AUTO ? {...item, width: ''} : item,
@@ -336,7 +334,6 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         isGroupSettings={true}
                         groupImpactType={selectorsGroup.impactType}
                         groupImpactTabsIds={selectorsGroup.impactTabsIds}
-                        selectorWidth={SELECTOR_WIDTH}
                         className={b('row')}
                         hasMultipleSelectors={isMultipleSelectors}
                     />
