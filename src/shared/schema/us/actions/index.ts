@@ -1,6 +1,7 @@
 import {collectionsActions} from './collections';
 import {colorPalettesActions} from './color-palettes';
 import {editorActions} from './editor';
+import {embedUsageActions} from './embed-usage';
 import {embedsActions} from './embeds';
 import {entriesActions} from './entries';
 import {favoritesActions} from './favorites';
@@ -30,4 +31,5 @@ export const actions = {
     ...embedsActions,
     ...operationsActions,
     ...tenantActions,
+    ...embedUsageActions,
 };
