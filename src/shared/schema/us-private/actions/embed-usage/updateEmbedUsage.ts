@@ -3,7 +3,7 @@ import type {UpdateEmbedUsageResponse} from '../../types';
 
 export const _updateEmbedUsage = createAction<UpdateEmbedUsageResponse>({
     method: 'POST',
-    path: () => `/private/v1/embeds/usage`,
+    path: () => `/private/v1/embed-usage`,
     params: (_, headers) => ({
         headers,
     }),

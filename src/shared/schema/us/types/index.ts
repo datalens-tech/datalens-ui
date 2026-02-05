@@ -15,3 +15,4 @@ export * from './embeds';
 export * from './operations';
 export * from './sort';
 export * from './tenant';
+export * from './embed-usage';

@@ -1,2 +1,2 @@
 export * from './entries';
-export * from './embeds';
+export * from './embed-usage';
