@@ -21,10 +21,6 @@ function getDarkenColor(originalColor: unknown, value = 0.8) {
     return color.set('lab.l', color.get('lab.l') * value).hex();
 }
 
-function getComplementary(originalColor: unknown) {
-    return chroma(String(originalColor)).set('hsl.h', '+180').hex();
-}
-
 type PointData = {x: number; y: number};
 
 function generateTrendLine({
@@ -139,7 +135,6 @@ function createTrendSeries({
 }) {
     const regressionMethod = settings?.method ?? DEFAULT_TREND_SETTINGS.method;
     const lineWidth = settings?.lineWidth ?? DEFAULT_TREND_SETTINGS.lineWidth;
-    const colorMode = settings?.colorMode ?? DEFAULT_TREND_SETTINGS.colorMode;
     const linked = settings?.linked ?? DEFAULT_TREND_SETTINGS.linked;
 
     let dashStyle = settings?.dashStyle;
@@ -159,8 +154,7 @@ function createTrendSeries({
                     warnings,
                 });
                 const originalSeriesName = s.name;
-                const color =
-                    colorMode === 'similar' ? getDarkenColor(s.color) : getComplementary(s.color);
+                const color = getDarkenColor(s.color);
 
                 const newSeries = {
                     ...cloneDeep(s),
@@ -195,8 +189,7 @@ function createTrendSeries({
                 });
                 const originalSeriesName = s.name ?? s.title ?? s.id;
                 const name = `${originalSeriesName}: тренд`;
-                const color =
-                    colorMode === 'similar' ? getDarkenColor(s.color) : getComplementary(s.color);
+                const color = getDarkenColor(s.color);
 
                 return {
                     ...cloneDeep(s),
@@ -227,7 +220,6 @@ function createSmoothingSeries({
 }) {
     const method = settings?.method ?? 'sma';
     const windowSize = Number(settings?.windowSize ?? DEFAULT_SMOOTHING.windowSize);
-    const colorMode = settings?.colorMode ?? DEFAULT_SMOOTHING.colorMode;
     const lineWidth = settings?.lineWidth ?? DEFAULT_SMOOTHING.lineWidth;
     const linked = settings?.linked ?? DEFAULT_SMOOTHING.linked;
 
@@ -249,8 +241,7 @@ function createSmoothingSeries({
                     warnings,
                 });
                 const originalSeriesName = s.name;
-                const color =
-                    colorMode === 'similar' ? getDarkenColor(s.color) : getComplementary(s.color);
+                const color = getDarkenColor(s.color);
 
                 const newSeries = {
                     ...cloneDeep(s),
@@ -286,8 +277,7 @@ function createSmoothingSeries({
                 });
                 const originalSeriesName = s.name ?? s.title ?? s.id;
                 const name = `${originalSeriesName}: сглаживание`;
-                const color =
-                    colorMode === 'similar' ? getDarkenColor(s.color) : getComplementary(s.color);
+                const color = getDarkenColor(s.color);
 
                 return {
                     ...cloneDeep(s),
@@ -307,7 +297,7 @@ function createSmoothingSeries({
     return [];
 }
 
-export function addChartAnalyticsSeries({
+export function addChartModelingSeries({
     chartStateData,
     chartData,
 }: {

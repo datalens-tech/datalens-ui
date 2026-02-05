@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {HelpMark, NumberInput, SegmentedRadioGroup, Select, Switch, Text} from '@gravity-ui/uikit';
+import {HelpMark, NumberInput, Select, Switch, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
@@ -8,7 +8,7 @@ import type {ChartStateSettings, TrendLineSettings} from 'shared';
 import {DEFAULT_TREND_SETTINGS} from 'shared/constants/chart-modeling';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 
-import {COLOR_MODE_SELECT_OPTION, MAX_LINE_WIDTH, TREND_SELECT_OPTION} from '../constants';
+import {MAX_LINE_WIDTH, TREND_SELECT_OPTION} from '../constants';
 
 import {ShapeSelect} from './ShapeSelect/ShapeSelect';
 
@@ -27,7 +27,6 @@ export const TrendSettings = (props: Props) => {
 
     const enabled = chartState.trends?.enabled ?? false;
     const method = String(settings?.method ?? DEFAULT_TREND_SETTINGS.method);
-    const colorMode = settings?.colorMode ?? DEFAULT_TREND_SETTINGS.colorMode;
     const dashStyle = settings?.dashStyle ?? DEFAULT_TREND_SETTINGS.dashStyle ?? 'auto';
     const lineWidth = settings?.lineWidth ?? DEFAULT_TREND_SETTINGS.lineWidth;
 
@@ -65,13 +64,6 @@ export const TrendSettings = (props: Props) => {
     const handleUpdateMethod = React.useCallback(
         (value: string[]) => {
             updateSettings({method: value[0] as TrendLineSettings['method']});
-        },
-        [updateSettings],
-    );
-
-    const handleUpdateColorMode = React.useCallback(
-        (value: string) => {
-            updateSettings({colorMode: value as TrendLineSettings['colorMode']});
         },
         [updateSettings],
     );
@@ -119,16 +111,6 @@ export const TrendSettings = (props: Props) => {
                                 </Select.Option>
                             ))}
                         </Select>
-                    </div>
-                    <div className={b('form-row')}>
-                        <Text>{i18n('label_color')}</Text>
-                        <SegmentedRadioGroup value={colorMode} onUpdate={handleUpdateColorMode}>
-                            {COLOR_MODE_SELECT_OPTION.map((item) => (
-                                <SegmentedRadioGroup.Option key={item.value} value={item.value}>
-                                    {item.label}
-                                </SegmentedRadioGroup.Option>
-                            ))}
-                        </SegmentedRadioGroup>
                     </div>
                     <div className={b('form-row')}>
                         <Text>{i18n('label_shape-and-width')}</Text>

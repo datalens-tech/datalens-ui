@@ -10,9 +10,4 @@ export const TREND_SELECT_OPTION = [
     {value: 'cubic', label: i18n('label_cubic')},
 ];
 
-export const COLOR_MODE_SELECT_OPTION = [
-    {value: 'similar', label: i18n('label_similar')},
-    {value: 'contrasted', label: i18n('label_contrasted')},
-];
-
 export const MAX_LINE_WIDTH = 12;

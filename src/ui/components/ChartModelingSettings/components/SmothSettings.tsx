@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {HelpMark, NumberInput, SegmentedRadioGroup, Select, Switch, Text} from '@gravity-ui/uikit';
+import {HelpMark, NumberInput, Select, Switch, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
@@ -9,7 +9,7 @@ import {DEFAULT_SMOOTHING} from 'shared/constants/chart-modeling';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 
 import {RangeInputPicker} from '../../common/RangeInputPicker';
-import {COLOR_MODE_SELECT_OPTION, MAX_LINE_WIDTH, SMOOTHING_SELECT_OPTION} from '../constants';
+import {MAX_LINE_WIDTH, SMOOTHING_SELECT_OPTION} from '../constants';
 
 import {ShapeSelect} from './ShapeSelect/ShapeSelect';
 
@@ -27,7 +27,6 @@ export const SmothSettings = (props: Props) => {
 
     const enabled = chartState.smoothing?.enabled ?? false;
     const windowSize = chartState.smoothing?.settings?.windowSize ?? DEFAULT_SMOOTHING.windowSize;
-    const colorMode = chartState.smoothing?.settings?.colorMode ?? DEFAULT_SMOOTHING.colorMode;
     const dashStyle =
         chartState.smoothing?.settings?.dashStyle ?? DEFAULT_SMOOTHING.dashStyle ?? 'auto';
     const lineWidth = chartState.smoothing?.settings?.lineWidth ?? DEFAULT_SMOOTHING.lineWidth;
@@ -71,13 +70,6 @@ export const SmothSettings = (props: Props) => {
     );
 
     const handleUpdateMethod = React.useCallback(() => {}, []);
-
-    const handleUpdateColorMode = React.useCallback(
-        (value: string) => {
-            updateSettings({colorMode: value as SmoothingLineSettings['colorMode']});
-        },
-        [updateSettings],
-    );
 
     const handleUpdateShape = React.useCallback(
         (values: string[]) => {
@@ -136,19 +128,6 @@ export const SmothSettings = (props: Props) => {
                             step={1}
                             onUpdate={handleChangeWindowSize}
                         />
-                    </div>
-                    <div className={b('form-row')}>
-                        <Text>{i18n('label_color')}</Text>
-                        <SegmentedRadioGroup
-                            defaultValue={colorMode}
-                            onUpdate={handleUpdateColorMode}
-                        >
-                            {COLOR_MODE_SELECT_OPTION.map((item) => (
-                                <SegmentedRadioGroup.Option key={item.value} value={item.value}>
-                                    {item.label}
-                                </SegmentedRadioGroup.Option>
-                            ))}
-                        </SegmentedRadioGroup>
                     </div>
                     <div className={b('form-row')}>
                         <Text>{i18n('label_shape-and-width')}</Text>

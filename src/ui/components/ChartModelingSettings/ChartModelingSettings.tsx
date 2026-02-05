@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Xmark} from '@gravity-ui/icons';
 import {Drawer, DrawerItem} from '@gravity-ui/navigation';
-import {Alert, Button, Icon, Switch, Text} from '@gravity-ui/uikit';
+import {Alert, Button, Icon, Label, Switch, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -15,6 +15,7 @@ import {EntityIcon} from '../EntityIcon/EntityIcon';
 
 import {SmothSettings} from './components/SmothSettings';
 import {TrendSettings} from './components/TrendSettings';
+import {getChartModelingWarning} from './utils';
 
 import './ChartModelingSettings.scss';
 
@@ -30,17 +31,10 @@ export const ChartModelingSettings = () => {
         getChartModelingState(state, widgetId),
     );
     const widgetName = chartState?.widgetName;
-    const warning = React.useMemo(() => {
-        const warningCode = chartState?.warnings?.[0];
-        switch (warningCode) {
-            case 'dataWithNull': {
-                return i18n('label_null-data-warning');
-            }
-            default: {
-                return null;
-            }
-        }
-    }, [chartState?.warnings]);
+    const warning = React.useMemo(
+        () => getChartModelingWarning(chartState?.warnings)?.description,
+        [chartState?.warnings],
+    );
 
     const handleClose = React.useCallback(() => {
         dispatch(chartModelingActions.closeChartModelingDialog());
@@ -95,7 +89,14 @@ export const ChartModelingSettings = () => {
             >
                 <div className={b('section')}>
                     <div className={b('header')}>
-                        <Text variant="subheader-2">{i18n('title_modeling')}</Text>
+                        <div>
+                            <Text className={b('title')} variant="subheader-2">
+                                {i18n('title_modeling')}
+                            </Text>
+                            <Label theme="info" size="xs">
+                                Preview
+                            </Label>
+                        </div>
                         <Button view="flat" size="m" onClick={handleClose}>
                             <Icon data={Xmark} />
                         </Button>

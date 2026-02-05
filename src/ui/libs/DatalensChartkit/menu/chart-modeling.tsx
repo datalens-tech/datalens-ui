@@ -1,18 +1,16 @@
 import React from 'react';
 
-import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import {ChartLine} from '@gravity-ui/icons';
+import {Label, Text} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
+import {isChartModelingAvailable} from 'ui/utils/chart-modeling';
 
 import type {ChartStateSettings} from '../../../../shared';
-import {MenuItemsIds, WidgetKind} from '../../../../shared';
-import {Feature} from '../../../../shared/types/feature';
+import {MenuItemsIds} from '../../../../shared';
 import {DL} from '../../../constants';
-import {isEnabledFeature} from '../../../utils/isEnabledFeature';
 import ChartKitIcon from '../components/ChartKitIcon/ChartKitIcon';
-import type {GraphWidget} from '../types';
 
 import type {MenuItemConfig} from './Menu';
 
@@ -41,33 +39,17 @@ export const getChartModelingMenuItem = ({
 
     return {
         id: MenuItemsIds.CHART_MODELING,
-        title: i18n('chartkit.menu', 'modeling'),
+        title: () => (
+            <React.Fragment>
+                <Text style={{marginRight: 8}}>{i18n('chartkit.menu', 'modeling')}</Text>
+                <Label theme="info" size="xs">
+                    Preview
+                </Label>
+            </React.Fragment>
+        ),
         icon: <ChartKitIcon data={ChartLine} />,
         isVisible: ({loadedData}) => {
-            if (DL.IS_MOBILE || !isEnabledFeature(Feature.ChartModeling)) {
-                return false;
-            }
-
-            switch (loadedData.type) {
-                case WidgetKind.GravityCharts: {
-                    const chartData = loadedData.data as ChartData;
-                    return (
-                        chartData.series.data.every((s) => s.type === 'line') &&
-                        chartData.xAxis?.type !== 'category'
-                    );
-                }
-                case WidgetKind.Graph: {
-                    const graphWidget = loadedData as GraphWidget;
-                    const xAxes = [graphWidget.libraryConfig.xAxis].flat();
-                    return (
-                        graphWidget.libraryConfig.chart?.type === 'line' &&
-                        !xAxes.some((xAxis) => xAxis?.type === 'category')
-                    );
-                }
-                default: {
-                    return false;
-                }
-            }
+            return !DL.IS_MOBILE && isChartModelingAvailable({loadedData});
         },
         items: [
             {

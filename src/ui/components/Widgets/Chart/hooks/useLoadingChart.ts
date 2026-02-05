@@ -21,6 +21,7 @@ import type {DatalensGlobalState} from 'ui/index';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 import {getChartModelingState} from 'ui/store/chart-modeling/selectors';
+import {isChartModelingAvailable} from 'ui/utils/chart-modeling';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import {START_PAGE} from '../../../../libs/DatalensChartkit/ChartKit/components/Widget/components/Table/Paginator/Paginator';
@@ -39,7 +40,7 @@ import type {
     OnActivityComplete,
     OnChangeData,
 } from '../../../../libs/DatalensChartkit/types';
-import {addChartAnalyticsSeries} from '../helpers/analytics';
+import {addChartModelingSeries} from '../../../../utils/chart-modeling/add-chart-modeling-series';
 import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
@@ -1041,11 +1042,11 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     );
 
     const [chartData, setChartData] = React.useState<ChartContentWidgetData | null>(null);
-    React.useEffect(() => {
+    const setChartModelingData = useMemoCallback(() => {
         let updatedChartData: ChartContentWidgetData | null = null;
         if (loadedData) {
             updatedChartData = cloneDeep(loadedData);
-            const {warnings} = addChartAnalyticsSeries({
+            const {warnings} = addChartModelingSeries({
                 chartData: updatedChartData,
                 chartStateData,
             });
@@ -1065,7 +1066,17 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         if (!isEqual(chartData, updatedChartData)) {
             setChartData(updatedChartData);
         }
-    }, [loadedData, chartStateData, chartData, widgetId, globalDispatch]);
+    }, []);
+
+    const shouldUseChartModeling = React.useMemo(
+        () => loadedData && isChartModelingAvailable({loadedData}),
+        [loadedData],
+    );
+    React.useEffect(() => {
+        if (shouldUseChartModeling) {
+            setChartModelingData();
+        }
+    }, [shouldUseChartModeling, setChartModelingData, widgetId, chartStateData]);
 
     return {
         loadedData,
@@ -1092,7 +1103,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isWidgetMenuDataChanged,
         runActivity,
         silentLoadChartData,
-        chartData,
+        chartData: shouldUseChartModeling ? chartData : loadedData,
         chartStateData,
     };
 };

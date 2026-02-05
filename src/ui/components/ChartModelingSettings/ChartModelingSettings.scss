@@ -18,6 +18,10 @@
         align-items: center;
     }
 
+    &__title {
+        margin-right: var(--g-spacing-2);
+    }
+
     &__section-header {
         display: flex;
         justify-content: space-between;

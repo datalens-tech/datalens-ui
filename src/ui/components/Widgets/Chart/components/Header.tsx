@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {ChartLine} from '@gravity-ui/icons';
-import {Button, Icon} from '@gravity-ui/uikit';
+import {ChartLine, TriangleExclamation} from '@gravity-ui/icons';
+import {ActionTooltip, Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, type StringParams} from 'shared';
+import {getChartModelingWarning} from 'ui/components/ChartModelingSettings/utils';
 import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
 import {URL_OPTIONS} from 'ui/constants';
 import {type DatalensGlobalState, usePrevious} from 'ui/index';
@@ -164,19 +165,28 @@ export const Header = (props: HeaderProps) => {
     const shouldShowChartModelingIcon = Boolean(
         chartStateData?.smoothing?.enabled || chartStateData?.trends?.enabled,
     );
+    const chartModelingWarning = React.useMemo(
+        () => getChartModelingWarning(chartStateData?.warnings)?.title,
+        [chartStateData?.warnings],
+    );
     const chartModelingDialogWidgetId = useSelector(getEditingWidgetId);
+
+    const openChartModelingDialog = React.useCallback(() => {
+        dispatch(
+            chartModelingActions.openChartModelingDialog({
+                id: widgetId,
+                widgetName: extraOptions?.widgetTitle as string,
+            }),
+        );
+    }, [dispatch, extraOptions?.widgetTitle, widgetId]);
+
     const handleChartModelingIconClick = React.useCallback(() => {
         if (chartModelingDialogWidgetId && chartModelingDialogWidgetId === widgetId) {
             dispatch(chartModelingActions.closeChartModelingDialog());
         } else {
-            dispatch(
-                chartModelingActions.openChartModelingDialog({
-                    id: widgetId,
-                    widgetName: extraOptions?.widgetTitle as string,
-                }),
-            );
+            openChartModelingDialog();
         }
-    }, [chartModelingDialogWidgetId, dispatch, extraOptions?.widgetTitle, widgetId]);
+    }, [chartModelingDialogWidgetId, dispatch, openChartModelingDialog, widgetId]);
 
     const prevWidgetId = usePrevious(widgetId);
     React.useEffect(() => {
@@ -244,11 +254,30 @@ export const Header = (props: HeaderProps) => {
                     />
                 )}
                 {shouldShowChartModelingIcon && (
-                    <div className={b('icons')}>
-                        <Button onClick={handleChartModelingIconClick} view="flat-info">
-                            <Icon data={ChartLine} size={16} className={b('icon-chart-modeling')} />
-                        </Button>
-                    </div>
+                    <React.Fragment>
+                        <div className={b('icons')}>
+                            <Button onClick={handleChartModelingIconClick} view="flat-info">
+                                <Icon
+                                    data={ChartLine}
+                                    size={16}
+                                    className={b('icon-chart-modeling')}
+                                />
+                            </Button>
+                        </div>
+                        {chartModelingWarning && (
+                            <div className={b('icons')}>
+                                <ActionTooltip title={chartModelingWarning}>
+                                    <Button onClick={openChartModelingDialog} view="flat-warning">
+                                        <Icon
+                                            data={TriangleExclamation}
+                                            size={16}
+                                            className={b('icon-chart-modeling-warning')}
+                                        />
+                                    </Button>
+                                </ActionTooltip>
+                            </div>
+                        )}
+                    </React.Fragment>
                 )}
             </div>
         </div>

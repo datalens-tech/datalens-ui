@@ -326,7 +326,6 @@ export type ChartActivityResponseData = {
 
 export type TrendLineSettings = {
     method?: 'linear' | 'quadratic' | 'cubic';
-    colorMode?: 'similar' | 'contrast';
     dashStyle?: string;
     lineWidth?: number;
     /** new series linked with original (e.g., shown/hidden together)) */
@@ -336,7 +335,6 @@ export type TrendLineSettings = {
 export type SmoothingLineSettings = {
     method?: 'sma';
     windowSize?: number;
-    colorMode?: 'similar' | 'contrast';
     dashStyle?: string;
     lineWidth?: number;
     /** new series linked with original (e.g., shown/hidden together)) */
