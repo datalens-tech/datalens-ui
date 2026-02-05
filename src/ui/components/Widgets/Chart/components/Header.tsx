@@ -1,14 +1,20 @@
 import React from 'react';
 
-import {Button, Icon} from '@gravity-ui/uikit';
+import {ChartLine, TriangleExclamation} from '@gravity-ui/icons';
+import {ActionTooltip, Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, type StringParams} from 'shared';
+import {getChartModelingWarning} from 'ui/components/ChartModelingSettings/utils';
 import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
 import {URL_OPTIONS} from 'ui/constants';
+import {type DatalensGlobalState, usePrevious} from 'ui/index';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
+import {chartModelingActions} from 'ui/store/chart-modeling/actions';
+import {getChartModelingState, getEditingWidgetId} from 'ui/store/chart-modeling/selectors';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
 
 import {
@@ -152,6 +158,43 @@ export const Header = (props: HeaderProps) => {
 
     const showFiltersClear = showActionParamsFilter && onFiltersClear;
 
+    const widgetId = requestId;
+    const chartStateData = useSelector((state: DatalensGlobalState) =>
+        getChartModelingState(state, widgetId),
+    );
+    const shouldShowChartModelingIcon = Boolean(
+        chartStateData?.smoothing?.enabled || chartStateData?.trends?.enabled,
+    );
+    const chartModelingWarning = React.useMemo(
+        () => getChartModelingWarning(chartStateData?.warnings)?.title,
+        [chartStateData?.warnings],
+    );
+    const chartModelingDialogWidgetId = useSelector(getEditingWidgetId);
+
+    const openChartModelingDialog = React.useCallback(() => {
+        dispatch(
+            chartModelingActions.openChartModelingDialog({
+                id: widgetId,
+                widgetName: extraOptions?.widgetTitle as string,
+            }),
+        );
+    }, [dispatch, extraOptions?.widgetTitle, widgetId]);
+
+    const handleChartModelingIconClick = React.useCallback(() => {
+        if (chartModelingDialogWidgetId && chartModelingDialogWidgetId === widgetId) {
+            dispatch(chartModelingActions.closeChartModelingDialog());
+        } else {
+            openChartModelingDialog();
+        }
+    }, [chartModelingDialogWidgetId, dispatch, openChartModelingDialog, widgetId]);
+
+    const prevWidgetId = usePrevious(widgetId);
+    React.useEffect(() => {
+        if (prevWidgetId && prevWidgetId !== widgetId && !isEmpty(chartStateData)) {
+            dispatch(chartModelingActions.removeChartSettings({id: prevWidgetId}));
+        }
+    }, [chartStateData, dispatch, prevWidgetId, widgetId]);
+
     return (
         <div className={b('chart-header')}>
             {safeChartWarning && <ChartInfoIcon msg={safeChartWarning} />}
@@ -209,6 +252,32 @@ export const Header = (props: HeaderProps) => {
                         messagesByLocator={chartsInsightsData.messagesByLocator}
                         locators={chartsInsightsData.locators}
                     />
+                )}
+                {shouldShowChartModelingIcon && (
+                    <React.Fragment>
+                        <div className={b('icons')}>
+                            <Button onClick={handleChartModelingIconClick} view="flat-info">
+                                <Icon
+                                    data={ChartLine}
+                                    size={16}
+                                    className={b('icon-chart-modeling')}
+                                />
+                            </Button>
+                        </div>
+                        {chartModelingWarning && (
+                            <div className={b('icons')}>
+                                <ActionTooltip title={chartModelingWarning}>
+                                    <Button onClick={openChartModelingDialog} view="flat-warning">
+                                        <Icon
+                                            data={TriangleExclamation}
+                                            size={16}
+                                            className={b('icon-chart-modeling-warning')}
+                                        />
+                                    </Button>
+                                </ActionTooltip>
+                            </div>
+                        )}
+                    </React.Fragment>
                 )}
             </div>
         </div>

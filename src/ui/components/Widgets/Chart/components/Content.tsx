@@ -85,6 +85,8 @@ export const Content = (props: ChartContentProps) => {
         showActionParamsFilter,
         onFiltersClear,
         reload,
+        chartData,
+        chartStateData,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -171,6 +173,7 @@ export const Content = (props: ChartContentProps) => {
                         showActionParamsFilter={showActionParamsFilter}
                         onFiltersClear={onFiltersClear}
                         reload={reload}
+                        extraOptions={{chartStateData}}
                     />
                 </React.Fragment>
             )}
@@ -216,7 +219,7 @@ export const Content = (props: ChartContentProps) => {
                     onChange={onChange}
                     onError={onError}
                     onRetry={onRetry}
-                    loadedData={loadedData}
+                    loadedData={chartData}
                     forwardedRef={forwardedRef}
                     renderPluginLoader={chartInnerLoaderComponent}
                     paneSplitOrientation={paneSplitOrientation}
