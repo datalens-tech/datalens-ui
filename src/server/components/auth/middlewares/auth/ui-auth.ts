@@ -4,12 +4,9 @@ import requestIp from 'request-ip';
 import setCookieParser from 'set-cookie-parser';
 
 import {ErrorCode} from '../../../../../shared';
-import {
-    AUTH_COOKIE_NAME,
-    AUTH_EXP_COOKIE_NAME,
-} from '../../../../../shared/components/auth/constants/cookie';
 import {ACCESS_TOKEN_TIME_RESERVE} from '../../../../../shared/components/auth/constants/token';
 import {RELOADED_URL_QUERY} from '../../../../../shared/components/auth/constants/url';
+import {getAuthCookieName, getAuthExpCookieName} from '../../../../../shared/components/auth/utils';
 import {
     AuthHeader,
     FORWARDED_FOR_HEADER,
@@ -27,9 +24,11 @@ import {ALGORITHMS} from './constants';
 
 export const uiAuth = async (req: Request, res: Response, next: NextFunction) => {
     req.ctx.log('UI_AUTH');
+    const authCookieName = getAuthCookieName(req.ctx.config.authCookieName);
+    const authExpCookieName = getAuthExpCookieName(req.ctx.config.authCookieName);
 
-    let authCookie = req.cookies[AUTH_COOKIE_NAME];
-    let authExpCookie = req.cookies[AUTH_EXP_COOKIE_NAME];
+    let authCookie = req.cookies[authCookieName];
+    let authExpCookie = req.cookies[authExpCookieName];
 
     if (!authCookie || !authExpCookie) {
         req.ctx.log('SIGNIN');
@@ -73,9 +72,9 @@ export const uiAuth = async (req: Request, res: Response, next: NextFunction) =>
                                 );
 
                                 settedCookies.forEach((cookie) => {
-                                    if (cookie.name === AUTH_COOKIE_NAME) {
+                                    if (cookie.name === authCookieName) {
                                         authCookie = cookie.value;
-                                    } else if (cookie.name === AUTH_EXP_COOKIE_NAME) {
+                                    } else if (cookie.name === authExpCookieName) {
                                         authExpCookie = cookie.value;
                                     }
                                 });
