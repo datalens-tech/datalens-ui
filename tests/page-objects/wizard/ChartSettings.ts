@@ -2,6 +2,7 @@ import {ElementHandle, Page} from '@playwright/test';
 
 import {slct, waitForCondition} from '../../utils';
 import {CommonSelectors} from '../constants/common-selectors';
+import {ChartSettingsDialogQA} from '../../../src/shared';
 
 export enum ChartSettingsItems {
     Navigator = 'navigator-switcher',
@@ -118,6 +119,14 @@ export default class ChartSettings {
 
     async setFeed(feedValue: string) {
         await this.page.fill(`${slct('feed-input')} input`, feedValue);
+    }
+
+    async setMetricFontSize(size: string) {
+        const sizeOption = this.page
+            .locator(slct(ChartSettingsDialogQA.IndicatorFontSize))
+            .locator(CommonSelectors.RadioButtonOption, {hasText: size});
+
+        await sizeOption.click();
     }
 
     async setNavigatorLinesMode(linesMode: 'all' | 'selected') {
