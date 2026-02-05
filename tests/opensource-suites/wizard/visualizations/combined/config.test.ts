@@ -26,42 +26,48 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.setVisualization(WizardVisualizationId.CombinedChart);
         });
 
-        datalensTest.only('Config should match expected structure', async ({page}) => {
-            const wizardPage = new WizardPage({page});
-            const preview = page.locator(slct(WizardPageQa.SectionPreview));
-            const previewLoader = preview.locator(slct(ChartKitQa.Loader));
-            const responses: Response[] = [];
-            const onResponse = (response: Response) => {
-                const responseUrl = new URL(response.url());
+        datalensTest(
+            'X axis settings should be applied correctly when first layer is empty',
+            async ({page}) => {
+                const wizardPage = new WizardPage({page});
+                const preview = page.locator(slct(WizardPageQa.SectionPreview));
+                const previewLoader = preview.locator(slct(ChartKitQa.Loader));
+                const responses: Response[] = [];
+                const onResponse = (response: Response) => {
+                    const responseUrl = new URL(response.url());
 
-                if (responseUrl.pathname === CommonUrls.ApiRun && response.ok()) {
-                    responses.push(response);
-                }
-            };
+                    if (responseUrl.pathname === CommonUrls.ApiRun && response.ok()) {
+                        responses.push(response);
+                    }
+                };
 
-            page.on('response', onResponse);
+                page.on('response', onResponse);
 
-            await wizardPage.sectionVisualization.addLayer();
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'Order_date');
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
-            await wizardPage.placeholderDialog.open(PlaceholderId.X);
-            await wizardPage.placeholderDialog.toggleRadioButton(
-                RadioButtons.Grid,
-                RadioButtonsValues.Off,
-            );
-            await wizardPage.placeholderDialog.apply();
+                await wizardPage.sectionVisualization.addLayer();
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.X,
+                    'Order_date',
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
+                await wizardPage.placeholderDialog.open(PlaceholderId.X);
+                await wizardPage.placeholderDialog.toggleRadioButton(
+                    RadioButtons.Grid,
+                    RadioButtonsValues.Off,
+                );
+                await wizardPage.placeholderDialog.apply();
 
-            await expect(previewLoader).not.toBeVisible();
+                await expect(previewLoader).not.toBeVisible();
 
-            page.off('response', onResponse);
+                page.off('response', onResponse);
 
-            const lastResponse = responses[responses.length - 1];
-            expect(lastResponse).toBeDefined();
+                const lastResponse = responses[responses.length - 1];
+                expect(lastResponse).toBeDefined();
 
-            const responseData = await lastResponse.json();
-            Object.entries(mapDataKeyToValue).forEach(([key, value]) => {
-                expect(get(responseData?.data, key)).toBe(value);
-            });
-        });
+                const responseData = await lastResponse.json();
+                Object.entries(mapDataKeyToValue).forEach(([key, value]) => {
+                    expect(get(responseData?.data, key)).toBe(value);
+                });
+            },
+        );
     });
 });
