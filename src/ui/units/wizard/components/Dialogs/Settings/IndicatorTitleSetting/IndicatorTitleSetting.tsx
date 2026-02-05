@@ -103,9 +103,11 @@ const IndicatorTitleSetting: React.FC<Props> = (props: Props) => {
                             </RadioButton.Option>
                         ))}
                     </RadioButton>
-                    <Text color="secondary" className={spacing({mt: 1})}>
-                        {i18n('wizard', 'label_font-size-disabled-hint')}
-                    </Text>
+                    {isMarkup && (
+                        <Text color="secondary" className={spacing({mt: 1})}>
+                            {i18n('wizard', 'label_font-size-disabled-hint')}
+                        </Text>
+                    )}
                 </Flex>
             </div>
         </div>
