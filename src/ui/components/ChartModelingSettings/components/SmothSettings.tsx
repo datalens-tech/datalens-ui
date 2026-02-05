@@ -2,7 +2,6 @@ import React from 'react';
 
 import {NumberInput, Select, Switch, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import type {ChartStateSettings, SmoothingLineSettings} from 'shared';
 import {DEFAULT_SMOOTHING} from 'shared/constants/chart-modeling';
@@ -11,11 +10,11 @@ import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 
 import {RangeInputPicker} from '../../common/RangeInputPicker';
 import {MAX_LINE_WIDTH, SMOOTHING_SELECT_OPTION} from '../constants';
+import {i18n} from '../i18n';
 
 import {ShapeSelect} from './ShapeSelect/ShapeSelect';
 
 const b = block('chart-modeling-settings');
-const i18n = I18n.keyset('component.chart-modeling-settings');
 
 type Props = {
     widgetId: string;

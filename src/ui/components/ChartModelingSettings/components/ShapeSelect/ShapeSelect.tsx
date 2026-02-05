@@ -2,15 +2,15 @@ import React from 'react';
 
 import {Select, type SelectOption} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
 import type {LineShapeType} from 'shared';
 import {SHAPES_PALETTE_ORDER} from 'shared';
 import {selectClientAvailableLineShapes} from 'ui/constants/common';
 
+import {i18n} from '../../i18n';
+
 import {getShapedLineIcon} from './utils';
 
 const b = block('chart-modeling-settings');
-const i18n = I18n.keyset('component.chart-modeling-settings');
 
 function getShapeSelectOptions() {
     const availableLineShapes = selectClientAvailableLineShapes();

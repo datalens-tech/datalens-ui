@@ -2,7 +2,6 @@ import React from 'react';
 
 import {NumberInput, Select, Switch, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import type {ChartStateSettings, TrendLineSettings} from 'shared';
 import {DEFAULT_TREND_SETTINGS} from 'shared/constants/chart-modeling';
@@ -10,11 +9,11 @@ import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHel
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 
 import {MAX_LINE_WIDTH, TREND_SELECT_OPTION} from '../constants';
+import {i18n} from '../i18n';
 
 import {ShapeSelect} from './ShapeSelect/ShapeSelect';
 
 const b = block('chart-modeling-settings');
-const i18n = I18n.keyset('component.chart-modeling-settings');
 
 type Props = {
     widgetId: string;

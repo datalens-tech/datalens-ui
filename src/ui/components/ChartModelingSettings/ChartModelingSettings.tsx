@@ -4,7 +4,6 @@ import {Xmark} from '@gravity-ui/icons';
 import {Drawer, DrawerItem} from '@gravity-ui/navigation';
 import {Alert, Button, Icon, Label, Switch, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DEFAULT_SMOOTHING, DEFAULT_TREND_SETTINGS} from 'shared/constants/chart-modeling';
 import type {DatalensGlobalState} from 'ui/index';
@@ -15,12 +14,12 @@ import {EntityIcon} from '../EntityIcon/EntityIcon';
 
 import {SmothSettings} from './components/SmothSettings';
 import {TrendSettings} from './components/TrendSettings';
+import {i18n} from './i18n';
 import {getChartModelingWarning} from './utils';
 
 import './ChartModelingSettings.scss';
 
 const b = block('chart-modeling-settings');
-const i18n = I18n.keyset('component.chart-modeling-settings');
 
 export const ChartModelingSettings = () => {
     const dispatch = useDispatch();

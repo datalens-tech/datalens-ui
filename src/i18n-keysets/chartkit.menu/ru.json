@@ -23,11 +23,5 @@
   "show-full-period": "Посмотреть весь период",
   "show-holidays": "Показать выходные",
   "show-sources": "Источники",
-  "title_select-action": "Выберите действие",
-  "modeling": "Моделирование",
-  "add-trend": "Добавить тренд",
-  "add-smoothing": "Добавить сглаживание",
-  "remove-trend": "Убрать тренд",
-  "remove-smoothing": "Убрать сглаживание",
-  "modeling-settings": "Настроить"
+  "title_select-action": "Выберите действие"
 }

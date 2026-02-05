@@ -1,6 +1,4 @@
-import {I18n} from 'i18n';
-
-const i18n = I18n.keyset('component.chart-modeling-settings');
+import {i18n} from './i18n';
 
 export function getChartModelingWarning(warnings?: string[]) {
     switch (warnings?.[0]) {
