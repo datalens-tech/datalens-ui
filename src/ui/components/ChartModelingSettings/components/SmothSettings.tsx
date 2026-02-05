@@ -1,11 +1,12 @@
 import React from 'react';
 
-import {HelpMark, NumberInput, Select, Switch, Text} from '@gravity-ui/uikit';
+import {NumberInput, Select, Switch, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import type {ChartStateSettings, SmoothingLineSettings} from 'shared';
 import {DEFAULT_SMOOTHING} from 'shared/constants/chart-modeling';
+import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 
 import {RangeInputPicker} from '../../common/RangeInputPicker';
@@ -105,7 +106,7 @@ export const SmothSettings = (props: Props) => {
                     <div className={b('form-row')}>
                         <div className={b('label-with-hint')}>
                             <Text>{i18n('label_method')}</Text>
-                            <HelpMark>{i18n('tooltip_smoothing-method')}</HelpMark>
+                            <MarkdownHelpPopover markdown={i18n('tooltip_smoothing-method')} />
                         </div>
                         <Select value={['sma']} onUpdate={handleUpdateMethod}>
                             {SMOOTHING_SELECT_OPTION.map((item) => (
@@ -118,7 +119,7 @@ export const SmothSettings = (props: Props) => {
                     <div className={b('form-row')}>
                         <div className={b('label-with-hint')}>
                             <Text>{i18n('label_window-size')}</Text>
-                            <HelpMark>{i18n('tooltip_smoothing-window-size')}</HelpMark>
+                            <MarkdownHelpPopover markdown={i18n('tooltip_smoothing-window-size')} />
                         </div>
                         <RangeInputPicker
                             size="s"

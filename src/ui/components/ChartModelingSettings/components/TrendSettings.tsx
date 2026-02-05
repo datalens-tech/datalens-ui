@@ -1,11 +1,12 @@
 import React from 'react';
 
-import {HelpMark, NumberInput, Select, Switch, Text} from '@gravity-ui/uikit';
+import {NumberInput, Select, Switch, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import type {ChartStateSettings, TrendLineSettings} from 'shared';
 import {DEFAULT_TREND_SETTINGS} from 'shared/constants/chart-modeling';
+import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {chartModelingActions} from 'ui/store/chart-modeling/actions';
 
 import {MAX_LINE_WIDTH, TREND_SELECT_OPTION} from '../constants';
@@ -102,7 +103,7 @@ export const TrendSettings = (props: Props) => {
                     <div className={b('form-row')}>
                         <div className={b('label-with-hint')}>
                             <Text>{i18n('label_method')}</Text>
-                            <HelpMark>{i18n('tooltip_trend-method')}</HelpMark>
+                            <MarkdownHelpPopover markdown={i18n('tooltip_trend-method')} />
                         </div>
                         <Select value={[method]} onUpdate={handleUpdateMethod}>
                             {TREND_SELECT_OPTION.map((item) => (
