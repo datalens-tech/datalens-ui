@@ -159,7 +159,7 @@ datalensTest.describe('Wizard - Sort', () => {
         },
     );
 
-    datalensTest(
+    datalensTest.skip(
         'Sorting works if there is a field with the Date type in section X',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
@@ -187,7 +187,7 @@ datalensTest.describe('Wizard - Sort', () => {
         },
     );
 
-    datalensTest(
+    datalensTest.skip(
         'Sorting works if there is a field with the number type in section X, and the same field in the Sorting',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});

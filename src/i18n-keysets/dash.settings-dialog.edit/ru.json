@@ -10,6 +10,7 @@
   "label_autoupdate": "Автообновление",
   "label_autoupdate-interval": "Интервал",
   "label_border-radius": "Скругление",
+  "label_dash-background": "Фон дашборда",
   "label_dependent-selectors": "Зависимые селекторы",
   "label_display": "Внешний вид",
   "label_display-info": "Выберите элементы, которые должны отображаться на дашборде",
@@ -33,6 +34,7 @@
   "label_tabs": "Табы",
   "label_title": "Заголовок",
   "label_toc": "Оглавление",
+  "label_widgets-background": "Фон виджетов",
   "value_load-priority-charts": "Чарты",
   "value_load-priority-selectors": "Селекторы"
 }

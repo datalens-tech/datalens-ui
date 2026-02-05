@@ -11,7 +11,7 @@ import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import {type ConnectorType, Feature} from 'shared';
+import {type ConnectorType, Feature, SharedEntriesBaseQa} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {PageTitle, SlugifyUrl, URL_QUERY, Utils} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
@@ -191,7 +191,7 @@ const PageComponent = (props: PageProps) => {
         isShowCreateButtons = Boolean(entry.permissions?.edit);
     }
 
-    if (isReadonly || (!entry?.entryId && !isFakeEntry)) {
+    if (isReadonly || (!entry?.entryId && !isFakeEntry) || apiErrors.entry) {
         isShowCreateButtons = false;
     }
 
@@ -276,6 +276,7 @@ const PageComponent = (props: PageProps) => {
                           onClick={() => {
                               history.push(location.pathname);
                           }}
+                          qa={SharedEntriesBaseQa.OpenOriginalBtn}
                       >
                           {getSharedEntryMockText('workbook-shared-entry-original-link')}
                       </Button>,

@@ -1,3 +1,4 @@
+import type {WorkbookEntry} from 'shared';
 import type {
     AddFavoriteResponse,
     DeleteEntryResponse,
@@ -506,7 +507,7 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
         }
         case CHANGE_FAVORITE_ENTRY_INLINE: {
             const changeFavoriteEntry = Array.isArray(action.data) ? action.data[0] : action.data;
-            const mapItemsCallback = (item: GetEntryResponse) => {
+            const mapItemsCallback = (item: WorkbookEntry) => {
                 if (changeFavoriteEntry.entryId === item.entryId) {
                     const newItem = {...item} as GetEntryResponse;
 

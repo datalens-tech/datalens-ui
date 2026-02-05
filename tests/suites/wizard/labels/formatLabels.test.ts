@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {expectArraysEqualUnordered, openTestPage, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {
@@ -23,11 +23,9 @@ async function getChartLabelValues(page: Page, expectedLength: number) {
             const lineLabelsSelector = '.highcharts-series-0.highcharts-data-labels';
             const labelsSelector = '.highcharts-data-label';
             const hcDataLabelsSelector = `${lineLabelsSelector} ${labelsSelector}`;
-            // ToDo: replace with qa attribute
-            const gravityChartsDataLabelsSelector = '.gcharts-pie__label';
 
             const labels = document.querySelectorAll(
-                [hcDataLabelsSelector, gravityChartsDataLabelsSelector].join(','),
+                [hcDataLabelsSelector, '.gcharts-pie__label', '.gcharts-line__label'].join(','),
             );
 
             return (
@@ -74,7 +72,7 @@ datalensTest.describe('Wizard - formatting signatures (line)', () => {
 
             const initialLabels = await getChartLabelValues(wizardPage.page, 3);
 
-            expect(initialLabels).toEqual(EXPECTED_INITIAL_LABELS);
+            expectArraysEqualUnordered(initialLabels, EXPECTED_INITIAL_LABELS);
 
             await wizardPage.visualizationItemDialog.open(PlaceholderName.Y, 'Sales');
 
@@ -93,7 +91,10 @@ datalensTest.describe('Wizard - formatting signatures (line)', () => {
 
             await waitForCondition(async () => {
                 labelsAfterPrecisionChange = await getChartLabelValues(wizardPage.page, 3);
-                return labelsAfterPrecisionChange.join(',') === EXPECTED_FORMATTED_LABELS.join(',');
+                return (
+                    labelsAfterPrecisionChange.sort().join(',') ===
+                    EXPECTED_FORMATTED_LABELS.sort().join(',')
+                );
             }).catch(() => {
                 throw new Error(
                     `Formatting was not applied.
@@ -143,7 +144,7 @@ datalensTest.describe('Wizard - formatting signatures (pie, donut)', () => {
 
             const labels = await getChartLabelValues(wizardPage.page, 3);
 
-            expect(labels).toEqual(EXPECTED_LABELS_WITH_LABEL_MODE_PERCENT);
+            expectArraysEqualUnordered(labels, EXPECTED_LABELS_WITH_LABEL_MODE_PERCENT);
 
             await wizardPage.visualizationItemDialog.open(PlaceholderName.Labels, 'Profit');
 

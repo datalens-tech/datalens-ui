@@ -212,6 +212,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                                 }
                                 window.open(url);
                             },
+                            qa: TabQueryQA.GoToConnectionContextMenuBtn,
                             text: i18n('sql', 'button_to-connection'),
                         },
                     ]}

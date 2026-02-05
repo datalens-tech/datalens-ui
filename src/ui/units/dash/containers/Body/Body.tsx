@@ -19,7 +19,8 @@ import {
     Square,
     SquareCheck,
 } from '@gravity-ui/icons';
-import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
+import type {ThemeType} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon, useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
 import {i18n} from 'i18n';
@@ -46,6 +47,7 @@ import {
     FIXED_GROUP_CONTAINER_ID,
     FIXED_GROUP_HEADER_ID,
 } from 'ui/components/DashKit/constants';
+import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Mode} from '../../modules/constants';
@@ -94,6 +96,10 @@ export type OwnProps = {
     | NoEditProps
 );
 
+type BodyInternalOwnProps = {
+    themeType: ThemeType;
+} & OwnProps;
+
 type EditProps = {
     handlerEditClick: () => void;
     onPasteItem: (data: CopiedConfigData, newLayout?: ConfigLayout[]) => void;
@@ -121,6 +127,7 @@ type DashBodyState = {
     totalItemsCount: number;
 };
 
+type BodyInternalProps = StateProps & DispatchProps & RouteComponentProps & BodyInternalOwnProps;
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
 
 type MemoContext = {
@@ -135,7 +142,7 @@ type MemoContext = {
 type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
 
 // Body is used as a core in different environments
-class Body extends React.PureComponent<BodyProps, DashBodyState> {
+class BodyInternal extends React.PureComponent<BodyInternalProps, DashBodyState> {
     static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
         let updatedState: Partial<DashBodyState> = {};
 
@@ -214,9 +221,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     };
     _memoizedPropertiesCache: Map<string, ReactGridLayoutProps> = new Map();
 
+    _memoizedDashStyles: React.CSSProperties | undefined = undefined;
+
     state: DashBodyState;
 
-    constructor(props: BodyProps) {
+    constructor(props: BodyInternalProps) {
         super(props);
 
         this.state = {
@@ -250,6 +259,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             },
             totalItemsCount: 0,
         };
+
+        this.updateDashBgColors();
     }
 
     componentDidMount() {
@@ -265,6 +276,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
     componentDidUpdate() {
         this.updateMargins();
+        this.updateDashBgColors();
     }
 
     componentDidCatch(error: Error) {
@@ -282,6 +294,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     render() {
         return (
             <div
+                style={this._memoizedDashStyles}
                 className={b({'split-pane': this.props.isSplitPaneLayout})}
                 ref={this._dashBodyRef}
             >
@@ -330,6 +343,31 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
     _dashBodyRef: React.RefCallback<HTMLDivElement> = (el) => {
         this.setState({dashEl: el});
+    };
+
+    updateDashBgColors = () => {
+        const dashEl = this.state.dashEl;
+        const {
+            settings: {backgroundSettings},
+            themeType,
+        } = this.props;
+        const dashBgColor =
+            typeof backgroundSettings?.color === 'string'
+                ? backgroundSettings?.color
+                : backgroundSettings?.color?.[themeType];
+        if (dashBgColor && dashEl) {
+            const {getFixedHeaderBackgroundColor} = registry.dash.functions.getAll();
+            const fixedHeaderBgColor = getFixedHeaderBackgroundColor(dashBgColor, themeType);
+
+            const newStyles = {
+                ['--dl-dash-background-color' as any]: dashBgColor,
+                ['--dl-fixed-header-background-color' as any]: fixedHeaderBgColor,
+            };
+
+            if (!isEqual(this._memoizedDashStyles, newStyles)) {
+                this._memoizedDashStyles = newStyles;
+            }
+        }
     };
 
     updateMargins() {
@@ -816,6 +854,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         }
     };
 }
+
+const Body = (props: BodyProps) => {
+    const themeType = useThemeType();
+    return <BodyInternal {...props} themeType={themeType} />;
+};
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
     entryId: selectEntryId(state),

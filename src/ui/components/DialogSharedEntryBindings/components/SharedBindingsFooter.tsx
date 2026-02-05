@@ -2,6 +2,7 @@ import React from 'react';
 
 import {Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {SharedEntriesBindingsDialogQa} from 'shared';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import {DialogClassName} from '../constants';
@@ -30,6 +31,7 @@ export const SharedBindingsFooter = ({
             textButtonApply={getSharedEntryMockText('apply-bindings-dialog-delete')}
             propsButtonApply={{
                 view: 'outlined-danger',
+                qa: SharedEntriesBindingsDialogQa.ApplyDeleteBtn,
             }}
             propsButtonCancel={{
                 view: 'flat',

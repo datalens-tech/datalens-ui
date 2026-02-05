@@ -91,8 +91,6 @@ export enum Feature {
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
     /** enabled redesign/moving to drawers existing settings */
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
-    /** Enable a setting in the Selector settings dialog that allows you to make the selector pass-through for all or several tabs */
-    EnableGlobalSelectors = 'EnableGlobalSelectors',
     /** enables new dash & widgets settings */
     EnableNewDashSettings = 'EnableNewDashSettings',
     /** Enable color pickers with customization of values for light & dark themes separately */
@@ -103,8 +101,6 @@ export enum Feature {
     UsDynamicMasterToken = 'UsDynamicMasterToken',
     /** Enable using dynamic master token in proxy */
     UsDynamicMasterTokenInProxy = 'UsDynamicMasterTokenInProxy',
-    /** Use axios instead of request-promise-native for HTTP requests in charts-engine */
-    UseAxiosRequest = 'UseAxiosRequest',
 }
 
 export type FeatureConfig = Record<string, boolean>;
