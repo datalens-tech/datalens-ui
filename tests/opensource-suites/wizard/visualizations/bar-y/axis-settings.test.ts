@@ -104,5 +104,22 @@ datalensTest.describe('Wizard', () => {
             await expect(previewLoader).not.toBeVisible();
             await expect(preview).toHaveScreenshot();
         });
+
+        datalensTest(
+            'It should be possible to adjust the axes without specifying a field in the section',
+            async ({page}) => {
+                const wizardPage = new WizardPage({page});
+
+                await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
+
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.X,
+                    'SalesSum',
+                );
+
+                await wizardPage.placeholderDialog.open(PlaceholderId.Y);
+                await expect(page.locator(slct(DialogPlaceholderQa.Dialog))).toBeVisible();
+            },
+        );
     });
 });

@@ -156,7 +156,11 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const {item} = this.props;
 
         return (
-            <Dialog qa="dialog-placeholder" open={this.props.visible} onClose={this.props.onCancel}>
+            <Dialog
+                qa={DialogPlaceholderQa.Dialog}
+                open={this.props.visible}
+                onClose={this.props.onCancel}
+            >
                 <div className={b()}>
                     {item && (
                         <Dialog.Header
