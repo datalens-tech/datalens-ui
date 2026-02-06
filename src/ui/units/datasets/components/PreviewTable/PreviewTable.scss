@@ -36,21 +36,6 @@
         font-size: 14px;
     }
 
-    &__header {
-        height: 32px;
-        display: flex;
-        align-items: center;
-    }
-
-    &__column {
-        vertical-align: middle;
-    }
-
-    &__row {
-        height: 32px;
-        border-bottom: 1px solid var(--ds-color-divider);
-    }
-
     &__details-btn {
         margin-left: 12px;
     }

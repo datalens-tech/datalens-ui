@@ -2,6 +2,7 @@ import {i18n} from 'i18n';
 import type {CollectionId, EntryScope, WorkbookId} from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
 import {DL} from 'ui';
+import type {DatasetPreviewView} from 'units/datasets/store/types';
 
 import {getFakeEntry as genericGetFakeEntry} from '../../../components/ActionPanel';
 
@@ -236,7 +237,7 @@ export const THEME = {
     DARK: 'dark',
 };
 
-export const VIEW_PREVIEW = {
+export const VIEW_PREVIEW: Record<string, DatasetPreviewView> = {
     FULL: 'full',
     BOTTOM: 'bottom',
     RIGHT: 'right',
