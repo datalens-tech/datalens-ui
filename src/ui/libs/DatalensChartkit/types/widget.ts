@@ -401,6 +401,10 @@ export type LoadedWidgetData<TProviderData = unknown> = (Widget & TProviderData)
 
 export type WidgetData = (Widget & ChartsData) | null;
 
+export type ChartContentWidgetData =
+    | LoadedWidgetData<ChartsData>
+    | (LoadedWidgetData<ChartsData> & ControlWidget & ChartsData['extra']);
+
 export type OnActivityComplete = (args: {responseData?: ChartActivityResponseData | null}) => void;
 
 export type RunActivityArgs = {

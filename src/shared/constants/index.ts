@@ -30,4 +30,5 @@ export * from './markdown';
 export * from './markup';
 export * from './print';
 export * from './charts';
+export * from './chart-modeling';
 export * from './widgets';
