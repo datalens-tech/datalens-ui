@@ -185,6 +185,8 @@ export const Chart = (props: ChartNoWidgetProps) => {
         reloadChart,
         runActivity,
         handleChartkitReflow,
+        chartData,
+        chartStateData,
     } = useLoadingChart({
         chartKitRef,
         dataProvider,
@@ -318,6 +320,8 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 needRenderContentControls={true}
                 enableAssistant={enableAssistant}
                 reload={reloadChart}
+                chartData={chartData}
+                chartStateData={chartStateData}
             />
         </div>
     );

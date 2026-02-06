@@ -1,18 +1,16 @@
 import type React from 'react';
 
-import type {ControlWidget} from 'ui/libs/DatalensChartkit/types';
+import type {ChartContentWidgetData} from 'ui/libs/DatalensChartkit/types';
 
-import type {ChartsData, ChartsProps} from '../../../../../modules/data-provider/charts';
-import type {CombinedError, LoadedWidget, LoadedWidgetData} from '../../../../../types';
+import type {ChartsProps} from '../../../../../modules/data-provider/charts';
+import type {CombinedError, LoadedWidget} from '../../../../../types';
 import type {DataProps} from '../../../types';
 
 export type State = {
     isLoading: boolean;
     isSilentReload: boolean;
     isReloadWithNoVeil: boolean;
-    loadedData:
-        | LoadedWidgetData<ChartsData>
-        | (LoadedWidgetData<ChartsData> & ControlWidget & ChartsData['extra']);
+    loadedData: ChartContentWidgetData;
     widget: LoadedWidget;
     widgetRendering: number | null;
     yandexMapAPIWaiting: number | null;

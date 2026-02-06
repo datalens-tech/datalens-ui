@@ -399,11 +399,11 @@ export type OnChangeData = ParamsChangedOnChange | YMapGeoObjectVisibilityChange
 
 export type LoadedWidgetData<TProviderData = unknown> = (Widget & TProviderData) | null;
 
-export type WidgetData = (Widget & ChartsData) | null;
-
 export type ChartContentWidgetData =
     | LoadedWidgetData<ChartsData>
     | (LoadedWidgetData<ChartsData> & ControlWidget & ChartsData['extra']);
+
+export type WidgetData = (Widget & ChartsData) | null;
 
 export type OnActivityComplete = (args: {responseData?: ChartActivityResponseData | null}) => void;
 
