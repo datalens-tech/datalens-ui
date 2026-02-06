@@ -1383,7 +1383,7 @@ export function changeCurrentDbName(payload: string, bindedWorkbookId?: Workbook
         const connection = selectedConnectionSelector(state);
         const workbookId = workbookIdSelector(state);
 
-        if (!connection?.entryId || !workbookId) {
+        if (!connection?.entryId) {
             return;
         }
 

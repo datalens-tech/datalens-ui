@@ -48,6 +48,9 @@ export enum DatasetSourcesLeftPanelQA {
     ConnContextMenuOpen = 'dataset-sources-conn-context-menu-open',
     ConnContextMenuReplace = 'dataset-sources-conn-context-menu-replace',
     ConnContextMenuDelete = 'dataset-sources-conn-context-menu-delete',
+    SelectSourcesDbName = 'dataset-sources-db-name-select',
+    SourcesServerSearchInput = 'dataset-sources-server-search-input',
+    SourcesList = 'dataset-sources-list',
 }
 
 export enum DatasetActionQA {

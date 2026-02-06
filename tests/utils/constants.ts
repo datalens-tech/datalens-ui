@@ -162,6 +162,7 @@ export const enum RobotChartsDatasetUrls {
     DatasetWithAddedParameter = '/datasets/ktrfwixwpwikc',
     DatasetWithDeletedConnection = '/datasets/rupa8kcmvnmil',
     DatasetWithValidationError = '/datasets/mqjnuhmltfs8c',
+    DatasetSourcesListing = '/datasets/1ui7gozkkugal',
 }
 
 export const mapDatasetToDatasetPath = {

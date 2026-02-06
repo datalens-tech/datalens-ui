@@ -22,7 +22,7 @@ import {
     SharedEntriesPermissionsDialogQa,
     ValueOf,
 } from '../../../src/shared';
-import {Page, Response} from '@playwright/test';
+import {Page, Response, expect} from '@playwright/test';
 
 export interface DatasetPageProps extends BasePageProps {}
 
@@ -292,6 +292,36 @@ class DatasetPage extends BasePage {
 
     async checkIsReadonlyState() {
         await this.page.waitForSelector(slct(SharedEntriesBaseQa.OpenOriginalBtn));
+    }
+
+    async scrollSourcesList({scrollHeight = 99999}: {scrollHeight?: number} = {}) {
+        const sourcesList = await this.page.waitForSelector(
+            slct(DatasetSourcesLeftPanelQA.SourcesList),
+        );
+        await this.page.waitForSelector(slct(DatasetSourcesTableQa.Source));
+        await sourcesList.hover();
+        await this.page.mouse.wheel(0, scrollHeight);
+    }
+
+    async changeDbName({namePattern}: {namePattern?: string} = {}) {
+        const select = await this.page.waitForSelector(
+            slct(DatasetSourcesLeftPanelQA.SelectSourcesDbName),
+        );
+        await this.page.waitForFunction(
+            async (element) => {
+                return !(element as HTMLSelectElement).disabled;
+            },
+            select,
+            {polling: 500},
+        );
+
+        const disabled = await select.isDisabled();
+        expect(disabled).toBe(false);
+        await select.click();
+        await this.page.waitForSelector(slct('select-popup'));
+        const popup = this.page.locator(slct('select-popup'));
+        const option = popup.locator('[role="option"]', {hasText: namePattern});
+        await option.click();
     }
 }
 

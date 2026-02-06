@@ -5,6 +5,7 @@ import {Button, Icon, List, Loader, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import {useDispatch, useSelector} from 'react-redux';
+import {DatasetSourcesLeftPanelQA} from 'shared';
 import type {BaseSource} from 'shared/schema';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
 import {usePrevious} from 'ui';
@@ -224,6 +225,7 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
                             className={b('select-db-name')}
                             value={[currentDbName ? currentDbName : '']}
                             onUpdate={onChangeDbName}
+                            qa={DatasetSourcesLeftPanelQA.SelectSourcesDbName}
                         >
                             {dbNames?.map((name: string) => (
                                 <Select.Option key={name} value={name}>
@@ -245,6 +247,7 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
                         onUpdate={onSearch}
                         disabled={loading || sourcesError}
                         controlRef={searchInputRef}
+                        qa={DatasetSourcesLeftPanelQA.SourcesServerSearchInput}
                     />
                 )}
             </div>
@@ -267,6 +270,7 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
                         filterItem={filterItem}
                         onLoadMore={serverPagination ? onLoadMore : undefined}
                         loading={serverPagination && !sourcesPagination.isFinished && !sourcesError}
+                        qa={DatasetSourcesLeftPanelQA.SourcesList}
                         renderItem={(source) => (
                             <SourceWithDragging
                                 readonly={readonly}
