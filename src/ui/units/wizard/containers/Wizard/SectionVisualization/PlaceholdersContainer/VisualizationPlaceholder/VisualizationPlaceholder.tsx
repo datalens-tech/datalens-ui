@@ -183,16 +183,22 @@ class VisualizationPlaceholder extends React.Component<Props> {
                 };
             }
             default: {
-                if (placeholder.id === 'size') {
+                if (placeholder.id === PlaceholderId.Size) {
                     return {
                         hasSettings: true,
                         onActionIconClick: this.openDialogPointsSize,
                     };
                 } else {
+                    const axisPlaceholderIds: string[] = [
+                        PlaceholderId.X,
+                        PlaceholderId.Y,
+                        PlaceholderId.Y2,
+                    ];
                     const hasSettings = Boolean(
                         placeholder.settings &&
                             Object.keys(placeholder.settings).length > 0 &&
-                            placeholder.items.length > 0,
+                            (axisPlaceholderIds.includes(placeholder.id) ||
+                                placeholder.items.length > 0),
                     );
                     return {
                         hasSettings,
