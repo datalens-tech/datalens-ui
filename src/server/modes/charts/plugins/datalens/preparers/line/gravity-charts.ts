@@ -217,6 +217,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 shapeValue: graph.shapeValue,
             },
             rangeSlider,
+            lineWidth: graph.lineWidth,
         };
     });
 
