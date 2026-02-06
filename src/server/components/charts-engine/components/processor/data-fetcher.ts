@@ -663,7 +663,8 @@ export class DataFetcher {
             }) as Promise<FetchSourceResult>;
         }
 
-        const {passedCredentials, extraHeaders, sourceType} = sourceConfig;
+        const {passedCredentials, extraHeaders, sourceType: sourceTypeFromConfig} = sourceConfig;
+        const sourceType = sourceTypeFromConfig!; // Set by getSourceConfig() at line 386
 
         if (
             sourceConfig.allowedMethods &&
@@ -690,7 +691,7 @@ export class DataFetcher {
                 sourceName,
                 sourceType,
             });
-            if (result.valid === false) {
+            if (result.valid === false && result.meta) {
                 return result.meta;
             }
         }
@@ -707,12 +708,14 @@ export class DataFetcher {
         }
 
         if (sourceConfig.adapterWithContext) {
+            // adapterWithContext has 'unknown' return type but implementations
+            // return structures compatible with FetchSourceResult
             return sourceConfig.adapterWithContext({
                 targetUri: croppedTargetUri,
                 sourceName,
                 adapterContext,
                 ctx,
-            });
+            }) as Promise<FetchSourceResult>;
         }
 
         const headers: IncomingHttpHeaders = Object.assign(
@@ -1138,7 +1141,7 @@ type SourceCheckResult = {
     valid: boolean;
     meta?: {
         sourceId: string;
-        sourceType?: string;
+        sourceType: string;
         message: string;
     };
 };
@@ -1152,7 +1155,7 @@ async function sourceConfigCheck({
 }: {
     ctx: AppContext;
     sourceName: string;
-    sourceType?: string;
+    sourceType: string;
     sourceConfig: SourceConfig;
     targetUri: string;
 }): Promise<SourceCheckResult> {
