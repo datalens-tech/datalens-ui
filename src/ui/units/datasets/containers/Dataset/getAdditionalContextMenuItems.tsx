@@ -13,11 +13,12 @@ import type {EntryContextMenuItem} from 'ui/components/EntryContextMenu/helpers'
 import {DIALOG_IAM_ACCESS} from 'ui/components/IamAccessDialog';
 import {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 import type {closeDialog, openDialog} from 'ui/store/actions/dialog';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import type {DatasetEntry} from '../../typings/dataset';
 
 const i18ContextMenu = I18n.keyset('component.entry-context-menu.view');
+const i18nSharedEntry = I18n.keyset('shared-entry');
+
 type GetAdditionalContextMenuItemsProps = {
     isSharedDataset: boolean;
     entry: DatasetEntry;
@@ -75,7 +76,7 @@ export const getAdditionalContextMenuItems = ({
                     });
                 },
                 icon: <Shield />,
-                text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
+                text: i18nSharedEntry('shared-entry-bindings-dropdown-menu-title'),
             });
         }
         if (entry.fullPermissions?.delete) {
@@ -99,7 +100,7 @@ export const getAdditionalContextMenuItems = ({
                 },
                 icon: <TrashBin />,
                 theme: 'danger',
-                text: getSharedEntryMockText('shared-entry-delete-dropdown-menu-title'),
+                text: i18ContextMenu('value_delete'),
             });
         }
     } else {
@@ -117,7 +118,7 @@ export const getAdditionalContextMenuItems = ({
                     });
                 },
                 icon: <CodeTrunk />,
-                text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
+                text: i18nSharedEntry('shared-entry-bindings-dropdown-menu-title'),
             });
         }
         if (entry.fullPermissions?.listAccessBindings) {
@@ -161,7 +162,7 @@ export const getAdditionalContextMenuItems = ({
                 },
                 icon: <TrashBin />,
                 theme: 'danger',
-                text: getSharedEntryMockText('shared-entry-delete-dropdown-menu-title'),
+                text: i18ContextMenu('value_delete'),
             });
         }
     }

@@ -3,6 +3,7 @@
   "label_filter-by-ownership-only-my": "Только мои",
   "label_filter-by-type-all": "Все типы",
   "label_filter-by-type-only-collections": "Только коллекции",
+  "label_filter-by-type-only-entries": "Только общие объекты",
   "label_filter-by-type-only-workbooks": "Только воркбуки",
   "label_filter-string-placeholder": "Искать по названию",
   "label_sort-first-alphabet-asc": "Сортировка от А до Я",

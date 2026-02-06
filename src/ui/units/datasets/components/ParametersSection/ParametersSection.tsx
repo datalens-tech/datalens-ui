@@ -5,7 +5,6 @@ import {I18n} from 'i18n';
 import {useHistory, useLocation} from 'react-router';
 import type {DatasetField} from 'shared';
 import {ParametersQA} from 'shared';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import {DatasetTabSection} from '../DatasetTabSection/DatasetTabSection';
 
@@ -19,6 +18,7 @@ type ParametersSectionProps = {
 };
 
 const i18n = I18n.keyset('dataset.parameters-tab.modify');
+const i18nSharedEntry = I18n.keyset('shared-entry');
 
 export const ParametersSection: React.FC<ParametersSectionProps> = (
     props: ParametersSectionProps,
@@ -30,14 +30,11 @@ export const ParametersSection: React.FC<ParametersSectionProps> = (
 
     const {headerColumns, columns, controlSettings, onItemClick} = useParametersSection({readonly});
 
-    const alertTitle =
+    const alertTitle = parameters.length > 0 ? undefined : i18n('parameters-readonly-alert-title');
+    const alertMessage = i18n(
         parameters.length > 0
-            ? undefined
-            : getSharedEntryMockText('dataset-parameters-readonly-alert-title');
-    const alertMessage = getSharedEntryMockText(
-        parameters.length > 0
-            ? 'dataset-parameters-readonly-alert-message'
-            : 'dataset-empty-parameters-readonly-alert-message',
+            ? 'parameters-readonly-alert-message'
+            : 'empty-parameters-readonly-alert-message',
     );
 
     return (
@@ -50,7 +47,7 @@ export const ParametersSection: React.FC<ParametersSectionProps> = (
                     message={alertMessage}
                     actions={[
                         {
-                            text: getSharedEntryMockText('workbook-shared-entry-original-link'),
+                            text: i18nSharedEntry('workbook-shared-entry-original-link'),
                             handler: () => history.push(location.pathname),
                         },
                     ]}
