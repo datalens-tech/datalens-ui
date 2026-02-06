@@ -26,6 +26,7 @@ import type {AdapterContext, Source, SourceConfig, TelemetryCallbacks} from '../
 import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 
+import {convertToAPIConnectorSource, shouldUseAlias} from './source-alias';
 import {getApiConnectorParamsFromSource, isAPIConnectorSource, prepareSource} from './sources';
 import {getMessageFromUnknownError} from './utils';
 
@@ -162,6 +163,26 @@ export type DataFetcherResult = {
     message?: string;
     code?: string;
     data?: any;
+    details?: string;
+};
+
+type FetchSourceResult = {
+    sourceId: string;
+    sourceType: string;
+    body?: unknown;
+    responseHeaders?: IncomingHttpHeaders | null;
+    status?: number | null;
+    latency?: number;
+    size?: number;
+    uiUrl?: string | null;
+    dataUrl?: string | null;
+    datasetId?: string | null;
+    datasetFields?: PartialDatasetField[];
+    hideInInspector?: boolean;
+    url?: string | null;
+    message?: string;
+    code?: string | null;
+    data?: unknown;
     details?: string;
 };
 
@@ -493,7 +514,7 @@ export class DataFetcher {
         adapterContext: AdapterContext;
         cacheClient: CacheClient;
         sourcesConfig: ChartsEngine['sources'];
-    }) {
+    }): Promise<FetchSourceResult> {
         const singleFetchingTimeout =
             ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
@@ -607,6 +628,39 @@ export class DataFetcher {
                 sourceType: 'Unresolved',
                 code: INVALID_SOURCE_FORMAT,
             };
+        }
+
+        // Alias: route legacy source through API Connector
+        if (shouldUseAlias(source, sourceConfig)) {
+            const aliasedSource = convertToAPIConnectorSource(source, sourceConfig);
+            const preparedAliasedSource = prepareSource(aliasedSource);
+
+            ctx.log('FETCHER_ALIAS_TO_API_CONNECTOR', {
+                sourceName: dataSourceName,
+                apiConnectionId: sourceConfig.aliasTo!.apiConnectionId,
+            });
+
+            // Re-enter fetchSource with the converted source
+            return DataFetcher.fetchSource({
+                sourceName,
+                source: preparedAliasedSource,
+                ctx,
+                fetchingStartTime,
+                subrequestHeaders,
+                processingRequests,
+                rejectFetchingSource,
+                userId,
+                userLogin,
+                iamToken,
+                workbookId,
+                isEmbed,
+                authParams,
+                originalReqHeaders,
+                adapterContext,
+                telemetryCallbacks,
+                cacheClient,
+                sourcesConfig,
+            }) as Promise<FetchSourceResult>;
         }
 
         const {passedCredentials, extraHeaders, sourceType} = sourceConfig;
