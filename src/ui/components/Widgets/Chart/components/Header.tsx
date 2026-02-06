@@ -13,8 +13,8 @@ import {URL_OPTIONS} from 'ui/constants';
 import {type DatalensGlobalState, usePrevious} from 'ui/index';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
-import {chartModelingActions} from 'ui/store/chart-modeling/actions';
-import {getChartModelingState, getEditingWidgetId} from 'ui/store/chart-modeling/selectors';
+import {chartModelingActions} from 'ui/store/toolkit/chart-modeling/actions';
+import {getChartModelingState, getEditingWidgetId} from 'ui/store/toolkit/chart-modeling/selectors';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
 
 import {

@@ -4,7 +4,7 @@ import {ChartLine} from '@gravity-ui/icons';
 import {Label, Text} from '@gravity-ui/uikit';
 // import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
-import {chartModelingActions} from 'ui/store/chart-modeling/actions';
+import {chartModelingActions} from 'ui/store/toolkit/chart-modeling/actions';
 import {isChartModelingAvailable} from 'ui/utils/chart-modeling';
 
 import type {ChartStateSettings} from '../../../../shared';

@@ -6,7 +6,7 @@ import {useDispatch} from 'react-redux';
 import type {ChartStateSettings, TrendLineSettings} from 'shared';
 import {DEFAULT_TREND_SETTINGS} from 'shared/constants/chart-modeling';
 import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
-import {chartModelingActions} from 'ui/store/chart-modeling/actions';
+import {chartModelingActions} from 'ui/store/toolkit/chart-modeling/actions';
 
 import {MAX_LINE_WIDTH, TREND_SELECT_OPTION} from '../constants';
 import {i18n} from '../i18n';

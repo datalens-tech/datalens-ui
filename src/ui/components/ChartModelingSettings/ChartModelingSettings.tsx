@@ -7,8 +7,8 @@ import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {DEFAULT_SMOOTHING, DEFAULT_TREND_SETTINGS} from 'shared/constants/chart-modeling';
 import type {DatalensGlobalState} from 'ui/index';
-import {chartModelingActions} from 'ui/store/chart-modeling/actions';
-import {getChartModelingState, getEditingWidgetId} from 'ui/store/chart-modeling/selectors';
+import {chartModelingActions} from 'ui/store/toolkit/chart-modeling/actions';
+import {getChartModelingState, getEditingWidgetId} from 'ui/store/toolkit/chart-modeling/selectors';
 
 import {EntityIcon} from '../EntityIcon/EntityIcon';
 

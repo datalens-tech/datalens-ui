@@ -19,8 +19,8 @@ import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
 import type {DatalensGlobalState} from 'ui/index';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
-import {chartModelingActions} from 'ui/store/chart-modeling/actions';
-import {getChartModelingState} from 'ui/store/chart-modeling/selectors';
+import {chartModelingActions} from 'ui/store/toolkit/chart-modeling/actions';
+import {getChartModelingState} from 'ui/store/toolkit/chart-modeling/selectors';
 import {isChartModelingAvailable} from 'ui/utils/chart-modeling';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 

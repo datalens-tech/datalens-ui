@@ -6,7 +6,7 @@ import {useDispatch} from 'react-redux';
 import type {ChartStateSettings, SmoothingLineSettings} from 'shared';
 import {DEFAULT_SMOOTHING} from 'shared/constants/chart-modeling';
 import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
-import {chartModelingActions} from 'ui/store/chart-modeling/actions';
+import {chartModelingActions} from 'ui/store/toolkit/chart-modeling/actions';
 
 import {RangeInputPicker} from '../../common/RangeInputPicker';
 import {MAX_LINE_WIDTH, SMOOTHING_SELECT_OPTION} from '../constants';
