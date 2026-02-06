@@ -88,10 +88,10 @@ const IndicatorTitleSetting: React.FC<Props> = (props: Props) => {
                 </div>
             )}
             <div className={b('row')} data-qa={ChartSettingsDialogQA.IndicatorFontSize}>
-                <div className={b('title', spacing({mb: 5}))}>
+                <div className={b('title', spacing({mb: isMarkup ? 5 : 0}))}>
                     {i18n('wizard', 'label_font-size')}
                 </div>
-                <Flex direction="column">
+                <Flex direction="column" alignItems="flex-start">
                     <RadioButton
                         value={fontSize}
                         onUpdate={handleUpdateFontSize}
