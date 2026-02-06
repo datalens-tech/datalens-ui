@@ -93,11 +93,14 @@ export async function deleteEntry(entryDialoguesRef: EntryDialoguesRef, entry: M
         });
         if (response.status === EntryDialogResolveStatus.Success) {
             const pathname = navigateHelper.getRedirectLocation(entry);
+            const unblock = history.block(true);
 
             history.replace({
                 ...history.location,
                 pathname,
             });
+
+            unblock();
         }
     }
 }
