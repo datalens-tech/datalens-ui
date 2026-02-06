@@ -9,13 +9,16 @@ import type {
     TrendLineSettings,
 } from 'shared';
 import {DEFAULT_SMOOTHING, DEFAULT_TREND_SETTINGS, WidgetKind} from 'shared';
+import {DL} from 'ui/constants';
 import type {
     ChartContentWidgetData,
     GraphWidget,
     GraphWidgetSeriesOptions,
 } from 'ui/libs/DatalensChartkit/types';
 
-function getDarkenColor(originalColor: unknown, value = 0.8) {
+const BRIGHTNESS_RATIO = 0.8;
+
+function getDarkenColor(originalColor: unknown, value = BRIGHTNESS_RATIO) {
     const color = chroma(String(originalColor));
     return color.set('lab.l', color.get('lab.l') * value).hex();
 }
@@ -136,6 +139,8 @@ function createTrendSeries({
     const lineWidth = settings?.lineWidth ?? DEFAULT_TREND_SETTINGS.lineWidth;
     const linked = settings?.linked ?? DEFAULT_TREND_SETTINGS.linked;
 
+    const trendSeriesPostfix = DL.USER_LANG === 'ru' ? 'тренд' : 'trend';
+
     let dashStyle = settings?.dashStyle;
     if (dashStyle === 'auto') {
         dashStyle = undefined;
@@ -158,7 +163,7 @@ function createTrendSeries({
                 const newSeries = {
                     ...cloneDeep(s),
                     type: 'line',
-                    name: `${originalSeriesName}: тренд`,
+                    name: `${originalSeriesName}: ${trendSeriesPostfix}`,
                     color,
                     dashStyle: (dashStyle ?? 'Dash') as LineSeries['dashStyle'],
                     data: trendData,
@@ -187,7 +192,7 @@ function createTrendSeries({
                     warnings,
                 });
                 const originalSeriesName = s.name ?? s.title ?? s.id;
-                const name = `${originalSeriesName}: тренд`;
+                const name = `${originalSeriesName}: ${trendSeriesPostfix}`;
                 const color = getDarkenColor(s.color);
 
                 return {
@@ -222,6 +227,8 @@ function createSmoothingSeries({
     const lineWidth = settings?.lineWidth ?? DEFAULT_SMOOTHING.lineWidth;
     const linked = settings?.linked ?? DEFAULT_SMOOTHING.linked;
 
+    const smoothingSeriesPostfix = DL.USER_LANG === 'ru' ? 'сглаживание' : 'smoothing';
+
     let dashStyle = settings?.dashStyle;
     if (dashStyle === 'auto') {
         dashStyle = undefined;
@@ -245,7 +252,7 @@ function createSmoothingSeries({
                 const newSeries = {
                     ...cloneDeep(s),
                     type: 'line',
-                    name: `${originalSeriesName}: сглаживание`,
+                    name: `${originalSeriesName}: ${smoothingSeriesPostfix}`,
                     color,
                     dashStyle: (dashStyle ?? s.dashStyle) as LineSeries['dashStyle'],
                     data: seriesData,
@@ -275,7 +282,7 @@ function createSmoothingSeries({
                     warnings,
                 });
                 const originalSeriesName = s.name ?? s.title ?? s.id;
-                const name = `${originalSeriesName}: сглаживание`;
+                const name = `${originalSeriesName}: ${smoothingSeriesPostfix}`;
                 const color = getDarkenColor(s.color);
 
                 return {
