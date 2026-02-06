@@ -11,7 +11,7 @@ import {copyEntriesToWorkbook} from 'ui/store/reducers/copyEntriesToWorkbook';
 import {editHistory} from 'ui/store/reducers/editHistory';
 import {controlDialog} from 'ui/store/reducers/controlDialog/controlDialog';
 import {localStorageFallback} from 'store/reducers/localStorageFallback';
-import {chartModelingReducer} from '../chart-modeling/reducer';
+import {chartModelingReducer} from '../toolkit/chart-modeling/reducer';
 
 export default {
     user,
