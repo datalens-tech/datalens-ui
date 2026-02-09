@@ -15,7 +15,7 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
 import {useDispatch, useSelector} from 'react-redux';
-import type {DashChartRequestContext, StringParams} from 'shared';
+import type {ChartStateSettings, DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
 import type {DatalensGlobalState} from 'ui/index';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
@@ -40,7 +40,6 @@ import type {
     OnActivityComplete,
     OnChangeData,
 } from '../../../../libs/DatalensChartkit/types';
-import {addChartModelingSeries} from '../../../../utils/chart-modeling/add-chart-modeling-series';
 import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
@@ -135,6 +134,17 @@ const loadingStateReducer = (state: LoadingStateType, newState: Partial<LoadingS
 
     return state;
 };
+
+async function addChartModelingSeriesAsync(args: {
+    chartStateData: ChartStateSettings;
+    chartData: ChartContentWidgetData;
+}) {
+    const {addChartModelingSeries} = await import(
+        /* webpackChunkName: "add-chart-modeling-series" */ '../../../../utils/chart-modeling/add-chart-modeling-series'
+    );
+
+    return addChartModelingSeries(args);
+}
 
 export const useLoadingChart = (props: LoadingChartHookProps) => {
     const {
@@ -1041,11 +1051,11 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     );
 
     const [chartData, setChartData] = React.useState<ChartContentWidgetData | null>(null);
-    const setChartModelingData = useMemoCallback(() => {
+    const setChartModelingData = useMemoCallback(async () => {
         let updatedChartData: ChartContentWidgetData | null = null;
         if (loadedData) {
             updatedChartData = cloneDeep(loadedData);
-            const {warnings} = addChartModelingSeries({
+            const {warnings} = await addChartModelingSeriesAsync({
                 chartData: updatedChartData,
                 chartStateData,
             });
