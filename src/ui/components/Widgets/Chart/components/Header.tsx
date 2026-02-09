@@ -158,9 +158,8 @@ export const Header = (props: HeaderProps) => {
 
     const showFiltersClear = showActionParamsFilter && onFiltersClear;
 
-    const widgetId = requestId;
     const chartStateData = useSelector((state: DatalensGlobalState) =>
-        getChartModelingState(state, widgetId),
+        getChartModelingState(state, requestId),
     );
     const shouldShowChartModelingIcon = Boolean(
         chartStateData?.smoothing?.enabled || chartStateData?.trends?.enabled,
@@ -174,26 +173,26 @@ export const Header = (props: HeaderProps) => {
     const openChartModelingDialog = React.useCallback(() => {
         dispatch(
             chartModelingActions.openChartModelingDialog({
-                id: widgetId,
+                id: requestId,
                 widgetName: extraOptions?.widgetTitle as string,
             }),
         );
-    }, [dispatch, extraOptions?.widgetTitle, widgetId]);
+    }, [dispatch, extraOptions?.widgetTitle, requestId]);
 
     const handleChartModelingIconClick = React.useCallback(() => {
-        if (chartModelingDialogWidgetId && chartModelingDialogWidgetId === widgetId) {
+        if (chartModelingDialogWidgetId && chartModelingDialogWidgetId === requestId) {
             dispatch(chartModelingActions.closeChartModelingDialog());
         } else {
             openChartModelingDialog();
         }
-    }, [chartModelingDialogWidgetId, dispatch, openChartModelingDialog, widgetId]);
+    }, [chartModelingDialogWidgetId, dispatch, openChartModelingDialog, requestId]);
 
-    const prevWidgetId = usePrevious(widgetId);
+    const prevRequestId = usePrevious(requestId);
     React.useEffect(() => {
-        if (prevWidgetId && prevWidgetId !== widgetId && !isEmpty(chartStateData)) {
-            dispatch(chartModelingActions.removeChartSettings({id: prevWidgetId}));
+        if (prevRequestId && prevRequestId !== requestId && !isEmpty(chartStateData)) {
+            dispatch(chartModelingActions.removeChartSettings({id: prevRequestId}));
         }
-    }, [chartStateData, dispatch, prevWidgetId, widgetId]);
+    }, [chartStateData, dispatch, prevRequestId, requestId]);
 
     return (
         <div className={b('chart-header')}>

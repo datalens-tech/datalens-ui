@@ -59,14 +59,13 @@ export const getChartModelingMenuItem = ({
                     : i18n('chartkit.menu', 'add-trend'),
                 isVisible: () => true,
                 action: ({requestId}) => {
-                    const widgetId = requestId;
                     const chartSettings = {
                         trends: {enabled: !hasTrendsOnChart},
                     };
 
                     return dispatchAction(
                         chartModelingActions.updateChartSettings({
-                            id: widgetId,
+                            id: requestId,
                             settings: chartSettings,
                         }),
                     );
@@ -79,14 +78,13 @@ export const getChartModelingMenuItem = ({
                     : i18n('chartkit.menu', 'add-smoothing'),
                 isVisible: () => true,
                 action: ({requestId}) => {
-                    const widgetId = requestId;
                     const chartSettings = {
                         smoothing: {enabled: !hasSmoothingLinesOnChart},
                     };
 
                     return dispatchAction(
                         chartModelingActions.updateChartSettings({
-                            id: widgetId,
+                            id: requestId,
                             settings: chartSettings,
                         }),
                     );
@@ -97,11 +95,9 @@ export const getChartModelingMenuItem = ({
                 title: i18n('chartkit.menu', 'modeling-settings'),
                 isVisible: () => true,
                 action: ({requestId}) => {
-                    // temporary solution - so that the same chart work differently in different dashboard widgets
-                    const widgetId = requestId;
                     return dispatchAction(
                         chartModelingActions.openChartModelingDialog({
-                            id: widgetId,
+                            id: requestId,
                             widgetName,
                         }),
                     );

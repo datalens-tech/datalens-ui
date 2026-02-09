@@ -1036,9 +1036,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         onActivityComplete,
     });
 
-    const widgetId = requestId;
     const chartStateData = useSelector((state: DatalensGlobalState) =>
-        getChartModelingState(state, widgetId),
+        getChartModelingState(state, requestId),
     );
 
     const [chartData, setChartData] = React.useState<ChartContentWidgetData | null>(null);
@@ -1054,7 +1053,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
             if (!isEqual(warnings, chartStateData?.warnings)) {
                 globalDispatch(
                     chartModelingActions.updateChartSettings({
-                        id: widgetId,
+                        id: requestId,
                         settings: {
                             warnings,
                         },
@@ -1076,7 +1075,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         if (shouldUseChartModeling) {
             setChartModelingData();
         }
-    }, [shouldUseChartModeling, setChartModelingData, widgetId, chartStateData]);
+    }, [shouldUseChartModeling, setChartModelingData, requestId, chartStateData]);
 
     return {
         loadedData,
