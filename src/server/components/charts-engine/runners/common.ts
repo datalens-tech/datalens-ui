@@ -323,10 +323,12 @@ export function commonRunner({
     const sourcesConfig = chartsEngine.sources;
     const hooks = new ProcessorHooks({processorHooks: chartsEngine.processorHooks});
 
-    (resLocals || res.locals).subrequestHeaders['x-chart-kind'] = chartType;
+    const locals = resLocals || res.locals;
+
+    locals.subrequestHeaders['x-chart-kind'] = chartType;
 
     const serializableProcessorParams = getSerializableProcessorParams({
-        resLocals: resLocals || res.locals,
+        resLocals: locals,
         res,
         req,
         ctx,
