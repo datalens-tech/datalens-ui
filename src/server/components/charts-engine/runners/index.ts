@@ -17,15 +17,21 @@ export type Runner = {
     safeConfig?: boolean;
 };
 
+export type RunnerHandlerResult = {
+    status: number;
+    payload: unknown;
+} | void;
+
 export type RunnerHandler = (
     ctx: AppContext,
-    {chartsEngine, req, res, config, configResolving}: RunnerHandlerProps,
-) => void | Promise<void>;
+    {chartsEngine, req, resLocals, config, configResolving}: RunnerHandlerProps,
+) => RunnerHandlerResult | Promise<RunnerHandlerResult>;
 
 export type RunnerHandlerProps = {
     chartsEngine: ChartsEngine;
     req: Request;
     res: Response;
+    resLocals: Response['locals'];
     config: ResolvedConfig | ReducedResolvedConfig;
     configResolving: number;
     workbookId?: WorkbookId;
