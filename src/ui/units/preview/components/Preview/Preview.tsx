@@ -6,6 +6,7 @@ import type {RouteComponentProps} from 'react-router-dom';
 import type {WorkbookId} from 'shared';
 import {PreviewQa, SCR_USER_AGENT_HEADER_VALUE} from 'shared';
 import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
+import {ChartModelingSettings} from 'ui/components/ChartModelingSettings/ChartModelingSettings';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
 import {pushStats} from 'ui/components/Widgets/Chart/helpers/helpers';
@@ -236,6 +237,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
                     />
                 )}
                 <PreviewExtension />
+                <ChartModelingSettings />
             </div>
         </React.Fragment>
     );

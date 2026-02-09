@@ -8,14 +8,20 @@ import {
     pickExceptActionParamsFromParams,
 } from '@gravity-ui/dashkit/helpers';
 import {useMountedState, usePrevious} from 'hooks';
+import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
+import {useDispatch, useSelector} from 'react-redux';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
+import type {DatalensGlobalState} from 'ui/index';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
+import {chartModelingActions} from 'ui/store/toolkit/chart-modeling/actions';
+import {getChartModelingState} from 'ui/store/toolkit/chart-modeling/selectors';
+import {isChartModelingAvailable} from 'ui/utils/chart-modeling';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import {START_PAGE} from '../../../../libs/DatalensChartkit/ChartKit/components/Widget/components/Table/Paginator/Paginator';
@@ -29,10 +35,12 @@ import DatalensChartkitCustomError, {
     formatError,
 } from '../../../../libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import type {
+    ChartContentWidgetData,
     CombinedError,
     OnActivityComplete,
     OnChangeData,
 } from '../../../../libs/DatalensChartkit/types';
+import {addChartModelingSeries} from '../../../../utils/chart-modeling/add-chart-modeling-series';
 import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
@@ -199,6 +207,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         },
         dispatch,
     ] = React.useReducer(reducer, getInitialState());
+
+    const globalDispatch = useDispatch();
 
     const [renderedCallbackCalledOnce, setRenderedCallbackCalledOnce] = React.useState(false);
     const [changedInnerFlag, setChangedInnerFlag] = React.useState<boolean>(false);
@@ -1026,6 +1036,47 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         onActivityComplete,
     });
 
+    const chartStateData = useSelector((state: DatalensGlobalState) =>
+        getChartModelingState(state, requestId),
+    );
+
+    const [chartData, setChartData] = React.useState<ChartContentWidgetData | null>(null);
+    const setChartModelingData = useMemoCallback(() => {
+        let updatedChartData: ChartContentWidgetData | null = null;
+        if (loadedData) {
+            updatedChartData = cloneDeep(loadedData);
+            const {warnings} = addChartModelingSeries({
+                chartData: updatedChartData,
+                chartStateData,
+            });
+
+            if (!isEqual(warnings, chartStateData?.warnings)) {
+                globalDispatch(
+                    chartModelingActions.updateChartSettings({
+                        id: requestId,
+                        settings: {
+                            warnings,
+                        },
+                    }),
+                );
+            }
+        }
+
+        if (!isEqual(chartData, updatedChartData)) {
+            setChartData(updatedChartData);
+        }
+    }, []);
+
+    const shouldUseChartModeling = React.useMemo(
+        () => loadedData && isChartModelingAvailable({loadedData}),
+        [loadedData],
+    );
+    React.useEffect(() => {
+        if (shouldUseChartModeling) {
+            setChartModelingData();
+        }
+    }, [shouldUseChartModeling, setChartModelingData, requestId, chartStateData]);
+
     return {
         loadedData,
         isLoading,
@@ -1051,5 +1102,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isWidgetMenuDataChanged,
         runActivity,
         silentLoadChartData,
+        chartData: shouldUseChartModeling ? chartData : loadedData,
+        chartStateData,
     };
 };

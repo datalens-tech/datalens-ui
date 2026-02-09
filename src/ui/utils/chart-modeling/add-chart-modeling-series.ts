@@ -1,5 +1,6 @@
 import type {ChartData, LineSeries} from '@gravity-ui/chartkit/gravity-charts';
 import chroma from 'chroma-js';
+import {I18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import {PolynomialRegression} from 'ml-regression-polynomial';
 import type {
@@ -9,12 +10,13 @@ import type {
     TrendLineSettings,
 } from 'shared';
 import {DEFAULT_SMOOTHING, DEFAULT_TREND_SETTINGS, WidgetKind} from 'shared';
-import {DL} from 'ui/constants';
 import type {
     ChartContentWidgetData,
     GraphWidget,
     GraphWidgetSeriesOptions,
 } from 'ui/libs/DatalensChartkit/types';
+
+export const i18n = I18n.keyset('chartkit');
 
 const BRIGHTNESS_RATIO = 0.8;
 
@@ -139,7 +141,7 @@ function createTrendSeries({
     const lineWidth = settings?.lineWidth ?? DEFAULT_TREND_SETTINGS.lineWidth;
     const linked = settings?.linked ?? DEFAULT_TREND_SETTINGS.linked;
 
-    const trendSeriesPostfix = DL.USER_LANG === 'ru' ? 'тренд' : 'trend';
+    const trendSeriesPostfix = i18n('trend');
 
     let dashStyle = settings?.dashStyle;
     if (dashStyle === 'auto') {
@@ -227,7 +229,7 @@ function createSmoothingSeries({
     const lineWidth = settings?.lineWidth ?? DEFAULT_SMOOTHING.lineWidth;
     const linked = settings?.linked ?? DEFAULT_SMOOTHING.linked;
 
-    const smoothingSeriesPostfix = DL.USER_LANG === 'ru' ? 'сглаживание' : 'smoothing';
+    const smoothingSeriesPostfix = i18n('smoothing');
 
     let dashStyle = settings?.dashStyle;
     if (dashStyle === 'auto') {
