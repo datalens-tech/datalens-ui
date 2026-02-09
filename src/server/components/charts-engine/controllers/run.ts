@@ -153,10 +153,10 @@ export const runController = (
 
             req.body.key = req.body.key || config.key;
 
-            await runnerFound.handler(ctx, {
+            const {status, payload} = await runnerFound.handler(ctx, {
                 chartsEngine,
                 req,
-                res,
+                resLocals: res.locals,
                 config: {
                     ...config,
                     data: {
@@ -169,6 +169,9 @@ export const runController = (
                 configResolving,
                 workbookId,
             });
+
+            res.status(status).send(payload);
+            return;
         } catch (error) {
             ctx.logError('CHARTS_ENGINE_RUNNER_ERROR', error);
             res.status(500).send({

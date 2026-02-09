@@ -23,13 +23,13 @@ async function getWizardWorker(options?: WorkerPoolOptions): Promise<Proxy<Wizar
 }
 
 export const runWizardChart: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
-    const {req, res, config} = props;
+    const {req, resLocals, config} = props;
     const timeouts = cx.config.runnerExecutionTimeouts?.wizard;
     const {widgetConfig} = req.body;
 
     const chartBuilder = await getWizardChartBuilder({
-        userLang: res.locals && res.locals.lang,
-        userLogin: res.locals && res.locals.login,
+        userLang: resLocals && resLocals.lang,
+        userLogin: resLocals && resLocals.login,
         widgetConfig,
         config: config as ResolvedConfig,
         isScreenshoter: Boolean(req.headers['x-charts-scr']),
