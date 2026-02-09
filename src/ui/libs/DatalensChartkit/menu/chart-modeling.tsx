@@ -2,7 +2,7 @@ import React from 'react';
 
 import {ChartLine} from '@gravity-ui/icons';
 import {Label, Text} from '@gravity-ui/uikit';
-// import {i18n} from 'i18n';
+import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {chartModelingActions} from 'ui/store/toolkit/chart-modeling/actions';
 import {isChartModelingAvailable} from 'ui/utils/chart-modeling';
@@ -13,29 +13,6 @@ import {DL} from '../../../constants';
 import ChartKitIcon from '../components/ChartKitIcon/ChartKitIcon';
 
 import type {MenuItemConfig} from './Menu';
-
-const keyset_mock: any = {
-    ru: {
-        modeling: 'Моделирование',
-        'add-trend': 'Добавить тренд',
-        'add-smoothing': 'Добавить сглаживание',
-        'remove-trend': 'Убрать тренд',
-        'remove-smoothing': 'Убрать сглаживание',
-        'modeling-settings': 'Настроить',
-    },
-    en: {
-        modeling: 'Modeling',
-        'add-trend': 'Add trend',
-        'add-smoothing': 'Add smoothing',
-        'remove-trend': 'Remove trend',
-        'remove-smoothing': 'Remove smoothing',
-        'modeling-settings': 'Settings',
-    },
-};
-
-const i18n = (_keysetFileName: string, keysetName: string) => {
-    return keyset_mock[DL.USER_LANG]?.[keysetName];
-};
 
 const dispatchAction = (action: any) => {
     return ({onClose}: {onClose: () => void}) => {
