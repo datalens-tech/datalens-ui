@@ -30,6 +30,26 @@ import {convertToAPIConnectorSource, shouldUseAlias} from './source-alias';
 import {getApiConnectorParamsFromSource, isAPIConnectorSource, prepareSource} from './sources';
 import {getMessageFromUnknownError} from './utils';
 
+/**
+ * Unwraps API Connector response format {data: {body: {result: X}}} -> X
+ */
+function unwrapAPIConnectorResponse(body: unknown): unknown {
+    if (
+        typeof body === 'object' &&
+        body !== null &&
+        'data' in body &&
+        typeof body.data === 'object' &&
+        body.data !== null &&
+        'body' in body.data &&
+        typeof (body.data as {body: unknown}).body === 'object' &&
+        (body.data as {body: unknown}).body !== null &&
+        'result' in (body.data as {body: {result: unknown}}).body
+    ) {
+        return (body.data as {body: {result: unknown}}).body.result;
+    }
+    return body;
+}
+
 const {
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
     ALL_REQUESTS_TIMEOUT_EXCEEDED,
@@ -641,7 +661,7 @@ export class DataFetcher {
             });
 
             // Re-enter fetchSource with the converted source
-            return DataFetcher.fetchSource({
+            const result = (await DataFetcher.fetchSource({
                 sourceName,
                 source: preparedAliasedSource,
                 ctx,
@@ -660,7 +680,14 @@ export class DataFetcher {
                 telemetryCallbacks,
                 cacheClient,
                 sourcesConfig,
-            }) as Promise<FetchSourceResult>;
+            })) as FetchSourceResult;
+
+            // Unwrap API Connector response if configured
+            if (sourceConfig.aliasTo!.unwrapResponse && result.body) {
+                result.body = unwrapAPIConnectorResponse(result.body);
+            }
+
+            return result;
         }
 
         const {passedCredentials, extraHeaders, sourceType: sourceTypeFromConfig} = sourceConfig;

@@ -22,10 +22,16 @@ export function convertToAPIConnectorSource(source: Source, sourceConfig: Source
     // Extract path: '/_startrek/issues?filter=open' -> '/issues?filter=open'
     const path = source.url.replace(/^\/_[^/?]+/, '');
 
+    // Use source method if specified, otherwise use first allowed method from config
+    // Source only supports GET and POST, so filter to those
+    const firstAllowedMethod = sourceConfig.allowedMethods?.[0];
+    const defaultMethod: 'GET' | 'POST' =
+        firstAllowedMethod === 'GET' || firstAllowedMethod === 'POST' ? firstAllowedMethod : 'GET';
+
     const converted: Source = {
         ...source,
         apiConnectionId: aliasTo.apiConnectionId,
-        method: source.method || 'GET',
+        method: source.method || defaultMethod,
         path: path || '/',
         url: '',
     };
