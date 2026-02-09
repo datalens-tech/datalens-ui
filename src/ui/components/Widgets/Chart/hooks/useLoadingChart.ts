@@ -1085,7 +1085,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         if (shouldUseChartModeling) {
             setChartModelingData();
         }
-    }, [shouldUseChartModeling, setChartModelingData, requestId, chartStateData]);
+    }, [shouldUseChartModeling, setChartModelingData, loadedData, chartStateData]);
 
     return {
         loadedData,
