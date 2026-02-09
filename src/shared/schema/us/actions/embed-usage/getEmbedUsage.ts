@@ -3,7 +3,7 @@ import type {GetEmbedUsageResponse} from '../../types';
 
 export const getEmbedUsage = createAction<GetEmbedUsageResponse>({
     method: 'GET',
-    path: () => `/v1/embeds/usage`,
+    path: () => `/v1/embeds-usage`,
     params: (_, headers) => ({
         headers,
     }),
