@@ -33,7 +33,7 @@ export function convertToAPIConnectorSource(
         throw new Error('convertToAPIConnectorSource called without aliasTo config');
     }
 
-    // Extract path: '/_startrek/issues?filter=open' -> '/issues?filter=open'
+    // Extract path: '/_example/issues?filter=open' -> '/issues?filter=open'
     const path = source.url.replace(/^\/_[^/?]+/, '');
 
     const firstAllowedMethod = sourceConfig.allowedMethods?.[0];
