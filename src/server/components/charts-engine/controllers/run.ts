@@ -156,7 +156,6 @@ export const runController = (
             const runnerHandlerResult = await runnerFound.handler(ctx, {
                 chartsEngine,
                 req,
-                res,
                 resLocals: res.locals,
                 config: {
                     ...config,

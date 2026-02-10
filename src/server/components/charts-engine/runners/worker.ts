@@ -17,7 +17,6 @@ export const runWorkerChart = async (
     const {
         chartsEngine,
         req,
-        res,
         resLocals,
         config,
         configResolving,
@@ -114,7 +113,6 @@ export const runWorkerChart = async (
 
     return commonRunner({
         resLocals,
-        res,
         req,
         ctx,
         chartType,

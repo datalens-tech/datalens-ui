@@ -159,7 +159,6 @@ export const getSerializableProcessorParams = ({
     secureConfig,
 }: {
     resLocals: Response['locals'];
-    res?: Response;
     req: Request;
     ctx: AppContext;
     configResolving: number;
@@ -292,7 +291,6 @@ export function commonRunner({
     secureConfig,
 }: {
     resLocals: Response['locals'];
-    res?: Response;
     req: Request;
     ctx: AppContext;
     chartType?: string;

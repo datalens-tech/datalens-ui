@@ -30,7 +30,6 @@ export type RunnerHandler = (
 export type RunnerHandlerProps = {
     chartsEngine: ChartsEngine;
     req: Request;
-    res: Response;
     resLocals: Response['locals'];
     config: ResolvedConfig | ReducedResolvedConfig;
     configResolving: number;
