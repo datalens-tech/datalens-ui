@@ -325,11 +325,11 @@ export function addChartModelingSeries({
     chartStateData: ChartStateSettings;
     chartData: ChartContentWidgetData;
 }) {
-    const warnings = new Set<ChartStateWarning>();
     if (!(chartStateData?.trends?.enabled || chartStateData?.smoothing?.enabled)) {
-        return {warnings: Array.from(warnings), chartData};
+        return {warnings: undefined, chartData};
     }
 
+    const warnings = new Set<ChartStateWarning>();
     const newChartSeries = [];
     let shouldHideOriginalLines = false;
     if (chartStateData?.trends?.enabled) {
@@ -390,5 +390,5 @@ export function addChartModelingSeries({
         }
     }
 
-    return {warnings: Array.from(warnings), chartData};
+    return {warnings: warnings.size ? Array.from(warnings) : undefined, chartData};
 }

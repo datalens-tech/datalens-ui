@@ -1088,15 +1088,23 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     }, [shouldUseChartModeling, setChartModelingData, loadedData, chartStateData]);
 
     const chartModelingDialogWidgetId = useSelector(getEditingWidgetId);
+    const prevRequestId = usePrevious(requestId);
     const cleanChartSettings = useMemoCallback(async () => {
-        if (!isEmpty(chartStateData) || chartModelingDialogWidgetId === requestId) {
+        const id = prevRequestId || requestId;
+        if (!isEmpty(chartStateData) || chartModelingDialogWidgetId === id) {
             globalDispatch(
                 chartModelingActions.removeChartSettings({
-                    id: requestId,
+                    id,
                 }),
             );
         }
     }, []);
+
+    React.useEffect(() => {
+        if (prevRequestId && prevRequestId !== requestId) {
+            cleanChartSettings();
+        }
+    }, [cleanChartSettings, prevRequestId, requestId]);
 
     React.useEffect(() => {
         return () => {

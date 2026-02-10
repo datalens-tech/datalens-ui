@@ -17,7 +17,7 @@ export function isChartModelingAvailable({
         case WidgetKind.GravityCharts: {
             const chartData = loadedData.data as ChartData;
             return (
-                chartData.series.data.every((s) => s.type === 'line') &&
+                chartData.series?.data.every((s) => s.type === 'line') &&
                 chartData.xAxis?.type !== 'category'
             );
         }
