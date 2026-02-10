@@ -638,8 +638,7 @@ export class DataFetcher {
             };
         }
 
-        // Alias: route legacy source through API Connector
-        if (shouldUseAlias(source, sourceConfig)) {
+        if (shouldUseAlias(source, sourceConfig, isEnabledServerFeature)) {
             const aliasedSource = convertToAPIConnectorSource(source, sourceConfig);
             const preparedAliasedSource = prepareSource(aliasedSource);
 
@@ -670,7 +669,6 @@ export class DataFetcher {
                 sourcesConfig,
             })) as FetchSourceResult;
 
-            // Unwrap API Connector response if configured
             if (sourceConfig.aliasTo!.unwrapResponse && result.body) {
                 result.body = unwrapAPIConnectorResponse(result.body);
             }
@@ -679,7 +677,16 @@ export class DataFetcher {
         }
 
         const {passedCredentials, extraHeaders, sourceType: sourceTypeFromConfig} = sourceConfig;
-        const sourceType = sourceTypeFromConfig!; // Set by getSourceConfig() at line 386
+        if (!sourceTypeFromConfig) {
+            ctx.logError(`Invalid sourceType from config: ${sourceTypeFromConfig}`);
+
+            return {
+                sourceId: sourceName,
+                sourceType: 'Unresolved',
+                code: INVALID_SOURCE_FORMAT,
+            };
+        }
+        const sourceType = sourceTypeFromConfig;
 
         if (
             sourceConfig.allowedMethods &&
