@@ -12,7 +12,6 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
     const {
         chartsEngine,
         req,
-        res,
         resLocals,
         config,
         configResolving,
@@ -65,7 +64,6 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
 
     return commonRunner({
         resLocals,
-        res,
         req,
         ctx,
         chartsEngine,
