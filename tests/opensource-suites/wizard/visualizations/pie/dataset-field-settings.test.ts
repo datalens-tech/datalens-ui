@@ -1,4 +1,5 @@
 import {expect} from '@playwright/test';
+import uniqId from 'lodash/uniqueId';
 
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {getUniqueTimestamp, openTestPage, slct} from '../../../../utils';
@@ -19,12 +20,11 @@ import {WorkbooksUrls} from '../../../../constants/constants';
 import {DatasetsEntities} from '../../../../constants/test-entities/datasets';
 import {Workbook} from '../../../../page-objects/workbook/Workbook';
 import {addCustomPalette} from '../../../utils';
-import {getUniqId} from '@gravity-ui/uikit';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Pie chart', () => {
         datalensTest('Use color palette from dataset @screenshot', async ({page}, testInfo) => {
-            const customPaletteName = getUniqId();
+            const customPaletteName = uniqId();
             await addCustomPalette(page, {name: customPaletteName, colors: ['ff0000']});
 
             await openTestPage(page, `${WorkbooksUrls.E2EWorkbook}/?tab=dataset`);
@@ -55,7 +55,10 @@ datalensTest.describe('Wizard', () => {
             // select custom palette
             const colorsDialog = page.locator(slct(DatasetFieldColorsDialogQa.Dialog));
             await colorsDialog.locator('.color-palette-select').click();
-            await colorsDialog.locator(slct(SelectQa.POPUP)).getByText(customPaletteName).click();
+            await page
+                .locator(slct(SelectQa.POPUP))
+                .getByText(customPaletteName, {exact: true})
+                .click();
             // set color from palette for field value
             const paletteItem = colorsDialog
                 .locator(slct(DatasetFieldColorsDialogQa.PaleteItem))
@@ -77,7 +80,10 @@ datalensTest.describe('Wizard', () => {
             const chart = chartContainer.locator('.chartkit-graph,.gcharts-chart');
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Colors, 'region');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Colors,
+                fieldName,
+            );
             await wizardPage.sectionVisualization.addFieldByClick(
                 PlaceholderName.Measures,
                 'Sales',
