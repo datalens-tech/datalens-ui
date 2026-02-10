@@ -20,7 +20,7 @@ import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
 import type {DatalensGlobalState} from 'ui/index';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
 import {chartModelingActions} from 'ui/store/toolkit/chart-modeling/actions';
-import {getChartModelingState} from 'ui/store/toolkit/chart-modeling/selectors';
+import {getChartModelingState, getEditingWidgetId} from 'ui/store/toolkit/chart-modeling/selectors';
 import {isChartModelingAvailable} from 'ui/utils/chart-modeling';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
@@ -1086,6 +1086,31 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
             setChartModelingData();
         }
     }, [shouldUseChartModeling, setChartModelingData, loadedData, chartStateData]);
+
+    const chartModelingDialogWidgetId = useSelector(getEditingWidgetId);
+    const prevRequestId = usePrevious(requestId);
+    const cleanChartSettings = useMemoCallback(async () => {
+        const id = prevRequestId || requestId;
+        if (!isEmpty(chartStateData) || chartModelingDialogWidgetId === id) {
+            globalDispatch(
+                chartModelingActions.removeChartSettings({
+                    id,
+                }),
+            );
+        }
+    }, []);
+
+    React.useEffect(() => {
+        if (prevRequestId && prevRequestId !== requestId) {
+            cleanChartSettings();
+        }
+    }, [cleanChartSettings, prevRequestId, requestId]);
+
+    React.useEffect(() => {
+        return () => {
+            cleanChartSettings();
+        };
+    }, [cleanChartSettings]);
 
     return {
         loadedData,

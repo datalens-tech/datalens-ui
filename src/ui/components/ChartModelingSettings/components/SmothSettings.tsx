@@ -27,8 +27,7 @@ export const SmothSettings = (props: Props) => {
 
     const enabled = chartState.smoothing?.enabled ?? false;
     const windowSize = chartState.smoothing?.settings?.windowSize ?? DEFAULT_SMOOTHING.windowSize;
-    const dashStyle =
-        chartState.smoothing?.settings?.dashStyle ?? DEFAULT_SMOOTHING.dashStyle ?? 'auto';
+    const dashStyle = chartState.smoothing?.settings?.dashStyle ?? 'auto';
     const lineWidth = chartState.smoothing?.settings?.lineWidth ?? DEFAULT_SMOOTHING.lineWidth;
 
     const handleEnableSmoothing = React.useCallback(() => {
