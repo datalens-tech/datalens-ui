@@ -2,7 +2,7 @@
     &__container {
         top: var(--dl-chart-modelling-settings-top, 40px);
         width: 280px;
-        z-index: 2;
+        z-index: 10;
         background: var(--g-color-base-float);
         overflow: auto;
     }
