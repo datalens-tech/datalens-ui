@@ -47,7 +47,9 @@ export const chartModelingSlice = createSlice({
                 state.editingWidgetId = undefined;
             }
 
-            delete state.widgets[widgetId];
+            if (state.widgets[widgetId]) {
+                delete state.widgets[widgetId];
+            }
         },
     },
 });

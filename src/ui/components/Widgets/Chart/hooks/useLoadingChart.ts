@@ -1087,6 +1087,16 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         }
     }, [shouldUseChartModeling, setChartModelingData, loadedData, chartStateData]);
 
+    React.useEffect(() => {
+        return () => {
+            globalDispatch(
+                chartModelingActions.removeChartSettings({
+                    id: requestId,
+                }),
+            );
+        };
+    }, [globalDispatch, requestId]);
+
     return {
         loadedData,
         isLoading,
