@@ -364,7 +364,6 @@ async function findAndExecuteRunner(
     const runnerHandlerResult = await runnerFound.handler(ctx, {
         chartsEngine,
         req,
-        res,
         resLocals: res.locals,
         config: {
             ...entry,
