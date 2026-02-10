@@ -43,7 +43,7 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 type SourceEditorDialogProps = {
     onApply: (
         source: EditedSource,
-    ) => Promise<{updates: Update[]; sourceErrors: DatasetComponentError[]}>;
+    ) => Promise<{updates?: Update[]; sourceErrors: DatasetComponentError[]}> | undefined;
     onUpdate: (source: EditedSource) => void;
     onClose: () => void;
     onParamCreate: OnParamCreate;
@@ -156,7 +156,7 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
         setLoading(true);
 
         const preparedSource = getPreparedSource(source, selectedFreeformSource);
-        const {updates, sourceErrors} = await onApply(preparedSource);
+        const {updates, sourceErrors} = (await onApply(preparedSource)) ?? {};
 
         setLoading(false);
 
@@ -167,7 +167,7 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
 
             if (update && 'source' in update) {
                 const resultSource = update.source;
-                const withoutErrors = !sourceErrors.find(({id}) => id === resultSource.id);
+                const withoutErrors = !sourceErrors?.find(({id}) => id === resultSource.id);
 
                 onUpdate(resultSource as StandaloneSource);
 

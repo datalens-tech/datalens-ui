@@ -5,7 +5,7 @@ import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import type {Dataset, DatasetApiError} from 'shared';
+import type {Dataset, DatasetApiError, DatasetWithDelegation} from 'shared';
 import {Feature, SectionDatasetQA} from 'shared';
 import type {DataLensApiError} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -17,14 +17,14 @@ import './DatasetSelect.scss';
 const b = block('dataset-select');
 
 export interface DatasetSelectProps {
-    dataset?: Dataset;
-    datasets?: Dataset[];
+    dataset?: DatasetWithDelegation;
+    datasets?: DatasetWithDelegation[];
     datasetApiErrors: DatasetApiError[];
     isPopupVisible: boolean;
     onChange: (value: Dataset) => void;
     onPreselectClick: () => void;
 
-    onOpenDatasetClick: (id: string) => void;
+    onOpenDatasetClick: (id: string, isSharedDataset: boolean) => void;
     onAddDatasetClick: () => void;
     onReplaceDatasetClick: (id: string) => void;
     openDialogMultidataset: ({initedDataset}: {initedDataset?: Dataset}) => void;
@@ -83,7 +83,10 @@ class DatasetSelect extends React.Component<DatasetSelectProps, DatasetSelectSta
                     }
                     label={i18n('wizard', 'dataset-selector_label')}
                     description={dataset?.realName}
-                    items={this.getDatasetItemActions(dataset?.id)}
+                    items={this.getDatasetItemActions({
+                        datasetId: dataset?.id,
+                        isSharedDataset: Boolean(dataset?.collection_id),
+                    })}
                     qaRole={'dataset-select'}
                 />
 
@@ -117,9 +120,13 @@ class DatasetSelect extends React.Component<DatasetSelectProps, DatasetSelectSta
                         icon={<DatasetIcon />}
                         onClick={onChange.bind(null, el)}
                         label={el.realName}
-                        items={this.getDatasetItemActions(el.id)}
+                        items={this.getDatasetItemActions({
+                            datasetId: el.id,
+                            isSharedDataset: Boolean(el.collection_id),
+                        })}
                         secondary={true}
                         selected={el === dataset}
+                        sharedDatasetDelegation={el.collection_id ? el.isDelegated : undefined}
                     />
                 ))}
                 {datasetApiErrors.map(({datasetId, error}) => {
@@ -128,7 +135,7 @@ class DatasetSelect extends React.Component<DatasetSelectProps, DatasetSelectSta
                             key={datasetId}
                             icon={<DatasetIcon />}
                             label={datasetId}
-                            items={this.getDatasetItemActions(datasetId)}
+                            items={this.getDatasetItemActions({datasetId})}
                             secondary={true}
                             error={error as DataLensApiError}
                         />
@@ -166,7 +173,13 @@ class DatasetSelect extends React.Component<DatasetSelectProps, DatasetSelectSta
         );
     }
 
-    private getDatasetItemActions(datasetId?: string): DropdownMenuItemMixed<any>[] {
+    private getDatasetItemActions({
+        datasetId,
+        isSharedDataset,
+    }: {
+        datasetId?: string;
+        isSharedDataset?: boolean;
+    }): DropdownMenuItemMixed<any>[] {
         if (!datasetId) {
             return [];
         }
@@ -176,7 +189,7 @@ class DatasetSelect extends React.Component<DatasetSelectProps, DatasetSelectSta
 
         return [
             {
-                action: () => this.props.onOpenDatasetClick(datasetId),
+                action: () => this.props.onOpenDatasetClick(datasetId, Boolean(isSharedDataset)),
                 text: i18n('wizard', 'button_to-dataset'),
                 qa: SectionDatasetQA.GoToDatasetButton,
             },

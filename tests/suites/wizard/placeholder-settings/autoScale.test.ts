@@ -2,13 +2,13 @@ import {Page, expect} from '@playwright/test';
 
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
-import {RadioButtons, RadioButtonsValues} from '../../../page-objects/wizard/PlaceholderDialog';
+import {RadioButtons} from '../../../page-objects/wizard/PlaceholderDialog';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
-import {PlaceholderId} from '../../../../src/shared';
+import {AxisAutoScaleModes, PlaceholderId} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - placeholder dialog ("Autoscaling")', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
@@ -21,10 +21,21 @@ datalensTest.describe('Wizard - placeholder dialog ("Autoscaling")', () => {
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'Category');
     });
 
+    // todo: remove along with GravityChartsForLineAreaAndBarX feature flag
     datalensTest('Scaling from 0 to max works in the Y section', async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
-        const yAxisLabelsLocator = wizardPage.page.locator('.highcharts-yaxis-labels');
-        const minYAxisLabel = yAxisLabelsLocator.first().locator('text').first();
+        const hcMinYAxisLabel = wizardPage.page
+            .locator('.highcharts-yaxis-labels')
+            .first()
+            .locator('text')
+            .first();
+        const minYAxisLabel = hcMinYAxisLabel.or(
+            wizardPage.page
+                .locator('.gcharts-y-axis')
+                .first()
+                .locator('.gcharts-y-axis__label')
+                .first(),
+        );
 
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
 
@@ -32,7 +43,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Autoscaling")', () => {
 
         await wizardPage.placeholderDialog.toggleRadioButton(
             RadioButtons.AutoScale,
-            RadioButtonsValues.ZeroMax,
+            AxisAutoScaleModes.ZeroMax,
         );
 
         await wizardPage.placeholderDialog.apply();
@@ -45,8 +56,18 @@ datalensTest.describe('Wizard - placeholder dialog ("Autoscaling")', () => {
         'Scaling from 0 to max works in the "Y2" section',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
-            const yAxisLabelsLocator = wizardPage.page.locator('.highcharts-yaxis-labels');
-            const minY2AxisLabel = yAxisLabelsLocator.last().locator('text').first();
+            const hcMinY2AxisLabel = wizardPage.page
+                .locator('.highcharts-yaxis-labels')
+                .last()
+                .locator('text')
+                .first();
+            const minY2AxisLabel = hcMinY2AxisLabel.or(
+                wizardPage.page
+                    .locator('.gcharts-y-axis')
+                    .last()
+                    .locator('.gcharts-y-axis__label')
+                    .first(),
+            );
 
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y2, 'Sales');
 
@@ -54,7 +75,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Autoscaling")', () => {
 
             await wizardPage.placeholderDialog.toggleRadioButton(
                 RadioButtons.AutoScale,
-                RadioButtonsValues.ZeroMax,
+                AxisAutoScaleModes.ZeroMax,
             );
 
             await wizardPage.placeholderDialog.apply();
@@ -68,9 +89,18 @@ datalensTest.describe('Wizard - placeholder dialog ("Autoscaling")', () => {
         'If there is a field in "Y" and "Y2", then you can adjust the scaling for each axis separately',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
-            const yAxisLabelsLocator = wizardPage.page.locator('.highcharts-yaxis-labels');
-            const minYAxisLabel = yAxisLabelsLocator.first().locator('text').first();
-            const minY2AxisLabel = yAxisLabelsLocator.last().locator('text').first();
+            const hcYAxisLabelsLocator = wizardPage.page.locator('.highcharts-yaxis-labels');
+            const gravityChartsYAxisLocator = wizardPage.page.locator('.gcharts-y-axis');
+            const minYAxisLabel = hcYAxisLabelsLocator
+                .first()
+                .locator('text')
+                .first()
+                .or(gravityChartsYAxisLocator.first().locator('.gcharts-y-axis__label').first());
+            const minY2AxisLabel = hcYAxisLabelsLocator
+                .last()
+                .locator('text')
+                .first()
+                .or(gravityChartsYAxisLocator.last().locator('.gcharts-y-axis__label').first());
 
             let successfulResponsePromise = wizardPage.waitForSuccessfulResponse(CommonUrls.ApiRun);
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
@@ -92,7 +122,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Autoscaling")', () => {
 
             await wizardPage.placeholderDialog.toggleRadioButton(
                 RadioButtons.AutoScale,
-                RadioButtonsValues.ZeroMax,
+                AxisAutoScaleModes.ZeroMax,
             );
 
             successfulResponsePromise = wizardPage.waitForSuccessfulResponse(CommonUrls.ApiRun);
@@ -106,7 +136,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Autoscaling")', () => {
 
             await wizardPage.placeholderDialog.toggleRadioButton(
                 RadioButtons.AutoScale,
-                RadioButtonsValues.ZeroMax,
+                AxisAutoScaleModes.ZeroMax,
             );
 
             await wizardPage.placeholderDialog.apply();

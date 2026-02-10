@@ -1,11 +1,12 @@
 import type {DatalensGlobalState} from 'index';
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
+import {getAllTabItems} from 'shared/utils/dash';
 
 import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {Mode} from '../../modules/constants';
-import type {DashState} from '../reducers/dashTypedReducer';
+import type {DashState} from '../typings/dash';
 
 export const selectDash = (state: DatalensGlobalState) => state.dash || null;
 
@@ -31,7 +32,13 @@ export const selectEntryTitle = (state: DatalensGlobalState) =>
 export const selectEntryData = (state: DatalensGlobalState) =>
     state.dash.convertedEntryData || state.dash.entry?.data || null;
 
-export const selectSettings = (state: DatalensGlobalState) => state.dash?.data?.settings || {};
+export const selectSettings = (state: DatalensGlobalState) =>
+    state.dash?.data?.settings || Object.create(null);
+
+export const selectVisualSettings = createSelector([selectSettings], (settings) => ({
+    backgroundSettings: settings.backgroundSettings,
+    widgetsSettings: settings.widgetsSettings,
+}));
 
 export const selectHasOpenedDialog = (state: DatalensGlobalState) =>
     Boolean(state.dash.openedDialog) || state.dialog?.dialogs?.length > 0;
@@ -176,7 +183,8 @@ export const selectOpenedItemData = createSelector(
     [selectCurrentTab, selectDash],
     (currentTab, dash) => {
         if (dash.openedItemId && currentTab) {
-            const item = currentTab.items.find(({id}) => id === dash.openedItemId);
+            const allItems = getAllTabItems(currentTab);
+            const item = allItems.find(({id}) => id === dash.openedItemId);
             return item?.data;
         }
         return undefined;
@@ -187,7 +195,8 @@ export const selectOpenedItem = createSelector(
     [selectCurrentTab, selectDash],
     (currentTab, dash) => {
         if (dash.openedItemId && currentTab) {
-            const item = currentTab.items.find(({id}) => id === dash.openedItemId);
+            const allItems = getAllTabItems(currentTab);
+            const item = allItems.find(({id}) => id === dash.openedItemId);
             return item;
         }
         return undefined;
@@ -201,7 +210,9 @@ export const selectCurrentTabRelationDataItems = createSelector(
             return undefined;
         }
 
-        return currentTab.items.filter(
+        const allItems = getAllTabItems(currentTab);
+
+        return allItems.filter(
             ({type}) =>
                 type === ITEM_TYPE.CONTROL ||
                 type === ITEM_TYPE.WIDGET ||

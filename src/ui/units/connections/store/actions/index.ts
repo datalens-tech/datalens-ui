@@ -17,7 +17,12 @@ import history from '../../../../utils/history';
 import {FieldKey, InnerFieldKey} from '../../constants';
 import {getIsRevisionsSupported} from '../../utils';
 import {connectionIdSelector, newConnectionSelector} from '../selectors';
-import type {ConnectionsReduxDispatch, ConnectionsReduxState, GetState} from '../typings';
+import type {
+    ConnectionEntry,
+    ConnectionsReduxDispatch,
+    ConnectionsReduxState,
+    GetState,
+} from '../typings';
 import {
     getConnectorItemFromFlattenList,
     getDataForParamsChecking,
@@ -77,10 +82,14 @@ interface GetConnectionDataRequestProps {
     entry?: GetEntryResponse;
     flattenConnectors: ConnectorItem[];
     rev_id?: string;
+    bindedWorkbookId?: string | null;
+    bindedDatasetId?: string | null;
 }
 
 async function getConnectionDataRequest({
     entry,
+    bindedWorkbookId,
+    bindedDatasetId,
     flattenConnectors,
     rev_id,
 }: GetConnectionDataRequestProps) {
@@ -93,11 +102,12 @@ async function getConnectionDataRequest({
         if (isRevisionsSupported) {
             revId = rev_id;
         }
-        ({connectionData, error: connectionError} = await api.fetchConnectionData(
-            entry.entryId,
-            entry?.workbookId ?? null,
+        ({connectionData, error: connectionError} = await api.fetchConnectionData({
+            connectionId: entry.entryId,
+            workbookId: entry?.workbookId || bindedWorkbookId,
+            bindedDatasetId,
             revId,
-        ));
+        }));
     }
     return {connectionData, connectionError};
 }
@@ -107,29 +117,56 @@ export function setPageData({
     workbookId,
     collectionId,
     rev_id,
+    bindedWorkbookId,
+    bindedDatasetId,
 }: {
     entryId?: string | null;
     workbookId?: string;
     collectionId?: string;
     rev_id?: string;
+    bindedWorkbookId?: string | null;
+    bindedDatasetId?: string | null;
 }) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         dispatch(setPageLoading({pageLoading: true}));
         const groupedConnectors = await api.fetchConnectors();
         const flattenConnectors = getFlattenConnectors(groupedConnectors);
         const {checkData, form, validationErrors} = getState().connections;
-        let entry: GetEntryResponse | undefined;
+        let entry: ConnectionEntry | undefined;
         let entryError: DataLensApiError | undefined;
         let connectionData: ConnectionData | undefined;
         let connectionError: DataLensApiError | undefined;
 
         if (entryId) {
-            ({entry, error: entryError} = await api.fetchEntry(entryId));
+            ({entry, error: entryError} = await api.fetchEntry({
+                entryId,
+                bindedDatasetId,
+                bindedWorkbookId,
+            }));
             ({connectionData, connectionError} = await getConnectionDataRequest({
                 entry,
                 flattenConnectors,
+                bindedWorkbookId,
+                bindedDatasetId,
                 rev_id,
             }));
+        }
+
+        if (entry?.collectionId && bindedWorkbookId && !bindedDatasetId) {
+            const {delegation, error: delegationError} = await api.fetchSharedEntryDelegation(
+                entry.entryId,
+                bindedWorkbookId,
+            );
+            if (delegationError) {
+                dispatch(
+                    showToast({
+                        title: delegationError.message,
+                        error: delegationError,
+                    }),
+                );
+            } else {
+                entry.isDelegated = delegation?.isDelegated;
+            }
         }
 
         if (!entry) {
@@ -461,7 +498,7 @@ function updateConnection() {
         );
         let updatedEntry: GetEntryResponse | undefined;
         if (!error && entry?.entryId) {
-            const response = await api.fetchEntry(entry.entryId);
+            const response = await api.fetchEntry({entryId: entry.entryId});
             updatedEntry = response.entry;
         }
         batch(() => {

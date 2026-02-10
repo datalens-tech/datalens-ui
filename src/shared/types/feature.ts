@@ -38,7 +38,6 @@ export enum Feature {
     EntryMenuItemMove = 'EntryMenuItemMove',
     ExternalSelectors = 'ExternalSelectors',
     DashBoardWidgetParamsStrictValidation = 'DashBoardWidgetParamsStrictValidation',
-    D3Visualizations = 'D3Visualizations',
     HideMultiDatasets = 'HideMultiDatasets',
     ShouldCheckEditorAccess = 'ShouldCheckEditorAccess',
     HideMultitenant = 'HideMultitenant',
@@ -80,20 +79,12 @@ export enum Feature {
     EnableExportSettings = 'EnableExportSettings',
     /** Enable updating dataset settings by action ('load_preview_by_default' | 'template_enabled' | 'data_export_forbidden') */
     EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
-    /** Enable new favicon, icon, theme, decorations and illustrations */
-    EnableDLRebranding = 'EnableDLRebranding',
     /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
     GravityChartsForPieAndTreemap = 'GravityChartsForPieAndTreemap',
     /** Use GravityUI Charts as the default library for some wizard visualizations(scatter and bar-y) */
     GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
     /** Use GravityUI Charts as the default library for some wizard visualizations(line, area and bar-x) */
     GravityChartsForLineAreaAndBarX = 'GravityChartsForLineAreaAndBarX',
-    /** Show dataset description button */
-    EnableDatasetDescription = 'EnableDatasetDescription',
-    /** Show connection description button */
-    EnableConnectionDescription = 'EnableConnectionDescription',
-    /** Enable pagination in dataset sources table */
-    EnableDatasetSourcesPagination = 'EnableDatasetSourcesPagination',
     /** Enable shared connections and datasets */
     EnableSharedEntries = 'EnableSharedEntries',
 
@@ -102,8 +93,16 @@ export enum Feature {
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
     /** enables new dash & widgets settings */
     EnableNewDashSettings = 'EnableNewDashSettings',
+    /** Enable color pickers with customization of values for light & dark themes separately */
+    EnableDashColorPickersByTheme = 'EnableDashColorPickersByTheme',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
+    /** Replace static master token with dynamic one */
+    UsDynamicMasterToken = 'UsDynamicMasterToken',
+    /** Enable using dynamic master token in proxy */
+    UsDynamicMasterTokenInProxy = 'UsDynamicMasterTokenInProxy',
+    /** Сhart settings for displaying trend lines smoothing, etc. */
+    ChartModeling = 'ChartModeling',
 }
 
 export type FeatureConfig = Record<string, boolean>;

@@ -2,7 +2,7 @@ import {expect, Page} from '@playwright/test';
 
 import {slct, waitForCondition} from '../../utils';
 import {CommonSelectors} from '../constants/common-selectors';
-import {PlaceholderId} from '../../../src/shared';
+import {DialogPlaceholderQa, PlaceholderId} from '../../../src/shared';
 
 export enum RadioButtons {
     AutoScale = 'autoscale-radio-buttons',
@@ -14,8 +14,6 @@ export enum RadioButtons {
 }
 
 export enum RadioButtonsValues {
-    MinMax = 'min-max',
-    ZeroMax = '0-max',
     Linear = 'linear',
     Logarithmic = 'logarithmic',
     Manual = 'manual',
@@ -41,7 +39,7 @@ export default class PlaceholderDialog {
         await this.page.click(slct(`placeholder-action-open-${placeholderId}-dialog`));
 
         await waitForCondition(async () => {
-            return this.page.$(slct('dialog-placeholder'));
+            return this.page.$(slct(DialogPlaceholderQa.Dialog));
         });
     }
 
@@ -66,7 +64,7 @@ export default class PlaceholderDialog {
         await radioGroupLocator.locator(`[value="${value}"]`).click();
     }
 
-    async fillInput(qa: Inputs, value: string) {
+    async fillInput(qa: string, value: string) {
         await this.page.fill(`${slct(qa)} input`, value);
     }
 

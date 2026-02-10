@@ -7,7 +7,6 @@ import {
     DL_COMPONENT_HEADER,
     DL_EMBED_TOKEN_HEADER,
     PROJECT_ID_HEADER,
-    SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
 } from '../../shared';
@@ -32,7 +31,7 @@ export default {
     singleFetchingTimeout: process.env.DATA_SINGLE_FETCHING_TIMEOUT_MS
         ? parseInt(process.env.DATA_SINGLE_FETCHING_TIMEOUT_MS, 10)
         : undefined,
-    faviconUrl: '/favicon.ico',
+    faviconUrl: '/os-favicon.ico',
     appMode: process.env.APP_MODE,
     serviceName: SERVICE_NAME_DATALENS,
     gatewayProxyHeaders: [
@@ -42,7 +41,6 @@ export default {
         SuperuserHeader.XDlAllowSuperuser,
         SuperuserHeader.XDlSudo,
         AuthHeader.Authorization,
-        SERVICE_USER_ACCESS_TOKEN_HEADER,
         CSRF_TOKEN_HEADER,
         DL_COMPONENT_HEADER,
         DL_EMBED_TOKEN_HEADER,

@@ -8,7 +8,6 @@ import {
     DL_CONTEXT_HEADER,
     Language,
     PALETTE_ID,
-    SERVICE_USER_ACCESS_TOKEN_HEADER,
     isTrueArg,
 } from '../../../shared';
 import {UserRole} from '../../../shared/components/auth/constants/role';
@@ -52,6 +51,7 @@ export default {
         limit: '21mb',
     },
     usMasterToken: process.env.US_MASTER_TOKEN || 'fake-us-master-token',
+    usDynamicMasterTokenPrivateKey: getEnvCert(process.env.US_DYNAMIC_MASTER_TOKEN_PRIVATE_KEY),
 
     // CHARTS MODE
 
@@ -213,26 +213,15 @@ export default {
     },
     defaultColorPaletteId: PALETTE_ID.DEFAULT_20,
 
-    appSensitiveKeys: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
-    appSensitiveHeaders: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
-
-    // zitadel
-    isZitadelEnabled: isTrueArg(process.env.ZITADEL),
-    clientId: process.env.CLIENT_ID || '',
-    clientSecret: process.env.CLIENT_SECRET || '',
-    zitadelProjectId: process.env.ZITADEL_PROJECT_ID || '',
-    zitadelUri: process.env.ZITADEL_URI || '',
-    zitadelInternalUri: process.env.ZITADEL_INTERNAL_URI || process.env.ZITADEL_URI,
-    appHostUri: process.env.APP_HOST_URI || '',
-    zitadelCookieSecret: process.env.ZITADEL_COOKIE_SECRET || '',
-    serviceClientId: process.env.SERVICE_CLIENT_ID || '',
-    serviceClientSecret: process.env.SERVICE_CLIENT_SECRET || '',
+    appSensitiveKeys: [CSP_HEADER, CSP_REPORT_TO_HEADER],
+    appSensitiveHeaders: [CSP_HEADER, CSP_REPORT_TO_HEADER],
 
     // auth
     isAuthEnabled: isTrueArg(process.env.AUTH_ENABLED),
     authTokenPublicKey: getEnvCert(process.env.AUTH_TOKEN_PUBLIC_KEY),
     authManageLocalUsersDisabled: isTrueArg(process.env.AUTH_MANAGE_LOCAL_USERS_DISABLED),
     authSignupDisabled: isTrueArg(process.env.AUTH_SIGNUP_DISABLED),
+    authCookieName: process.env.AUTH_COOKIE_NAME,
 
     apiPrefix: '/api',
 } satisfies Partial<AppConfig>;

@@ -2,6 +2,7 @@ import type {ReactElement} from 'react';
 
 import type {EntryDialogOnCloseArg} from 'ui/components/EntryDialogues/types';
 import type {SelectorElementType} from 'ui/store/typings/controlDialog';
+import type {getFixedHeaderBackgroundColor} from 'ui/units/dash/utils/colors';
 
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
 import {EXAMPLE_FUNCTION} from '../common/constants/functions';
@@ -29,4 +30,5 @@ export const dashFunctionsMap = {
     beforeCloseDialogItem: makeFunctionTemplate<BeforeCloseDialogItemAction>({
         isReduxThunkActionTemplate: true,
     }),
+    getFixedHeaderBackgroundColor: makeFunctionTemplate<typeof getFixedHeaderBackgroundColor>(),
 } as const;

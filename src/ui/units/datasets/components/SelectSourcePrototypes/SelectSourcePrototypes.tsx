@@ -4,23 +4,32 @@ import {Ellipsis, Plus} from '@gravity-ui/icons';
 import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {useDispatch} from 'react-redux';
-import type {ConnectorType, DatasetOptions, DatasetSource} from 'shared';
+import {useDispatch, useSelector} from 'react-redux';
+import type {CollectionId, ConnectorType, DatasetOptions, Permissions, WorkbookId} from 'shared';
 import {CollectionItemEntities, DatasetSourcesLeftPanelQA, EntryScope, PLACE} from 'shared';
-import type {BaseSource, GetEntryResponse, SharedEntryFields} from 'shared/schema';
+import type {BaseSource, GetEntryResponse, SharedEntryPermissions} from 'shared/schema';
 import {NavigationMinimal, type SDK} from 'ui';
 import {ConnectorIcon} from 'ui/components/ConnectorIcon/ConnectorIcon';
 import {DIALOG_SELECT_SHARED_ENTRY} from 'ui/components/DialogSelectSharedEntry/DialogSelectSharedEntry';
-import {DIALOG_SHARED_ENTRY_PERMISSIONS} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
+import {SharedEntryIcon} from 'ui/components/SharedEntryIcon/SharedEntryIcon';
+import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {registry} from 'ui/registry';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import Utils, {getConnectorIconData} from 'ui/utils';
 
-import {setSharedDatasetDelegation} from '../../store/actions/creators';
-import type {SelectedConnections, SortedSourcePrototypes} from '../../store/selectors';
-import type {ConnectionEntry, DatasetError, FreeformSource} from '../../store/types';
+import {
+    type SelectedConnections,
+    type SortedSourcePrototypes,
+    selectedConnectionDelegationStatusSelector,
+} from '../../store/selectors';
+import type {
+    ConnectionEntry,
+    DatasetError,
+    FreeformSource,
+    SourcePrototype,
+} from '../../store/types';
 
 import {SourcesTable} from './SourcesTable';
 import {ICON_PLUS_SIZE} from './constants';
@@ -72,29 +81,35 @@ function hasEnabledFreeformSources(freeformSources: FreeformSource[]) {
 function getInactiveEntryIds(connections: SelectedConnections = []) {
     return connections.map(({entryId}) => entryId);
 }
-
-type DeleteConnectionHandle = (props: {connectionId?: string}) => void;
+type PartialEntryResponse = Partial<Omit<GetEntryResponse, 'permissions'>> & {
+    entryId: string;
+    permissions?: Permissions | SharedEntryPermissions;
+};
+type DeleteConnectionHandle = (props: {connectionId: string}) => void;
 type OpenConnectionHandle = (connectionId?: string) => void;
-type ReplaceConnectionHandle = (connection: {id?: string}, args: Partial<GetEntryResponse>) => void;
+type ReplaceConnectionHandle = (connection: {id?: string}, args: PartialEntryResponse) => void;
 type DeleteSourceHandle = (props: {id: string}) => void;
-type EditSourceHandle = (source: DatasetSource) => void;
-type ClickConnectionHandle = (connectionId: string) => Promise<BaseSource[]>;
-type SelectConnectionHandle = (props: Partial<GetEntryResponse>) => void;
-type OnSharedDatasetCreationHandle = (onApply: (entry: SharedEntryFields) => void) => void;
+type EditSourceHandle = (source: BaseSource) => void;
+type ClickConnectionHandle = (connectionId: string) => Promise<BaseSource[] | SourcePrototype[]>;
+type SelectConnectionHandle = (props: PartialEntryResponse) => void;
+type OnSharedDatasetCreationHandle = (
+    onApply: (entry: PartialEntryResponse) => Promise<void> | void,
+) => void;
 
 type ConnectionMenuProps = {
     sdk: SDK;
     openEnabled: boolean;
     deleteEnabled: boolean;
-    connectionId?: string;
+    connectionId: string;
     inactiveEntryIds: string[];
     onClickDeleteConnection: DeleteConnectionHandle;
     onClickOpenConnection: OpenConnectionHandle;
     onClickReplaceConnectionMenuItem: ReplaceConnectionHandle;
     clickableTypes?: ConnectorType[];
-    workbookId?: string;
-    collectionId?: string;
+    workbookId: WorkbookId;
+    collectionId: CollectionId;
     onSharedDatasetCreationHandle: OnSharedDatasetCreationHandle;
+    readonly: boolean;
 };
 
 function ConnectionMenu(props: ConnectionMenuProps) {
@@ -111,11 +126,12 @@ function ConnectionMenu(props: ConnectionMenuProps) {
         workbookId,
         collectionId,
         onSharedDatasetCreationHandle,
+        readonly,
     } = props;
     const menuControlBtnRef = React.useRef(null);
     const [isNavVisible, setNavVisibility] = useState(false);
 
-    function onEntryClick(connection: Partial<GetEntryResponse>, e?: React.MouseEvent) {
+    function onEntryClick(connection: PartialEntryResponse, e?: React.MouseEvent) {
         e?.stopPropagation();
         setNavVisibility(false);
         onClickReplaceConnectionMenuItem({id: connectionId}, connection);
@@ -150,6 +166,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                         view="flat"
                         onClick={onClick}
                         onKeyDown={onKeyDown}
+                        qa={DatasetSourcesLeftPanelQA.ConnContextMenuBtn}
                     >
                         <Icon className={b('icon-more')} data={Ellipsis} width={14} />
                     </Button>
@@ -163,13 +180,16 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                             e.stopPropagation();
                             onClickOpenConnection(connectionId);
                         },
+                        qa: DatasetSourcesLeftPanelQA.ConnContextMenuOpen,
                     },
                     {
                         text: i18n('label_menu-popup-replace-connection'),
+                        disabled: readonly,
                         action: (e) => {
                             e.stopPropagation();
                             onReplaceConnectionClick();
                         },
+                        qa: DatasetSourcesLeftPanelQA.ConnContextMenuReplace,
                     },
                     {
                         text: i18n('label_menu-popup-delete-connection'),
@@ -178,6 +198,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                             e.stopPropagation();
                             onClickDeleteConnection({connectionId});
                         },
+                        qa: DatasetSourcesLeftPanelQA.ConnContextMenuDelete,
                     },
                 ]}
             />
@@ -224,12 +245,14 @@ type ConnectionsListProps = {
     connectionId?: string;
     onClickConnection: ClickConnectionHandle;
     onClickConnectionDeleteButton: DeleteConnectionHandle;
-    workbookId?: string;
-    collectionId?: string;
+    workbookId: WorkbookId;
+    collectionId: CollectionId;
     openConnection: OpenConnectionHandle;
     onClickReplaceConnectionMenuItem: ReplaceConnectionHandle;
     clickableTypes?: ConnectorType[];
     onSharedDatasetCreationHandle: OnSharedDatasetCreationHandle;
+    isLoading: boolean;
+    readonly: boolean;
 };
 
 function ConnectionsList(props: ConnectionsListProps) {
@@ -245,56 +268,74 @@ function ConnectionsList(props: ConnectionsListProps) {
         workbookId,
         collectionId,
         onSharedDatasetCreationHandle,
+        isLoading,
+        readonly,
     } = props;
+    const connectionDelegation = useSelector(selectedConnectionDelegationStatusSelector);
 
     return (
         <>
-            {connections.map((connection) => {
-                const {id, entryId, deleted, deleteEnabled} = connection;
+            {isLoading ? (
+                <SmartLoader size="s" />
+            ) : (
+                connections.map((connection) => {
+                    const {id, entryId, deleted, deleteEnabled} = connection;
+                    const isSharedConnection = connection.collectionId;
 
-                const existedConnectionId = id || entryId;
-                const active = existedConnectionId === connectionId;
-                const connectionName = getConnectionName(connection);
+                    const existedConnectionId = id || entryId;
+                    const active = existedConnectionId === connectionId;
+                    const connectionName = getConnectionName(connection);
 
-                return (
-                    // 'connection-wrap' is needed in order for clicks within navigation
-                    // did not trigger the click event on the 'connection' element
-                    <div key={existedConnectionId} className={b('connection-wrap')}>
-                        <div
-                            className={b('connection', {active})}
-                            onClick={() => onClickConnection(existedConnectionId)}
-                        >
-                            <ConnectorIcon
-                                className={b('icon-connection')}
-                                data={getConnectorIconData(getConnectionType(connection))}
-                                height={24}
-                                width={24}
-                            />
-                            <span
-                                className={b('connection-title', {deleted})}
-                                title={connectionName}
-                                data-qa="select-sources-prototypes-connection-title"
+                    return (
+                        // 'connection-wrap' is needed in order for clicks within navigation
+                        // did not trigger the click event on the 'connection' element
+                        <div key={existedConnectionId} className={b('connection-wrap')}>
+                            <div
+                                className={b('connection', {active})}
+                                onClick={() => onClickConnection(existedConnectionId)}
                             >
-                                {connectionName}
-                            </span>
+                                <ConnectorIcon
+                                    className={b('icon-connection')}
+                                    data={getConnectorIconData(getConnectionType(connection))}
+                                    height={24}
+                                    width={24}
+                                />
+                                <div className={b('connection-title-container', {deleted})}>
+                                    <span
+                                        className={b('connection-title', {deleted})}
+                                        title={connectionName}
+                                        data-qa="select-sources-prototypes-connection-title"
+                                    >
+                                        {connectionName}
+                                    </span>
+                                    {isSharedConnection && (
+                                        <SharedEntryIcon
+                                            className={b('connection-shared-icon')}
+                                            isDelegated={connectionDelegation}
+                                            noBinding={connectionDelegation === null}
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                            <ConnectionMenu
+                                readonly={readonly}
+                                sdk={sdk}
+                                connectionId={existedConnectionId}
+                                openEnabled={!deleted}
+                                deleteEnabled={deleteEnabled}
+                                onClickDeleteConnection={onClickConnectionDeleteButton}
+                                onClickOpenConnection={openConnection}
+                                onClickReplaceConnectionMenuItem={onClickReplaceConnectionMenuItem}
+                                clickableTypes={clickableTypes}
+                                inactiveEntryIds={getInactiveEntryIds(connections)}
+                                workbookId={workbookId}
+                                collectionId={collectionId}
+                                onSharedDatasetCreationHandle={onSharedDatasetCreationHandle}
+                            />
                         </div>
-                        <ConnectionMenu
-                            sdk={sdk}
-                            connectionId={existedConnectionId}
-                            openEnabled={!deleted}
-                            deleteEnabled={deleteEnabled}
-                            onClickDeleteConnection={onClickConnectionDeleteButton}
-                            onClickOpenConnection={openConnection}
-                            onClickReplaceConnectionMenuItem={onClickReplaceConnectionMenuItem}
-                            clickableTypes={clickableTypes}
-                            inactiveEntryIds={getInactiveEntryIds(connections)}
-                            workbookId={workbookId}
-                            collectionId={collectionId}
-                            onSharedDatasetCreationHandle={onSharedDatasetCreationHandle}
-                        />
-                    </div>
-                );
-            })}
+                    );
+                })
+            )}
         </>
     );
 }
@@ -308,9 +349,11 @@ type SelectConnectionsProps = {
     openConnection: OpenConnectionHandle;
     replaceConnection: ReplaceConnectionHandle;
     connectionId?: string;
-    workbookId?: string;
-    collectionId?: string;
+    workbookId: WorkbookId;
+    collectionId: CollectionId;
     options: Partial<DatasetOptions>;
+    isLoadingConnectionInfo: boolean;
+    readonly: boolean;
 };
 
 function SelectConnections(props: SelectConnectionsProps) {
@@ -326,12 +369,15 @@ function SelectConnections(props: SelectConnectionsProps) {
         workbookId,
         options,
         collectionId,
+        isLoadingConnectionInfo,
+        readonly,
     } = props;
     const dispatch = useDispatch();
+    const connectionDelegation = useSelector(selectedConnectionDelegationStatusSelector);
     const [isNavVisible, setNavVisibility] = useState(false);
     const connectionBtnRef = useRef(null);
 
-    function onEntryClick(entry: Partial<GetEntryResponse>) {
+    function onEntryClick(entry: PartialEntryResponse) {
         onSelectConnection(entry);
         setNavVisibility(false);
     }
@@ -349,35 +395,31 @@ function SelectConnections(props: SelectConnectionsProps) {
                             dialogTitle: getSharedEntryMockText(
                                 'title-select-shared-entry-dialog-connection',
                             ),
-                            getIsInactiveEntity: (entry) =>
-                                entry.entity === CollectionItemEntities.ENTRY &&
-                                entry.scope === 'dataset',
-                            onSelectEntry: (connection) => {
-                                if (connection.entity === CollectionItemEntities.ENTRY) {
-                                    dispatch(
-                                        openDialog({
-                                            id: DIALOG_SHARED_ENTRY_PERMISSIONS,
-                                            props: {
-                                                open: true,
-                                                onClose: () => dispatch(closeDialog()),
-                                                entry: connection,
-                                                onApply: (delegate) => {
-                                                    dispatch(setSharedDatasetDelegation(delegate));
-                                                    onApply(connection);
-                                                    dispatch(closeDialog());
-                                                    dispatch(closeDialog());
-                                                },
-                                            },
-                                        }),
-                                    );
+                            getIsInactiveEntity: (entry) => {
+                                if (entry.entity !== CollectionItemEntities.ENTRY) {
+                                    return false;
                                 }
+
+                                const canCreateBinding =
+                                    entry.permissions?.createEntryBinding ||
+                                    entry.permissions?.createLimitedEntryBinding;
+                                const isAlreadySelectedConnection =
+                                    entry.entryId === connectionId && connectionDelegation !== null;
+                                return (
+                                    entry.scope === EntryScope.Dataset ||
+                                    isAlreadySelectedConnection ||
+                                    !canCreateBinding
+                                );
+                            },
+                            onSelectEntry: async (connection) => {
+                                await onApply(connection);
                             },
                         },
                     }),
                 );
             }
         },
-        [collectionId, dispatch],
+        [collectionId, dispatch, connectionId, connectionDelegation],
     );
 
     const onAddConnectionClick = React.useCallback(() => {
@@ -399,6 +441,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                 <span>{i18n('label_sources')}</span>
             </div>
             <ConnectionsList
+                readonly={readonly}
                 sdk={sdk}
                 connectionId={connectionId}
                 connections={connections}
@@ -410,6 +453,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                 workbookId={workbookId}
                 collectionId={collectionId}
                 onSharedDatasetCreationHandle={onSharedDatasetCreationHandle}
+                isLoading={isLoadingConnectionInfo}
             />
             {isVisibleAddConnectionButton && (
                 <div className={b('bottom-section')}>
@@ -482,9 +526,12 @@ type SelectSourcePrototypesProps = SelectConnectionsProps & {
     isDisabledAddSource?: boolean;
     isSourcesLoading: boolean;
     error?: DatasetError;
-    workbookId?: string;
-    collectionId?: string;
+    workbookId: WorkbookId;
+    collectionId: CollectionId;
     options: Partial<DatasetOptions>;
+    isLoadingConnectionInfo: boolean;
+    readonly: boolean;
+    bindedWorkbookId?: WorkbookId;
 };
 
 function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
@@ -510,6 +557,9 @@ function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
         workbookId,
         collectionId,
         options,
+        isLoadingConnectionInfo,
+        readonly,
+        bindedWorkbookId,
     } = props;
 
     const connectionId = id || entryId;
@@ -519,6 +569,7 @@ function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
     return (
         <div className={b()}>
             <SelectConnections
+                isLoadingConnectionInfo={isLoadingConnectionInfo}
                 sdk={sdk}
                 connections={connections}
                 connectionId={connectionId}
@@ -530,8 +581,11 @@ function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
                 workbookId={workbookId}
                 collectionId={collectionId}
                 options={options}
+                readonly={readonly}
             />
             <SourcesTable
+                bindedWorkbookId={bindedWorkbookId}
+                readonly={readonly}
                 error={error}
                 sources={sourcePrototypes}
                 loading={isSourcesLoading}

@@ -3,7 +3,10 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {EntryScope} from 'shared';
-import {setLastUsedConnectionId, setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {
+    setLastUsedConnectionId,
+    setSelectorDialogItem,
+} from 'ui/store/actions/controlDialog/controlDialog';
 import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {selectOpenedItemMeta, selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 

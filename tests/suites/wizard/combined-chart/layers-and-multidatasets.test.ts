@@ -77,6 +77,7 @@ const expectedLabelsTexts = [
     '01.11.2023',
 ];
 
+// todo: remove along with GravityChartsForLineAreaAndBarX feature flag
 datalensTest.describe('Multi-faceted charts with layers', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         await openTestPage(page, RobotChartsWizardUrls.Empty);

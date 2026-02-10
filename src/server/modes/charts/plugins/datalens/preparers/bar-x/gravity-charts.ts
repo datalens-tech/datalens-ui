@@ -3,6 +3,7 @@ import type {
     BarXSeriesData,
     ChartData,
     ChartSeries,
+    ChartYAxis,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
@@ -10,23 +11,30 @@ import sortBy from 'lodash/sortBy';
 import type {SeriesExportSettings, ServerField, WrappedMarkdown} from '../../../../../../../shared';
 import {
     AxisMode,
+    GradientType,
     LabelsPositions,
     PERCENT_VISUALIZATIONS,
     PlaceholderId,
     getFakeTitleOrTitle,
+    getIsNavigatorEnabled,
+    getRgbColorValue,
     getXAxisMode,
     isDateField,
     isHtmlField,
     isMarkdownField,
     isMarkupField,
     isNumberField,
+    transformHexToRgb,
 } from '../../../../../../../shared';
 import type {WrappedHTML} from '../../../../../../../shared/types/charts';
-import {getBaseChartConfig} from '../../gravity-charts/utils';
+import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
+import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slider';
+import {getRgbColors} from '../../utils/color-helpers';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
+import {isGradientMode} from '../../utils/misc-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import {getSegmentMap} from '../helpers/segments';
@@ -66,6 +74,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         colors,
         colorsConfig,
         visualizationId,
+        segments: split,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
@@ -93,11 +102,8 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
     }
 
     const preparedData = prepareBarX(args);
-    const xCategories = xField
-        ? preparedData.categories
-        : yField
-          ? [getFakeTitleOrTitle(yField)]
-          : [];
+    const preparedCategories = preparedData.categories ?? preparedData.categories_ms;
+    const xCategories = xField ? preparedCategories : yField ? [getFakeTitleOrTitle(yField)] : [];
 
     const exportSettings: SeriesExportSettings = {
         columns: [
@@ -113,16 +119,60 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         );
     }
 
+    const isGradient =
+        Boolean(colorItem) &&
+        isGradientMode({
+            colorField: colorItem,
+            colorFieldDataType: colorItem.data_type,
+            colorsConfig,
+        });
+
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
     const shouldUsePercentStacking = PERCENT_VISUALIZATIONS.has(visualizationId);
+    const inNavigatorEnabled = getIsNavigatorEnabled(shared);
+
+    let seriesTooltip: BarXSeries['tooltip'];
+    if (!yField) {
+        seriesTooltip = {enabled: false};
+    }
+
     const seriesData = preparedData.graphs.map<ExtendedBarXSeries>((graph) => {
+        const rangeSlider = inNavigatorEnabled
+            ? getSeriesRangeSliderConfig({
+                  extraSettings: shared.extraSettings,
+                  seriesName: graph.title,
+              })
+            : undefined;
+        const seriesName = graph.custom?.segmentTitle
+            ? `${graph.custom.segmentTitle}: ${graph.title}`
+            : graph.title;
+
+        let seriesColor = graph.color;
+        if (!seriesColor && isGradient) {
+            const points = preparedData.graphs
+                .map((graph) =>
+                    (graph.data ?? []).map((d: OldBarXDataItem) => ({colorValue: d?.colorValue})),
+                )
+                .flat(2);
+            const colorScale = getLegendColorScale({
+                colorsConfig,
+                points,
+            });
+            const gradientColors = getRgbColors(colorScale.colors.map(transformHexToRgb), false);
+            seriesColor = getRgbColorValue(0.5, GradientType.TWO_POINT, 0.5, [
+                gradientColors[0],
+                gradientColors[gradientColors.length - 1],
+            ]);
+        }
+
         return {
-            name: graph.title,
+            name: seriesName,
             type: 'bar-x',
-            color: graph.color,
+            color: seriesColor,
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
+            tooltip: seriesTooltip,
             data: graph.data.reduce(
                 (acc: ExtendedBaXrSeriesData[], item: OldBarXDataItem, index: number) => {
                     const dataItem: ExtendedBaXrSeriesData = {
@@ -155,6 +205,10 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 },
                 [],
             ),
+            legend: {
+                groupId: graph.id,
+                itemText: graph.legendTitle,
+            },
             custom: {...graph.custom, colorValue: graph.colorValue, exportSettings},
             dataLabels: {
                 enabled: isDataLabelsEnabled,
@@ -162,6 +216,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 html: shouldUseHtmlForLabels,
             },
             yAxis: graph.yAxis,
+            rangeSlider,
         };
     });
 
@@ -184,15 +239,33 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
             colorScale,
         };
-    } else if (seriesData.length <= 1) {
-        legend = {enabled: false};
+    } else {
+        const shouldUseHtmlForLegend = isHtmlField(colorItem);
+        legend = {html: shouldUseHtmlForLegend};
+
+        const nonEmptyLegendGroups = Array.from(
+            new Set(seriesData.map((s) => s.legend?.groupId).filter(Boolean)),
+        );
+        if (seriesData.length <= 1 || nonEmptyLegendGroups.length <= 1) {
+            legend.enabled = false;
+        }
     }
 
     let xAxis: ChartData['xAxis'] = {};
-    if (isCategoriesXAxis) {
+    if (isCategoriesXAxis && xCategories?.length) {
         xAxis = {
             type: 'category',
-            categories: xCategories?.map(String),
+            // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+            categories: xCategories.map((category) => {
+                if (typeof category === 'number') {
+                    return String(category);
+                }
+
+                return category;
+            }),
+            labels: {
+                html: isHtmlField(xField) || isMarkdownField(xField) || isMarkupField(xField),
+            },
         };
     } else {
         if (isDateField(xField)) {
@@ -218,6 +291,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
     const segmentsMap = getSegmentMap(args);
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
     const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
+    const isSplitWithHtmlValues = isHtmlField(split?.[0]);
 
     const axisLabelNumberFormat = yPlaceholder
         ? getAxisFormatting({
@@ -232,14 +306,35 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         legend,
         xAxis,
         yAxis: segments.map((d) => {
-            return {
+            const axisBaseConfig = getYAxisBaseConfig({
+                placeholder: yPlaceholder,
+            });
+
+            let axisTitle: ChartYAxis['title'] | null = null;
+            if (isSplitEnabled) {
+                let titleText: string = d.title;
+                if (isSplitWithHtmlValues) {
+                    // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+                    titleText = wrapHtml(d.title);
+                }
+
+                axisTitle = {
+                    text: titleText,
+                    rotation: 0,
+                    maxWidth: '25%',
+                    html: isSplitWithHtmlValues,
+                };
+            }
+
+            return merge(axisBaseConfig, {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
                 plotIndex: d.index,
-                position: d.isOpposite ? 'right' : 'left',
-                title: isSplitEnabled ? {text: d.title} : undefined,
-            };
+                title: axisTitle,
+                startOnTick: isSplitEnabled,
+                endOnTick: isSplitEnabled,
+            });
         }),
         split: {
             enable: isSplitEnabled,
@@ -258,7 +353,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
 
     return merge(
         getBaseChartConfig({
-            extraSettings: shared.extraSettings,
+            shared,
             visualization: {placeholders, id: visualizationId},
         }),
         config,

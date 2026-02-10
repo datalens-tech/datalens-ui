@@ -31,15 +31,11 @@ import {getDuration, normalizeParams, resolveParams} from '../utils';
 import type {CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
 import {CommentsFetcher} from './comments-fetcher';
 import type {LogItem} from './console';
-import type {
-    AuthParams,
-    DataFetcherOriginalReqHeaders,
-    DataFetcherResult,
-    ZitadelParams,
-} from './data-fetcher';
+import type {AuthParams, DataFetcherOriginalReqHeaders, DataFetcherResult} from './data-fetcher';
 import {DataFetcher} from './data-fetcher';
 import {ProcessorHooks} from './hooks';
 import {updateActionParams, updateParams} from './paramsUtils';
+import {getSourcesErrorStatusCode} from './sources';
 import {StackTracePreparer} from './stack-trace-prepaper';
 import type {
     ChartBuilder,
@@ -60,9 +56,6 @@ const {
     DEFAULT_OVERSIZE_ERROR_STATUS,
     DEFAULT_RUNTIME_ERROR_STATUS,
     DEFAULT_RUNTIME_TIMEOUT_STATUS,
-    DEFAULT_SOURCE_FETCHING_ERROR_STATUS_400,
-    DEFAULT_SOURCE_FETCHING_ERROR_STATUS_500,
-    DEFAULT_SOURCE_FETCHING_LIMIT_EXCEEDED_STATUS,
     DEPS_RESOLVE_ERROR,
     HOOKS_ERROR,
     ROWS_NUMBER_OVERSIZE,
@@ -70,8 +63,6 @@ const {
     RUNTIME_TIMEOUT_ERROR,
     SEGMENTS_OVERSIZE,
     TABLE_OVERSIZE,
-    REQUEST_SIZE_LIMIT_EXCEEDED,
-    ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
 } = configConstants;
 
 export class SandboxError extends Error {
@@ -211,7 +202,6 @@ export type SerializableProcessorParams = {
     configId: string;
     revId?: string;
     isEmbed: boolean;
-    zitadelParams: ZitadelParams | undefined;
     authParams: AuthParams | undefined;
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
@@ -244,7 +234,6 @@ export class Processor {
         configId,
         revId,
         isEmbed,
-        zitadelParams,
         authParams,
         originalReqHeaders,
         adapterContext,
@@ -579,8 +568,7 @@ export class Processor {
                     subrequestHeaders[DL_CONTEXT_HEADER] = JSON.stringify(dlContext);
                 }
 
-                resolvedSources = await DataFetcher.fetch({
-                    sources,
+                const dataFetcherOptions = {
                     ctx,
                     iamToken,
                     subrequestHeaders,
@@ -588,14 +576,28 @@ export class Processor {
                     userLogin,
                     workbookId,
                     isEmbed,
-                    zitadelParams,
                     authParams,
                     originalReqHeaders,
                     adapterContext,
                     telemetryCallbacks,
                     cacheClient,
                     sourcesConfig,
+                };
+                resolvedSources = await DataFetcher.fetch({
+                    sources,
+                    ...dataFetcherOptions,
                 });
+
+                if (builder.buildPaletteSources) {
+                    const paletteSourcesResult = await builder.buildPaletteSources({
+                        sources: resolvedSources,
+                    });
+                    const resolvedPalettes = await DataFetcher.fetch({
+                        sources: paletteSourcesResult.exports as Record<string, Source>,
+                        ...dataFetcherOptions,
+                    });
+                    Object.assign(resolvedSources, resolvedPalettes);
+                }
 
                 if (Object.keys(resolvedSources).length) {
                     timings.dataFetching = getDuration(hrStart);
@@ -640,33 +642,7 @@ export class Processor {
                         sources: error,
                     };
 
-                    let maybe400 = false;
-                    let maybe500 = false;
-                    let requestSizeLimitExceeded = false;
-                    Object.values(error).forEach((sourceResult) => {
-                        const possibleStatus = sourceResult && sourceResult.status;
-
-                        if (399 < possibleStatus && possibleStatus < 500) {
-                            maybe400 = true;
-                        } else {
-                            maybe500 = true;
-                        }
-
-                        if (
-                            sourceResult.code === REQUEST_SIZE_LIMIT_EXCEEDED ||
-                            sourceResult.code === ALL_REQUESTS_SIZE_LIMIT_EXCEEDED
-                        ) {
-                            requestSizeLimitExceeded = true;
-                        }
-                    });
-
-                    if (maybe400 && !maybe500) {
-                        response.error.statusCode = DEFAULT_SOURCE_FETCHING_ERROR_STATUS_400;
-                    } else if (requestSizeLimitExceeded) {
-                        response.error.statusCode = DEFAULT_SOURCE_FETCHING_LIMIT_EXCEEDED_STATUS;
-                    } else {
-                        response.error.statusCode = DEFAULT_SOURCE_FETCHING_ERROR_STATUS_500;
-                    }
+                    response.error.statusCode = getSourcesErrorStatusCode(error);
                 }
 
                 return response;
@@ -890,12 +866,27 @@ export class Processor {
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
 
                 result.dataExport = mapValues(data, (sourceResponse) => {
-                    if (
-                        typeof sourceResponse === 'object' &&
-                        sourceResponse &&
-                        'data_export' in sourceResponse
-                    ) {
-                        return sourceResponse.data_export as ApiV2DataExportField;
+                    if (sourceResponse) {
+                        if (Array.isArray(sourceResponse)) {
+                            const meta = sourceResponse.find(
+                                (node) =>
+                                    node &&
+                                    typeof node === 'object' &&
+                                    'event' in node &&
+                                    node.event === 'metadata',
+                            );
+                            if (
+                                meta &&
+                                typeof meta === 'object' &&
+                                'data' in meta &&
+                                'data_export' in meta.data
+                            ) {
+                                return meta.data.data_export as ApiV2DataExportField;
+                            }
+                        }
+                        if (typeof sourceResponse === 'object' && 'data_export' in sourceResponse) {
+                            return sourceResponse.data_export as ApiV2DataExportField;
+                        }
                     }
                     return undefined;
                 });

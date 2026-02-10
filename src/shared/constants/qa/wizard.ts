@@ -20,6 +20,7 @@ export const enum SectionDatasetQA {
     CreateFieldButton = 'create-field-button',
     CreateHierarchyButton = 'create-hierarchy-button',
     CreateParameterButton = 'create-parameter-button',
+    DatasetSelectItem = 'dataset-select-item',
     GoToDatasetButton = 'go-to-dataset-action-button',
     ReplaceDatasetButton = 'replace-dataset-action-button',
     RemoveDatasetButton = 'remove-dataset-action-button',
@@ -132,12 +133,6 @@ export const enum DialogColorQa {
     ApplyButton = 'color-dialog-apply-button',
 }
 
-export const enum DialogMetricSettingsQa {
-    Dialog = 'metric-settings-dialog',
-    CancelButton = 'metric-settings-dialog-cancel',
-    CustomColorButton = 'metric-settings-dialog-custom-color-btn',
-}
-
 export const enum SectionVisualizationAddItemQa {
     NoFieldsErrorTooltip = 'section-visualisation-no-field-error-tooltip',
     LabelsOverflowErrorTooltip = 'section-visualisation-labels-overflow-error-tooltip',
@@ -145,10 +140,14 @@ export const enum SectionVisualizationAddItemQa {
 }
 
 export const enum DialogPlaceholderQa {
+    Dialog = 'dialog-placeholder',
     TooltipZeroToMaxScale = 'dialog-placeholder-tooltip-zero-to-max-scale',
     TooltipLogarithmicAxis = 'dialog-placeholder-tooltip-logarithmic-axis',
     AxisFormatMode = 'dialog-placeholder-axis-format-mode',
     LabelsViewRadioButtons = 'dialog-placeholder-axis-labels-view',
+    AxisScaleModeRadioButtons = 'dialog-placeholder-axis-scale-mode',
+    AxisMinInput = 'dialog-placeholder-axis-min-input',
+    AxisMaxInput = 'dialog-placeholder-axis-max-input',
 }
 
 export const enum DatasetItemActionsQa {
@@ -172,6 +171,7 @@ export const enum DialogMultiDatasetQa {
 
 export const enum PlaceholderActionQa {
     OpenColorDialogIcon = 'placeholder-action-open-color-dialog',
+    OpenMetricColorDialogIcon = 'placeholder-action-open-metric-color-dialog',
 }
 
 export const enum HierarchyEditorQa {
@@ -191,4 +191,13 @@ export const enum ChartSaveControlsQA {
 export const enum ChartSettingsDialogQA {
     IndicatorTitleMode = 'indicator-title-mode',
     PreserveWhiteSpace = 'preserve-white-space',
+    IndicatorFontSize = 'indicator-font-size',
+}
+
+export const enum DialogMetricColorsQa {
+    Dialog = 'dialog-metric-colors',
+    ApplyButton = 'dialog-metric-colors-apply-button',
+    CancelButton = 'dialog-metric-colors-cancel-button',
+    Palette = 'dialog-metric-settings-palette',
+    CustomColorButton = 'dialog-metric-colors-custom-color-btn',
 }

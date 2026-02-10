@@ -1,8 +1,7 @@
 import {omit, uniqBy} from 'lodash';
 
 import {
-    DL_COMPONENT_HEADER,
-    DlComponentHeader,
+    DATASET_ID_HEADER,
     TIMEOUT_60_SEC,
     TIMEOUT_90_SEC,
     WORKBOOK_ID_HEADER,
@@ -20,6 +19,8 @@ import type {
     CopyWorkbookEntryResponse,
     CreateFolderArgs,
     CreateFolderResponse,
+    DeleteSharedEntriesArgs,
+    DeleteSharedEntriesResponse,
     DeleteUSEntryArgs,
     DeleteUSEntryResponse,
     EntityBindingsArgs,
@@ -28,12 +29,10 @@ import type {
     GetEntriesAnnotationResponse,
     GetEntriesByKeyPatternArgs,
     GetEntriesByKeyPatternResponse,
-    GetEntryArgs,
     GetEntryByKeyArgs,
     GetEntryByKeyResponse,
     GetEntryMetaArgs,
     GetEntryMetaResponse,
-    GetEntryResponse,
     GetRelationsArgs,
     GetRelationsGraphArgs,
     GetRelationsGraphResponse,
@@ -44,50 +43,40 @@ import type {
     GetRevisionsResponse,
     GetSharedEntryBindingsArgs,
     GetSharedEntryBindingsResponse,
+    GetSharedEntryInfoArgs,
+    GetSharedEntryInfoResponse,
+    GetSharedEntryWorkbookRelationsArgs,
+    GetSharedEntryWorkbookRelationsResponse,
     MoveEntryArgs,
     MoveEntryResponse,
+    MoveSharedEntriesArgs,
+    MoveSharedEntriesResponse,
+    MoveSharedEntryArgs,
     RenameEntryArgs,
     RenameEntryResponse,
     SwitchPublicationStatusArgs,
     SwitchPublicationStatusResponse,
 } from '../../types';
 
+import {_createEntry} from './create-entry';
 import {getEntries} from './get-entries';
 import {getEntriesRelations} from './get-entries-relations';
+import {getEntry} from './get-entry';
 import {listDirectory} from './list-directory';
+import {_updateEntry} from './update-entry';
 
 const PATH_PREFIX = '/v1';
 const PATH_PREFIX_V2 = '/v2';
 const PRIVATE_PATH_PREFIX = '/private';
 
 export const entriesActions = {
+    _createEntry,
+    _updateEntry,
     getEntriesRelations,
     listDirectory,
     getEntries,
-    getEntry: createAction<GetEntryResponse, GetEntryArgs>({
-        method: 'GET',
-        path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: (
-            {
-                entryId: _entryId,
-                workbookId,
-                includeDlComponentUiData,
-                includeFavorite = true,
-                ...query
-            },
-            headers,
-        ) => ({
-            query: {
-                ...query,
-                includeFavorite,
-            },
-            headers: {
-                ...headers,
-                ...(includeDlComponentUiData ? {[DL_COMPONENT_HEADER]: DlComponentHeader.UI} : {}),
-                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
-            },
-        }),
-    }),
+    getEntry,
+    _getEntryWithAudit: getEntry,
     getEntryByKey: createAction<GetEntryByKeyResponse, GetEntryByKeyArgs>({
         method: 'GET',
         path: () => `${PATH_PREFIX}/entriesByKey`,
@@ -96,7 +85,13 @@ export const entriesActions = {
     getEntryMeta: createAction<GetEntryMetaResponse, GetEntryMetaArgs>({
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}/meta`,
-        params: (_, headers) => ({headers}),
+        params: ({bindedWorkbookId, bindedDatasetId}, headers) => ({
+            headers: {
+                ...headers,
+                ...(bindedWorkbookId ? {[WORKBOOK_ID_HEADER]: bindedWorkbookId} : {}),
+                ...(bindedDatasetId ? {[DATASET_ID_HEADER]: bindedDatasetId} : {}),
+            },
+        }),
     }),
     getRevisions: createAction<GetRevisionsOutput, GetRevisionsArgs, GetRevisionsResponse>({
         method: 'GET',
@@ -259,6 +254,23 @@ export const entriesActions = {
             headers,
         }),
     }),
+    getSharedEntryDelegation: createAction<
+        EntityBindingsResponse,
+        Omit<EntityBindingsArgs, 'delegation'>
+    >({
+        method: 'GET',
+        path: () => `${PATH_PREFIX}/entity-bindings`,
+        params: ({sourceId, targetId, bindedWorkbookId}, headers) => ({
+            query: {
+                sourceId,
+                targetId,
+            },
+            headers: {
+                ...headers,
+                ...(bindedWorkbookId ? {[WORKBOOK_ID_HEADER]: bindedWorkbookId} : {}),
+            },
+        }),
+    }),
     createSharedEntryBinding: createAction<EntityBindingsResponse, EntityBindingsArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/entity-bindings/create`,
@@ -292,15 +304,57 @@ export const entriesActions = {
     >({
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${entryId}/entity-bindings`,
-        params: ({page, pageSize, entryAs, mode, filterString}, headers) => ({
+        params: (
+            {page, pageSize, entryAs, mode, filterString, includePermissionsInfo},
+            headers,
+        ) => ({
             query: {
                 pageSize,
                 page,
                 entryAs,
                 mode,
                 filterString,
+                includePermissionsInfo,
             },
             headers,
         }),
+    }),
+    getSharedEntryWorkbookRelations: createAction<
+        GetSharedEntryWorkbookRelationsResponse,
+        GetSharedEntryWorkbookRelationsArgs
+    >({
+        method: 'GET',
+        path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${entryId}/workbook-relations`,
+        params: ({scope, workbookId}, headers) => ({
+            query: {
+                workbookId,
+                scope,
+            },
+            headers,
+        }),
+    }),
+    moveSharedEntry: createAction<MoveEntryResponse, MoveSharedEntryArgs>({
+        method: 'POST',
+        path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${filterUrlFragment(entryId)}/move`,
+        params: ({collectionId, name}, headers) => ({headers, body: {collectionId, name}}),
+        timeout: TIMEOUT_60_SEC,
+    }),
+    moveSharedEntries: createAction<MoveSharedEntriesResponse, MoveSharedEntriesArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/shared-entries/move-entries`,
+        params: ({collectionId, entryIds}, headers) => ({headers, body: {collectionId, entryIds}}),
+        timeout: TIMEOUT_60_SEC,
+    }),
+    deleteSharedEntries: createAction<DeleteSharedEntriesResponse, DeleteSharedEntriesArgs>({
+        method: 'DELETE',
+        path: () => `${PATH_PREFIX}/shared-entries/delete-entries`,
+        params: ({entryIds}, headers) => ({headers, body: {entryIds}}),
+        timeout: TIMEOUT_60_SEC,
+    }),
+    getSharedEntryInfo: createAction<GetSharedEntryInfoResponse, GetSharedEntryInfoArgs>({
+        method: 'GET',
+        path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${entryId}/info`,
+        params: ({includePermissionsInfo}, headers) => ({headers, query: {includePermissionsInfo}}),
+        timeout: TIMEOUT_60_SEC,
     }),
 };

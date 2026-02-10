@@ -5,6 +5,7 @@ import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
+import {DatasetSourcesTableQa} from 'shared';
 
 import {MANAGED_BY} from '../../constants';
 import DatasetUtils from '../../helpers/utils';
@@ -26,33 +27,51 @@ const attachDnD = (drag, drop) => (node) => {
 };
 
 function SourceMenu(props) {
-    const {avatar, avatar: {id, isConnectedWithAvatar} = {}, onClickEditBtn, onDelete} = props;
+    const {
+        avatar,
+        avatar: {id, isConnectedWithAvatar} = {},
+        onClickEditBtn,
+        onDelete,
+        readonly,
+    } = props;
 
     return (
         <DropdownMenu
             size="s"
             switcherWrapperClassName={b('btn-menu-control')}
             renderSwitcher={({onClick, onKeyDown}) => (
-                <Button size="s" view="flat" onClick={onClick} onKeyDown={onKeyDown}>
+                <Button
+                    size="s"
+                    view="flat"
+                    onClick={onClick}
+                    onKeyDown={onKeyDown}
+                    qa={DatasetSourcesTableQa.SourceContextMenuBtn}
+                >
                     <Icon className={b('icon-more')} data={Ellipsis} width={14} />
                 </Button>
             )}
-            popupProps={{placement: ['bottom-start', 'top-start'], qa: 'ds-source-menu'}}
+            popupProps={{
+                placement: ['bottom-start', 'top-start'],
+                qa: DatasetSourcesTableQa.SourceMenu,
+            }}
             items={[
                 {
                     text: i18n('label_menu-popup-modify-source'),
+                    disabled: readonly,
                     action: (e) => {
                         e.stopPropagation();
                         onClickEditBtn(avatar);
                     },
+                    qa: DatasetSourcesTableQa.SourceContextMenuModify,
                 },
                 {
                     text: i18n('label_menu-popup-delete-source'),
-                    disabled: isConnectedWithAvatar,
+                    disabled: isConnectedWithAvatar || readonly,
                     action: (e) => {
                         e.stopPropagation();
                         onDelete({id});
                     },
+                    qa: DatasetSourcesTableQa.SourceContextMenuDelete,
                 },
             ]}
         />
@@ -71,6 +90,7 @@ function Source(props) {
         onClickEditBtn,
         onDeleteSource,
         position,
+        readonly,
     } = props;
     const {id, managed_by, isSource} = avatar;
 
@@ -89,7 +109,7 @@ function Source(props) {
                 drag_disabled: dragDisabled || isActive,
             })}
             style={position}
-            data-qa="ds-source"
+            data-qa={DatasetSourcesTableQa.Source}
         >
             <Icon className={b('icon-avatar')} data={iconAvatarTable} width={16} height={16} />
             <span title={avatarTitle} className={b('avatar-title')}>
@@ -97,6 +117,7 @@ function Source(props) {
             </span>
             {managed_by === MANAGED_BY.USER && (
                 <SourceMenu
+                    readonly={readonly}
                     avatar={avatar}
                     onClickEditBtn={onClickEditBtn}
                     onDelete={onDeleteSource}
@@ -110,6 +131,7 @@ SourceMenu.propTypes = {
     avatar: PropTypes.object.isRequired,
     onClickEditBtn: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
+    readonly: PropTypes.bool,
 };
 
 Source.propTypes = {
@@ -126,6 +148,7 @@ Source.propTypes = {
     onDeleteSource: PropTypes.func,
     onClickEditBtn: PropTypes.func,
     dragDisabled: PropTypes.bool,
+    readonly: PropTypes.bool,
 };
 Source.defaultProps = {
     isActive: false,

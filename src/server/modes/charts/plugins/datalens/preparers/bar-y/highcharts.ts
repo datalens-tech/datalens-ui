@@ -8,7 +8,6 @@ import {
     PlaceholderId,
     getAxisMode,
     getFakeTitleOrTitle,
-    getIsNavigatorEnabled,
     getXAxisMode,
     isDateField,
     isFloatField,
@@ -91,10 +90,6 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
                 enabled: isLegendEnabled(shared.extraSettings),
                 symbolWidth: null,
             };
-        }
-
-        if (getIsNavigatorEnabled(shared)) {
-            customConfig.xAxis.ordinal = isXDiscrete;
         }
 
         if (shared.extraSettings) {

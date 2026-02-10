@@ -4,10 +4,15 @@ import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import ChartKit from 'libs/DatalensChartkit';
 import {batch, useDispatch, useSelector} from 'react-redux';
+import {Feature} from 'shared';
 import {DashboardDialogSettingsQa} from 'shared/constants/qa/dash';
-import {DEFAULT_DASH_MARGINS} from 'ui/components/DashKit/constants';
+import {
+    DEFAULT_DASH_MARGINS,
+    OLD_DEFAULT_WIDGET_BORDER_RADIUS,
+} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
 import {openDialog} from 'ui/store/actions/dialog';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {DatalensGlobalState} from '../../../../..';
 import {i18n} from '../../../../../../i18n';
@@ -22,6 +27,7 @@ import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
     selectDashAccessDescription,
     selectDashSupportDescription,
+    selectEntryId,
     selectIsDialogVisible,
     selectSettings,
 } from '../../../store/selectors/dashTypedSelectors';
@@ -38,6 +44,7 @@ const b = block('dialog-settings');
 const Settings = () => {
     const dispatch = useDispatch();
 
+    const isNew = !useSelector(selectEntryId);
     const settings = useSelector(selectSettings);
     const visible = useSelector((state: DatalensGlobalState) =>
         selectIsDialogVisible(state, DIALOG_TYPE.SETTINGS),
@@ -73,6 +80,21 @@ const Settings = () => {
     const [accessDescription, setAccessDesc] = React.useState(accessDesc);
     const [supportDescription, setSupportDesc] = React.useState(supportDesc);
     const [margins, setMargins] = React.useState(settings.margins || DEFAULT_DASH_MARGINS);
+    const [internalMarginsEnabled, setInternalMarginsEnabled] = React.useState(
+        settings.widgetsSettings?.internalMarginsEnabled ?? true,
+    );
+    const [borderRadius, setBorderRadius] = React.useState(
+        settings.widgetsSettings?.borderRadius ??
+            (!isNew && isEnabledFeature(Feature.EnableNewDashSettings)
+                ? OLD_DEFAULT_WIDGET_BORDER_RADIUS
+                : undefined),
+    );
+    const [backgroundColorSettings, setBackgroundColorSettings] = React.useState(
+        settings.backgroundSettings?.color || undefined,
+    );
+    const [widgetsBackgroundColorSettings, setWidgetsBackgroundColorSettings] = React.useState(
+        settings.widgetsSettings?.backgroundSettings?.color || undefined,
+    );
     const [otherSettinsState, setOtherSettingsState] = React.useState<Partial<DashSettings>>({});
 
     const entryDialoguesRef = React.useRef<EntryDialogues>(null);
@@ -120,7 +142,7 @@ const Settings = () => {
             !dependentSelectors ||
             confirm(i18n('dash.settings-dialog.edit', 'context_dependent-selectors'))
         ) {
-            const newSettings = {
+            const newSettings: DashSettings = {
                 ...settings,
                 autoupdateInterval:
                     (typeof autoupdateInterval === 'string'
@@ -135,6 +157,21 @@ const Settings = () => {
                 hideDashTitle,
                 expandTOC,
                 loadPriority,
+                widgetsSettings: {
+                    ...settings.widgetsSettings,
+                    borderRadius,
+                    internalMarginsEnabled,
+                    backgroundSettings: widgetsBackgroundColorSettings
+                        ? {
+                              color: widgetsBackgroundColorSettings,
+                          }
+                        : undefined,
+                },
+                backgroundSettings: backgroundColorSettings
+                    ? {
+                          color: backgroundColorSettings,
+                      }
+                    : undefined,
                 ...otherSettinsState,
             };
 
@@ -250,12 +287,20 @@ const Settings = () => {
                 <Display
                     margins={margins}
                     onChangeMargins={handleMarginsChange}
+                    internalMarginsEnabled={internalMarginsEnabled}
+                    onChangeInternalMarginsEnabled={setInternalMarginsEnabled}
                     hideTabsValue={hideTabs}
                     onChangeHideTabs={() => setHideTabs(!hideTabs)}
                     hideDashTitleValue={hideDashTitle}
                     onChangeHideDashTitle={() => setHideTitle(!hideDashTitle)}
                     expandTOCValue={expandTOC}
                     onChangeExpandTOC={() => setExpandTOC(!expandTOC)}
+                    borderRadius={borderRadius}
+                    onChangeBorderRadius={setBorderRadius}
+                    backgroundSettings={backgroundColorSettings}
+                    onChangeBackgroundSettings={setBackgroundColorSettings}
+                    widgetsBackgroundSettings={widgetsBackgroundColorSettings}
+                    onChangeWidgetsBackgroundSettings={setWidgetsBackgroundColorSettings}
                 />
                 <OtherSettings
                     showDependentSelectors={showDependentSelectors}

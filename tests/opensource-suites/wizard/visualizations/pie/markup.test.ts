@@ -12,7 +12,7 @@ datalensTest.describe('Wizard', () => {
             const wizardPage = new WizardPage({page});
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
 
-            await wizardPage.setVisualization(WizardVisualizationId.PieD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Pie);
         });
 
         datalensTest('Markup with special characters in dataLabels @screenshot', async ({page}) => {

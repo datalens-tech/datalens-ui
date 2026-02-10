@@ -1,0 +1,65 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.group-extended-settings {
+    &__row {
+        --gc-form-row-label-width: 280px;
+        margin-block-end: var(--g-spacing-2);
+
+        &:last-child {
+            margin-block-end: 0;
+        }
+    }
+
+    &__help-icon {
+        left: var(--g-spacing-1);
+    }
+
+    &__note {
+        @include text-body-1();
+        margin-block-end: var(--g-spacing-5);
+    }
+
+    &__list-item-container {
+        padding: 0 var(--g-spacing-2);
+    }
+
+    &__list-item {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        border-radius: 4px;
+        height: 40px;
+        width: 100%;
+        cursor: pointer;
+        gap: var(--g-spacing-2);
+    }
+
+    &__item-title {
+        width: 240px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    &__radio-button {
+        flex: 1;
+    }
+
+    &__text-input {
+        width: 74px;
+    }
+
+    &__error {
+        width: 100%;
+        margin-block-start: var(--g-spacing-2);
+        color: var(--g-color-text-danger);
+    }
+
+    &__switch {
+        margin-top: var(--g-spacing-1);
+    }
+
+    &__form-section {
+        width: 624px;
+    }
+}

@@ -4,10 +4,10 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {DatalensTabsQa} from '../../../../src/shared/constants/qa';
 
 const SELECTORS = {
     DASH_CHART_KEY: 'dashkit-grid-item',
-    DASH_TAB2: '.gc-adaptive-tabs__tab-container:nth-child(2) .dl-tabs__tab',
 };
 
 datalensTest.describe(`Dashboards - tabs`, () => {
@@ -32,17 +32,17 @@ datalensTest.describe(`Dashboards - tabs`, () => {
             await dashboardPage.page.waitForSelector(slct(SELECTORS.DASH_CHART_KEY));
 
             // switch to the second tab
-
-            page.locator(SELECTORS.DASH_TAB2);
-
-            await dashboardPage.changeTab({tabSelector: SELECTORS.DASH_TAB2});
+            await dashboardPage.changeTab({
+                index: 1,
+            });
 
             // Cancel editing the dashboard without saving
             await dashboardPage.exitEditMode();
 
             // Check that the added tab is not left on the dashboard
-            const tab = await dashboardPage.selectTab(SELECTORS.DASH_TAB2);
-            expect(tab).toBeNull();
+            // if there is only one tab left, then the tab elements are not displayed.
+            const tabsCount = await page.locator(slct(DatalensTabsQa.Item)).count();
+            await expect(tabsCount).toEqual(0);
 
             await dashboardPage.deleteDashFromViewMode();
         },

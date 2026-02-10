@@ -11,6 +11,7 @@ import {URL_OPTIONS} from 'ui/constants/common';
 import type {MenuItemConfig, MenuItemModalProps} from 'ui/libs/DatalensChartkit/menu/Menu';
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import type {DeepPartial} from 'utility-types';
 
 import {ICONS_MENU_DEFAULT_SIZE, type MenuItemArgs} from '../../../../../../../../menu/MenuItems';
 import type {ChartKitDataProvider} from '../../../../../../types';
@@ -21,7 +22,7 @@ import {copyData, downloadData, isExportVisible} from './utils';
 
 const i18n = I18n.keyset('chartkit.menu.export');
 
-const directExportAction = (
+export const directExportAction = (
     format: ExportFormatsType,
     onExportLoading?: ExportChartArgs['onExportLoading'],
 ) => {
@@ -43,7 +44,7 @@ const directExportAction = (
 
 const screenshotExportAction = (
     chartsDataProvider: ChartKitDataProvider,
-    customConfig?: Partial<MenuItemConfig>,
+    customConfig?: DeepPartial<MenuItemConfig>,
 ) => {
     return (args: ExportActionArgs) => {
         const menuAction =
@@ -90,17 +91,17 @@ const getSubItems = ({
     showWiki?: boolean;
     showScreenshot?: boolean;
     chartsDataProvider: ChartKitDataProvider;
-    customConfig?: Partial<MenuItemConfig>;
+    customConfig?: DeepPartial<MenuItemConfig>;
 }) => {
     const onExportLoading = customConfig?.onExportLoading;
 
-    let csvAction =
+    const csvAction =
         customConfig?.items?.find((item) => item.id === MenuItemsIds.EXPORT_CSV)?.action ??
         csvExportAction(chartsDataProvider, onExportLoading);
 
-    if (customConfig?.actionWrapper) {
-        csvAction = customConfig.actionWrapper(csvAction);
-    }
+    const xlsxAction =
+        customConfig?.items?.find((item) => item.id === MenuItemsIds.EXPORT_XLSX)?.action ??
+        directExportAction(EXPORT_FORMATS.XLSX, onExportLoading);
 
     const submenuItems = [
         {
@@ -109,7 +110,7 @@ const getSubItems = ({
             isVisible: ({loadedData, error}: MenuItemArgs) =>
                 isEnabledFeature(Feature.XlsxChartExportEnabled) &&
                 isExportVisible({loadedData, error}),
-            action: directExportAction(EXPORT_FORMATS.XLSX, onExportLoading),
+            action: xlsxAction,
         },
         {
             id: MenuItemsIds.EXPORT_CSV,
@@ -176,7 +177,7 @@ export const getExportItem = ({
     showWiki?: boolean;
     showScreenshot?: boolean;
     chartsDataProvider: ChartKitDataProvider;
-    customConfig?: Partial<MenuItemConfig>;
+    customConfig?: DeepPartial<MenuItemConfig>;
     extraOptions?: Record<string, unknown>;
 }): MenuItemConfig => ({
     id: MenuItemsIds.EXPORT,

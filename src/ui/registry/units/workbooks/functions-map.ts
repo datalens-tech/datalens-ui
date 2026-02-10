@@ -4,25 +4,23 @@ import type {WorkbookWithPermissions} from 'shared/schema';
 import type {EntryDialogOnCloseArg} from 'ui/components/EntryDialogues/types';
 import type {CreateEntryActionType} from 'ui/units/workbooks/constants';
 import type {Item} from 'units/workbooks/components/WorkbookTabs/types';
-import type {WorkbookEntry} from 'units/workbooks/types';
+import type {WorkbookUnionEntry} from 'units/workbooks/types';
 
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
 
 import type {CheckWbCreateEntryButtonVisibility} from './types/functions/checkWbCreateEntryButtonVisibility';
+import type {GetWorkbookEntryUrl} from './types/functions/getWorkbookEntryUrl';
 
 export const workbooksFunctionsMap = {
     getWorkbookTabs: makeFunctionTemplate<(workbook: WorkbookWithPermissions) => Item[]>(),
-    getWorkbookEntryUrl:
-        makeFunctionTemplate<
-            (workbookEntry: WorkbookEntry, workbook: WorkbookWithPermissions) => string
-        >(),
+    getWorkbookEntryUrl: makeFunctionTemplate<GetWorkbookEntryUrl>(),
     getWorkbookDashboardEntryUrl:
         makeFunctionTemplate<(response: EntryDialogOnCloseArg) => string>(),
     getNewDashUrl: makeFunctionTemplate<(workbookId?: string) => string>(),
     useAdditionalWorkbookEntryActions:
         makeFunctionTemplate<
             (
-                workbookEntry: WorkbookEntry,
+                workbookEntry: WorkbookUnionEntry,
                 workbook: WorkbookWithPermissions,
             ) => DropdownMenuItemMixed<unknown>[]
         >(),

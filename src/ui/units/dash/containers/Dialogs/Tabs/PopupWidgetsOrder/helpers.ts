@@ -2,15 +2,11 @@ import {i18n} from 'i18n';
 import update from 'immutability-helper';
 import {isNumber} from 'lodash';
 import type {DashData, DashTab, DashTabItem, DashTabItemBase, DashTabItemWidgetTab} from 'shared';
-import {DashTabItemType} from 'shared';
-import {getGroupedItems as getGroupedItemsReexport} from 'ui/units/dash/modules/helpers';
+import {DashTabItemType, getAllTabItems} from 'shared';
 
 import {getTextOverflowedStr} from '../../../../../../utils/stringUtils';
 
 const MAX_ROW_WIDGET_TEXT_LENGTH = 100;
-
-// TODO delete after merge
-export const getGroupedItems = getGroupedItemsReexport;
 
 export const getWidgetRowText = (item: DashTabItem) => {
     let text = '';
@@ -104,7 +100,7 @@ interface MappedItem {
 }
 
 const getMapped = (data: DashTab, id: string) =>
-    data.items.map((item) => ({
+    getAllTabItems(data).map((item) => ({
         tabId: id,
         id: item.id,
         orderId: item.orderId,

@@ -1,6 +1,8 @@
 import {Page} from '@playwright/test';
 
 import {slct, waitForCondition} from './index';
+import {COMMON_CHARTKIT_SELECTORS} from '../page-objects/constants/chartkit';
+import {CollectionActionsQa, EntryScope} from '../../src/shared';
 
 export const getStylesFromString = (string = '') => {
     return string
@@ -25,25 +27,29 @@ export const mapColorsAndShapes = (colors: string[], shapes: string[]) => {
 
 export const getXAxisValues = async (page: Page): Promise<(string | null)[]> => {
     return await page.evaluate(() => {
+        let xAxisLabelNodes = [];
+
         const xAxisValues = document.querySelector('.highcharts-xaxis-labels');
         if (xAxisValues) {
-            const childrenElements = Array.from(xAxisValues.children);
-            return childrenElements
-                .sort((a, b) => {
-                    const firstElAttributes = a.attributes;
-                    const secondElAttributes = b.attributes;
-
-                    const firstElValue = firstElAttributes.getNamedItem('x')?.value || '';
-                    const secondElValue = secondElAttributes.getNamedItem('x')?.value || '';
-
-                    const parsedFirstValue = parseFloat(firstElValue);
-                    const parsedSecondValue = parseFloat(secondElValue);
-
-                    return parsedFirstValue - parsedSecondValue;
-                })
-                .map((el) => el.textContent);
+            xAxisLabelNodes = Array.from(xAxisValues.children);
+        } else {
+            xAxisLabelNodes = Array.from(document.getElementsByClassName('gcharts-x-axis__label'));
         }
-        return [];
+
+        return xAxisLabelNodes
+            .sort((a, b) => {
+                const firstElAttributes = a.attributes;
+                const secondElAttributes = b.attributes;
+
+                const firstElValue = firstElAttributes.getNamedItem('x')?.value || '';
+                const secondElValue = secondElAttributes.getNamedItem('x')?.value || '';
+
+                const parsedFirstValue = parseFloat(firstElValue);
+                const parsedSecondValue = parseFloat(secondElValue);
+
+                return parsedFirstValue - parsedSecondValue;
+            })
+            .map((el) => el.textContent);
     });
 };
 
@@ -76,7 +82,7 @@ export async function waitForValidSearchParams({
 export const hoverTooltip = async (page: Page, chartId: string) => {
     const plot = page
         .locator(slct(`chartkit-body-entry-${chartId}`))
-        .locator('.chartkit-graph, .gcharts-chart');
+        .locator(COMMON_CHARTKIT_SELECTORS.chart);
     await plot.waitFor({state: 'visible'});
 
     const plotBox = await plot.boundingBox();
@@ -95,3 +101,42 @@ export async function isEnabledFeature(page: Page, featureName: string) {
     const isFeature = await page.evaluate(`window.DL.features?.${featureName}`);
     return Boolean(typeof isDynamicFeature === 'undefined' ? isFeature : isDynamicFeature);
 }
+
+export function expectArraysEqualUnordered(actual: unknown[], expected: unknown[]) {
+    expect(actual).toHaveLength(expected.length);
+
+    expected.forEach((expectedItem) => {
+        expect(actual).toContainEqual(expectedItem);
+    });
+
+    actual.forEach((actualItem) => {
+        expect(expected).toContainEqual(actualItem);
+    });
+}
+
+export const createSharedEntry = async ({
+    page,
+    scope,
+}: {
+    page: Page;
+    scope: EntryScope.Dataset | EntryScope.Connection;
+}) => {
+    const sharedObjectsMenuItem = page.locator(slct(CollectionActionsQa.SharedObjectsMenuItem));
+    await sharedObjectsMenuItem.hover();
+    switch (scope) {
+        case EntryScope.Connection: {
+            const sharedConnectionCreateBtn = page.locator(
+                slct(CollectionActionsQa.SharedConnectionCreateBtn),
+            );
+            await sharedConnectionCreateBtn.click();
+            break;
+        }
+        case EntryScope.Dataset: {
+            const sharedDatasetCreateBtn = page.locator(
+                slct(CollectionActionsQa.SharedDatasetCreateBtn),
+            );
+            await sharedDatasetCreateBtn.click();
+            break;
+        }
+    }
+};

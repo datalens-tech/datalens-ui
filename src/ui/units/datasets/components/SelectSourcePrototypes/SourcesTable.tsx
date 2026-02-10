@@ -5,11 +5,12 @@ import {Button, Icon, List, Loader, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import {useDispatch, useSelector} from 'react-redux';
+import type {BaseSource} from 'shared/schema';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
 import {usePrevious} from 'ui';
 
 import {I18n} from '../../../../../i18n';
-import type {DatasetSource} from '../../../../../shared/types';
+import type {DatasetSource, WorkbookId} from '../../../../../shared/types';
 import type {DataLensApiError} from '../../../../typings';
 import DatasetUtils, {getSourceListingValues} from '../../helpers/utils';
 import {
@@ -44,7 +45,7 @@ type ErrorViewProps = {
 };
 
 type SourcesTableProps = {
-    onEdit: (source: DatasetSource) => void;
+    onEdit: (source: BaseSource) => void;
     onAdd: () => void;
     onDelete: (props: {id: string}) => void;
     onRetry: () => void;
@@ -54,6 +55,8 @@ type SourcesTableProps = {
     dragDisabled?: boolean;
     dropDisabled?: boolean;
     allowAddSource?: boolean;
+    readonly: boolean;
+    bindedWorkbookId?: WorkbookId;
 };
 
 const b = block('select-sources-prototypes');
@@ -123,6 +126,8 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
     onAdd,
     onDelete,
     onRetry,
+    readonly,
+    bindedWorkbookId,
 }) => {
     const [search, setSearch] = React.useState('');
     const searchInputRef = React.useRef<HTMLInputElement>(null);
@@ -160,9 +165,9 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
 
     const onChangeDbName = React.useCallback(
         (value) => {
-            dispatch(changeCurrentDbName(value[0]));
+            dispatch(changeCurrentDbName(value[0], bindedWorkbookId));
         },
-        [dispatch],
+        [dispatch, bindedWorkbookId],
     );
 
     const onLoadMore = React.useCallback(() => {
@@ -173,16 +178,23 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
             !sourcesError &&
             sourcePrototypes.length > 0
         ) {
-            dispatch(incrementSourcesPage());
+            dispatch(incrementSourcesPage(bindedWorkbookId));
         }
-    }, [dispatch, loading, sourcesPagination, sourcesError, sourcePrototypes.length]);
+    }, [
+        dispatch,
+        loading,
+        sourcesPagination,
+        sourcesError,
+        bindedWorkbookId,
+        sourcePrototypes.length,
+    ]);
 
     const debouncedSearch = React.useMemo(
         () =>
             debounce((value: string) => {
-                dispatch(searchSources(value));
+                dispatch(searchSources(value, bindedWorkbookId));
             }, SEARCH_DELAY),
-        [dispatch],
+        [dispatch, bindedWorkbookId],
     );
 
     React.useEffect(() => {
@@ -257,8 +269,9 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
                         loading={serverPagination && !sourcesPagination.isFinished && !sourcesError}
                         renderItem={(source) => (
                             <SourceWithDragging
-                                dragDisabled={dragDisabled}
-                                dropDisabled={dropDisabled}
+                                readonly={readonly}
+                                dragDisabled={dragDisabled || readonly}
+                                dropDisabled={dropDisabled || readonly}
                                 avatar={source}
                                 onClickEditBtn={onEdit}
                                 onDeleteSource={onDelete}

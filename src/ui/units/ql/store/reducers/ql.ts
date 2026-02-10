@@ -51,6 +51,7 @@ import {
     SET_QUERY_METADATA,
     SET_QUERY_VALUE,
     SET_SETTINGS,
+    SET_SHARED_CONNECTION_DELEGATION_STATUS,
     SET_STATUS,
     SET_TABLE_PREVIEW_DATA,
     SET_VISUALIZATION_STATUS,
@@ -384,7 +385,7 @@ export const getEntryNotChanged = createSelector(
                 chartType,
                 visualization,
                 order: null,
-                version: QlConfigVersions.V6,
+                version: QlConfigVersions.V7,
             };
 
             // Removing possible functions from the structure to compare data
@@ -465,7 +466,7 @@ export const getPreviewData = createSelector(
                 params: params,
                 visualization,
                 order,
-                version: QlConfigVersions.V6,
+                version: QlConfigVersions.V7,
                 geopointsConfig,
             };
 
@@ -915,6 +916,14 @@ export default function ql(state: QLState = initialState, action: QLAction) {
             return {
                 ...state,
                 connectionStatus,
+            };
+        }
+
+        case SET_SHARED_CONNECTION_DELEGATION_STATUS: {
+            const {isDelegated} = action;
+            return {
+                ...state,
+                connection: {...state.connection, isDelegated},
             };
         }
 

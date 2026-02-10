@@ -1,4 +1,4 @@
-$rebrandingRoot: '.dl-root_rebranding';
+$customThemeRoot: '.dl-root_custom-theme';
 
 $backgroundMenu: #fbfbfb;
 
@@ -15,6 +15,7 @@ $groupOperationsHeight: 73px;
 $menuIconSize: 16px;
 $menuIconMarginRight: 4px;
 $footerHeight: 40px;
+$pageMaxWidth: 936px;
 
 // Layers
 $primaryLayoutLayer: 100;
@@ -50,6 +51,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
     --dl-color-entity-dashboard: #ff8c3c;
 
     --dl-color-widget-background: var(--g-color-base-float);
+    --dl-widget-border-radius: 20px;
 
     --dl-color-text-workbook-icon: var(--g-color-text-dark-primary);
 

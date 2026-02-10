@@ -1,4 +1,5 @@
 import type {ConnectorType} from '../constants';
+import type {SharedEntryPermissions} from '../schema';
 import type {CommonNumberFormattingOptions, Permissions} from '../types';
 
 import type {CommonUpdate} from './common-update';
@@ -131,7 +132,9 @@ export interface Dataset {
         description?: string;
     };
     workbook_id?: string;
+    collection_id?: string;
     permissions?: Permissions;
+    full_permissions?: SharedEntryPermissions;
 
     // This part of the fields moved to the dataset field. right here saved for backward compatibility
     avatar_relations: DatasetAvatarRelation[];
@@ -144,7 +147,7 @@ export interface Dataset {
     source_features: {};
     sources: DatasetSource[];
 }
-
+export type DatasetWithDelegation = Dataset & {isDelegated?: boolean};
 export interface ObligatoryFilter {
     id: string;
     field_guid: string;

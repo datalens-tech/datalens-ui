@@ -1,7 +1,8 @@
 import React from 'react';
 
 import type {CancellablePromise} from '@gravity-ui/sdk';
-import {useDispatch} from 'react-redux';
+import {isSdkError} from 'libs/schematic-sdk';
+import {useDispatch, useSelector} from 'react-redux';
 import type {
     GetStructureItemsArgs,
     GetStructureItemsMode,
@@ -19,6 +20,7 @@ import {
     resetState,
     resetStructureItems,
 } from 'ui/store/actions/collectionsStructure';
+import {selectGetCollection} from 'ui/store/selectors/collectionsStructure';
 
 import type {StructureItemsFilters} from '../../CollectionFilters';
 
@@ -50,6 +52,7 @@ export const useCollectionStructureDialogState = ({
     open,
 }: UseCollectionStructureDialogStateProps) => {
     const dispatch = useDispatch<CollectionsStructureDispatch>();
+    const getCollectionState = useSelector(selectGetCollection);
 
     const [filters, setFilters] = React.useState<StructureItemsFilters>(DEFAULT_FILTERS);
     const [targetCollectionId, setTargetCollectionId] = React.useState(initialCollectionId);
@@ -140,6 +143,14 @@ export const useCollectionStructureDialogState = ({
             });
         };
     }, [fetchData, open]);
+
+    React.useEffect(() => {
+        const isNoAccessError =
+            isSdkError(getCollectionState.error) && getCollectionState.error.status === 403;
+        if (open && isNoAccessError) {
+            setTargetCollectionId(null);
+        }
+    }, [open, getCollectionState.error]);
 
     return {
         getStructureItemsRecursively,

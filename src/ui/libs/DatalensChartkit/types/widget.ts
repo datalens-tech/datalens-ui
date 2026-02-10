@@ -399,6 +399,10 @@ export type OnChangeData = ParamsChangedOnChange | YMapGeoObjectVisibilityChange
 
 export type LoadedWidgetData<TProviderData = unknown> = (Widget & TProviderData) | null;
 
+export type ChartContentWidgetData =
+    | LoadedWidgetData<ChartsData>
+    | (LoadedWidgetData<ChartsData> & ControlWidget & ChartsData['extra']);
+
 export type WidgetData = (Widget & ChartsData) | null;
 
 export type OnActivityComplete = (args: {responseData?: ChartActivityResponseData | null}) => void;
@@ -406,4 +410,4 @@ export type OnActivityComplete = (args: {responseData?: ChartActivityResponseDat
 export type RunActivityArgs = {
     params?: StringParams | ChartSeriesData;
 };
-export type RunActivityFn = (args: RunActivityArgs) => void;
+export type RunActivityFn = (args: RunActivityArgs) => Promise<ChartActivityResponseData | null>;

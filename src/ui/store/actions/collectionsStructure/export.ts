@@ -304,8 +304,8 @@ export const importWorkbook = (
 
         return getSdk()
             .sdk.metaManager.startWorkbookImport({
-                title,
-                description,
+                title: title.trim().normalize('NFC'),
+                description: description?.trim(),
                 collectionId,
                 data,
             })

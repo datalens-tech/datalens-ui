@@ -35,6 +35,12 @@ import {
     MOVE_WORKBOOKS_LOADING,
     MOVE_WORKBOOKS_SUCCESS,
     MOVE_WORKBOOKS_FAILED,
+    MOVE_SHARED_ENTRY_LOADING,
+    MOVE_SHARED_ENTRY_SUCCESS,
+    MOVE_SHARED_ENTRY_FAILED,
+    MOVE_SHARED_ENTRIES_LOADING,
+    MOVE_SHARED_ENTRIES_SUCCESS,
+    MOVE_SHARED_ENTRIES_FAILED,
     COPY_WORKBOOK_LOADING,
     COPY_WORKBOOK_SUCCESS,
     COPY_WORKBOOK_FAILED,
@@ -53,6 +59,9 @@ import {
     DELETE_COLLECTIONS_LOADING,
     DELETE_COLLECTIONS_SUCCESS,
     DELETE_COLLECTIONS_FAILED,
+    DELETE_SHARED_ENTRIES_LOADING,
+    DELETE_SHARED_ENTRIES_SUCCESS,
+    DELETE_SHARED_ENTRIES_FAILED,
     DELETE_WORKBOOKS_SUCCESS,
     DELETE_WORKBOOKS_LOADING,
     DELETE_WORKBOOKS_FAILED,
@@ -89,6 +98,9 @@ import type {
     MoveCollectionsResponse,
     MoveWorkbookResponse,
     MoveWorkbooksResponse,
+    MoveEntryResponse,
+    MoveSharedEntriesResponse,
+    DeleteSharedEntriesResponse,
     CopyWorkbookResponse,
     CreateWorkbookResponse,
     UpdateWorkbookResponse,
@@ -162,6 +174,16 @@ export type CollectionsStructureState = {
         data: MoveWorkbooksResponse | null;
         error: Error | null;
     };
+    moveSharedEntry: {
+        isLoading: boolean;
+        data: MoveEntryResponse | null;
+        error: Error | null;
+    };
+    moveSharedEntries: {
+        isLoading: boolean;
+        data: MoveSharedEntriesResponse | null;
+        error: Error | null;
+    };
     copyWorkbook: {
         isLoading: boolean;
         data: CopyWorkbookResponse | null;
@@ -185,6 +207,11 @@ export type CollectionsStructureState = {
     deleteCollections: {
         isLoading: boolean;
         data: DeleteCollectionResponse | null;
+        error: Error | null;
+    };
+    deleteSharedEntries: {
+        isLoading: boolean;
+        data: DeleteSharedEntriesResponse | null;
         error: Error | null;
     };
     deleteWorkbook: {
@@ -283,6 +310,16 @@ const initialState: CollectionsStructureState = {
         data: null,
         error: null,
     },
+    moveSharedEntry: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    moveSharedEntries: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
     copyWorkbook: {
         isLoading: false,
         data: null,
@@ -304,6 +341,11 @@ const initialState: CollectionsStructureState = {
         error: null,
     },
     deleteCollections: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    deleteSharedEntries: {
         isLoading: false,
         data: null,
         error: null,
@@ -738,6 +780,69 @@ export const collectionsStructure = (
             };
         }
 
+        // Moving a shared entry
+        case MOVE_SHARED_ENTRY_LOADING: {
+            return {
+                ...state,
+                moveSharedEntry: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case MOVE_SHARED_ENTRY_SUCCESS: {
+            return {
+                ...state,
+                moveSharedEntry: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case MOVE_SHARED_ENTRY_FAILED: {
+            return {
+                ...state,
+                moveSharedEntry: {
+                    ...state.moveSharedEntry,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        case MOVE_SHARED_ENTRIES_LOADING: {
+            return {
+                ...state,
+                moveSharedEntries: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case MOVE_SHARED_ENTRIES_SUCCESS: {
+            return {
+                ...state,
+                moveSharedEntries: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case MOVE_SHARED_ENTRIES_FAILED: {
+            return {
+                ...state,
+                moveSharedEntries: {
+                    ...state.moveSharedEntries,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
         // Copying a workbook
         case COPY_WORKBOOK_LOADING: {
             return {
@@ -892,6 +997,37 @@ export const collectionsStructure = (
                 ...state,
                 deleteCollections: {
                     ...state.deleteCollections,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        case DELETE_SHARED_ENTRIES_LOADING: {
+            return {
+                ...state,
+                deleteSharedEntries: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case DELETE_SHARED_ENTRIES_SUCCESS: {
+            return {
+                ...state,
+                deleteSharedEntries: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case DELETE_SHARED_ENTRIES_FAILED: {
+            return {
+                ...state,
+                deleteSharedEntries: {
+                    ...state.deleteSharedEntries,
                     isLoading: false,
                     error: action.error,
                 },

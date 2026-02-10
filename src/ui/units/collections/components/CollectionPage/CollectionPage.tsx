@@ -4,8 +4,9 @@ import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import {useParams} from 'react-router-dom';
-import {Feature} from 'shared';
+import {CollectionItemEntities, EntryScope, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
+import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
@@ -31,7 +32,6 @@ import {CollectionContent} from '../CollectionContent';
 import {DEFAULT_FILTERS} from '../constants';
 
 import {useData, useFilters, useLayout, useSelection, useViewMode} from './hooks';
-import {useCreateWorkbookDialogHandlers} from './hooks/useCreateWorkbookDialogHandlers';
 import {useOpenCreateWorkbookDialog} from './hooks/useOpenCreateWorkbookDialog';
 
 import './CollectionPage.scss';
@@ -84,6 +84,7 @@ export const CollectionPage = (props: RouteComponentProps) => {
 
     const {refreshPageAfterImport} = useRefreshPageAfterImport({refreshPage});
 
+    const {useCreateWorkbookDialogHandlers} = registry.collections.functions.getAll();
     const {handleOpenCreateDialog, handleOpenCreateDialogWithConnection} =
         useCreateWorkbookDialogHandlers();
 
@@ -121,13 +122,16 @@ export const CollectionPage = (props: RouteComponentProps) => {
     const handleMoveSelectedEntities = React.useCallback(() => {
         const workbookIds: string[] = [];
         const collectionIds: string[] = [];
+        const entryIds: string[] = [];
 
         Object.keys(selectedMapWithMovePermission).forEach((key) => {
             const type = selectedMap[key];
-            if (type === 'workbook') {
+            if (type === CollectionItemEntities.WORKBOOK) {
                 workbookIds.push(key);
-            } else {
+            } else if (type === CollectionItemEntities.COLLECTION) {
                 collectionIds.push(key);
+            } else if (type === CollectionItemEntities.ENTRY) {
+                entryIds.push(key);
             }
         });
 
@@ -145,6 +149,7 @@ export const CollectionPage = (props: RouteComponentProps) => {
                     initialParentId: collection?.collectionId,
                     workbookIds,
                     collectionIds,
+                    entryIds,
                 },
             }),
         );
@@ -164,18 +169,34 @@ export const CollectionPage = (props: RouteComponentProps) => {
         const workbookTitles: string[] = [];
         const collectionIds: string[] = [];
         const collectionTitles: string[] = [];
+        const entryIds: string[] = [];
+        const datasetTitles: string[] = [];
+        const connectionTitles: string[] = [];
 
         items.forEach((item) => {
-            if ('workbookId' in item && selectedMapWithDeletePermission[item.workbookId]) {
+            if (
+                item.entity === CollectionItemEntities.WORKBOOK &&
+                selectedMapWithDeletePermission[item.workbookId]
+            ) {
                 workbookIds.push(item.workbookId);
                 workbookTitles.push(item.title);
             } else if (
-                'collectionId' in item &&
+                item.entity === CollectionItemEntities.COLLECTION &&
                 item.collectionId &&
                 selectedMapWithDeletePermission[item.collectionId]
             ) {
                 collectionIds.push(item.collectionId);
                 collectionTitles.push(item.title);
+            } else if (
+                item.entity === CollectionItemEntities.ENTRY &&
+                selectedMapWithDeletePermission[item.entryId]
+            ) {
+                if (item.scope === EntryScope.Dataset) {
+                    datasetTitles.push(item.title);
+                } else if (item.scope === EntryScope.Connection) {
+                    connectionTitles.push(item.title);
+                }
+                entryIds.push(item.entryId);
             }
         });
 
@@ -194,6 +215,9 @@ export const CollectionPage = (props: RouteComponentProps) => {
                     collectionTitles,
                     workbookIds,
                     workbookTitles,
+                    datasetTitles,
+                    connectionTitles,
+                    entryIds,
                 },
             }),
         );

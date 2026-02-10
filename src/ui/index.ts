@@ -6,19 +6,21 @@ import type {LandingState} from 'store/reducers/landing';
 import type {AsideHeaderState} from 'store/typings/asideHeader';
 import type {EntryGlobalState} from 'store/typings/entryContent';
 import type {UserState} from 'store/typings/user';
-import type {ControlDialogState} from 'ui/store/reducers/controlDialog';
+import type {ControlDialogState} from 'ui/store/reducers/controlDialog/controlDialog';
 import type {CopyEntriesToWorkbookState} from 'ui/store/reducers/copyEntriesToWorkbook';
 import type {EditHistoryState} from 'ui/store/reducers/editHistory';
+import type {LocalStorageFallbackState} from 'ui/store/reducers/localStorageFallback';
 import type {MigrationToWorkbookState} from 'ui/store/reducers/migrationToWorkbook';
 import type {AuthState} from 'units/auth/store/reducers';
 import type {CollectionsState} from 'units/collections/store/reducers';
 import type {ConnectionsReduxState} from 'units/connections/store/typings';
-import type {DashState} from 'units/dash/store/reducers/dashTypedReducer';
+import type {DashState} from 'units/dash/store/typings/dash';
 import type {DatasetReduxState} from 'units/datasets/store/types';
 import type {QLState} from 'units/ql/store/typings';
 import type {WizardGlobalState} from 'units/wizard/reducers';
 import type {WorkbooksState} from 'units/workbooks/store/reducers';
 
+import type {ChartModelingState} from './store/toolkit/chart-modeling/types';
 import type {CollectionsNavigationState} from './units/collections-navigation/store/reducers';
 import type {ServiceSettingsState} from './units/service-settings/store/typings/serviceSettings';
 
@@ -75,4 +77,6 @@ export type DatalensGlobalState = {
     iamAccessDialog: IamAccessDialogState;
     auth: AuthState;
     serviceSettings: ServiceSettingsState;
+    localStorageFallback: LocalStorageFallbackState;
+    chartModeling: ChartModelingState;
 };

@@ -198,7 +198,7 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
         isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
 
     let legend: ChartData['legend'] = {
-        html: [x, y, z].some(
+        html: [x, y, z, color].some(
             (field) => isHtmlField(field) || isMarkdownField(field) || isMarkupField(field),
         ),
     };
@@ -251,5 +251,8 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
         legend,
     };
 
-    return merge(getBaseChartConfig(shared), config);
+    return merge(
+        getBaseChartConfig({shared, visualization: {placeholders, id: visualizationId}}),
+        config,
+    );
 }

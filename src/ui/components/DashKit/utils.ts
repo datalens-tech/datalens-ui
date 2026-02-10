@@ -2,9 +2,19 @@ import React from 'react';
 import type {CSSProperties} from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
-import {type ThemeType, useThemeType} from '@gravity-ui/uikit';
-import type {BackgroundSettings, DashTabItemControlElement} from 'shared';
-import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared/constants/widgets';
+import type {ThemeType} from '@gravity-ui/uikit';
+import {useThemeType} from '@gravity-ui/uikit';
+import {color as d3Color} from 'd3-color';
+import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared';
+import type {
+    BackgroundSettings,
+    ColorSettings,
+    DashTabItemControlElement,
+    OldBackgroundSettings,
+} from 'shared';
+import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
+import {computeColorFromToken} from 'ui/utils/widgets/colors';
+import {calculateInternalMarginsEnabled} from 'ui/utils/widgets/internalMargins';
 
 import {DL} from '../../constants';
 import {
@@ -13,6 +23,7 @@ import {
     CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
 } from '../../libs/DatalensChartkit/ChartKit/helpers/constants';
 
+import type {CommonVisualSettings} from './DashKit';
 import {MAX_AUTO_HEIGHT_PX, MIN_AUTO_HEIGHT_PX} from './constants';
 
 /*
@@ -271,88 +282,122 @@ export function getControlHint(source: DashTabItemControlElement) {
     return source.showHint ? source.hint : undefined;
 }
 
-export function getPreparedWrapSettings(
-    backgroundColor: string | undefined,
-    additionalStyle?: CSSProperties,
-) {
-    const hasBgColor = Boolean(backgroundColor) && backgroundColor !== CustomPaletteBgColors.NONE;
+interface GetPreparedWrapSettingsArgs {
+    ownWidgetSettings: WidgetVisualSettings;
+    dashVisualSettings: CommonVisualSettings;
+    additionalStyle?: CSSProperties;
+    defaultOldColor: string;
+    theme: ThemeType;
+}
+
+function getPreparedWrapSettings({
+    ownWidgetSettings,
+    dashVisualSettings,
+    additionalStyle,
+    defaultOldColor,
+    theme,
+}: GetPreparedWrapSettingsArgs) {
+    const borderRadius =
+        ownWidgetSettings.borderRadius ?? dashVisualSettings.widgetsSettings?.borderRadius;
+
+    const hasInternalMarginsFromConfigs =
+        ownWidgetSettings.internalMarginsEnabled ??
+        dashVisualSettings.widgetsSettings?.internalMarginsEnabled;
+
+    const bgColorFromConfigs =
+        getResultedBgColor(
+            ownWidgetSettings.background,
+            theme,
+            defaultOldColor,
+            ownWidgetSettings.backgroundSettings,
+        ) ??
+        getResultedBgColor(
+            undefined,
+            theme,
+            defaultOldColor,
+            dashVisualSettings.widgetsSettings?.backgroundSettings,
+        );
+
+    const hexBgColor = bgColorFromConfigs ? computeColorFromToken(bgColorFromConfigs) : undefined;
+    const hasBgColor = hexBgColor ? (d3Color(hexBgColor)?.opacity ?? 0) > 0 : true;
+
+    const newInternalMarginsEnabled =
+        hasInternalMarginsFromConfigs ??
+        calculateInternalMarginsEnabled({
+            resultedHexWidgetColor: hexBgColor,
+            dashBackground: dashVisualSettings.background,
+            dashBackgroundSettings: dashVisualSettings.backgroundSettings,
+            themeType: theme,
+        });
 
     const newBackgroundColor =
-        backgroundColor === CustomPaletteBgColors.LIKE_CHART
+        bgColorFromConfigs === CustomPaletteBgColors.LIKE_CHART
             ? LIKE_CHART_COLOR_TOKEN
-            : backgroundColor;
+            : bgColorFromConfigs;
 
     const style: CSSProperties = {
         ...additionalStyle,
+        borderRadius,
         backgroundColor:
-            hasBgColor || backgroundColor === CustomPaletteBgColors.NONE
+            hasBgColor || newBackgroundColor === CustomPaletteBgColors.NONE
                 ? newBackgroundColor
                 : undefined,
     };
     return {
         style,
         hasBgColor,
+        hasInternalMargins: newInternalMarginsEnabled,
     };
 }
 
-export function useTextColorStyles(textColor?: string) {
-    // const theme = useThemeType(); // it would be used in next PR
-    return React.useMemo(
-        () => ({
-            color: textColor,
-        }),
-        [textColor /* , theme */],
-    );
+export function useTextColorStyles(oldTextColor?: string, textColorSettings?: ColorSettings) {
+    const theme = useThemeType();
+    return React.useMemo(() => {
+        const resultedNewTextColor =
+            typeof textColorSettings === 'string' ? textColorSettings : textColorSettings?.[theme];
+
+        return {
+            color: typeof oldTextColor === 'string' ? oldTextColor : resultedNewTextColor,
+        };
+    }, [oldTextColor, textColorSettings, theme]);
+}
+
+interface WidgetVisualSettings {
+    background?: OldBackgroundSettings | undefined;
+    backgroundSettings?: BackgroundSettings | undefined;
+    borderRadius?: number | undefined;
+    internalMarginsEnabled?: boolean;
 }
 
 export function usePreparedWrapSettings({
-    widgetBackground,
-    globalBackground,
+    ownWidgetSettings,
     additionalStyle,
     defaultOldColor,
-}: {
-    widgetBackground: BackgroundSettings | undefined;
-    globalBackground: BackgroundSettings | undefined;
-    additionalStyle?: CSSProperties;
-    defaultOldColor: string;
-}) {
+    dashVisualSettings,
+}: Omit<GetPreparedWrapSettingsArgs, 'theme'>) {
     const theme = useThemeType();
+
     return React.useMemo(
         () =>
-            getPreparedWrapSettings(
-                getResultedBgColor(widgetBackground, theme, defaultOldColor) ??
-                    getResultedBgColor(globalBackground, theme, defaultOldColor),
+            getPreparedWrapSettings({
+                ownWidgetSettings,
                 additionalStyle,
-            ),
-        [widgetBackground, globalBackground, additionalStyle, theme, defaultOldColor],
+                defaultOldColor,
+                theme,
+                dashVisualSettings,
+            }),
+        [ownWidgetSettings, additionalStyle, defaultOldColor, theme, dashVisualSettings],
     );
 }
 
-function getResultedBgColor(
-    bgColor: BackgroundSettings | undefined,
-    _theme: ThemeType, // it would be used in next PR
-    defaultColor: string,
+export function getResultedBgColor(
+    oldBgColor: OldBackgroundSettings | undefined,
+    theme: ThemeType,
+    defaultColor: string | undefined,
+    newBgColor: BackgroundSettings | undefined,
 ): string | undefined {
-    if (!bgColor) {
-        return defaultColor;
+    if (newBgColor?.color) {
+        return typeof newBgColor.color === 'string' ? newBgColor.color : newBgColor.color?.[theme];
     }
-    if (typeof bgColor === 'string') {
-        // where was a bug, when new Textwidgets were created with background color set by string
-        return bgColor;
-    }
-    if (typeof bgColor.color === 'string' || bgColor.color === undefined) {
-        if ('enabled' in bgColor && bgColor.enabled === false) {
-            if (bgColor.color === CustomPaletteBgColors.NONE) {
-                // where was a bug, when new widgets were created with background color set to transparent, but enabled set to false
-                return CustomPaletteBgColors.NONE;
-            }
-            return defaultColor;
-        }
-        if (!bgColor.color) {
-            return defaultColor;
-        }
-        return bgColor.color;
-    }
-
-    return defaultColor;
+    return getResultedOldBgColor(oldBgColor, defaultColor);
 }

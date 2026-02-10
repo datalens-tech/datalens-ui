@@ -6,8 +6,11 @@ import {Checkbox, DropdownMenu, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
-import {CollectionItemEntities} from 'shared';
-import {CollectionContentTableQa, DEFAULT_DATE_FORMAT} from 'shared/constants';
+import {
+    CollectionContentTableQa,
+    CollectionTableRowQa,
+    DEFAULT_DATE_FORMAT,
+} from 'shared/constants';
 import {DL} from 'ui/constants/common';
 import {selectDateTimeFormat} from 'ui/store/selectors/user';
 
@@ -16,7 +19,7 @@ import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {useRefreshPageAfterImport} from '../../hooks/useRefreshPageAfterImport';
 import {selectStructureItems} from '../../store/selectors';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
-import {getItemKey} from '../helpers';
+import {getItemId} from '../helpers';
 
 import {CollectionCheckboxCell} from './TableComponents/CollectionCheckboxCell';
 import {CollectionLinkRow} from './TableComponents/CollectionLinkRow';
@@ -84,7 +87,7 @@ export const CollectionContentTable = React.memo<Props>(
 
                                     return (
                                         <CollectionLinkRow
-                                            key={getItemKey(item)}
+                                            key={getItemId(item)}
                                             item={item}
                                             isDisabled={isCreating || isDeleting}
                                             refreshPageAfterImport={refreshPageAfterImport}
@@ -146,7 +149,7 @@ export const CollectionContentTable = React.memo<Props>(
 
                                 return (
                                     <CollectionLinkRow
-                                        key={getItemKey(item)}
+                                        key={getItemId(item)}
                                         item={item}
                                         isDisabled={nonInteractive}
                                         refreshPageAfterImport={refreshPageAfterImport}
@@ -155,10 +158,7 @@ export const CollectionContentTable = React.memo<Props>(
                                             item={item}
                                             onUpdateCheckboxClick={onUpdateCheckboxClick}
                                             selectedMap={selectedMap}
-                                            disabled={
-                                                nonInteractive ||
-                                                item.entity === CollectionItemEntities.ENTRY
-                                            }
+                                            disabled={nonInteractive}
                                         />
                                         <CollectionTitleCell item={item} />
 
@@ -195,6 +195,9 @@ export const CollectionContentTable = React.memo<Props>(
                                                     size="s"
                                                     items={actions}
                                                     disabled={isDeleting}
+                                                    defaultSwitcherProps={{
+                                                        qa: CollectionTableRowQa.CollectionRowDropdownMenuBtn,
+                                                    }}
                                                 />
                                             )}
                                         </div>

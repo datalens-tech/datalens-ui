@@ -1,5 +1,3 @@
-import type React from 'react';
-
 import type {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
@@ -15,6 +13,7 @@ import type {DIALOG_TYPE} from 'ui/constants/dialogs';
 import type {ValuesType} from 'utility-types';
 
 import {Mode} from '../../modules/constants';
+import type {TabsHashStates} from '../../store/actions/dashTyped';
 import type {DashUpdateStatus} from '../../typings/dash';
 import {
     CLOSE_DIALOG,
@@ -23,9 +22,10 @@ import {
     SAVE_DASH_ERROR,
     SAVE_DASH_SUCCESS,
 } from '../actions/dash';
-import type {TabsHashStates} from '../actions/dashTyped';
 import {
     CHANGE_NAVIGATION_PATH,
+    REMOVE_GLOBAL_ITEMS,
+    RESET_CONNECTIONS_UPDATERS,
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
     SET_DASH_DESCRIPTION,
@@ -48,11 +48,21 @@ import {
     SET_TAB_HASH_STATE,
     SET_WIDGET_CURRENT_TAB,
     TOGGLE_TABLE_OF_CONTENT,
+    UPDATE_CONNECTIONS_UPDATERS,
+    UPDATE_TABS_WITH_GLOBAL_STATE,
 } from '../actions/dashTyped';
 import type {DashAction} from '../actions/index';
 
-import {TAB_PROPERTIES} from './dash';
+import {TAB_PROPERTIES} from './dashHelpers';
 
+export interface ConnectionsUpdaters {
+    [tabId: string]: {
+        joinedSelectorId: string;
+        targetSelectorParamId: string;
+    }[];
+}
+
+// TODO (global selectors): Remove moved type after up version
 export type DashState = {
     tabId: null | string;
     lastModifiedItemId: null | string;
@@ -82,6 +92,7 @@ export type DashState = {
     widgetsCurrentTab: {[key: string]: string};
     dragOperationProps: DashDragOptions | null;
     openInfoOnLoad?: boolean;
+    connectionsUpdaters: ConnectionsUpdaters;
 };
 
 // eslint-disable-next-line complexity
@@ -179,9 +190,11 @@ export function dashTypedReducer(
         }
 
         case SET_TAB_HASH_STATE: {
+            const prevHashState = state.hashStates?.[action.payload.tabId] ?? {};
             const newHashStates = {
-                [action.payload.tabId]: {},
+                [action.payload.tabId]: action.payload.disableUrlState ? prevHashState : {},
             } as TabsHashStates;
+
             if (action.payload.stateHashId && action.payload.hashStates) {
                 newHashStates[action.payload.tabId] =
                     action.payload.hashStates[action.payload.tabId];
@@ -366,6 +379,70 @@ export function dashTypedReducer(
             return {
                 ...state,
                 ...action.payload,
+            };
+        }
+
+        case REMOVE_GLOBAL_ITEMS: {
+            const removedItemId = action.payload.itemId;
+
+            return {
+                ...state,
+                data: {
+                    ...state.data,
+                    tabs: state.data.tabs.map((tab) => {
+                        if (!tab.globalItems || tab.globalItems.length === 0) {
+                            return tab;
+                        }
+
+                        const filteredGlobalItems = tab.globalItems.filter(
+                            (item) => item.id !== removedItemId,
+                        );
+
+                        if (filteredGlobalItems.length === tab.globalItems.length) {
+                            return tab;
+                        }
+
+                        return {
+                            ...tab,
+                            globalItems: filteredGlobalItems,
+                            layout: tab.layout.filter((item) => item.i !== removedItemId),
+                        };
+                    }),
+                },
+            };
+        }
+
+        case UPDATE_TABS_WITH_GLOBAL_STATE: {
+            return {
+                ...state,
+                hashStates: {
+                    ...state.hashStates,
+                    ...action.payload.hashStates,
+                },
+            };
+        }
+
+        case UPDATE_CONNECTIONS_UPDATERS: {
+            const existingUpdaters = state.connectionsUpdaters?.[action.payload.tabId] || [];
+            return {
+                ...state,
+                connectionsUpdaters: {
+                    ...state.connectionsUpdaters,
+                    [action.payload.tabId]: [
+                        ...existingUpdaters,
+                        {
+                            joinedSelectorId: action.payload.joinedSelectorId,
+                            targetSelectorParamId: action.payload.targetSelectorParamId,
+                        },
+                    ],
+                },
+            };
+        }
+
+        case RESET_CONNECTIONS_UPDATERS: {
+            return {
+                ...state,
+                connectionsUpdaters: {},
             };
         }
 

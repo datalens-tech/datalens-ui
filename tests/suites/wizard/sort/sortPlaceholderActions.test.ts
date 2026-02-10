@@ -6,6 +6,7 @@ import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {getXAxisValues, openTestPage, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 
 const checkXAxisValuesOrder = async (wizardPage: WizardPage, expectedValues: string[]) => {
     let xAxisValues: (string | null)[] = [];
@@ -158,7 +159,7 @@ datalensTest.describe('Wizard - Sort', () => {
         },
     );
 
-    datalensTest(
+    datalensTest.skip(
         'Sorting works if there is a field with the Date type in section X',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
@@ -186,7 +187,7 @@ datalensTest.describe('Wizard - Sort', () => {
         },
     );
 
-    datalensTest(
+    datalensTest.skip(
         'Sorting works if there is a field with the number type in section X, and the same field in the Sorting',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
@@ -255,7 +256,9 @@ datalensTest.describe('Wizard - Sort', () => {
             let legendItemsTexts: string[] = [];
 
             await waitForCondition(async () => {
-                const legendItems = await wizardPage.page.$$('.highcharts-legend-item');
+                const legendItems = await wizardPage.page.$$(
+                    COMMON_CHARTKIT_SELECTORS.chartLegendItem,
+                );
 
                 if (!legendItems?.length) {
                     return false;

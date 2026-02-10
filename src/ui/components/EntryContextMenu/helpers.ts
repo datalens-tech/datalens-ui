@@ -93,11 +93,14 @@ export async function deleteEntry(entryDialoguesRef: EntryDialoguesRef, entry: M
         });
         if (response.status === EntryDialogResolveStatus.Success) {
             const pathname = navigateHelper.getRedirectLocation(entry);
+            const unblock = history.block(true);
 
             history.replace({
                 ...history.location,
                 pathname,
             });
+
+            unblock();
         }
     }
 }
@@ -247,12 +250,12 @@ export type EntryContextMenuItem<T = unknown> = {
 };
 
 // In the Dropdown component, menu groups are formed as Array<Array<Item>>, so the config has the same structure
-// Widget config only (on dashboard, preview, visard, etc.)
+// Widget config only (on dashboard, preview, wizard, etc.)
 const MENU_GROUP_CONFIG: Array<Array<MenuItemsIds>> = [
     [MenuItemsIds.FULLSCREEEN, MenuItemsIds.EXPORT, MenuItemsIds.OPEN_AS_TABLE],
     [MenuItemsIds.MOVE, MenuItemsIds.DUPLICATE, MenuItemsIds.COPY],
     [MenuItemsIds.NEW_WINDOW, MenuItemsIds.GET_LINK],
-    [MenuItemsIds.SOURCE, MenuItemsIds.INSPECTOR, MenuItemsIds.ALERTS],
+    [MenuItemsIds.SOURCE, MenuItemsIds.CHART_MODELING, MenuItemsIds.INSPECTOR, MenuItemsIds.ALERTS],
     [MenuItemsIds.COMMENTS, MenuItemsIds.SHOW_COMMENTS, MenuItemsIds.HIDE_COMMENTS],
     [MenuItemsIds.EDIT, MenuItemsIds.SETTINGS],
     [MenuItemsIds.EMBEDDED],

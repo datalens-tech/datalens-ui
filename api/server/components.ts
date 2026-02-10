@@ -17,6 +17,8 @@ export {
     DataFetcher,
 } from '../../src/server/components/charts-engine';
 
+export {Request} from '../../src/server/components/charts-engine/components/request';
+
 export {renderHTML} from '../../src/server/components/charts-engine/components/markdown';
 
 export {initPublicApiSwagger} from '../../src/server/components/public-api';
@@ -26,7 +28,7 @@ export {
     PUBLIC_API_VERSION,
     PUBLIC_API_VERSION_HEADER,
 } from '../../src/server/components/public-api';
-export {getPublicApiActionsV0} from '../../src/server/components/public-api/config';
+export {getPublicApiActionsV1} from '../../src/server/components/public-api/config';
 export type {
     PublicApiBaseConfig,
     PublicApiConfig,
@@ -34,3 +36,5 @@ export type {
 } from '../../src/server/components/public-api/types';
 export {ApiTag as PublicApiTag} from '../../src/server/components/public-api/constants';
 export {preparePublicApiBaseConfig} from '../../src/server/components/public-api/utils';
+
+export {createAuthArgsMiddleware} from '../../src/server/components';

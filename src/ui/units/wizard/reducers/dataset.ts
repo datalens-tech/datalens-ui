@@ -1,4 +1,4 @@
-import type {Dataset, DatasetApiError, DatasetOptions, Field, Link} from 'shared';
+import type {DatasetApiError, DatasetOptions, DatasetWithDelegation, Field, Link} from 'shared';
 import type {DataLensApiError} from 'typings';
 
 import type {ResetWizardStoreAction} from '../actions';
@@ -7,6 +7,7 @@ import {
     SET_DATASET,
     SET_DATASETS,
     SET_DATASET_API_ERRORS,
+    SET_DATASET_DELEGATION,
     SET_DATASET_LOADING,
     SET_DATASET_SCHEMA,
     SET_LINKS,
@@ -16,16 +17,16 @@ import {
 export interface DatasetState {
     loading: boolean;
     loaded: boolean;
-    dataset: Dataset | undefined;
+    dataset: DatasetWithDelegation | undefined;
     datasetId: string | undefined;
-    datasets: Dataset[];
+    datasets: DatasetWithDelegation[];
     datasetApiErrors: DatasetApiError[];
     options: DatasetOptions | undefined;
     links: Link[];
     dimensions: Field[];
     measures: Field[];
     error: DataLensApiError | undefined;
-    originalDatasets: Record<string, Dataset>;
+    originalDatasets: Record<string, DatasetWithDelegation>;
 }
 
 const initialState: DatasetState = {
@@ -178,6 +179,32 @@ export function dataset(
             return {
                 ...state,
                 datasetApiErrors,
+            };
+        }
+        case SET_DATASET_DELEGATION: {
+            const {datasetId, delegation} = action.payload;
+            let newDataset = state.dataset;
+            let newOriginalDataset = state.originalDatasets[datasetId];
+            if (datasetId === newDataset?.id) {
+                newDataset = {...newDataset, isDelegated: delegation};
+            }
+            if (datasetId === newOriginalDataset?.id) {
+                newOriginalDataset = {...newOriginalDataset, isDelegated: delegation};
+            }
+            const newDatasetArr = state.datasets.map((currentDataset) => {
+                if (datasetId === currentDataset.id) {
+                    return {...currentDataset, isDelegated: delegation};
+                }
+                return currentDataset;
+            });
+            return {
+                ...state,
+                dataset: newDataset,
+                datasets: newDatasetArr,
+                originalDatasets: {
+                    ...state.originalDatasets,
+                    [newOriginalDataset.id]: newOriginalDataset,
+                },
             };
         }
         default:

@@ -1,5 +1,5 @@
 import type {CollectionItemEntities} from '../../../constants';
-import type {CollectionId, EntryAnnotation, WorkbookId} from '../../../types';
+import type {CollectionId, EntryAnnotation, SharedScope, WorkbookId} from '../../../types';
 
 export type EntryFieldData<T = Record<string, unknown>> = null | T;
 export type EntryFieldLinks = null | Record<string, string>;
@@ -44,6 +44,7 @@ export interface EntryMetaFields {
     publishedId: EntryFieldPublishedId;
     tenantId: string;
     workbookId: WorkbookId;
+    collectionId: CollectionId;
     accessDescription?: string;
     supportDescription?: string;
 }
@@ -84,8 +85,8 @@ export interface SharedEntryPermissions {
 export interface SharedEntryFields {
     collectionId: string;
     updatedAt: string;
-    workbookId: string;
-    scope: string;
+    workbookId: WorkbookId;
+    scope: SharedScope;
     type: string;
     key: string;
     entryId: string;
@@ -96,6 +97,11 @@ export interface SharedEntryFields {
 
 export interface SharedEntryFieldsWithPermissions extends SharedEntryFields {
     permissions: SharedEntryPermissions;
+}
+
+export interface SharedEntryFieldsWithOptionalPermissions
+    extends Omit<SharedEntryFields, 'permissions'> {
+    permissions?: SharedEntryPermissions;
 }
 
 // corresponds to RETURN_FAVORITES_COLUMNS from US
@@ -130,6 +136,11 @@ export interface EntryRelationFields {
     workbookId: WorkbookId;
     isLocked: boolean;
 }
+
+export type SharedEntryRelationFields = Omit<EntryRelationFields, 'isLocked'> & {
+    collectionId: string;
+    createdAt: string;
+};
 
 export interface TenantSettings {
     defaultColorPaletteId?: string;

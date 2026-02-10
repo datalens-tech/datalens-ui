@@ -6,8 +6,9 @@ import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage} from '../../../utils';
+import {expectArraysEqualUnordered, openTestPage} from '../../../utils';
 
+// todo: remove along with GravityChartsForLineAreaAndBarX feature flag
 datalensTest.describe('Wizard - Combined diagram. Signatures', () => {
     datalensTest('Adding prefix and postfix to signature', async ({page}) => {
         const wizardPage = new WizardPage({page});
@@ -25,13 +26,18 @@ datalensTest.describe('Wizard - Combined diagram. Signatures', () => {
         await setFormatting(wizardPage, DialogFieldMainSectionQa.PrefixInput, '>');
 
         let labels = await wizardPage.chartkit.getLabelsTexts();
-        expect(labels).toEqual(['>113 271 247', '>111 208 247', '>141 003 420', '>186 089 738']);
+        expectArraysEqualUnordered(labels, [
+            '>113 271 247',
+            '>111 208 247',
+            '>141 003 420',
+            '>186 089 738',
+        ]);
 
         await setFormatting(wizardPage, DialogFieldMainSectionQa.PostfixInput, '<');
 
         labels = await wizardPage.chartkit.getLabelsTexts();
 
-        expect(labels).toEqual([
+        expectArraysEqualUnordered(labels, [
             '>113 271 247<',
             '>111 208 247<',
             '>141 003 420<',

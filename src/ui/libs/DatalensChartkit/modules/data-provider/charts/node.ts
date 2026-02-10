@@ -23,6 +23,7 @@ import {
     WRAPPED_MARKDOWN_KEY,
     WRAPPED_MARKUP_KEY,
     isMarkupItem,
+    isTrueArg,
 } from '../../../../../../shared';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
@@ -59,9 +60,14 @@ function isNodeResponse(loaded: CurrentResponse): loaded is ResponseSuccessNode 
 }
 
 function shouldShowSafeChartInfo(params: StringParams) {
-    if (!isEnabledFeature('ShowSafeChartInfo')) {
-        return false;
+    const ignoreSafeChartWarningParamValue = String(params?.['ignore_safe_chart_warning']?.[0]);
+    const hideSafeChartWarning =
+        isTrueArg(ignoreSafeChartWarningParamValue) &&
+        !isEnabledFeature('DisableIgnoreSafeChartWarningParam');
+    if (isEnabledFeature('ShowUnsafeChartIcon') && !hideSafeChartWarning) {
+        return true;
     }
+
     return (
         Utils.getOptionsFromSearch(window.location.search).showSafeChartInfo ||
         (params &&
@@ -71,10 +77,15 @@ function shouldShowSafeChartInfo(params: StringParams) {
 }
 
 /* eslint-disable complexity */
-async function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyWidget>(
-    loaded: T,
-    noJsonFn?: boolean,
-): Promise<R & ChartsData> {
+async function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyWidget>({
+    loaded,
+    noJsonFn,
+    widgetElement,
+}: {
+    loaded: T;
+    noJsonFn?: boolean;
+    widgetElement?: Element;
+}): Promise<R & ChartsData> {
     const {
         type: loadedType,
         params,
@@ -128,10 +139,14 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
         }
 
         if (isNodeResponse(loaded)) {
+            const isWizardOrQl = result.isNewWizard || result.isQL;
             const parsedConfig = JSON.parse(loaded.config);
             const enableJsAndHtml = get(parsedConfig, 'enableJsAndHtml', true);
 
-            const jsonParse = noJsonFn || enableJsAndHtml === false ? JSON.parse : JSONfn.parse;
+            let jsonParse = JSON.parse;
+            if (!isWizardOrQl && !noJsonFn && enableJsAndHtml) {
+                jsonParse = JSONfn.parse;
+            }
 
             result.data = loaded.data;
             result.config = jsonParse(loaded.config);
@@ -166,6 +181,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     entryType: loadedType,
                     sandbox: uiSandbox,
                     options: uiSandboxOptions,
+                    widgetElement,
                 };
                 await unwrapPossibleFunctions({...unwrapFnArgs, target: result.config});
                 await unwrapPossibleFunctions({...unwrapFnArgs, target: result.libraryConfig});
@@ -173,7 +189,6 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            const isWizardOrQl = result.isNewWizard || result.isQL;
             const shouldProcessHtmlFields =
                 isPotentiallyUnsafeChart(loadedType) || result.config?.useHtml;
             if (shouldProcessHtmlFields) {

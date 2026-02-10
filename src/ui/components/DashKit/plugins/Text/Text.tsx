@@ -9,8 +9,8 @@ import {PluginText as PluginTextRenderer, pluginText} from '@gravity-ui/dashkit'
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
-import {CustomPaletteBgColors} from 'shared';
-import type {DashTabItemText} from 'shared';
+import {type DashTabItemText, TextWidgetQa} from 'shared';
+import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     usePreparedWrapSettings,
@@ -20,13 +20,13 @@ import {usePrevious} from 'ui/hooks';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
-import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
+import type {CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Text.scss';
 
-type Props = Omit<PluginTextProps, 'apiHandler'> & CommonPluginProps;
+type Props = Omit<PluginTextProps, 'apiHandler'>;
 
 const b = block('dashkit-plugin-text-container');
 
@@ -80,14 +80,16 @@ const useWatchDomResizeObserver = ({
 
 type PluginTextObjectSettings = CommonPluginSettings & DashkitPluginTextObjectSettings;
 
-type PluginText = Plugin<Props> & {
-    setSettings: (settings: PluginTextObjectSettings) => PluginText;
-};
+type PluginText = Plugin<Props> &
+    CommonPluginSettings & {
+        setSettings: (settings: PluginTextObjectSettings) => PluginText;
+    };
 const textPlugin: PluginText = {
     ...pluginText,
     setSettings(settings: PluginTextObjectSettings) {
-        const {apiHandler} = settings;
+        const {apiHandler, globalWidgetSettings} = settings;
         pluginText._apiHandler = apiHandler;
+        textPlugin.globalWidgetSettings = globalWidgetSettings;
         return textPlugin;
     },
     renderer: function Wrapper(
@@ -191,9 +193,18 @@ const textPlugin: PluginText = {
 
         const data = props.data as DashTabItemText['data'];
 
-        const {style, hasBgColor} = usePreparedWrapSettings({
-            widgetBackground: data.background,
-            globalBackground: props.background,
+        const {style, hasInternalMargins} = usePreparedWrapSettings({
+            ownWidgetSettings: {
+                background: data.background,
+                backgroundSettings: data.backgroundSettings,
+                borderRadius: data.borderRadius,
+                internalMarginsEnabled: data.internalMarginsEnabled,
+            },
+            dashVisualSettings: {
+                widgetsSettings: textPlugin.globalWidgetSettings,
+                background: undefined,
+                backgroundSettings: undefined,
+            },
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 
@@ -242,8 +253,12 @@ const textPlugin: PluginText = {
                 <YfmWrapper
                     // needed for force update when text is changed
                     key={`yfm_${YfmWrapperKeyRef.current}`}
-                    content={<div className={b('content-wrap', null)}>{content}</div>}
-                    className={b({'with-color': Boolean(hasBgColor)})}
+                    content={
+                        <div className={b('content-wrap', null)} data-qa={TextWidgetQa.Wrapper}>
+                            {content}
+                        </div>
+                    }
+                    className={b({'with-internal-margins': hasInternalMargins})}
                     metaScripts={metaScripts}
                     onRenderCallback={handleTextRender}
                 />

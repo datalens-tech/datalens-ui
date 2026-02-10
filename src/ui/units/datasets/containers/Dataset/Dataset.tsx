@@ -2,6 +2,7 @@ import React from 'react';
 
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import type {ButtonView} from '@gravity-ui/uikit';
+import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {History, Location} from 'history';
 import {I18n} from 'i18n';
@@ -12,18 +13,23 @@ import {connect} from 'react-redux';
 import SplitPane from 'react-split-pane';
 import {createStructuredSelector} from 'reselect';
 import type {DatasetSource, DatasetSourceAvatar} from 'shared';
-import {EntryScope, ErrorCode, ErrorContentTypes} from 'shared';
-import type {GetEntryResponse, GetRevisionsEntry} from 'shared/schema';
+import {EntryScope, ErrorCode, ErrorContentTypes, SharedEntriesBaseQa} from 'shared';
+import type {GetRevisionsEntry} from 'shared/schema';
 import type {DataLensApiError, SDK} from 'ui';
+import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import type {DialogUnlockProps} from 'ui/components/EntryDialogues/DialogUnlock';
-import {SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'ui/constants/common';
+import {SharedEntryIcon} from 'ui/components/SharedEntryIcon/SharedEntryIcon';
+import {DL, SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'ui/constants/common';
 import {HOTKEYS_SCOPES} from 'ui/constants/misc';
 import {withHotkeysContext} from 'ui/hoc/withHotkeysContext';
 import {
+    closeDialog,
+    openDialog,
     openDialogErrorWithTabs,
     openDialogSaveDraftChartAsActualConfirm,
 } from 'ui/store/actions/dialog';
 import {initEditHistoryUnit} from 'ui/store/actions/editHistory';
+import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {
     addAvatar,
     addSource,
@@ -38,6 +44,7 @@ import {
     setEditHistoryState,
     togglePreview,
     updateDatasetByValidation,
+    updateDatasetDelegation,
 } from 'units/datasets/store/actions/creators';
 import CommonUtils from 'utils/utils';
 import {v1 as uuidv1} from 'uuid';
@@ -72,12 +79,15 @@ import {
 import DatasetError from '../../containers/DatasetError/DatasetError';
 import DatasetTabViewer from '../../containers/DatasetTabViewer/DatasetTabViewer';
 import {getAutoCreatedYTDatasetKey} from '../../helpers/datasets';
-import DatasetUtils from '../../helpers/utils';
+import DatasetUtils, {filterContextMenuItems} from '../../helpers/utils';
 import {
     UISelector,
     currentTabSelector,
+    datasetCollectionIdSelector,
     datasetCurrentRevIdSelector,
+    datasetDelegationSelector,
     datasetErrorSelector,
+    datasetFullPermissionsSelector,
     datasetKeySelector,
     datasetPermissionsSelector,
     datasetPreviewErrorSelector,
@@ -95,11 +105,13 @@ import {
     workbookIdSelector,
 } from '../../store/selectors';
 import type {DatasetReduxState} from '../../store/types';
+import type {DatasetEntry} from '../../typings/dataset';
 import type {DatasetEditor} from '../DatasetEditor/DatasetEditor';
 import DatasetPreview from '../DatasetPreview/DatasetPreview';
 import type {DatasetSources} from '../DatasetSources/DatasetSources';
 
 import {ActionPanelRightItems} from './ActionPanelRightItems';
+import {getAdditionalContextMenuItems} from './getAdditionalContextMenuItems';
 
 import './Dataset.scss';
 
@@ -126,6 +138,7 @@ interface OwnProps {
     hotkeysContext?: HotkeysContextType;
     location: Location;
     history: History;
+    bindedWorkbookId?: string | null;
 }
 
 type ReduxProps = ConnectedProps<typeof connector>;
@@ -181,17 +194,24 @@ class Dataset extends React.Component<Props, State> {
             initializeDataset,
             fetchFieldTypes,
             location,
+            bindedWorkbookId,
         } = this.props;
         const collectionId = this.getCollectionId();
+        const workbookId = this.getWorkbookId();
         const currentSearchParams = new URLSearchParams(location.search);
         const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
         fetchFieldTypes();
 
         if (isCreationProcess) {
-            initializeDataset({connectionId, collectionId});
+            initializeDataset({connectionId, collectionId, workbookId});
         } else if (datasetId) {
-            initialFetchDataset({datasetId, rev_id: revId});
+            initialFetchDataset({
+                datasetId,
+                rev_id: revId,
+                bindedWorkbookId,
+                workbookIdFromPath: workbookId,
+            });
         }
 
         this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.DATASETS);
@@ -203,6 +223,7 @@ class Dataset extends React.Component<Props, State> {
             datasetPreview: {view: prevView},
             ui: {isSourcesLoading: prevIsSourcesLoading},
             location: prevLocation,
+            bindedWorkbookId: prevBindedWorkbookId,
         } = prevProps;
         const {
             currentTab,
@@ -215,6 +236,7 @@ class Dataset extends React.Component<Props, State> {
             initialFetchDataset,
             publishedId,
             currentRevId,
+            bindedWorkbookId,
         } = this.props;
         const {isAuto} = this.state;
 
@@ -224,13 +246,19 @@ class Dataset extends React.Component<Props, State> {
         const prevRevId = prevSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
         const hasRevisionChanged = revId !== prevRevId;
         const isSavingUpdate = publishedId === currentRevId && !revId;
+        const isBindingChanged = bindedWorkbookId !== prevBindedWorkbookId;
 
         if (datasetId && prevDatasetId !== datasetId) {
-            initialFetchDataset({datasetId, rev_id: revId});
+            initialFetchDataset({datasetId, rev_id: revId, bindedWorkbookId});
         }
 
-        if (hasRevisionChanged && !isSavingUpdate) {
-            initialFetchDataset({datasetId, rev_id: revId, isInitialFetch: false});
+        if ((hasRevisionChanged && !isSavingUpdate) || isBindingChanged) {
+            initialFetchDataset({
+                datasetId,
+                rev_id: revId,
+                isInitialFetch: false,
+                bindedWorkbookId,
+            });
         }
 
         if (prevView !== curView) {
@@ -315,8 +343,9 @@ class Dataset extends React.Component<Props, State> {
 
     openCreationWidgetPage = () => {
         const {datasetId} = this.props;
+        const workbookId = this.props.bindedWorkbookId || this.getWorkbookId();
 
-        DatasetUtils.openCreationWidgetPage({datasetId, workbookId: this.getWorkbookId()});
+        DatasetUtils.openCreationWidgetPage({datasetId, workbookId});
     };
 
     openDialogCreateDataset = () => {
@@ -380,10 +409,12 @@ class Dataset extends React.Component<Props, State> {
                     return {
                         type: 'no-access',
                         title: i18n('label_error-403-title'),
-                        action: {
-                            text: i18n('button_ask-access-rights'),
-                            handler: this.askAccessRights,
-                        },
+                        action: !DL.IS_WORKBOOKS_ENABLED
+                            ? {
+                                  text: i18n('button_ask-access-rights'),
+                                  handler: this.askAccessRights,
+                              }
+                            : undefined,
                     };
                 }
             case 404:
@@ -402,15 +433,17 @@ class Dataset extends React.Component<Props, State> {
         }
     };
 
-    getEntry(): GetEntryResponse & {fake?: boolean} {
+    getEntry(): DatasetEntry {
         const {
             isCreationProcess,
             datasetId,
             isFavorite,
             datasetKey,
             datasetPermissions,
+            datasetFullPermissions,
             publishedId,
             currentRevId,
+            datasetDelegation,
         } = this.props;
         const workbookId = this.getWorkbookId();
         const collectionId = this.getCollectionId();
@@ -422,8 +455,9 @@ class Dataset extends React.Component<Props, State> {
             return getFakeEntry(EntryScope.Dataset, workbookId, collectionId, searchCurrentPath!);
         }
 
-        return {
+        const entry = {
             workbookId,
+            collectionId,
             isFavorite,
             publishedId,
             revId: currentRevId,
@@ -431,7 +465,19 @@ class Dataset extends React.Component<Props, State> {
             key: datasetKey,
             scope: 'dataset',
             permissions: datasetPermissions,
-        } as GetEntryResponse;
+            fullPermissions: datasetFullPermissions,
+        } as DatasetEntry;
+
+        if (this.getIsWorkbookSharedDataset()) {
+            return {
+                ...entry,
+                workbookId: this.props.bindedWorkbookId!,
+                collectionId: null,
+                isDelegated: datasetDelegation,
+            };
+        }
+
+        return entry;
     }
 
     switchTab = (currentTab: DatasetTab) => {
@@ -488,7 +534,15 @@ class Dataset extends React.Component<Props, State> {
     }
 
     getCollectionId() {
-        return this.props.collectionIdFromPath;
+        return this.props.collectionIdFromPath || this.props.collectionId;
+    }
+
+    getIsSharedDataset() {
+        return Boolean(this.getCollectionId());
+    }
+
+    getIsWorkbookSharedDataset() {
+        return this.getIsSharedDataset() && Boolean(this.props.bindedWorkbookId);
     }
 
     refreshSources = () => {
@@ -501,11 +555,14 @@ class Dataset extends React.Component<Props, State> {
 
     getRightItems = () => {
         const {isCreationProcess, history} = this.props;
-
+        const isSharedDataset = this.getIsSharedDataset();
+        const isWorkbookSharedDataset = this.getIsWorkbookSharedDataset();
         return (
             <ActionPanelRightItems
+                canCreateWidget={!isSharedDataset || isWorkbookSharedDataset}
                 isCreationProcess={isCreationProcess}
                 onClickCreateWidgetButton={this.openCreationWidgetPage}
+                readonly={isWorkbookSharedDataset}
                 onClickSaveDatasetButton={() =>
                     isCreationProcess
                         ? this.openDialogCreateDataset()
@@ -513,6 +570,38 @@ class Dataset extends React.Component<Props, State> {
                 }
             />
         );
+    };
+
+    getCenterItems = () => {
+        const items = [];
+        if (this.getIsWorkbookSharedDataset()) {
+            items.push(
+                <Button
+                    key="workbook-shared-entry-original-link"
+                    view="normal-contrast"
+                    onClick={() => {
+                        this.props.history.push(location.pathname);
+                    }}
+                    qa={SharedEntriesBaseQa.OpenOriginalBtn}
+                >
+                    {getSharedEntryMockText('workbook-shared-entry-original-link')}
+                </Button>,
+            );
+        }
+        return items;
+    };
+
+    getLastCrumbAdditionalContent = () => {
+        let content = null;
+        if (this.getIsWorkbookSharedDataset()) {
+            content = (
+                <SharedEntryIcon
+                    className={b('shared-entry-icon')}
+                    isDelegated={this.props.datasetDelegation}
+                />
+            );
+        }
+        return content;
     };
 
     openDialogDetails = () => {
@@ -597,11 +686,13 @@ class Dataset extends React.Component<Props, State> {
                     allowResize={view !== VIEW_PREVIEW.FULL}
                 >
                     <DatasetTabViewer
+                        readonly={this.getIsWorkbookSharedDataset()}
                         ref={this._datasetEditorRef}
                         tab={currentTab}
                         sdk={sdk}
                         datasetId={datasetId}
                         workbookId={this.getWorkbookId()}
+                        bindedWorkbookId={this.props.bindedWorkbookId}
                         collectionId={this.getCollectionId()}
                     />
                     <DatasetPreview closePreview={this.closeDatasetPreview} />
@@ -609,6 +700,12 @@ class Dataset extends React.Component<Props, State> {
             </div>
         );
     }
+
+    filterEntryContextMenuItems: FilterEntryContextMenuItems = ({items}) => {
+        const isSharedDataset = this.getIsSharedDataset();
+        const isWorkbookSharedDataset = this.getIsWorkbookSharedDataset();
+        return filterContextMenuItems({items, isSharedDataset, isWorkbookSharedDataset});
+    };
 
     renderControls() {
         const DATASET_DISABLED_DATE = dateTimeUtc({input: MIN_AVAILABLE_DATASET_REV_DATE});
@@ -630,16 +727,35 @@ class Dataset extends React.Component<Props, State> {
             };
         };
 
+        const isSharedDataset = this.getIsSharedDataset();
+        const entry = this.getEntry();
+        const {openDialog, closeDialog, updateDatasetDelegation, history} = this.props;
+        const additionalContextMenuItems = getAdditionalContextMenuItems({
+            openDialog,
+            closeDialog,
+            entry,
+            isSharedDataset,
+            history,
+            updateDatasetDelegation,
+            bindedWorkbookId: this.props.bindedWorkbookId,
+        });
+
         return (
             <React.Fragment>
                 <ActionPanel
+                    className={b('action-panel', {readonly: this.getIsWorkbookSharedDataset()})}
                     entry={this.getEntry()}
                     rightItems={this.getRightItems()}
+                    lastCrumbAdditionalContent={this.getLastCrumbAdditionalContent()}
+                    centerItems={this.getCenterItems()}
                     setActualVersion={this.setActualVersionHandler}
                     expandablePanelDescription={description}
                     getRevisionRowExtendedProps={getRevisionRowExtendedProps}
+                    filterEntryContextMenuItems={this.filterEntryContextMenuItems}
+                    additionalEntryItems={additionalContextMenuItems}
                 />
                 <DatasetPanel
+                    readonly={this.getIsWorkbookSharedDataset()}
                     isCreationProcess={this.props.isCreationProcess}
                     tab={this.props.currentTab}
                     previewEnabled={this.props.previewEnabled}
@@ -741,6 +857,7 @@ class Dataset extends React.Component<Props, State> {
 const mapStateToProps = createStructuredSelector({
     datasetKey: datasetKeySelector,
     datasetPermissions: datasetPermissionsSelector,
+    datasetFullPermissions: datasetFullPermissionsSelector,
     datasetError: datasetErrorSelector,
     previewError: datasetPreviewErrorSelector,
     savingError: datasetSavingErrorSelector,
@@ -757,7 +874,9 @@ const mapStateToProps = createStructuredSelector({
     sourceTemplate: sourceTemplateSelector,
     ui: UISelector,
     workbookId: workbookIdSelector,
+    collectionId: datasetCollectionIdSelector,
     currentTab: currentTabSelector,
+    datasetDelegation: datasetDelegationSelector,
 });
 const mapDispatchToProps = {
     fetchFieldTypes,
@@ -776,6 +895,9 @@ const mapDispatchToProps = {
     setEditHistoryState,
     setCurrentTab,
     setActualDataset,
+    openDialog,
+    closeDialog,
+    updateDatasetDelegation,
 };
 const connector = connect(mapStateToProps, mapDispatchToProps);
 

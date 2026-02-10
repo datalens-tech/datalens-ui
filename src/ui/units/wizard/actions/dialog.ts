@@ -24,7 +24,7 @@ import {DIALOG_COLUMN_SETTINGS} from '../components/Dialogs/DialogColumnSettings
 import type {ColumnSettingsState} from '../components/Dialogs/DialogColumnSettings/hooks/useDialogColumnSettingsState';
 import type {LabelSettings} from '../components/Dialogs/DialogLabelSettings/DialogLabelSettings';
 import {DIALOG_LABEL_SETTINGS} from '../components/Dialogs/DialogLabelSettings/DialogLabelSettings';
-import {DIALOG_METRIC_SETTINGS} from '../components/Dialogs/DialogMetricSettings/DialogMetricSettings';
+import {DIALOG_METRIC_COLORS} from '../components/Dialogs/DialogMetricColors/DialogMetricColors';
 import {DIALOG_MULTIDATASET} from '../components/Dialogs/DialogMultidataset';
 import {DIALOG_PLACEHOLDER} from '../components/Dialogs/DialogPlaceholder/DialogPlaceholder';
 import {DIALOG_POINTS_SIZE} from '../components/Dialogs/DialogPointsSize';
@@ -134,55 +134,6 @@ export function openDialogPlaceholder({placeholder, onApply}: OpenDialogPlacehol
     };
 }
 
-type OpenDialogMetricArguments = {
-    extraSettings: CommonSharedExtraSettings | undefined;
-};
-
-export function openDialogMetric({extraSettings}: OpenDialogMetricArguments) {
-    return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
-        const colorPalettes = selectColorPalettes(getState());
-        if (!colorPalettes.length) {
-            await dispatch(fetchColorPalettes());
-        }
-
-        dispatch(
-            openDialog({
-                id: DIALOG_METRIC_SETTINGS,
-                props: {
-                    onSave: ({size, palette, color, colorIndex}) => {
-                        // TODO: use either index or color
-                        // const metricSettins =
-                        //     typeof colorIndex === 'number'
-                        //         ? {
-                        //               metricFontColorIndex: colorIndex,
-                        //               metricFontSize: size,
-                        //               metricFontColorPalette: palette,
-                        //               metricFontColor: undefined,
-                        //           }
-                        //         : {
-                        //               metricFontSize: size,
-                        //               metricFontColor: color,
-                        //               metricFontColorPalette: palette,
-                        //               metricFontColorIndex: undefined,
-                        //           };
-
-                        const metricSettins = {
-                            metricFontColorIndex: colorIndex,
-                            metricFontSize: size,
-                            metricFontColorPalette: palette,
-                            metricFontColor: color,
-                        };
-
-                        dispatch(setExtraSettings({...extraSettings, ...metricSettins}));
-
-                        dispatch(updatePreviewAndClientChartsConfig({}));
-                    },
-                },
-            }),
-        );
-    };
-}
-
 type OpenDialogPointsSizeArguments = {
     geopointsConfig: PointSizeConfig;
     placeholder: Placeholder;
@@ -200,10 +151,7 @@ export function openDialogPointsSize({
         const visualizationId = visualization.id;
 
         const pointType =
-            visualizationId === WizardVisualizationId.Scatter ||
-            visualizationId === WizardVisualizationId.ScatterD3
-                ? 'scatter'
-                : 'geopoint';
+            visualizationId === WizardVisualizationId.Scatter ? 'scatter' : 'geopoint';
 
         dispatch(
             openDialog({
@@ -218,6 +166,62 @@ export function openDialogPointsSize({
 
                         dispatch(closeDialog());
 
+                        dispatch(updatePreviewAndClientChartsConfig({}));
+
+                        onApply?.();
+                    },
+                },
+            }),
+        );
+    };
+}
+
+type OpenDialogMetricColorsArguments = {
+    extraSettings: CommonSharedExtraSettings | undefined;
+    onApply?: () => void;
+};
+
+export function openDialogMetricColors({extraSettings, onApply}: OpenDialogMetricColorsArguments) {
+    return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
+        const colorPalettes = selectColorPalettes(getState());
+        if (!colorPalettes.length) {
+            await dispatch(fetchColorPalettes());
+        }
+
+        dispatch(
+            openDialog({
+                id: DIALOG_METRIC_COLORS,
+                props: {
+                    onApply: ({
+                        color,
+                        palette,
+                        colorIndex,
+                    }: {
+                        color: string;
+                        palette?: string;
+                        colorIndex?: number;
+                    }) => {
+                        // TODO: use either index or color
+                        // const metricColorSettings =
+                        //     typeof colorIndex === 'number'
+                        //         ? {
+                        //               metricFontColorIndex: colorIndex,
+                        //               metricFontColor: undefined,
+                        //               metricFontColorPalette: palette,
+                        //           }
+                        //         : {
+                        //               metricFontColorIndex: undefined,
+                        //               metricFontColor: color,
+                        //               metricFontColorPalette: palette,
+                        //           };
+
+                        const metricColorSettings = {
+                            metricFontColorIndex: colorIndex,
+                            metricFontColorPalette: palette,
+                            metricFontColor: color,
+                        };
+
+                        dispatch(setExtraSettings({...extraSettings, ...metricColorSettings}));
                         dispatch(updatePreviewAndClientChartsConfig({}));
 
                         onApply?.();

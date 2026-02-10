@@ -21,6 +21,7 @@ import {
     EntryScope,
     ErrorCode,
     Feature,
+    getAllTabItems,
 } from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
@@ -80,7 +81,6 @@ function validateEmbedToken(
             extra: {
                 message: 'You must provide embedToken',
                 hideRetry: true,
-                hideDebugInfo: true,
             },
         });
         return null;
@@ -92,7 +92,7 @@ function validateEmbedToken(
         ctx.log('CHARTS_ENGINE_WRONG_TOKEN');
         res.status(400).send({
             code: ErrorCode.InvalidToken,
-            extra: {message: 'Wrong token format', hideRetry: true, hideDebugInfo: true},
+            extra: {message: 'Wrong token format', hideRetry: true},
         });
         return null;
     }
@@ -126,7 +126,6 @@ function handleError(
             extra: {
                 message: 'Dependencies of embed are outdated',
                 hideRetry: true,
-                hideDebugInfo: true,
             },
         });
         return;
@@ -151,7 +150,6 @@ function handleError(
             },
             extra: {
                 hideRetry: false,
-                hideDebugInfo: true,
             },
         },
     });
@@ -177,7 +175,7 @@ function processControlWidget(
     // Support group and old single selectors
     const controlWidgetId = controlData.widgetId || controlData.id;
 
-    const controlWidgetConfig = controlTab?.items.find(
+    const controlWidgetConfig = getAllTabItems(controlTab).find(
         ({id}: {id: string}) => id === controlWidgetId,
     );
 
@@ -239,7 +237,6 @@ function processEntry(
         extra: {
             message: 'Invalid token',
             hideRetry: true,
-            hideDebugInfo: true,
         },
     });
     return null;
@@ -344,7 +341,7 @@ async function findAndExecuteRunner(
         res.status(400).send({
             error: `Unknown config type ${configType}`,
         });
-        return null;
+        return;
     }
 
     const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
@@ -353,7 +350,7 @@ async function findAndExecuteRunner(
         res.status(400).send({
             error: 'Editor is disabled',
         });
-        return null;
+        return;
     }
 
     req.body.config = entry;
@@ -364,10 +361,11 @@ async function findAndExecuteRunner(
         enableExport: embeddingInfo.embed.settings?.enableExport === true,
     };
 
-    return await runnerFound.handler(ctx, {
+    const runnerHandlerResult = await runnerFound.handler(ctx, {
         chartsEngine,
         req,
         res,
+        resLocals: res.locals,
         config: {
             ...entry,
             data: {
@@ -382,6 +380,12 @@ async function findAndExecuteRunner(
         secureConfig: {privateParams: privateParams ? Array.from(privateParams) : undefined},
         forbiddenFields: ['_confStorageConfig', 'timings', 'key'],
     });
+
+    if (runnerHandlerResult) {
+        res.status(runnerHandlerResult.status).send(runnerHandlerResult.payload);
+    }
+
+    return;
 }
 
 export const embedsController = (chartsEngine: ChartsEngine) => {

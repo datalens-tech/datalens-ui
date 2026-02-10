@@ -13,6 +13,7 @@ import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from '../../DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import {DIALOG_SHARED_ENTRY_UNBIND} from '../../DialogSharedEntryUnbind/DialogSharedEntryUnbind';
+import {DIALOG_SHARED_RELATED_ENTITIES} from '../../DialogSharedRelatedEntities/DialogSharedRelatedEntities';
 import {PlaceholderIllustration} from '../../PlaceholderIllustration/PlaceholderIllustration';
 import {SharedBindingsList} from '../../SharedBindingsList/SharedBindingsList';
 import type {AttachmentValue} from '../constants';
@@ -24,6 +25,7 @@ type RelationsProps = {
     isError: boolean;
     isDeleteDialog: boolean;
     entities: SharedEntryBindingsItem[];
+    entitiesForDeleteAlert: SharedEntryBindingsItem[];
     entry: SharedEntry;
     currentDirection: AttachmentValue;
     onSearch: (value: string) => void;
@@ -48,8 +50,26 @@ export const Relations = ({
     isLoading,
     showDirectionControl,
     fetchEntityBindings,
+    entitiesForDeleteAlert,
 }: RelationsProps) => {
     const dispatch: AppDispatch = useDispatch();
+
+    const onClickRelationButton = React.useCallback(
+        ({workbookId, isDelegated}: SharedEntryBindingsItem) => {
+            dispatch(
+                openDialog({
+                    id: DIALOG_SHARED_RELATED_ENTITIES,
+                    props: {
+                        entry: {...entry, isDelegated},
+                        workbookId: workbookId!,
+                        open: true,
+                        onClose: () => dispatch(closeDialog()),
+                    },
+                }),
+            );
+        },
+        [entry, dispatch],
+    );
 
     const showErrorToast = React.useCallback(
         (error) => {
@@ -65,26 +85,35 @@ export const Relations = ({
 
     const getListItemActions = React.useCallback(
         (item: SharedEntryBindingsItem) => {
+            const isRelationUnbind = getIsRelationUnbind(currentDirection, item);
+            const relation = isRelationUnbind ? undefined : item;
+            const parentEntry = isRelationUnbind ? item : entry;
+            const sourceId = isRelationUnbind ? item.entryId : entry.entryId;
+            const target = isRelationUnbind ? entry : item;
+
+            let targetId = '';
+
+            if ('entity' in target && target.entity === CollectionItemEntities.WORKBOOK) {
+                targetId = target.workbookId!;
+            } else if ('entryId' in target) {
+                targetId = target.entryId;
+            }
+
             return [
                 {
                     text: getSharedEntryMockText('shared-bindings-list-action-unbind'),
-                    action: () =>
+                    action: () => {
                         dispatch(
                             openDialog({
                                 id: DIALOG_SHARED_ENTRY_UNBIND,
                                 props: {
-                                    entry: getIsRelationUnbind(currentDirection, item)
-                                        ? item
-                                        : entry,
+                                    entry: parentEntry,
                                     onClose: () => dispatch(closeDialog()),
                                     onApply: async () => {
                                         try {
                                             await getSdk().sdk.us.deleteSharedEntryBinding({
-                                                sourceId: entry.entryId,
-                                                targetId:
-                                                    item.entity === CollectionItemEntities.WORKBOOK
-                                                        ? item.workbookId!
-                                                        : item.entryId,
+                                                sourceId,
+                                                targetId,
                                             });
                                             dispatch(closeDialog());
                                             fetchEntityBindings(isDeleteDialog ? '' : searchValue);
@@ -93,12 +122,11 @@ export const Relations = ({
                                         }
                                     },
                                     open: true,
-                                    relation: getIsRelationUnbind(currentDirection, item)
-                                        ? undefined
-                                        : item,
+                                    relation,
                                 },
                             }),
-                        ),
+                        );
+                    },
                 },
                 {
                     text: getSharedEntryMockText('shared-bindings-list-action-change-permissions'),
@@ -107,16 +135,17 @@ export const Relations = ({
                             openDialog({
                                 id: DIALOG_SHARED_ENTRY_PERMISSIONS,
                                 props: {
-                                    entry,
+                                    entry: parentEntry,
                                     onClose: () => dispatch(closeDialog()),
                                     onApply: async (delegate) => {
+                                        if (delegate === item.isDelegated) {
+                                            dispatch(closeDialog());
+                                            return;
+                                        }
                                         try {
                                             await getSdk().sdk.us.updateSharedEntryBinding({
-                                                sourceId: entry.entryId,
-                                                targetId:
-                                                    item.entity === CollectionItemEntities.WORKBOOK
-                                                        ? item.workbookId!
-                                                        : item.entryId,
+                                                sourceId,
+                                                targetId,
                                                 delegation: delegate,
                                             });
                                             dispatch(closeDialog());
@@ -127,7 +156,7 @@ export const Relations = ({
                                     },
                                     open: true,
                                     delegation: item.isDelegated,
-                                    relation: item,
+                                    relation,
                                 },
                             }),
                         ),
@@ -169,7 +198,7 @@ export const Relations = ({
         );
     }
 
-    if (isDeleteDialog && entities.length === 0) {
+    if (isDeleteDialog && entitiesForDeleteAlert.length === 0) {
         return null;
     }
 
@@ -190,6 +219,7 @@ export const Relations = ({
             }
             getListItemActions={getListItemActions}
             isLoading={isLoading}
+            onClickRelationButton={onClickRelationButton}
         />
     );
 };

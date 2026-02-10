@@ -17,6 +17,7 @@ const b = block('dl-color-picker');
 type ColorPickerProps = {
     color?: string;
     onSelect: (color: string) => void;
+    onBlur?: () => void;
     enableCustomColorSelector?: boolean;
     mainPresetOptions: string[];
     paletteOptions: string[];
@@ -26,6 +27,7 @@ type ColorPickerProps = {
 
 export function ColorPicker({
     onSelect,
+    onBlur,
     color,
     enableCustomColorSelector,
     mainPresetOptions,
@@ -78,6 +80,7 @@ export function ColorPicker({
             >
                 <ColorPalette
                     onSelect={setSelectedColor}
+                    onBlur={onBlur}
                     selectedColor={selectedColor}
                     enableCustomBgColorSelector={enableCustomColorSelector}
                     mainPresetOptions={mainPresetOptions}

@@ -19,6 +19,8 @@
 }
 
 .dialog-relations {
+    $optionIconSize: 16px;
+
     min-width: 900px;
     max-width: 90vw;
 
@@ -108,5 +110,10 @@
 
     &__item-select-popup {
         max-height: 320px;
+    }
+
+    &__skeleton-option-icon {
+        height: $optionIconSize;
+        width: $optionIconSize;
     }
 }

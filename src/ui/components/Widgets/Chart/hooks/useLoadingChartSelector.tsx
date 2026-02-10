@@ -6,6 +6,7 @@ import {useHistory} from 'react-router-dom';
 import type {DashSettings, DashTabItemControl} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 import {useBeforeLoad} from 'ui/hooks/useBeforeLoad';
+import type {ExtendedDashKitContextType} from 'ui/units/dash/typings/context';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import type {
@@ -49,6 +50,7 @@ type LoadingChartSelectorHookProps = Pick<
         widgetId: WidgetPluginProps['id'];
         chartId: string;
         onActivityComplete?: OnActivityComplete;
+        updateTabsWithGlobalState?: ExtendedDashKitContextType['updateTabsWithGlobalState'];
     };
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 600;

@@ -9,6 +9,8 @@
   "label_access-description": "Access error message",
   "label_autoupdate": "Auto update",
   "label_autoupdate-interval": "Interval",
+  "label_border-radius": "Rounding",
+  "label_dash-background": "Dashboard background",
   "label_dependent-selectors": "Dependent selectors",
   "label_display": "Appearance",
   "label_display-info": "Select elements to display on the dashboard",
@@ -17,6 +19,7 @@
   "label_global-params": "Dashboard parameters",
   "label_hide-tabs": "Hide tabs",
   "label_hide-title": "Hide title",
+  "label_internal-margins": "Margins inside widgets",
   "label_load-only-visible-charts": "Only load visible charts",
   "label_load-priority": "Load priority",
   "label_load-priority-hint": "Defines the order in which widgets are loaded on the dashboard. For example, if priority is given to charts, all the charts that appear on the screen will be loaded first and then selectors",
@@ -31,6 +34,7 @@
   "label_tabs": "Tabs",
   "label_title": "Title",
   "label_toc": "Contents",
+  "label_widgets-background": "Widget background",
   "value_load-priority-charts": "Charts",
   "value_load-priority-selectors": "Selectors"
 }

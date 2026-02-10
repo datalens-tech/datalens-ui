@@ -347,7 +347,7 @@ export const VISUALIZATION_PLACEHOLDERS = {
         'placeholder-labels',
         'placeholder-filters',
     ],
-    metric: ['placeholder-measures', 'placeholder-filters'],
+    metric: ['placeholder-measures', 'placeholder-metric-colors', 'placeholder-filters'],
     scatter: [
         'placeholder-x',
         'placeholder-y',

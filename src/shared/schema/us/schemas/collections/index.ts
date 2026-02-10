@@ -19,7 +19,6 @@ export const collectionSchema = z.object({
     title: z.string(),
     description: z.string().nullable(),
     parentId: z.string().nullable(),
-    projectId: z.string().nullable(),
     tenantId: z.string(),
     createdBy: z.string(),
     createdAt: z.string(),

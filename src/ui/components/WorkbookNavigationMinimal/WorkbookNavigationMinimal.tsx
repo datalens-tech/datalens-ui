@@ -10,17 +10,17 @@ import {OrderBySelect, SORT_TYPE} from 'components/OrderBySelect';
 import {i18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import moment from 'moment';
-import type {SharedScope} from 'shared';
 import {EntryScope, Feature, WorkbookNavigationMinimalQa, getEntryNameByKey} from 'shared';
+import type {SharedScope, WorkbookEntry} from 'shared';
 import type {
     GetEntryResponse,
-    GetSharedEntryResponse,
     GetWorkbookEntriesArgs,
     OrderDirection,
     OrderWorkbookEntriesField,
+    RestrictedSharedEntry,
 } from 'shared/schema';
 import {DEFAULT_DATE_FORMAT} from 'ui/constants/misc';
-import {getIsSharedEntry} from 'ui/utils';
+import {getIsNotRestrictedSharedEntry, getIsSharedEntry} from 'ui/utils';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
@@ -231,7 +231,10 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                             <span>{name}</span>
                         </div>
                         {getIsSharedEntry(entry) && (
-                            <SharedEntryIcon className={b('shared-item-icon')} entry={entry} />
+                            <SharedEntryIcon
+                                className={b('shared-item-icon')}
+                                isDelegated={entry.isDelegated}
+                            />
                         )}
                     </div>
 
@@ -243,11 +246,11 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
         );
     };
 
-    private getItemsFromResponse = <T extends GetEntryResponse | GetSharedEntryResponse>({
+    private getItemsFromResponse = <T extends WorkbookEntry>({
         entries,
     }: {
         entries: T[];
-    }): BaseListItem<T>[] => {
+    }): BaseListItem<Exclude<T, RestrictedSharedEntry>>[] => {
         const {includeClickableType, excludeClickableType, inactiveEntryIds} = this.props;
 
         const includeType = new Set(
@@ -257,7 +260,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
             Array.isArray(excludeClickableType) ? excludeClickableType : [excludeClickableType],
         );
         const inactiveIds = new Set(Array.isArray(inactiveEntryIds) ? inactiveEntryIds : []);
-        return entries.map((entry) => {
+        return entries.filter(getIsNotRestrictedSharedEntry).map((entry) => {
             const inactiveByIncludeType = includeClickableType
                 ? !includeType.has(entry.type)
                 : false;

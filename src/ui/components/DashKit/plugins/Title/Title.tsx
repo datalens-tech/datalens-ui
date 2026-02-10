@@ -19,7 +19,7 @@ import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHel
 import {DL} from 'ui/constants';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
-import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
+import type {CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
@@ -40,13 +40,14 @@ type PluginTitleObjectSettings = CommonPluginSettings & {
     hideHint?: boolean;
 };
 
-type Props = PluginTitleProps & PluginTitleObjectSettings & CommonPluginProps;
+type Props = PluginTitleProps & PluginTitleObjectSettings;
 
-type PluginTitle = Plugin<Props> & {
-    setSettings: (settings: PluginTitleObjectSettings) => PluginTitle;
-    hideAnchor?: boolean;
-    hideHint?: boolean;
-};
+type PluginTitle = Plugin<Props> &
+    CommonPluginSettings & {
+        setSettings: (settings: PluginTitleObjectSettings) => PluginTitle;
+        hideAnchor?: boolean;
+        hideHint?: boolean;
+    };
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
 
@@ -57,10 +58,11 @@ const MIN_AVAILABLE_TOP_OFFSET = -5;
 const titlePlugin: PluginTitle = {
     ...pluginTitle,
     setSettings(settings: PluginTitleObjectSettings) {
-        const {hideAnchor, hideHint} = settings;
+        const {hideAnchor, hideHint, globalWidgetSettings} = settings;
 
         titlePlugin.hideAnchor = hideAnchor;
         titlePlugin.hideHint = hideHint;
+        titlePlugin.globalWidgetSettings = globalWidgetSettings;
         return titlePlugin;
     },
     renderer: function PluginTitleRenderer(
@@ -129,14 +131,22 @@ const titlePlugin: PluginTitle = {
 
         const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
         const withAbsoluteHint = showHint && !isInlineExtraElements;
-
-        const {style, hasBgColor} = usePreparedWrapSettings({
-            widgetBackground: data.background,
-            globalBackground: props.background,
+        const {style, hasInternalMargins} = usePreparedWrapSettings({
+            ownWidgetSettings: {
+                background: data.background,
+                backgroundSettings: data.backgroundSettings,
+                borderRadius: data.borderRadius,
+                internalMarginsEnabled: data.internalMarginsEnabled,
+            },
+            dashVisualSettings: {
+                background: undefined,
+                backgroundSettings: undefined,
+                widgetsSettings: titlePlugin.globalWidgetSettings,
+            },
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 
-        const textColorStyles = useTextColorStyles(data.textColor);
+        const textColorStyles = useTextColorStyles(data.textColor, data.textSettings?.color);
         const wrapperStyles = {...style, ...textColorStyles};
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
@@ -222,7 +232,9 @@ const titlePlugin: PluginTitle = {
 
             return {
                 ...fontStyles,
-                top: showAnchor ? extraElementsTop : getTopOffsetBySize(data.size, hasBgColor),
+                top: showAnchor
+                    ? extraElementsTop
+                    : getTopOffsetBySize(data.size, hasInternalMargins),
             };
         };
 
@@ -231,7 +243,7 @@ const titlePlugin: PluginTitle = {
                 <div
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
-                        'with-color': Boolean(hasBgColor),
+                        'with-internal-margins': Boolean(hasInternalMargins),
                         'with-inline-extra-elements': Boolean(withInlineExtraElements),
                         'with-absolute-anchor': withAbsoluteAnchor && !withAbsoluteHint,
                         'with-absolute-hint': withAbsoluteHint && !withAbsoluteAnchor,

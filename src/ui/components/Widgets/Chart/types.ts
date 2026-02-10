@@ -2,11 +2,18 @@ import type React from 'react';
 
 import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {CkHighchartsSeriesOptionsType, Highcharts} from '@gravity-ui/chartkit/highcharts';
+import type {StringWithSuggest} from '@gravity-ui/uikit';
 import type {CancelTokenSource} from 'axios';
 import type {Split} from 'react-split-pane';
-import type {DashTabItemControlSourceType, MenuItemsIds, StringParams} from 'shared';
+import type {
+    ChartStateSettings,
+    DashTabItemControlSourceType,
+    MenuItemsIds,
+    StringParams,
+} from 'shared';
 import type {OnWidgetLoadDataHandler} from 'ui/components/DashKit/context/WidgetContext';
 import type {
+    ChartContentWidgetData,
     Widget as ChartWidget,
     CombinedError,
     ControlWidget,
@@ -18,6 +25,7 @@ import type {
     WidgetDashState,
 } from 'ui/libs/DatalensChartkit/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
+import type {ExtendedDashKitContextType} from 'ui/units/dash/typings/context';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {
@@ -128,6 +136,7 @@ type ChartKitBaseWrapperProps = ChartsProps & {
     needRenderContentControls?: boolean;
     reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
     runActivity?: RunActivityFn;
+    updateTabsWithGlobalState?: ExtendedDashKitContextType['updateTabsWithGlobalState'];
 };
 
 export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
@@ -136,6 +145,7 @@ export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
         usageType: 'widget';
         onWidgetLoadData?: OnWidgetLoadDataHandler;
         backgroundColor?: string;
+        hasInternalMargins?: boolean;
     };
 
 export type ChartProviderPropsWithRefProps = ChartRefProp &
@@ -166,6 +176,10 @@ export type ChartAlertProps = Pick<
     ChartsProps & {
         dataProvider: ChartKitDataProvider;
         forwardedRef: React.RefObject<ChartKit | ChartKitRef>;
+        alarm?: string;
+        condition?: StringWithSuggest<'GT' | 'GTE' | 'LT' | 'LTE'>;
+        selectedSeriesNames?: string[];
+        yAxisIndex?: number | null;
     };
 
 type ChartWidgetWithProviderProps = Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout'> &
@@ -300,9 +314,7 @@ export type ChartContentProps = Pick<
         chartId: ChartsProps['id'];
         requestId: ChartsData['requestId'];
         error: CombinedError | null;
-        loadedData:
-            | LoadedWidgetData<ChartsData>
-            | (LoadedWidgetData<ChartsData> & ControlWidget & ChartsData['extra']);
+        loadedData: ChartContentWidgetData;
         drillDownFilters: DrillProps['filters'];
         drillDownLevel: DrillProps['level'];
         widgetType?: DashTabItemControlSourceType | WidgetType | ChartWidget['type'];
@@ -319,6 +331,8 @@ export type ChartContentProps = Pick<
         enableAssistant?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
         backgroundColor?: string;
+        chartData: ChartContentWidgetData;
+        chartStateData: ChartStateSettings | undefined;
     };
 
 export type WidgetDataRef = React.MutableRefObject<

@@ -16,6 +16,7 @@ type ConnPanelActionsProps = {
     entryKey: string;
     s3BasedFormOpened: boolean;
     workbookId?: WorkbookId;
+    isSharedConnection?: boolean;
 };
 
 const b = block('conn-panel-actions');
@@ -25,6 +26,7 @@ const ConnPanelActions = ({
     entryKey,
     s3BasedFormOpened,
     workbookId,
+    isSharedConnection,
 }: ConnPanelActionsProps) => {
     const schemaLoading = useSelector(schemaLoadingSelector);
     const uiSchema = useSelector(uiSchemaSelector);
@@ -33,11 +35,17 @@ const ConnPanelActions = ({
 
     return schemaLoading ? null : (
         <div className={b()}>
-            {showCreateEditorChartButton && entryId && (
+            {!isSharedConnection && showCreateEditorChartButton && entryId && (
                 <CreateEditorChartButton entryId={entryId} workbookId={workbookId} />
             )}
-            <CreateQlChartButton entryId={entryId} workbookId={workbookId} />
-            <CreateDatasetButton entryId={entryId} entryKey={entryKey} />
+            {!isSharedConnection && (
+                <CreateQlChartButton entryId={entryId} workbookId={workbookId} />
+            )}
+            <CreateDatasetButton
+                entryId={entryId}
+                entryKey={entryKey}
+                externalWorkbookId={workbookId}
+            />
             {s3BasedFormOpened && <S3BasedConnButton />}
         </div>
     );

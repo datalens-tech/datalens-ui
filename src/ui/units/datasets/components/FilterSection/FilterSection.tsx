@@ -1,8 +1,11 @@
 import React from 'react';
 
+import {Alert, spacing} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import {useHistory, useLocation} from 'react-router';
 import type {DatasetField, DatasetOptions} from 'shared';
 import type {ApplyData} from 'ui';
+import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import type {ObligatoryFilter} from '../../typings/dataset';
 import {DatasetTabSection} from '../DatasetTabSection/DatasetTabSection';
@@ -21,11 +24,14 @@ interface FilterSectionProps {
     addFilter: (data: ApplyData) => void;
     updateFilter: (data: ApplyData) => void;
     deleteFilter: (filterId: string) => void;
+    readonly: boolean;
 }
 
 const FilterSection: React.FC<FilterSectionProps> = (props: FilterSectionProps) => {
-    const {progress, filters, updateFilter, fields, options, addFilter, deleteFilter} = props;
-
+    const {progress, filters, updateFilter, fields, options, addFilter, deleteFilter, readonly} =
+        props;
+    const history = useHistory();
+    const location = useLocation();
     const {
         headerColumns,
         onFilterItemClick,
@@ -41,13 +47,41 @@ const FilterSection: React.FC<FilterSectionProps> = (props: FilterSectionProps) 
         updateFilter,
         addFilter,
         deleteFilter,
+        readonly,
     });
 
     const title = i18n('label_obligatory-filter-title');
     const description = i18n('label_obligatory-filter-description');
+    const alertTitle =
+        preparedFields.length > 0
+            ? undefined
+            : getSharedEntryMockText('dataset-filters-readonly-alert-title');
+    const alertMessage = getSharedEntryMockText(
+        preparedFields.length > 0
+            ? 'dataset-filters-readonly-alert-message'
+            : 'dataset-empty-filters-readonly-alert-message',
+    );
 
     return (
         <DatasetTabSection
+            readonlyNotice={
+                progress ? null : (
+                    <Alert
+                        className={spacing({mb: '3'})}
+                        theme="info"
+                        title={alertTitle}
+                        message={alertMessage}
+                        actions={[
+                            {
+                                text: getSharedEntryMockText('workbook-shared-entry-original-link'),
+                                handler: () => history.push(location.pathname),
+                            },
+                        ]}
+                        layout="horizontal"
+                    />
+                )
+            }
+            readonly={readonly}
             title={title}
             description={description}
             onOpenDialogClick={onOpenDialogFilterClick}

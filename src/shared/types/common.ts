@@ -183,10 +183,6 @@ export type DLGlobalData = {
         features?: Record<string, unknown>;
     };
     userIsOrgAdmin?: boolean;
-    licenseExpirationWarningDays?: number | null;
-    hasBillingAccountProblems?: boolean;
-    licenseLimitMoreThanOne?: boolean;
-    hasActiveLicense?: boolean;
     tenantSettings?: TenantSettings;
     allowLanguages?: Language[];
     langRegion?: string;
@@ -236,7 +232,6 @@ export type DLGlobalData = {
     defaultColorPaletteId?: string;
     extraPalettes?: Record<string, Palette>;
     headersMap?: Record<string, string>;
-    isZitadelEnabled?: boolean;
     hideNavigation?: boolean;
     connectorIcons?: ConnectorIconData[];
     releaseVersion?: string;
@@ -244,6 +239,7 @@ export type DLGlobalData = {
     isAuthEnabled?: boolean;
     authManageLocalUsersDisabled?: boolean;
     authSignupDisabled?: boolean;
+    authCookieName?: string;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

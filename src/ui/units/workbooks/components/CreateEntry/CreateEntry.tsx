@@ -6,7 +6,7 @@ import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {CollectionItemEntities, CreateEntityButton, EntryScope, Feature} from 'shared';
-import type {WorkbookWithPermissions} from 'shared/schema';
+import type {GetSharedEntryResponse, WorkbookWithPermissions} from 'shared/schema';
 import {DIALOG_SELECT_SHARED_ENTRY} from 'ui/components/DialogSelectSharedEntry/DialogSelectSharedEntry';
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import {registry} from 'ui/registry';
@@ -47,11 +47,15 @@ export const CreateEntry = React.memo<Props>(
         };
 
         const handleSharedEntryAction = React.useCallback(
-            (
-                scope: EntryScope.Dataset | EntryScope.Connection,
-                collectionId: string,
-                workbookId: string,
-            ) =>
+            ({
+                scope,
+                collectionId,
+                workbookId,
+            }: {
+                scope: EntryScope.Dataset | EntryScope.Connection;
+                collectionId: string | null;
+                workbookId: string;
+            }) =>
                 () =>
                     dispatch(
                         openDialog({
@@ -64,68 +68,74 @@ export const CreateEntry = React.memo<Props>(
                                     `title-select-shared-entry-dialog-${scope}`,
                                 ),
                                 onSelectEntry: (entry) => {
-                                    if (entry.entity === CollectionItemEntities.ENTRY) {
-                                        dispatch(
-                                            openDialog({
-                                                id: DIALOG_SHARED_ENTRY_PERMISSIONS,
-                                                props: {
-                                                    open: true,
-                                                    onClose: () => dispatch(closeDialog()),
-                                                    entry,
-                                                    onApply: async (delegation) => {
-                                                        const success = await dispatch(
-                                                            bindSharedEntryToWorkbook({
-                                                                sourceId: entry.entryId,
-                                                                targetId: workbookId,
-                                                                delegation,
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_SHARED_ENTRY_PERMISSIONS,
+                                            props: {
+                                                open: true,
+                                                onClose: () => dispatch(closeDialog()),
+                                                delegation: entry.permissions?.createEntryBinding,
+                                                entry,
+                                                onApply: async (delegation) => {
+                                                    const success = await dispatch(
+                                                        bindSharedEntryToWorkbook({
+                                                            sourceId: entry.entryId,
+                                                            targetId: workbookId,
+                                                            delegation,
+                                                        }),
+                                                    );
+                                                    if (success) {
+                                                        dispatch(closeDialog());
+                                                        dispatch(closeDialog());
+
+                                                        const entries = await dispatch(
+                                                            getWorkbookSharedEntries({
+                                                                scope,
+                                                                workbookId,
+                                                                filters,
                                                             }),
                                                         );
-                                                        if (success) {
-                                                            dispatch(closeDialog());
-                                                            dispatch(closeDialog());
 
-                                                            const entries = await dispatch(
-                                                                getWorkbookSharedEntries({
-                                                                    scope,
-                                                                    workbookId,
-                                                                    filters,
-                                                                }),
-                                                            );
+                                                        const addedEntry = entries?.entries.find(
+                                                            (
+                                                                item,
+                                                            ): item is GetSharedEntryResponse =>
+                                                                item.entryId === entry.entryId,
+                                                        );
 
-                                                            const addedEntry =
-                                                                entries?.entries.find(
-                                                                    (item) =>
-                                                                        item.entryId ===
-                                                                        entry.entryId,
-                                                                );
-
-                                                            dispatch(
-                                                                showToast({
-                                                                    type: 'success',
-                                                                    title: getSharedEntryMockText(
-                                                                        `add-entry-workbook-toast-title-${scope}`,
-                                                                    ),
-                                                                    content: getSharedEntryMockText(
-                                                                        'add-entry-workbook-toast-message',
-                                                                        {
-                                                                            name: Utils.getEntryNameFromKey(
-                                                                                addedEntry?.key ??
-                                                                                    '',
-                                                                            ),
-                                                                        },
-                                                                    ),
-                                                                }),
-                                                            );
-                                                        }
-                                                    },
+                                                        dispatch(
+                                                            showToast({
+                                                                type: 'success',
+                                                                title: getSharedEntryMockText(
+                                                                    `add-entry-workbook-toast-title-${scope}`,
+                                                                ),
+                                                                content: getSharedEntryMockText(
+                                                                    'add-entry-workbook-toast-message',
+                                                                    {
+                                                                        name: Utils.getEntryNameFromKey(
+                                                                            addedEntry?.key ?? '',
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                            }),
+                                                        );
+                                                    }
                                                 },
-                                            }),
-                                        );
-                                    }
+                                            },
+                                        }),
+                                    );
                                 },
-                                getIsInactiveEntity: (entry) =>
-                                    entry.entity === CollectionItemEntities.ENTRY &&
-                                    entry.scope !== scope,
+                                getIsInactiveEntity: (entry) => {
+                                    if (entry.entity !== CollectionItemEntities.ENTRY) {
+                                        return false;
+                                    }
+
+                                    const canCreateBinding =
+                                        entry.permissions?.createEntryBinding ||
+                                        entry.permissions?.createLimitedEntryBinding;
+
+                                    return entry.scope !== scope || !canCreateBinding;
+                                },
                             },
                         }),
                     ),
@@ -139,23 +149,19 @@ export const CreateEntry = React.memo<Props>(
             handleAction,
         });
 
-        if (
-            isEnabledFeature(Feature.EnableSharedEntries) &&
-            workbook?.collectionId &&
-            workbook?.workbookId
-        ) {
+        if (isEnabledFeature(Feature.EnableSharedEntries) && workbook?.workbookId) {
             items.push(
                 getSharedEntriesMenuItems({
-                    datasetAction: handleSharedEntryAction(
-                        EntryScope.Dataset,
-                        workbook.collectionId,
-                        workbook.workbookId,
-                    ),
-                    connectionAction: handleSharedEntryAction(
-                        EntryScope.Connection,
-                        workbook.collectionId,
-                        workbook.workbookId,
-                    ),
+                    datasetAction: handleSharedEntryAction({
+                        scope: EntryScope.Dataset,
+                        collectionId: workbook.collectionId,
+                        workbookId: workbook.workbookId,
+                    }),
+                    connectionAction: handleSharedEntryAction({
+                        scope: EntryScope.Connection,
+                        collectionId: workbook.collectionId,
+                        workbookId: workbook.workbookId,
+                    }),
                     noticeClassName: b('shared-entry-notice'),
                 }),
             );

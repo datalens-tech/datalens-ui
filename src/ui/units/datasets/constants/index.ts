@@ -1,5 +1,6 @@
 import {i18n} from 'i18n';
-import type {EntryScope, WorkbookId} from 'shared';
+import type {CollectionId, EntryScope, WorkbookId} from 'shared';
+import type {GetEntryResponse} from 'shared/schema';
 import {DL} from 'ui';
 
 import {getFakeEntry as genericGetFakeEntry} from '../../../components/ActionPanel';
@@ -48,17 +49,17 @@ export const getStaticSelectItems = (values: string[]) => {
 };
 export const getAppMetricGroupNameI18n = (key: string) => _getSelectItemTitle()[key];
 
-export const getFakeEntry = (
+export const getFakeEntry = <T extends GetEntryResponse = GetEntryResponse>(
     scope: EntryScope.Connection | EntryScope.Dataset,
     workbookId?: WorkbookId,
-    collectionId?: string,
+    collectionId?: CollectionId,
     searchCurrentPath?: string,
 ) => {
     let path = searchCurrentPath || DL.USER_FOLDER;
 
     path = path.endsWith('/') ? path : `${path}/`;
 
-    return genericGetFakeEntry({
+    return genericGetFakeEntry<T>({
         key: `${path}${i18n('connections.form', `section_creation-${scope}`)}`,
         workbookId,
         collectionId,
@@ -209,7 +210,7 @@ export const DATASET_UPDATE_ACTIONS = {
     OBLIGATORY_FILTER_ADD: 'add_obligatory_filter',
     OBLIGATORY_FILTER_UPDATE: 'update_obligatory_filter',
     OBLIGATORY_FILTER_DELETE: 'delete_obligatory_filter',
-};
+} as const;
 
 export const CONDITION_TYPES = {
     BINARY: 'binary',

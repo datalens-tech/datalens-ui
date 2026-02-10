@@ -1,12 +1,25 @@
-import type {ChartData, ChartTitle} from '@gravity-ui/chartkit/gravity-charts';
-
-import {PlaceholderId, WizardVisualizationId, isDateField} from '../../../../../../../shared';
 import type {
+    ChartData,
+    ChartTitle,
+    ChartTooltip,
+    ChartYAxis,
+} from '@gravity-ui/chartkit/gravity-charts';
+
+import {
+    PlaceholderId,
+    WizardVisualizationId,
+    isDateField,
+    isTooltipSumEnabled,
+} from '../../../../../../../shared';
+import type {
+    ServerChartsConfig,
     ServerCommonSharedExtraSettings,
     ServerPlaceholder,
     ServerPlaceholderSettings,
 } from '../../../../../../../shared';
 import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../../utils/axis-helpers';
+
+import {getRangeSliderConfig} from './range-slider';
 
 export function getChartTitle(settings?: ServerCommonSharedExtraSettings): ChartTitle | undefined {
     if (settings?.titleMode !== 'hide' && settings?.title) {
@@ -37,42 +50,82 @@ export function getAxisLabelsRotationAngle(placeholderSettings?: ServerPlacehold
 function getAxisMinMax(
     placeholderSettings?: ServerPlaceholderSettings,
 ): [number | undefined, number | undefined] {
-    if (
-        placeholderSettings?.scale !== 'manual' ||
-        !Array.isArray(placeholderSettings?.scaleValue)
-    ) {
-        return [undefined, undefined];
+    if (placeholderSettings?.scale === 'manual') {
+        if (!Array.isArray(placeholderSettings?.scaleValue)) {
+            return [undefined, undefined];
+        }
+
+        const min = Number(placeholderSettings.scaleValue[0]);
+        const max = Number(placeholderSettings.scaleValue[1]);
+
+        return [Number.isNaN(min) ? undefined : min, Number.isNaN(max) ? undefined : max];
     }
 
-    const min = Number(placeholderSettings.scaleValue[0]);
-    const max = Number(placeholderSettings.scaleValue[1]);
+    if (placeholderSettings?.scaleValue === '0-max') {
+        return [0, undefined];
+    }
 
-    return [Number.isNaN(min) ? undefined : min, Number.isNaN(max) ? undefined : max];
+    return [undefined, undefined];
+}
+
+export function getYAxisBaseConfig({
+    placeholder,
+}: {
+    placeholder: ServerPlaceholder | undefined;
+}): ChartYAxis {
+    const placeholderSettings = placeholder?.settings || {};
+    const yItem = placeholder?.items[0];
+
+    const [yMin, yMax] = getAxisMinMax(placeholderSettings);
+
+    return {
+        // todo: the axis type should depend on the type of field
+        type: isDateField(yItem) ? 'datetime' : 'linear',
+        visible: placeholderSettings?.axisVisibility !== 'hide',
+        labels: {
+            enabled: Boolean(yItem) && placeholder?.settings?.hideLabels !== 'yes',
+            rotation: getAxisLabelsRotationAngle(placeholder?.settings),
+        },
+        title: {
+            text: getAxisTitle(placeholderSettings, yItem) || undefined,
+        },
+        grid: {
+            enabled: Boolean(yItem) && isGridEnabled(placeholderSettings),
+        },
+        ticks: {
+            pixelInterval: getTickPixelInterval(placeholderSettings) || 72,
+        },
+        lineColor: 'var(--g-color-line-generic)',
+        min: yMin,
+        max: yMax,
+    };
 }
 
 export function getBaseChartConfig(args: {
-    extraSettings?: ServerCommonSharedExtraSettings;
+    shared: ServerChartsConfig;
     visualization: {id: string; placeholders: ServerPlaceholder[]};
 }) {
-    const {extraSettings, visualization} = args;
+    const {shared, visualization} = args;
+    const extraSettings = shared.extraSettings;
     const isLegendEnabled = extraSettings?.legendMode !== 'hide';
 
     const xPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.X);
     const xItem = xPlaceholder?.items[0];
     const xPlaceholderSettings = xPlaceholder?.settings || {};
 
-    const yPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.Y);
-    const yPlaceholderSettings = yPlaceholder?.settings || {};
-    const yItem = yPlaceholder?.items[0];
+    const tooltip: ChartTooltip = {
+        enabled: extraSettings?.tooltip !== 'hide',
+    };
+
+    if (isTooltipSumEnabled({visualizationId: shared.visualization.id})) {
+        tooltip.totals = {
+            enabled: extraSettings?.tooltipSum !== 'off',
+        };
+    }
 
     let chartWidgetData: Partial<ChartData> = {
         title: getChartTitle(extraSettings),
-        tooltip: {
-            enabled: extraSettings?.tooltip !== 'hide',
-            totals: {
-                enabled: extraSettings?.tooltipSum !== 'off',
-            },
-        },
+        tooltip,
         legend: {enabled: isLegendEnabled},
         series: {
             data: [],
@@ -87,6 +140,9 @@ export function getBaseChartConfig(args: {
                     },
                 },
                 line: {
+                    lineWidth: 2,
+                },
+                area: {
                     lineWidth: 2,
                 },
             },
@@ -112,23 +168,16 @@ export function getBaseChartConfig(args: {
     const visualizationId = visualization.id as WizardVisualizationId;
     const visualizationWithoutAxis = [
         WizardVisualizationId.Pie,
-        WizardVisualizationId.PieD3,
         WizardVisualizationId.Donut,
-        WizardVisualizationId.DonutD3,
         WizardVisualizationId.Treemap,
-        WizardVisualizationId.TreemapD3,
     ];
 
-    const visualizationWithYMainAxis = [
-        WizardVisualizationId.Bar,
-        WizardVisualizationId.Bar100p,
-        WizardVisualizationId.BarYD3,
-        WizardVisualizationId.BarY100pD3,
-    ];
+    const visualizationWithYMainAxis = [WizardVisualizationId.Bar, WizardVisualizationId.Bar100p];
 
     if (!visualizationWithoutAxis.includes(visualizationId)) {
+        const yPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.Y);
         const [xMin, xMax] = getAxisMinMax(xPlaceholderSettings);
-        const [yMin, yMax] = getAxisMinMax(yPlaceholderSettings);
+
         chartWidgetData = {
             ...chartWidgetData,
             xAxis: {
@@ -149,30 +198,9 @@ export function getBaseChartConfig(args: {
                 lineColor: 'var(--g-color-line-generic)',
                 min: xMin,
                 max: xMax,
+                rangeSlider: getRangeSliderConfig({extraSettings, visualization}),
             },
-            yAxis: [
-                {
-                    // todo: the axis type should depend on the type of field
-                    type: isDateField(yItem) ? 'datetime' : 'linear',
-                    visible: yPlaceholderSettings?.axisVisibility !== 'hide',
-                    labels: {
-                        enabled: Boolean(yItem) && yPlaceholder?.settings?.hideLabels !== 'yes',
-                        rotation: getAxisLabelsRotationAngle(yPlaceholder?.settings),
-                    },
-                    title: {
-                        text: getAxisTitle(yPlaceholderSettings, yItem) || undefined,
-                    },
-                    grid: {
-                        enabled: Boolean(yItem) && isGridEnabled(yPlaceholderSettings),
-                    },
-                    ticks: {
-                        pixelInterval: getTickPixelInterval(yPlaceholderSettings) || 72,
-                    },
-                    lineColor: 'var(--g-color-line-generic)',
-                    min: yMin,
-                    max: yMax,
-                },
-            ],
+            yAxis: [getYAxisBaseConfig({placeholder: yPlaceholder})],
         };
 
         if (visualizationWithYMainAxis.includes(visualizationId)) {

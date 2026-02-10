@@ -3,8 +3,10 @@ import type {
     AreaSeriesData,
     ChartData,
     ChartSeries,
+    ChartYAxis,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
+import sortBy from 'lodash/sortBy';
 
 import type {
     SeriesExportSettings,
@@ -23,12 +25,13 @@ import {
     isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
-import {getBaseChartConfig} from '../../gravity-charts/utils';
+import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
-import {getAxisType} from '../helpers/axis';
+import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {getSegmentMap} from '../helpers/segments';
 import {prepareLineData} from '../line/prepare-line-data';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -52,6 +55,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         shared,
         idToDataType,
         colors,
+        segments: split,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
@@ -78,6 +82,11 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         };
     }
 
+    const segmentsMap = getSegmentMap(args);
+    const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
+    const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
+    const isSplitWithHtmlValues = isHtmlField(split?.[0]);
+
     const preparedData = prepareLineData(args);
     const xCategories = preparedData.categories;
 
@@ -99,15 +108,22 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
     const shouldUsePercentStacking = visualizationId === WizardVisualizationId.Area100p;
     const seriesData: ExtendedLineSeries[] = preparedData.graphs.map<AreaSeries>((graph: any) => {
+        let seriesName = graph.title;
+
+        if (graph.custom?.segmentTitle) {
+            seriesName = `${graph.custom.segmentTitle}: ${seriesName}`;
+        }
+
         return {
-            name: graph.title,
+            name: seriesName,
             type: 'area',
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             color: graph.color,
+            nullMode: graph.connectNulls ? 'connect' : 'skip',
             data: graph.data.reduce((acc: ExtendedLineSeriesData[], item: any, index: number) => {
                 const dataItem: ExtendedLineSeriesData = {
-                    y: item?.y || 0,
+                    y: item?.y ?? null,
                     custom: item.custom,
                 };
 
@@ -133,6 +149,10 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
 
                 return acc;
             }, []),
+            legend: {
+                groupId: graph.id,
+                itemText: graph.legendTitle,
+            },
             dataLabels: {
                 enabled: isDataLabelsEnabled,
                 html: shouldUseHtmlForLabels,
@@ -147,16 +167,24 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         };
     });
 
-    let legend: ChartData['legend'];
-    if (seriesData.length <= 1) {
-        legend = {enabled: false};
+    const shouldUseHtmlForLegend = isHtmlField(colorItem);
+    const legend: ChartData['legend'] = {html: shouldUseHtmlForLegend};
+    const nonEmptyLegendGroups = Array.from(
+        new Set(seriesData.map((s) => s.legend?.groupId).filter(Boolean)),
+    );
+    if (seriesData.length <= 1 || nonEmptyLegendGroups.length <= 1) {
+        legend.enabled = false;
     }
 
     let xAxis: ChartData['xAxis'] = {};
     if (isCategoriesXAxis) {
         xAxis = {
             type: 'category',
-            categories: xCategories?.map(String),
+            // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+            categories: xCategories,
+            labels: {
+                html: isHtmlField(xField) || isMarkdownField(xField) || isMarkupField(xField),
+            },
         };
     } else {
         if (isDateField(xField)) {
@@ -168,12 +196,57 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         }
     }
 
+    const axisLabelNumberFormat = yPlaceholder
+        ? getAxisFormatting({
+              placeholder: yPlaceholder,
+              visualizationId,
+          })
+        : undefined;
+
     const config: ChartData = {
         series: {
             data: seriesData as ChartSeries[],
         },
         xAxis,
+        yAxis: segments.map((d) => {
+            const baseConfig = getYAxisBaseConfig({
+                placeholder: yPlaceholder,
+            });
+            let axisTitle: ChartYAxis['title'] | null = null;
+            if (isSplitEnabled) {
+                let titleText: string = d.title;
+                if (isSplitWithHtmlValues) {
+                    // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+                    titleText = wrapHtml(d.title);
+                }
+
+                axisTitle = {
+                    text: titleText,
+                    rotation: 0,
+                    maxWidth: '25%',
+                    html: isSplitWithHtmlValues,
+                };
+            }
+
+            return merge(baseConfig, {
+                lineColor: 'transparent',
+                labels: {
+                    numberFormat: axisLabelNumberFormat ?? undefined,
+                },
+                plotIndex: d.index,
+                title: axisTitle,
+                startOnTick: isSplitEnabled,
+                endOnTick: isSplitEnabled,
+            });
+        }),
         legend,
+        split: {
+            enable: isSplitEnabled,
+            gap: '40px',
+            plots: segments.map(() => {
+                return {};
+            }),
+        },
     };
 
     if (yFields[0]) {
@@ -184,7 +257,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
 
     return merge(
         getBaseChartConfig({
-            extraSettings: shared.extraSettings,
+            shared,
             visualization: {placeholders, id: visualizationId},
         }),
         config,
