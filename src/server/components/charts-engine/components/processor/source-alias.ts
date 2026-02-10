@@ -1,5 +1,5 @@
 import {Feature} from '../../../../../shared/types/feature';
-import type {Source, SourceConfig} from '../../types';
+import type {Source, SourceConfig, SourceWithAPIConnector} from '../../types';
 
 type IsEnabledServerFeature = (feature: string) => boolean;
 
@@ -24,7 +24,10 @@ export function shouldUseAlias(
     return true;
 }
 
-export function convertToAPIConnectorSource(source: Source, sourceConfig: SourceConfig): Source {
+export function convertToAPIConnectorSource(
+    source: Source,
+    sourceConfig: SourceConfig,
+): SourceWithAPIConnector {
     const {aliasTo} = sourceConfig;
     if (!aliasTo) {
         throw new Error('convertToAPIConnectorSource called without aliasTo config');
@@ -43,7 +46,7 @@ export function convertToAPIConnectorSource(source: Source, sourceConfig: Source
         apiConnectionId: aliasTo.apiConnectionId,
         method: source.method || defaultMethod,
         path: path || '/',
-    } as Source;
+    } as SourceWithAPIConnector;
 
     return converted;
 }

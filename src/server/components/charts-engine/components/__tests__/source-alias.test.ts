@@ -1,4 +1,4 @@
-import type {Source, SourceConfig} from '../../types';
+import type {Source, SourceConfig, SourceWithAPIConnector} from '../../types';
 import {convertToAPIConnectorSource, shouldUseAlias} from '../processor/source-alias';
 import {
     getApiConnectorParamsFromSource,
@@ -8,7 +8,7 @@ import {
 
 describe('source-alias: legacy source to API Connector conversion', () => {
     const aliasConfig: SourceConfig = {
-        dataEndpoint: 'https://st-api.yandex-team.ru/v2',
+        dataEndpoint: 'https://api.example.com/v2',
         passedCredentials: {cookie: true, oauth: true},
         allowedMethods: ['GET'],
         aliasTo: {apiConnectionId: 'test-connection-id'},
@@ -17,7 +17,7 @@ describe('source-alias: legacy source to API Connector conversion', () => {
     describe('convertToAPIConnectorSource', () => {
         test('converts legacy URL to API Connector format', () => {
             const result = convertToAPIConnectorSource(
-                {url: '/_startrek/issues?filter=open&page=1'},
+                {url: '/_example/issues?filter=open&page=1'},
                 aliasConfig,
             );
 
@@ -30,7 +30,7 @@ describe('source-alias: legacy source to API Connector conversion', () => {
 
         test('uses source method when specified', () => {
             const result = convertToAPIConnectorSource(
-                {url: '/_startrek/issues', method: 'POST'},
+                {url: '/_example/issues', method: 'POST'},
                 {...aliasConfig, allowedMethods: ['GET', 'POST']},
             );
 
@@ -56,13 +56,13 @@ describe('source-alias: legacy source to API Connector conversion', () => {
         });
 
         test('works with prepareSource pipeline', () => {
-            const result = convertToAPIConnectorSource({url: '/_startrek/issues'}, aliasConfig);
+            const result = convertToAPIConnectorSource({url: '/_example/issues'}, aliasConfig);
 
             const prepared = prepareSource(result);
             expect(prepared.url).toBe('/_bi_connections/test-connection-id/typed_query_raw');
 
             // Double prepareSource must preserve _original
-            const prepared2 = prepareSource(prepared);
+            const prepared2 = prepareSource(prepared) as SourceWithAPIConnector;
             expect((prepared2._original as Source).method).toBe('GET');
             expect(getApiConnectorParamsFromSource(prepared2).method).toBe('GET');
         });
@@ -72,12 +72,12 @@ describe('source-alias: legacy source to API Connector conversion', () => {
         const enabledFlag = () => true;
 
         test('returns true when aliasTo exists and no OAuth header', () => {
-            expect(shouldUseAlias({url: '/_startrek/issues'}, aliasConfig, enabledFlag)).toBe(true);
+            expect(shouldUseAlias({url: '/_example/issues'}, aliasConfig, enabledFlag)).toBe(true);
         });
 
         test('skips alias for explicit OAuth header', () => {
             const source: Source = {
-                url: '/_startrek/issues',
+                url: '/_example/issues',
                 headers: {authorization: 'OAuth my-secret-token'},
             };
 
@@ -86,7 +86,7 @@ describe('source-alias: legacy source to API Connector conversion', () => {
 
         test('enable alias for non-OAuth Authorization headers', () => {
             const source: Source = {
-                url: '/_startrek/issues',
+                url: '/_example/issues',
                 headers: {authorization: 'Bearer some-token'},
             };
 
@@ -96,8 +96,8 @@ describe('source-alias: legacy source to API Connector conversion', () => {
         test('returns false when aliasTo is not defined', () => {
             expect(
                 shouldUseAlias(
-                    {url: '/_startrek/issues'},
-                    {dataEndpoint: 'https://st-api.yandex-team.ru/v2'},
+                    {url: '/_example/issues'},
+                    {dataEndpoint: 'https://api.example.com/v2'},
                     enabledFlag,
                 ),
             ).toBe(false);
