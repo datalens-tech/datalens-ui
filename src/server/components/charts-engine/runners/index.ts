@@ -20,7 +20,7 @@ export type Runner = {
 export type RunnerHandlerResult = {
     status: number;
     payload: unknown;
-} | void;
+};
 
 export type RunnerHandler = (
     ctx: AppContext,
