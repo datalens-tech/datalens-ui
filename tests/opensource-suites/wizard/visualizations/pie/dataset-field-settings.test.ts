@@ -19,11 +19,12 @@ import {WorkbooksUrls} from '../../../../constants/constants';
 import {DatasetsEntities} from '../../../../constants/test-entities/datasets';
 import {Workbook} from '../../../../page-objects/workbook/Workbook';
 import {addCustomPalette} from '../../../utils';
+import {getUniqId} from '@gravity-ui/uikit';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Pie chart', () => {
         datalensTest('Use color palette from dataset @screenshot', async ({page}, testInfo) => {
-            const customPaletteName = `${testInfo.title} (${getUniqueTimestamp()})`;
+            const customPaletteName = getUniqId();
             await addCustomPalette(page, {name: customPaletteName, colors: ['ff0000']});
 
             await openTestPage(page, `${WorkbooksUrls.E2EWorkbook}/?tab=dataset`);
