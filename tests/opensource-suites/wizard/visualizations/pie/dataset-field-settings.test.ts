@@ -70,7 +70,7 @@ datalensTest.describe('Wizard', () => {
             // create pie chart
             const newPage = await newPagePromise;
             const wizardPage = new WizardPage({page: newPage});
-            await wizardPage.setVisualization(WizardVisualizationId.PieD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Pie);
 
             const chartContainer = wizardPage.page.locator(slct(WizardPageQa.SectionPreview));
             const chart = chartContainer.locator('.chartkit-graph,.gcharts-chart');
