@@ -34,20 +34,8 @@ import {getMessageFromUnknownError} from './utils';
  * Unwraps API Connector response format {data: {body: {result: X}}} -> X
  */
 function unwrapAPIConnectorResponse(body: unknown): unknown {
-    if (
-        typeof body === 'object' &&
-        body !== null &&
-        'data' in body &&
-        typeof body.data === 'object' &&
-        body.data !== null &&
-        'body' in body.data &&
-        typeof (body.data as {body: unknown}).body === 'object' &&
-        (body.data as {body: unknown}).body !== null &&
-        'result' in (body.data as {body: {result: unknown}}).body
-    ) {
-        return (body.data as {body: {result: unknown}}).body.result;
-    }
-    return body;
+    const result = (body as any)?.data?.body?.result;
+    return result === undefined ? body : result;
 }
 
 const {

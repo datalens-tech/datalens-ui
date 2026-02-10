@@ -28,15 +28,13 @@ export function convertToAPIConnectorSource(source: Source, sourceConfig: Source
     const defaultMethod: 'GET' | 'POST' =
         firstAllowedMethod === 'GET' || firstAllowedMethod === 'POST' ? firstAllowedMethod : 'GET';
 
-    const converted: Source = {
-        ...source,
+    const {url: _, ...sourceWithoutUrl} = source;
+    const converted = {
+        ...sourceWithoutUrl,
         apiConnectionId: aliasTo.apiConnectionId,
         method: source.method || defaultMethod,
         path: path || '/',
-        url: '',
-    };
-
-    delete (converted as {url?: string}).url;
+    } as Source;
 
     return converted;
 }
