@@ -148,7 +148,6 @@ export function engineProcessingCallback({
 
 export const getSerializableProcessorParams = ({
     resLocals,
-    res,
     req,
     ctx,
     configResolving,
@@ -159,8 +158,8 @@ export const getSerializableProcessorParams = ({
     forbiddenFields,
     secureConfig,
 }: {
-    resLocals?: Response['locals'];
-    res: Response;
+    resLocals: Response['locals'];
+    res?: Response;
     req: Request;
     ctx: AppContext;
     configResolving: number;
@@ -179,9 +178,7 @@ export const getSerializableProcessorParams = ({
 }): SerializableProcessorParams => {
     const {params, actionParams, widgetConfig} = req.body;
 
-    const locals = resLocals || res.locals;
-
-    const iamToken = locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
+    const iamToken = resLocals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
     const configName = req.body.key;
     const configId = req.body.id;
@@ -221,12 +218,12 @@ export const getSerializableProcessorParams = ({
         paramsOverride: params,
         actionParamsOverride: actionParams,
         widgetConfig,
-        userLang: locals && locals.lang,
-        userLogin: locals && locals.login,
-        userId: locals && locals.userId,
-        subrequestHeaders: locals.subrequestHeaders,
+        userLang: resLocals && resLocals.lang,
+        userLogin: resLocals && resLocals.login,
+        userId: resLocals && resLocals.userId,
+        subrequestHeaders: resLocals.subrequestHeaders,
         iamToken,
-        isEditMode: Boolean(locals.editMode),
+        isEditMode: Boolean(resLocals.editMode),
         configResolving,
         cacheToken: req.headers['x-charts-cache-token'] || null,
         forbiddenFields,
@@ -279,7 +276,6 @@ export const getSerializableProcessorParams = ({
 
 export function commonRunner({
     resLocals,
-    res,
     req,
     ctx,
     chartType,
@@ -295,8 +291,8 @@ export function commonRunner({
     forbiddenFields,
     secureConfig,
 }: {
-    resLocals?: Response['locals'];
-    res: Response;
+    resLocals: Response['locals'];
+    res?: Response;
     req: Request;
     ctx: AppContext;
     chartType?: string;
@@ -323,13 +319,10 @@ export function commonRunner({
     const sourcesConfig = chartsEngine.sources;
     const hooks = new ProcessorHooks({processorHooks: chartsEngine.processorHooks});
 
-    const locals = resLocals || res.locals;
-
-    locals.subrequestHeaders['x-chart-kind'] = chartType;
+    resLocals.subrequestHeaders['x-chart-kind'] = chartType;
 
     const serializableProcessorParams = getSerializableProcessorParams({
-        resLocals: locals,
-        res,
+        resLocals,
         req,
         ctx,
         configResolving,
