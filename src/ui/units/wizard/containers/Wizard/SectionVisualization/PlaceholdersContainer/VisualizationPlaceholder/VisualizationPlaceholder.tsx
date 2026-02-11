@@ -25,7 +25,6 @@ import {
     PseudoFieldTitle,
     WizardVisualizationId,
     isFieldHierarchy,
-    isMarkupField,
     isVisualizationWithLayers,
 } from '../../../../../../../../shared';
 import {
@@ -36,7 +35,6 @@ import {
 import {
     openDialogColors,
     openDialogColumnSettings,
-    openDialogMetric,
     openDialogPlaceholder,
     openDialogPointsSize,
 } from '../../../../../actions/dialog';
@@ -160,19 +158,9 @@ class VisualizationPlaceholder extends React.Component<Props> {
                 };
             }
             case 'metric': {
-                const {items} = placeholder;
-
-                const item = items[0];
-
-                return isMarkupField(item)
-                    ? {
-                          hasSettings: false,
-                      }
-                    : {
-                          hasSettings: true,
-                          onActionIconClick: this.openDialogMetric,
-                          actionIconQa: 'placeholder-action-open-metric-dialog',
-                      };
+                return {
+                    hasSettings: false,
+                };
             }
             case 'flatTable': {
                 const hasSettings =
@@ -195,16 +183,22 @@ class VisualizationPlaceholder extends React.Component<Props> {
                 };
             }
             default: {
-                if (placeholder.id === 'size') {
+                if (placeholder.id === PlaceholderId.Size) {
                     return {
                         hasSettings: true,
                         onActionIconClick: this.openDialogPointsSize,
                     };
                 } else {
+                    const axisPlaceholderIds: string[] = [
+                        PlaceholderId.X,
+                        PlaceholderId.Y,
+                        PlaceholderId.Y2,
+                    ];
                     const hasSettings = Boolean(
                         placeholder.settings &&
                             Object.keys(placeholder.settings).length > 0 &&
-                            placeholder.items.length > 0,
+                            (axisPlaceholderIds.includes(placeholder.id) ||
+                                placeholder.items.length > 0),
                     );
                     return {
                         hasSettings,
@@ -234,12 +228,6 @@ class VisualizationPlaceholder extends React.Component<Props> {
                 }
             },
         });
-    };
-
-    private openDialogMetric = () => {
-        const {extraSettings, onUpdate} = this.props;
-
-        this.props.openDialogMetric({extraSettings, onApply: onUpdate});
     };
 
     private openDialogPointsSize = () => {
@@ -433,7 +421,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
             setColorsConfig,
             setExtraSettings,
             setPointsSizeConfig,
-            openDialogMetric,
             openDialogPointsSize,
             openDialogColors,
             forceDisableTotalsAndPagination,

@@ -382,6 +382,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         noControls: urlNoControls,
         runActivity,
         silentLoadChartData,
+        chartData: widgetChartData,
+        chartStateData,
     } = useLoadingChartWidget({
         ...props,
         chartKitRef,
@@ -621,6 +623,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         noControls: disableControls,
         onFiltersClear: handleFiltersClear,
         reload,
+        chartStateData,
     };
 
     const withInsights = Boolean(loadedData?.chartsInsightsData);
@@ -710,6 +713,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 needRenderContentControls={false}
                 chartRevIdRef={null}
                 runActivity={runActivity}
+                chartData={widgetChartData}
                 {...commonHeaderContentProps}
             />
             {Boolean(description || loadedData?.publicAuthor) && (

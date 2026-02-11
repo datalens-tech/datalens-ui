@@ -1,4 +1,6 @@
 {
   "categories": "Categories",
-  "date": "Date"
+  "date": "Date",
+  "smoothing": "smoothing",
+  "trend": "trend"
 }

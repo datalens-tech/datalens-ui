@@ -38,22 +38,23 @@ const PlaceholderActionIcon: React.FC<PlaceholderActionIconProps> = ({
     const icon = <Icon data={iconData} size={iconSize ?? 16} />;
 
     const content = (
-        <Button view="flat-secondary" size="s" onClick={onClick} qa={qa}>
-            {icon}
-        </Button>
+        <div className={b({first: isFirstElementInRow}, className)}>
+            <Button view="flat-secondary" size="s" onClick={onClick} qa={qa}>
+                {icon}
+            </Button>
+        </div>
     );
 
     return disabledText || hoverText ? (
         <Popover
             placement={['right', 'top', 'bottom']}
             content={<div className={b('popover-content')}>{disabledText || hoverText}</div>}
-            className={b({first: isFirstElementInRow}, className)}
             hasArrow={true}
         >
             {content}
         </Popover>
     ) : (
-        <div className={b({first: isFirstElementInRow}, className)}>{content}</div>
+        content
     );
 };
 
