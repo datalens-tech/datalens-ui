@@ -1,7 +1,7 @@
 {
-  "empty-filters-readonly-alert-message": "Для добавления фильтров перейдите к оригиналу датасета",
-  "filters-readonly-alert-message": "Для редактирования и добавления фильтров перейдите к оригиналу датасета",
-  "filters-readonly-alert-title": "Фильтры отсутствуют",
+  "empty-filters-readonly-alert-message": "To add filters, go to the original dataset",
+  "filters-readonly-alert-message": "To edit or add filters, go to the original dataset",
+  "filters-readonly-alert-title": "No filters",
   "label_filter-list-field-th": "Field",
   "label_filter-list-value-th": "Value",
   "label_obligatory-filter-add": "Add",
