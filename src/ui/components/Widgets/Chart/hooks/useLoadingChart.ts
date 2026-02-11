@@ -8,14 +8,20 @@ import {
     pickExceptActionParamsFromParams,
 } from '@gravity-ui/dashkit/helpers';
 import {useMountedState, usePrevious} from 'hooks';
+import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
-import type {DashChartRequestContext, StringParams} from 'shared';
+import {useDispatch, useSelector} from 'react-redux';
+import type {ChartStateSettings, DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
+import type {DatalensGlobalState} from 'ui/index';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
+import {chartModelingActions} from 'ui/store/toolkit/chart-modeling/actions';
+import {getChartModelingState, getEditingWidgetId} from 'ui/store/toolkit/chart-modeling/selectors';
+import {isChartModelingAvailable} from 'ui/utils/chart-modeling';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import {START_PAGE} from '../../../../libs/DatalensChartkit/ChartKit/components/Widget/components/Table/Paginator/Paginator';
@@ -29,6 +35,7 @@ import DatalensChartkitCustomError, {
     formatError,
 } from '../../../../libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import type {
+    ChartContentWidgetData,
     CombinedError,
     OnActivityComplete,
     OnChangeData,
@@ -128,6 +135,17 @@ const loadingStateReducer = (state: LoadingStateType, newState: Partial<LoadingS
     return state;
 };
 
+async function addChartModelingSeriesAsync(args: {
+    chartStateData: ChartStateSettings;
+    chartData: ChartContentWidgetData;
+}) {
+    const {addChartModelingSeries} = await import(
+        /* webpackChunkName: "add-chart-modeling-series" */ '../../../../utils/chart-modeling/add-chart-modeling-series'
+    );
+
+    return addChartModelingSeries(args);
+}
+
 export const useLoadingChart = (props: LoadingChartHookProps) => {
     const {
         dataProvider,
@@ -199,6 +217,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         },
         dispatch,
     ] = React.useReducer(reducer, getInitialState());
+
+    const globalDispatch = useDispatch();
 
     const [renderedCallbackCalledOnce, setRenderedCallbackCalledOnce] = React.useState(false);
     const [changedInnerFlag, setChangedInnerFlag] = React.useState<boolean>(false);
@@ -1026,6 +1046,72 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         onActivityComplete,
     });
 
+    const chartStateData = useSelector((state: DatalensGlobalState) =>
+        getChartModelingState(state, requestId),
+    );
+
+    const [chartData, setChartData] = React.useState<ChartContentWidgetData | null>(null);
+    const setChartModelingData = useMemoCallback(async () => {
+        let updatedChartData: ChartContentWidgetData | null = null;
+        if (loadedData) {
+            updatedChartData = cloneDeep(loadedData);
+            const {warnings} = await addChartModelingSeriesAsync({
+                chartData: updatedChartData,
+                chartStateData,
+            });
+
+            if (!isEqual(warnings, chartStateData?.warnings)) {
+                globalDispatch(
+                    chartModelingActions.updateChartSettings({
+                        id: requestId,
+                        settings: {
+                            warnings,
+                        },
+                    }),
+                );
+            }
+        }
+
+        if (!isEqual(chartData, updatedChartData)) {
+            setChartData(updatedChartData);
+        }
+    }, []);
+
+    const shouldUseChartModeling = React.useMemo(
+        () => loadedData && isChartModelingAvailable({loadedData}),
+        [loadedData],
+    );
+    React.useEffect(() => {
+        if (shouldUseChartModeling) {
+            setChartModelingData();
+        }
+    }, [shouldUseChartModeling, setChartModelingData, loadedData, chartStateData]);
+
+    const chartModelingDialogWidgetId = useSelector(getEditingWidgetId);
+    const prevRequestId = usePrevious(requestId);
+    const cleanChartSettings = useMemoCallback(async () => {
+        const id = prevRequestId || requestId;
+        if (!isEmpty(chartStateData) || chartModelingDialogWidgetId === id) {
+            globalDispatch(
+                chartModelingActions.removeChartSettings({
+                    id,
+                }),
+            );
+        }
+    }, []);
+
+    React.useEffect(() => {
+        if (prevRequestId && prevRequestId !== requestId) {
+            cleanChartSettings();
+        }
+    }, [cleanChartSettings, prevRequestId, requestId]);
+
+    React.useEffect(() => {
+        return () => {
+            cleanChartSettings();
+        };
+    }, [cleanChartSettings]);
+
     return {
         loadedData,
         isLoading,
@@ -1051,5 +1137,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isWidgetMenuDataChanged,
         runActivity,
         silentLoadChartData,
+        chartData: shouldUseChartModeling ? chartData : loadedData,
+        chartStateData,
     };
 };

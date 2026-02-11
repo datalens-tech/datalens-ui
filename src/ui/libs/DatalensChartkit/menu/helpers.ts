@@ -1,3 +1,4 @@
+import type {ChartStateSettings} from 'shared';
 import {MenuItemsIds} from 'shared';
 import type {GetDefaultChartMenuArgs} from 'ui/registry/units/chart/types/functions/getDefaultChartMenu';
 import type {GetPanePreviewChartMenuArgs} from 'ui/registry/units/chart/types/functions/getPanePreviewChartMenu';
@@ -14,6 +15,7 @@ import {
     getNewWindowMenuItem,
     getOpenAsTableMenuItem,
 } from './MenuItems';
+import {getChartModelingMenuItem} from './chart-modeling';
 
 /**
  * Menu config for type: 'widget' (value comes from MenuType in Menu.tsx)
@@ -115,6 +117,10 @@ export const getDefaultChartMenu = ({
         getEditMenuItem({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.EDIT],
+        }),
+        getChartModelingMenuItem({
+            chartState: extraOptions?.chartStateData as ChartStateSettings,
+            widgetName: extraOptions?.widgetTitle as string,
         }),
         getOpenAsTableMenuItem({
             chartsDataProvider,

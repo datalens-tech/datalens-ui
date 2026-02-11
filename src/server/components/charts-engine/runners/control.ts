@@ -12,7 +12,7 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
     const {
         chartsEngine,
         req,
-        res,
+        resLocals,
         config,
         configResolving,
         workbookId,
@@ -32,10 +32,10 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
         ctx.logError('CONTROL_RUNNER_CONFIG_MISSING', error);
         ctx.end();
 
-        res.status(400).send({
-            error,
-        });
-        return;
+        return {
+            status: 400,
+            payload: error,
+        };
     }
 
     const generatedConfig = {
@@ -63,7 +63,7 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
     });
 
     return commonRunner({
-        res,
+        resLocals,
         req,
         ctx,
         chartsEngine,

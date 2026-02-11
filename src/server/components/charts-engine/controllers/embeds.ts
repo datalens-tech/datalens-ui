@@ -341,7 +341,7 @@ async function findAndExecuteRunner(
         res.status(400).send({
             error: `Unknown config type ${configType}`,
         });
-        return null;
+        return;
     }
 
     const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
@@ -350,7 +350,7 @@ async function findAndExecuteRunner(
         res.status(400).send({
             error: 'Editor is disabled',
         });
-        return null;
+        return;
     }
 
     req.body.config = entry;
@@ -361,10 +361,10 @@ async function findAndExecuteRunner(
         enableExport: embeddingInfo.embed.settings?.enableExport === true,
     };
 
-    return await runnerFound.handler(ctx, {
+    const runnerHandlerResult = await runnerFound.handler(ctx, {
         chartsEngine,
         req,
-        res,
+        resLocals: res.locals,
         config: {
             ...entry,
             data: {
@@ -379,6 +379,12 @@ async function findAndExecuteRunner(
         secureConfig: {privateParams: privateParams ? Array.from(privateParams) : undefined},
         forbiddenFields: ['_confStorageConfig', 'timings', 'key'],
     });
+
+    if (runnerHandlerResult) {
+        res.status(runnerHandlerResult.status).send(runnerHandlerResult.payload);
+    }
+
+    return;
 }
 
 export const embedsController = (chartsEngine: ChartsEngine) => {

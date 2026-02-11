@@ -103,6 +103,8 @@ export enum Feature {
     UsDynamicMasterTokenInProxy = 'UsDynamicMasterTokenInProxy',
     /** Сhart settings for displaying trend lines smoothing, etc. */
     ChartModeling = 'ChartModeling',
+    /** Route legacy HTTP sources through API Connector */
+    UseSourceAlias = 'UseSourceAlias',
 }
 
 export type FeatureConfig = Record<string, boolean>;

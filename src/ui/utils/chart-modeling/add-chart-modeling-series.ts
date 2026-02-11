@@ -1,5 +1,6 @@
 import type {ChartData, LineSeries} from '@gravity-ui/chartkit/gravity-charts';
 import chroma from 'chroma-js';
+import {I18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import {PolynomialRegression} from 'ml-regression-polynomial';
 import type {
@@ -9,12 +10,13 @@ import type {
     TrendLineSettings,
 } from 'shared';
 import {DEFAULT_SMOOTHING, DEFAULT_TREND_SETTINGS, WidgetKind} from 'shared';
-import {DL} from 'ui/constants';
 import type {
     ChartContentWidgetData,
     GraphWidget,
     GraphWidgetSeriesOptions,
 } from 'ui/libs/DatalensChartkit/types';
+
+export const i18n = I18n.keyset('chartkit');
 
 const BRIGHTNESS_RATIO = 0.8;
 
@@ -92,7 +94,10 @@ function sma({
         sum += point.y;
 
         if (i < windowSize - 1) {
-            result.push({...point});
+            result.push({
+                x: point.x,
+                y: sum / (i + 1),
+            });
         } else {
             if (i >= windowSize) {
                 sum -= data[i - windowSize].y;
@@ -139,7 +144,7 @@ function createTrendSeries({
     const lineWidth = settings?.lineWidth ?? DEFAULT_TREND_SETTINGS.lineWidth;
     const linked = settings?.linked ?? DEFAULT_TREND_SETTINGS.linked;
 
-    const trendSeriesPostfix = DL.USER_LANG === 'ru' ? 'тренд' : 'trend';
+    const trendSeriesPostfix = i18n('trend');
 
     let dashStyle = settings?.dashStyle;
     if (dashStyle === 'auto') {
@@ -159,11 +164,12 @@ function createTrendSeries({
                 });
                 const originalSeriesName = s.name;
                 const color = getDarkenColor(s.color);
+                const newSeriesName = `${originalSeriesName}: ${trendSeriesPostfix}`;
 
                 const newSeries = {
                     ...cloneDeep(s),
                     type: 'line',
-                    name: `${originalSeriesName}: ${trendSeriesPostfix}`,
+                    name: newSeriesName,
                     color,
                     dashStyle: (dashStyle ?? 'Dash') as LineSeries['dashStyle'],
                     data: trendData,
@@ -171,6 +177,10 @@ function createTrendSeries({
                 };
 
                 if (!linked) {
+                    if (newSeries.legend?.itemText) {
+                        newSeries.legend.itemText = newSeriesName;
+                    }
+
                     if (newSeries.legend?.groupId) {
                         newSeries.legend.groupId += 'trend';
                     }
@@ -204,7 +214,7 @@ function createTrendSeries({
                     dashStyle: dashStyle ?? 'Dash',
                     data: trendData,
                     lineWidth,
-                    linkedTo: linked ? s.id : undefined,
+                    linkedTo: linked ? ' ' : undefined,
                 };
             });
         }
@@ -227,7 +237,7 @@ function createSmoothingSeries({
     const lineWidth = settings?.lineWidth ?? DEFAULT_SMOOTHING.lineWidth;
     const linked = settings?.linked ?? DEFAULT_SMOOTHING.linked;
 
-    const smoothingSeriesPostfix = DL.USER_LANG === 'ru' ? 'сглаживание' : 'smoothing';
+    const smoothingSeriesPostfix = i18n('smoothing');
 
     let dashStyle = settings?.dashStyle;
     if (dashStyle === 'auto') {
@@ -248,11 +258,12 @@ function createSmoothingSeries({
                 });
                 const originalSeriesName = s.name;
                 const color = getDarkenColor(s.color);
+                const newSeriesName = `${originalSeriesName}: ${smoothingSeriesPostfix}`;
 
                 const newSeries = {
                     ...cloneDeep(s),
                     type: 'line',
-                    name: `${originalSeriesName}: ${smoothingSeriesPostfix}`,
+                    name: newSeriesName,
                     color,
                     dashStyle: (dashStyle ?? s.dashStyle) as LineSeries['dashStyle'],
                     data: seriesData,
@@ -260,6 +271,10 @@ function createSmoothingSeries({
                 };
 
                 if (!linked) {
+                    if (newSeries.legend?.itemText) {
+                        newSeries.legend.itemText = newSeriesName;
+                    }
+
                     if (newSeries.legend?.groupId) {
                         newSeries.legend.groupId += 'smoothing';
                     }
@@ -294,7 +309,7 @@ function createSmoothingSeries({
                     dashStyle: dashStyle ?? s.dashStyle,
                     data: trendData,
                     lineWidth,
-                    linkedTo: linked ? s.id : undefined,
+                    linkedTo: linked ? ' ' : undefined,
                 };
             });
         }
@@ -310,11 +325,11 @@ export function addChartModelingSeries({
     chartStateData: ChartStateSettings;
     chartData: ChartContentWidgetData;
 }) {
-    const warnings = new Set<ChartStateWarning>();
     if (!(chartStateData?.trends?.enabled || chartStateData?.smoothing?.enabled)) {
-        return {warnings: Array.from(warnings), chartData};
+        return {warnings: undefined, chartData};
     }
 
+    const warnings = new Set<ChartStateWarning>();
     const newChartSeries = [];
     let shouldHideOriginalLines = false;
     if (chartStateData?.trends?.enabled) {
@@ -341,11 +356,6 @@ export function addChartModelingSeries({
     switch (chartData?.type) {
         case WidgetKind.GravityCharts: {
             const gChartData = chartData.data as ChartData;
-            if (shouldHideOriginalLines) {
-                gChartData.series.data.forEach((s) => {
-                    s.visible = false;
-                });
-            }
             if (shouldHideOriginalLines) {
                 (gChartData.series.data as LineSeries[]).forEach((s) => {
                     if (s.color) {
@@ -380,5 +390,5 @@ export function addChartModelingSeries({
         }
     }
 
-    return {warnings: Array.from(warnings), chartData};
+    return {warnings: warnings.size ? Array.from(warnings) : undefined, chartData};
 }
