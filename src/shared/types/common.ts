@@ -32,6 +32,7 @@ export interface LandingLayoutPageError {
     pageTitle?: RenderParams<{DL: DLGlobalData}>['title'];
     pageMeta?: RenderParams<{DL: DLGlobalData}>['meta'];
     pageLinks?: RenderParams<{DL: DLGlobalData}>['links'];
+    showDebugInfo?: boolean;
 }
 
 export interface LandingPageEntryMeta {

@@ -323,3 +323,33 @@ export type ChartActivityResponseData = {
     requestId?: string;
     traceId?: string;
 };
+
+export type TrendLineSettings = {
+    method?: 'linear' | 'quadratic' | 'cubic';
+    dashStyle?: string;
+    lineWidth?: number;
+    /** new series linked with original (e.g., shown/hidden together)) */
+    linked?: boolean;
+};
+
+export type SmoothingLineSettings = {
+    method?: 'sma';
+    windowSize?: number;
+    dashStyle?: string;
+    lineWidth?: number;
+    /** new series linked with original (e.g., shown/hidden together)) */
+    linked?: boolean;
+};
+
+export type ChartStateWarning = 'dataWithNull';
+
+export type ChartStateSettings = {
+    trends?: {
+        enabled?: boolean;
+        settings?: TrendLineSettings;
+    };
+    smoothing?: {
+        enabled?: boolean;
+        settings?: SmoothingLineSettings;
+    };
+};

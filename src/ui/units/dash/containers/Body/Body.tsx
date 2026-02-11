@@ -42,6 +42,7 @@ import {
 } from 'shared';
 import {getAllTabItems} from 'shared/utils/dash';
 import type {DatalensGlobalState} from 'ui';
+import {ChartModelingSettings} from 'ui/components/ChartModelingSettings/ChartModelingSettings';
 import {
     DEFAULT_DASH_MARGINS,
     FIXED_GROUP_CONTAINER_ID,
@@ -337,6 +338,7 @@ class BodyInternal extends React.PureComponent<BodyInternalProps, DashBodyState>
                 />
                 <PaletteEditor />
                 <EntryDialogues ref={this.entryDialoguesRef} />
+                <ChartModelingSettings />
             </div>
         );
     }

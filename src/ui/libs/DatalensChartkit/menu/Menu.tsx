@@ -30,7 +30,7 @@ export type MenuItemData = {loadedData: MenuLoadedData};
 
 export type MenuItemConfig = {
     id: MenuItemsIds;
-    title: string | (() => string) | ((data: MenuItemArgs) => string);
+    title: string | (() => string | React.ReactNode) | ((data: MenuItemArgs) => string);
     icon?: React.ReactNode | ((data: MenuItemArgs) => React.ReactNode);
     items?: MenuItemConfig[];
     isDisabled?: (params?: any) => boolean | string;
