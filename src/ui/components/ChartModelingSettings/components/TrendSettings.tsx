@@ -27,7 +27,7 @@ export const TrendSettings = (props: Props) => {
 
     const enabled = chartState.trends?.enabled ?? false;
     const method = String(settings?.method ?? DEFAULT_TREND_SETTINGS.method);
-    const dashStyle = settings?.dashStyle ?? DEFAULT_TREND_SETTINGS.dashStyle ?? 'auto';
+    const dashStyle = settings?.dashStyle ?? 'auto';
     const lineWidth = settings?.lineWidth ?? DEFAULT_TREND_SETTINGS.lineWidth;
 
     const handleEnableTrends = React.useCallback(() => {

@@ -165,6 +165,11 @@ export type HooksContext = {
     };
 };
 
+export type SourceAliasConfig = {
+    apiConnectionId: string;
+    unwrapResponse?: boolean; // If true, unwrap {data: {body: {result: X}}} -> X
+};
+
 export type SourceConfig = {
     description?: {
         title: {
@@ -203,6 +208,7 @@ export type SourceConfig = {
     args?: Record<string, string | number | (string | number)[]>;
     maxRedirects?: number;
     isExternal?: boolean;
+    aliasTo?: SourceAliasConfig;
 };
 
 export enum MiddlewareStage {
