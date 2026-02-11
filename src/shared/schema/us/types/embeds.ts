@@ -1,43 +1,25 @@
-export type Embed = {
-    embedId: string;
-    title: string;
-    embeddingSecretId: string;
-    entryId: string;
-    depsIds: string[];
-    unsignedParams: string[];
-    privateParams: string[];
-    createdBy: string;
-    createdAt: string;
-    updatedAt: string;
-    updatedBy: string;
-    publicParamsMode: boolean;
-    settings: {
-        enableExport?: boolean;
-    };
-};
+import type z from 'zod';
 
-export type CreateEmbedArgs = {
-    title: string;
-    embeddingSecretId: string;
-    entryId: string;
-    depsIds: string[];
-    unsignedParams: string[];
-    privateParams: string[];
-    publicParamsMode: boolean;
-};
+import type {
+    createEmbedArgsSchema,
+    createEmbedResultSchema,
+    deleteEmbedArgsSchema,
+    deleteEmbedResultSchema,
+    embedSchema,
+    listEmbedsArgsSchema,
+    listEmbedsResultSchema,
+} from '../schemas/embeds';
 
-export type CreateEmbedResponse = Embed;
+export type Embed = z.infer<typeof embedSchema>;
 
-export type ListEmbedsArgs = {
-    entryId: string;
-};
+export type CreateEmbedArgs = z.infer<typeof createEmbedArgsSchema>;
 
-export type ListEmbedsResponse = Embed[];
+export type CreateEmbedResponse = z.infer<typeof createEmbedResultSchema>;
 
-export type DeleteEmbedArgs = {
-    embedId: string;
-};
+export type ListEmbedsArgs = z.infer<typeof listEmbedsArgsSchema>;
 
-export type DeleteEmbedResponse = {
-    embedId: string;
-};
+export type ListEmbedsResponse = z.infer<typeof listEmbedsResultSchema>;
+
+export type DeleteEmbedArgs = z.infer<typeof deleteEmbedArgsSchema>;
+
+export type DeleteEmbedResponse = z.infer<typeof deleteEmbedResultSchema>;
