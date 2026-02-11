@@ -1,12 +1,12 @@
 {
-  "apply-btn": "Далее",
-  "cancel-btn": "Отмена",
-  "dialog-title": "Укажите ссылку на подключение",
-  "documentation-link-text": "документации",
-  "entry-error": "Невалидная сущность",
-  "info-message": "Подключение и воркбук должны находиться в одной организации и у вас должны быть права на привязку выбранного подключения. Подробнее в",
-  "input-label": "Ссылка:",
-  "link-error": "Некорректная ссылка",
-  "no-access-for-binding-create": "У вас нет прав на использование этого объекта",
-  "required-error": "Введите ссылку"
+  "apply-btn": "Next",
+  "cancel-btn": "Cancel",
+  "dialog-title": "Enter link to connection",
+  "documentation-link-text": "documentation",
+  "entry-error": "Invalid object",
+  "info-message": "The connection and the workbook must be located in the same organization, and you must have the rights to bind the connection specified. Read more in the",
+  "input-label": "Link:",
+  "link-error": "Invalid link",
+  "no-access-for-binding-create": "Insufficient rights to bind object",
+  "required-error": "Add link"
 }

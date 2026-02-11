@@ -1,5 +1,5 @@
 {
-  "delegated": "Права делегированы",
-  "not-delegated": "Без делегации прав",
-  "relation-tooltip-text": "Перейти к связанным объектам в воркбуке"
+  "delegated": "Rights delegated",
+  "not-delegated": "No rights delegated",
+  "relation-tooltip-text": "Go to linked objects in workbook"
 }

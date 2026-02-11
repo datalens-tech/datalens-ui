@@ -1,8 +1,8 @@
 {
-  "entries-list-title-connection": "Подключения",
-  "entries-list-title-dataset": "Датасеты",
+  "entries-list-title-connection": "Connections",
+  "entries-list-title-dataset": "Datasets",
   "label_no-data": "No data",
   "label_placeholder-filter-by-name": "Filter by name",
-  "shared-list-title": "Привязанные {{entry}}",
-  "workbook-list-title": "{{entry}} в воркбуке"
+  "shared-list-title": "Bound {{entry}}",
+  "workbook-list-title": "{{entry}} in workbook"
 }

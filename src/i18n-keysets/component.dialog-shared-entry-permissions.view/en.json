@@ -1,13 +1,13 @@
 {
-  "apply-text": "Применить",
-  "cancel-text": "Отмена",
-  "delegate-message": "Внутри воркбука права на подключение проверяться не будут",
-  "delegate-title": "Делегировать права доступа",
-  "documentation-link-text": "документации",
-  "label-current-entry": "Выбранный объект",
-  "label-relation-entity": "Где используется",
-  "not-delegate-message": "Для просмотра данных необходимо выдать права на оригинал подключения",
-  "not-delegate-title": "Не делегировать права доступа",
-  "notice-text": "Неправильная настройка может привести к непредвиденным результатам. Подробнее в",
-  "title-dialog": "Настройка доступа"
+  "apply-text": "Apply",
+  "cancel-text": "Cancel",
+  "delegate-message": "Connection rights will not be checked within a workbook",
+  "delegate-title": "Delegate access rights",
+  "documentation-link-text": "documentation",
+  "label-current-entry": "Selected object",
+  "label-relation-entity": "Where it's used",
+  "not-delegate-message": "To view the data, you must grant the rights to the original connection",
+  "not-delegate-title": "Do not delegate access rights",
+  "notice-text": "Incorrect settings can lead to unexpected results. Read more in the",
+  "title-dialog": "Access setup"
 }

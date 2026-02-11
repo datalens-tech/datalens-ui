@@ -1,11 +1,11 @@
 {
-  "add-entry-workbook-toast-message": "Название: {{name}}",
-  "add-entry-workbook-toast-title-connection": "Подключение привязано к воркбуку",
-  "add-entry-workbook-toast-title-dataset": "Датасет привязан к воркбуку",
-  "label-shared-connection": "Подключение",
-  "label-shared-dataset": "Датасет",
-  "shared-entry-bindings-dropdown-menu-title": "Управление привязками",
-  "title-select-shared-entry-dialog-connection": "Выберите подключение",
-  "title-select-shared-entry-dialog-dataset": "Выберите датасет",
-  "workbook-shared-entry-original-link": "Открыть оригинал"
+  "add-entry-workbook-toast-message": "Name: {{name}}",
+  "add-entry-workbook-toast-title-connection": "Connection bound to workbook",
+  "add-entry-workbook-toast-title-dataset": "Dataset bound to workbook",
+  "label-shared-connection": "Connection",
+  "label-shared-dataset": "Dataset",
+  "shared-entry-bindings-dropdown-menu-title": "Manage bindings",
+  "title-select-shared-entry-dialog-connection": "Select connection",
+  "title-select-shared-entry-dialog-dataset": "Select dataset",
+  "workbook-shared-entry-original-link": "Open original"
 }
