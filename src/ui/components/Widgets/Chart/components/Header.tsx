@@ -15,7 +15,6 @@ import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/Cha
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 import {chartModelingActions} from 'ui/store/toolkit/chart-modeling/actions';
 import {getChartModelingState, getEditingWidgetId} from 'ui/store/toolkit/chart-modeling/selectors';
-import {getChartType} from 'ui/units/ql/store/reducers/ql';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
 
 import {
@@ -114,7 +113,6 @@ export const Header = (props: HeaderProps) => {
     const [commentsLength, setCommentsLength] = React.useState(null);
 
     const isEditAvaible = useSelector(selectWorkbookEditPermission);
-    const chartType = useSelector(getChartType);
 
     const handleCommentsChanged = React.useCallback(
         (length) => {
@@ -209,7 +207,6 @@ export const Header = (props: HeaderProps) => {
             <div className={b('controls-corner-wrapper')}>
                 {canBeShownMenu && (
                     <MenuWithErrorBoundary
-                        chartType={chartType}
                         commentsLength={commentsLength}
                         hideChartComments={hideChartComments}
                         configMenu={configMenu}

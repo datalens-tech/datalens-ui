@@ -12,7 +12,6 @@ import {
 } from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import {I18n, i18n} from 'i18n';
-import type {QLChartType} from 'shared';
 import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds, PREVIEW_ROUTE, WidgetKind} from 'shared';
 import {isWidgetTypeDoNotNeedOverlay} from 'ui/components/DashKit/plugins/Widget/components/helpers';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
@@ -41,7 +40,6 @@ export type MenuItemArgs = {
     widgetDataRef?: ChartWidgetDataRef | null;
     error?: DatalensChartkitCustomError;
     widgetRenderTimeRef?: React.MutableRefObject<number | null>;
-    chartType?: QLChartType | null;
 };
 
 export type MenuCommentsItemVisibleArgs = {
@@ -51,7 +49,6 @@ export type MenuCommentsItemVisibleArgs = {
     widgetRenderTimeRef?: React.MutableRefObject<number | null>;
     callbackOnCommentsChanged?: (commentsLength: number) => void;
     updatedCommentsLength?: number | null;
-    chartType?: QLChartType | null;
 };
 
 export const getExportMenuItem = getExportItem;
