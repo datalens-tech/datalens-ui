@@ -1,4 +1,4 @@
-import {Page} from '@playwright/test';
+import {Page, expect} from '@playwright/test';
 
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
@@ -7,6 +7,7 @@ import {getXAxisValues, openTestPage, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
+import {CommonUrls} from '../../../page-objects/constants/common-urls';
 
 const checkXAxisValuesOrder = async (wizardPage: WizardPage, expectedValues: string[]) => {
     let xAxisValues: (string | null)[] = [];
@@ -23,6 +24,51 @@ const checkXAxisValuesOrder = async (wizardPage: WizardPage, expectedValues: str
             )}]`,
         );
     });
+};
+
+// const formatDateValue = (value: number | string) => {
+//     if (typeof value === 'number') {
+//         return moment(value).format('DD.MM.YYYY');
+//     }
+//     return value;
+// };
+
+const getApiRunXAxisValues = (responseData: any): string[] => {
+    const chartData = responseData?.data;
+    if (!chartData) {
+        throw new Error('API /api/run response has no data for chart values');
+    }
+
+    if (Array.isArray(chartData.categories_ms)) {
+        return chartData.categories_ms.map(String);
+    }
+
+    if (Array.isArray(chartData.categories)) {
+        return chartData.categories.map(String);
+    }
+
+    if (Array.isArray(chartData.xAxis?.categories)) {
+        return chartData.xAxis.categories.map(String);
+    }
+
+    throw new Error('API /api/run response has no categories for X axis');
+};
+
+const checkApiRunXAxisValuesOrderAfterAction = async (
+    wizardPage: WizardPage,
+    expectedValues: string[],
+    action: () => Promise<void>,
+) => {
+    const apiRunResponsePromise = wizardPage.page.waitForResponse((response) => {
+        return new URL(response.url()).pathname === CommonUrls.ApiRun && response.status() === 200;
+    });
+
+    await action();
+
+    const responseData = await (await apiRunResponsePromise).json();
+    const xAxisValues = getApiRunXAxisValues(responseData);
+
+    expect(xAxisValues).toEqual(expectedValues);
 };
 
 const expectedNumericValues = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
@@ -159,7 +205,7 @@ datalensTest.describe('Wizard - Sort', () => {
         },
     );
 
-    datalensTest.skip(
+    datalensTest(
         'Sorting works if there is a field with the Date type in section X',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
@@ -173,21 +219,36 @@ datalensTest.describe('Wizard - Sort', () => {
 
             await wizardPage.filterEditor.selectRangeDate(['01.12.2017', '07.12.2017']);
 
-            await wizardPage.filterEditor.apply();
+            await checkApiRunXAxisValuesOrderAfterAction(
+                wizardPage,
+                expectedDateValues,
+                async () => {
+                    await wizardPage.filterEditor.apply();
+                },
+            );
 
-            await checkXAxisValuesOrder(wizardPage, expectedDateValues);
+            await checkApiRunXAxisValuesOrderAfterAction(
+                wizardPage,
+                expectedDateValuesAfterSort,
+                async () => {
+                    await wizardPage.sectionVisualization.addFieldByClick(
+                        PlaceholderName.Sort,
+                        'Profit',
+                    );
+                },
+            );
 
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Sort, 'Profit');
-
-            await checkXAxisValuesOrder(wizardPage, expectedDateValuesAfterSort);
-
-            await wizardPage.sectionVisualization.clickOnSortIcon();
-
-            await checkXAxisValuesOrder(wizardPage, expectedDateValuesAfterChangeSort);
+            await checkApiRunXAxisValuesOrderAfterAction(
+                wizardPage,
+                expectedDateValuesAfterChangeSort,
+                async () => {
+                    await wizardPage.sectionVisualization.clickOnSortIcon();
+                },
+            );
         },
     );
 
-    datalensTest.skip(
+    datalensTest(
         'Sorting works if there is a field with the number type in section X, and the same field in the Sorting',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
