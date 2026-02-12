@@ -138,7 +138,7 @@ const expectedDateValuesAfterSort = [
     '07.12.2017',
 ];
 
-datalensTest.describe.only('Wizard - Sort', () => {
+datalensTest.describe('Wizard - Sort', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         await openTestPage(page, RobotChartsWizardUrls.WizardForDatasetSampleCh);
     });
