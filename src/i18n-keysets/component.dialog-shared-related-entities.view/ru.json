@@ -1,0 +1,21 @@
+{
+  "alert-message-info": "Удаление не повлияет на чарты в Wizard, но может повлиять на чарты в Editor",
+  "alert-message-warning": "Перед удалением убедитесь, что не нарушатся связи в объектах. Если у вас есть чарты в Editor, их придётся проверить вручную.",
+  "alert-title-info": "{{entry}} нигде не используется",
+  "alert-title-warning": "{{entry}} используется в некоторых {{relation}}",
+  "apply-text": "Удалить",
+  "cancel-text": "Отмена",
+  "dialog-error": "Произошла ошибка",
+  "dialog-title": "Связанные объекты в воркбуке",
+  "label-current-entry": "Выбранный объект",
+  "label-shared-connection": "Подключение",
+  "label-shared-dataset": "Датасет",
+  "refresh-btn": "Обновить",
+  "related-entities-list-empty": "Связанные объекты в воркбуке отсутствуют",
+  "relation-chart": "чартах",
+  "relation-dash": "дашбордах",
+  "relation-dataset": "датасетах",
+  "relations": "связанных объектах",
+  "retry-btn": "Попробовать снова",
+  "title-dialog-delete": "Удалить {{entry}}?"
+}

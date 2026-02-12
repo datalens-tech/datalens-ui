@@ -19,7 +19,8 @@ import {
     Square,
     SquareCheck,
 } from '@gravity-ui/icons';
-import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
+import type {ThemeType} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon, useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
 import {i18n} from 'i18n';
@@ -33,13 +34,21 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {DashTab, DashTabLayout} from 'shared';
-import {Feature, FixedHeaderQa, SCROLL_TITLE_DEBOUNCE_TIME} from 'shared';
+import {
+    Feature,
+    FixedHeaderQa,
+    SCROLL_TITLE_DEBOUNCE_TIME,
+    SCR_USER_AGENT_HEADER_VALUE,
+} from 'shared';
+import {getAllTabItems} from 'shared/utils/dash';
 import type {DatalensGlobalState} from 'ui';
+import {ChartModelingSettings} from 'ui/components/ChartModelingSettings/ChartModelingSettings';
 import {
     DEFAULT_DASH_MARGINS,
     FIXED_GROUP_CONTAINER_ID,
     FIXED_GROUP_HEADER_ID,
 } from 'ui/components/DashKit/constants';
+import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Mode} from '../../modules/constants';
@@ -63,6 +72,8 @@ import {FixedContainerWrapperWithContext, FixedControlsWrapperWithContext} from 
 
 import './Body.scss';
 
+const VIEWPORT_DASH_LOADED_EVENT_DEBOUNCE_TIME = 1000;
+
 // Do not change class name, the snapter service uses
 const b = block('dash-body');
 
@@ -85,6 +96,10 @@ export type OwnProps = {
       } & EditProps)
     | NoEditProps
 );
+
+type BodyInternalOwnProps = {
+    themeType: ThemeType;
+} & OwnProps;
 
 type EditProps = {
     handlerEditClick: () => void;
@@ -110,8 +125,10 @@ type DashBodyState = {
         margins: [number, number];
         renderers: DashKitGroup[];
     };
+    totalItemsCount: number;
 };
 
+type BodyInternalProps = StateProps & DispatchProps & RouteComponentProps & BodyInternalOwnProps;
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
 
 type MemoContext = {
@@ -126,7 +143,7 @@ type MemoContext = {
 type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
 
 // Body is used as a core in different environments
-class Body extends React.PureComponent<BodyProps, DashBodyState> {
+class BodyInternal extends React.PureComponent<BodyInternalProps, DashBodyState> {
     static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
         let updatedState: Partial<DashBodyState> = {};
 
@@ -143,6 +160,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             };
 
             isTabUnmount = true;
+        }
+
+        const newTotalItemsCount = getAllTabItems(props.tabData).length;
+        if (newTotalItemsCount !== state.totalItemsCount) {
+            updatedState.totalItemsCount = newTotalItemsCount;
         }
 
         const currentHash = props.location.hash;
@@ -183,6 +205,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         }
     }, SCROLL_TITLE_DEBOUNCE_TIME);
 
+    dispatchViewportDashLoadedEventDebounced = debounce(() => {
+        return this.dispatchViewportDashLoadedEvent();
+    }, VIEWPORT_DASH_LOADED_EVENT_DEBOUNCE_TIME);
+
     _memoizedWidgetsMap: {
         layout: DashTabLayout[] | null;
         byGroup: Record<string, DashTabLayout[]>;
@@ -196,9 +222,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     };
     _memoizedPropertiesCache: Map<string, ReactGridLayoutProps> = new Map();
 
+    _memoizedDashStyles: React.CSSProperties | undefined = undefined;
+
     state: DashBodyState;
 
-    constructor(props: BodyProps) {
+    constructor(props: BodyInternalProps) {
         super(props);
 
         this.state = {
@@ -230,7 +258,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     },
                 ],
             },
+            totalItemsCount: 0,
         };
+
+        this.updateDashBgColors();
     }
 
     componentDidMount() {
@@ -246,6 +277,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
     componentDidUpdate() {
         this.updateMargins();
+        this.updateDashBgColors();
     }
 
     componentDidCatch(error: Error) {
@@ -256,11 +288,14 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     componentWillUnmount() {
         window.removeEventListener('wheel', this.interruptAutoScroll);
         window.removeEventListener('touchmove', this.interruptAutoScroll);
+        this.scrollIntoViewWithDebounce.cancel();
+        this.dispatchViewportDashLoadedEventDebounced.cancel();
     }
 
     render() {
         return (
             <div
+                style={this._memoizedDashStyles}
                 className={b({'split-pane': this.props.isSplitPaneLayout})}
                 ref={this._dashBodyRef}
             >
@@ -303,12 +338,38 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 />
                 <PaletteEditor />
                 <EntryDialogues ref={this.entryDialoguesRef} />
+                <ChartModelingSettings />
             </div>
         );
     }
 
     _dashBodyRef: React.RefCallback<HTMLDivElement> = (el) => {
         this.setState({dashEl: el});
+    };
+
+    updateDashBgColors = () => {
+        const dashEl = this.state.dashEl;
+        const {
+            settings: {backgroundSettings},
+            themeType,
+        } = this.props;
+        const dashBgColor =
+            typeof backgroundSettings?.color === 'string'
+                ? backgroundSettings?.color
+                : backgroundSettings?.color?.[themeType];
+        if (dashBgColor && dashEl) {
+            const {getFixedHeaderBackgroundColor} = registry.dash.functions.getAll();
+            const fixedHeaderBgColor = getFixedHeaderBackgroundColor(dashBgColor, themeType);
+
+            const newStyles = {
+                ['--dl-dash-background-color' as any]: dashBgColor,
+                ['--dl-fixed-header-background-color' as any]: fixedHeaderBgColor,
+            };
+
+            if (!isEqual(this._memoizedDashStyles, newStyles)) {
+                this._memoizedDashStyles = newStyles;
+            }
+        }
     };
 
     updateMargins() {
@@ -705,9 +766,50 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         if (isMounted) {
             this.state.loadedItemsMap.set(item.id, false);
 
-            if (this.state.loadedItemsMap.size === this.props.tabData?.items.length) {
+            if (this.state.loadedItemsMap.size === this.state.totalItemsCount) {
                 this.scrollIntoViewWithDebounce();
             }
+        }
+    };
+
+    private isElementOutsideViewport = (element: Element): boolean => {
+        const rect = element.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
+        return (
+            rect.bottom < 0 ||
+            rect.top > viewportHeight ||
+            rect.right < 0 ||
+            rect.left > viewportWidth
+        );
+    };
+
+    private dispatchViewportDashLoadedEvent = () => {
+        const {loadedItemsMap, dashEl} = this.state;
+
+        if (!dashEl) {
+            return;
+        }
+
+        const unloadedItemIds: string[] = [];
+        loadedItemsMap.forEach((isLoaded, itemId) => {
+            if (isLoaded !== true) {
+                unloadedItemIds.push(itemId);
+            }
+        });
+
+        const allViewportItemsLoaded = unloadedItemIds.every((itemId) => {
+            const itemElement = document.getElementById(itemId);
+            if (!itemElement) {
+                return false;
+            }
+            const result = this.isElementOutsideViewport(itemElement);
+            return result;
+        });
+
+        if (allViewportItemsLoaded) {
+            dispatchDashLoadedEvent();
         }
     };
 
@@ -718,7 +820,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             loadedItemsMap.set(item.id, true);
 
             const isLoaded =
-                loadedItemsMap.size === this.props.tabData?.items.length &&
+                loadedItemsMap.size === this.state.totalItemsCount &&
                 Array.from(loadedItemsMap.values()).every(Boolean);
 
             if (isLoaded && this.state.delayedScrollElement) {
@@ -731,7 +833,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             }
 
             if (isLoaded) {
+                this.dispatchViewportDashLoadedEventDebounced.cancel();
                 dispatchDashLoadedEvent();
+            } else if (navigator.userAgent === SCR_USER_AGENT_HEADER_VALUE) {
+                this.dispatchViewportDashLoadedEventDebounced();
             }
 
             this.setState({loaded: isLoaded});
@@ -751,6 +856,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         }
     };
 }
+
+const Body = (props: BodyProps) => {
+    const themeType = useThemeType();
+    return <BodyInternal {...props} themeType={themeType} />;
+};
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
     entryId: selectEntryId(state),

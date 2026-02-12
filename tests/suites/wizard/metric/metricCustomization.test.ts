@@ -5,8 +5,9 @@ import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {CommonSelectors} from '../../../page-objects/constants/common-selectors';
-import {DialogMetricSettingsQa, WizardPageQa, WizardVisualizationId} from '../../../../src/shared';
+import {DialogMetricColorsQa, WizardPageQa, WizardVisualizationId} from '../../../../src/shared';
 import {openTestPage, slct} from '../../../utils';
+import {CommonUrls} from '../../../page-objects/constants/common-urls';
 
 datalensTest.describe('Wizard - metric chart. Settings', () => {
     const defaultColor = '#4DA2F1';
@@ -29,18 +30,23 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
     datalensTest('Default values', async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
 
-        await wizardPage.metricSettingsDialog.open();
+        await wizardPage.metricColorsDialog.open();
 
-        const paletteColor = await wizardPage.metricSettingsDialog.getSelectedPaletteColor();
+        const paletteColor = await wizardPage.metricColorsDialog.getSelectedPaletteColor();
         expect(paletteColor).toBe(defaultColor);
     });
 
     datalensTest('Size change', async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
 
-        await wizardPage.metricSettingsDialog.open();
-        await wizardPage.metricSettingsDialog.selectSize('L');
-        await wizardPage.metricSettingsDialog.apply();
+        await wizardPage.chartSettings.open();
+        await wizardPage.chartSettings.setMetricFontSize('L');
+
+        const apiRunRequest = wizardPage.page.waitForRequest(
+            (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,
+        );
+        await wizardPage.chartSettings.apply();
+        await (await apiRunRequest).response();
 
         const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
         const metricItem = chartContainer.locator(wizardPage.chartkit.metricItemSelector);
@@ -54,13 +60,13 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
 
         const newColor = '#FF3D64';
 
-        await wizardPage.metricSettingsDialog.open();
-        await wizardPage.metricSettingsDialog.selectColor(newColor);
+        await wizardPage.metricColorsDialog.open();
+        await wizardPage.metricColorsDialog.selectColor(newColor);
 
-        const paletteColor = await wizardPage.metricSettingsDialog.getSelectedPaletteColor();
+        const paletteColor = await wizardPage.metricColorsDialog.getSelectedPaletteColor();
         expect(paletteColor).toBe(newColor);
 
-        await wizardPage.metricSettingsDialog.apply();
+        await wizardPage.metricColorsDialog.apply();
 
         const indicatorColor = await wizardPage.page
             .locator(wizardPage.chartkit.metricItemValueSelector)
@@ -74,21 +80,21 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         const newPalette = 'Neo 20';
         const expectedColor = '#DB9101'; // first color from Neo 20 palette
 
-        await wizardPage.metricSettingsDialog.open();
-        await wizardPage.metricSettingsDialog.selectPalette(newPalette);
+        await wizardPage.metricColorsDialog.open();
+        await wizardPage.metricColorsDialog.selectPalette(newPalette);
 
-        const paletteColor = await wizardPage.metricSettingsDialog.getSelectedPaletteColor();
+        const paletteColor = await wizardPage.metricColorsDialog.getSelectedPaletteColor();
         expect(paletteColor).toEqual(expectedColor);
 
-        await wizardPage.metricSettingsDialog.apply();
+        await wizardPage.metricColorsDialog.apply();
 
         const indicatorColor = await wizardPage.page
             .locator(wizardPage.chartkit.metricItemValueSelector)
             .evaluate(getElementHexColor);
         expect(indicatorColor).toBe(expectedColor);
 
-        await wizardPage.metricSettingsDialog.open();
-        const selectedPalette = await wizardPage.metricSettingsDialog.getSelectedPalette();
+        await wizardPage.metricColorsDialog.open();
+        const selectedPalette = await wizardPage.metricColorsDialog.getSelectedPalette();
         expect(selectedPalette).toBe(newPalette);
     });
 
@@ -98,11 +104,11 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         const inavlidColorValue = 'salmon';
         const customColor = '#FF8C69';
 
-        await wizardPage.metricSettingsDialog.open();
-        const customColorBtn = page.locator(slct(DialogMetricSettingsQa.CustomColorButton));
+        await wizardPage.metricColorsDialog.open();
+        const customColorBtn = page.locator(slct(DialogMetricColorsQa.CustomColorButton));
         await customColorBtn.click();
 
-        const colorInput = wizardPage.metricSettingsDialog.getPaletteInput();
+        const colorInput = wizardPage.metricColorsDialog.getPaletteInput();
         await colorInput.fill(inavlidColorValue);
 
         const colorInputErrorLocator = wizardPage.page.locator(CommonSelectors.TextInputErrorState);
@@ -114,11 +120,11 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
 
         await expect(colorInputErrorLocator).not.toBeVisible();
 
-        expect(await wizardPage.metricSettingsDialog.getSelectedPaletteColor()).toBe(
-            DialogMetricSettingsQa.CustomColorButton,
+        expect(await wizardPage.metricColorsDialog.getSelectedPaletteColor()).toBe(
+            DialogMetricColorsQa.CustomColorButton,
         );
 
-        await wizardPage.metricSettingsDialog.apply();
+        await wizardPage.metricColorsDialog.apply();
 
         const indicatorColor = await wizardPage.page
             .locator(wizardPage.chartkit.metricItemValueSelector)

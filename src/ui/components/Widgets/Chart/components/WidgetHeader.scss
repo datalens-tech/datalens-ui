@@ -43,11 +43,17 @@
 
     &__tabs {
         display: flex;
-        padding: 0 65px 0 16px;
+        padding-block: 0;
+        padding-inline-start: 0;
+        padding-inline-end: 65px;
         font-size: 15px;
 
+        #{$class}_with-internal-margins & {
+            padding-inline-start: var(--g-spacing-4);
+        }
+
         &_no-controls {
-            padding: 0 35px 0 16px;
+            padding-inline-end: 35px;
         }
 
         &_edit-mode.dl-draggable-handle-element {

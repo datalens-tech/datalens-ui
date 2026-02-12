@@ -9,8 +9,8 @@ import {PluginText as PluginTextRenderer, pluginText} from '@gravity-ui/dashkit'
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
-import {CustomPaletteBgColors} from 'shared';
-import type {DashTabItemText} from 'shared';
+import {type DashTabItemText, TextWidgetQa} from 'shared';
+import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     usePreparedWrapSettings,
@@ -193,13 +193,18 @@ const textPlugin: PluginText = {
 
         const data = props.data as DashTabItemText['data'];
 
-        const {style, hasBgColor} = usePreparedWrapSettings({
+        const {style, hasInternalMargins} = usePreparedWrapSettings({
             ownWidgetSettings: {
                 background: data.background,
                 backgroundSettings: data.backgroundSettings,
                 borderRadius: data.borderRadius,
+                internalMarginsEnabled: data.internalMarginsEnabled,
             },
-            globalWidgetSettings: textPlugin.globalWidgetSettings ?? {},
+            dashVisualSettings: {
+                widgetsSettings: textPlugin.globalWidgetSettings,
+                background: undefined,
+                backgroundSettings: undefined,
+            },
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 
@@ -248,8 +253,12 @@ const textPlugin: PluginText = {
                 <YfmWrapper
                     // needed for force update when text is changed
                     key={`yfm_${YfmWrapperKeyRef.current}`}
-                    content={<div className={b('content-wrap', null)}>{content}</div>}
-                    className={b({'with-color': Boolean(hasBgColor)})}
+                    content={
+                        <div className={b('content-wrap', null)} data-qa={TextWidgetQa.Wrapper}>
+                            {content}
+                        </div>
+                    }
+                    className={b({'with-internal-margins': hasInternalMargins})}
                     metaScripts={metaScripts}
                     onRenderCallback={handleTextRender}
                 />

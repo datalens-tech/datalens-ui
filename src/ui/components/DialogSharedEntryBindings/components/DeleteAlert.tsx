@@ -2,13 +2,12 @@ import React from 'react';
 
 import {Alert} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import type {SharedScope} from 'shared';
+import {I18n} from 'i18n';
+import {CollectionItemEntities} from 'shared';
 import type {SharedEntryBindingsItem} from 'shared/schema';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import {DialogClassName} from '../constants';
 import type {SharedEntry} from '../types';
-import {getRelationText} from '../utils';
 
 type DeleteAlertProps = {
     entry: SharedEntry;
@@ -18,7 +17,23 @@ type DeleteAlertProps = {
     isSearchActive: boolean;
 };
 
+const i18n = I18n.keyset('component.dialog-shared-entry-bindings.view');
 const b = block(DialogClassName);
+
+export const getRelationText = (entities: SharedEntryBindingsItem[]) => {
+    const hasEntry = entities.some((e) => e.entity === CollectionItemEntities.ENTRY);
+    const hasWorkbook = entities.some((e) => e.entity === CollectionItemEntities.WORKBOOK);
+
+    if (hasEntry && hasWorkbook) {
+        return i18n('relations-delete');
+    } else if (hasEntry) {
+        return i18n('relation-dataset-delete');
+    } else if (hasWorkbook) {
+        return i18n('relation-workbook-delete');
+    } else {
+        return '';
+    }
+};
 
 export const DeleteAlert = ({
     entities,
@@ -31,20 +46,11 @@ export const DeleteAlert = ({
         return null;
     }
 
-    const title = getSharedEntryMockText(
-        entities.length > 0
-            ? 'alert-title-warning-bindings-dialog-delete'
-            : 'alert-title-info-bindings-dialog-delete',
-        {
-            entry: getSharedEntryMockText(`label-shared-${entry.scope as SharedScope}`),
-            relation: getRelationText(entities),
-        },
-    );
-    const message = getSharedEntryMockText(
-        entities.length > 0
-            ? 'alert-message-warning-bindings-dialog-delete'
-            : 'alert-message-info-bindings-dialog-delete',
-    );
+    const title = i18n(entities.length > 0 ? 'alert-title-warning' : 'alert-title-info', {
+        entry: i18n(entry.scope),
+        relation: getRelationText(entities),
+    });
+    const message = i18n(entities.length > 0 ? 'alert-message-warning' : 'alert-message-info');
     const theme = entities.length > 0 ? 'warning' : 'info';
 
     return (

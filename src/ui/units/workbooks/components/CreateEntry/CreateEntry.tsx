@@ -4,9 +4,10 @@ import {ChevronDown} from '@gravity-ui/icons';
 import type {ButtonSize, ButtonView} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {CollectionItemEntities, CreateEntityButton, EntryScope, Feature} from 'shared';
-import type {WorkbookWithPermissions} from 'shared/schema';
+import type {GetSharedEntryResponse, WorkbookWithPermissions} from 'shared/schema';
 import {DIALOG_SELECT_SHARED_ENTRY} from 'ui/components/DialogSelectSharedEntry/DialogSelectSharedEntry';
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import {registry} from 'ui/registry';
@@ -14,7 +15,6 @@ import type {AppDispatch} from 'ui/store';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {showToast} from 'ui/store/actions/toaster';
 import {getSharedEntriesMenuItems} from 'ui/units/collections/components/CollectionActions/utils';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import Utils from 'ui/utils';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -36,6 +36,7 @@ type Props = {
     view?: ButtonView;
 };
 
+const i18nSharedEntry = I18n.keyset('shared-entry');
 const b = block('dl-workbook-create-entry');
 
 export const CreateEntry = React.memo<Props>(
@@ -64,7 +65,7 @@ export const CreateEntry = React.memo<Props>(
                                 open: true,
                                 onClose: () => dispatch(closeDialog()),
                                 collectionId,
-                                dialogTitle: getSharedEntryMockText(
+                                dialogTitle: i18nSharedEntry(
                                     `title-select-shared-entry-dialog-${scope}`,
                                 ),
                                 onSelectEntry: (entry) => {
@@ -97,17 +98,19 @@ export const CreateEntry = React.memo<Props>(
                                                         );
 
                                                         const addedEntry = entries?.entries.find(
-                                                            (item) =>
+                                                            (
+                                                                item,
+                                                            ): item is GetSharedEntryResponse =>
                                                                 item.entryId === entry.entryId,
                                                         );
 
                                                         dispatch(
                                                             showToast({
                                                                 type: 'success',
-                                                                title: getSharedEntryMockText(
+                                                                title: i18nSharedEntry(
                                                                     `add-entry-workbook-toast-title-${scope}`,
                                                                 ),
-                                                                content: getSharedEntryMockText(
+                                                                content: i18nSharedEntry(
                                                                     'add-entry-workbook-toast-message',
                                                                     {
                                                                         name: Utils.getEntryNameFromKey(

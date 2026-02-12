@@ -2,6 +2,7 @@ import React from 'react';
 
 import type {ChartKitLang, ChartKitProps, ChartKitRef} from '@gravity-ui/chartkit';
 import OpensourceChartKit, {settings} from '@gravity-ui/chartkit';
+import cloneDeep from 'lodash/cloneDeep';
 import throttle from 'lodash/throttle';
 import {ErrorBoundary} from 'ui/components/ErrorBoundary/ErrorBoundary';
 import {useGetChartkitHolidaysAsyncQuery} from 'ui/store/toolkit';
@@ -56,7 +57,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
 
             settings.set({
                 plugins: getChartkitPlugins(),
-                extra: {holidays: chartkitHolidays},
+                extra: {holidays: cloneDeep(chartkitHolidays)},
             });
 
             const additionalProps = getAdditionalProps({

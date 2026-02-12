@@ -13,6 +13,7 @@ import type {
     GetCollectionBreadcrumbsResponse,
     GetWorkbookEntriesArgs,
     GetWorkbookEntriesResponse,
+    GetWorkbookSharedEntriesResponse,
     RenameEntryResponse,
     WorkbookPermission,
     WorkbookWithPermissions,
@@ -188,7 +189,7 @@ type GetWorkbookSharedEntriesLoadingAction = {
 };
 type GetWorkbookSharedEntriesSuccessAction = {
     type: typeof GET_WORKBOOK_SHARED_ENTRIES_SUCCESS;
-    data: GetWorkbookEntriesResponse;
+    data: GetWorkbookSharedEntriesResponse;
 };
 type GetWorkbookSharedEntriesFailedAction = {
     type: typeof GET_WORKBOOK_SHARED_ENTRIES_FAILED;

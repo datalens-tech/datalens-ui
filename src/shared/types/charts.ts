@@ -304,8 +304,13 @@ type ChartActivitySetParamsResult = {
     params: StringParams;
 };
 
+export type ChartActivitiesActionResult =
+    | ChartActivityToastResult
+    | ChartActivitySetParamsResult
+    | ChartActivityPopupResult;
+
 export type ChartActivityResponseData = {
-    data?: ChartActivityToastResult | ChartActivitySetParamsResult | ChartActivityPopupResult;
+    data?: ChartActivitiesActionResult | ChartActivitiesActionResult[];
     error?: {
         code?: string;
         message: string;
@@ -317,4 +322,34 @@ export type ChartActivityResponseData = {
     logs_v2?: string;
     requestId?: string;
     traceId?: string;
+};
+
+export type TrendLineSettings = {
+    method?: 'linear' | 'quadratic' | 'cubic';
+    dashStyle?: string;
+    lineWidth?: number;
+    /** new series linked with original (e.g., shown/hidden together)) */
+    linked?: boolean;
+};
+
+export type SmoothingLineSettings = {
+    method?: 'sma';
+    windowSize?: number;
+    dashStyle?: string;
+    lineWidth?: number;
+    /** new series linked with original (e.g., shown/hidden together)) */
+    linked?: boolean;
+};
+
+export type ChartStateWarning = 'dataWithNull';
+
+export type ChartStateSettings = {
+    trends?: {
+        enabled?: boolean;
+        settings?: TrendLineSettings;
+    };
+    smoothing?: {
+        enabled?: boolean;
+        settings?: SmoothingLineSettings;
+    };
 };

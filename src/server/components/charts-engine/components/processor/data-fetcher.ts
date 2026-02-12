@@ -26,8 +26,17 @@ import type {AdapterContext, Source, SourceConfig, TelemetryCallbacks} from '../
 import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 
+import {convertToAPIConnectorSource, shouldUseAlias} from './source-alias';
 import {getApiConnectorParamsFromSource, isAPIConnectorSource, prepareSource} from './sources';
 import {getMessageFromUnknownError} from './utils';
+
+/**
+ * Unwraps API Connector response format {data: {body: {result: X}}} -> X
+ */
+function unwrapAPIConnectorResponse(body: unknown): unknown {
+    const result = (body as any)?.data?.body?.result;
+    return result === undefined ? body : result;
+}
 
 const {
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
@@ -162,6 +171,26 @@ export type DataFetcherResult = {
     message?: string;
     code?: string;
     data?: any;
+    details?: string;
+};
+
+type FetchSourceResult = {
+    sourceId: string;
+    sourceType: string;
+    body?: unknown;
+    responseHeaders?: IncomingHttpHeaders | null;
+    status?: number | null;
+    latency?: number;
+    size?: number;
+    uiUrl?: string | null;
+    dataUrl?: string | null;
+    datasetId?: string | null;
+    datasetFields?: PartialDatasetField[];
+    hideInInspector?: boolean;
+    url?: string | null;
+    message?: string;
+    code?: string | null;
+    data?: unknown;
     details?: string;
 };
 
@@ -493,7 +522,7 @@ export class DataFetcher {
         adapterContext: AdapterContext;
         cacheClient: CacheClient;
         sourcesConfig: ChartsEngine['sources'];
-    }) {
+    }): Promise<FetchSourceResult> {
         const singleFetchingTimeout =
             ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
@@ -609,7 +638,55 @@ export class DataFetcher {
             };
         }
 
-        const {passedCredentials, extraHeaders, sourceType} = sourceConfig;
+        if (shouldUseAlias(source, sourceConfig, isEnabledServerFeature)) {
+            const aliasedSource = convertToAPIConnectorSource(source, sourceConfig);
+            const preparedAliasedSource = prepareSource(aliasedSource);
+
+            ctx.log('FETCHER_ALIAS_TO_API_CONNECTOR', {
+                sourceName: dataSourceName,
+                apiConnectionId: sourceConfig.aliasTo!.apiConnectionId,
+            });
+
+            // Re-enter fetchSource with the converted source
+            const result = (await DataFetcher.fetchSource({
+                sourceName,
+                source: preparedAliasedSource,
+                ctx,
+                fetchingStartTime,
+                subrequestHeaders,
+                processingRequests,
+                rejectFetchingSource,
+                userId,
+                userLogin,
+                iamToken,
+                workbookId,
+                isEmbed,
+                authParams,
+                originalReqHeaders,
+                adapterContext,
+                telemetryCallbacks,
+                cacheClient,
+                sourcesConfig,
+            })) as FetchSourceResult;
+
+            if (sourceConfig.aliasTo!.unwrapResponse && result.body) {
+                result.body = unwrapAPIConnectorResponse(result.body);
+            }
+
+            return result;
+        }
+
+        const {passedCredentials, extraHeaders, sourceType: sourceTypeFromConfig} = sourceConfig;
+        if (!sourceTypeFromConfig) {
+            ctx.logError(`Invalid sourceType from config: ${sourceTypeFromConfig}`);
+
+            return {
+                sourceId: sourceName,
+                sourceType: 'Unresolved',
+                code: INVALID_SOURCE_FORMAT,
+            };
+        }
+        const sourceType = sourceTypeFromConfig;
 
         if (
             sourceConfig.allowedMethods &&
@@ -636,7 +713,7 @@ export class DataFetcher {
                 sourceName,
                 sourceType,
             });
-            if (result.valid === false) {
+            if (result.valid === false && result.meta) {
                 return result.meta;
             }
         }
@@ -653,12 +730,14 @@ export class DataFetcher {
         }
 
         if (sourceConfig.adapterWithContext) {
+            // adapterWithContext has 'unknown' return type but implementations
+            // return structures compatible with FetchSourceResult
             return sourceConfig.adapterWithContext({
                 targetUri: croppedTargetUri,
                 sourceName,
                 adapterContext,
                 ctx,
-            });
+            }) as Promise<FetchSourceResult>;
         }
 
         const headers: IncomingHttpHeaders = Object.assign(
@@ -853,7 +932,6 @@ export class DataFetcher {
                 requestOptions: {...requestOptions, signal},
                 requestControl,
                 useCaching,
-                ctx,
             })
                 // eslint-disable-next-line
                 .catch((error) => {
@@ -1085,7 +1163,7 @@ type SourceCheckResult = {
     valid: boolean;
     meta?: {
         sourceId: string;
-        sourceType?: string;
+        sourceType: string;
         message: string;
     };
 };
@@ -1099,7 +1177,7 @@ async function sourceConfigCheck({
 }: {
     ctx: AppContext;
     sourceName: string;
-    sourceType?: string;
+    sourceType: string;
     sourceConfig: SourceConfig;
     targetUri: string;
 }): Promise<SourceCheckResult> {

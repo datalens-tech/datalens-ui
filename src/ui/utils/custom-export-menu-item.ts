@@ -2,33 +2,54 @@ import type {ExportActionArgs} from 'ui/libs/DatalensChartkit/components/ChartKi
 import type {MenuItemConfig} from 'ui/libs/DatalensChartkit/menu/Menu';
 import type {AlertsActionArgs} from 'ui/libs/DatalensChartkit/types/menu';
 import {getStore} from 'ui/store';
+import type {OpenDialogSaveChartConfirmArguments} from 'ui/store/actions/dialog';
 import {openDialogSaveChartConfirm} from 'ui/store/actions/dialog';
 
 export function getCustomExportActionWrapperWithSave(
     {
-        message,
         onApply,
         canBeSaved,
+        ...args
     }: {
-        message: string;
         onApply: () => void;
         canBeSaved: boolean;
-    },
+    } & OpenDialogSaveChartConfirmArguments,
     originalAction: MenuItemConfig['action'],
 ) {
     return (originalActionArgs: ExportActionArgs | AlertsActionArgs) => {
-        return new Promise((resolve) => {
-            if (canBeSaved) {
-                openDialogSaveChartConfirm({
-                    onApply: async () => {
-                        await onApply();
-                        resolve(originalAction(originalActionArgs));
-                    },
-                    message,
-                })(getStore().dispatch);
-            } else {
-                resolve(originalAction(originalActionArgs));
-            }
-        });
+        return confirmSaveChart(
+            {
+                onApply,
+                canBeSaved,
+                ...args,
+            },
+            () => originalAction(originalActionArgs),
+        );
     };
+}
+
+export async function confirmSaveChart<T = void>(
+    {
+        onApply,
+        canBeSaved,
+        ...args
+    }: {
+        onApply: () => void;
+        canBeSaved: boolean;
+    } & OpenDialogSaveChartConfirmArguments,
+    cb: () => T,
+) {
+    return new Promise((resolve) => {
+        if (canBeSaved) {
+            openDialogSaveChartConfirm({
+                onApply: async () => {
+                    await onApply();
+                    resolve(cb());
+                },
+                ...args,
+            })(getStore().dispatch);
+        } else {
+            resolve(cb());
+        }
+    });
 }

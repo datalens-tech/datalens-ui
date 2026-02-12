@@ -13,6 +13,7 @@ import type {
     SeriesExportSettings,
     ServerField,
     ServerPlaceholder,
+    WizardVisualizationId,
     WrappedHTML,
     WrappedMarkdown,
 } from '../../../../../../../shared';
@@ -34,9 +35,13 @@ import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slide
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {isXAxisReversed} from '../helpers/highcharts';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
-import {mapToGravityChartValueFormat} from '../utils';
+import {
+    mapChartkitFormatSettingsToGravityChartValueFormat,
+    mapToGravityChartValueFormat,
+} from '../utils';
 
 import {prepareLineData} from './prepare-line-data';
 
@@ -62,6 +67,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         colors,
         shapes,
         segments: split,
+        sort,
         visualizationId,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
@@ -199,6 +205,13 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 itemText: graph.legendTitle,
             },
             dashStyle: graph.dashStyle,
+            tooltip: graph.tooltip?.chartKitFormatting
+                ? {
+                      valueFormat: mapChartkitFormatSettingsToGravityChartValueFormat({
+                          chartkitFormatSettings: graph.tooltip,
+                      }),
+                  }
+                : undefined,
             yAxis: graph.yAxis,
             custom: {
                 ...graph.custom,
@@ -237,6 +250,10 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         if (isNumberField(xField)) {
             xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
         }
+    }
+
+    if (xAxis && isXAxisReversed(xField, sort, visualizationId as WizardVisualizationId)) {
+        xAxis.order = 'reverse';
     }
 
     const segmentsMap = getSegmentMap(args);
@@ -284,6 +301,8 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                     },
                     lineColor: 'transparent',
                     position: placeholder?.id === PlaceholderId.Y2 ? 'right' : 'left',
+                    startOnTick: true,
+                    endOnTick: true,
                 }),
             );
 

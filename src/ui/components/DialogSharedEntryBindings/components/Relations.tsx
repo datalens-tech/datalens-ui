@@ -2,6 +2,7 @@ import React from 'react';
 
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {CollectionItemEntities} from 'shared';
 import type {SharedEntryBindingsItem} from 'shared/schema';
@@ -9,7 +10,6 @@ import {getSdk} from 'ui/libs/schematic-sdk';
 import type {AppDispatch} from 'ui/store';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {showToast} from 'ui/store/actions/toaster';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from '../../DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import {DIALOG_SHARED_ENTRY_UNBIND} from '../../DialogSharedEntryUnbind/DialogSharedEntryUnbind';
@@ -36,6 +36,7 @@ type RelationsProps = {
     fetchEntityBindings: (filter?: string) => void;
 };
 
+const i18n = I18n.keyset('component.dialog-shared-entry-bindings.view');
 const b = block(DialogClassName);
 
 export const Relations = ({
@@ -101,7 +102,7 @@ export const Relations = ({
 
             return [
                 {
-                    text: getSharedEntryMockText('shared-bindings-list-action-unbind'),
+                    text: i18n('list-action-unbind'),
                     action: () => {
                         dispatch(
                             openDialog({
@@ -129,7 +130,7 @@ export const Relations = ({
                     },
                 },
                 {
-                    text: getSharedEntryMockText('shared-bindings-list-action-change-permissions'),
+                    text: i18n('list-action-change-permissions'),
                     action: () =>
                         dispatch(
                             openDialog({
@@ -138,6 +139,10 @@ export const Relations = ({
                                     entry: parentEntry,
                                     onClose: () => dispatch(closeDialog()),
                                     onApply: async (delegate) => {
+                                        if (delegate === item.isDelegated) {
+                                            dispatch(closeDialog());
+                                            return;
+                                        }
                                         try {
                                             await getSdk().sdk.us.updateSharedEntryBinding({
                                                 sourceId,
@@ -178,7 +183,7 @@ export const Relations = ({
                 view="action"
                 onClick={() => fetchEntityBindings(searchValue)}
             >
-                {getSharedEntryMockText('bindings-dialog-retry-btn')}
+                {i18n('retry-btn')}
             </Button>
         );
 
@@ -187,7 +192,7 @@ export const Relations = ({
                 <PlaceholderIllustration
                     direction="column"
                     name="error"
-                    title={getSharedEntryMockText('bindings-dialog-error')}
+                    title={i18n('dialog-error')}
                     renderAction={renderRetryAction}
                 />
             </div>
@@ -204,14 +209,14 @@ export const Relations = ({
             searchProps={{
                 value: searchValue,
                 onUpdate: onSearch,
-                placeholder: getSharedEntryMockText('entries-list-search-placeholder'),
+                placeholder: i18n('list-search-placeholder'),
                 disabled: isLoading || isError,
                 loading: isSearchLoading,
             }}
             title={
                 showDirectionControl
-                    ? getSharedEntryMockText(ObjectsListTitles[currentDirection])
-                    : undefined
+                    ? i18n(ObjectsListTitles[currentDirection])
+                    : i18n('list-title')
             }
             getListItemActions={getListItemActions}
             isLoading={isLoading}

@@ -16,7 +16,6 @@ import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {registry} from 'ui/registry';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import Utils, {getConnectorIconData} from 'ui/utils';
 
 import {
@@ -39,6 +38,7 @@ import './SelectSourcePrototypes.scss';
 
 const b = block('select-sources-prototypes');
 const i18n = I18n.keyset('dataset.sources-tab.modify');
+const i18nSharedEntry = I18n.keyset('shared-entry');
 
 function getConnectionType(connection: Partial<SelectedConnections[number]> = {}) {
     const {db_type: dbType, type} = connection;
@@ -166,6 +166,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                         view="flat"
                         onClick={onClick}
                         onKeyDown={onKeyDown}
+                        qa={DatasetSourcesLeftPanelQA.ConnContextMenuBtn}
                     >
                         <Icon className={b('icon-more')} data={Ellipsis} width={14} />
                     </Button>
@@ -179,6 +180,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                             e.stopPropagation();
                             onClickOpenConnection(connectionId);
                         },
+                        qa: DatasetSourcesLeftPanelQA.ConnContextMenuOpen,
                     },
                     {
                         text: i18n('label_menu-popup-replace-connection'),
@@ -187,6 +189,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                             e.stopPropagation();
                             onReplaceConnectionClick();
                         },
+                        qa: DatasetSourcesLeftPanelQA.ConnContextMenuReplace,
                     },
                     {
                         text: i18n('label_menu-popup-delete-connection'),
@@ -195,6 +198,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                             e.stopPropagation();
                             onClickDeleteConnection({connectionId});
                         },
+                        qa: DatasetSourcesLeftPanelQA.ConnContextMenuDelete,
                     },
                 ]}
             />
@@ -277,8 +281,6 @@ function ConnectionsList(props: ConnectionsListProps) {
                 connections.map((connection) => {
                     const {id, entryId, deleted, deleteEnabled} = connection;
                     const isSharedConnection = connection.collectionId;
-                    const isShowSharedEntryIcon =
-                        isSharedConnection && connectionDelegation !== null;
 
                     const existedConnectionId = id || entryId;
                     const active = existedConnectionId === connectionId;
@@ -306,10 +308,11 @@ function ConnectionsList(props: ConnectionsListProps) {
                                     >
                                         {connectionName}
                                     </span>
-                                    {isShowSharedEntryIcon && (
+                                    {isSharedConnection && (
                                         <SharedEntryIcon
                                             className={b('connection-shared-icon')}
                                             isDelegated={connectionDelegation}
+                                            noBinding={connectionDelegation === null}
                                         />
                                     )}
                                 </div>
@@ -370,6 +373,7 @@ function SelectConnections(props: SelectConnectionsProps) {
         readonly,
     } = props;
     const dispatch = useDispatch();
+    const connectionDelegation = useSelector(selectedConnectionDelegationStatusSelector);
     const [isNavVisible, setNavVisibility] = useState(false);
     const connectionBtnRef = useRef(null);
 
@@ -388,7 +392,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                             open: true,
                             onClose: () => dispatch(closeDialog()),
                             collectionId,
-                            dialogTitle: getSharedEntryMockText(
+                            dialogTitle: i18nSharedEntry(
                                 'title-select-shared-entry-dialog-connection',
                             ),
                             getIsInactiveEntity: (entry) => {
@@ -399,7 +403,8 @@ function SelectConnections(props: SelectConnectionsProps) {
                                 const canCreateBinding =
                                     entry.permissions?.createEntryBinding ||
                                     entry.permissions?.createLimitedEntryBinding;
-                                const isAlreadySelectedConnection = entry.entryId === connectionId;
+                                const isAlreadySelectedConnection =
+                                    entry.entryId === connectionId && connectionDelegation !== null;
                                 return (
                                     entry.scope === EntryScope.Dataset ||
                                     isAlreadySelectedConnection ||
@@ -414,7 +419,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                 );
             }
         },
-        [collectionId, dispatch, connectionId],
+        [collectionId, dispatch, connectionId, connectionDelegation],
     );
 
     const onAddConnectionClick = React.useCallback(() => {

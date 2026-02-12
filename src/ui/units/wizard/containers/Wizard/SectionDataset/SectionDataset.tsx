@@ -992,7 +992,7 @@ class SectionDataset extends React.Component<Props, State> {
 
         return (
             <div
-                className={`container datasets-container${!datasetLoaded ? ' blank' : ''}`}
+                className={`datasets-container${!datasetLoaded ? ' blank' : ''}`}
                 data-qa={SectionDatasetQA.DatasetContainer}
             >
                 <div

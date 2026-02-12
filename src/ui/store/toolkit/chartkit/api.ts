@@ -13,7 +13,7 @@ export const chartkitApi = createApi({
                 const {getChartkitHolidays} = registry.chart.functions.getAll();
                 const holidays = await getChartkitHolidays();
 
-                return {data: holidays};
+                return {data: holidays ?? {holiday: {}, weekend: {}}};
             },
         }),
     }),

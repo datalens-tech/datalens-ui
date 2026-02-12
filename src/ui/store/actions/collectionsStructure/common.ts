@@ -1,4 +1,4 @@
-import {getSdk} from 'libs/schematic-sdk';
+import {getSdk, isSdkError} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
 import {waitOperation} from '../../../utils/waitOperation';
 import {showToast} from 'store/actions/toaster';
@@ -250,8 +250,9 @@ export const getCollection = ({collectionId}: {collectionId: string}) => {
             })
             .catch((error: Error) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
+                const isNoAccessError = isSdkError(error) && error.status === 403;
 
-                if (!isCanceled) {
+                if (!isCanceled && !isNoAccessError) {
                     logger.logError('collectionsStructure/getCollection failed', error);
                     dispatch(
                         showToast({
@@ -335,8 +336,9 @@ export const getStructureItems = ({
             })
             .catch((error: Error) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
+                const isNoAccessError = isSdkError(error) && error.status === 403;
 
-                if (!isCanceled) {
+                if (!isCanceled && !isNoAccessError) {
                     logger.logError('collectionsStructure/getStructureItems failed', error);
                     dispatch(
                         showToast({

@@ -15,7 +15,7 @@ import type {
     DashTabItemGroupControlData,
     StringParams,
 } from 'shared';
-import {ControlQA, DashTabItemType, Feature} from 'shared';
+import {ControlQA, DashTabItemType} from 'shared';
 import {DL} from 'ui/constants/common';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
@@ -29,7 +29,6 @@ import {
     isItemGlobal,
 } from 'ui/units/dash/utils/selectors';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
 import type {CommonGlobalWidgetSettings} from '../../DashKit';
@@ -331,7 +330,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const currentTabId = this.props.context.currentTabId;
 
         if (
-            !isEnabledFeature(Feature.EnableGlobalSelectors) ||
             !currentTabId ||
             !isItemGlobal({
                 data: controlData,
@@ -520,16 +518,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             const appliedControlsIds = this.getControlsIds({data: controlData, controlId});
             this.props.onStateAndParamsChange({params}, {groupItemIds: appliedControlsIds});
             this.localMeta.queue = [];
-
-            this.context?.updateTabsWithGlobalState?.({
-                params,
-                selectorItem: {
-                    type: DashTabItemType.GroupControl,
-                    data: controlData,
-                    id: this.props.id,
-                },
-                appliedSelectorsIds: appliedControlsIds,
-            });
             return;
         }
 
@@ -805,6 +793,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 dependentSelectors={this.dependentSelectors}
                 widgetId={this.props.id}
                 requestHeaders={this.requestHeadersGetter}
+                groupData={this.propsControlData}
             />
         );
     }

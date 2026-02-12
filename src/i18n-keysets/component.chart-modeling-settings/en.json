@@ -1,0 +1,20 @@
+{
+  "label_additional-settings": "Additional settings",
+  "label_auto": "Auto",
+  "label_cubic": "Cubic",
+  "label_linear": "Linear",
+  "label_link-series": "Group lines",
+  "label_method": "Function",
+  "label_null-data-warning": "The modeling is inaccurate, as the data is partially or completely missing",
+  "label_null-data-warning-short": "Model inaccuracy",
+  "label_quadratic": "Quadratic",
+  "label_shape-and-width": "Line shape and width",
+  "label_simple-moving-average": "Simple moving average",
+  "label_smoothing": "Smoothing",
+  "label_trend": "Trend",
+  "label_window-size": "Window (number of points)",
+  "title_modeling": "Modeling",
+  "tooltip_smoothing-method": "A simple moving average is the arithmetic mean at point t over the interval specified in the Window field. The window includes the points up to and including point t.",
+  "tooltip_smoothing-window-size": "The number of points for calculating the arithmetic mean, including the point t itself.",
+  "tooltip_trend-method": "**Linear**: A linear regression, a straight line, helps to generally assess growth or decline in a selected interval.\n**Quadratic**: Use if the source data clearly shows a nonlinear dependence in the data.\n**Cubic**: Use if more than one inflection is clearly visible in the source data.\n\nWhen making decisions, use the quadratic and cubic functions carefully. Follow the recommendations above."
+}

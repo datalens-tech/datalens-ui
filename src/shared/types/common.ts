@@ -32,6 +32,7 @@ export interface LandingLayoutPageError {
     pageTitle?: RenderParams<{DL: DLGlobalData}>['title'];
     pageMeta?: RenderParams<{DL: DLGlobalData}>['meta'];
     pageLinks?: RenderParams<{DL: DLGlobalData}>['links'];
+    showDebugInfo?: boolean;
 }
 
 export interface LandingPageEntryMeta {
@@ -239,6 +240,7 @@ export type DLGlobalData = {
     isAuthEnabled?: boolean;
     authManageLocalUsersDisabled?: boolean;
     authSignupDisabled?: boolean;
+    authCookieName?: string;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

@@ -18,7 +18,7 @@
   "error_select-connection": "Необходимо выбрать подключение",
   "hint_available-warning": "Неиспользованные колонки могут искажать ожидаемую визуализацию",
   "label_add-query": "Добавить запрос",
-  "label_applied": "Применены: ",
+  "label_applied": "Применены:",
   "label_chart-type": "Тип чарта",
   "label_connection": "Подключение",
   "label_copy-as-text": "Скопировать как текст",

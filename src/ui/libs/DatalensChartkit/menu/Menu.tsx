@@ -30,13 +30,14 @@ export type MenuItemData = {loadedData: MenuLoadedData};
 
 export type MenuItemConfig = {
     id: MenuItemsIds;
-    title: string | (() => string) | ((data: MenuItemArgs) => string);
+    title: string | (() => string | React.ReactNode) | ((data: MenuItemArgs) => string);
     icon?: React.ReactNode | ((data: MenuItemArgs) => React.ReactNode);
     items?: MenuItemConfig[];
     isDisabled?: (params?: any) => boolean | string;
     isVisible: (params?: any) => boolean;
     action: (params: any) => void | Promise<void> | MenuActionComponent;
     actionWrapper?: (args: MenuItemConfig['action']) => (args: unknown) => void;
+    extraOptions?: Record<string, unknown>;
     onExportLoading?: (isLoading: boolean) => void;
     onFullscreenClick?: () => void;
 };

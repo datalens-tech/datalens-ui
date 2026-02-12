@@ -69,8 +69,10 @@ datalensTest.describe('Wizard - chartkit', () => {
             const waitChartWithoutNavigator = async () => {
                 await waitForCondition(async () => {
                     return await wizardPage.page.evaluate(() => {
-                        const chart = document.querySelector('.highcharts-root');
-                        const navigator = document.querySelector('.highcharts-navigator');
+                        const chart = document.querySelector('.highcharts-root, .gcharts-chart');
+                        const navigator = document.querySelector(
+                            '.highcharts-navigator, .gcharts-range-slider',
+                        );
 
                         return Boolean(chart && !navigator);
                     });

@@ -1,6 +1,12 @@
 import {LayoutColumns3, LayoutRows3, SquareHashtag} from '@gravity-ui/icons';
 import type {Field, Placeholder, TableShared} from 'shared';
-import {PlaceholderId, createMeasureNames, isMeasureName, isMeasureNameOrValue} from 'shared';
+import {
+    PlaceholderId,
+    createMeasureNames,
+    isMeasureName,
+    isMeasureNameOrValue,
+    isMeasureValue,
+} from 'shared';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES} from '../misc';
@@ -75,6 +81,9 @@ export const PIVOT_TABLE_VISUALIZATION: TableShared['visualization'] = {
     placeholders: [
         {
             allowedTypes: ITEM_TYPES.DIMENSIONS_AND_PSEUDO,
+            checkAllowed: (field) => {
+                return ITEM_TYPES.DIMENSIONS_AND_PSEUDO.has(field.type) && !isMeasureValue(field);
+            },
             allowedDataTypes: new Set([...PRIMITIVE_DATA_TYPES, 'markup']),
             id: PlaceholderId.PivotTableColumns,
             type: 'pivot-table-columns',

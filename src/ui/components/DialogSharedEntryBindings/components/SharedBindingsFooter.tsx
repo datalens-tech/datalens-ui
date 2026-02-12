@@ -2,7 +2,8 @@ import React from 'react';
 
 import {Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
+import {I18n} from 'i18n';
+import {SharedEntriesBindingsDialogQa} from 'shared';
 
 import {DialogClassName} from '../constants';
 
@@ -16,6 +17,7 @@ type SharedBindingsFooterProps = {
     onDelete: () => void;
 };
 
+const i18n = I18n.keyset('component.dialog-shared-entry-bindings.view');
 const b = block(DialogClassName);
 
 export const SharedBindingsFooter = ({
@@ -27,22 +29,23 @@ export const SharedBindingsFooter = ({
 }: SharedBindingsFooterProps) => {
     return (
         <Dialog.Footer
-            textButtonApply={getSharedEntryMockText('apply-bindings-dialog-delete')}
+            textButtonApply={i18n('apply-delete')}
             propsButtonApply={{
                 view: 'outlined-danger',
+                qa: SharedEntriesBindingsDialogQa.ApplyDeleteBtn,
             }}
             propsButtonCancel={{
                 view: 'flat',
             }}
             className={b('footer', {'empty-list': emptyList})}
             loading={isLoading}
-            textButtonCancel={getSharedEntryMockText('cancel-bindings-dialog-delete')}
+            textButtonCancel={i18n('cancel-delete')}
             onClickButtonApply={onDelete}
             onClickButtonCancel={onClose}
         >
             <Button loading={isLoading} view="outlined" size="l" onClick={onRefresh}>
                 <Icon data={ArrowsRotateRightIcon} />
-                {getSharedEntryMockText('bindings-dialog-delete-refresh-btn')}
+                {i18n('refresh-btn')}
             </Button>
         </Dialog.Footer>
     );

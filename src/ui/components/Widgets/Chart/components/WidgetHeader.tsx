@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab} from 'components/DashKit/plugins/Widget/types';
 import {useDispatch} from 'react-redux';
+import type {ChartStateSettings} from 'shared';
 import {ChartkitMenuDialogsQA} from 'shared';
 import {Header as ChartHeader} from 'ui/components/Widgets/Chart/components/Header';
 import {DL} from 'ui/constants/common';
@@ -36,6 +37,7 @@ type TabItem = {
 };
 
 export type HeaderProps = {
+    hasInternalMargins?: boolean;
     widgetId: string;
     isFullscreen: boolean;
     onFullscreenClick: () => void;
@@ -83,12 +85,14 @@ export type HeaderWithControlsProps = HeaderProps &
 
         setIsExportLoading: (arg: boolean) => void;
         reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
+        chartStateData?: ChartStateSettings;
     };
 
 const b = block('widget-header');
 
 export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
     const {
+        hasInternalMargins,
         widgetId,
         isFullscreen,
         onFullscreenClick,
@@ -206,6 +210,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                 className={b({
                     mobile: DL.IS_MOBILE,
                     fullscreen: isFullscreen,
+                    'with-internal-margins': hasInternalMargins,
                     ...{[String(extraMod)]: Boolean(extraMod)},
                 })}
             >
@@ -246,6 +251,10 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                     onFiltersClear={onFiltersClear}
                     canBeDisplayedFilters={true}
                     reload={headerWithControlsProps.reload}
+                    extraOptions={{
+                        chartStateData: headerWithControlsProps.chartStateData,
+                        widgetTitle,
+                    }}
                 />
             </div>
         </React.Fragment>

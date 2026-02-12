@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import SplitPane from 'react-split-pane';
 import {createStructuredSelector} from 'reselect';
 import type {DatasetSource, DatasetSourceAvatar} from 'shared';
-import {EntryScope, ErrorCode, ErrorContentTypes} from 'shared';
+import {EntryScope, ErrorCode, ErrorContentTypes, SharedEntriesBaseQa} from 'shared';
 import type {GetRevisionsEntry} from 'shared/schema';
 import type {DataLensApiError, SDK} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
@@ -29,7 +29,6 @@ import {
     openDialogSaveDraftChartAsActualConfirm,
 } from 'ui/store/actions/dialog';
 import {initEditHistoryUnit} from 'ui/store/actions/editHistory';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {
     addAvatar,
     addSource,
@@ -120,6 +119,7 @@ const i18n = I18n.keyset('dataset.dataset-editor.modify');
 const i18nError = I18n.keyset('component.view-error.view');
 const i18nActionPanel = I18n.keyset('component.action-panel.view');
 const i18nDialogRevisions = I18n.keyset('component.dialog-revisions.view');
+const i18nSharedEntry = I18n.keyset('shared-entry');
 const RIGHT_PREVIEW_PANEL_MIN_SIZE = 500;
 const BOTTOM_PREVIEW_PANEL_MIN_SIZE = 48;
 const BOTTOM_PREVIEW_PANEL_DEFAULT_SIZE = 200;
@@ -582,8 +582,9 @@ class Dataset extends React.Component<Props, State> {
                     onClick={() => {
                         this.props.history.push(location.pathname);
                     }}
+                    qa={SharedEntriesBaseQa.OpenOriginalBtn}
                 >
-                    {getSharedEntryMockText('workbook-shared-entry-original-link')}
+                    {i18nSharedEntry('workbook-shared-entry-original-link')}
                 </Button>,
             );
         }

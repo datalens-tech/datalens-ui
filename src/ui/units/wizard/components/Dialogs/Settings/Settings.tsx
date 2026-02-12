@@ -36,6 +36,8 @@ import {
     ZoomMode,
     getIsNavigatorAvailable,
     isDateField,
+    isMarkupField,
+    isMonitoringOrPrometheusChart,
     isTreeField,
 } from 'shared';
 import {isTooltipSumEnabled} from 'shared/modules/wizard';
@@ -88,6 +90,7 @@ const BASE_SETTINGS_KEYS: SettingsKeys[] = [
     'mapCenterMode',
     'mapCenterValue',
     'preserveWhiteSpace',
+    'metricFontSize',
 ];
 
 const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteChart'];
@@ -186,6 +189,7 @@ interface State {
     mapCenterMode: MapCenterModes;
     mapCenterValue?: string | null;
     preserveWhiteSpace?: boolean;
+    metricFontSize?: string;
 }
 
 export const DIALOG_CHART_SETTINGS = Symbol('DIALOG_CHART_SETTINGS');
@@ -239,6 +243,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             mapCenterMode = MapCenterMode.Auto,
             mapCenterValue,
             preserveWhiteSpace,
+            metricFontSize,
         } = extraSettings;
 
         const navigatorSettings = this.prepareNavigatorSettings(visualization, extraSettings);
@@ -301,13 +306,24 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             mapCenterMode,
             mapCenterValue,
             preserveWhiteSpace,
+            metricFontSize,
         };
     }
 
     componentDidUpdate(prevProps: Readonly<InnerProps>) {
-        if (
+        const isHighchartsSeriesUpdated =
             typeof prevProps.highchartsWidget?.series === 'undefined' &&
-            typeof this.props.highchartsWidget?.series !== 'undefined' &&
+            typeof this.props.highchartsWidget?.series !== 'undefined';
+
+        const prevChartData = (prevProps.highchartsWidget as unknown as Widget)?.data as ChartData;
+        const currentChartData = (this.props.highchartsWidget as unknown as Widget)
+            ?.data as ChartData;
+        const isGravityChartSeriesUpdated =
+            typeof prevChartData?.series === 'undefined' &&
+            typeof currentChartData?.series !== 'undefined';
+
+        if (
+            (isHighchartsSeriesUpdated || isGravityChartSeriesUpdated) &&
             this.state.navigatorSettings.isNavigatorAvailable
         ) {
             const navigatorSeries = this.prepareNavigatorSeries(
@@ -534,13 +550,22 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     renderTitleMode() {
         const {visualization} = this.props;
         if (visualization.id === WizardVisualizationId.Metric) {
+            const isMarkup = isMarkupField(
+                visualization.placeholders.find(({id}) => id === PlaceholderId.Measures)?.items[0],
+            );
             return (
                 <IndicatorTitleSetting
                     mode={this.state.indicatorTitleMode}
                     title={this.state.title}
+                    fontSize={this.state.metricFontSize}
                     onUpdate={(settings) => {
-                        this.setState({indicatorTitleMode: settings.mode, title: settings.title});
+                        this.setState({
+                            indicatorTitleMode: settings.mode,
+                            title: settings.title,
+                            metricFontSize: settings.fontSize,
+                        });
                     }}
+                    isMarkup={isMarkup}
                 />
             );
         }
@@ -892,6 +917,10 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     }
 
     renderFeed() {
+        if (isMonitoringOrPrometheusChart(this.props.chartType)) {
+            return null;
+        }
+
         const visualization = this.props.visualization;
         const placeholders = [
             ...('layers' in visualization
