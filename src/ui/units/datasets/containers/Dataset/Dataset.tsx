@@ -246,7 +246,7 @@ class Dataset extends React.Component<Props, State> {
         const prevRevId = prevSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
         const hasRevisionChanged = revId !== prevRevId;
         const isSavingUpdate = publishedId === currentRevId && !revId;
-        const isBindingChanged = bindedWorkbookId !== prevBindedWorkbookId;
+        const isBindingChanged = (bindedWorkbookId ?? null) !== (prevBindedWorkbookId ?? null);
 
         if (datasetId && prevDatasetId !== datasetId) {
             initialFetchDataset({datasetId, rev_id: revId, bindedWorkbookId});
