@@ -1,4 +1,5 @@
-import {Page} from '@playwright/test';
+import {Page, expect} from '@playwright/test';
+import {dateTimeParse} from '@gravity-ui/date-utils';
 
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
@@ -7,6 +8,7 @@ import {getXAxisValues, openTestPage, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
+import {CommonUrls} from '../../../page-objects/constants/common-urls';
 
 const checkXAxisValuesOrder = async (wizardPage: WizardPage, expectedValues: string[]) => {
     let xAxisValues: (string | null)[] = [];
@@ -23,6 +25,57 @@ const checkXAxisValuesOrder = async (wizardPage: WizardPage, expectedValues: str
             )}]`,
         );
     });
+};
+
+const formatAxisValues = (values: Array<number | string>, isDateTimeAxis: boolean) =>
+    values
+        .map((value) =>
+            isDateTimeAxis ? dateTimeParse(value)?.format('DD.MM.YYYY') || value : value,
+        )
+        .map(String);
+
+const getApiRunXAxisValues = async (responseData: any): Promise<string[]> => {
+    const chartData = responseData?.data;
+    const highchartsConfig = JSON.parse(responseData.highchartsConfig ?? '{}');
+
+    const isDateTime =
+        chartData.xAxis?.type === 'datetime' || highchartsConfig?.xAxis?.type === 'datetime';
+
+    const categories = chartData.categories ?? chartData.xAxis?.categories;
+    const data = chartData.graphs?.[0] ?? chartData.series?.data?.[0];
+
+    const apiValues = categories
+        ? categories.map(String)
+        : formatAxisValues(
+              data.data.map(({x}: {x: number}) => x),
+              isDateTime,
+          );
+
+    const isBarChart = data.type === 'bar-x' || highchartsConfig?.chart?.type === 'column';
+    const isReversed = chartData.xAxis?.order === 'reverse' || highchartsConfig?.xAxis?.reversed;
+    const needReverse = isReversed && !isBarChart;
+
+    return needReverse ? [...apiValues].reverse() : apiValues;
+};
+
+const checkApiRunXAxisValuesOrderAfterAction = async (
+    wizardPage: WizardPage,
+    expectedValues: string[],
+    action: () => Promise<void>,
+) => {
+    const apiRunResponse = wizardPage.page.waitForRequest(
+        (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,
+    );
+
+    await action();
+
+    const responseData = await (await (await apiRunResponse).response())?.json();
+
+    await wizardPage.chartkit.waitUntilLoaderExists();
+
+    const xAxisValues = await getApiRunXAxisValues(responseData);
+
+    expect(xAxisValues).toEqual(expectedValues);
 };
 
 const expectedNumericValues = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
@@ -58,13 +111,13 @@ const expectedValuesAfterChangeNumericSort = [
 ];
 
 const expectedDateValues = [
-    '01.12.17',
-    '02.12.17',
-    '03.12.17',
-    '04.12.17',
-    '05.12.17',
-    '06.12.17',
-    '07.12.17',
+    '01.12.2017',
+    '02.12.2017',
+    '03.12.2017',
+    '04.12.2017',
+    '05.12.2017',
+    '06.12.2017',
+    '07.12.2017',
 ];
 
 const expectedDateValuesAfterChangeSort = [
@@ -159,7 +212,7 @@ datalensTest.describe('Wizard - Sort', () => {
         },
     );
 
-    datalensTest.skip(
+    datalensTest(
         'Sorting works if there is a field with the Date type in section X',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
@@ -173,21 +226,36 @@ datalensTest.describe('Wizard - Sort', () => {
 
             await wizardPage.filterEditor.selectRangeDate(['01.12.2017', '07.12.2017']);
 
-            await wizardPage.filterEditor.apply();
+            await checkApiRunXAxisValuesOrderAfterAction(
+                wizardPage,
+                expectedDateValues,
+                async () => {
+                    await wizardPage.filterEditor.apply();
+                },
+            );
 
-            await checkXAxisValuesOrder(wizardPage, expectedDateValues);
+            await checkApiRunXAxisValuesOrderAfterAction(
+                wizardPage,
+                expectedDateValuesAfterSort,
+                async () => {
+                    await wizardPage.sectionVisualization.addFieldByClick(
+                        PlaceholderName.Sort,
+                        'Profit',
+                    );
+                },
+            );
 
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Sort, 'Profit');
-
-            await checkXAxisValuesOrder(wizardPage, expectedDateValuesAfterSort);
-
-            await wizardPage.sectionVisualization.clickOnSortIcon();
-
-            await checkXAxisValuesOrder(wizardPage, expectedDateValuesAfterChangeSort);
+            await checkApiRunXAxisValuesOrderAfterAction(
+                wizardPage,
+                expectedDateValuesAfterChangeSort,
+                async () => {
+                    await wizardPage.sectionVisualization.clickOnSortIcon();
+                },
+            );
         },
     );
 
-    datalensTest.skip(
+    datalensTest(
         'Sorting works if there is a field with the number type in section X, and the same field in the Sorting',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
@@ -198,25 +266,47 @@ datalensTest.describe('Wizard - Sort', () => {
 
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Profit');
 
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Sort, 'Month');
+            await checkApiRunXAxisValuesOrderAfterAction(
+                wizardPage,
+                [...expectedNumericValues].reverse(),
+                async () => {
+                    await wizardPage.sectionVisualization.addFieldByClick(
+                        PlaceholderName.Sort,
+                        'Month',
+                    );
+                },
+            );
 
-            await checkXAxisValuesOrder(wizardPage, [...expectedNumericValues].reverse());
-
-            await wizardPage.sectionVisualization.clickOnSortIcon();
-
-            await checkXAxisValuesOrder(wizardPage, expectedNumericValues);
+            await checkApiRunXAxisValuesOrderAfterAction(
+                wizardPage,
+                expectedNumericValues,
+                async () => {
+                    await wizardPage.sectionVisualization.clickOnSortIcon();
+                },
+            );
 
             await wizardPage.sectionVisualization.removeFieldByClick(PlaceholderName.Sort, 'Month');
 
             await wizardPage.setVisualization(WizardVisualizationId.Column);
 
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Sort, 'Month');
+            await checkApiRunXAxisValuesOrderAfterAction(
+                wizardPage,
+                [...expectedNumericValues].reverse(),
+                async () => {
+                    await wizardPage.sectionVisualization.addFieldByClick(
+                        PlaceholderName.Sort,
+                        'Month',
+                    );
+                },
+            );
 
-            await checkXAxisValuesOrder(wizardPage, [...expectedNumericValues].reverse());
-
-            await wizardPage.sectionVisualization.clickOnSortIcon();
-
-            await checkXAxisValuesOrder(wizardPage, expectedNumericValues);
+            await checkApiRunXAxisValuesOrderAfterAction(
+                wizardPage,
+                expectedNumericValues,
+                async () => {
+                    await wizardPage.sectionVisualization.clickOnSortIcon();
+                },
+            );
         },
     );
 

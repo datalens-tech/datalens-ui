@@ -8,7 +8,12 @@ import type {
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
 
-import type {SeriesExportSettings, ServerField, WrappedMarkdown} from '../../../../../../../shared';
+import type {
+    SeriesExportSettings,
+    ServerField,
+    WizardVisualizationId,
+    WrappedMarkdown,
+} from '../../../../../../../shared';
 import {
     AxisMode,
     GradientType,
@@ -36,6 +41,7 @@ import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {isXAxisReversed} from '../helpers/highcharts';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
@@ -73,6 +79,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         idToDataType,
         colors,
         colorsConfig,
+        sort,
         visualizationId,
         segments: split,
     } = args;
@@ -286,6 +293,10 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         if (xAxisLabelNumberFormat) {
             xAxis.labels = {numberFormat: xAxisLabelNumberFormat};
         }
+    }
+
+    if (xAxis && isXAxisReversed(xField, sort, visualizationId as WizardVisualizationId)) {
+        xAxis.order = 'reverse';
     }
 
     const segmentsMap = getSegmentMap(args);
