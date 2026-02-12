@@ -16,7 +16,6 @@ import {getSdk} from 'ui/libs/schematic-sdk';
 import {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {showToast} from 'ui/store/actions/toaster';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import type {ConnectionEntry} from '../../store';
 import {setEntryDelegation} from '../../store';
@@ -24,6 +23,7 @@ import {setEntryDelegation} from '../../store';
 import {getIsSharedConnection} from './utils';
 
 const i18ContextMenu = I18n.keyset('component.entry-context-menu.view');
+const i18nSharedEntry = I18n.keyset('shared-entry');
 
 type UseAdditionalContextMenuItemsProps = {
     entry?: ConnectionEntry;
@@ -93,7 +93,7 @@ export const useAdditionalContextMenuItems = ({
                         );
                     },
                     icon: <Shield />,
-                    text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
+                    text: i18nSharedEntry('shared-entry-bindings-dropdown-menu-title'),
                 });
             }
             if (entry.fullPermissions.delete) {
@@ -120,7 +120,7 @@ export const useAdditionalContextMenuItems = ({
                     },
                     icon: <TrashBin />,
                     theme: 'danger',
-                    text: getSharedEntryMockText('shared-entry-delete-dropdown-menu-title'),
+                    text: i18ContextMenu('value_delete'),
                 });
             }
         } else {
@@ -140,7 +140,7 @@ export const useAdditionalContextMenuItems = ({
                         );
                     },
                     icon: <CodeTrunk />,
-                    text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
+                    text: i18nSharedEntry('shared-entry-bindings-dropdown-menu-title'),
                 });
             }
             if (entry.fullPermissions.listAccessBindings) {
@@ -190,7 +190,7 @@ export const useAdditionalContextMenuItems = ({
                     },
                     icon: <TrashBin />,
                     theme: 'danger',
-                    text: getSharedEntryMockText('shared-entry-delete-dropdown-menu-title'),
+                    text: i18ContextMenu('value_delete'),
                 });
             }
         }
