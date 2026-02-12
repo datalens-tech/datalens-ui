@@ -373,7 +373,6 @@ async function findAndExecuteRunner(
         chartsEngine,
         req,
         runnerLocals,
-        resLocals: res.locals,
         config: {
             ...entry,
             data: {
