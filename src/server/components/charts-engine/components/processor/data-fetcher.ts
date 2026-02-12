@@ -211,7 +211,12 @@ export function addAuthHeaders({
 }
 
 export class DataFetcher {
-    static fetch({
+    static async fetch(options: DataFetcherOptions) {
+        const result = await this.fetchSources(options);
+        return result.result;
+    }
+
+    static fetchSources({
         sources,
         ctx,
         postprocess = null,

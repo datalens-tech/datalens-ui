@@ -583,7 +583,7 @@ export class Processor {
                     cacheClient,
                     sourcesConfig,
                 };
-                const dataFetcherResult = await DataFetcher.fetch({
+                const dataFetcherResult = await DataFetcher.fetchSources({
                     sources,
                     ...dataFetcherOptions,
                 });
@@ -593,7 +593,7 @@ export class Processor {
                     const paletteSourcesResult = await builder.buildPaletteSources({
                         sources: dataFetcherResult.sources,
                     });
-                    const resolvedPalettesResult = await DataFetcher.fetch({
+                    const resolvedPalettesResult = await DataFetcher.fetchSources({
                         sources: paletteSourcesResult.exports as Record<string, Source>,
                         ...dataFetcherOptions,
                     });
