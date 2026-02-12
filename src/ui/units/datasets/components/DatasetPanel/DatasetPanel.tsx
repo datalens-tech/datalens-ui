@@ -99,6 +99,7 @@ const DatasetPanel = (props: DatasetPanelProps) => {
                         className={b('btn-update-fields')}
                         disabled={!(options as DatasetOptions).schema_update_enabled}
                         onClick={refreshSources}
+                        qa={DatasetPanelQA.UpdateFieldsButton}
                     >
                         <Icon
                             className={b('ic-sync')}
@@ -111,7 +112,11 @@ const DatasetPanel = (props: DatasetPanelProps) => {
                 )}
                 {(isDatasetTab || isSourceTab) && (
                     <div className={b('preview-btn', {tab, readonly}, b('item'))}>
-                        <Button disabled={!previewEnabled} onClick={togglePreview}>
+                        <Button
+                            disabled={!previewEnabled}
+                            onClick={togglePreview}
+                            qa={DatasetPanelQA.PreviewButton}
+                        >
                             <span>{i18n('button_preview')}</span>
                             {/* Omit the empty div in order to reserve a place for the tooltip icon */}
                             {previewEnabled ? null : (

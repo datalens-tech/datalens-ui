@@ -17,6 +17,7 @@ export const runWorkerChart = async (
     const {
         chartsEngine,
         req,
+        runnerLocals,
         resLocals,
         config,
         configResolving,
@@ -112,6 +113,7 @@ export const runWorkerChart = async (
     const hrStart = process.hrtime();
 
     return commonRunner({
+        runnerLocals,
         resLocals,
         req,
         ctx,
