@@ -24,6 +24,7 @@ import {
 import {isOpensourceInstallation} from '../app-env';
 import {PUBLIC_API_VERSION_HEADER} from '../components/public-api/constants';
 import {PUBLIC_API_ORG_ID_HEADER} from '../constants/public-api';
+import {registry} from '../registry';
 
 import {isGatewayError} from './gateway';
 
@@ -87,6 +88,10 @@ class Utils {
         const orgId = req.headers[PUBLIC_API_ORG_ID_HEADER];
         const tenantId = orgId && !Array.isArray(orgId) ? makeTenantIdFromOrgId(orgId) : undefined;
 
+        const pickAdditionalPublicApiHeaders = registry.common.functions.get(
+            'pickAdditionalPublicApiHeaders',
+        );
+
         return {
             ...pick(req.headers, [
                 AuthHeader.Authorization,
@@ -97,6 +102,7 @@ class Utils {
             ...Utils.pickForwardHeaders(req.headers),
             [TENANT_ID_HEADER]: tenantId,
             [REQUEST_SOURCE_HEADER]: RequestSourceHeaderValue.PublicApi,
+            ...pickAdditionalPublicApiHeaders(req),
         };
     }
 

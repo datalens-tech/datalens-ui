@@ -1,4 +1,4 @@
-import type {Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {Palette} from '../../../../shared/constants/colors';
@@ -20,4 +20,6 @@ export const commonFunctionsMap = {
     extractEntryId: makeFunctionTemplate<(value?: string) => string | null>(),
     handleEntryRedirect:
         makeFunctionTemplate<(entry: GetEntryByKeyResponse, res: Response) => void>(),
+    pickAdditionalPublicApiHeaders:
+        makeFunctionTemplate<(req: Request) => Record<string, string>>(),
 } as const;
