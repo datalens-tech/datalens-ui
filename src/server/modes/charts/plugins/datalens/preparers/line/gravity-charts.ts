@@ -13,6 +13,7 @@ import type {
     SeriesExportSettings,
     ServerField,
     ServerPlaceholder,
+    WizardVisualizationId,
     WrappedHTML,
     WrappedMarkdown,
 } from '../../../../../../../shared';
@@ -34,6 +35,7 @@ import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slide
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {isXAxisReversed} from '../helpers/highcharts';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
 import {
@@ -65,6 +67,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         colors,
         shapes,
         segments: split,
+        sort,
         visualizationId,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
@@ -247,6 +250,10 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         if (isNumberField(xField)) {
             xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
         }
+    }
+
+    if (xAxis && isXAxisReversed(xField, sort, visualizationId as WizardVisualizationId)) {
+        xAxis.order = 'reverse';
     }
 
     const segmentsMap = getSegmentMap(args);

@@ -1,4 +1,8 @@
 {
+  "entries-list-title-connection": "Подключения",
+  "entries-list-title-dataset": "Датасеты",
   "label_no-data": "Нет данных",
-  "label_placeholder-filter-by-name": "Фильтр по имени"
+  "label_placeholder-filter-by-name": "Фильтр по имени",
+  "shared-list-title": "Привязанные {{entry}}",
+  "workbook-list-title": "{{entry}} в воркбуке"
 }
