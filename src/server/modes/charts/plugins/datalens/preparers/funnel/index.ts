@@ -3,6 +3,7 @@ import merge from 'lodash/merge';
 
 import {
     PlaceholderId,
+    WizardVisualizationId,
     getFakeTitleOrTitle,
     getFormatOptions,
     isMeasureValue,
@@ -142,17 +143,23 @@ export function prepareFunnel({
         legend.enabled = series.data.length > 1;
     }
 
-    return merge(getBaseChartConfig(shared), {
-        series: {
-            data: [series],
-        },
-        legend,
-        chart: {
-            zoom: {enabled: false},
-            margin: {
-                left: 20,
-                right: 20,
+    return merge(
+        getBaseChartConfig({
+            shared,
+            visualization: {placeholders, id: WizardVisualizationId.Funnel},
+        }),
+        {
+            series: {
+                data: [series],
+            },
+            legend,
+            chart: {
+                zoom: {enabled: false},
+                margin: {
+                    left: 20,
+                    right: 20,
+                },
             },
         },
-    });
+    );
 }

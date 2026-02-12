@@ -4,7 +4,7 @@ import {createFeatureConfig} from '../utils';
 export default createFeatureConfig({
     name: Feature.FunnelChart,
     state: {
-        development: true,
+        development: false,
         production: false,
     },
 });
