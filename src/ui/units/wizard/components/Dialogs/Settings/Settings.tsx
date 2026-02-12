@@ -37,6 +37,7 @@ import {
     getIsNavigatorAvailable,
     isDateField,
     isMarkupField,
+    isMonitoringOrPrometheusChart,
     isTreeField,
 } from 'shared';
 import {isTooltipSumEnabled} from 'shared/modules/wizard';
@@ -916,6 +917,10 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     }
 
     renderFeed() {
+        if (isMonitoringOrPrometheusChart(this.props.chartType)) {
+            return null;
+        }
+
         const visualization = this.props.visualization;
         const placeholders = [
             ...('layers' in visualization
