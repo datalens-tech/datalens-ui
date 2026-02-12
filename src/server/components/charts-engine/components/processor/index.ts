@@ -583,20 +583,21 @@ export class Processor {
                     cacheClient,
                     sourcesConfig,
                 };
-                resolvedSources = await DataFetcher.fetch({
+                const dataFetcherResult = await DataFetcher.fetch({
                     sources,
                     ...dataFetcherOptions,
                 });
+                resolvedSources = dataFetcherResult.result;
 
-                if (builder.buildPaletteSources) {
+                if (builder.buildPaletteSources && dataFetcherResult.sources) {
                     const paletteSourcesResult = await builder.buildPaletteSources({
-                        sources: resolvedSources,
+                        sources: dataFetcherResult.sources,
                     });
-                    const resolvedPalettes = await DataFetcher.fetch({
+                    const resolvedPalettesResult = await DataFetcher.fetch({
                         sources: paletteSourcesResult.exports as Record<string, Source>,
                         ...dataFetcherOptions,
                     });
-                    Object.assign(resolvedSources, resolvedPalettes);
+                    Object.assign(resolvedSources, resolvedPalettesResult.result);
                 }
 
                 if (Object.keys(resolvedSources).length) {

@@ -185,13 +185,13 @@ type FetchSourceResult = {
     uiUrl?: string | null;
     dataUrl?: string | null;
     datasetId?: string | null;
-    datasetFields?: PartialDatasetField[];
     hideInInspector?: boolean;
     url?: string | null;
     message?: string;
     code?: string | null;
     data?: unknown;
     details?: string;
+    source?: Source;
 };
 
 export type AuthParams = {
@@ -227,7 +227,10 @@ export class DataFetcher {
         telemetryCallbacks,
         cacheClient,
         sourcesConfig,
-    }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
+    }: DataFetcherOptions): Promise<{
+        result: Record<string, DataFetcherResult>;
+        sources?: Record<string, Source>;
+    }> {
         const fetchingTimeout = ctx.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
 
         const fetchingStartTime = Date.now();
@@ -291,10 +294,11 @@ export class DataFetcher {
                 .then((results) => {
                     const failed: Record<string, Record<string, string>> = {};
                     const fetched: Record<string, DataFetcherResult> = {};
+                    const fetchedSources: Record<string, Source> = {};
 
                     clearTimeout(overallTimeout);
 
-                    (results as DataFetcherResult[]).forEach((result) => {
+                    (results as FetchSourceResult[]).forEach((result) => {
                         Object.keys(result).forEach((key) => {
                             if ((result as Record<string, any>)[key] === null) {
                                 delete (result as Record<string, any>)[key];
@@ -329,15 +333,19 @@ export class DataFetcher {
                                 result,
                                 ctx.config.runResponseWhitelist,
                             ) as DataFetcherResult;
+
+                            if (result.source) {
+                                fetchedSources[result.sourceId] = result.source;
+                            }
                         }
                     });
 
                     if (Object.keys(failed).length) {
                         reject(failed);
                     } else if (postprocess) {
-                        resolve(postprocess(fetched));
+                        resolve({result: postprocess(fetched), sources: fetchedSources});
                     } else {
-                        resolve(fetched);
+                        resolve({result: fetched, sources: fetchedSources});
                     }
                 })
                 .catch((error) => {
@@ -1103,6 +1111,7 @@ export class DataFetcher {
                             fetchResolve({
                                 sourceId: sourceName,
                                 sourceType,
+                                source,
                                 body: data,
                                 responseHeaders: response.headers,
                                 status: response.statusCode,
@@ -1111,7 +1120,6 @@ export class DataFetcher {
                                 uiUrl: userTargetUriUi,
                                 dataUrl: publicTargetUri,
                                 datasetId,
-                                datasetFields: source.datasetFields,
                                 hideInInspector,
                                 data: publicSourceData,
                                 /** @deprecated use uiUrl or dataUrl */
