@@ -174,7 +174,15 @@ export function getTableTitle(config: TableWidgetData['config']): TableTitle | u
 }
 
 export function getTableSizes(table: HTMLTableElement) {
-    const tableScale = round(table?.getBoundingClientRect()?.width / table?.clientWidth, 2);
+    // Calculate scale factor to handle CSS transforms.
+    // For very wide tables, Firefox may return incorrect getBoundingClientRect values,
+    // so we validate that tableScale is within reasonable bounds (0.5 to 2.0)
+    let tableScale = round(table?.getBoundingClientRect()?.width / table?.clientWidth, 2);
+
+    if (!Number.isFinite(tableScale) || tableScale < 0.5 || tableScale > 2) {
+        tableScale = 1;
+    }
+
     let rows: HTMLTableRowElement[] = [];
 
     rows = Array.from(
