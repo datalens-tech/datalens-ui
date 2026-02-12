@@ -1,0 +1,12 @@
+{
+  "apply-btn": "Next",
+  "cancel-btn": "Cancel",
+  "dialog-title": "Enter link to connection",
+  "documentation-link-text": "documentation",
+  "entry-error": "Invalid object",
+  "info-message": "The connection and the workbook must be located in the same organization, and you must have the rights to bind the connection specified. Read more in the",
+  "input-label": "Link:",
+  "link-error": "Invalid link",
+  "no-access-for-binding-create": "Insufficient rights to bind object",
+  "required-error": "Add link"
+}

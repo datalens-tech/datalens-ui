@@ -18,6 +18,8 @@
   "label_user": "Пользователь",
   "label_user-accounts": "Пользователи",
   "placeholder_search": "Фильтр по пользователю",
+  "role-entry-binding-creator": "Делегация прав",
+  "role-limited-entry-binding-creator": "Без делегации прав",
   "role_admin": "Администрирование",
   "role_editor": "Редактирование",
   "role_limited-viewer": "Ограниченный просмотр",

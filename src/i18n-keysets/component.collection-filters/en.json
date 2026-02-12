@@ -3,6 +3,7 @@
   "label_filter-by-ownership-only-my": "Only mine",
   "label_filter-by-type-all": "All types",
   "label_filter-by-type-only-collections": "Only collections",
+  "label_filter-by-type-only-entries": "Only common objects",
   "label_filter-by-type-only-workbooks": "Only workbooks",
   "label_filter-string-placeholder": "Search by name",
   "label_sort-first-alphabet-asc": "Sort A to Z",
