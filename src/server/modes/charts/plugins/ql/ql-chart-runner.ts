@@ -1,6 +1,6 @@
 import path from 'path';
 
-import type {AppContext} from '@gravity-ui/nodekit';
+import {type AppContext, USER_LANGUAGE_PARAM_NAME} from '@gravity-ui/nodekit';
 import type {Pool, Proxy, WorkerPoolOptions} from 'workerpool';
 import workerpool from 'workerpool';
 
@@ -8,6 +8,7 @@ import {getWizardChartBuilder} from '../../../../components/charts-engine/compon
 import type {ResolvedConfig} from '../../../../components/charts-engine/components/storage/types';
 import type {WizardWorker} from '../../../../components/charts-engine/components/wizard-worker/types';
 import type {RunnerHandler, RunnerHandlerProps} from '../../../../components/charts-engine/runners';
+import {resolveRunnerLocals} from '../../../../components/charts-engine/runners/common';
 import {runWorkerChart} from '../../../../components/charts-engine/runners/worker';
 import {registry} from '../../../../registry';
 
@@ -30,13 +31,14 @@ async function getQlWorker(options?: WorkerPoolOptions): Promise<Proxy<WizardWor
 }
 
 export const runQlChart: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
-    const {req, resLocals, config} = props;
+    const {req, runnerLocals, resLocals, config} = props;
+    const locals = resolveRunnerLocals({runnerLocals, resLocals});
     const {widgetConfig} = req.body;
     const timeouts = cx.config.runnerExecutionTimeouts?.qlChart;
 
     const chartBuilder = await getWizardChartBuilder({
-        userLang: resLocals && resLocals.lang,
-        userLogin: resLocals && resLocals.login,
+        userLang: cx.get(USER_LANGUAGE_PARAM_NAME) || '',
+        userLogin: locals.login || '',
         widgetConfig,
         config: config as ResolvedConfig,
         isScreenshoter: Boolean(req.headers['x-charts-scr']),
