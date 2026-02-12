@@ -7,6 +7,7 @@ import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
 
 export enum DOMNamedAttributes {
     StrokeDashArray = 'stroke-dasharray',
+    StrokeWidth = 'stroke-width',
     Stroke = 'stroke',
 }
 
