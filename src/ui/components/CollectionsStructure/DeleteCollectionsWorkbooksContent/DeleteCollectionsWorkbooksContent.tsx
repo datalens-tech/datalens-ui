@@ -6,7 +6,6 @@ import {I18n} from 'i18n';
 import {EntryScope} from 'shared';
 import {EntryIcon} from 'ui/components/EntryIcon/EntryIcon';
 import {IconById} from 'ui/components/IconById/IconById';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import workbookColoredIcon from '../../../assets/icons/collections/workbook-colored.svg';
 
@@ -78,7 +77,7 @@ export const DeleteCollectionsWorkbooksContent = ({
             {Boolean(connectionTitles.length) && (
                 <React.Fragment>
                     <div className={b('header')}>
-                        {getSharedEntryMockText('label_delete-connections-for-delete')}:
+                        {i18n('label_delete-connections-for-delete')}:
                     </div>
                     <div className={b('list')}>
                         {connectionTitles.map((title) => (
@@ -104,9 +103,7 @@ export const DeleteCollectionsWorkbooksContent = ({
 
             {Boolean(datasetTitles.length) && (
                 <React.Fragment>
-                    <div className={b('header')}>
-                        {getSharedEntryMockText('label_delete-datasets-for-delete')}:
-                    </div>
+                    <div className={b('header')}>{i18n('label_delete-datasets-for-delete')}:</div>
                     <div className={b('list')}>
                         {datasetTitles.map((title) => (
                             <div className={b('item')} key={title}>

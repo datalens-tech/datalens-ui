@@ -9,6 +9,7 @@ import {
     DatasetSourcesTableQa,
     DatasetSourcesLeftPanelQA,
     AvatarQA,
+    DatasetFieldsTabQa,
 } from '../../../src/shared/constants/qa/datasets';
 
 import {deleteEntity, slct} from '../../utils';
@@ -22,7 +23,8 @@ import {
     SharedEntriesPermissionsDialogQa,
     ValueOf,
 } from '../../../src/shared';
-import {Page, Response} from '@playwright/test';
+import {Page, Response, expect} from '@playwright/test';
+import Revisions from '../common/Revisions';
 
 export interface DatasetPageProps extends BasePageProps {}
 
@@ -71,12 +73,14 @@ export const SET_CONNECTION_METHODS = {
 class DatasetPage extends BasePage {
     datasetTabSection: DatasetTabSection;
     dialogParameter: DialogParameter;
+    revisions: Revisions;
 
     constructor({page}: DatasetPageProps) {
         super({page});
 
         this.datasetTabSection = new DatasetTabSection(page);
         this.dialogParameter = new DialogParameter(page);
+        this.revisions = new Revisions(page);
     }
 
     async addAvatarByDragAndDrop(sourceTitle?: string) {
@@ -292,6 +296,58 @@ class DatasetPage extends BasePage {
 
     async checkIsReadonlyState() {
         await this.page.waitForSelector(slct(SharedEntriesBaseQa.OpenOriginalBtn));
+    }
+
+    async scrollSourcesList({scrollHeight = 99999}: {scrollHeight?: number} = {}) {
+        const sourcesList = await this.page.waitForSelector(
+            slct(DatasetSourcesLeftPanelQA.SourcesList),
+        );
+        await this.page.waitForSelector(slct(DatasetSourcesTableQa.Source));
+        await sourcesList.hover();
+        await this.page.mouse.wheel(0, scrollHeight);
+    }
+
+    async changeDbName({namePattern}: {namePattern?: string} = {}) {
+        const select = await this.page.waitForSelector(
+            slct(DatasetSourcesLeftPanelQA.SelectSourcesDbName),
+        );
+        await this.page.waitForFunction(
+            async (element) => {
+                return !(element as HTMLSelectElement).disabled;
+            },
+            select,
+            {polling: 500},
+        );
+
+        const disabled = await select.isDisabled();
+        expect(disabled).toBe(false);
+        await select.click();
+        await this.page.waitForSelector(slct('select-popup'));
+        const popup = this.page.locator(slct('select-popup'));
+        const option = popup.locator('[role="option"]', {hasText: namePattern});
+        await option.click();
+    }
+
+    async renameFirstField({value}: {value?: string} = {}) {
+        const fieldInput = this.page.locator(slct(DatasetFieldsTabQa.FieldNameColumnInput)).first();
+        const originalValue = await fieldInput.locator('input').inputValue();
+        const newValue = value || `${originalValue}_modified`;
+
+        await fieldInput.locator('input').fill(newValue);
+        await this.page.keyboard.press('Enter');
+        await waitForBiValidateDatasetResponses(this.page, 5000);
+        return {newValue, originalValue};
+    }
+
+    async saveUpdatedDataset() {
+        const getEntrySuccessfulPromise = this.waitForSuccessfulResponse(
+            '/gateway/root/us/getEntryMeta',
+        );
+        const saveBtn = await this.page.locator(slct(DatasetActionQA.CreateButton));
+        const disabled = await saveBtn.isDisabled();
+        expect(disabled).toBe(false);
+        await saveBtn.click();
+        await getEntrySuccessfulPromise;
     }
 }
 

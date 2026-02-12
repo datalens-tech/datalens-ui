@@ -1,0 +1,19 @@
+{
+  "apply-btn": "Отвязать",
+  "cancel-btn": "Отмена",
+  "dialog-title": "Отвязать {{entry}}?",
+  "entries-list-title-connection": "Подключения",
+  "label-current-entry": "Выбранный объект",
+  "label-of-shared-dataset": "датасета",
+  "label-relation-dataset": "датасете",
+  "label-relation-entity": "Где используется",
+  "label-relation-workbook": "воркбуке",
+  "label-shared-connection": "Подключение",
+  "label-shared-dataset": "Датасет",
+  "label-workbook": "Воркбук",
+  "message-alert": "Если на данных из {{entry}} построены {{relation}}, они перестанут работать.",
+  "message-relation-alert": "чарты",
+  "message-relations-alert": "датасеты и чарты",
+  "open-relation": "Открыть {{relation}}",
+  "title-alert": "{{entry}} используется в {{relation}}"
+}

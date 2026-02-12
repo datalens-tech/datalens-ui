@@ -5,8 +5,6 @@ import {DL} from 'ui';
 import {registry} from 'ui/registry';
 import {COLLECTIONS_PATH, WORKBOOKS_PATH} from 'ui/units/collections-navigation/constants';
 
-import {mockSharedEntriesTexts} from './constants';
-
 export const getIsWorkbookItem = (item: StructureItem): item is ExtendedWorkbook => {
     if (item.entity) {
         return item.entity === CollectionItemEntities.WORKBOOK;
@@ -52,12 +50,5 @@ export const getItemLink = (item: StructureItem) => {
     }
 };
 
-export const getSharedEntryMockText = (
-    key: keyof typeof mockSharedEntriesTexts,
-    args?: Record<string, string>,
-) => {
-    const text = mockSharedEntriesTexts[key];
-    return text.replace(/\{\{(\w+)\}\}/g, (_, name) => {
-        return args?.[name] ?? `{{${name}}}`;
-    });
-};
+// TODO remove after CHARTS-11999
+export const getSharedEntryMockText = (..._: unknown[]) => '';

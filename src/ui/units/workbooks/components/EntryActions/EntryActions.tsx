@@ -10,7 +10,6 @@ import {WorkbookPageQa} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types';
 import {EntryScope} from 'shared/types/common';
 import {S3_BASED_CONNECTORS} from 'ui/constants';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {DropdownAction} from '../../../../components/DropdownAction/DropdownAction';
@@ -21,6 +20,7 @@ import iconId from 'ui/assets/icons/id-square.svg';
 
 const i18n = I18n.keyset('new-workbooks');
 const commonMenuI18n = I18n.keyset('component.entry-context-menu.view');
+const i18nSharedEntry = I18n.keyset('shared-entry');
 
 const copyEntriesToWorkbookEnabled = isEnabledFeature(Feature.CopyEntriesToWorkbook);
 
@@ -110,7 +110,7 @@ export const EntryActions = ({
             text: (
                 <DropdownAction
                     icon={Shield}
-                    text={getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title')}
+                    text={i18nSharedEntry('shared-entry-bindings-dropdown-menu-title')}
                 />
             ),
         });

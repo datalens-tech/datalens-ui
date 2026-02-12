@@ -1,8 +1,7 @@
 import React from 'react';
 
 import {Dialog} from '@gravity-ui/uikit';
-import type {SharedScope} from 'shared';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
+import {I18n} from 'i18n';
 
 import type {SharedEntry} from '../types';
 
@@ -11,14 +10,14 @@ type SharedBindingsHeaderProps = {
     entry: SharedEntry;
 };
 
+const i18n = I18n.keyset('component.dialog-shared-entry-bindings.view');
+
 export const SharedBindingsHeader = ({isDeleteDialog, entry}: SharedBindingsHeaderProps) => {
     const title = isDeleteDialog
-        ? getSharedEntryMockText('title-bindings-dialog-delete', {
-              entry: getSharedEntryMockText(
-                  `label-shared-${entry.scope as SharedScope}`,
-              ).toLowerCase(),
+        ? i18n('title-dialog-delete', {
+              entry: i18n(entry.scope).toLowerCase(),
           })
-        : getSharedEntryMockText('title-bindings-dialog');
+        : i18n('title-dialog');
 
     return <Dialog.Header caption={title} />;
 };
