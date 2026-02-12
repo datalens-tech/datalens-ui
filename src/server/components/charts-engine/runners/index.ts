@@ -10,6 +10,13 @@ import type {ReducedResolvedConfig, ResolvedConfig} from '../components/storage/
 import {runControl} from './control';
 import {runWizardChart} from './wizard';
 
+export type RunnerLocals = {
+    subrequestHeaders: Record<string, string>;
+    editMode: boolean;
+    login: string | null;
+    iamToken: string | null;
+};
+
 export type Runner = {
     name: string;
     trigger: Set<string>;
@@ -24,12 +31,14 @@ export type RunnerHandlerResult = {
 
 export type RunnerHandler = (
     ctx: AppContext,
-    {chartsEngine, req, resLocals, config, configResolving}: RunnerHandlerProps,
+    {chartsEngine, req, config, configResolving}: RunnerHandlerProps,
 ) => RunnerHandlerResult | Promise<RunnerHandlerResult>;
 
 export type RunnerHandlerProps = {
     chartsEngine: ChartsEngine;
     req: Request;
+    runnerLocals?: RunnerLocals;
+    /** @deprecated Use runnerLocals instead */
     resLocals: Response['locals'];
     config: ResolvedConfig | ReducedResolvedConfig;
     configResolving: number;

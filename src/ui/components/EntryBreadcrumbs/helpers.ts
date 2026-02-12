@@ -71,11 +71,13 @@ export const getEntityBreadcrumbsItems: GetEntityBreadcrumbsItems = ({
         breadcrumbsItems.push({
             text: entryName,
             action: () => {},
+            path: location.pathname,
         });
     } else if (fakeName) {
         breadcrumbsItems.push({
             text: fakeName,
             action: () => {},
+            path: location.pathname,
         });
     }
 
