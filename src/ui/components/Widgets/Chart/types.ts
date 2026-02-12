@@ -191,7 +191,11 @@ export type ChartWithProviderProps = ChartsProps & {
     dataProvider: ChartKitDataProvider;
 };
 
-type ChartRefProp = {forwardedRef: React.RefObject<ChartKit | ChartKitRef>};
+type ChartRefProp = {
+    forwardedRef?:
+        | React.RefObject<ChartKit | ChartKitRef>
+        | React.RefCallback<ChartKit | ChartKitRef>;
+};
 
 export type ChartWrapperWithRefProps =
     | ChartWidgetProviderPropsWithRefProps

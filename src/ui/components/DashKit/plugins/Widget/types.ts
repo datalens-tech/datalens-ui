@@ -35,7 +35,9 @@ export type WidgetPluginData = ConfigItem['data'];
 export type WidgetPluginDataWithTabs = ConfigItemWithTabs['data'] & {tabs: Array<CurrentTab>};
 
 export type WidgetPluginProps = Omit<PluginWidgetProps, 'data'> & {
-    forwardedRef: React.RefObject<ChartKit | ChartKitRef>;
+    forwardedRef?:
+        | React.RefObject<ChartKit | ChartKitRef>
+        | React.RefCallback<ChartKit | ChartKitRef>;
     data: WidgetPluginDataWithTabs | WidgetPluginData;
     getMarkdown?: (props: {text: string}) => Promise<{result: string; meta?: object}>;
     debouncedAdjustWidgetLayout: DebouncedFunc<(props: AdjustWidgetLayoutProps) => void>;
