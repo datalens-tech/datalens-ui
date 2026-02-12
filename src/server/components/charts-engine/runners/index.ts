@@ -7,6 +7,7 @@ import {ControlType} from '../../../../shared';
 import type {ProcessorParams} from '../components/processor';
 import type {ReducedResolvedConfig, ResolvedConfig} from '../components/storage/types';
 
+import {RUNNER_NAME} from './constants';
 import {runControl} from './control';
 import {runWizardChart} from './wizard';
 
@@ -42,7 +43,7 @@ export type RunnerHandlerProps = {
 export function getDefaultRunners() {
     const runners: Runner[] = [
         {
-            name: 'wizard',
+            name: RUNNER_NAME.WIZARD,
             trigger: new Set([
                 'graph_wizard_node',
                 'table_wizard_node',
@@ -57,7 +58,7 @@ export function getDefaultRunners() {
         },
         {
             // for all types of controls except editor control
-            name: 'dashControls',
+            name: RUNNER_NAME.DASH_CONTROLS,
             trigger: new Set([ControlType.Dash]),
             safeConfig: true,
             handler: runControl,

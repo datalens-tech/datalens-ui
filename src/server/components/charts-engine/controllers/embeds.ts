@@ -23,6 +23,7 @@ import {
     Feature,
     getAllTabItems,
 } from '../../../../shared';
+import {registry} from '../../../registry';
 import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 import type {EmbeddingInfo, ReducedResolvedConfig} from '../components/storage/types';
@@ -318,16 +319,25 @@ async function filterParams({
     };
 }
 
-async function findAndExecuteRunner(
-    entry: ReducedResolvedConfig,
-    chartsEngine: ChartsEngine,
-    ctx: AppContext,
-    req: Request,
-    res: Response,
-    configResolving: number,
-    embeddingInfo: EmbeddingInfo,
-    privateParams?: Set<string>,
-) {
+async function findAndExecuteRunner({
+    entry,
+    chartsEngine,
+    ctx,
+    req,
+    res,
+    configResolving,
+    embeddingInfo,
+    privateParams,
+}: {
+    entry: ReducedResolvedConfig;
+    chartsEngine: ChartsEngine;
+    ctx: AppContext;
+    req: Request;
+    res: Response;
+    configResolving: number;
+    embeddingInfo: EmbeddingInfo;
+    privateParams?: Set<string>;
+}) {
     const configType = entry?.meta?.stype;
 
     ctx.log('CHARTS_ENGINE_CONFIG_TYPE', {configType});
@@ -380,15 +390,27 @@ async function findAndExecuteRunner(
         forbiddenFields: ['_confStorageConfig', 'timings', 'key'],
     });
 
-    if (runnerHandlerResult) {
+    const onEmbedsControllerBeforeResponse = registry.common.functions.get(
+        'onEmbedsControllerBeforeResponse',
+    );
+
+    await onEmbedsControllerBeforeResponse({
+        req,
+        res,
+        runnerName: runnerFound.name,
+        runnerHandlerResult,
+    });
+
+    if (res.headersSent) {
+        // If response sent in onEmbedsControllerBeforeResponse
+        return;
+    } else {
         res.status(runnerHandlerResult.status).send(runnerHandlerResult.payload);
     }
-
-    return;
 }
 
 export const embedsController = (chartsEngine: ChartsEngine) => {
-    return function chartsRunController(req: Request, res: Response) {
+    return async function chartsRunController(req: Request, res: Response) {
         const {ctx} = req;
 
         // We need it because of timeout error after 120 seconds
@@ -405,6 +427,14 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
         }
 
         const {embedToken, embedId} = tokenData;
+
+        const onEmbedsControllerStart = registry.common.functions.get('onEmbedsControllerStart');
+
+        await onEmbedsControllerStart({req, res});
+        // If response sent in onEmbedsControllerStart
+        if (res.headersSent) {
+            return;
+        }
 
         const configResolveArgs: EmbedResolveConfigProps = {
             id,
@@ -464,7 +494,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
                 const configResolving = getDuration(hrStart);
 
-                return findAndExecuteRunner(
+                return findAndExecuteRunner({
                     entry,
                     chartsEngine,
                     ctx,
@@ -473,7 +503,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     configResolving,
                     embeddingInfo,
                     privateParams,
-                );
+                });
             })
             .catch((error) => {
                 handleError(error, ctx, res, 'ERR.CHARTS.CHARTS_ENGINE_RUNNER_ERROR');
