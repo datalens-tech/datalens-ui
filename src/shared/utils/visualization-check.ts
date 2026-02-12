@@ -36,6 +36,10 @@ export function isGravityChartsVisualization({
     id: string;
     features?: FeatureConfig;
 }) {
+    if (id === WizardVisualizationId.Funnel) {
+        return true;
+    }
+
     const isPieOrTreemap = [
         WizardVisualizationId.Pie,
         WizardVisualizationId.Donut,

@@ -18,6 +18,7 @@ export enum WizardVisualizationId {
     Geopolygon = 'geopolygon',
     GeopointWithCluster = 'geopoint-with-cluster',
     CombinedChart = 'combined-chart',
+    Funnel = 'funnel',
 }
 
 export enum QlVisualizationId {
