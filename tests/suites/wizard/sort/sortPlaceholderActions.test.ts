@@ -1,5 +1,5 @@
 import {Page, expect} from '@playwright/test';
-import {dateTimeParse} from '@gravity-ui/date-utils';
+import {dateTimeUtc} from '@gravity-ui/date-utils';
 
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
@@ -29,9 +29,7 @@ const checkXAxisValuesOrder = async (wizardPage: WizardPage, expectedValues: str
 
 const formatAxisValues = (values: Array<number | string>, isDateTimeAxis: boolean) =>
     values
-        .map((value) =>
-            isDateTimeAxis ? dateTimeParse(value)?.format('DD.MM.YYYY') || value : value,
-        )
+        .map((value) => (isDateTimeAxis ? dateTimeUtc({input: value}).format('DD.MM.YYYY') : value))
         .map(String);
 
 const getApiRunXAxisValues = async (responseData: any): Promise<string[]> => {
@@ -140,7 +138,7 @@ const expectedDateValuesAfterSort = [
     '07.12.2017',
 ];
 
-datalensTest.describe('Wizard - Sort', () => {
+datalensTest.describe.only('Wizard - Sort', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         await openTestPage(page, RobotChartsWizardUrls.WizardForDatasetSampleCh);
     });
