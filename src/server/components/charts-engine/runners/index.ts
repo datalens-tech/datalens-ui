@@ -1,4 +1,4 @@
-import type {Request, Response} from '@gravity-ui/expresskit';
+import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {ChartsEngine} from '..';
@@ -37,9 +37,7 @@ export type RunnerHandler = (
 export type RunnerHandlerProps = {
     chartsEngine: ChartsEngine;
     req: Request;
-    runnerLocals?: RunnerLocals;
-    /** @deprecated Use runnerLocals instead */
-    resLocals: Response['locals'];
+    runnerLocals: RunnerLocals;
     config: ResolvedConfig | ReducedResolvedConfig;
     configResolving: number;
     workbookId?: WorkbookId;
