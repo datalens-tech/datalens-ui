@@ -125,6 +125,11 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
         if (shouldUseHtmlForLegend) {
             legend.html = true;
         }
+
+        const isLegendEnabled = shared?.extraSettings?.legendMode !== 'hide';
+        if (isLegendEnabled) {
+            legend.enabled = true;
+        }
     }
 
     return merge(getBaseChartConfig({shared, visualization: {placeholders, id: visualizationId}}), {

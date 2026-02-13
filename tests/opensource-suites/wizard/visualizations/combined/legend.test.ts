@@ -156,5 +156,26 @@ datalensTest.describe('Wizard', () => {
                 await expect(preview).toHaveScreenshot();
             },
         );
+
+        datalensTest(
+            'The legend should be displayed for two layers with single lines @screenshot',
+            async ({page}) => {
+                const wizardPage = new WizardPage({page});
+                const preview = page.locator(slct(WizardPageQa.SectionPreview));
+                const previewLoader = preview.locator(slct(ChartKitQa.Loader));
+
+                await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'segment');
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Y,
+                    'salesSum',
+                );
+
+                await wizardPage.sectionVisualization.addLayer();
+                await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Id');
+
+                await expect(previewLoader).not.toBeVisible();
+                await expect(preview.locator('.gcharts-legend')).toHaveScreenshot();
+            },
+        );
     });
 });
