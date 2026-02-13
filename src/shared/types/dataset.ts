@@ -378,7 +378,7 @@ export type CacheInvalidationSource = {
         title: string;
         level: string;
         locator: string;
-    };
+    } | null;
     last_result_timestamp: string | null;
     last_result_error: {
         code: string;
@@ -386,8 +386,8 @@ export type CacheInvalidationSource = {
         details: {
             db_message: string;
         };
-        debug: {};
-    };
+        debug: unknown;
+    } | null;
 };
 
 export type DatasetSelectionMap = Record<DatasetField['guid'], true>;
