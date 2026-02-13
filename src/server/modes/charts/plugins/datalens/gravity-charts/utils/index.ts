@@ -193,7 +193,7 @@ export function getBaseChartConfig(args: {
                     enabled: isGridEnabled(xPlaceholderSettings),
                 },
                 ticks: {
-                    pixelInterval: getTickPixelInterval(xPlaceholderSettings) || 120,
+                    pixelInterval: getTickPixelInterval(xPlaceholderSettings),
                 },
                 lineColor: 'var(--g-color-line-generic)',
                 min: xMin,
