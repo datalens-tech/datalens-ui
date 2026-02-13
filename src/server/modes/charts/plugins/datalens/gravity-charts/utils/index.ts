@@ -199,6 +199,8 @@ export function getBaseChartConfig(args: {
                 min: xMin,
                 max: xMax,
                 rangeSlider: getRangeSliderConfig({extraSettings, visualization}),
+                endOnTick: false,
+                startOnTick: false,
             },
             yAxis: [getYAxisBaseConfig({placeholder: yPlaceholder})],
         };
