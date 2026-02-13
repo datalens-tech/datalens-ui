@@ -5,6 +5,7 @@ import type {
     LineSeries,
     LineSeriesData,
 } from '@gravity-ui/chartkit/gravity-charts';
+import groupBy from 'lodash/groupBy';
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
 
@@ -344,7 +345,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         config.split = {
             enable: true,
             gap: '40px',
-            plots: segments.map(() => {
+            plots: Object.values(groupBy(segments, (d) => d.plotIndex)).map(() => {
                 return {};
             }),
         };
