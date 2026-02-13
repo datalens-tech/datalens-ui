@@ -180,6 +180,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         onActivityComplete,
     } = props;
 
+    const prevRequestId = usePrevious(requestId);
+
     const [{isInit, canBeLoaded}, setLoadingState] = React.useReducer(loadingStateReducer, {
         isInit: false,
         canBeLoaded: false,
@@ -745,6 +747,12 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         setIsWidgetMenuDataChanged(isChanged);
     }, [widgetMenuData, prevWidgetMenuData]);
 
+    React.useEffect(() => {
+        if (widgetRenderTimeRef && requestId !== prevRequestId) {
+            widgetRenderTimeRef.current = null;
+        }
+    }, [prevRequestId, requestId, widgetRenderTimeRef]);
+
     /**
      * triggers from chartkit instance after each it's render
      */
@@ -790,7 +798,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 });
             }
 
-            if (widgetRenderTimeRef) {
+            if (widgetRenderTimeRef && !widgetRenderTimeRef.current) {
                 widgetRenderTimeRef.current = renderedData.widgetRendering || null;
             }
 
@@ -1088,7 +1096,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     }, [shouldUseChartModeling, setChartModelingData, loadedData, chartStateData]);
 
     const chartModelingDialogWidgetId = useSelector(getEditingWidgetId);
-    const prevRequestId = usePrevious(requestId);
     const cleanChartSettings = useMemoCallback(async () => {
         const id = prevRequestId || requestId;
         if (!isEmpty(chartStateData) || chartModelingDialogWidgetId === id) {
