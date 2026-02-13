@@ -23,7 +23,7 @@ import type {
     ValidateDatasetResponse,
 } from '../../../../../shared/schema';
 import type {EntryContentAction} from '../../../../store/actions/entryContent';
-import type {DatasetTab} from '../../constants';
+import type {DatasetCacheMode, DatasetTab} from '../../constants';
 import type {
     ADD_AVATAR_PROTOTYPES,
     ADD_AVATAR_TEMPLATE,
@@ -71,6 +71,7 @@ import type {
     SET_CONNECTIONS_DB_NAMES,
     SET_CURRENT_DB_NAME,
     SET_CURRENT_TAB,
+    SET_DATASET_CACHE_MODE,
     SET_DATASET_DELEGATION,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
@@ -289,6 +290,7 @@ export type DatasetReduxState = {
     content: Partial<Dataset['dataset']>;
     prevContent: Partial<Dataset['dataset']>;
     options: Partial<Dataset['options']>;
+    cacheInvalidationSource: Dataset['cache_invalidation_source'] | null;
     currentDbName?: string;
     connectionsDbNames: Record<string, string[]>;
     sourcesPagination: SourcesPagination;
@@ -894,6 +896,11 @@ export type SetDatasetDelegation = {
     payload: boolean;
 };
 
+export type SetDatasetCacheMode = {
+    type: typeof SET_DATASET_CACHE_MODE;
+    payload: DatasetCacheMode;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -981,4 +988,5 @@ export type DatasetReduxAction =
     | OpenDialogAction
     | CloseDialogAction
     | SetDatasetDelegation
+    | SetDatasetCacheMode
     | EditHistoryAction;

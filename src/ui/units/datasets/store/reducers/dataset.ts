@@ -1,7 +1,7 @@
 import _has from 'lodash/has';
 import _xorBy from 'lodash/xorBy';
-import type {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
 import {Feature} from 'shared';
+import type {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
 import {DatasetSDK} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {v1 as uuidv1} from 'uuid';
@@ -54,6 +54,7 @@ import {
     SET_CONNECTIONS_DB_NAMES,
     SET_CURRENT_DB_NAME,
     SET_CURRENT_TAB,
+    SET_DATASET_CACHE_MODE,
     SET_DATASET_DELEGATION,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
@@ -1536,6 +1537,15 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             return {
                 ...state,
                 isDelegated: action.payload,
+            };
+        }
+        case SET_DATASET_CACHE_MODE: {
+            return {
+                ...state,
+                cacheInvalidationSource: {
+                    ...state.cacheInvalidationSource,
+                    mode: action.payload,
+                },
             };
         }
         default: {

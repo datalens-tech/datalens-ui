@@ -3,11 +3,9 @@ import React from 'react';
 import {Alert, spacing} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useHistory, useLocation} from 'react-router';
-import type {DatasetField, DatasetOptions} from 'shared';
+import type {DatasetField, DatasetOptions, ObligatoryFilter} from 'shared';
 import type {ApplyData} from 'ui';
-
-import type {ObligatoryFilter} from '../../typings/dataset';
-import {DatasetTabSection} from '../DatasetTabSection/DatasetTabSection';
+import {DatasetTableFieldsSection} from 'ui/units/datasets/components/DatasetTableFieldsSection/DatasetTableFieldsSection';
 
 import type {FilterType} from './types';
 import {useFilterSection} from './useFilterSection';
@@ -19,7 +17,7 @@ interface FilterSectionProps {
     type: FilterType;
     fields: DatasetField[];
     filters: ObligatoryFilter[];
-    options: DatasetOptions;
+    options: Partial<DatasetOptions>;
     progress: boolean;
     addFilter: (data: ApplyData) => void;
     updateFilter: (data: ApplyData) => void;
@@ -60,7 +58,7 @@ const FilterSection: React.FC<FilterSectionProps> = (props: FilterSectionProps) 
     );
 
     return (
-        <DatasetTabSection
+        <DatasetTableFieldsSection
             readonlyNotice={
                 progress ? null : (
                     <Alert
@@ -81,13 +79,13 @@ const FilterSection: React.FC<FilterSectionProps> = (props: FilterSectionProps) 
             readonly={readonly}
             title={title}
             description={description}
-            onOpenDialogClick={onOpenDialogFilterClick}
-            openDialogButtonText={i18n('label_obligatory-filter-add')}
+            onConfirmClick={onOpenDialogFilterClick}
+            confirmButtonText={i18n('label_obligatory-filter-add')}
             onItemClick={onFilterItemClick}
             fields={preparedFields}
             headerColumns={headerColumns}
             columns={columns}
-            isListUpdating={progress}
+            isLoading={progress}
             controlSettings={controlSettings}
             checkIsRowValid={checkIsRowValid}
         />

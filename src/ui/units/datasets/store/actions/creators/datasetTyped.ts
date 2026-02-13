@@ -49,6 +49,7 @@ import type {ApplyData} from '../../../../../components/DialogFilter/DialogFilte
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from '../../../../../components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
+import type {DatasetCacheMode} from '../../../constants';
 import {
     ComponentErrorType,
     DATASETS_EDIT_HISTORY_UNIT_ID,
@@ -85,6 +86,7 @@ import type {
     FreeformSource,
     SetCurrentDbName,
     SetCurrentTab,
+    SetDatasetCacheMode,
     SetDelegationFromConnToSharedDataset,
     SetLastModifiedTab,
     SetSelectedConnectionDelegation,
@@ -2363,6 +2365,13 @@ export function setSharedConnectionDelegation(
     return {
         type: DATASET_ACTION_TYPES.SET_SELECTED_CONNECTION_DELEGATION,
         payload: delegation,
+    };
+}
+
+export function setDatasetCacheMode(mode: DatasetCacheMode): SetDatasetCacheMode {
+    return {
+        type: DATASET_ACTION_TYPES.SET_DATASET_CACHE_MODE,
+        payload: mode,
     };
 }
 

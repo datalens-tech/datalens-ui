@@ -71,6 +71,13 @@ export const DATASET_TAB = {
     FILTERS: 'filters',
     SOURCES: 'sources',
     PARAMETERS: 'parameters',
+    CACHE: 'cache',
+} as const;
+
+export const DATASET_CACHE_MODE = {
+    OFF: 'off',
+    FORMULA: 'formula',
+    SQL: 'sql',
 } as const;
 
 export const DatasetSourcesTableQa = {

@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 import {createSelector} from 'reselect';
-import {Feature} from 'shared';
+import {DATASET_CACHE_MODE, Feature} from 'shared';
 import type {DatasetField} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -66,7 +66,7 @@ export const datasetValidationSelector = (state: DatalensGlobalState) => state.d
 export const sourceTemplateSelector = (state: DatalensGlobalState) => state.dataset.sourceTemplate;
 
 export const obligatoryFiltersSelector = (state: DatalensGlobalState) =>
-    state.dataset.content.obligatory_filters;
+    state.dataset.content.obligatory_filters ?? [];
 
 export const datasetPreviewErrorSelector = (state: DatalensGlobalState) =>
     state.dataset.errors.previewError;
@@ -242,3 +242,16 @@ export const isDescriptionChangedSelector = createSelector(
 
 export const selectedConnectionDelegationStatusSelector = (state: DatalensGlobalState) =>
     state.dataset.ui.selectedConnectionDelegationStatus;
+
+export const datasetCacheModeSelector = (state: DatalensGlobalState) =>
+    state.dataset.cacheInvalidationSource?.mode ?? DATASET_CACHE_MODE.OFF;
+export const datasetCacheFieldSelector = (state: DatalensGlobalState) =>
+    state.dataset.cacheInvalidationSource?.field;
+export const datasetCacheFilterSelector = (state: DatalensGlobalState) =>
+    state.dataset.cacheInvalidationSource?.filters ?? [];
+export const datasetCacheLastResultTimeSelector = (state: DatalensGlobalState) =>
+    state.dataset.cacheInvalidationSource?.last_result_timestamp;
+export const datasetCacheLastResultErrorSelector = (state: DatalensGlobalState) =>
+    state.dataset.cacheInvalidationSource?.last_result_error;
+export const datasetCacheErrorSelector = (state: DatalensGlobalState) =>
+    state.dataset.cacheInvalidationSource?.cache_invalidation_error;
