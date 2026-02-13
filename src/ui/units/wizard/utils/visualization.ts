@@ -1,7 +1,8 @@
 import _ from 'lodash';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartkitGlobalSettings, Field} from '../../../../shared';
-import {DatasetFieldAggregation, isParameter} from '../../../../shared';
+import {DatasetFieldAggregation, Feature, isParameter} from '../../../../shared';
 import {DL} from '../../../../ui';
 import {
     AREA_100P_VISUALIZATION,
@@ -13,6 +14,7 @@ import {
     COMBINED_CHART_VISUALIZATION,
     DONUT_VISUALIZATION,
     FLAT_TABLE_VISUALIZATION,
+    FUNNEL_VISUALIZATION,
     GEOLAYER_VISUALIZATION,
     GEOPOINT_VISUALIZATION,
     GEOPOINT_WITH_CLUSTER_VISUALIZATION,
@@ -67,6 +69,10 @@ export function getAvailableVisualizations(options?: ChartkitGlobalSettings) {
         FLAT_TABLE_VISUALIZATION,
         PIVOT_TABLE_VISUALIZATION,
     ];
+
+    if (isEnabledFeature(Feature.FunnelChart)) {
+        items.push(FUNNEL_VISUALIZATION);
+    }
 
     if (isYandexMapEnabled) {
         items.push(

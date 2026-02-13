@@ -28,6 +28,7 @@ import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 import type {EmbeddingInfo, ReducedResolvedConfig} from '../components/storage/types';
 import {getDuration, isDashEntry} from '../components/utils';
+import type {RunnerLocals} from '../runners';
 
 const isControlDisabled = (
     controlData: DashTabItemControlData,
@@ -371,10 +372,17 @@ async function findAndExecuteRunner({
         enableExport: embeddingInfo.embed.settings?.enableExport === true,
     };
 
+    const runnerLocals: RunnerLocals = {
+        subrequestHeaders: res.locals.subrequestHeaders,
+        editMode: Boolean(res.locals.editMode),
+        login: res.locals.login ?? null,
+        iamToken: res.locals.iamToken ?? null,
+    };
+
     const runnerHandlerResult = await runnerFound.handler(ctx, {
         chartsEngine,
         req,
-        resLocals: res.locals,
+        runnerLocals,
         config: {
             ...entry,
             data: {

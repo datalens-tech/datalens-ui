@@ -1,5 +1,5 @@
-import type {Request, Response} from '@gravity-ui/expresskit';
-import type {AppContext} from '@gravity-ui/nodekit';
+import type {Request} from '@gravity-ui/expresskit';
+import {type AppContext, USER_ID_PARAM_NAME, USER_LANGUAGE_PARAM_NAME} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
 import type {ControlType, EntryPublicAuthor, WorkbookId} from '../../../../shared';
@@ -21,7 +21,7 @@ import type {ChartStorageType} from '../types';
 
 import {prepareErrorForLogger} from './utils';
 
-import type {RunnerHandlerResult} from '.';
+import type {RunnerHandlerResult, RunnerLocals} from '.';
 
 export type Runners = 'Worker' | 'Wizard' | 'Ql' | 'Editor' | 'Control';
 
@@ -147,7 +147,7 @@ export function engineProcessingCallback({
 }
 
 export const getSerializableProcessorParams = ({
-    resLocals,
+    runnerLocals,
     req,
     ctx,
     configResolving,
@@ -158,7 +158,7 @@ export const getSerializableProcessorParams = ({
     forbiddenFields,
     secureConfig,
 }: {
-    resLocals: Response['locals'];
+    runnerLocals: RunnerLocals;
     req: Request;
     ctx: AppContext;
     configResolving: number;
@@ -175,9 +175,12 @@ export const getSerializableProcessorParams = ({
     forbiddenFields?: ProcessorParams['forbiddenFields'];
     secureConfig?: ProcessorParams['secureConfig'];
 }): SerializableProcessorParams => {
+    const locals = runnerLocals;
+
     const {params, actionParams, widgetConfig} = req.body;
 
-    const iamToken = resLocals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
+    const iamToken =
+        locals.iamToken ?? (req.headers[ctx.config.headersMap.subjectToken] as string) ?? null;
 
     const configName = req.body.key;
     const configId = req.body.id;
@@ -217,12 +220,12 @@ export const getSerializableProcessorParams = ({
         paramsOverride: params,
         actionParamsOverride: actionParams,
         widgetConfig,
-        userLang: resLocals && resLocals.lang,
-        userLogin: resLocals && resLocals.login,
-        userId: resLocals && resLocals.userId,
-        subrequestHeaders: resLocals.subrequestHeaders,
+        userLang: ctx.get(USER_LANGUAGE_PARAM_NAME) || null,
+        userLogin: locals.login,
+        userId: ctx.get(USER_ID_PARAM_NAME) || null,
+        subrequestHeaders: locals.subrequestHeaders,
         iamToken,
-        isEditMode: Boolean(resLocals.editMode),
+        isEditMode: locals.editMode,
         configResolving,
         cacheToken: req.headers['x-charts-cache-token'] || null,
         forbiddenFields,
@@ -274,7 +277,7 @@ export const getSerializableProcessorParams = ({
 };
 
 export function commonRunner({
-    resLocals,
+    runnerLocals,
     req,
     ctx,
     chartType,
@@ -290,7 +293,7 @@ export function commonRunner({
     forbiddenFields,
     secureConfig,
 }: {
-    resLocals: Response['locals'];
+    runnerLocals: RunnerLocals;
     req: Request;
     ctx: AppContext;
     chartType?: string;
@@ -317,10 +320,12 @@ export function commonRunner({
     const sourcesConfig = chartsEngine.sources;
     const hooks = new ProcessorHooks({processorHooks: chartsEngine.processorHooks});
 
-    resLocals.subrequestHeaders['x-chart-kind'] = chartType;
+    if (chartType) {
+        runnerLocals.subrequestHeaders['x-chart-kind'] = chartType;
+    }
 
     const serializableProcessorParams = getSerializableProcessorParams({
-        resLocals,
+        runnerLocals,
         req,
         ctx,
         configResolving,

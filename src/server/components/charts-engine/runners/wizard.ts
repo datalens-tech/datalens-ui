@@ -1,6 +1,6 @@
 import path from 'path';
 
-import {type AppContext} from '@gravity-ui/nodekit';
+import {type AppContext, USER_LANGUAGE_PARAM_NAME} from '@gravity-ui/nodekit';
 import type {Pool, Proxy, WorkerPoolOptions} from 'workerpool';
 import workerpool from 'workerpool';
 
@@ -23,13 +23,13 @@ async function getWizardWorker(options?: WorkerPoolOptions): Promise<Proxy<Wizar
 }
 
 export const runWizardChart: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
-    const {req, resLocals, config} = props;
+    const {req, runnerLocals, config} = props;
     const timeouts = cx.config.runnerExecutionTimeouts?.wizard;
     const {widgetConfig} = req.body;
 
     const chartBuilder = await getWizardChartBuilder({
-        userLang: resLocals && resLocals.lang,
-        userLogin: resLocals && resLocals.login,
+        userLang: cx.get(USER_LANGUAGE_PARAM_NAME) || '',
+        userLogin: runnerLocals.login || '',
         widgetConfig,
         config: config as ResolvedConfig,
         isScreenshoter: Boolean(req.headers['x-charts-scr']),
