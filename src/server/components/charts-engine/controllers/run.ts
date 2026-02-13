@@ -165,7 +165,6 @@ export const runController = (
                 chartsEngine,
                 req,
                 runnerLocals,
-                resLocals: res.locals,
                 config: {
                     ...config,
                     data: {

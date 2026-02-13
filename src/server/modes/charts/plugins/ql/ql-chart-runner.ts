@@ -8,7 +8,6 @@ import {getWizardChartBuilder} from '../../../../components/charts-engine/compon
 import type {ResolvedConfig} from '../../../../components/charts-engine/components/storage/types';
 import type {WizardWorker} from '../../../../components/charts-engine/components/wizard-worker/types';
 import type {RunnerHandler, RunnerHandlerProps} from '../../../../components/charts-engine/runners';
-import {resolveRunnerLocals} from '../../../../components/charts-engine/runners/common';
 import {runWorkerChart} from '../../../../components/charts-engine/runners/worker';
 import {registry} from '../../../../registry';
 
@@ -31,14 +30,13 @@ async function getQlWorker(options?: WorkerPoolOptions): Promise<Proxy<WizardWor
 }
 
 export const runQlChart: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
-    const {req, runnerLocals, resLocals, config} = props;
-    const locals = resolveRunnerLocals({runnerLocals, resLocals});
+    const {req, runnerLocals, config} = props;
     const {widgetConfig} = req.body;
     const timeouts = cx.config.runnerExecutionTimeouts?.qlChart;
 
     const chartBuilder = await getWizardChartBuilder({
         userLang: cx.get(USER_LANGUAGE_PARAM_NAME) || '',
-        userLogin: locals.login || '',
+        userLogin: runnerLocals.login || '',
         widgetConfig,
         config: config as ResolvedConfig,
         isScreenshoter: Boolean(req.headers['x-charts-scr']),

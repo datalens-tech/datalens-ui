@@ -1,4 +1,4 @@
-import type {Request, Response} from '@gravity-ui/expresskit';
+import type {Request} from '@gravity-ui/expresskit';
 import {type AppContext, USER_ID_PARAM_NAME, USER_LANGUAGE_PARAM_NAME} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
@@ -22,25 +22,6 @@ import type {ChartStorageType} from '../types';
 import {prepareErrorForLogger} from './utils';
 
 import type {RunnerHandlerResult, RunnerLocals} from '.';
-
-export function resolveRunnerLocals({
-    runnerLocals,
-    resLocals,
-}: {
-    runnerLocals?: RunnerLocals;
-    /** @deprecated Use runnerLocals instead */
-    resLocals?: Response['locals'];
-}): RunnerLocals {
-    if (runnerLocals) {
-        return runnerLocals;
-    }
-    return {
-        subrequestHeaders: resLocals?.subrequestHeaders ?? {},
-        editMode: Boolean(resLocals?.editMode),
-        login: resLocals?.login ?? null,
-        iamToken: resLocals?.iamToken ?? null,
-    };
-}
 
 export type Runners = 'Worker' | 'Wizard' | 'Ql' | 'Editor' | 'Control';
 
@@ -167,7 +148,6 @@ export function engineProcessingCallback({
 
 export const getSerializableProcessorParams = ({
     runnerLocals,
-    resLocals,
     req,
     ctx,
     configResolving,
@@ -178,9 +158,7 @@ export const getSerializableProcessorParams = ({
     forbiddenFields,
     secureConfig,
 }: {
-    runnerLocals?: RunnerLocals;
-    /** @deprecated Use runnerLocals instead */
-    resLocals?: Response['locals'];
+    runnerLocals: RunnerLocals;
     req: Request;
     ctx: AppContext;
     configResolving: number;
@@ -197,7 +175,7 @@ export const getSerializableProcessorParams = ({
     forbiddenFields?: ProcessorParams['forbiddenFields'];
     secureConfig?: ProcessorParams['secureConfig'];
 }): SerializableProcessorParams => {
-    const locals = resolveRunnerLocals({runnerLocals, resLocals});
+    const locals = runnerLocals;
 
     const {params, actionParams, widgetConfig} = req.body;
 
@@ -300,7 +278,6 @@ export const getSerializableProcessorParams = ({
 
 export function commonRunner({
     runnerLocals,
-    resLocals,
     req,
     ctx,
     chartType,
@@ -316,9 +293,7 @@ export function commonRunner({
     forbiddenFields,
     secureConfig,
 }: {
-    runnerLocals?: RunnerLocals;
-    /** @deprecated Use runnerLocals instead */
-    resLocals?: Response['locals'];
+    runnerLocals: RunnerLocals;
     req: Request;
     ctx: AppContext;
     chartType?: string;
@@ -340,18 +315,17 @@ export function commonRunner({
     forbiddenFields?: ProcessorParams['forbiddenFields'];
     secureConfig?: ProcessorParams['secureConfig'];
 }): Promise<RunnerHandlerResult> {
-    const locals = resolveRunnerLocals({runnerLocals, resLocals});
     const telemetryCallbacks = chartsEngine.telemetryCallbacks;
     const cacheClient = chartsEngine.cacheClient;
     const sourcesConfig = chartsEngine.sources;
     const hooks = new ProcessorHooks({processorHooks: chartsEngine.processorHooks});
 
     if (chartType) {
-        locals.subrequestHeaders['x-chart-kind'] = chartType;
+        runnerLocals.subrequestHeaders['x-chart-kind'] = chartType;
     }
 
     const serializableProcessorParams = getSerializableProcessorParams({
-        runnerLocals: locals,
+        runnerLocals,
         req,
         ctx,
         configResolving,
