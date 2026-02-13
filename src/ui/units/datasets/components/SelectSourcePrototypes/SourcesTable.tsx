@@ -106,7 +106,11 @@ const ErrorView: React.FC<ErrorViewProps> = ({error, onRetry}) => {
                         >
                             {i18n('button_details')}
                         </Button>
-                        <Button size="s" onClick={onRetry}>
+                        <Button
+                            size="s"
+                            onClick={onRetry}
+                            qa={DatasetSourcesLeftPanelQA.SourcesListRetryButton}
+                        >
                             {i18n('button_retry')}
                         </Button>
                     </div>

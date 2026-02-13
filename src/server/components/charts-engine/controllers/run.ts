@@ -9,6 +9,7 @@ import {Feature} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import type {ResolvedConfig} from '../components/storage/types';
 import {getDuration} from '../components/utils';
+import type {RunnerLocals} from '../runners';
 
 import {resolveChartConfig} from './utils';
 
@@ -153,10 +154,17 @@ export const runController = (
 
             req.body.key = req.body.key || config.key;
 
+            const runnerLocals: RunnerLocals = {
+                subrequestHeaders: res.locals.subrequestHeaders,
+                editMode: Boolean(res.locals.editMode),
+                login: res.locals.login ?? null,
+                iamToken: res.locals.iamToken ?? null,
+            };
+
             const runnerHandlerResult = await runnerFound.handler(ctx, {
                 chartsEngine,
                 req,
-                resLocals: res.locals,
+                runnerLocals,
                 config: {
                     ...config,
                     data: {
