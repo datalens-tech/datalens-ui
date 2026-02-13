@@ -5,3 +5,5 @@ export {
 
 export {resolveParams} from '../../src/server/components/charts-engine/components/utils';
 export {getTelemetryCallbacks} from '../../src/server/modes/charts/telemetry';
+
+export {RUNNER_NAME} from '../../src/server/components/charts-engine/runners/constants';

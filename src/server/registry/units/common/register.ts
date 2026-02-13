@@ -11,6 +11,9 @@ import {
 import {handleEntryRedirect} from '../../../controllers/utils/handle-entry-redirect';
 import {registry} from '../../index';
 
+import {onEmbedsControllerBeforeResponse} from './functions-map/on-embeds-controller-before-response';
+import {onEmbedsControllerStart} from './functions-map/on-embeds-controller-start';
+
 export const registerCommonPlugins = () => {
     registry.common.functions.register({
         getAvailablePalettesMap,
@@ -18,6 +21,8 @@ export const registerCommonPlugins = () => {
         isEntryId,
         extractEntryId,
         handleEntryRedirect,
+        onEmbedsControllerBeforeResponse,
+        onEmbedsControllerStart,
     });
 
     registry.common.auth.register({
