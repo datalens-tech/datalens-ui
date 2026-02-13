@@ -19,6 +19,10 @@ export const enum CollectionContentTableQa {
     CollectionTitleCell = 'coll-content-table-coll-title-cell',
 }
 
+export const CollectionFiltersQa = {
+    SearchInput: 'coll-filters-search-input',
+} as const;
+
 export const enum DialogCollectionStructureQa {
     ApplyButton = 'coll-structure-dialog-apply-button',
     ListItem = 'coll-structure-dialog-list-item',
