@@ -5,7 +5,6 @@ import type {
     LineSeries,
     LineSeriesData,
 } from '@gravity-ui/chartkit/gravity-charts';
-import groupBy from 'lodash/groupBy';
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
 
@@ -256,10 +255,11 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         xAxis.order = 'reverse';
     }
 
+    const segmentField = split?.[0];
     const segmentsMap = getSegmentMap(args);
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
-    const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
-    const isSplitWithHtmlValues = isHtmlField(split?.[0]);
+    const isSplitEnabled = Boolean(segmentField);
+    const isSplitWithHtmlValues = isHtmlField(segmentField);
     const isMultiAxis = Boolean(yPlaceholder?.items.length && y2Placeholder?.items.length);
 
     let yAxis: ChartYAxis[] = [];
@@ -337,15 +337,18 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         },
         xAxis,
         yAxis,
-        split: {
-            enable: isSplitEnabled,
-            gap: '40px',
-            plots: Object.values(groupBy(segments, (d) => d.plotIndex)).map(() => {
-                return {};
-            }),
-        },
         legend,
     };
+
+    if (isSplitEnabled) {
+        config.split = {
+            enable: true,
+            gap: '40px',
+            plots: segments.map(() => {
+                return {};
+            }),
+        };
+    }
 
     if (yFields[0]) {
         config.tooltip = {
