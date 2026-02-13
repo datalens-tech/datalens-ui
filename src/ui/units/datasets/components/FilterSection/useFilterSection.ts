@@ -2,13 +2,12 @@ import React from 'react';
 
 import without from 'lodash/without';
 import {useDispatch, useSelector} from 'react-redux';
-import type {DatasetField, DatasetOptions} from 'shared';
+import type {DatasetField, DatasetOptions, ObligatoryFilter} from 'shared';
 import type {ApplyData} from 'ui';
 
 import {openDialogFilter} from '../../../../store/actions/dialog';
 import {useDatasetPageContext} from '../../containers/DatasetPage/DatasetPage';
 import {filteredDatasetParametersSelector, workbookIdSelector} from '../../store/selectors';
-import type {ObligatoryFilter} from '../../typings/dataset';
 import type {
     FieldColumn,
     FieldListColumn,
@@ -25,7 +24,7 @@ import {
 
 type UseFilterSectionArgs = {
     filters: ObligatoryFilter[];
-    options: DatasetOptions;
+    options: Partial<DatasetOptions>;
     fields: DatasetField[];
     updateFilter: (data: ApplyData) => void;
     addFilter: (data: ApplyData) => void;
@@ -63,7 +62,7 @@ export const useFilterSection = (args: UseFilterSectionArgs): UseFilterSection =
                 openDialogFilter({
                     field,
                     filter: preparedFilter,
-                    options,
+                    options: options as DatasetOptions,
                     datasetId,
                     workbookId,
                     fields: dialogFilterFields,
@@ -81,7 +80,7 @@ export const useFilterSection = (args: UseFilterSectionArgs): UseFilterSection =
                 fields: dialogFilterFields,
                 datasetId,
                 workbookId,
-                options,
+                options: options as DatasetOptions,
                 parameters,
                 onApply: addFilter,
             }),

@@ -107,6 +107,8 @@ export enum Feature {
     ChartModeling = 'ChartModeling',
     /** Route legacy HTTP sources through API Connector */
     UseSourceAlias = 'UseSourceAlias',
+    /** Enable early cache invalidation in datasets */
+    EnableDatasetEarlyInvalidationCache = 'EnableDatasetEarlyInvalidationCache',
 }
 
 export type FeatureConfig = Record<string, boolean>;

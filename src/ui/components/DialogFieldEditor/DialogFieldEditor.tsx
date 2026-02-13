@@ -17,6 +17,9 @@ export type DialogFieldEditorProps<T = DatasetField> = {
     fields: T[];
     onlyFormulaEditor: boolean;
     dataTypes?: DataTypeConfig[];
+    staticTitle?: string;
+    additionalFooterContent?: React.ReactNode;
+    applyBtnText?: string;
 
     onClose: () => void;
     onSave: (field: T) => void;
@@ -49,6 +52,9 @@ export const DialogFieldEditor: React.FC<DialogFieldEditorProps> = (
         onCreate,
         onLoadStart,
         onLoadComplete,
+        staticTitle,
+        additionalFooterContent,
+        applyBtnText,
     } = props;
 
     return (
@@ -68,6 +74,9 @@ export const DialogFieldEditor: React.FC<DialogFieldEditorProps> = (
             onLoadStart={onLoadStart}
             onLoadComplete={onLoadComplete}
             onlyFormulaEditor={onlyFormulaEditor}
+            staticTitle={staticTitle}
+            additionalFooterContent={additionalFooterContent}
+            applyBtnText={applyBtnText}
         />
     );
 };

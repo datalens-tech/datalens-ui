@@ -18,22 +18,7 @@
         line-height: var(--g-text-code-1-line-height);
     }
 
-    &__add-button {
+    &__confirm-button {
         margin-top: 10px;
-    }
-
-    &__loader {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    &__list {
-        margin-top: 10px;
-    }
-
-    &__readonly-notice {
-        margin-bottom: var(--g-spacing-3);
     }
 }

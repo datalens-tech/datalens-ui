@@ -37,6 +37,7 @@ interface SettingsProps {
     onlyFormulaEditor?: boolean;
     additionalPanelVisible: boolean;
     isNewField: boolean;
+    staticTitle?: string;
 }
 
 export const Settings: React.FC<SettingsProps> = ({
@@ -47,6 +48,7 @@ export const Settings: React.FC<SettingsProps> = ({
     toggleDocumentationPanel,
     toggleAdditionalPanel,
     isNewField,
+    staticTitle,
 }) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -120,44 +122,50 @@ export const Settings: React.FC<SettingsProps> = ({
         }
     }, [errorMessageKey]);
 
+    const renderCaption = () => {
+        if (staticTitle) {
+            return staticTitle;
+        }
+
+        if (titleEditMode) {
+            return (
+                <TextInput
+                    className={b('settings-field-name')}
+                    controlProps={{
+                        className: b('settings-field-name-input'),
+                    }}
+                    style={{
+                        width: inputTitleWidth,
+                    }}
+                    controlRef={inputRef}
+                    qa="field-name"
+                    placeholder={
+                        isNewField
+                            ? i18n('label_field-name-placeholder-new')
+                            : i18n('label_field-name-placeholder')
+                    }
+                    value={inputTitle}
+                    error={errorMessageKey && i18n(errorMessageKey)}
+                    onUpdate={onChangeTitle}
+                    size="l"
+                    errorPlacement="inside"
+                    onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                            handleStopEditTitle();
+                        }
+                    }}
+                    onBlur={handleStopEditTitle}
+                    hasClear={true}
+                />
+            );
+        }
+
+        return <NameHeader title={inputTitle} onStartEdit={handleStartEditTitle} />;
+    };
+
     return (
         <React.Fragment>
-            <Dialog.Header
-                caption={
-                    titleEditMode ? (
-                        <TextInput
-                            className={b('settings-field-name')}
-                            controlProps={{
-                                className: b('settings-field-name-input'),
-                            }}
-                            style={{
-                                width: inputTitleWidth,
-                            }}
-                            controlRef={inputRef}
-                            qa="field-name"
-                            placeholder={
-                                isNewField
-                                    ? i18n('label_field-name-placeholder-new')
-                                    : i18n('label_field-name-placeholder')
-                            }
-                            value={inputTitle}
-                            error={errorMessageKey && i18n(errorMessageKey)}
-                            onUpdate={onChangeTitle}
-                            size="l"
-                            errorPlacement="inside"
-                            onKeyDown={(event) => {
-                                if (event.key === 'Enter') {
-                                    handleStopEditTitle();
-                                }
-                            }}
-                            onBlur={handleStopEditTitle}
-                            hasClear={true}
-                        />
-                    ) : (
-                        <NameHeader title={inputTitle} onStartEdit={handleStartEditTitle} />
-                    )
-                }
-            />
+            <Dialog.Header caption={renderCaption()} />
             <span
                 ref={fakeInputTitleRef}
                 className={b('settings-field-name-input', {fake: true})}

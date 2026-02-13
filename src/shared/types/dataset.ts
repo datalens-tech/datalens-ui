@@ -1,6 +1,6 @@
-import type {ConnectorType} from '../constants';
+import type {ConnectorType, DATASET_CACHE_MODE} from '../constants';
 import type {SharedEntryPermissions} from '../schema';
-import type {CommonNumberFormattingOptions, Permissions} from '../types';
+import type {CommonNumberFormattingOptions, Permissions, ValueOf} from '../types';
 
 import type {CommonUpdate} from './common-update';
 
@@ -135,6 +135,7 @@ export interface Dataset {
     collection_id?: string;
     permissions?: Permissions;
     full_permissions?: SharedEntryPermissions;
+    cache_invalidation_source: CacheInvalidationSource;
 
     // This part of the fields moved to the dataset field. right here saved for backward compatibility
     avatar_relations: DatasetAvatarRelation[];
@@ -365,6 +366,29 @@ export interface DatasetApiError {
         message?: string;
     };
 }
+
+export type CacheInvalidationSource = {
+    mode: ValueOf<typeof DATASET_CACHE_MODE>;
+    filters: ObligatoryFilter[];
+    field: DatasetField | null;
+    sql: string | null;
+    cache_invalidation_error: {
+        code: string;
+        message: string;
+        title: string;
+        level: string;
+        locator: string;
+    };
+    last_result_timestamp: string | null;
+    last_result_error: {
+        code: string;
+        message: string;
+        details: {
+            db_message: string;
+        };
+        debug: {};
+    };
+};
 
 export type DatasetSelectionMap = Record<DatasetField['guid'], true>;
 

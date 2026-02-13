@@ -6,7 +6,7 @@ import {useHistory, useLocation} from 'react-router';
 import type {DatasetField} from 'shared';
 import {ParametersQA} from 'shared';
 
-import {DatasetTabSection} from '../DatasetTabSection/DatasetTabSection';
+import {DatasetTableFieldsSection} from '../DatasetTableFieldsSection/DatasetTableFieldsSection';
 
 import {useParametersSection} from './useParametersSection';
 
@@ -38,7 +38,7 @@ export const ParametersSection: React.FC<ParametersSectionProps> = (
     );
 
     return (
-        <DatasetTabSection
+        <DatasetTableFieldsSection
             readonlyNotice={
                 <Alert
                     className={spacing({mb: '3'})}
@@ -58,12 +58,12 @@ export const ParametersSection: React.FC<ParametersSectionProps> = (
             onItemClick={onItemClick}
             title={i18n('tab-parameters_title')}
             description={i18n('tab-parameters_description')}
-            onOpenDialogClick={props.onOpenDialogClick}
-            openDialogButtonText={i18n('tab-parameters_add-button')}
+            onConfirmClick={props.onOpenDialogClick}
+            confirmButtonText={i18n('tab-parameters_add-button')}
             fields={parameters}
             headerColumns={headerColumns}
             columns={columns}
-            isListUpdating={isLoading}
+            isLoading={isLoading}
             isListLoading={headerColumns.length === 0}
             controlSettings={controlSettings}
             qa={ParametersQA.ParametersTabSection}

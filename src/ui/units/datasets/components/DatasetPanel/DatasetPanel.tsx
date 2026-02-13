@@ -7,12 +7,13 @@ import {
     Icon,
     SegmentedRadioGroup as RadioButton,
     TextInput,
+    spacing,
 } from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect, useDispatch} from 'react-redux';
 import type {DatasetOptions} from 'shared';
-import {DatasetPanelQA} from 'shared';
+import {DATASET_TAB, DatasetPanelQA} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 
 import type {DatasetTab} from '../../constants';
@@ -36,6 +37,7 @@ function TabSwitch(props: TabSwitchProps) {
 
     return (
         <RadioButton
+            className={spacing({mr: 2})}
             qa={DatasetPanelQA.TabRadio}
             value={tab}
             onUpdate={(value) => switchTab(value)}
@@ -43,7 +45,7 @@ function TabSwitch(props: TabSwitchProps) {
             {tabs.map(({value, label, disabled}) => (
                 <RadioButton.Option
                     key={value}
-                    content={i18n(label)}
+                    content={value === DATASET_TAB.CACHE ? label : i18n(label)}
                     value={value}
                     disabled={disabled}
                 />

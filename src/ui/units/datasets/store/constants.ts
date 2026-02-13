@@ -1,7 +1,8 @@
 import type {Dataset} from 'shared';
+import {DATASET_TAB, Feature} from 'shared';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {DatasetTab} from '../constants';
-import {DATASET_TABS, TAB_DATASET, TAB_SOURCES} from '../constants';
 import DatasetUtils, {isCreationProcess} from '../helpers/utils';
 
 import type {DatasetReduxState} from './types';
@@ -20,14 +21,22 @@ const getDefaultDatasetContent = (): Partial<Dataset['dataset']> => ({
 });
 
 const isDatasetTab = (value: unknown): value is DatasetTab => {
-    return typeof value === 'string' && DATASET_TABS.includes(value);
+    return typeof value === 'string' && Object.values(DATASET_TAB).includes(value as DatasetTab);
 };
 
 export const getCurrentTab = (): DatasetTab => {
-    const defaultTab = isCreationProcess(location.pathname) ? TAB_SOURCES : TAB_DATASET;
+    const defaultTab = isCreationProcess(location.pathname)
+        ? DATASET_TAB.SOURCES
+        : DATASET_TAB.DATASET;
     const queryTab = DatasetUtils.getQueryParam('tab');
 
     if (isDatasetTab(queryTab)) {
+        if (
+            queryTab === DATASET_TAB.CACHE &&
+            !isEnabledFeature(Feature.EnableDatasetEarlyInvalidationCache)
+        ) {
+            return defaultTab;
+        }
         return queryTab;
     }
 
@@ -63,6 +72,7 @@ export const initialState: DatasetReduxState = {
     // the previous contents of the dataset, necessary for the validation handle
     prevContent: getDefaultDatasetContent(),
     options: {},
+    cacheInvalidationSource: null,
     preview: initialPreview,
     errors: {
         previewError: null,
