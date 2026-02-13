@@ -15,6 +15,7 @@ import {ChartKit} from './ChartKit';
 import {ChartKitTooltip} from './components';
 import type {ChartKitTooltipRef} from './components';
 import {getAdditionalProps, getOpensourceChartKitData} from './helpers/chartkit-adapter';
+import {getIsHolidaysEnabled} from './helpers/utils';
 import {I18N as modulesI18n} from './modules/i18n/i18n';
 import type {ChartKitAdapterProps} from './types';
 
@@ -40,7 +41,11 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
             runActivity,
         } = props;
 
-        const {data: chartkitHolidays} = useGetChartkitHolidaysAsyncQuery();
+        const {data: chartkitHolidaysData} = useGetChartkitHolidaysAsyncQuery();
+        const isHolidaysEnabled = getIsHolidaysEnabled({widgetData: loadedData});
+        const chartkitHolidays = React.useMemo(() => {
+            return isHolidaysEnabled ? chartkitHolidaysData : undefined;
+        }, [chartkitHolidaysData, isHolidaysEnabled]);
 
         const chartkitType = React.useMemo(() => {
             const getChartkitType = registry.chart.functions.get('getChartkitType');
