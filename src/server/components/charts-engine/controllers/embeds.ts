@@ -438,7 +438,9 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         const onEmbedsControllerStart = registry.common.functions.get('onEmbedsControllerStart');
 
-        await onEmbedsControllerStart({req, res});
+        await onEmbedsControllerStart({req, res}).catch((error) => {
+            handleError(error, ctx, res);
+        });
         // If response sent in onEmbedsControllerStart
         if (res.headersSent) {
             return;
