@@ -35,7 +35,6 @@ export type ExportChartArgs = {
 export type ExportMenuAction = (
     chartsDataProvider: ChartKitDataProvider,
     onExportLoading?: ExportChartArgs['onExportLoading'],
-    hasAccessToBusinessFeature?: boolean,
     format?: typeof EXPORT_FORMATS.XLSX | typeof EXPORT_FORMATS.CSV,
     extraOptions?: Record<string, unknown>,
 ) => (chartData: ExportActionArgs) => void | MenuActionComponent;
