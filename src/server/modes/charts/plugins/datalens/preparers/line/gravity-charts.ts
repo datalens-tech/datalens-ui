@@ -249,6 +249,11 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
 
         if (isNumberField(xField)) {
             xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
+
+            if (xAxis.type === 'logarithmic') {
+                xAxis.startOnTick = true;
+                xAxis.endOnTick = true;
+            }
         }
     }
 
