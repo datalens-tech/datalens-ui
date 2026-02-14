@@ -46,6 +46,7 @@ type ExtendedLineSeries = Omit<AreaSeries, 'data'> & {
     data: ExtendedLineSeriesData[];
 };
 
+// eslint-disable-next-line complexity
 export function prepareGravityChartArea(args: PrepareFunctionArgs) {
     const {
         visualizationId,
@@ -193,6 +194,11 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
 
         if (isNumberField(xField)) {
             xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
+
+            if (xAxis.type === 'logarithmic') {
+                xAxis.startOnTick = true;
+                xAxis.endOnTick = true;
+            }
         }
     }
 

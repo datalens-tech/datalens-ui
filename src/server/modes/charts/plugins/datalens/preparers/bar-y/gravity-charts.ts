@@ -189,6 +189,8 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             labels: {
                 numberFormat: xAxisLabelNumberFormat ?? undefined,
             },
+            startOnTick: isLogXAxis,
+            endOnTick: isLogXAxis,
         },
         custom: {
             tooltip: {
