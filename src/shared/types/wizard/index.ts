@@ -238,7 +238,8 @@ export interface GraphShared extends CommonShared {
             | WizardVisualizationId.Pie
             | WizardVisualizationId.Donut
             | WizardVisualizationId.Scatter
-            | WizardVisualizationId.Treemap;
+            | WizardVisualizationId.Treemap
+            | WizardVisualizationId.Funnel;
         iconProps: VisualizationIconProps;
         name: string;
         hidden?: boolean;

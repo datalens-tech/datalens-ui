@@ -6,14 +6,13 @@ import {Icon, SegmentedRadioGroup as RadioButton, Select, TextInput} from '@grav
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
-import {Feature} from 'shared';
+import {CollectionFiltersQa, Feature} from 'shared';
 import type {GetStructureItemsMode} from 'shared/schema/us/types/collections';
 import type {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
 import {OrderBySelect, SORT_TYPE} from 'ui/components/OrderBySelect';
 import type {OrderBy, OrderByOptions, SortType} from 'ui/components/OrderBySelect';
 import Tabs from 'ui/components/Tabs/Tabs';
 import {DL} from 'ui/constants/common';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
@@ -117,7 +116,7 @@ export const CollectionFilters = React.memo<Props>(
             if (canFilterOnlyEntries) {
                 options.push({
                     value: 'onlyEntries',
-                    content: getSharedEntryMockText('label_filter-by-type-only-entries'),
+                    content: i18n('label_filter-by-type-only-entries'),
                 });
             }
             return options;
@@ -225,6 +224,7 @@ export const CollectionFilters = React.memo<Props>(
                         onUpdate={handleUpdateFilterString}
                         placeholder={i18n('label_filter-string-placeholder')}
                         hasClear
+                        qa={CollectionFiltersQa.SearchInput}
                     />
                     {searchRowExtendContent}
                 </div>

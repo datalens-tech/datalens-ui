@@ -1,0 +1,11 @@
+{
+  "add-entry-workbook-toast-message": "Name: {{name}}",
+  "add-entry-workbook-toast-title-connection": "Connection bound to workbook",
+  "add-entry-workbook-toast-title-dataset": "Dataset bound to workbook",
+  "label-shared-connection": "Connection",
+  "label-shared-dataset": "Dataset",
+  "shared-entry-bindings-dropdown-menu-title": "Manage bindings",
+  "title-select-shared-entry-dialog-connection": "Select connection",
+  "title-select-shared-entry-dialog-dataset": "Select dataset",
+  "workbook-shared-entry-original-link": "Open original"
+}

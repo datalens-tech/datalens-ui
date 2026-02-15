@@ -1,9 +1,13 @@
 import {
     CollectionActionsQa,
     CollectionContentTableQa,
+    CollectionFiltersQa,
+    CollectionItemEntities,
     CollectionTableRowQa,
+    DialogConfirmQA,
     EntryScope,
     SharedEntriesBindingsDialogQa,
+    ValueOf,
 } from '../../../src/shared';
 import type {BasePageProps} from '../BasePage';
 import {BasePage} from '../BasePage';
@@ -14,6 +18,10 @@ import {v1 as uuidv1} from 'uuid';
 import {DialogWorkbook} from '../workbook/DialogWorkbook';
 
 type CollectionsPageProps = BasePageProps;
+type FindEntityProps = {
+    entityName: string;
+    type: ValueOf<typeof CollectionItemEntities>;
+};
 
 export class CollectionsPagePO extends BasePage {
     private readonly root = '.dl-collections-navigation-layout';
@@ -62,16 +70,50 @@ export class CollectionsPagePO extends BasePage {
         });
     }
 
-    async removeSharedEntry({entryName}: {entryName: string}) {
-        const entryRow = this.page.locator(slct(CollectionContentTableQa.EntryLinkRow), {
-            hasText: entryName,
-        });
-        const entryContextMenuBtn = entryRow.locator(
+    async removeEntity({entityName, type}: FindEntityProps) {
+        const entityRow = await this.findEntity({entityName, type});
+        const entityContextMenuBtn = entityRow.locator(
             slct(CollectionTableRowQa.CollectionRowDropdownMenuBtn),
         );
-        await entryContextMenuBtn.click();
+        await entityContextMenuBtn.click();
         await this.page.locator(slct(CollectionTableRowQa.CollectionDropdownMenuDeleteBtn)).click();
-        const dialogApply = this.page.locator(slct(SharedEntriesBindingsDialogQa.ApplyDeleteBtn));
-        await dialogApply.click();
+        if (type === CollectionItemEntities.ENTRY) {
+            const dialogApply = this.page.locator(
+                slct(SharedEntriesBindingsDialogQa.ApplyDeleteBtn),
+            );
+            await dialogApply.click();
+        } else {
+            const dialogApply = this.page.locator(slct(DialogConfirmQA.ApplyButton));
+            await dialogApply.click();
+        }
+    }
+
+    async findEntity({entityName, type}: FindEntityProps) {
+        await this.page.waitForSelector(slct(CollectionFiltersQa.SearchInput));
+        const search = this.page.locator(slct(CollectionFiltersQa.SearchInput)).locator('input');
+        await search.press('Meta+A');
+        await search.press('Backspace');
+        await search.fill(entityName);
+
+        await this.waitForSuccessfulResponse('/getStructureItems');
+
+        let entitySelector: string;
+
+        switch (type) {
+            case CollectionItemEntities.COLLECTION:
+                entitySelector = CollectionContentTableQa.CollectionLinkRow;
+                break;
+            case CollectionItemEntities.WORKBOOK:
+                entitySelector = CollectionContentTableQa.WorkbookLinkRow;
+                break;
+            case CollectionItemEntities.ENTRY:
+                entitySelector = CollectionContentTableQa.EntryLinkRow;
+        }
+
+        await this.page.waitForSelector(slct(entitySelector));
+        const currentEntry = this.page.locator(slct(entitySelector), {
+            hasText: entityName,
+        });
+        return currentEntry;
     }
 }

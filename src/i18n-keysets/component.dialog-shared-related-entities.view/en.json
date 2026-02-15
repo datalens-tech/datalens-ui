@@ -1,0 +1,21 @@
+{
+  "alert-message-info": "Deletion will not affect charts in Wizard, but may affect charts in Editor",
+  "alert-message-warning": "Before deleting, ensure that this will not affect links in objects. If you have charts in Editor, you will have to check them manually.",
+  "alert-title-info": "{{entry}} is not in use anywhere",
+  "alert-title-warning": "{{entry}} is in use in several {{relation}}",
+  "apply-text": "Delete",
+  "cancel-text": "Cancel",
+  "dialog-error": "An error occurred",
+  "dialog-title": "Linked objects in workbook",
+  "label-current-entry": "Selected object",
+  "label-shared-connection": "Connection",
+  "label-shared-dataset": "Dataset",
+  "refresh-btn": "Update",
+  "related-entities-list-empty": "No linked objects in workbook",
+  "relation-chart": "charts",
+  "relation-dash": "dashboards",
+  "relation-dataset": "datasets",
+  "relations": "linked objects",
+  "retry-btn": "Try again",
+  "title-dialog-delete": "Delete {{entry}}?"
+}

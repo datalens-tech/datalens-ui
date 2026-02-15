@@ -215,7 +215,7 @@ function mutateAndValidateVisualization({
     shapes = [],
 }: MutateAndValidateVisualizationArgs) {
     // We validate each item sequentially, while it is important that each previous item is executed
-    let everythingIsOk = visualization.placeholders.some((placeholder: Placeholder) => {
+    let everythingIsOk = visualization.placeholders?.some((placeholder: Placeholder) => {
         return placeholder.items.length > 0;
     });
 
