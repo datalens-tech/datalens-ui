@@ -256,6 +256,9 @@ export const DL = {
     get IS_NATIVE_AUTH_ADMIN() {
         return window.DL.user.roles?.includes(UserRole.Admin);
     },
+    get AI_CONFIG() {
+        return window.DL.aiConfig;
+    },
 };
 
 // monaco-editor common themes:
