@@ -62,8 +62,6 @@ type OldBarXDataItem = {
 
 type ExtendedBaXrSeriesData = Omit<BarXSeriesData, 'x'> & {
     x?: BarXSeriesData['x'] | WrappedHTML | WrappedMarkdown;
-    total?: number;
-    percentage?: number;
 };
 
 type ExtendedBarXSeries = Omit<BarXSeries, 'data'> & {
@@ -221,8 +219,6 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                         y: item?.y || 0,
                         custom: item?.custom,
                         color: item?.color,
-                        total,
-                        percentage,
                     };
 
                     if (isDataLabelsEnabled) {

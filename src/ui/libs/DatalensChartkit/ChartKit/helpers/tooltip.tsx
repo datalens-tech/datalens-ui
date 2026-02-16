@@ -206,7 +206,14 @@ const getBarXYWithPercentRowRenderer = ({
 }: {
     valueKey: 'x' | 'y';
 }): ChartTooltip['rowRenderer'] => {
-    return ({name, value, formattedValue, hovered, className, color}) => {
+    return function barXYWithPercentRowRenderer({
+        name,
+        value,
+        formattedValue,
+        hovered,
+        className,
+        color,
+    }) {
         const total =
             hovered?.reduce(
                 (acc, item) =>
