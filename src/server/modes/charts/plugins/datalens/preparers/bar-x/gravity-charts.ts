@@ -44,7 +44,10 @@ import {isXAxisReversed} from '../helpers/highcharts';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
-import {mapToGravityChartValueFormat} from '../utils';
+import {
+    mapChartkitFormatSettingsToGravityChartValueFormat,
+    mapToGravityChartValueFormat,
+} from '../utils';
 
 import {prepareBarX} from './prepare-bar-x';
 
@@ -168,8 +171,10 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         let seriesColor = graph.color;
         if (!seriesColor && isGradient) {
             const points = preparedData.graphs
-                .map((graph) =>
-                    (graph.data ?? []).map((d: OldBarXDataItem) => ({colorValue: d?.colorValue})),
+                .map((currentGraph) =>
+                    (currentGraph.data ?? []).map((d: OldBarXDataItem) => ({
+                        colorValue: d?.colorValue,
+                    })),
                 )
                 .flat(2);
             const colorScale = getLegendColorScale({
@@ -182,6 +187,14 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 gradientColors[gradientColors.length - 1],
             ]);
         }
+        const tooltip = graph.tooltip?.chartKitFormatting
+            ? {
+                  ...seriesTooltip,
+                  valueFormat: mapChartkitFormatSettingsToGravityChartValueFormat({
+                      chartkitFormatSettings: graph.tooltip,
+                  }),
+              }
+            : seriesTooltip;
 
         return {
             name: seriesName,
@@ -189,7 +202,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             color: seriesColor,
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
-            tooltip: seriesTooltip,
+            tooltip,
             data: graph.data.reduce(
                 (acc: ExtendedBaXrSeriesData[], item: OldBarXDataItem, index: number) => {
                     const pointX = item?.x;

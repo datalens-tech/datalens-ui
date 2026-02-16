@@ -87,7 +87,7 @@ datalensTest.describe('Wizard', () => {
         });
     });
 
-    datalensTest.describe('Normalise bar-y chart', () => {
+    datalensTest.describe('Bar-x normalised chart', () => {
         datalensTest.beforeEach(async ({page, config}) => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
