@@ -192,14 +192,13 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             tooltip: seriesTooltip,
             data: graph.data.reduce(
                 (acc: ExtendedBaXrSeriesData[], item: OldBarXDataItem, index: number) => {
-                    const pointX = item?.x ?? index;
+                    const pointX = item?.x;
                     const total =
                         preparedData.graphs.reduce(
                             (sum, currentGraph) =>
                                 sum +
                                 (currentGraph.data.find(
-                                    (point: OldBarXDataItem, pointIndex: number) =>
-                                        (point?.x ?? pointIndex) === pointX,
+                                    (point: OldBarXDataItem) => point?.x === pointX,
                                 )?.y ?? 0),
                             0,
                         ) ?? 0;
