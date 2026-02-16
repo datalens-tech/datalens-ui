@@ -78,7 +78,7 @@ class LabelsPlaceholder extends React.Component<Props> {
             return false;
         }
 
-        return (visualization as any).checkAllowedLabels(item);
+        return (visualization as any).checkAllowedLabels?.(item);
     };
 
     private onLabelsUpdate = (items: Field[]) => {

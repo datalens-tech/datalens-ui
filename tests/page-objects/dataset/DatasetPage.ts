@@ -18,6 +18,7 @@ import DialogParameter from '../common/DialogParameter';
 
 import DatasetTabSection from './DatasetTabSection';
 import {
+    CollectionFiltersQa,
     DialogCollectionStructureQa,
     SharedEntriesBaseQa,
     SharedEntriesPermissionsDialogQa,
@@ -285,6 +286,13 @@ class DatasetPage extends BasePage {
                 break;
             }
         }
+
+        await this.page.waitForSelector(slct(CollectionFiltersQa.SearchInput));
+        const search = this.page.locator(slct(CollectionFiltersQa.SearchInput)).locator('input');
+        await search.press('Meta+A');
+        await search.press('Backspace');
+        await search.fill(connectionName);
+        await this.waitForSuccessfulResponse('/getCollectionBreadcrumbs');
 
         await this.page.waitForSelector(slct(DialogCollectionStructureQa.ListItem));
 

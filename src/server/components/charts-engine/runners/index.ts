@@ -1,4 +1,4 @@
-import type {Request, Response} from '@gravity-ui/expresskit';
+import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {ChartsEngine} from '..';
@@ -9,6 +9,13 @@ import type {ReducedResolvedConfig, ResolvedConfig} from '../components/storage/
 
 import {runControl} from './control';
 import {runWizardChart} from './wizard';
+
+export type RunnerLocals = {
+    subrequestHeaders: Record<string, string>;
+    editMode: boolean;
+    login: string | null;
+    iamToken: string | null;
+};
 
 export type Runner = {
     name: string;
@@ -24,13 +31,13 @@ export type RunnerHandlerResult = {
 
 export type RunnerHandler = (
     ctx: AppContext,
-    {chartsEngine, req, resLocals, config, configResolving}: RunnerHandlerProps,
+    {chartsEngine, req, config, configResolving}: RunnerHandlerProps,
 ) => RunnerHandlerResult | Promise<RunnerHandlerResult>;
 
 export type RunnerHandlerProps = {
     chartsEngine: ChartsEngine;
     req: Request;
-    resLocals: Response['locals'];
+    runnerLocals: RunnerLocals;
     config: ResolvedConfig | ReducedResolvedConfig;
     configResolving: number;
     workbookId?: WorkbookId;

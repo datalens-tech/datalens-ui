@@ -40,6 +40,8 @@ export enum DatasetTabSectionQA {
 
 export enum DatasetPanelQA {
     TabRadio = 'dataset-panel-tab-radio',
+    UpdateFieldsButton = 'dataset-panel-update-fields-button',
+    PreviewButton = 'dataset-panel-preview-button',
 }
 
 export enum DatasetSourcesLeftPanelQA {
@@ -51,6 +53,7 @@ export enum DatasetSourcesLeftPanelQA {
     SelectSourcesDbName = 'dataset-sources-db-name-select',
     SourcesServerSearchInput = 'dataset-sources-server-search-input',
     SourcesList = 'dataset-sources-list',
+    SourcesListRetryButton = 'dataset-sources-list-retry-button',
 }
 
 export enum DatasetActionQA {
@@ -77,3 +80,7 @@ export const DatasetSourcesTableQa = {
     SourceContextMenuDelete: 'ds-source-context-menu-delete',
     SourceContextMenuModify: 'ds-source-context-menu-modify',
 } as const;
+
+export enum DatasetPreviewQA {
+    Preview = 'dataset-preview',
+}
