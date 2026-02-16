@@ -59,7 +59,7 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.setVisualization(WizardVisualizationId.Bar100p);
         });
 
-        datalensTest.only('Percentage formatting in tooltip @screenshot', async ({page}) => {
+        datalensTest('Percentage formatting in tooltip @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const preview = page.locator(slct(WizardPageQa.SectionPreview));
             const chart = preview.locator('.gcharts-chart');
