@@ -246,7 +246,7 @@ export type DLGlobalData = {
     authManageLocalUsersDisabled?: boolean;
     authSignupDisabled?: boolean;
     authCookieName?: string;
-    aiConfig: AIConfig;
+    aiConfig?: AIConfig;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {
