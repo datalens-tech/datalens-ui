@@ -16,7 +16,11 @@ export function shouldUseAlias(
         return false;
     }
 
-    const authorization = source.headers?.authorization || source.headers?.Authorization;
+    const headers = source.headers || {};
+    const authorization = Object.entries(headers).find(
+        ([key]) => key.toLowerCase() === 'authorization',
+    )?.[1];
+
     if (typeof authorization === 'string' && authorization.startsWith('OAuth ')) {
         return false;
     }
