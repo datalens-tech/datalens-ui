@@ -97,3 +97,7 @@ export function getEscapedActionParams(widgetData: LoadedWidgetData | undefined)
 
     return escapedActionParams;
 }
+
+export function getIsHolidaysEnabled({widgetData}: {widgetData: LoadedWidgetData | undefined}) {
+    return get(widgetData, 'config.hideHolidaysBands') === false;
+}

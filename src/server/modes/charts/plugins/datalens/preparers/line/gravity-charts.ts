@@ -225,12 +225,6 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
 
     const shouldUseHtmlForLegend = [colorItem, shapeItem].some(isHtmlField);
     const legend: ChartData['legend'] = {html: shouldUseHtmlForLegend};
-    const nonEmptyLegendGroups = Array.from(
-        new Set(seriesData.map((s) => s.legend?.groupId).filter(Boolean)),
-    );
-    if (seriesData.length <= 1 || nonEmptyLegendGroups.length <= 1) {
-        legend.enabled = false;
-    }
 
     let xAxis: ChartData['xAxis'] = {};
     if (isCategoriesXAxis) {
@@ -256,10 +250,11 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         xAxis.order = 'reverse';
     }
 
+    const segmentField = split?.[0];
     const segmentsMap = getSegmentMap(args);
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
-    const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
-    const isSplitWithHtmlValues = isHtmlField(split?.[0]);
+    const isSplitEnabled = Boolean(segmentField);
+    const isSplitWithHtmlValues = isHtmlField(segmentField);
     const isMultiAxis = Boolean(yPlaceholder?.items.length && y2Placeholder?.items.length);
 
     let yAxis: ChartYAxis[] = [];
@@ -337,15 +332,18 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         },
         xAxis,
         yAxis,
-        split: {
-            enable: isSplitEnabled,
+        legend,
+    };
+
+    if (isSplitEnabled) {
+        config.split = {
+            enable: true,
             gap: '40px',
             plots: Object.values(groupBy(segments, (d) => d.plotIndex)).map(() => {
                 return {};
             }),
-        },
-        legend,
-    };
+        };
+    }
 
     if (yFields[0]) {
         config.tooltip = {
