@@ -59,6 +59,8 @@ type OldBarXDataItem = {
 
 type ExtendedBaXrSeriesData = Omit<BarXSeriesData, 'x'> & {
     x?: BarXSeriesData['x'] | WrappedHTML | WrappedMarkdown;
+    total?: number;
+    percentage?: number;
 };
 
 type ExtendedBarXSeries = Omit<BarXSeries, 'data'> & {
@@ -158,6 +160,10 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         const labelFormatting = graph.dataLabels
             ? mapToGravityChartValueFormat({field: labelField, formatSettings: graph.dataLabels})
             : undefined;
+        const shouldUsePercentageAsLabel =
+            labelFormatting &&
+            'labelMode' in labelFormatting &&
+            labelFormatting?.labelMode === 'percent';
 
         let seriesColor = graph.color;
         if (!seriesColor && isGradient) {
@@ -186,17 +192,32 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             tooltip: seriesTooltip,
             data: graph.data.reduce(
                 (acc: ExtendedBaXrSeriesData[], item: OldBarXDataItem, index: number) => {
+                    const pointX = item?.x ?? index;
+                    const total =
+                        preparedData.graphs.reduce(
+                            (sum, currentGraph) =>
+                                sum +
+                                (currentGraph.data.find(
+                                    (point: OldBarXDataItem, pointIndex: number) =>
+                                        (point?.x ?? pointIndex) === pointX,
+                                )?.y ?? 0),
+                            0,
+                        ) ?? 0;
+                    const percentage = ((item?.y ?? 0) / total) * 100;
+                    const label = shouldUsePercentageAsLabel ? percentage : item?.label;
                     const dataItem: ExtendedBaXrSeriesData = {
                         y: item?.y || 0,
                         custom: item?.custom,
                         color: item?.color,
+                        total,
+                        percentage,
                     };
 
                     if (isDataLabelsEnabled) {
                         if (item?.y === null) {
                             dataItem.label = '';
                         } else {
-                            dataItem.label = item?.label;
+                            dataItem.label = label;
                         }
                     }
 
