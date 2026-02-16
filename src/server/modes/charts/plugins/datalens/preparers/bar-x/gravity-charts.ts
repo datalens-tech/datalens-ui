@@ -33,7 +33,6 @@ import {
 } from '../../../../../../../shared';
 import type {WrappedHTML} from '../../../../../../../shared/types/charts';
 import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
-import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slider';
 import {getRgbColors} from '../../utils/color-helpers';
@@ -45,6 +44,7 @@ import {isXAxisReversed} from '../helpers/highcharts';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
+import {mapToGravityChartValueFormat} from '../utils';
 
 import {prepareBarX} from './prepare-bar-x';
 
@@ -155,6 +155,10 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             ? `${graph.custom.segmentTitle}: ${graph.title}`
             : graph.title;
 
+        const labelFormatting = graph.dataLabels
+            ? mapToGravityChartValueFormat({field: labelField, formatSettings: graph.dataLabels})
+            : undefined;
+
         let seriesColor = graph.color;
         if (!seriesColor && isGradient) {
             const points = preparedData.graphs
@@ -191,10 +195,8 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                     if (isDataLabelsEnabled) {
                         if (item?.y === null) {
                             dataItem.label = '';
-                        } else if (shouldUseHtmlForLabels) {
-                            dataItem.label = item?.label;
                         } else {
-                            dataItem.label = getFormattedLabel(item?.label, labelField);
+                            dataItem.label = item?.label;
                         }
                     }
 
@@ -221,6 +223,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 enabled: isDataLabelsEnabled,
                 inside: shared.extraSettings?.labelsPosition !== LabelsPositions.Outside,
                 html: shouldUseHtmlForLabels,
+                format: labelFormatting,
             },
             yAxis: graph.yAxis,
             rangeSlider,
