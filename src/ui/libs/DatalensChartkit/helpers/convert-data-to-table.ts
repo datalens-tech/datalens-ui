@@ -25,7 +25,7 @@ export function convertChartToTable(options: ConvertChartToTableArgs) {
         extra: {},
     }) as ChartData;
 
-    if (!chartData) {
+    if (!chartData || !chartData.graphs) {
         return [];
     }
 
