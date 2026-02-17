@@ -18,7 +18,6 @@ export const runWorkerChart = async (
         chartsEngine,
         req,
         runnerLocals,
-        resLocals,
         config,
         configResolving,
         workbookId,
@@ -114,7 +113,6 @@ export const runWorkerChart = async (
 
     return commonRunner({
         runnerLocals,
-        resLocals,
         req,
         ctx,
         chartType,

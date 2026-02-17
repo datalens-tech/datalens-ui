@@ -6,7 +6,7 @@ import {Icon, SegmentedRadioGroup as RadioButton, Select, TextInput} from '@grav
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
-import {Feature} from 'shared';
+import {CollectionFiltersQa, Feature} from 'shared';
 import type {GetStructureItemsMode} from 'shared/schema/us/types/collections';
 import type {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
 import {OrderBySelect, SORT_TYPE} from 'ui/components/OrderBySelect';
@@ -224,6 +224,7 @@ export const CollectionFilters = React.memo<Props>(
                         onUpdate={handleUpdateFilterString}
                         placeholder={i18n('label_filter-string-placeholder')}
                         hasClear
+                        qa={CollectionFiltersQa.SearchInput}
                     />
                     {searchRowExtendContent}
                 </div>

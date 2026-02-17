@@ -16,12 +16,11 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {DatalensGlobalState} from '../../../../..';
 import {i18n} from '../../../../../../i18n';
-import type {DashSettings, DashSettingsGlobalParams} from '../../../../../../shared';
+import type {DashSettings} from '../../../../../../shared';
 import {DashLoadPriority} from '../../../../../../shared';
 import {DIALOG_ENTRY_DESCRIPTION} from '../../../../../components/DialogEntryDescription';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {DIALOG_TYPE} from '../../../../../constants/dialogs';
-import {validateParamTitle} from '../../../components/ParamsSettings/helpers';
 import {toggleTableOfContent, updateAllDashSettings} from '../../../store/actions/dashTyped';
 import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
@@ -36,6 +35,7 @@ import {AutoRefresh} from './components/AutoRefresh';
 import {Display} from './components/Display';
 import {OtherSettings} from './components/OtherSettings';
 import {Params} from './components/Params';
+import {useGlobalParams} from './useGlobalParams';
 
 import './Settings.scss';
 
@@ -72,8 +72,18 @@ const Settings = () => {
     const [loadOnlyVisibleCharts, setLoadOnlyVisibleCharts] = React.useState(
         settings.loadOnlyVisibleCharts ?? true,
     );
-    const [globalParams, setGlobalParams] = React.useState(settings.globalParams || {});
-    const [isGlobalParamsError, setIsGlobalParamsError] = React.useState(false);
+    const {
+        globalParams,
+        isGlobalParamsError,
+        localParams,
+        handleEditParamTitle,
+        handleEditParamValue,
+        handleRemoveParam,
+        handleRemoveAllParams,
+        handleValidateParamTitle,
+    } = useGlobalParams({
+        initialParams: settings.globalParams || {},
+    });
     const [hideTabs, setHideTabs] = React.useState(settings.hideTabs);
     const [hideDashTitle, setHideTitle] = React.useState(Boolean(settings.hideDashTitle));
     const [expandTOC, setExpandTOC] = React.useState(settings.expandTOC);
@@ -240,13 +250,6 @@ const Settings = () => {
         );
     }, [dispatch, supportDescription]);
 
-    const handleChangeGlobalParams = React.useCallback((params: DashSettingsGlobalParams) => {
-        setIsGlobalParamsError(
-            Object.keys(params).some((param) => Boolean(validateParamTitle(param))),
-        );
-        setGlobalParams(params);
-    }, []);
-
     const handleMarginsChange = React.useCallback((margins: number | [number, number]) => {
         if (Array.isArray(margins)) {
             setMargins(margins);
@@ -318,7 +321,14 @@ const Settings = () => {
                     settings={otherSettinsState}
                     onChange={setOtherSettingsState}
                 />
-                <Params paramsValue={globalParams} onChangeParamsValue={handleChangeGlobalParams} />
+                <Params
+                    paramsData={localParams}
+                    onEditParamTitle={handleEditParamTitle}
+                    onEditParamValue={handleEditParamValue}
+                    onRemoveParam={handleRemoveParam}
+                    onRemoveAllParams={handleRemoveAllParams}
+                    validateParamTitle={handleValidateParamTitle}
+                />
                 <EntryDialogues ref={entryDialoguesRef} />
             </Dialog.Body>
             <Dialog.Footer

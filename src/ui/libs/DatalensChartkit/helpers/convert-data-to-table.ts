@@ -11,9 +11,9 @@ type ConvertChartToTableArgs = {
 };
 
 type ChartData = {
-    categories_ms: number[];
+    categories_ms?: number[];
     categories?: string[];
-    graphs: any[];
+    graphs?: any[];
 };
 
 export function convertChartToTable(options: ConvertChartToTableArgs) {
@@ -25,9 +25,11 @@ export function convertChartToTable(options: ConvertChartToTableArgs) {
         extra: {},
     }) as ChartData;
 
-    if (!chartData) {
+    if (!chartData || !chartData.graphs) {
         return [];
     }
+
+    const {graphs} = chartData;
 
     let lines = [];
     const header = [];
@@ -40,7 +42,7 @@ export function convertChartToTable(options: ConvertChartToTableArgs) {
         header.push('Categories');
     }
 
-    chartData.graphs.forEach((graph) => {
+    graphs.forEach((graph) => {
         header.push(graph.title);
     });
 
@@ -49,7 +51,7 @@ export function convertChartToTable(options: ConvertChartToTableArgs) {
     const dataArray =
         chartData.categories_ms ||
         chartData.categories ||
-        Array(chartData.graphs[0].data.length).fill(undefined);
+        Array(graphs[0].data.length).fill(undefined);
 
     dataArray.forEach((item, i) => {
         const line = [];
@@ -65,7 +67,7 @@ export function convertChartToTable(options: ConvertChartToTableArgs) {
             line.push(`"${measure}"`);
         }
 
-        chartData.graphs.forEach((graph) => {
+        graphs.forEach((graph) => {
             let currentValue = graph.data[i];
             let value = '""';
 

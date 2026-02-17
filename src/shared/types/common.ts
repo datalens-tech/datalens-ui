@@ -152,6 +152,11 @@ export type MainLayoutConfigData = {
 type DocPathNameKey = 'datasetSubsql' | 'qlCreateChart' | 'functionsPath';
 export type DocPathName = Partial<Record<DocPathNameKey, string>>;
 
+export type AIConfig = {
+    defaultModel: string;
+    availableModels: string[];
+};
+
 export type DLGlobalData = {
     deviceType: DeviceType;
     requestId: string;
@@ -241,6 +246,7 @@ export type DLGlobalData = {
     authManageLocalUsersDisabled?: boolean;
     authSignupDisabled?: boolean;
     authCookieName?: string;
+    aiConfig?: AIConfig;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

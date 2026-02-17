@@ -2,71 +2,38 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import type {DashSettingsGlobalParams, StringParams} from 'shared';
 import {ParamsSettingsQA} from 'shared';
 
 import {Collapse} from '../../../../../../components/Collapse/Collapse';
 import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';
 import {ParamsSettings} from '../../../../components/ParamsSettings/ParamsSettings';
-import {
-    clearEmptyParams,
-    removeParam,
-    updateParamTitle,
-    updateParamValue,
-    validateParamTitle,
-} from '../../../../components/ParamsSettings/helpers';
+import type {ParamsSettingData} from '../../../../components/ParamsSettings/types';
 
 import {Title} from './Title';
 
-import '../Settings.scss';
+import './Params.scss';
 
-const b = block('dialog-settings');
+const b = block('dialog-settings-params');
 
 type ParamsProps = {
-    paramsValue?: StringParams;
-    onChangeParamsValue: (params: DashSettingsGlobalParams) => void;
+    paramsData: ParamsSettingData;
+    onEditParamTitle: (paramTitleOld: string, paramTitle: string) => void;
+    onEditParamValue: (paramTitle: string, paramValue: string[]) => void;
+    onRemoveParam: (paramTitle: string) => void;
+    onRemoveAllParams: () => void;
+    validateParamTitle: (paramTitle: string) => Error | null;
 };
 
-export const Params = ({paramsValue, onChangeParamsValue}: ParamsProps) => {
-    const localParams = React.useMemo(() => clearEmptyParams(paramsValue), [paramsValue]);
-
-    const handleEditParamTitle = React.useCallback(
-        (paramTitleOld, paramTitle) => {
-            onChangeParamsValue(updateParamTitle(localParams, paramTitleOld, paramTitle));
-        },
-        [localParams, onChangeParamsValue],
-    );
-
-    const handleEditParamValue = React.useCallback(
-        (paramTitle, paramValue) => {
-            onChangeParamsValue(updateParamValue(localParams, paramTitle, paramValue));
-        },
-        [localParams, onChangeParamsValue],
-    );
-
-    const handleRemoveParam = React.useCallback(
-        (paramTitle) => {
-            onChangeParamsValue(removeParam(localParams, paramTitle));
-        },
-        [localParams, onChangeParamsValue],
-    );
-
-    const handleRemoveAllParams = React.useCallback(() => {
-        onChangeParamsValue({});
-    }, [onChangeParamsValue]);
-
-    const handleValidateParamTitle = React.useCallback((paramTitle: string) => {
-        const errorCode = validateParamTitle(paramTitle);
-
-        if (errorCode) {
-            return new Error(i18n('dash.params-button-dialog.view', `context_${errorCode}`));
-        }
-
-        return null;
-    }, []);
-
+export const Params = ({
+    paramsData,
+    onEditParamTitle,
+    onEditParamValue,
+    onRemoveParam,
+    onRemoveAllParams,
+    validateParamTitle,
+}: ParamsProps) => {
     return (
-        <SectionWrapper>
+        <SectionWrapper className={b()}>
             <Collapse
                 title={
                     <Title
@@ -77,15 +44,15 @@ export const Params = ({paramsValue, onChangeParamsValue}: ParamsProps) => {
                 arrowPosition="left"
                 arrowQa={ParamsSettingsQA.Open}
             >
-                <div className={b('params')}>
+                <div className={b('content')}>
                     <ParamsSettings
-                        tagLabelClassName={b('params-tag')}
-                        data={localParams}
-                        validator={{title: handleValidateParamTitle}}
-                        onEditParamTitle={handleEditParamTitle}
-                        onEditParamValue={handleEditParamValue}
-                        onRemoveParam={handleRemoveParam}
-                        onRemoveAllParams={handleRemoveAllParams}
+                        tagLabelClassName={b('tag')}
+                        data={paramsData}
+                        validator={{title: validateParamTitle}}
+                        onEditParamTitle={onEditParamTitle}
+                        onEditParamValue={onEditParamValue}
+                        onRemoveParam={onRemoveParam}
+                        onRemoveAllParams={onRemoveAllParams}
                     />
                 </div>
             </Collapse>

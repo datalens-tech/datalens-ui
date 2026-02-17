@@ -93,6 +93,15 @@ describe('source-alias: legacy source to API Connector conversion', () => {
             expect(shouldUseAlias(source, aliasConfig, enabledFlag)).toBe(true);
         });
 
+        test('skips alias for OAuth header with capital Authorization', () => {
+            const source: Source = {
+                url: '/_example/issues',
+                headers: {Authorization: 'OAuth my-secret-token'},
+            };
+
+            expect(shouldUseAlias(source, aliasConfig, enabledFlag)).toBe(false);
+        });
+
         test('returns false when aliasTo is not defined', () => {
             expect(
                 shouldUseAlias(

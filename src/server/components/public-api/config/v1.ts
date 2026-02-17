@@ -354,5 +354,13 @@ export const getPublicApiActionsV1 = <
             },
             features: [Feature.CollectionsEnabled],
         },
+        getWorkbookEntries: {
+            resolve: (api) => api.us.getWorkbookEntriesTyped,
+            openApi: {
+                summary: 'Get workbook entries',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
     } satisfies PublicApiVersionActions<TSchema, Feature>;
 };

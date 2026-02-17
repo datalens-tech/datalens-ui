@@ -16,7 +16,7 @@ export function shouldUseAlias(
         return false;
     }
 
-    const authorization = source.headers?.authorization;
+    const authorization = source.headers?.authorization || source.headers?.Authorization;
     if (typeof authorization === 'string' && authorization.startsWith('OAuth ')) {
         return false;
     }

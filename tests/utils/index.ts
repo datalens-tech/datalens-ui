@@ -18,21 +18,46 @@ export const ROOT_ENV_PATH = path.resolve(__dirname, '..', '..', '.env');
 
 dotenv.config({path: ROOT_ENV_PATH});
 
-// A method to simplify writing playwright selectors (see https://playwright.dev/docs/api/class-selectors /)
-// Example to click on a node:
-// <div data-qa="node-key">
-// in the test, using the slct helper, it is enough to write page.click(slct('node-key'))
-// If the second argument is passed, the selection takes place not only by the selector, but also by the text content
-// nodes. Example:
-// <div data-qa="node-key">foo</div>
-// <div data-qa="node-key">bar</div>
-// <div data-qa="node-key">baz</div>
-// To click on a node with the text "bar", write page.click(slct('node-key', 'bar'))
-export const slct = (nodeAnchorKey: string, text?: string) => {
-    if (text) {
-        return `[data-qa="${nodeAnchorKey}"] >> text="${text}"`;
+type SlctMode = 'exact' | 'contains' | 'startsWith' | 'endsWith';
+
+type SlctOptions = {
+    mode?: SlctMode;
+    text?: string;
+};
+
+const dataQaSelectorByMode: Record<SlctMode, (nodeAnchorKey: string) => string> = {
+    exact: (nodeAnchorKey) => `[data-qa="${nodeAnchorKey}"]`,
+    contains: (nodeAnchorKey) => `[data-qa*="${nodeAnchorKey}"]`,
+    startsWith: (nodeAnchorKey) => `[data-qa^="${nodeAnchorKey}"]`,
+    endsWith: (nodeAnchorKey) => `[data-qa$="${nodeAnchorKey}"]`,
+};
+
+/**
+ * Builds a Playwright selector for elements with the `data-qa` attribute.
+ *
+ * Supports:
+ * - `slct('node-key')` -> exact `data-qa` match
+ * - `slct('node-key', 'bar')` -> exact `data-qa` + text match (backward-compatible API)
+ * - `slct('node-key', {mode: 'contains' | 'startsWith' | 'endsWith' | 'exact', text?: 'bar'})`
+ *
+ * @example
+ * slct('node-key') // [data-qa="node-key"]
+ * slct('node-key', 'bar') // [data-qa="node-key"] >> text="bar"
+ * slct('node', {mode: 'contains'}) // [data-qa*="node"]
+ *
+ * @param nodeAnchorKey Node key used to build the `data-qa` selector.
+ * @param textOrOptions Optional text filter or selector options.
+ * @returns Playwright selector string.
+ */
+export const slct = (nodeAnchorKey: string, textOrOptions?: string | SlctOptions) => {
+    const options = typeof textOrOptions === 'string' ? {text: textOrOptions} : textOrOptions;
+    const mode = options?.mode ?? 'exact';
+    const selector = dataQaSelectorByMode[mode](nodeAnchorKey);
+
+    if (options?.text) {
+        return `${selector} >> text="${options.text}"`;
     } else {
-        return `[data-qa="${nodeAnchorKey}"]`;
+        return selector;
     }
 };
 

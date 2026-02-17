@@ -8,7 +8,6 @@ import {getWizardChartBuilder} from '../components/processor/worker-chart-builde
 import type {ResolvedConfig} from '../components/storage/types';
 import type {WizardWorker} from '../components/wizard-worker/types';
 
-import {resolveRunnerLocals} from './common';
 import {runWorkerChart} from './worker';
 
 import type {RunnerHandler, RunnerHandlerProps} from './index';
@@ -24,14 +23,13 @@ async function getWizardWorker(options?: WorkerPoolOptions): Promise<Proxy<Wizar
 }
 
 export const runWizardChart: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
-    const {req, runnerLocals, resLocals, config} = props;
-    const locals = resolveRunnerLocals({runnerLocals, resLocals});
+    const {req, runnerLocals, config} = props;
     const timeouts = cx.config.runnerExecutionTimeouts?.wizard;
     const {widgetConfig} = req.body;
 
     const chartBuilder = await getWizardChartBuilder({
         userLang: cx.get(USER_LANGUAGE_PARAM_NAME) || '',
-        userLogin: locals.login || '',
+        userLogin: runnerLocals.login || '',
         widgetConfig,
         config: config as ResolvedConfig,
         isScreenshoter: Boolean(req.headers['x-charts-scr']),
