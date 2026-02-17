@@ -5,6 +5,7 @@ import type {
     AddNewItemOptions,
     Config,
     ConfigItemData,
+    ConfigLayout,
     DashKit,
     ItemsStateAndParams,
     PluginTextProps,
@@ -41,6 +42,7 @@ import type {ItemDataSource} from 'ui/store/typings/controlDialog';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
+import {openDialogDefault} from '../../../../components/DialogDefault/DialogDefault';
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
 import {ITEM_TYPE} from '../../../../constants/dialogs';
 import logger from '../../../../libs/logger';
@@ -60,6 +62,7 @@ import {isItemGlobal, isWidgetVisibleOnTab} from '../../utils/selectors';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
 import {
+    selectCurrentTab,
     selectDash,
     selectDashData,
     selectDashDescription,
@@ -69,11 +72,8 @@ import {
 import type {DashState, UpdateTabsWithGlobalStateArgs} from '../typings/dash';
 
 import {save} from './base/actions';
-import {
-    getPreparedCopiedSelectorData,
-    migrateDataSettings,
-    processTabForGlobalUpdate,
-} from './helpers';
+import {getPreparedCopiedSelectorData, handleSelectorLinkingDialog} from './copy-and-paste/helpers';
+import {migrateDataSettings, processTabForGlobalUpdate} from './helpers';
 
 import type {DashDispatch} from './index';
 
@@ -517,6 +517,25 @@ export type SetItemDataExternalControl = Partial<DashTabItemControl['data']> & S
 export type SetItemDataImage = DashTabItemImage['data'];
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
+export type SetItemDataItem = {
+    defaults?: SetItemDataDefaults;
+    namespace?: string;
+    // context for selectors pasted from the buffer
+    contextList?: {
+        index: number;
+        targetId: string;
+        targetEntryId: string;
+        targetDashTabId: string;
+    }[];
+} & (
+    | {type?: DashTabItemType.Control; data: SetItemDataExternalControl}
+    | {type?: DashTabItemType.GroupControl; data: SetItemDataGroupControl}
+    | {type?: DashTabItemType.Text; data: SetItemDataText}
+    | {type?: DashTabItemType.Title; data: SetItemDataTitle}
+    | {type?: DashTabItemType.Image; data: SetItemDataImage}
+);
+
+// TODO: Remove after update platform
 export type SetItemDataArgs = {
     defaults?: SetItemDataDefaults;
     namespace?: string;
@@ -535,12 +554,23 @@ export type SetItemDataArgs = {
     | {type?: DashTabItemType.Image; data: SetItemDataImage}
 );
 
-export type SetItemDataAction = {
-    type: typeof actionTypes.SET_ITEM_DATA;
-    payload: SetItemDataArgs;
+export type AddingGlobalItemArgs = {
+    itemLayout?: Omit<ConfigLayout, 'i'>;
+    options?: Omit<AddNewItemOptions, 'reflowLayoutOptions'>;
 };
 
-export const setItemData = (data: SetItemDataArgs) => {
+export type SetItemDataPayload = {
+    tabId?: string | null;
+    item: SetItemDataItem;
+    addingGlobalItemArgs?: AddingGlobalItemArgs;
+};
+
+export type SetItemDataAction = {
+    type: typeof actionTypes.SET_ITEM_DATA;
+    payload: SetItemDataPayload | SetItemDataArgs;
+};
+
+export const setItemData = (data: SetItemDataPayload | SetItemDataArgs) => {
     return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
         dispatch({
             type: actionTypes.SET_ITEM_DATA,
@@ -1059,7 +1089,7 @@ export const updateAllDashSettings = (data: {
     };
 };
 
-type SetCopiedItemDataPayload = {
+export type SetCopiedItemDataPayload = {
     item: AddConfigItem;
     context?: CopiedConfigContext;
     options: AddNewItemOptions;
@@ -1070,10 +1100,12 @@ type SetCopiedItemDataPayload = {
 
 export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
     return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        const state = getState();
         const {
             tabId,
             entry: {entryId},
-        } = getState().dash;
+            data: {tabs},
+        } = state.dash;
 
         const isSelectorItem =
             payload.item.type === DashTabItemType.Control ||
@@ -1089,21 +1121,29 @@ export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
             });
         };
 
-        if (tabId && isSelectorItem) {
-            const selectorData = payload.item.data as IsWidgetVisibleOnTabArgs['itemData'];
+        if (!tabId || !isSelectorItem) {
+            dispatchEvents(payload);
+            return;
+        }
 
-            const isWidgetVisible = isWidgetVisibleOnTab({
-                itemData: selectorData,
-                tabId,
-            });
+        const selectorData = payload.item.data as IsWidgetVisibleOnTabArgs['itemData'];
 
+        const isWidgetVisible = isWidgetVisibleOnTab({
+            itemData: selectorData,
+            tabId,
+        });
+
+        const hasEntryChanged = payload.context?.targetEntryId !== entryId;
+        const hasTabChanged = payload.context?.targetDashTabId !== tabId;
+
+        const isPastedBetweenTabs = !hasEntryChanged && hasTabChanged;
+        const sourceTabId = payload.context?.targetDashTabId;
+
+        const pasteSelectorItem = () => {
             if (isWidgetVisible) {
                 dispatchEvents(payload);
                 return;
             }
-
-            const hasEntryChanged = payload.context?.targetEntryId !== entryId;
-            const hasTabChanged = payload.context?.targetDashTabId !== tabId;
 
             const updatedData = getPreparedCopiedSelectorData({
                 selectorData,
@@ -1120,11 +1160,48 @@ export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
                     item: {...payload.item, data: updatedData as ConfigItemData},
                 });
             }
+        };
 
+        const currentTab = selectCurrentTab(state);
+
+        const dialogResult = handleSelectorLinkingDialog({
+            isPastedBetweenTabs,
+            sourceTabId,
+            currentTab,
+            tabs,
+            tabId,
+            payload,
+        });
+
+        if (dialogResult?.showDialog) {
+            dispatch(
+                openDialogDefault({
+                    ...dialogResult.dialogConfig,
+                    onApply: () => {
+                        const updatedSelector = dialogResult.dialogConfig.onApply();
+
+                        if (updatedSelector) {
+                            dispatch(
+                                setItemData({
+                                    tabId: sourceTabId,
+                                    item: updatedSelector,
+                                    addingGlobalItemArgs: {
+                                        itemLayout: payload.item.layout,
+                                        options: payload.options,
+                                    },
+                                }),
+                            );
+                        }
+                    },
+                    onCancel: () => {
+                        pasteSelectorItem();
+                    },
+                }),
+            );
             return;
         }
 
-        dispatchEvents(payload);
+        pasteSelectorItem();
     };
 };
 

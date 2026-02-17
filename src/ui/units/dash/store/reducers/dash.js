@@ -365,24 +365,43 @@ function dash(state = initialState, action) {
             };
         }
         case actionTypes.SET_ITEM_DATA: {
-            const itemType = action.payload.type;
-            const itemData = action.payload.data;
+            const {
+                type: itemType,
+                data: itemData,
+                namespace,
+                defaults,
+                contextList,
+                id: itemId,
+                // TODO: removw after up platform
+            } = 'item' in action.payload ? action.payload.item : action.payload;
+
+            let targetTabIndex = tabIndex;
+            const targetTab = action.payload.tabId
+                ? state.data.tabs.find((tabItem, index) => {
+                      if (tabItem.id === action.payload.tabId) {
+                          targetTabIndex = index;
+                          return true;
+                      }
+                      return false;
+                  })
+                : tab;
+            const targetTabId = action.payload.tabId ?? tabId;
 
             const isGlobal =
                 itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control
-                    ? isItemGlobal(action.payload)
+                    ? isItemGlobal(action.payload.item)
                     : false;
 
             const tabData = DashKit.setItem({
                 item: {
-                    id: state.openedItemId,
-                    type: action.payload.type || state.openedDialog,
-                    data: action.payload.data,
-                    namespace: action.payload.namespace,
+                    id: state.openedItemId ?? itemId,
+                    type: state.openedDialog ?? itemType,
+                    data: itemData,
+                    namespace,
                     layout: state.dragOperationProps?.itemLayout,
-                    ...(action.payload.defaults ? {defaults: action.payload.defaults} : null),
+                    ...(defaults ? {defaults} : null),
                 },
-                config: {...tab, salt: data.salt, counter: data.counter},
+                config: {...targetTab, salt: data.salt, counter: data.counter},
                 options: {
                     excludeIds: getUniqIdsFromDashData(data),
                     updateLayout: state.dragOperationProps?.newLayout,
@@ -397,23 +416,23 @@ function dash(state = initialState, action) {
             // 2. !action.payload.data.group[0].id - first selector doesn't have an id because it was just converted
             if (
                 state.openedItemId &&
-                action.payload.type === DashTabItemType.GroupControl &&
-                !action.payload.data.group[0].id
+                itemType === DashTabItemType.GroupControl &&
+                !itemData.group[0].id
             ) {
                 tabData.connections = migrateConnectionsForGroupControl({
                     openedItemId: state.openedItemId,
-                    currentTab: tab,
+                    currentTab: targetTab,
                     tabDataItems: allTabItems,
                 });
             }
 
             // copy connections if the pasted selector was on the same dashboard tab
-            if (action.payload.contextList?.length > 0) {
+            if (contextList?.length > 0) {
                 const indexTargetIdMap = {};
-                action.payload.contextList.forEach((context) => {
+                contextList.forEach((context) => {
                     if (
                         context.targetEntryId === state.entry.entryId &&
-                        context.targetDashTabId === tabId
+                        context.targetDashTabId === targetTabId
                     ) {
                         indexTargetIdMap[context.index] = context.targetId;
                     }
@@ -444,11 +463,13 @@ function dash(state = initialState, action) {
                     state,
                     data,
                     tabData,
-                    tabIndex,
+                    tabIndex: targetTabIndex,
                     itemType,
                     itemData,
                     isGlobal,
                     connectionsUpdaters,
+                    itemId,
+                    addingGlobalItemArgs: action.payload.addingGlobalItemArgs,
                 });
 
                 // If the function returned a state, return it
