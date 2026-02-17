@@ -346,6 +346,7 @@ export default ({
         disableDefaultSorting,
         features,
         defaultColorPaletteId,
+        categories: new Set(),
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);

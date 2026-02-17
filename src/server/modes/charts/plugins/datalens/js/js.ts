@@ -1027,7 +1027,7 @@ export const buildGraphPrivate = (args: {
             features,
             plugin,
             defaultColorPaletteId,
-            categories: [],
+            categories: new Set(),
         });
 
         if (result?.[0]?.bounds) {
