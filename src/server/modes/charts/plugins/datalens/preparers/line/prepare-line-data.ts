@@ -38,6 +38,7 @@ import {
 } from '../../utils/misc-helpers';
 import {mapAndShapeGraph} from '../../utils/shape-helpers';
 import {addActionParamValue} from '../helpers/action-params';
+import {getIsAdditionalLayer} from '../helpers/layers';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -58,6 +59,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         labels,
         idToTitle,
         idToDataType,
+        layerSettings,
         visualizationId,
         datasets = [],
         shared,
@@ -68,9 +70,11 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         usedColors,
         disableDefaultSorting = false,
         defaultColorPaletteId,
+        categories: prevLayerCategories,
     } = args;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
+    const isAdditionalLayer = getIsAdditionalLayer({shared, layerSettings});
 
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField = xPlaceholder?.items[0];
@@ -147,7 +151,9 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const nullsY1 = yPlaceholder?.settings?.nulls;
     const nullsY2 = y2Placeholder?.settings?.nulls;
 
-    const categoriesMap = new Map<string | number, boolean>();
+    const categoriesMap = new Map<string | number, boolean>(
+        Array.from(prevLayerCategories).map((d) => [d, true]),
+    );
     const seriesNameFormatter = getSeriesTitleFormatter({fields: [colorItem, shapeItem]});
 
     const categoryField = xField
@@ -162,7 +168,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     }
 
     if (mergedYSections.length) {
-        let categories: (string | number)[] = [];
+        let categories: (string | number)[] = [...prevLayerCategories];
         const categories2: (string | number)[] = [];
 
         const lines1: LinesRecord = {};
@@ -278,7 +284,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         let lineKeys1 = Object.keys(lines1);
         let lineKeys2 = Object.keys(lines2);
 
-        if (xIsDate && !disableDefaultSorting) {
+        if (xIsDate && !disableDefaultSorting && !isAdditionalLayer) {
             (categories as number[]).sort(numericCollator);
         }
 
@@ -291,7 +297,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             visualizationId !== WizardVisualizationId.Area &&
             !isPercentVisualization(visualizationId);
 
-        if (!disableDefaultSorting) {
+        if (!disableDefaultSorting && !isAdditionalLayer) {
             categories = getSortedCategories({
                 lines,
                 colorItem,
@@ -567,6 +573,12 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             ChartEditor.updateConfig({useMarkup: true});
         }
 
+        categoriesMap.forEach((_, key) => {
+            if (!prevLayerCategories.has(key)) {
+                prevLayerCategories.add(key);
+            }
+        });
+
         if (isXCategoryAxis) {
             return {
                 graphs,
@@ -609,7 +621,11 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         });
 
         // Default sorting
-        if ((!isSortItemExists || !isSortCategoriesAvailable) && !disableDefaultSorting) {
+        if (
+            (!isSortItemExists || !isSortCategoriesAvailable) &&
+            !disableDefaultSorting &&
+            !isAdditionalLayer
+        ) {
             if (xIsNumber) {
                 (categories as number[]).sort(numericCollator);
             } else {

@@ -42,3 +42,23 @@ export function getYPlaceholders(args: PrepareFunctionArgs) {
 
     return [layerYPlaceholder, layerY2Placeholder];
 }
+
+/**
+ * Determines if a given layer is an additional (non-primary) layer within a collection.
+ * The first layer in the `layers` array is considered the primary layer.
+ *
+ * There is no category sorting for additional labels.
+ *
+ * @returns {boolean} - `true` if the layer is not the first one in the array, otherwise `false`.
+ **/
+export function getIsAdditionalLayer({
+    shared,
+    layerSettings,
+}: {
+    shared: PrepareFunctionArgs['shared'];
+    layerSettings: PrepareFunctionArgs['layerSettings'];
+}) {
+    const layers = shared.visualization.layers ?? [];
+    const layerIndex = layers.findIndex((l) => l?.layerSettings?.id === layerSettings?.id);
+    return layers.length > 1 && layerIndex > 0;
+}
