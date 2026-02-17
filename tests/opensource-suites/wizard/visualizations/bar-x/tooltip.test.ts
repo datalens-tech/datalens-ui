@@ -14,12 +14,12 @@ import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualizat
 import {SMALL_SCREENSHOT_VIEWPORT_SIZE} from '../constants';
 
 datalensTest.describe('Wizard', () => {
-    datalensTest.describe('Bar-y chart', () => {
+    datalensTest.describe('Bar-x chart', () => {
         datalensTest.beforeEach(async ({page, config}) => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.Bar);
+            await wizardPage.setVisualization(WizardVisualizationId.Column);
         });
 
         datalensTest(
@@ -28,22 +28,20 @@ datalensTest.describe('Wizard', () => {
                 const wizardPage = new WizardPage({page});
                 const preview = page.locator(slct(WizardPageQa.SectionPreview));
                 const chart = preview.locator('.gcharts-chart');
-
                 // Fractional value - by default, it should have two decimal places
                 await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
                 await wizardPage.sectionVisualization.addFieldByClick(
-                    PlaceholderName.X,
+                    PlaceholderName.Y,
                     'SalesSum',
                 );
                 // Integer - no decimal places
                 await wizardPage.createNewFieldWithFormula('orderCount', 'count([order_id])');
                 await wizardPage.sectionVisualization.addFieldByClick(
-                    PlaceholderName.X,
+                    PlaceholderName.Y,
                     'orderCount',
                 );
-
                 await expect(preview.locator(slct(ChartKitQa.Loader))).not.toBeVisible();
-                const bar = chart.locator('.gcharts-bar-y').first();
+                const bar = chart.locator('.gcharts-bar-x').first();
                 await expect(bar).toBeVisible();
                 await bar.hover({force: true});
                 const tooltip = page.locator(slct(ChartKitQa.Tooltip, {mode: 'startsWith'}));
@@ -52,12 +50,12 @@ datalensTest.describe('Wizard', () => {
         );
     });
 
-    datalensTest.describe('Bar-y normalised chart', () => {
+    datalensTest.describe('Bar-x normalised chart', () => {
         datalensTest.beforeEach(async ({page, config}) => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.Bar100p);
+            await wizardPage.setVisualization(WizardVisualizationId.Column100p);
         });
 
         datalensTest('Percentage formatting in tooltip @screenshot', async ({page}) => {
@@ -65,7 +63,7 @@ datalensTest.describe('Wizard', () => {
             const preview = page.locator(slct(WizardPageQa.SectionPreview));
             const chart = preview.locator('.gcharts-chart');
             await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'SalesSum');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'SalesSum');
             await wizardPage.sectionVisualization.addFieldByClick(
                 PlaceholderName.Colors,
                 'segment',
@@ -81,7 +79,7 @@ datalensTest.describe('Wizard', () => {
             );
             await wizardPage.visualizationItemDialog.clickOnApplyButton();
             await expect(preview.locator(slct(ChartKitQa.Loader))).not.toBeVisible();
-            const bar = chart.locator('.gcharts-bar-y').first();
+            const bar = chart.locator('.gcharts-bar-x').first();
             await expect(bar).toBeVisible();
             await bar.hover({force: true});
             const tooltip = page.locator(slct(ChartKitQa.Tooltip, {mode: 'startsWith'}));
