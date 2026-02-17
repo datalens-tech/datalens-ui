@@ -18,7 +18,7 @@ import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/Pal
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {useInternalMarginsEnabled} from 'ui/utils/widgets/internalMargins';
 
-import type {SetItemDataPayload} from '../../units/dash/store/actions/dashTyped';
+import type {SetItemDataArgs, SetItemDataPayload} from '../../units/dash/store/actions/dashTyped';
 import type {CommonVisualSettings} from '../DashKit/DashKit';
 import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
 import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
@@ -45,7 +45,8 @@ export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {
     dialogIsVisible: boolean;
 
     closeDialog: () => void;
-    setItemData: (newItemData: SetItemDataPayload) => void;
+    // TODO: Remove args after platform up
+    setItemData: (newItemData: SetItemDataPayload | SetItemDataArgs) => void;
 
     theme?: RealTheme;
 }

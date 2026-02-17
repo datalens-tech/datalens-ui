@@ -148,19 +148,10 @@ const getLinkedImpactFields = ({
 
         return updatedSelector;
     } else {
-        const originalIndex = originalItem.data.group.findIndex(
-            (item) => item.id === originalItem.id,
-        );
-
-        const originalGroupItem = originalItem.data.group[originalIndex];
-
-        const originalImpactType = originalGroupItem.impactType;
+        const originalSingleSelector = originalItem.data.group[0];
         const isSingleSelector = originalItem.data.group.length === 1;
 
-        const needChangeMainSetting =
-            !isSingleSelector && (!originalImpactType || originalImpactType === 'asGroup');
-
-        if (needChangeMainSetting) {
+        if (!isSingleSelector) {
             const {impactType, impactTabsIds} = getImpactFields({
                 impactType: originalItem.data.impactType,
                 impactTabsIds: originalItem.data.impactTabsIds,
@@ -174,21 +165,19 @@ const getLinkedImpactFields = ({
             return updatedSelector;
         }
 
-        const updatedGroup = [...originalItem.data.group];
-
-        updatedGroup[originalIndex] = {
-            ...originalGroupItem,
-            ...getImpactFields({
-                impactType: originalGroupItem.impactType,
-                impactTabsIds: originalGroupItem.impactTabsIds,
-                currentTabId,
-                sourceTabId,
-            }),
-        };
-
         updatedSelector.data = {
             ...originalItem.data,
-            group: updatedGroup,
+            group: [
+                {
+                    ...originalSingleSelector,
+                    ...getImpactFields({
+                        impactType: originalSingleSelector.impactType,
+                        impactTabsIds: originalSingleSelector.impactTabsIds,
+                        currentTabId,
+                        sourceTabId,
+                    }),
+                },
+            ],
         };
 
         return updatedSelector;
@@ -273,11 +262,17 @@ export const handleSelectorLinkingDialog = ({
         return null;
     }
 
+    const isMultiSelectorGroup =
+        originalSelector.type === DashTabItemType.GroupControl &&
+        originalSelector.data.group.length > 1;
+
     return {
         showDialog: true,
         dialogConfig: {
             caption: i18n('title_link-selector-to-tab'),
-            message: i18n('label_link-selector-to-tab'),
+            message: isMultiSelectorGroup
+                ? i18n('label_link-group-selector-to-tab')
+                : i18n('label_link-selector-to-tab'),
             textButtonApply: i18n('button_link'),
             textButtonCancel: i18n('button_create-new'),
             size: 's' as const,

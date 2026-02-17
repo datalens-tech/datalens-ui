@@ -517,6 +517,8 @@ export const copyControlToStorage = (controlIndex: number) => {
             namespace: namespace || DEFAULT_NAMESPACE,
             width: '',
             placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
+            impactType: selectorToCopy.impactType,
+            impactTabsIds: selectorToCopy.impactTabsIds,
         };
 
         const options: PreparedCopyItemOptions<CopiedConfigContext> = {
