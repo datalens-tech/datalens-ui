@@ -32,10 +32,13 @@ export type ExportChartArgs = {
     onExportLoading?: (isLoading: boolean) => void;
 };
 
+export type ExportMenuActionArgs = {
+    chartsDataProvider: ChartKitDataProvider;
+    onExportLoading?: ExportChartArgs['onExportLoading'];
+    format?: typeof EXPORT_FORMATS.XLSX | typeof EXPORT_FORMATS.CSV;
+    extraOptions?: Record<string, unknown>;
+};
+
 export type ExportMenuAction = (
-    chartsDataProvider: ChartKitDataProvider,
-    onExportLoading?: ExportChartArgs['onExportLoading'],
-    hasAccessToBusinessFeature?: boolean,
-    format?: typeof EXPORT_FORMATS.XLSX | typeof EXPORT_FORMATS.CSV,
-    extraOptions?: Record<string, unknown>,
+    args: ExportMenuActionArgs,
 ) => (chartData: ExportActionArgs) => void | MenuActionComponent;

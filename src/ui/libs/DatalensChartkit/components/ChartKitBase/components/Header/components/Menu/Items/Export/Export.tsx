@@ -97,7 +97,7 @@ const getSubItems = ({
 
     const csvAction =
         customConfig?.items?.find((item) => item.id === MenuItemsIds.EXPORT_CSV)?.action ??
-        csvExportAction(chartsDataProvider, onExportLoading);
+        csvExportAction({chartsDataProvider, onExportLoading});
 
     const xlsxAction =
         customConfig?.items?.find((item) => item.id === MenuItemsIds.EXPORT_XLSX)?.action ??
