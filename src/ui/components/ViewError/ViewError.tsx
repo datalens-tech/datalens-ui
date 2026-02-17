@@ -32,6 +32,7 @@ export interface ViewErrorProps {
     actionContent?: React.ReactNode;
     hideDetails?: boolean;
     size?: PlaceholderIllustrationProps['size'];
+    direction?: PlaceholderIllustrationProps['direction'];
     containerClassName?: string;
     showDebugInfo?: boolean;
     exportId?: string;
@@ -54,6 +55,7 @@ export const ViewError = ({
     showDebugInfo = !hideDetails,
     exportId,
     importId,
+    direction,
 }: ViewErrorProps) => {
     const dispatch = useDispatch();
 
@@ -93,7 +95,6 @@ export const ViewError = ({
     const {type: statusType, title: statusTitle} = getErrorMessage();
     const resultType = type || statusType;
     const resultTitle = title || statusTitle;
-    const errorClassname = actionsClassName || 'actions';
     const buttonDetailsText = buttonText || i18n('button_details');
 
     const buttonSize = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 'm';
@@ -115,7 +116,7 @@ export const ViewError = ({
         typeof retry === 'function' && (!isManualError(error) || !error.extra?.hideRetry);
 
     const content = (
-        <div className={b(errorClassname, {mobile: DL.IS_MOBILE})}>
+        <div className={b('actions', {mobile: DL.IS_MOBILE}, actionsClassName)}>
             {showRetry && (
                 <Button
                     className={b('btn-retry')}
@@ -151,6 +152,7 @@ export const ViewError = ({
             showDebugInfo={showDebugInfo}
             size={size}
             containerClassName={containerClassName}
+            direction={direction}
         />
     );
 };
