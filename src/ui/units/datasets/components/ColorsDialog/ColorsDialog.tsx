@@ -219,6 +219,7 @@ export const ColorsDialog = (props: Props) => {
                             selectedValue={selectedValue}
                             colorsList={colorsList}
                             onPaletteItemClick={handleSelectColor}
+                            palleteItemQa={DatasetFieldColorsDialogQa.PaleteItem}
                         />
                     </div>
                 </div>

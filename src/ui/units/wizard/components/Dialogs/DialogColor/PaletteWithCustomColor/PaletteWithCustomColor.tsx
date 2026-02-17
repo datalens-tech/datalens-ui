@@ -15,6 +15,7 @@ interface PaletteWithCustomColorProps {
     currentMountedColor?: string | null;
     selectedValue?: string | null;
     className?: string;
+    palleteItemQa?: string;
 }
 
 const DEFAULT_COLOR = 'auto';
@@ -26,6 +27,7 @@ export function PaletteWithCustomColor({
     colorsList,
     selectedValue,
     className,
+    palleteItemQa,
 }: PaletteWithCustomColorProps) {
     const isCustomColorSelected = Boolean(currentMountedColor?.startsWith('#'));
     const currentColorHex = isCustomColorSelected
@@ -60,6 +62,7 @@ export function PaletteWithCustomColor({
                     onSelect: () => onPaletteItemClick(customColorValue),
                     qa: DialogColorQa.CustomColorButton,
                 }}
+                palleteItemQa={palleteItemQa}
             />
             <div className={b('color-input-wrapper', {visible: isCustomColorSelected})}>
                 <ColorPickerInput
