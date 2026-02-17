@@ -95,8 +95,7 @@ export const DownloadCsv = ({
         };
 
         onSubmit(params);
-        onClose();
-    }, [delNumber, delValue, encoding, onSubmit, onClose]);
+    }, [delNumber, delValue, encoding, onSubmit]);
 
     return (
         <Dialog

@@ -44,7 +44,9 @@ import {TabMenu} from 'ui/components/TabMenu/TabMenu';
 import type {UpdateState} from 'ui/components/TabMenu/types';
 import {TabActionType} from 'ui/components/TabMenu/types';
 import {DL, URL_OPTIONS} from 'ui/constants/common';
+import {InternalMarginsToggler} from 'ui/units/dash/containers/Dialogs/components/InternalMarginsToggler/InternalMarginsToggler';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {useInternalMarginsEnabled} from 'ui/utils/widgets/internalMargins';
 import type {ValuesType} from 'utility-types';
 
 import {registry} from '../../registry';
@@ -61,6 +63,7 @@ import {PaletteBackground} from '../../units/dash/containers/Dialogs/components/
 import {isEntryTypeWithFiltering} from '../../units/dash/containers/Dialogs/utils';
 import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../units/dash/modules/constants';
 import type {SetItemDataPayload} from '../../units/dash/store/actions/dashTyped';
+import type {CommonVisualSettings} from '../DashKit/DashKit';
 import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
 import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 
@@ -100,11 +103,13 @@ export interface DialogChartWidgetFeatureProps {
     enableAutoheight?: boolean;
     enableBackgroundColor?: boolean;
     enableCustomBgColorSelector?: boolean;
+    enableInternalMarginsSelector?: boolean;
     enableSeparateThemeColorSelector?: boolean;
     enableBorderRadiusSelector?: boolean;
     enableFilteringSetting?: boolean;
 }
 export interface DialogChartWidgetProps extends DialogChartWidgetFeatureProps {
+    commonVisualSettings: CommonVisualSettings;
     openedItemId: string | null;
     openedItemData: DashTabItemWidget['data'];
     dialogIsVisible: boolean;
@@ -151,6 +156,7 @@ const INPUT_HINT_ID = 'chartHintField';
 const INPUT_BORDER_RADIUS_ID = 'chartBorderRadiusField';
 
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableCommonChartDashSettings);
+const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
 
 const DEFAULT_OPENED_ITEM_DATA: DashTabItemWidget['data'] = {
     hideTitle: false,
@@ -188,6 +194,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
         enableAutoheight = true,
         enableBackgroundColor = false,
         enableCustomBgColorSelector = false,
+        enableInternalMarginsSelector = true,
         enableSeparateThemeColorSelector = true,
         enableBorderRadiusSelector = false,
         enableFilteringSetting = true,
@@ -202,13 +209,14 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
         closeDialog,
         setItemData,
         openedItemId,
+        commonVisualSettings,
     } = props;
     const [state, setState] = React.useState<DialogChartWidgetState>({
         hideTitle: true,
         prevVisible: false,
         error: false,
         tabIndex: 0,
-        data: omit(openedItemData, 'background', 'backgroundSettings'),
+        data: omit(openedItemData, 'background', 'backgroundSettings', 'internalMarginsEnabled'),
         isManualTitle: false,
         tabParams: {},
         legacyChanged: 0,
@@ -216,6 +224,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
     });
 
     const couldChangeOldBg = enableCustomBgColorSelector;
+    const canHaveMaxOneTab = Boolean(withoutSidebar);
 
     const {
         oldBackgroundColor,
@@ -234,6 +243,13 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
         enableSeparateThemeColorSelector,
         isNewWidget: !props.openedItemData,
     });
+
+    const {internalMarginsEnabled, setInternalMarginsEnabled, initialDisabledValue} =
+        useInternalMarginsEnabled({
+            dashSettings: commonVisualSettings,
+            currentValue: openedItemData.internalMarginsEnabled,
+        });
+
     const [prevDialogIsVisible, setPrevDialogIsVisible] = React.useState<boolean | undefined>();
 
     React.useEffect(() => {
@@ -285,6 +301,13 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
         [],
     );
 
+    const handleUpdateActiveTab = React.useCallback((value: string) => {
+        setState((prevState) => ({
+            ...prevState,
+            activeTab: value as (typeof TAB_TYPE)[keyof typeof TAB_TYPE],
+        }));
+    }, []);
+
     const onApply = React.useCallback(
         (argState: DialogChartWidgetState, resultedBg: typeof resultedBackgroundSettings) => {
             const isValidateParamTitle = isEnabledFeature(
@@ -305,6 +328,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                         ? {backgroundSettings: resultedBg.backgroundSettings}
                         : {}),
                     borderRadius,
+                    internalMarginsEnabled,
                     hideTitle: tabs.length === 1 && hideTitle,
                     tabs: tabs.map(({title, params, ...rest}, index) => {
                         let resultTabParams =
@@ -346,7 +370,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                 }));
             }
         },
-        [setItemData, closeDialog],
+        [setItemData, closeDialog, internalMarginsEnabled],
     );
 
     const onAddWidget = React.useCallback(
@@ -645,7 +669,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                         />
                     </FormRow>
                 ) : null}
-                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                {enableBorderRadiusSelector && isNewDashSettingsEnabled && (
                     <FormRow
                         className={b('row')}
                         label={i18nCommon('label_border-radius')}
@@ -657,6 +681,14 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                             onUpdate={setBorderRadius}
                         />
                     </FormRow>
+                )}
+                {enableInternalMarginsSelector && isNewDashSettingsEnabled && (
+                    <InternalMarginsToggler
+                        className={b('row')}
+                        value={internalMarginsEnabled}
+                        onUpdate={setInternalMarginsEnabled}
+                        initialDisabledValue={initialDisabledValue}
+                    />
                 )}
             </React.Fragment>
         );
@@ -840,7 +872,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                                 />
                             </FormRow>
                         )}
-                        {renderVisualSettings()}
+                        {canHaveMaxOneTab && renderVisualSettings()}
                     </div>
                     <ParamsSection
                         tabIndex={tabIndex}
@@ -856,8 +888,8 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
         );
     };
 
-    const shouldRenderTabs = false;
-    // isEnabledFeature(Feature.EnableCommonChartDashSettings) && !withoutSidebar;
+    const shouldRenderTabs =
+        isEnabledFeature(Feature.EnableCommonChartDashSettings) && !withoutSidebar;
     const tabsTabContent = (
         <div className={b('tab-content', {'with-sidebar': !withoutSidebar})}>
             {!withoutSidebar && (
@@ -900,8 +932,8 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
             <Dialog.Body className={b('body')}>
                 {shouldRenderTabs ? (
                     <TabProvider
-                        value={TAB_TYPE.TABS}
-                        // onUpdate={(value) => this.setState({activeTab: value})}
+                        value={state.activeTab ?? TAB_TYPE.TABS}
+                        onUpdate={handleUpdateActiveTab}
                     >
                         <TabList className={b('tab-list')}>
                             <Tab value={TAB_TYPE.TABS}>

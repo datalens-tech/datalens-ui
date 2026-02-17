@@ -155,21 +155,26 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
     }
 
     getCustomMenuOptions() {
+        const onSaveChart = async () => {
+            const {previewData} = this.props;
+
+            if (!previewData) {
+                return;
+            }
+
+            const preparedChartData = prepareChartDataBeforeSave(previewData);
+            await this.props.updateChart(preparedChartData, EntryUpdateMode.Publish);
+        };
         return {
             [MenuItemsIds.EXPORT]: {
+                extraOptions: {
+                    canBeSaved: this.props.entryCanBeSaved,
+                    onSaveChart,
+                },
                 actionWrapper: getCustomExportActionWrapperWithSave.bind(null, {
                     message: i18n('wizard', 'confirm_chart-save_message'),
                     canBeSaved: this.props.entryCanBeSaved,
-                    onApply: async () => {
-                        const {previewData} = this.props;
-
-                        if (!previewData) {
-                            return;
-                        }
-
-                        const preparedChartData = prepareChartDataBeforeSave(previewData);
-                        await this.props.updateChart(preparedChartData, EntryUpdateMode.Publish);
-                    },
+                    onApply: onSaveChart,
                 }),
             },
         } as unknown as ChartProviderPropsWithRefProps['customMenuOptions'];

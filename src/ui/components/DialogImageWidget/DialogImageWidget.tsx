@@ -11,10 +11,13 @@ import omit from 'lodash/omit';
 import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA, Feature} from 'shared';
 import type {DashTabItemImage, EntryScope, RecursivePartial} from 'shared';
 import {registry} from 'ui/registry';
+import {InternalMarginsToggler} from 'ui/units/dash/containers/Dialogs/components/InternalMarginsToggler/InternalMarginsToggler';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {useInternalMarginsEnabled} from 'ui/utils/widgets/internalMargins';
 
 import {PaletteBackground} from '../..//units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import type {SetItemDataPayload} from '../../units/dash/store/actions/dashTyped';
+import type {CommonVisualSettings} from '../DashKit/DashKit';
 import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
 import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 
@@ -25,9 +28,8 @@ const b = block('dialog-image');
 const INPUT_SRC_ID = 'dialog-image-input-src';
 const INPUT_ALT_ID = 'dialog-image-input-alt';
 const INPUT_PRESERVE_ASPECT_RATIO_ID = 'dialog-image-input-preserve-aspect-ratio';
-
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
-
+const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
 const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
     src: '',
     alt: '',
@@ -48,9 +50,11 @@ const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
 export type DialogImageWidgetFeatureProps = {
     enableSeparateThemeColorSelector?: boolean;
     enableBorderRadiusSelector?: boolean;
+    enableInternalMarginsSelector?: boolean;
 };
 
 type Props = {
+    commonVisualSettings: CommonVisualSettings;
     openedItemId: string | null;
     openedItemData?: DashTabItemImage['data'];
     dialogIsVisible: boolean;
@@ -81,10 +85,12 @@ export function DialogImageWidget(props: Props) {
         theme,
         enableSeparateThemeColorSelector = true,
         enableBorderRadiusSelector = false,
+        enableInternalMarginsSelector = true,
+        commonVisualSettings,
     } = props;
     const isNewWidget = !props.openedItemData;
     const [data, setData] = React.useState(
-        omit(openedItemData, 'background', 'backgroundSettings'),
+        omit(openedItemData, 'background', 'backgroundSettings', 'internalMarginsEnabled'),
     );
     const [validationErrors, setValidationErrors] = React.useState<Record<string, string>>({});
     const {DialogImageWidgetLinkHint} = registry.common.components.getAll();
@@ -107,6 +113,11 @@ export function DialogImageWidget(props: Props) {
         isNewWidget,
     });
 
+    const {internalMarginsEnabled, setInternalMarginsEnabled, initialDisabledValue} =
+        useInternalMarginsEnabled({
+            dashSettings: commonVisualSettings,
+            currentValue: openedItemData.internalMarginsEnabled,
+        });
     const handleSrcUpdate = (nextSrc: string) => {
         setValidationErrors({
             ...validationErrors,
@@ -119,6 +130,7 @@ export function DialogImageWidget(props: Props) {
         const newData = {
             ...data,
             ...resultedBackgroundSettings,
+            internalMarginsEnabled,
         };
         const nextValidationErrors = getValidationErrors(newData);
 
@@ -200,13 +212,21 @@ export function DialogImageWidget(props: Props) {
                         enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
-                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                {enableBorderRadiusSelector && isNewDashSettingsEnabled && (
                     <FormRow className={b('row')} label={i18nCommon('label_border-radius')}>
                         <WidgetRoundingsInput
                             value={data.borderRadius}
                             onUpdate={(borderRadius) => updateData({borderRadius})}
                         />
                     </FormRow>
+                )}
+                {enableInternalMarginsSelector && isNewDashSettingsEnabled && (
+                    <InternalMarginsToggler
+                        className={b('row')}
+                        value={internalMarginsEnabled}
+                        onUpdate={setInternalMarginsEnabled}
+                        initialDisabledValue={initialDisabledValue}
+                    />
                 )}
             </Dialog.Body>
             <Dialog.Footer

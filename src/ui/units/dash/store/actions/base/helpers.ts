@@ -5,12 +5,11 @@ import type {
     QueueItem,
 } from '@gravity-ui/dashkit/helpers';
 import type {DashData} from 'shared/types';
-import {DashTabItemType, Feature} from 'shared/types';
+import {DashTabItemType} from 'shared/types';
 import {
     isGlobalWidgetVisibleByMainSetting,
     isGroupItemVisibleOnTab,
 } from 'ui/units/dash/utils/selectors';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {createNewTabState} from '../../utils';
 import type {TabsHashStates} from '../dashTyped';
@@ -115,11 +114,7 @@ export const getGlobalStatesForInactiveTabs = ({
         const currentStateQueue =
             state?.__meta__ && 'queue' in state.__meta__ ? state.__meta__.queue : null;
 
-        if (
-            !isEnabledFeature(Feature.EnableGlobalSelectors) ||
-            !currentStateQueue ||
-            !currentStateQueue?.length
-        ) {
+        if (!currentStateQueue || !currentStateQueue?.length) {
             resolve(null);
             return;
         }

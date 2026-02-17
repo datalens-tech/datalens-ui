@@ -4,9 +4,10 @@ import {ChevronDown} from '@gravity-ui/icons';
 import type {ButtonSize, ButtonView} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {CollectionItemEntities, CreateEntityButton, EntryScope, Feature} from 'shared';
-import type {WorkbookWithPermissions} from 'shared/schema';
+import type {GetSharedEntryResponse, WorkbookWithPermissions} from 'shared/schema';
 import {DIALOG_SELECT_SHARED_ENTRY} from 'ui/components/DialogSelectSharedEntry/DialogSelectSharedEntry';
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import {registry} from 'ui/registry';
@@ -14,7 +15,6 @@ import type {AppDispatch} from 'ui/store';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {showToast} from 'ui/store/actions/toaster';
 import {getSharedEntriesMenuItems} from 'ui/units/collections/components/CollectionActions/utils';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import Utils from 'ui/utils';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -36,6 +36,7 @@ type Props = {
     view?: ButtonView;
 };
 
+const i18nSharedEntry = I18n.keyset('shared-entry');
 const b = block('dl-workbook-create-entry');
 
 export const CreateEntry = React.memo<Props>(
@@ -47,11 +48,15 @@ export const CreateEntry = React.memo<Props>(
         };
 
         const handleSharedEntryAction = React.useCallback(
-            (
-                scope: EntryScope.Dataset | EntryScope.Connection,
-                collectionId: string,
-                workbookId: string,
-            ) =>
+            ({
+                scope,
+                collectionId,
+                workbookId,
+            }: {
+                scope: EntryScope.Dataset | EntryScope.Connection;
+                collectionId: string | null;
+                workbookId: string;
+            }) =>
                 () =>
                     dispatch(
                         openDialog({
@@ -60,7 +65,7 @@ export const CreateEntry = React.memo<Props>(
                                 open: true,
                                 onClose: () => dispatch(closeDialog()),
                                 collectionId,
-                                dialogTitle: getSharedEntryMockText(
+                                dialogTitle: i18nSharedEntry(
                                     `title-select-shared-entry-dialog-${scope}`,
                                 ),
                                 onSelectEntry: (entry) => {
@@ -70,6 +75,7 @@ export const CreateEntry = React.memo<Props>(
                                             props: {
                                                 open: true,
                                                 onClose: () => dispatch(closeDialog()),
+                                                delegation: entry.permissions?.createEntryBinding,
                                                 entry,
                                                 onApply: async (delegation) => {
                                                     const success = await dispatch(
@@ -92,17 +98,19 @@ export const CreateEntry = React.memo<Props>(
                                                         );
 
                                                         const addedEntry = entries?.entries.find(
-                                                            (item) =>
+                                                            (
+                                                                item,
+                                                            ): item is GetSharedEntryResponse =>
                                                                 item.entryId === entry.entryId,
                                                         );
 
                                                         dispatch(
                                                             showToast({
                                                                 type: 'success',
-                                                                title: getSharedEntryMockText(
+                                                                title: i18nSharedEntry(
                                                                     `add-entry-workbook-toast-title-${scope}`,
                                                                 ),
-                                                                content: getSharedEntryMockText(
+                                                                content: i18nSharedEntry(
                                                                     'add-entry-workbook-toast-message',
                                                                     {
                                                                         name: Utils.getEntryNameFromKey(
@@ -118,9 +126,17 @@ export const CreateEntry = React.memo<Props>(
                                         }),
                                     );
                                 },
-                                getIsInactiveEntity: (entry) =>
-                                    entry.entity === CollectionItemEntities.ENTRY &&
-                                    entry.scope !== scope,
+                                getIsInactiveEntity: (entry) => {
+                                    if (entry.entity !== CollectionItemEntities.ENTRY) {
+                                        return false;
+                                    }
+
+                                    const canCreateBinding =
+                                        entry.permissions?.createEntryBinding ||
+                                        entry.permissions?.createLimitedEntryBinding;
+
+                                    return entry.scope !== scope || !canCreateBinding;
+                                },
                             },
                         }),
                     ),
@@ -134,23 +150,19 @@ export const CreateEntry = React.memo<Props>(
             handleAction,
         });
 
-        if (
-            isEnabledFeature(Feature.EnableSharedEntries) &&
-            workbook?.collectionId &&
-            workbook?.workbookId
-        ) {
+        if (isEnabledFeature(Feature.EnableSharedEntries) && workbook?.workbookId) {
             items.push(
                 getSharedEntriesMenuItems({
-                    datasetAction: handleSharedEntryAction(
-                        EntryScope.Dataset,
-                        workbook.collectionId,
-                        workbook.workbookId,
-                    ),
-                    connectionAction: handleSharedEntryAction(
-                        EntryScope.Connection,
-                        workbook.collectionId,
-                        workbook.workbookId,
-                    ),
+                    datasetAction: handleSharedEntryAction({
+                        scope: EntryScope.Dataset,
+                        collectionId: workbook.collectionId,
+                        workbookId: workbook.workbookId,
+                    }),
+                    connectionAction: handleSharedEntryAction({
+                        scope: EntryScope.Connection,
+                        collectionId: workbook.collectionId,
+                        workbookId: workbook.workbookId,
+                    }),
                     noticeClassName: b('shared-entry-notice'),
                 }),
             );

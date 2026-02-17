@@ -190,6 +190,9 @@ export const DL = {
     get AUTH_SIGNUP_DISABLED() {
         return window.DL.authSignupDisabled === true;
     },
+    get AUTH_COOKIE_NAME() {
+        return window.DL.authCookieName;
+    },
     get IS_AUTH_PAGE() {
         return Boolean(window.DL.authPageSettings?.isAuthPage);
     },
@@ -253,6 +256,9 @@ export const DL = {
     get IS_NATIVE_AUTH_ADMIN() {
         return window.DL.user.roles?.includes(UserRole.Admin);
     },
+    get AI_CONFIG() {
+        return window.DL.aiConfig;
+    },
 };
 
 // monaco-editor common themes:
@@ -268,8 +274,6 @@ export const DATALENS_DARK_THEME_MONACO = 'vs-dark-datalens';
 export const DATALENS_DARK_HC_THEME_MONACO = 'vs-dark-hc-datalens';
 
 export const PRODUCT_NAME = 'DataLens';
-// TODO: remove CHARTS-11919
-export const REBRANDING_PRODUCT_NAME = `Yandex ${PRODUCT_NAME}`;
 export const FULL_PRODUCT_NAME = `Yandex ${PRODUCT_NAME}`;
 
 export const URL_OPTIONS = {
@@ -338,7 +342,6 @@ export const URL_QUERY = {
     UNRELEASED: 'unreleased',
     LOCAL_CONFIG: '_use_local_config',
     BINDED_WORKBOOK: 'bindedWorkbookId',
-    BINDED_DATASET_WOKRBOOK_ID: 'bindedDatasetWorkbookId',
     BINDED_DATASET: 'bindedDatasetId',
 };
 

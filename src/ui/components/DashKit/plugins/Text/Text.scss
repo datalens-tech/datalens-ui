@@ -8,12 +8,12 @@
         height: 100%;
         padding-right: 5px;
 
-        #{$class}_with-color & {
+        #{$class}_with-internal-margins & {
             padding: 0;
         }
     }
 
-    &_with-color .dashkit-plugin-text {
+    &_with-internal-margins .dashkit-plugin-text {
         padding: 0 10px;
 
         > .yfm > {

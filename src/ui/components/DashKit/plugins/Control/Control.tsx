@@ -49,7 +49,7 @@ import {
     addOperationForValue,
     unwrapFromArrayAndSkipOperation,
 } from '../../../../units/dash/modules/helpers';
-import type {CommonPluginProps} from '../../DashKit';
+import type {CommonGlobalWidgetSettings} from '../../DashKit';
 import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout, getControlHint} from '../../utils';
@@ -80,8 +80,7 @@ type ContextProps = {
     workbookId?: WorkbookId;
 };
 
-type PluginControlRendererProps = PluginWidgetProps &
-    Omit<CommonPluginProps, 'background' | 'backgroundSettings'>;
+type PluginControlRendererProps = PluginWidgetProps;
 
 export interface PluginControlProps
     extends PluginControlRendererProps,
@@ -95,7 +94,7 @@ export interface PluginControlProps
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: ControlSettings['getDistincts'];
-    globalWidgetSettings?: ControlSettings['globalWidgetSettings'];
+    globalWidgetSettings?: CommonGlobalWidgetSettings;
 }
 
 const b = block('dashkit-plugin-control');
@@ -184,9 +183,11 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 this.adjustWidgetLayout(true);
             }
         }
+        const currentSignigicantParams = this.filterSignificantParams(this.props.params);
+
         const hasDataChanged = !isEqual(this.props.data, prevProps.data);
         const hasParamsChanged = !isEqual(
-            this.filterSignificantParams(this.props.params),
+            currentSignigicantParams,
             this.filterSignificantParams(prevProps.params),
         );
 
@@ -200,6 +201,18 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             this.initialParams = {
                 params: initialParams,
             } as ChartInitialParams;
+        }
+
+        if (hasParamsChanged) {
+            this.context?.updateTabsWithGlobalState?.({
+                params: currentSignigicantParams,
+                selectorItem: {
+                    type: DashTabItemType.Control,
+                    data: this.propsControlData,
+                    id: this.props.id,
+                },
+                appliedSelectorsIds: [this.props.id],
+            });
         }
 
         const hasChanged = hasDataChanged || hasParamsChanged || hasDefaultsChanged;
@@ -500,16 +513,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     };
 
     onChange = ({param, value}: {param: string; value: string | string[]}) => {
-        const params: StringParams = {[param]: value};
-        this.context?.updateTabsWithGlobalState?.({
-            params,
-            selectorItem: {
-                type: DashTabItemType.Control,
-                data: this.propsControlData,
-                id: this.props.id,
-            },
-            appliedSelectorsIds: [this.props.id],
-        });
         this.props.onStateAndParamsChange({params: {[param]: value}}, {action: 'setParams'});
     };
 
@@ -524,15 +527,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         // }
         if (type === 'PARAMS_CHANGED') {
             const {params} = data as {params: StringParams};
-            this.context?.updateTabsWithGlobalState?.({
-                params,
-                selectorItem: {
-                    type: DashTabItemType.Control,
-                    data: this.propsControlData,
-                    id: this.props.id,
-                },
-                appliedSelectorsIds: [this.props.id],
-            });
             this.props.onStateAndParamsChange({params: params || {}});
         }
     };
@@ -720,16 +714,16 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     render() {
-        const {data, editMode, id, workbookId, globalWidgetSettings, borderRadius} = this.props;
+        const {data, editMode, id, workbookId, globalWidgetSettings} = this.props;
         const controlData = data as unknown as
             | DashTabItemControlExternal
             | DashTabItemControlManual
             | DashTabItemControlDataset;
         const {sourceType, source} = controlData;
 
-        const resultedBorderRadius = borderRadius ?? globalWidgetSettings?.borderRadius;
+        const borderRadius = globalWidgetSettings?.borderRadius;
 
-        const style = resultedBorderRadius ? {borderRadius: resultedBorderRadius} : undefined;
+        const style = borderRadius ? {borderRadius} : undefined;
 
         if (sourceType === DashTabItemControlSourceType.External) {
             const chartId = source.chartId;

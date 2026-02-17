@@ -1,7 +1,7 @@
 import type {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
-import type {WorkbookEntry} from 'ui/units/workbooks/types/index';
+import type {WorkbookUnionEntry} from 'ui/units/workbooks/types/index';
 
-interface WorkbookEntriesTableProps<T extends WorkbookEntry> {
+interface WorkbookEntriesTableProps<T extends WorkbookUnionEntry> {
     workbook: WorkbookWithPermissions;
     onRenameEntry?: (data: T) => void;
     onDeleteEntry?: (data: T) => void;

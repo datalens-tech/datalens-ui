@@ -1,6 +1,6 @@
 import path from 'path';
 
-import type {AppContext} from '@gravity-ui/nodekit';
+import {type AppContext, USER_LANGUAGE_PARAM_NAME} from '@gravity-ui/nodekit';
 import type {Pool, Proxy, WorkerPoolOptions} from 'workerpool';
 import workerpool from 'workerpool';
 
@@ -30,13 +30,13 @@ async function getQlWorker(options?: WorkerPoolOptions): Promise<Proxy<WizardWor
 }
 
 export const runQlChart: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
-    const {req, res, config} = props;
+    const {req, runnerLocals, config} = props;
     const {widgetConfig} = req.body;
     const timeouts = cx.config.runnerExecutionTimeouts?.qlChart;
 
     const chartBuilder = await getWizardChartBuilder({
-        userLang: res.locals && res.locals.lang,
-        userLogin: res.locals && res.locals.login,
+        userLang: cx.get(USER_LANGUAGE_PARAM_NAME) || '',
+        userLogin: runnerLocals.login || '',
         widgetConfig,
         config: config as ResolvedConfig,
         isScreenshoter: Boolean(req.headers['x-charts-scr']),

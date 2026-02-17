@@ -3,8 +3,7 @@ import React from 'react';
 import type {AxiosResponse} from 'axios';
 import debounce from 'lodash/debounce';
 import {useHistory} from 'react-router-dom';
-import {DashTabItemType} from 'shared';
-import type {DashSettings, DashTabItemControl, DashTabItemControlData} from 'shared';
+import type {DashSettings, DashTabItemControl} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 import {useBeforeLoad} from 'ui/hooks/useBeforeLoad';
 import type {ExtendedDashKitContextType} from 'ui/units/dash/typings/context';
@@ -85,7 +84,6 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         settings,
         data,
         onActivityComplete,
-        updateTabsWithGlobalState,
     } = props;
 
     const [isRendered, setIsRendered] = React.useState(false);
@@ -148,19 +146,10 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     const handleChangeCallback = React.useCallback(
         (changedProps) => {
             if (changedProps.type === 'PARAMS_CHANGED') {
-                updateTabsWithGlobalState?.({
-                    params: changedProps.data.params,
-                    selectorItem: {
-                        type: DashTabItemType.Control,
-                        data: data as unknown as DashTabItemControlData,
-                        id: widgetId,
-                    },
-                    appliedSelectorsIds: [widgetId],
-                });
                 onStateAndParamsChange({params: changedProps.data.params || {}});
             }
         },
-        [data, onStateAndParamsChange, updateTabsWithGlobalState, widgetId],
+        [onStateAndParamsChange],
     );
 
     /**

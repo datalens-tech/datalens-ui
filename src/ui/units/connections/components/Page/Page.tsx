@@ -11,7 +11,7 @@ import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import {type ConnectorType, Feature} from 'shared';
+import {type ConnectorType, Feature, SharedEntriesBaseQa} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {PageTitle, SlugifyUrl, URL_QUERY, Utils} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
@@ -24,7 +24,6 @@ import {
     openDialogSaveDraftChartAsActualConfirm,
 } from 'ui/store/actions/dialog';
 import type {DataLensApiError} from 'ui/typings';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ErrorViewProps} from '../';
@@ -55,6 +54,7 @@ import './Page.scss';
 
 const b = block('conn-page');
 const i18n = I18n.keyset('connections.form');
+const i18nSharedEntry = I18n.keyset('shared-entry');
 
 type DispatchState = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -162,7 +162,7 @@ const PageComponent = (props: PageProps) => {
     const bindedDatasetId = currentSearchParams.get(URL_QUERY.BINDED_DATASET);
     const isSharedConnection = getIsSharedConnection(originalEntry);
     const isWorkbookSharedEntry = isSharedConnection && bindedWorkbookId && !bindedDatasetId;
-    const isReadonly = isSharedConnection && (bindedWorkbookId || bindedDatasetId);
+    const isReadonly = Boolean(isSharedConnection && (bindedWorkbookId || bindedDatasetId));
 
     const entry = isWorkbookSharedEntry
         ? {...originalEntry, workbookId: bindedWorkbookId, collectionId: null}
@@ -187,7 +187,11 @@ const PageComponent = (props: PageProps) => {
         isShowCreateButtons = Boolean(entry.permissions?.edit);
     }
 
-    if (isSharedConnection && bindedDatasetId) {
+    if (entry?.collectionId && !isFakeEntry) {
+        isShowCreateButtons = Boolean(entry.permissions?.edit);
+    }
+
+    if (isReadonly || (!entry?.entryId && !isFakeEntry) || apiErrors.entry) {
         isShowCreateButtons = false;
     }
 
@@ -272,8 +276,9 @@ const PageComponent = (props: PageProps) => {
                           onClick={() => {
                               history.push(location.pathname);
                           }}
+                          qa={SharedEntriesBaseQa.OpenOriginalBtn}
                       >
-                          {getSharedEntryMockText('workbook-shared-entry-original-link')}
+                          {i18nSharedEntry('workbook-shared-entry-original-link')}
                       </Button>,
                   ]
                 : undefined,
@@ -292,7 +297,7 @@ const PageComponent = (props: PageProps) => {
             <div className={b()}>
                 {entry && (
                     <ActionPanel
-                        className={b('action-panel', {readonly: Boolean(isReadonly)})}
+                        className={b('action-panel', {readonly: isReadonly})}
                         entry={entry}
                         lastCrumbAdditionalContent={lastCrumbAdditionalContent}
                         centerItems={actionPanelCenterItems}
@@ -302,6 +307,7 @@ const PageComponent = (props: PageProps) => {
                                     className={spacing({mr: 2})}
                                     key="additional-actions"
                                     connectionId={extractedEntryId}
+                                    disabled={!isShowCreateButtons}
                                 />
                             ),
                             <DescriptionButton
@@ -314,6 +320,7 @@ const PageComponent = (props: PageProps) => {
                                     entryId={extractedEntryId}
                                     entryKey={(connectionData[FieldKey.Key] as string) || ''}
                                     s3BasedFormOpened={s3BasedFormOpened}
+                                    isSharedConnection={isSharedConnection}
                                     workbookId={workbookId || entry?.workbookId || bindedWorkbookId}
                                 />
                             ),

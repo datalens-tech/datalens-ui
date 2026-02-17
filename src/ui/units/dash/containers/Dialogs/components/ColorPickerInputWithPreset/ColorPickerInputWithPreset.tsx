@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {computeColorFromToken} from 'ui/utils/widgetColors';
+import {computeColorFromToken} from 'ui/utils/widgets/colors';
 
 import {
     ColorPickerInput,

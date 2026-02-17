@@ -46,6 +46,7 @@ type ExtendedLineSeries = Omit<AreaSeries, 'data'> & {
     data: ExtendedLineSeriesData[];
 };
 
+// eslint-disable-next-line complexity
 export function prepareGravityChartArea(args: PrepareFunctionArgs) {
     const {
         visualizationId,
@@ -82,10 +83,11 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         };
     }
 
+    const segmentField = split?.[0];
     const segmentsMap = getSegmentMap(args);
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
-    const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
-    const isSplitWithHtmlValues = isHtmlField(split?.[0]);
+    const isSplitEnabled = Boolean(segmentField);
+    const isSplitWithHtmlValues = isHtmlField(segmentField);
 
     const preparedData = prepareLineData(args);
     const xCategories = preparedData.categories;
@@ -235,17 +237,22 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
                 },
                 plotIndex: d.index,
                 title: axisTitle,
+                startOnTick: isSplitEnabled,
+                endOnTick: isSplitEnabled,
             });
         }),
         legend,
-        split: {
-            enable: isSplitEnabled,
+    };
+
+    if (isSplitEnabled) {
+        config.split = {
+            enable: true,
             gap: '40px',
             plots: segments.map(() => {
                 return {};
             }),
-        },
-    };
+        };
+    }
 
     if (yFields[0]) {
         config.tooltip = {

@@ -1,22 +1,22 @@
 import React from 'react';
 
 import {Alert, Dialog, Link, Text, TextInput, spacing} from '@gravity-ui/uikit';
+import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
-import {CollectionItemEntities} from 'shared';
-import type {GetEntryResponse} from 'shared/schema';
+import {CollectionItemEntities, SharedEntriesAddFromLinkDialogQa} from 'shared';
+import type {GetEntryResponse, StructureItem} from 'shared/schema';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {registry} from 'ui/registry';
 import {showToast} from 'ui/store/actions/toaster';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import * as yup from 'yup';
 
 import DialogManager from '../DialogManager/DialogManager';
 
 type DialogAddSharedEntryFromLinkProps = {
     open: boolean;
-    isValidEntry: (entry: GetEntryResponse) => boolean;
+    isValidEntry: (entry: Partial<StructureItem>) => boolean;
     onClose: () => void;
-    onSuccess: (entry: GetEntryResponse) => void;
+    onSuccess: (entry: Partial<StructureItem>) => void;
 };
 
 export const DIALOG_ADD_SHARED_ENTRY_FROM_LINK = Symbol('DIALOG_ADD_SHARED_ENTRY_FROM_LINK');
@@ -26,15 +26,14 @@ export interface OpenDialogAddSharedEntryFromLinkArgs {
     props: DialogAddSharedEntryFromLinkProps;
 }
 
+const i18n = I18n.keyset('component.dialog-add-shared-entry-from-link.view');
+
 const getIsSharedEntry = (
-    entry: GetEntryResponse,
+    entry: Partial<GetEntryResponse>,
 ): entry is GetEntryResponse & {collectionId: string} => {
     return typeof entry.collectionId === 'string';
 };
-const urlSchema = yup
-    .string()
-    .url(getSharedEntryMockText('add-shared-connection-from-link-dialog-error'))
-    .required(getSharedEntryMockText('add-shared-connection-from-link-dialog-required'));
+const urlSchema = yup.string().url(i18n('link-error')).required(i18n('required-error'));
 
 export const DialogAddSharedEntryFromLink: React.FC<DialogAddSharedEntryFromLinkProps> = ({
     open,
@@ -58,43 +57,52 @@ export const DialogAddSharedEntryFromLink: React.FC<DialogAddSharedEntryFromLink
             const extractedId = extractEntryId(url.pathname);
 
             if (!extractedId) {
-                showError(getSharedEntryMockText('add-shared-connection-from-link-dialog-error'));
+                showError(i18n('link-error'));
                 return;
             }
 
-            const entry = await getSdk().sdk.us.getEntry({
+            const entry = await getSdk().sdk.us.getSharedEntryInfo({
                 entryId: extractedId,
                 includePermissionsInfo: true,
             });
 
             const isSharedEntry = getIsSharedEntry(entry);
+            const {fullPermissions, ...restEntry} = entry;
+            const isCanCreateBinding =
+                fullPermissions?.createEntryBinding || fullPermissions?.createLimitedEntryBinding;
             if (!isSharedEntry) {
-                showError(
-                    getSharedEntryMockText('add-shared-connection-from-link-dialog-entry-error'),
-                );
+                showError(i18n('entry-error'));
                 return;
             }
 
-            const extendedEntry = {
-                ...entry,
+            if (!isCanCreateBinding) {
+                showError(i18n(`no-access-for-binding-create`));
+                return;
+            }
+
+            const extendedEntry: Partial<StructureItem> = {
+                ...restEntry,
+                permissions: fullPermissions,
                 entity: CollectionItemEntities.ENTRY,
             };
 
             if (!isValidEntry(extendedEntry)) {
-                showError(
-                    getSharedEntryMockText('add-shared-connection-from-link-dialog-entry-error'),
-                );
+                showError(i18n('entry-error'));
                 return;
             }
 
             onSuccess(extendedEntry);
-        } catch (e: any) {
-            dispatch(
-                showToast({
-                    title: e.message,
-                    error: e,
-                }),
-            );
+        } catch (e) {
+            if (e.status === 403) {
+                showError(i18n(`no-access-for-binding-create`));
+            } else {
+                dispatch(
+                    showToast({
+                        title: e.message,
+                        error: e,
+                    }),
+                );
+            }
         } finally {
             setIsLoading(false);
         }
@@ -120,21 +128,20 @@ export const DialogAddSharedEntryFromLink: React.FC<DialogAddSharedEntryFromLink
 
     return (
         <Dialog size="m" open={open} onClose={onCloseHandler}>
-            <Dialog.Header
-                caption={getSharedEntryMockText('add-shared-connection-from-link-dialog-title')}
-            />
+            <Dialog.Header caption={i18n('dialog-title')} />
             <Dialog.Body>
                 <Alert
                     theme="info"
                     message={
                         <Text variant="body-1">
-                            {getSharedEntryMockText('add-shared-connection-from-link-info-message')}
+                            {i18n('info-message')}
+                            {' '}
                             <Link
                                 // TODO doc link
                                 href="/"
                                 target="_blank"
                             >
-                                {getSharedEntryMockText('permissions-dialog-documentation-link')}
+                                {i18n('documentation-link-text')}
                             </Link>
                         </Text>
                     }
@@ -143,25 +150,23 @@ export const DialogAddSharedEntryFromLink: React.FC<DialogAddSharedEntryFromLink
                     value={textValue}
                     onUpdate={onUpdate}
                     className={spacing({mt: 4})}
-                    label={getSharedEntryMockText(
-                        'add-shared-connection-from-link-dialog-input-label',
-                    )}
+                    label={i18n('input-label')}
                     error={error}
                     disabled={isLoading}
+                    qa={SharedEntriesAddFromLinkDialogQa.LintTextInput}
                 />
             </Dialog.Body>
             <Dialog.Footer
-                textButtonApply={getSharedEntryMockText(
-                    'add-shared-connection-from-link-dialog-apply',
-                )}
+                textButtonApply={i18n('apply-btn')}
                 propsButtonCancel={{
                     view: 'flat',
                 }}
                 loading={isLoading}
                 propsButtonApply={{
+                    qa: SharedEntriesAddFromLinkDialogQa.ApplyBtn,
                     disabled: Boolean(error) || !textValue,
                 }}
-                textButtonCancel={getSharedEntryMockText('cancel-unbind-dialog')}
+                textButtonCancel={i18n('cancel-btn')}
                 onClickButtonApply={onSubmit}
                 onClickButtonCancel={onCloseHandler}
             />

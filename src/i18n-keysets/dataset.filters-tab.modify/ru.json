@@ -1,4 +1,7 @@
 {
+  "empty-filters-readonly-alert-message": "Для добавления фильтров перейдите к оригиналу датасета",
+  "filters-readonly-alert-message": "Для редактирования и добавления фильтров перейдите к оригиналу датасета",
+  "filters-readonly-alert-title": "Фильтры отсутствуют",
   "label_filter-list-field-th": "Поле",
   "label_filter-list-value-th": "Значение",
   "label_obligatory-filter-add": "Добавить",

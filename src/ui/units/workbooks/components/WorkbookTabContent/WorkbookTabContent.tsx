@@ -29,7 +29,7 @@ import {
     selectWorkbookSharedEntriesIsLoading,
     selectWorkbookSharedItems,
 } from '../../store/selectors';
-import type {WorkbookEntriesFilters, WorkbookSharedEntry} from '../../types';
+import type {WorkbookEntriesFilters, WorkbookEntry, WorkbookSharedEntry} from '../../types';
 import {EmptyWorkbookContainer} from '../EmptyWorkbook/EmptyWorkbookContainer';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
 import {TAB_ALL} from '../WorkbookTabs/constants';
@@ -74,7 +74,7 @@ export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filt
             : [];
     }, [getWorkbookTabs, workbook]) as EntryScope[];
 
-    const chunks = useChunkedEntries({entries, availableScopes});
+    const chunks = useChunkedEntries<WorkbookEntry>({entries, availableScopes});
     const sharedChunks = useChunkedEntries<WorkbookSharedEntry>({
         entries: sharedEntries,
         availableScopes: [EntryScope.Connection, EntryScope.Dataset],

@@ -2,6 +2,7 @@ export enum AvatarQA {
     DeleteButton = 'ds-avatar-delete-button',
     RelationsMapContainer = 'ds-avatar-relations-map-container',
     RelationsMapCanvas = 'ds-avatar-relations-map-canvas',
+    Avatar = 'ds-avatar',
 }
 
 export enum ParametersQA {
@@ -39,10 +40,20 @@ export enum DatasetTabSectionQA {
 
 export enum DatasetPanelQA {
     TabRadio = 'dataset-panel-tab-radio',
+    UpdateFieldsButton = 'dataset-panel-update-fields-button',
+    PreviewButton = 'dataset-panel-preview-button',
 }
 
 export enum DatasetSourcesLeftPanelQA {
     ConnSelection = 'dataset-sources-conn-selection',
+    ConnContextMenuBtn = 'dataset-sources-conn-context-menu-btn',
+    ConnContextMenuOpen = 'dataset-sources-conn-context-menu-open',
+    ConnContextMenuReplace = 'dataset-sources-conn-context-menu-replace',
+    ConnContextMenuDelete = 'dataset-sources-conn-context-menu-delete',
+    SelectSourcesDbName = 'dataset-sources-db-name-select',
+    SourcesServerSearchInput = 'dataset-sources-server-search-input',
+    SourcesList = 'dataset-sources-list',
+    SourcesListRetryButton = 'dataset-sources-list-retry-button',
 }
 
 export enum DatasetActionQA {
@@ -61,3 +72,15 @@ export const DATASET_TAB = {
     SOURCES: 'sources',
     PARAMETERS: 'parameters',
 } as const;
+
+export const DatasetSourcesTableQa = {
+    Source: 'ds-source',
+    SourceMenu: 'ds-source-menu',
+    SourceContextMenuBtn: 'ds-source-context-menu-btn',
+    SourceContextMenuDelete: 'ds-source-context-menu-delete',
+    SourceContextMenuModify: 'ds-source-context-menu-modify',
+} as const;
+
+export enum DatasetPreviewQA {
+    Preview = 'dataset-preview',
+}

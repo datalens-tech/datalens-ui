@@ -6,11 +6,20 @@ import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
 import type {DashTabItemText} from 'shared';
-import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA, Feature} from 'shared';
+import {
+    CustomPaletteBgColors,
+    DashCommonQa,
+    DialogDashWidgetItemQA,
+    DialogDashWidgetQA,
+    Feature,
+} from 'shared';
+import {InternalMarginsToggler} from 'ui/units/dash/containers/Dialogs/components/InternalMarginsToggler/InternalMarginsToggler';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {useInternalMarginsEnabled} from 'ui/utils/widgets/internalMargins';
 
 import type {SetItemDataPayload} from '../../units/dash/store/actions/dashTyped';
+import type {CommonVisualSettings} from '../DashKit/DashKit';
 import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
 import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 import type {WysiwygEditorRef} from '../WysiwygEditor/WysiwygEditor';
@@ -26,9 +35,11 @@ export interface DialogTextWidgetFeatureProps {
     enableCustomBgColorSelector?: boolean;
     enableSeparateThemeColorSelector?: boolean;
     enableBorderRadiusSelector?: boolean;
+    enableInternalMarginsSelector?: boolean;
 }
 
 export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {
+    commonVisualSettings: CommonVisualSettings;
     openedItemId: string | null;
     openedItemData: DashTabItemText['data'];
     dialogIsVisible: boolean;
@@ -45,12 +56,13 @@ interface DialogTextWidgetState {
     autoHeight?: boolean;
     borderRadius?: number;
     isError?: boolean;
+    internalMarginsEnabled?: boolean;
 }
 
 const INPUT_TEXT_ID = 'widgetTextField';
 const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
-
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
+const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
 
 const DEFAULT_OPENED_ITEM_DATA: DashTabItemText['data'] = {
     text: '',
@@ -74,15 +86,16 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         enableCustomBgColorSelector = false,
         enableSeparateThemeColorSelector = true,
         enableBorderRadiusSelector = false,
+        enableInternalMarginsSelector = true,
         openedItemData = DEFAULT_OPENED_ITEM_DATA,
         dialogIsVisible,
         closeDialog,
         setItemData,
         openedItemId,
+        commonVisualSettings,
     } = props;
 
     const isNewWidget = !props.openedItemData;
-
     const [state, setState] = React.useState<DialogTextWidgetState>({
         text: openedItemData.text,
         autoHeight: Boolean(openedItemData.autoHeight),
@@ -104,6 +117,11 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         isNewWidget,
     });
 
+    const {internalMarginsEnabled, setInternalMarginsEnabled, initialDisabledValue} =
+        useInternalMarginsEnabled({
+            dashSettings: commonVisualSettings,
+            currentValue: openedItemData.internalMarginsEnabled,
+        });
     const [prevDialogIsVisible, setPrevDialogIsVisible] = React.useState<boolean | undefined>();
 
     React.useEffect(() => {
@@ -152,12 +170,13 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
                     text,
                     autoHeight,
                     borderRadius,
+                    internalMarginsEnabled,
                     ...resultedBackgroundSettings,
                 },
             },
         });
         closeDialog();
-    }, [state, setItemData, closeDialog, resultedBackgroundSettings]);
+    }, [state, setItemData, closeDialog, resultedBackgroundSettings, internalMarginsEnabled]);
 
     const handleAutoHeightChanged = React.useCallback(() => {
         setState((prevState) => ({...prevState, autoHeight: !prevState.autoHeight}));
@@ -205,7 +224,15 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
                         enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
-                {enableBorderRadiusSelector && isEnabledFeature(Feature.EnableNewDashSettings) && (
+                {enableInternalMarginsSelector && isNewDashSettingsEnabled && (
+                    <InternalMarginsToggler
+                        className={b('row')}
+                        value={internalMarginsEnabled}
+                        onUpdate={setInternalMarginsEnabled}
+                        initialDisabledValue={initialDisabledValue}
+                    />
+                )}
+                {enableBorderRadiusSelector && isNewDashSettingsEnabled && (
                     <FormRow className={b('row')} label={i18nCommon('label_border-radius')}>
                         <WidgetRoundingsInput value={borderRadius} onUpdate={setBorderRadius} />
                     </FormRow>
@@ -221,6 +248,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
                             className={b('checkbox')}
                             checked={Boolean(autoHeight)}
                             onChange={handleAutoHeightChanged}
+                            qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
                         />
                     </FormRow>
                 )}

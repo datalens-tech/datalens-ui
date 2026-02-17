@@ -9,7 +9,7 @@ import type {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
 import type {GraphWidget} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
 import {getTooltipHeaderFormat, getTooltipRenderer, getTooltipRowRenderer} from '../tooltip';
-import {getEscapedActionParams, getNormalizedClickActions} from '../utils';
+import {getEscapedActionParams, getIsHolidaysEnabled, getNormalizedClickActions} from '../utils';
 
 import {convertChartCommentsToPlotBandsAndLines, shouldUseCommentsOnYAxis} from './comments';
 import {handleClick} from './event-handlers';
@@ -62,6 +62,10 @@ export function getGravityChartsChartKitData(args: {
     };
 
     const result = merge({}, chartWidgetData, widgetData);
+
+    if (result.title) {
+        result.title.qa = 'g-charts-title';
+    }
 
     if (!result.tooltip) {
         result.tooltip = {};
@@ -121,8 +125,8 @@ export function getGravityChartsChartKitData(args: {
     const comments = hideComments ? [] : get(loadedData, 'comments', []);
     const {plotBands, plotLines} = convertChartCommentsToPlotBandsAndLines({comments});
 
-    const hideHolidaysBands = get(loadedData, 'config.hideHolidaysBands', false);
-    const holidaysPlotBands = hideHolidaysBands
+    const isHolidaysEnabled = getIsHolidaysEnabled({widgetData: loadedData});
+    const holidaysPlotBands = isHolidaysEnabled
         ? []
         : convertHolidaysToPlotBands({holidays: chartkitHolidays, loadedData});
 

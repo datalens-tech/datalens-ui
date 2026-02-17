@@ -1,6 +1,6 @@
-import {SquareHashtag} from '@gravity-ui/icons';
+import {BucketPaint, SquareHashtag} from '@gravity-ui/icons';
 
-import type {Shared} from '../../../shared';
+import {PlaceholderId, type Shared} from '../../../shared';
 import {prepareFieldToMeasureTransformation} from '../../units/wizard/utils/visualization';
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES_AND_MARKUP} from '../misc';
 
@@ -17,7 +17,7 @@ export const METRIC_VISUALIZATION: Shared['visualization'] = {
             allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
             allowedFinalTypes: ITEM_TYPES.MEASURES,
             allowedDataTypes: PRIMITIVE_DATA_TYPES_AND_MARKUP,
-            id: 'measures',
+            id: PlaceholderId.Measures,
             type: 'measures',
             title: 'section_measure',
             iconProps: {data: SquareHashtag},
@@ -25,6 +25,14 @@ export const METRIC_VISUALIZATION: Shared['visualization'] = {
             required: true,
             capacity: 1,
             transform: prepareFieldToMeasureTransformation,
+        },
+        {
+            allowedTypes: ITEM_TYPES.NIL,
+            id: PlaceholderId.Colors,
+            type: 'colors',
+            title: 'section_colors',
+            iconProps: {data: BucketPaint},
+            items: [],
         },
     ],
 };

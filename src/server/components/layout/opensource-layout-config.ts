@@ -92,6 +92,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         docsUrl: config.docsUrl,
         orderedAuthRoles: config.orderedAuthRoles,
         authSignupDisabled: req.ctx.config.authSignupDisabled,
+        authCookieName: req.ctx.config.authCookieName,
         tenantSettings,
         ...appLayoutSettings.DL,
     };

@@ -1,5 +1,5 @@
-import type {Request, Response} from '@gravity-ui/expresskit';
-import type {AppContext} from '@gravity-ui/nodekit';
+import type {Request} from '@gravity-ui/expresskit';
+import {type AppContext, USER_ID_PARAM_NAME, USER_LANGUAGE_PARAM_NAME} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
 import type {ControlType, EntryPublicAuthor, WorkbookId} from '../../../../shared';
@@ -20,6 +20,8 @@ import type {ChartsEngine} from '../index';
 import type {ChartStorageType} from '../types';
 
 import {prepareErrorForLogger} from './utils';
+
+import type {RunnerHandlerResult, RunnerLocals} from '.';
 
 export type Runners = 'Worker' | 'Wizard' | 'Ql' | 'Editor' | 'Control';
 
@@ -145,7 +147,7 @@ export function engineProcessingCallback({
 }
 
 export const getSerializableProcessorParams = ({
-    res,
+    runnerLocals,
     req,
     ctx,
     configResolving,
@@ -156,7 +158,7 @@ export const getSerializableProcessorParams = ({
     forbiddenFields,
     secureConfig,
 }: {
-    res: Response;
+    runnerLocals: RunnerLocals;
     req: Request;
     ctx: AppContext;
     configResolving: number;
@@ -173,9 +175,12 @@ export const getSerializableProcessorParams = ({
     forbiddenFields?: ProcessorParams['forbiddenFields'];
     secureConfig?: ProcessorParams['secureConfig'];
 }): SerializableProcessorParams => {
+    const locals = runnerLocals;
+
     const {params, actionParams, widgetConfig} = req.body;
 
-    const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
+    const iamToken =
+        locals.iamToken ?? (req.headers[ctx.config.headersMap.subjectToken] as string) ?? null;
 
     const configName = req.body.key;
     const configId = req.body.id;
@@ -215,12 +220,12 @@ export const getSerializableProcessorParams = ({
         paramsOverride: params,
         actionParamsOverride: actionParams,
         widgetConfig,
-        userLang: res.locals && res.locals.lang,
-        userLogin: res.locals && res.locals.login,
-        userId: res.locals && res.locals.userId,
-        subrequestHeaders: res.locals.subrequestHeaders,
+        userLang: ctx.get(USER_LANGUAGE_PARAM_NAME) || null,
+        userLogin: locals.login,
+        userId: ctx.get(USER_ID_PARAM_NAME) || null,
+        subrequestHeaders: locals.subrequestHeaders,
         iamToken,
-        isEditMode: Boolean(res.locals.editMode),
+        isEditMode: locals.editMode,
         configResolving,
         cacheToken: req.headers['x-charts-cache-token'] || null,
         forbiddenFields,
@@ -272,7 +277,7 @@ export const getSerializableProcessorParams = ({
 };
 
 export function commonRunner({
-    res,
+    runnerLocals,
     req,
     ctx,
     chartType,
@@ -288,7 +293,7 @@ export function commonRunner({
     forbiddenFields,
     secureConfig,
 }: {
-    res: Response;
+    runnerLocals: RunnerLocals;
     req: Request;
     ctx: AppContext;
     chartType?: string;
@@ -309,16 +314,18 @@ export function commonRunner({
     subrequestHeadersKind?: string;
     forbiddenFields?: ProcessorParams['forbiddenFields'];
     secureConfig?: ProcessorParams['secureConfig'];
-}): Promise<void> {
+}): Promise<RunnerHandlerResult> {
     const telemetryCallbacks = chartsEngine.telemetryCallbacks;
     const cacheClient = chartsEngine.cacheClient;
     const sourcesConfig = chartsEngine.sources;
     const hooks = new ProcessorHooks({processorHooks: chartsEngine.processorHooks});
 
-    res.locals.subrequestHeaders['x-chart-kind'] = chartType;
+    if (chartType) {
+        runnerLocals.subrequestHeaders['x-chart-kind'] = chartType;
+    }
 
     const serializableProcessorParams = getSerializableProcessorParams({
-        res,
+        runnerLocals,
         req,
         ctx,
         configResolving,
@@ -349,11 +356,18 @@ export function commonRunner({
             });
         })
         .then((result) => {
-            res.status(result.status).send(result.payload);
+            return {
+                status: result.status,
+                payload: result.payload,
+            };
         })
         .catch((error) => {
             ctx.logError('CHARTS_ENGINE_PROCESSOR_UNHANDLED_ERROR', error);
-            res.status(500).send('Internal error');
+
+            return {
+                status: 500,
+                payload: 'Internal error',
+            };
         })
         .finally(() => {
             ctx.end();

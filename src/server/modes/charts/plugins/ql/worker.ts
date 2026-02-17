@@ -3,7 +3,11 @@ import {workerData} from 'worker_threads';
 import workerPool from 'workerpool';
 
 import type {QlConfig, QlExtendedConfig} from '../../../../../shared';
-import {WizardVisualizationId, isGravityChartsVisualization} from '../../../../../shared';
+import {
+    WizardVisualizationId,
+    isGravityChartsVisualization,
+    isYAGRVisualization,
+} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {Console} from '../../../../components/charts-engine';
 import type {GetChartApiContextArgs} from '../../../../components/charts-engine/components/processor/chart-api-context';
@@ -93,7 +97,14 @@ const worker: WizardWorker = {
                 break;
             }
             default: {
-                if (isGravityChartsVisualization({id: visualizationId, features})) {
+                const shouldUseYagr = isYAGRVisualization(
+                    serverChartConfig.chartType,
+                    visualizationId,
+                );
+                if (
+                    !shouldUseYagr &&
+                    isGravityChartsVisualization({id: visualizationId, features})
+                ) {
                     result = {};
                 } else {
                     result = qlModule.buildLibraryConfig({

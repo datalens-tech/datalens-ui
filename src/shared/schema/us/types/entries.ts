@@ -42,7 +42,25 @@ export interface GetEntryResponse extends EntryFields {
 }
 export interface GetSharedEntryResponse extends GetEntryResponse {
     isDelegated: boolean;
+    isRestricted?: false;
 }
+
+export interface RestrictedSharedEntry
+    extends Pick<
+        GetSharedEntryResponse,
+        | 'entryId'
+        | 'collectionId'
+        | 'isDelegated'
+        | 'isLocked'
+        | 'scope'
+        | 'type'
+        | 'workbookId'
+        | 'permissions'
+        | 'fullPermissions'
+    > {
+    isRestricted: true;
+}
+
 export interface GetEntryArgs {
     entryId: string;
     workbookId?: WorkbookId;
@@ -138,6 +156,14 @@ export type GetEntriesArgs = EntriesCommonArgs & {
 
 export type MoveEntryResponse = EntryFields[];
 
+export type GetSharedEntryInfoResponse = Pick<
+    GetEntryResponse,
+    'permissions' | 'fullPermissions' | 'entryId' | 'workbookId' | 'key' | 'type'
+> & {
+    scope: EntryScope.Connection | EntryScope.Dataset;
+    collectionId: string;
+};
+
 export type DeleteSharedEntriesResponse = {
     entries: EntryFields[];
 };
@@ -159,6 +185,11 @@ export interface MoveSharedEntryArgs {
 
 export interface DeleteSharedEntriesArgs {
     entryIds: string[];
+}
+
+export interface GetSharedEntryInfoArgs {
+    entryId: string;
+    includePermissionsInfo: boolean;
 }
 
 export interface MoveSharedEntriesArgs {

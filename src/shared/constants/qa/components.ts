@@ -201,6 +201,10 @@ export enum DatalensHeaderQa {
     MobileContainer = 'datalens-header-mobile-container',
 }
 
+export enum TextWidgetQa {
+    Wrapper = 'text-widget-wrapper',
+}
+
 // copied from @gravity-ui/uikit
 export enum UikitListQa {
     ACTIVE_ITEM = 'list-active-item',

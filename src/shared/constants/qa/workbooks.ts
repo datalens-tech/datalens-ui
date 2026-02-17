@@ -6,6 +6,7 @@ export enum WorkbookPageQa {
     MenuItemDuplicate = 'workbook-page-list-item-menu-item-duplicate',
     Filters = 'workbook-page-filters',
     ChunkScope = 'workbook-page-chunk-scope-',
+    ChunkSharedEntryScope = 'workbook-page-chunk-shared-entry-scope-',
 }
 
 export const WorkbookPageActionsMoreQA = {

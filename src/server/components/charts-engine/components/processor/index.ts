@@ -583,20 +583,21 @@ export class Processor {
                     cacheClient,
                     sourcesConfig,
                 };
-                resolvedSources = await DataFetcher.fetch({
+                const dataFetcherResult = await DataFetcher.fetchSources({
                     sources,
                     ...dataFetcherOptions,
                 });
+                resolvedSources = dataFetcherResult.result;
 
-                if (builder.buildPaletteSources) {
+                if (builder.buildPaletteSources && dataFetcherResult.sources) {
                     const paletteSourcesResult = await builder.buildPaletteSources({
-                        sources: resolvedSources,
+                        sources: dataFetcherResult.sources,
                     });
-                    const resolvedPalettes = await DataFetcher.fetch({
+                    const resolvedPalettesResult = await DataFetcher.fetchSources({
                         sources: paletteSourcesResult.exports as Record<string, Source>,
                         ...dataFetcherOptions,
                     });
-                    Object.assign(resolvedSources, resolvedPalettes);
+                    Object.assign(resolvedSources, resolvedPalettesResult.result);
                 }
 
                 if (Object.keys(resolvedSources).length) {
@@ -866,12 +867,27 @@ export class Processor {
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
 
                 result.dataExport = mapValues(data, (sourceResponse) => {
-                    if (
-                        typeof sourceResponse === 'object' &&
-                        sourceResponse &&
-                        'data_export' in sourceResponse
-                    ) {
-                        return sourceResponse.data_export as ApiV2DataExportField;
+                    if (sourceResponse) {
+                        if (Array.isArray(sourceResponse)) {
+                            const meta = sourceResponse.find(
+                                (node) =>
+                                    node &&
+                                    typeof node === 'object' &&
+                                    'event' in node &&
+                                    node.event === 'metadata',
+                            );
+                            if (
+                                meta &&
+                                typeof meta === 'object' &&
+                                'data' in meta &&
+                                'data_export' in meta.data
+                            ) {
+                                return meta.data.data_export as ApiV2DataExportField;
+                            }
+                        }
+                        if (typeof sourceResponse === 'object' && 'data_export' in sourceResponse) {
+                            return sourceResponse.data_export as ApiV2DataExportField;
+                        }
                     }
                     return undefined;
                 });

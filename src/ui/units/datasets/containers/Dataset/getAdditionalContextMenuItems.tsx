@@ -13,11 +13,12 @@ import type {EntryContextMenuItem} from 'ui/components/EntryContextMenu/helpers'
 import {DIALOG_IAM_ACCESS} from 'ui/components/IamAccessDialog';
 import {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 import type {closeDialog, openDialog} from 'ui/store/actions/dialog';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import type {DatasetEntry} from '../../typings/dataset';
 
 const i18ContextMenu = I18n.keyset('component.entry-context-menu.view');
+const i18nSharedEntry = I18n.keyset('shared-entry');
+
 type GetAdditionalContextMenuItemsProps = {
     isSharedDataset: boolean;
     entry: DatasetEntry;
@@ -46,10 +47,7 @@ export const getAdditionalContextMenuItems = ({
     const items: (EntryContextMenuItem & {theme?: string})[] = [];
 
     if (isWorkbookSharedDataset) {
-        if (
-            entry.fullPermissions?.createEntryBinding ||
-            entry.fullPermissions?.createLimitedEntryBinding
-        ) {
+        if (entry.permissions?.admin || entry.fullPermissions?.updateAccessBindings) {
             items.push({
                 id: ENTRY_CONTEXT_MENU_ACTION.ACCESS,
                 action: () => {
@@ -59,6 +57,10 @@ export const getAdditionalContextMenuItems = ({
                             onClose: closeDialog,
                             open: true,
                             onApply: async (delegate) => {
+                                if (delegate === entry.isDelegated) {
+                                    closeDialog();
+                                    return;
+                                }
                                 const result = await updateDatasetDelegation({
                                     sourceId: entry.entryId,
                                     targetId: bindedWorkbookId,
@@ -74,7 +76,7 @@ export const getAdditionalContextMenuItems = ({
                     });
                 },
                 icon: <Shield />,
-                text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
+                text: i18nSharedEntry('shared-entry-bindings-dropdown-menu-title'),
             });
         }
         if (entry.fullPermissions?.delete) {
@@ -98,25 +100,27 @@ export const getAdditionalContextMenuItems = ({
                 },
                 icon: <TrashBin />,
                 theme: 'danger',
-                text: getSharedEntryMockText('shared-entry-delete-dropdown-menu-title'),
+                text: i18ContextMenu('value_delete'),
             });
         }
     } else {
-        items.push({
-            id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
-            action: () => {
-                openDialog({
-                    id: DIALOG_SHARED_ENTRY_BINDINGS,
-                    props: {
-                        onClose: closeDialog,
-                        open: true,
-                        entry,
-                    },
-                });
-            },
-            icon: <CodeTrunk />,
-            text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
-        });
+        if (entry.permissions?.admin || entry.fullPermissions?.updateAccessBindings) {
+            items.push({
+                id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+                action: () => {
+                    openDialog({
+                        id: DIALOG_SHARED_ENTRY_BINDINGS,
+                        props: {
+                            onClose: closeDialog,
+                            open: true,
+                            entry,
+                        },
+                    });
+                },
+                icon: <CodeTrunk />,
+                text: i18nSharedEntry('shared-entry-bindings-dropdown-menu-title'),
+            });
+        }
         if (entry.fullPermissions?.listAccessBindings) {
             items.push({
                 id: ENTRY_CONTEXT_MENU_ACTION.ACCESS,
@@ -158,7 +162,7 @@ export const getAdditionalContextMenuItems = ({
                 },
                 icon: <TrashBin />,
                 theme: 'danger',
-                text: getSharedEntryMockText('shared-entry-delete-dropdown-menu-title'),
+                text: i18ContextMenu('value_delete'),
             });
         }
     }

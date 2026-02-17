@@ -35,8 +35,6 @@ const b = block('group-extended-settings');
 
 const i18n = I18n.keyset('dash.extended-settings-dialog.edit');
 
-const SELECTOR_WIDTH = 336;
-
 const resetAutoValues = (group: SelectorDialogState[]) =>
     group.map((item) =>
         item.placementMode === CONTROLS_PLACEMENT_MODE.AUTO ? {...item, width: ''} : item,
@@ -246,7 +244,7 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
 
     return (
         <React.Fragment>
-            <FormSection title={i18n('label_group-display')}>
+            <FormSection title={i18n('label_group-display')} className={b('form-section')}>
                 {showSelectorsGroupTitle && (
                     <FormRow className={b('row')} label={i18n('label_group-name')}>
                         <Flex gap={2}>
@@ -336,14 +334,16 @@ export const GroupExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         isGroupSettings={true}
                         groupImpactType={selectorsGroup.impactType}
                         groupImpactTabsIds={selectorsGroup.impactTabsIds}
-                        selectorWidth={SELECTOR_WIDTH}
                         className={b('row')}
                         hasMultipleSelectors={isMultipleSelectors}
                     />
                 )}
             </FormSection>
             {isMultipleSelectors && (
-                <FormSection title={i18n('label_selectors-representation')}>
+                <FormSection
+                    title={i18n('label_selectors-representation')}
+                    className={b('form-section')}
+                >
                     <div className={b('note')}>{i18n('label_note')}</div>
                     <div className={b('selectors')}>
                         <List
