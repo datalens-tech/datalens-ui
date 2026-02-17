@@ -395,7 +395,7 @@ function dash(state = initialState, action) {
             const tabData = DashKit.setItem({
                 item: {
                     id: state.openedItemId ?? itemId,
-                    type: state.openedDialog ?? itemType,
+                    type: itemType ?? state.openedDialog,
                     data: itemData,
                     namespace,
                     layout: state.dragOperationProps?.itemLayout,
