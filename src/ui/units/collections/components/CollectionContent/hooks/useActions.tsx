@@ -467,13 +467,15 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                     },
                 });
             }
-            const isNewAccessDialogEnabled = isEnabledFeature(Feature.EnableNewAccessDialog);
+            const isSharedEntryNewAccessDialogEnabled = isEnabledFeature(
+                Feature.EnableSharedEntryNewAccessDialog,
+            );
 
             if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
                 actions.push({
                     text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
                     action: () => {
-                        if (isNewAccessDialogEnabled) {
+                        if (isSharedEntryNewAccessDialogEnabled) {
                             openAccessDialog(dispatch, {
                                 resourceId: item.entryId,
                                 resourceType: ResourceType.SharedEntry,

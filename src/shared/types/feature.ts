@@ -103,6 +103,10 @@ export enum Feature {
 
     /** Enable new access dialog (AccessDialog) */
     EnableNewAccessDialog = 'EnableNewAccessDialog',
+
+    /** Enable new access dialog for shared entries (SharedEntryDialog) */
+    EnableSharedEntryNewAccessDialog = 'EnableSharedEntryNewAccessDialog',
+
     /** Use axios instead of request-promise-native for HTTP requests in charts-engine */
     UseAxiosRequest = 'UseAxiosRequest',
 }
