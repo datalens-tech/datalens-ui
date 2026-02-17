@@ -11,9 +11,9 @@ type ConvertChartToTableArgs = {
 };
 
 type ChartData = {
-    categories_ms: number[];
+    categories_ms?: number[];
     categories?: string[];
-    graphs: any[];
+    graphs?: any[];
 };
 
 export function convertChartToTable(options: ConvertChartToTableArgs) {
