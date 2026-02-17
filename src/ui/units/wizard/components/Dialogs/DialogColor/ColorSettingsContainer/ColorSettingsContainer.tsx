@@ -149,7 +149,7 @@ class ColorSettingsContainer extends React.Component<Props> {
         );
     };
 
-    private onPaletteItemClick = (_color: string, colorIndex: number) => {
+    private onPaletteItemClick = (color: string, colorIndex?: number) => {
         const {selectedValue} = this.props.paletteState;
         const {colorsList} = this.props;
 
@@ -158,6 +158,16 @@ class ColorSettingsContainer extends React.Component<Props> {
         }
 
         const mountedColors = {...this.props.paletteState.mountedColors};
+
+        if (colorIndex === undefined) {
+            mountedColors[selectedValue] = color;
+            this.props.actions.setDialogColorPaletteState({
+                ...this.props.paletteState,
+                mountedColors,
+            });
+            return;
+        }
+
         const isDefaultColor = !colorsList[colorIndex] || colorsList[colorIndex] === 'auto';
 
         if (mountedColors[selectedValue] && isDefaultColor) {

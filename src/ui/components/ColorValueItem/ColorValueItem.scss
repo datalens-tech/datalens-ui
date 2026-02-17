@@ -1,0 +1,24 @@
+.color-value-item {
+    overflow: hidden;
+    flex: 0 0 20px;
+    height: 14px;
+    margin-right: 12px;
+    border-radius: 2px;
+    background-color: var(--g-color-base-background);
+
+    &_default {
+        background-color: var(--g-color-base-generic);
+        border: 1px solid var(--g-color-line-generic);
+        color: var(--g-color-text-hint);
+        font-size: 10px;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__background {
+        width: 100%;
+        height: 100%;
+    }
+}
