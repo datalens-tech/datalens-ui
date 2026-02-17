@@ -32,6 +32,7 @@ export interface LandingLayoutPageError {
     pageTitle?: RenderParams<{DL: DLGlobalData}>['title'];
     pageMeta?: RenderParams<{DL: DLGlobalData}>['meta'];
     pageLinks?: RenderParams<{DL: DLGlobalData}>['links'];
+    showDebugInfo?: boolean;
 }
 
 export interface LandingPageEntryMeta {
@@ -151,6 +152,11 @@ export type MainLayoutConfigData = {
 type DocPathNameKey = 'datasetSubsql' | 'qlCreateChart' | 'functionsPath';
 export type DocPathName = Partial<Record<DocPathNameKey, string>>;
 
+export type AIConfig = {
+    defaultModel: string;
+    availableModels: string[];
+};
+
 export type DLGlobalData = {
     deviceType: DeviceType;
     requestId: string;
@@ -239,6 +245,8 @@ export type DLGlobalData = {
     isAuthEnabled?: boolean;
     authManageLocalUsersDisabled?: boolean;
     authSignupDisabled?: boolean;
+    authCookieName?: string;
+    aiConfig?: AIConfig;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

@@ -1,0 +1,19 @@
+{
+  "apply-btn": "Unbind",
+  "cancel-btn": "Cancel",
+  "dialog-title": "Unbind {{entry}}?",
+  "entries-list-title-connection": "Connections",
+  "label-current-entry": "Selected object",
+  "label-of-shared-dataset": "dataset",
+  "label-relation-dataset": "dataset",
+  "label-relation-entity": "Where it's used",
+  "label-relation-workbook": "workbook",
+  "label-shared-connection": "Connection",
+  "label-shared-dataset": "Dataset",
+  "label-workbook": "Workbook",
+  "message-alert": "If {{relation}} are built on data from {{entry}}, they will stop working.",
+  "message-relation-alert": "charts",
+  "message-relations-alert": "datasets and charts",
+  "open-relation": "Open {{relation}}",
+  "title-alert": "{{entry}} is in use in {{relation}}"
+}

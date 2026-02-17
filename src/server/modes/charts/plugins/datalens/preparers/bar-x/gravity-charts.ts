@@ -8,7 +8,12 @@ import type {
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
 
-import type {SeriesExportSettings, ServerField, WrappedMarkdown} from '../../../../../../../shared';
+import type {
+    SeriesExportSettings,
+    ServerField,
+    WizardVisualizationId,
+    WrappedMarkdown,
+} from '../../../../../../../shared';
 import {
     AxisMode,
     GradientType,
@@ -36,6 +41,7 @@ import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {isXAxisReversed} from '../helpers/highcharts';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
@@ -73,6 +79,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         idToDataType,
         colors,
         colorsConfig,
+        sort,
         visualizationId,
         segments: split,
     } = args;
@@ -288,10 +295,15 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         }
     }
 
+    if (xAxis && isXAxisReversed(xField, sort, visualizationId as WizardVisualizationId)) {
+        xAxis.order = 'reverse';
+    }
+
+    const segmentField = split?.[0];
     const segmentsMap = getSegmentMap(args);
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
-    const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
-    const isSplitWithHtmlValues = isHtmlField(split?.[0]);
+    const isSplitEnabled = Boolean(segmentField);
+    const isSplitWithHtmlValues = isHtmlField(segmentField);
 
     const axisLabelNumberFormat = yPlaceholder
         ? getAxisFormatting({
@@ -332,16 +344,21 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 },
                 plotIndex: d.index,
                 title: axisTitle,
+                startOnTick: isSplitEnabled,
+                endOnTick: isSplitEnabled,
             });
         }),
-        split: {
-            enable: isSplitEnabled,
+    };
+
+    if (isSplitEnabled) {
+        config.split = {
+            enable: true,
             gap: '40px',
             plots: segments.map(() => {
                 return {};
             }),
-        },
-    };
+        };
+    }
 
     if (yField) {
         config.tooltip = {

@@ -26,8 +26,17 @@ import type {AdapterContext, Source, SourceConfig, TelemetryCallbacks} from '../
 import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 
+import {convertToAPIConnectorSource, shouldUseAlias} from './source-alias';
 import {getApiConnectorParamsFromSource, isAPIConnectorSource, prepareSource} from './sources';
 import {getMessageFromUnknownError} from './utils';
+
+/**
+ * Unwraps API Connector response format {data: {body: {result: X}}} -> X
+ */
+function unwrapAPIConnectorResponse(body: unknown): unknown {
+    const result = (body as any)?.data?.body?.result;
+    return result === undefined ? body : result;
+}
 
 const {
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
@@ -165,6 +174,26 @@ export type DataFetcherResult = {
     details?: string;
 };
 
+type FetchSourceResult = {
+    sourceId: string;
+    sourceType: string;
+    body?: unknown;
+    responseHeaders?: IncomingHttpHeaders | null;
+    status?: number | null;
+    latency?: number;
+    size?: number;
+    uiUrl?: string | null;
+    dataUrl?: string | null;
+    datasetId?: string | null;
+    hideInInspector?: boolean;
+    url?: string | null;
+    message?: string;
+    code?: string | null;
+    data?: unknown;
+    details?: string;
+    source?: Source;
+};
+
 export type AuthParams = {
     accessToken?: string;
 };
@@ -182,7 +211,12 @@ export function addAuthHeaders({
 }
 
 export class DataFetcher {
-    static fetch({
+    static async fetch(options: DataFetcherOptions) {
+        const result = await this.fetchSources(options);
+        return result.result;
+    }
+
+    static fetchSources({
         sources,
         ctx,
         postprocess = null,
@@ -198,7 +232,10 @@ export class DataFetcher {
         telemetryCallbacks,
         cacheClient,
         sourcesConfig,
-    }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
+    }: DataFetcherOptions): Promise<{
+        result: Record<string, DataFetcherResult>;
+        sources?: Record<string, Source>;
+    }> {
         const fetchingTimeout = ctx.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
 
         const fetchingStartTime = Date.now();
@@ -262,10 +299,11 @@ export class DataFetcher {
                 .then((results) => {
                     const failed: Record<string, Record<string, string>> = {};
                     const fetched: Record<string, DataFetcherResult> = {};
+                    const fetchedSources: Record<string, Source> = {};
 
                     clearTimeout(overallTimeout);
 
-                    (results as DataFetcherResult[]).forEach((result) => {
+                    (results as FetchSourceResult[]).forEach((result) => {
                         Object.keys(result).forEach((key) => {
                             if ((result as Record<string, any>)[key] === null) {
                                 delete (result as Record<string, any>)[key];
@@ -300,15 +338,19 @@ export class DataFetcher {
                                 result,
                                 ctx.config.runResponseWhitelist,
                             ) as DataFetcherResult;
+
+                            if (result.source) {
+                                fetchedSources[result.sourceId] = result.source;
+                            }
                         }
                     });
 
                     if (Object.keys(failed).length) {
                         reject(failed);
                     } else if (postprocess) {
-                        resolve(postprocess(fetched));
+                        resolve({result: postprocess(fetched), sources: fetchedSources});
                     } else {
-                        resolve(fetched);
+                        resolve({result: fetched, sources: fetchedSources});
                     }
                 })
                 .catch((error) => {
@@ -493,7 +535,7 @@ export class DataFetcher {
         adapterContext: AdapterContext;
         cacheClient: CacheClient;
         sourcesConfig: ChartsEngine['sources'];
-    }) {
+    }): Promise<FetchSourceResult> {
         const singleFetchingTimeout =
             ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
@@ -609,7 +651,55 @@ export class DataFetcher {
             };
         }
 
-        const {passedCredentials, extraHeaders, sourceType} = sourceConfig;
+        if (shouldUseAlias(source, sourceConfig, isEnabledServerFeature)) {
+            const aliasedSource = convertToAPIConnectorSource(source, sourceConfig);
+            const preparedAliasedSource = prepareSource(aliasedSource);
+
+            ctx.log('FETCHER_ALIAS_TO_API_CONNECTOR', {
+                sourceName: dataSourceName,
+                apiConnectionId: sourceConfig.aliasTo!.apiConnectionId,
+            });
+
+            // Re-enter fetchSource with the converted source
+            const result = (await DataFetcher.fetchSource({
+                sourceName,
+                source: preparedAliasedSource,
+                ctx,
+                fetchingStartTime,
+                subrequestHeaders,
+                processingRequests,
+                rejectFetchingSource,
+                userId,
+                userLogin,
+                iamToken,
+                workbookId,
+                isEmbed,
+                authParams,
+                originalReqHeaders,
+                adapterContext,
+                telemetryCallbacks,
+                cacheClient,
+                sourcesConfig,
+            })) as FetchSourceResult;
+
+            if (sourceConfig.aliasTo!.unwrapResponse && result.body) {
+                result.body = unwrapAPIConnectorResponse(result.body);
+            }
+
+            return result;
+        }
+
+        const {passedCredentials, extraHeaders, sourceType: sourceTypeFromConfig} = sourceConfig;
+        if (!sourceTypeFromConfig) {
+            ctx.logError(`Invalid sourceType from config: ${sourceTypeFromConfig}`);
+
+            return {
+                sourceId: sourceName,
+                sourceType: 'Unresolved',
+                code: INVALID_SOURCE_FORMAT,
+            };
+        }
+        const sourceType = sourceTypeFromConfig;
 
         if (
             sourceConfig.allowedMethods &&
@@ -636,7 +726,7 @@ export class DataFetcher {
                 sourceName,
                 sourceType,
             });
-            if (result.valid === false) {
+            if (result.valid === false && result.meta) {
                 return result.meta;
             }
         }
@@ -653,12 +743,14 @@ export class DataFetcher {
         }
 
         if (sourceConfig.adapterWithContext) {
+            // adapterWithContext has 'unknown' return type but implementations
+            // return structures compatible with FetchSourceResult
             return sourceConfig.adapterWithContext({
                 targetUri: croppedTargetUri,
                 sourceName,
                 adapterContext,
                 ctx,
-            });
+            }) as Promise<FetchSourceResult>;
         }
 
         const headers: IncomingHttpHeaders = Object.assign(
@@ -853,7 +945,6 @@ export class DataFetcher {
                 requestOptions: {...requestOptions, signal},
                 requestControl,
                 useCaching,
-                ctx,
             })
                 // eslint-disable-next-line
                 .catch((error) => {
@@ -1025,6 +1116,7 @@ export class DataFetcher {
                             fetchResolve({
                                 sourceId: sourceName,
                                 sourceType,
+                                source,
                                 body: data,
                                 responseHeaders: response.headers,
                                 status: response.statusCode,
@@ -1033,7 +1125,6 @@ export class DataFetcher {
                                 uiUrl: userTargetUriUi,
                                 dataUrl: publicTargetUri,
                                 datasetId,
-                                datasetFields: source.datasetFields,
                                 hideInInspector,
                                 data: publicSourceData,
                                 /** @deprecated use uiUrl or dataUrl */
@@ -1085,7 +1176,7 @@ type SourceCheckResult = {
     valid: boolean;
     meta?: {
         sourceId: string;
-        sourceType?: string;
+        sourceType: string;
         message: string;
     };
 };
@@ -1099,7 +1190,7 @@ async function sourceConfigCheck({
 }: {
     ctx: AppContext;
     sourceName: string;
-    sourceType?: string;
+    sourceType: string;
     sourceConfig: SourceConfig;
     targetUri: string;
 }): Promise<SourceCheckResult> {

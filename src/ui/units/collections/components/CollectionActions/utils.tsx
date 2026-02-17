@@ -1,9 +1,9 @@
 import React from 'react';
 
 import {CodeTrunk} from '@gravity-ui/icons';
+import {I18n} from 'i18n';
+import {CollectionActionsQa} from 'shared';
 import {EntryIcon} from 'ui/components/EntryIcon/EntryIcon';
-
-import {getSharedEntryMockText} from '../helpers';
 
 import {SharedEntryNotice} from './components/SharedEntryNotice/SharedEntryNotice';
 
@@ -13,6 +13,9 @@ type GetSharedEntriesMenuItemsProps = {
     noticeClassName?: string;
 };
 
+const i18n = I18n.keyset('collections');
+const i18nSharedEntry = I18n.keyset('shared-entry');
+
 export const getSharedEntriesMenuItems = ({
     datasetAction,
     connectionAction,
@@ -20,8 +23,9 @@ export const getSharedEntriesMenuItems = ({
 }: GetSharedEntriesMenuItemsProps) => {
     return [
         {
-            text: getSharedEntryMockText('collection-actions-menu-item'),
+            text: i18n('shared-actions-menu-title'),
             iconStart: <CodeTrunk />,
+            qa: CollectionActionsQa.SharedObjectsMenuItem,
             items: [
                 {
                     text: <SharedEntryNotice />,
@@ -33,13 +37,15 @@ export const getSharedEntriesMenuItems = ({
                     iconStart: (
                         <EntryIcon entry={{scope: 'connection'}} overrideIconType="connection" />
                     ),
-                    text: getSharedEntryMockText('label-shared-connection'),
+                    text: i18nSharedEntry('label-shared-connection'),
                     action: connectionAction,
+                    qa: CollectionActionsQa.SharedConnectionCreateBtn,
                 },
                 {
                     iconStart: <EntryIcon entry={{scope: 'dataset'}} />,
-                    text: getSharedEntryMockText('label-shared-dataset'),
+                    text: i18nSharedEntry('label-shared-dataset'),
                     action: datasetAction,
+                    qa: CollectionActionsQa.SharedDatasetCreateBtn,
                 },
             ],
         },

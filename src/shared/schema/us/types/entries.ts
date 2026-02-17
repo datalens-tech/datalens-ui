@@ -42,7 +42,25 @@ export interface GetEntryResponse extends EntryFields {
 }
 export interface GetSharedEntryResponse extends GetEntryResponse {
     isDelegated: boolean;
+    isRestricted?: false;
 }
+
+export interface RestrictedSharedEntry
+    extends Pick<
+        GetSharedEntryResponse,
+        | 'entryId'
+        | 'collectionId'
+        | 'isDelegated'
+        | 'isLocked'
+        | 'scope'
+        | 'type'
+        | 'workbookId'
+        | 'permissions'
+        | 'fullPermissions'
+    > {
+    isRestricted: true;
+}
+
 export interface GetEntryArgs {
     entryId: string;
     workbookId?: WorkbookId;

@@ -1,4 +1,5 @@
 import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
+import merge from 'lodash/merge';
 
 import type {LayerChartMeta} from '../../../preparers/types';
 
@@ -51,23 +52,37 @@ export const extendCombinedChartGraphs = (args: ExtendCombinedChartGraphsArgs) =
 };
 
 export function combineLayersIntoSingleChart({layers}: {layers: Partial<ChartData>[]}) {
-    if (layers.length > 1) {
-        return {
-            ...layers[0],
-            series: {
-                options: layers.reduce(
-                    (acc, layerData) => ({...acc, ...layerData.series?.options}),
-                    {} as ChartData['series']['options'],
-                ),
-                data: layers.reduce(
-                    (acc, layerData) => [...acc, ...(layerData.series?.data ?? [])],
-                    [] as ChartData['series']['data'],
-                ),
-            },
-        };
+    if (layers.length === 0) {
+        return {};
     }
 
-    return layers[0];
+    if (layers.length === 1) {
+        return layers[0];
+    }
+
+    // Deep merge all layer configs except series (title, chart, tooltip, legend, xAxis, yAxis settings)
+    // Note: merge works by index for arrays, which is correct for yAxis (axis 0 merges with axis 0, etc.)
+    const mergedConfig = layers.reduce((acc, layerData) => {
+        const {series: _, ...rest} = layerData;
+        return merge({}, acc, rest);
+    }, {} as Partial<ChartData>);
+
+    // Build series separately: options are merged, data is concatenated
+    const series: ChartData['series'] = {
+        options: layers.reduce(
+            (acc, layerData) => ({...acc, ...layerData.series?.options}),
+            {} as ChartData['series']['options'],
+        ),
+        data: layers.reduce(
+            (acc, layerData) => [...acc, ...(layerData.series?.data ?? [])],
+            [] as ChartData['series']['data'],
+        ),
+    };
+
+    return {
+        ...mergedConfig,
+        series,
+    };
 }
 
 const isChartWithoutData = (graph: {data: any[]}) => {

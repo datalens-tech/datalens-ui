@@ -13,6 +13,7 @@ type PermissionButtonProps = {
     icon: React.ReactNode;
     title: string;
     message: string;
+    qa?: string;
 };
 
 const b = block('dl-permission-button');
@@ -24,6 +25,7 @@ export const PermissionButton: React.FC<PermissionButtonProps> = ({
     onCheck,
     title,
     disabled,
+    qa,
 }) => {
     return (
         <Card
@@ -32,6 +34,7 @@ export const PermissionButton: React.FC<PermissionButtonProps> = ({
             selected={checked}
             view={disabled && !checked ? 'clear' : 'outlined'}
             onClick={disabled ? undefined : onCheck}
+            qa={qa}
         >
             <div className={b('status-icon-container')}>
                 {disabled && (

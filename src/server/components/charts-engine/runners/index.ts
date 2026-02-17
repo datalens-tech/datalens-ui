@@ -1,4 +1,4 @@
-import type {Request, Response} from '@gravity-ui/expresskit';
+import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {ChartsEngine} from '..';
@@ -7,8 +7,16 @@ import {ControlType} from '../../../../shared';
 import type {ProcessorParams} from '../components/processor';
 import type {ReducedResolvedConfig, ResolvedConfig} from '../components/storage/types';
 
+import {RUNNER_NAME} from './constants';
 import {runControl} from './control';
 import {runWizardChart} from './wizard';
+
+export type RunnerLocals = {
+    subrequestHeaders: Record<string, string>;
+    editMode: boolean;
+    login: string | null;
+    iamToken: string | null;
+};
 
 export type Runner = {
     name: string;
@@ -17,15 +25,20 @@ export type Runner = {
     safeConfig?: boolean;
 };
 
+export type RunnerHandlerResult = {
+    status: number;
+    payload: unknown;
+};
+
 export type RunnerHandler = (
     ctx: AppContext,
-    {chartsEngine, req, res, config, configResolving}: RunnerHandlerProps,
-) => void | Promise<void>;
+    {chartsEngine, req, config, configResolving}: RunnerHandlerProps,
+) => RunnerHandlerResult | Promise<RunnerHandlerResult>;
 
 export type RunnerHandlerProps = {
     chartsEngine: ChartsEngine;
     req: Request;
-    res: Response;
+    runnerLocals: RunnerLocals;
     config: ResolvedConfig | ReducedResolvedConfig;
     configResolving: number;
     workbookId?: WorkbookId;
@@ -37,7 +50,7 @@ export type RunnerHandlerProps = {
 export function getDefaultRunners() {
     const runners: Runner[] = [
         {
-            name: 'wizard',
+            name: RUNNER_NAME.WIZARD,
             trigger: new Set([
                 'graph_wizard_node',
                 'table_wizard_node',
@@ -52,7 +65,7 @@ export function getDefaultRunners() {
         },
         {
             // for all types of controls except editor control
-            name: 'dashControls',
+            name: RUNNER_NAME.DASH_CONTROLS,
             trigger: new Set([ControlType.Dash]),
             safeConfig: true,
             handler: runControl,

@@ -41,20 +41,20 @@ datalensTest.describe('Wizard', () => {
 
             const newPalette = customPaletteNames[testInfo.testId];
 
-            await wizardPage.metricSettingsDialog.open();
-            const defaultPalette = await wizardPage.metricSettingsDialog.getSelectedPalette();
+            await wizardPage.metricColorsDialog.open();
+            const defaultPalette = await wizardPage.metricColorsDialog.getSelectedPalette();
             expect(defaultPalette).not.toBe(newPalette);
 
-            await wizardPage.metricSettingsDialog.selectPalette(newPalette);
-            await wizardPage.metricSettingsDialog.apply();
+            await wizardPage.metricColorsDialog.selectPalette(newPalette);
+            await wizardPage.metricColorsDialog.apply();
             await wizardPage.saveWizardEntry(wizardPage.getUniqueEntryName('test'));
             await wizardPage.page.reload();
 
             await expect(chart).toBeVisible();
 
-            await wizardPage.metricSettingsDialog.open();
+            await wizardPage.metricColorsDialog.open();
 
-            const selectedPalette = await wizardPage.metricSettingsDialog.getSelectedPalette();
+            const selectedPalette = await wizardPage.metricColorsDialog.getSelectedPalette();
 
             expect(selectedPalette).toBe(newPalette);
         });

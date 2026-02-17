@@ -10,12 +10,19 @@ export class ChartContainer {
     async getSeriesColors(navigator: boolean) {
         return await this.page.evaluate(
             ({isNavigator}: {isNavigator: boolean}) => {
-                const selector = isNavigator
+                const highchartsSeriesSelector = isNavigator
                     ? '.highcharts-navigator-series'
                     : '.highcharts-line-series:not(.highcharts-navigator-series)';
-                const navigatorSeries = document.querySelectorAll(
-                    `.highcharts-series-group .highcharts-series${selector} .highcharts-graph`,
+                let navigatorSeries = document.querySelectorAll(
+                    `.highcharts-series-group .highcharts-series${highchartsSeriesSelector} .highcharts-graph`,
                 );
+
+                if (!navigatorSeries.length) {
+                    const gChartsSeriesSelector = isNavigator
+                        ? '.gcharts-range-slider .gcharts-line'
+                        : '.gcharts-chart__content .gcharts-line';
+                    navigatorSeries = document.querySelectorAll(`${gChartsSeriesSelector} path`);
+                }
 
                 return Array.from(navigatorSeries).map((el) => {
                     const attributesList = el.attributes;

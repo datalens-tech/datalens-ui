@@ -3,8 +3,9 @@ import React from 'react';
 import {ShieldCheck, ShieldKeyhole} from '@gravity-ui/icons';
 import {Dialog, Divider, Link, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
+import {SharedEntriesPermissionsDialogQa} from 'shared';
 import type {SharedEntryBindingsItem} from 'shared/schema';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import DialogManager from '../DialogManager/DialogManager';
 import type {SharedEntry} from '../DialogSharedEntryBindings/types';
@@ -32,6 +33,7 @@ export interface OpenDialogSharedEntryPermissionsArgs {
     props: DialogSharedEntryPermissionsProps;
 }
 
+const i18n = I18n.keyset('component.dialog-shared-entry-permissions.view');
 const b = block('dialog-shared-entries-permissions');
 
 export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissionsProps> = ({
@@ -63,61 +65,62 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
 
     return (
         <Dialog size="m" open={open} onClose={onCloseHandler} className={b()}>
-            <Dialog.Header caption={getSharedEntryMockText('title-permissions-dialog')} />
+            <Dialog.Header caption={i18n('title-dialog')} />
             <Dialog.Body className={b('body')}>
                 <div className={b('objects-wrapper')}>
                     <EntitiesList
                         entities={[entry]}
                         rightSectionSlot={() => <SharedEntryIcon isDelegated={entry.isDelegated} />}
-                        title={getSharedEntryMockText('label-current-entry')}
+                        title={i18n('label-current-entry')}
                     />
                     {relation && (
-                        <EntityLink
-                            entity={relation}
-                            title={getSharedEntryMockText('label-relation-entity')}
-                        />
+                        <EntityLink entity={relation} title={i18n('label-relation-entity')} />
                     )}
                 </div>
                 <Divider />
                 <div className={b('permissions-container')}>
                     <Text variant="body-1">
-                        {getSharedEntryMockText('permissions-dialog-notice')}
+                        {i18n('notice-text')}
+                        {' '}
                         <Link
                             // TODO doc link
                             href="/"
                             target="_blank"
                         >
-                            {getSharedEntryMockText('permissions-dialog-documentation-link')}
+                            {i18n('documentation-link-text')}
                         </Link>
                     </Text>
                     <PermissionButton
                         icon={<ShieldCheck />}
-                        title={getSharedEntryMockText('delegate-title-permissions-dialog')}
-                        message={getSharedEntryMockText('delegate-message-permissions-dialog')}
+                        title={i18n('delegate-title')}
+                        message={i18n('delegate-message')}
                         disabled={!canCreateEntryBinding}
                         checked={delegate}
                         onCheck={() => setDelegate(true)}
+                        qa={SharedEntriesPermissionsDialogQa.DelegateBtn}
                     />
                     <PermissionButton
                         icon={<ShieldKeyhole />}
-                        title={getSharedEntryMockText('not-delegate-title-permissions-dialog')}
-                        message={getSharedEntryMockText('not-delegate-message-permissions-dialog')}
+                        title={i18n('not-delegate-title')}
+                        message={i18n('not-delegate-message')}
                         disabled={!canCreateLimitedEntryBinding}
                         checked={!delegate}
                         onCheck={() => setDelegate(false)}
+                        qa={SharedEntriesPermissionsDialogQa.NotDelegateBtn}
                     />
                 </div>
             </Dialog.Body>
             <Dialog.Footer
-                textButtonApply={getSharedEntryMockText('apply-permissions-dialog')}
+                textButtonApply={i18n('apply-text')}
                 propsButtonCancel={{
                     view: 'flat',
                 }}
                 propsButtonApply={{
                     disabled: delegate ? !canCreateEntryBinding : !canCreateLimitedEntryBinding,
+                    qa: SharedEntriesPermissionsDialogQa.ApplyBtn,
                 }}
                 loading={isLoading}
-                textButtonCancel={getSharedEntryMockText('cancel-unbind-dialog')}
+                textButtonCancel={i18n('cancel-text')}
                 onClickButtonApply={onSubmit}
                 onClickButtonCancel={onCloseHandler}
             />

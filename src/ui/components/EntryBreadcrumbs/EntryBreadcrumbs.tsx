@@ -35,7 +35,6 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
     return (
         <Breadcrumbs showRoot className={b()} endContent={endContent}>
             {breadcrumbsItems.map((item, index) => {
-                const last = index === breadcrumbsItems.length - 1;
                 let content: React.ReactNode = null;
 
                 if (index === 0 && !entry?.workbookId && renderRootContent) {
@@ -55,7 +54,6 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
                             }
                         }}
                         className={b('item', {link: Boolean(item.path)})}
-                        disabled={last}
                         href={item.path}
                     >
                         {content}

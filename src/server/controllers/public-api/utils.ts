@@ -55,7 +55,7 @@ export const prepareError = (
             };
         }
 
-        const originalError = innerError.debug.originalError;
+        const originalError = innerError.debug?.originalError;
 
         if (originalError instanceof AxiosError) {
             const status = originalError.status ?? 500;

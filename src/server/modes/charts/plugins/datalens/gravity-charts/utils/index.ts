@@ -107,7 +107,6 @@ export function getBaseChartConfig(args: {
 }) {
     const {shared, visualization} = args;
     const extraSettings = shared.extraSettings;
-    const isLegendEnabled = extraSettings?.legendMode !== 'hide';
 
     const xPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.X);
     const xItem = xPlaceholder?.items[0];
@@ -123,10 +122,15 @@ export function getBaseChartConfig(args: {
         };
     }
 
+    const legend: ChartData['legend'] = {};
+    if (extraSettings?.legendMode === 'hide') {
+        legend.enabled = false;
+    }
+
     let chartWidgetData: Partial<ChartData> = {
         title: getChartTitle(extraSettings),
         tooltip,
-        legend: {enabled: isLegendEnabled},
+        legend,
         series: {
             data: [],
             options: {
@@ -193,7 +197,7 @@ export function getBaseChartConfig(args: {
                     enabled: isGridEnabled(xPlaceholderSettings),
                 },
                 ticks: {
-                    pixelInterval: getTickPixelInterval(xPlaceholderSettings) || 120,
+                    pixelInterval: getTickPixelInterval(xPlaceholderSettings),
                 },
                 lineColor: 'var(--g-color-line-generic)',
                 min: xMin,

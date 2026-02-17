@@ -6,6 +6,7 @@
   "button_open-actual": "Открыть актуальную",
   "button_open-draft": "Открыть черновик",
   "button_open-revisions": "Показать в истории",
+  "context-menu_copy-id": "Копировать ID",
   "label_already-editing-entry": "Этот {{scope}} уже редактируется",
   "label_by": "от",
   "label_chart": "чарт",
@@ -23,5 +24,7 @@
   "label_of-dash": "дашборда",
   "label_of-dataset": "датасета",
   "label_of-editor": "редактора",
-  "label_unexpected-error": "Ошибка"
+  "label_unexpected-error": "Ошибка",
+  "toast_copy-error": "При копировании произошла ошибка",
+  "toast_copy-id-success": "ID скопирован в буфер обмена"
 }

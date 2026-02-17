@@ -5,7 +5,6 @@ import {I18n} from 'i18n';
 import {useHistory, useLocation} from 'react-router';
 import type {DatasetField, DatasetOptions} from 'shared';
 import type {ApplyData} from 'ui';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import type {ObligatoryFilter} from '../../typings/dataset';
 import {DatasetTabSection} from '../DatasetTabSection/DatasetTabSection';
@@ -14,6 +13,7 @@ import type {FilterType} from './types';
 import {useFilterSection} from './useFilterSection';
 
 const i18n = I18n.keyset('dataset.filters-tab.modify');
+const i18nSharedEntry = I18n.keyset('shared-entry');
 
 interface FilterSectionProps {
     type: FilterType;
@@ -52,14 +52,11 @@ const FilterSection: React.FC<FilterSectionProps> = (props: FilterSectionProps) 
 
     const title = i18n('label_obligatory-filter-title');
     const description = i18n('label_obligatory-filter-description');
-    const alertTitle =
+    const alertTitle = preparedFields.length > 0 ? undefined : i18n('filters-readonly-alert-title');
+    const alertMessage = i18n(
         preparedFields.length > 0
-            ? undefined
-            : getSharedEntryMockText('dataset-filters-readonly-alert-title');
-    const alertMessage = getSharedEntryMockText(
-        preparedFields.length > 0
-            ? 'dataset-filters-readonly-alert-message'
-            : 'dataset-empty-filters-readonly-alert-message',
+            ? 'filters-readonly-alert-message'
+            : 'empty-filters-readonly-alert-message',
     );
 
     return (
@@ -73,7 +70,7 @@ const FilterSection: React.FC<FilterSectionProps> = (props: FilterSectionProps) 
                         message={alertMessage}
                         actions={[
                             {
-                                text: getSharedEntryMockText('workbook-shared-entry-original-link'),
+                                text: i18nSharedEntry('workbook-shared-entry-original-link'),
                                 handler: () => history.push(location.pathname),
                             },
                         ]}

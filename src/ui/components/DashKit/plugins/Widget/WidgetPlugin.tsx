@@ -34,7 +34,7 @@ const widgetPlugin: PluginWidget = {
     },
     renderer: function Wrapper(
         props: Props,
-        forwardedRef: React.RefObject<ChartWidgetWithWrapRefProps>,
+        forwardedRef?: React.RefCallback<ChartWidgetWithWrapRefProps>,
     ) {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
         const {onWidgetLoadData} = useWidgetContext({

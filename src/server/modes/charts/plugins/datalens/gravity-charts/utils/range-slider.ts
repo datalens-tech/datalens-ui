@@ -4,6 +4,7 @@ import type {
 } from '@gravity-ui/chartkit/gravity-charts';
 
 import {
+    NavigatorLinesMode,
     NavigatorModes,
     getIsNavigatorAvailable,
     getNavigatorMode,
@@ -48,7 +49,15 @@ export function getSeriesRangeSliderConfig(args: {
     extraSettings?: ServerCommonSharedExtraSettings;
 }): ChartSeriesRangeSliderOptions | undefined {
     const {extraSettings, seriesName} = args;
-    const selectedLines = extraSettings?.navigatorSettings?.selectedLines || [];
+    const linesMode = extraSettings?.navigatorSettings?.linesMode;
+    let visible: boolean;
 
-    return {visible: selectedLines.length ? selectedLines.includes(seriesName) : true};
+    if (linesMode === NavigatorLinesMode.Selected) {
+        const selectedLines = extraSettings?.navigatorSettings?.selectedLines || [];
+        visible = selectedLines.includes(seriesName);
+    } else {
+        visible = true;
+    }
+
+    return {visible};
 }

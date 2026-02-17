@@ -6,7 +6,13 @@ import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
 import type {DashTabItemText} from 'shared';
-import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA, Feature} from 'shared';
+import {
+    CustomPaletteBgColors,
+    DashCommonQa,
+    DialogDashWidgetItemQA,
+    DialogDashWidgetQA,
+    Feature,
+} from 'shared';
 import {InternalMarginsToggler} from 'ui/units/dash/containers/Dialogs/components/InternalMarginsToggler/InternalMarginsToggler';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -240,6 +246,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
                             className={b('checkbox')}
                             checked={Boolean(autoHeight)}
                             onChange={handleAutoHeightChanged}
+                            qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
                         />
                     </FormRow>
                 )}

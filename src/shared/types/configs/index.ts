@@ -15,6 +15,7 @@ export type IconId =
     | 'visPie'
     | 'visPivot'
     | 'visTreemap'
+    | 'visFunnel'
     | 'collectionColored'
     | 'collectionColoredDark'
     | 'collectionColoredBig'

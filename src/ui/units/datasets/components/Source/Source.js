@@ -5,6 +5,7 @@ import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
+import {DatasetSourcesTableQa} from 'shared';
 
 import {MANAGED_BY} from '../../constants';
 import DatasetUtils from '../../helpers/utils';
@@ -39,11 +40,20 @@ function SourceMenu(props) {
             size="s"
             switcherWrapperClassName={b('btn-menu-control')}
             renderSwitcher={({onClick, onKeyDown}) => (
-                <Button size="s" view="flat" onClick={onClick} onKeyDown={onKeyDown}>
+                <Button
+                    size="s"
+                    view="flat"
+                    onClick={onClick}
+                    onKeyDown={onKeyDown}
+                    qa={DatasetSourcesTableQa.SourceContextMenuBtn}
+                >
                     <Icon className={b('icon-more')} data={Ellipsis} width={14} />
                 </Button>
             )}
-            popupProps={{placement: ['bottom-start', 'top-start'], qa: 'ds-source-menu'}}
+            popupProps={{
+                placement: ['bottom-start', 'top-start'],
+                qa: DatasetSourcesTableQa.SourceMenu,
+            }}
             items={[
                 {
                     text: i18n('label_menu-popup-modify-source'),
@@ -52,6 +62,7 @@ function SourceMenu(props) {
                         e.stopPropagation();
                         onClickEditBtn(avatar);
                     },
+                    qa: DatasetSourcesTableQa.SourceContextMenuModify,
                 },
                 {
                     text: i18n('label_menu-popup-delete-source'),
@@ -60,6 +71,7 @@ function SourceMenu(props) {
                         e.stopPropagation();
                         onDelete({id});
                     },
+                    qa: DatasetSourcesTableQa.SourceContextMenuDelete,
                 },
             ]}
         />
@@ -97,7 +109,7 @@ function Source(props) {
                 drag_disabled: dragDisabled || isActive,
             })}
             style={position}
-            data-qa="ds-source"
+            data-qa={DatasetSourcesTableQa.Source}
         >
             <Icon className={b('icon-avatar')} data={iconAvatarTable} width={16} height={16} />
             <span title={avatarTitle} className={b('avatar-title')}>

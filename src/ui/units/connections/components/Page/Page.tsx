@@ -11,7 +11,7 @@ import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import {type ConnectorType, Feature} from 'shared';
+import {type ConnectorType, Feature, SharedEntriesBaseQa} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {PageTitle, SlugifyUrl, URL_QUERY, Utils} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
@@ -24,7 +24,6 @@ import {
     openDialogSaveDraftChartAsActualConfirm,
 } from 'ui/store/actions/dialog';
 import type {DataLensApiError} from 'ui/typings';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ErrorViewProps} from '../';
@@ -55,6 +54,7 @@ import './Page.scss';
 
 const b = block('conn-page');
 const i18n = I18n.keyset('connections.form');
+const i18nSharedEntry = I18n.keyset('shared-entry');
 
 type DispatchState = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -276,8 +276,9 @@ const PageComponent = (props: PageProps) => {
                           onClick={() => {
                               history.push(location.pathname);
                           }}
+                          qa={SharedEntriesBaseQa.OpenOriginalBtn}
                       >
-                          {getSharedEntryMockText('workbook-shared-entry-original-link')}
+                          {i18nSharedEntry('workbook-shared-entry-original-link')}
                       </Button>,
                   ]
                 : undefined,

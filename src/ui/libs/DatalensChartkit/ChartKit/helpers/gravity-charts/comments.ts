@@ -1,5 +1,6 @@
 import type {AxisPlotBand, AxisPlotLine, ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import get from 'lodash/get';
+import {ChartQa} from 'shared/constants/qa/chart';
 import type {ChartComment} from 'shared/types';
 
 export function convertChartCommentsToPlotBandsAndLines({comments}: {comments: ChartComment[]}) {
@@ -17,6 +18,7 @@ export function convertChartCommentsToPlotBandsAndLines({comments}: {comments: C
                     layerPlacement: comment.meta.zIndex === 0 ? 'before' : 'after',
                     label: {
                         text: comment.text,
+                        qa: ChartQa.CommentLabel,
                     },
                 };
                 plotBands.push(item);
@@ -32,6 +34,7 @@ export function convertChartCommentsToPlotBandsAndLines({comments}: {comments: C
                     layerPlacement: comment.meta.zIndex === 0 ? 'before' : 'after',
                     label: {
                         text: comment.text,
+                        qa: ChartQa.CommentLabel,
                     },
                 });
                 break;

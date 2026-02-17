@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
+import {DatasetPreviewQA} from 'shared';
 import {
     changeAmountPreviewRows,
     refetchPreviewDataset,
@@ -55,7 +56,7 @@ const DatasetPreview = (props) => {
     }, [rootNodeRef, handleContainerMousemove]);
 
     return (
-        <div className={b()} ref={rootNodeRef}>
+        <div className={b()} ref={rootNodeRef} data-qa={DatasetPreviewQA.Preview}>
             <PreviewHeader
                 view={view}
                 amountPreviewRows={amountPreviewRows}

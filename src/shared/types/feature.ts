@@ -97,12 +97,16 @@ export enum Feature {
     EnableDashColorPickersByTheme = 'EnableDashColorPickersByTheme',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
+    /** Funnel chart visualization */
+    FunnelChart = 'FunnelChart',
     /** Replace static master token with dynamic one */
     UsDynamicMasterToken = 'UsDynamicMasterToken',
     /** Enable using dynamic master token in proxy */
     UsDynamicMasterTokenInProxy = 'UsDynamicMasterTokenInProxy',
-    /** Use axios instead of request-promise-native for HTTP requests in charts-engine */
-    UseAxiosRequest = 'UseAxiosRequest',
+    /** Сhart settings for displaying trend lines smoothing, etc. */
+    ChartModeling = 'ChartModeling',
+    /** Route legacy HTTP sources through API Connector */
+    UseSourceAlias = 'UseSourceAlias',
 }
 
 export type FeatureConfig = Record<string, boolean>;

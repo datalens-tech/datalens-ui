@@ -7,17 +7,17 @@ import type {ChartStorageType} from '../types';
 import type {Runners} from './common';
 import {commonRunner} from './common';
 
-import type {RunnerHandlerProps} from '.';
+import type {RunnerHandlerProps, RunnerHandlerResult} from '.';
 
 // eslint-disable-next-line complexity
 export const runWorkerChart = async (
     cx: AppContext,
     props: RunnerHandlerProps & {chartBuilder: ChartBuilder; runnerType?: Runners},
-): Promise<void> => {
+): Promise<RunnerHandlerResult> => {
     const {
         chartsEngine,
         req,
-        res,
+        runnerLocals,
         config,
         configResolving,
         workbookId,
@@ -80,10 +80,10 @@ export const runWorkerChart = async (
             ctx.logError('Failed to generate chart in chart runner', error);
             ctx.end();
 
-            res.status(400).send({
-                error,
-            });
-            return;
+            return {
+                status: 400,
+                payload: error,
+            };
         }
 
         generatedConfig = {
@@ -103,16 +103,16 @@ export const runWorkerChart = async (
         ctx.logError('CHART_RUNNER_CONFIG_MISSING', error);
         ctx.end();
 
-        res.status(400).send({
-            error,
-        });
-        return;
+        return {
+            status: 400,
+            payload: error,
+        };
     }
 
     const hrStart = process.hrtime();
 
     return commonRunner({
-        res,
+        runnerLocals,
         req,
         ctx,
         chartType,

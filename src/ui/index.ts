@@ -20,6 +20,7 @@ import type {QLState} from 'units/ql/store/typings';
 import type {WizardGlobalState} from 'units/wizard/reducers';
 import type {WorkbooksState} from 'units/workbooks/store/reducers';
 
+import type {ChartModelingState} from './store/toolkit/chart-modeling/types';
 import type {CollectionsNavigationState} from './units/collections-navigation/store/reducers';
 import type {ServiceSettingsState} from './units/service-settings/store/typings/serviceSettings';
 
@@ -77,4 +78,5 @@ export type DatalensGlobalState = {
     auth: AuthState;
     serviceSettings: ServiceSettingsState;
     localStorageFallback: LocalStorageFallbackState;
+    chartModeling: ChartModelingState;
 };

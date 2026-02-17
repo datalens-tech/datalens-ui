@@ -1,6 +1,7 @@
 import {exampleFunction} from 'ui/registry/functions/example-function';
 import {EXAMPLE_FUNCTION} from 'ui/registry/units/common/constants/functions';
 import {getMinAutoupdateInterval} from 'ui/units/dash/containers/Dialogs/Settings/utils';
+import {getFixedHeaderBackgroundColor} from 'ui/units/dash/utils/colors';
 
 import DialogTextWidget from '../../../components/DialogTextWidget/DialogTextWidget';
 import {LazyBody} from '../../../units/dash/containers/Body/LazyBody';
@@ -22,5 +23,6 @@ export const registerDashPlugins = () => {
         getDashEntryUrl,
         getMinAutoupdateInterval,
         getExtendedItemData,
+        getFixedHeaderBackgroundColor,
     });
 };

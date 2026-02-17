@@ -2,9 +2,10 @@ import React from 'react';
 
 import {Alert, Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
 import {useDispatch} from 'react-redux';
-import {EntryScope} from 'shared';
+import {EntryDialogQA, EntryScope} from 'shared';
 import type {SharedEntryRelationFields} from 'shared/schema';
 import DialogManager from 'ui/components/DialogManager/DialogManager';
 import {EntitiesList} from 'ui/components/EntitiesList/EntitiesList';
@@ -14,7 +15,6 @@ import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import type {AppDispatch} from 'ui/store';
 import {showToast} from 'ui/store/actions/toaster';
-import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {groupEntitiesByScope} from 'ui/utils/helpers';
 
 import type {SharedEntry} from '../DialogSharedEntryBindings/types';
@@ -43,6 +43,7 @@ type Entities = {
     [K in EntryScope]?: SharedEntryRelationFields[];
 };
 
+const i18n = I18n.keyset('component.dialog-shared-related-entities.view');
 const b = block('dl-shared-related-entities-dialog');
 
 const CONCURRENT_ID = 'list-shared-related-entities';
@@ -54,13 +55,13 @@ export const getRelationText = (entities: Entities | null) => {
     const hasWidget = Boolean(entities?.[EntryScope.Widget]);
 
     if ([hasDash, hasDataset, hasWidget].filter(Boolean).length > 1) {
-        return getSharedEntryMockText('relations-workbook-dialog-delete');
+        return i18n('relations');
     } else if (hasDataset) {
-        return getSharedEntryMockText('relation-dataset-bindings-dialog-delete');
+        return i18n('relation-dataset');
     } else if (hasDash) {
-        return getSharedEntryMockText('relation-dash-workbook-dialog-delete');
+        return i18n('relation-dash');
     } else if (hasWidget) {
-        return getSharedEntryMockText('relation-chart-workbook-dialog-delete');
+        return i18n('relation-chart');
     } else {
         return '';
     }
@@ -78,25 +79,16 @@ const SharedRelatedEntitiesDialog = React.memo<Props>(
 
         const isListEmpty = isEmpty(entities);
         const dialogTitle = isDeleteDialog
-            ? getSharedEntryMockText('title-bindings-dialog-delete', {
-                  entry: getSharedEntryMockText(`label-shared-${scope}`).toLocaleLowerCase(),
+            ? i18n('title-dialog-delete', {
+                  entry: i18n(`label-shared-${scope}`).toLocaleLowerCase(),
               })
-            : getSharedEntryMockText('shared-object-related-entities-dialog-title');
+            : i18n('dialog-title');
         const alertTheme = isListEmpty ? 'info' : 'warning';
-        const alertTitle = getSharedEntryMockText(
-            isListEmpty
-                ? 'alert-title-info-bindings-dialog-delete'
-                : 'alert-title-warning-bindings-dialog-delete',
-            {
-                entry: getSharedEntryMockText(`label-shared-${scope}`),
-                relation: getRelationText(entities),
-            },
-        );
-        const alertMessage = getSharedEntryMockText(
-            isListEmpty
-                ? 'alert-message-info-workbook-dialog-delete'
-                : 'alert-message-warning-workbook-dialog-delete',
-        );
+        const alertTitle = i18n(isListEmpty ? 'alert-title-info' : 'alert-title-warning', {
+            entry: i18n(`label-shared-${scope}`),
+            relation: getRelationText(entities),
+        });
+        const alertMessage = i18n(isListEmpty ? 'alert-message-info' : 'alert-message-warning');
         const fetchEntityRelations = React.useCallback(() => {
             setIsLoading(true);
             setIsError(false);
@@ -148,7 +140,7 @@ const SharedRelatedEntitiesDialog = React.memo<Props>(
                         view="action"
                         onClick={fetchEntityRelations}
                     >
-                        {getSharedEntryMockText('bindings-dialog-retry-btn')}
+                        {i18n('retry-btn')}
                     </Button>
                 );
 
@@ -157,7 +149,7 @@ const SharedRelatedEntitiesDialog = React.memo<Props>(
                         <PlaceholderIllustration
                             direction="column"
                             name="error"
-                            title={getSharedEntryMockText('bindings-dialog-error')}
+                            title={i18n('dialog-error')}
                             renderAction={renderRetryAction}
                         />
                     </div>
@@ -170,9 +162,7 @@ const SharedRelatedEntitiesDialog = React.memo<Props>(
                         <PlaceholderIllustration
                             direction="column"
                             name="emptyDirectory"
-                            title={getSharedEntryMockText(
-                                'shared-object-related-entities-list-empty',
-                            )}
+                            title={i18n('related-entities-list-empty')}
                         />
                     </div>
                 );
@@ -193,7 +183,7 @@ const SharedRelatedEntitiesDialog = React.memo<Props>(
                 <Dialog.Body className={b('body', {isDeleteDialog})}>
                     <EntitiesList
                         entities={[entry]}
-                        title={getSharedEntryMockText('label-current-entry')}
+                        title={i18n('label-current-entry')}
                         className={b('current-row', {isDeleteDialog})}
                         rightSectionSlot={() => <SharedEntryIcon isDelegated={entry.isDelegated} />}
                     />
@@ -216,8 +206,9 @@ const SharedRelatedEntitiesDialog = React.memo<Props>(
                 </Dialog.Body>
                 {isDeleteDialog && (
                     <Dialog.Footer
-                        textButtonApply={getSharedEntryMockText('apply-bindings-dialog-delete')}
+                        textButtonApply={i18n('apply-text')}
                         propsButtonApply={{
+                            qa: EntryDialogQA.Apply,
                             view: 'outlined-danger',
                         }}
                         propsButtonCancel={{
@@ -225,7 +216,7 @@ const SharedRelatedEntitiesDialog = React.memo<Props>(
                         }}
                         className={b('footer')}
                         loading={isLoading || isLoadingDelete}
-                        textButtonCancel={getSharedEntryMockText('cancel-bindings-dialog-delete')}
+                        textButtonCancel={i18n('cancel-text')}
                         onClickButtonApply={onDelete}
                         onClickButtonCancel={onClose}
                     >
@@ -236,7 +227,7 @@ const SharedRelatedEntitiesDialog = React.memo<Props>(
                             onClick={() => fetchEntityRelations()}
                         >
                             <Icon data={ArrowsRotateRightIcon} />
-                            {getSharedEntryMockText('bindings-dialog-delete-refresh-btn')}
+                            {i18n('refresh-btn')}
                         </Button>
                     </Dialog.Footer>
                 )}
