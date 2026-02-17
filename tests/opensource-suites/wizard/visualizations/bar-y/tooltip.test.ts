@@ -46,7 +46,8 @@ datalensTest.describe('Wizard', () => {
                 const bar = chart.locator('.gcharts-bar-y').first();
                 await expect(bar).toBeVisible();
                 await bar.hover({force: true});
-                await expect(preview).toHaveScreenshot();
+                const tooltip = page.locator(slct(ChartKitQa.Tooltip, {mode: 'startsWith'}));
+                await expect(tooltip).toHaveScreenshot();
             },
         );
     });
@@ -83,7 +84,8 @@ datalensTest.describe('Wizard', () => {
             const bar = chart.locator('.gcharts-bar-y').first();
             await expect(bar).toBeVisible();
             await bar.hover({force: true});
-            await expect(preview).toHaveScreenshot();
+            const tooltip = page.locator(slct(ChartKitQa.Tooltip, {mode: 'startsWith'}));
+            await expect(tooltip).toHaveScreenshot();
         });
     });
 });
