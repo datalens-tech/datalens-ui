@@ -70,7 +70,11 @@ import {
 import type {DashState, UpdateTabsWithGlobalStateArgs} from '../typings/dash';
 
 import {save} from './base/actions';
-import {getPreparedCopiedSelectorData, handleSelectorLinkingDialog} from './copy-and-paste/helpers';
+import {
+    getPreparedCopiedSelectorData,
+    handleSelectorLinkingDialog,
+    openFailedCopyGlobalItemDialog,
+} from './copy-and-paste/helpers';
 import {getUpdatedTabsWithGlobalState, migrateDataSettings} from './helpers';
 
 import type {DashDispatch} from './index';
@@ -1133,7 +1137,6 @@ export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
                 hasTabChanged,
                 isWidgetVisible,
                 tabId,
-                dispatch,
             });
 
             if (updatedData) {
@@ -1141,6 +1144,8 @@ export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
                     ...payload,
                     item: {...payload.item, data: updatedData as ConfigItemData},
                 });
+            } else {
+                openFailedCopyGlobalItemDialog(dispatch);
             }
         };
 
@@ -1155,7 +1160,7 @@ export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
             payload,
         });
 
-        if (dialogResult?.showDialog) {
+        if (dialogResult) {
             dispatch(
                 openDialogDefault({
                     ...dialogResult.dialogConfig,

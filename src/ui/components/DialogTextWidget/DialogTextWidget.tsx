@@ -165,16 +165,18 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
     const onApply = React.useCallback(() => {
         const {text, autoHeight, borderRadius} = state;
 
-        setItemData({
-            item: {
-                data: {
-                    text,
-                    autoHeight,
-                    borderRadius,
-                    internalMarginsEnabled,
-                    ...resultedBackgroundSettings,
-                },
+        const item = {
+            data: {
+                text,
+                autoHeight,
+                borderRadius,
+                internalMarginsEnabled,
+                ...resultedBackgroundSettings,
             },
+        };
+
+        setItemData({
+            item,
         });
         closeDialog();
     }, [state, setItemData, closeDialog, resultedBackgroundSettings, internalMarginsEnabled]);

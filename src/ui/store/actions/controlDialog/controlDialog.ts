@@ -453,11 +453,11 @@ export const applyGroupControlDialog = ({
         };
 
         const getExtendedItemData = getExtendedItemDataAction();
-        const itemData = dispatch(
+        const item = dispatch(
             getExtendedItemData({data, type: DashTabItemType.GroupControl, contextList}),
         );
 
-        setItemData({item: itemData});
+        setItemData({item});
 
         closeDialog();
     };
@@ -603,11 +603,9 @@ export const applyExternalControlDialog = ({
             }),
         };
         const getExtendedItemData = getExtendedItemDataAction();
-        const itemData = dispatch(
-            getExtendedItemData({data, defaults, type: DashTabItemType.Control}),
-        );
+        const item = dispatch(getExtendedItemData({data, defaults, type: DashTabItemType.Control}));
 
-        setItemData({item: itemData});
+        setItemData({item});
         closeDialog();
     };
 };

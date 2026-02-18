@@ -375,16 +375,16 @@ function dash(state = initialState, action) {
                 // TODO: remove after up platform
             } = 'item' in action.payload ? action.payload.item : action.payload;
 
+            let targetTab = tab;
             let targetTabIndex = tabIndex;
-            const targetTab = action.payload.tabId
-                ? state.data.tabs.find((tabItem, index) => {
-                      if (tabItem.id === action.payload.tabId) {
-                          targetTabIndex = index;
-                          return true;
-                      }
-                      return false;
-                  })
-                : tab;
+
+            // if we have to change item not on the current tab
+            if (action.payload.tabId) {
+                targetTabIndex = state.data.tabs.findIndex(
+                    (tabItem) => tabItem.id === action.payload.tabId,
+                );
+                targetTab = state.data.tabs[targetTabIndex];
+            }
 
             if (!targetTab) {
                 return state;
@@ -393,7 +393,7 @@ function dash(state = initialState, action) {
             const targetTabId = action.payload.tabId ?? tabId;
 
             // TODO: remove after up platform
-            const itemPayload = 'item' in action.payload ? action.payload.item : action.paylod;
+            const itemPayload = 'item' in action.payload ? action.payload.item : action.payload;
 
             const isGlobal =
                 itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control

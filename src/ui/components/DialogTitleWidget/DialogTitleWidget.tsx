@@ -301,28 +301,30 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                 : {textColor: oldTextColor};
         if (Object.values(validationErrors).filter(Boolean).length === 0) {
             const resultedCustomFontSize = customFontSize ?? previousSelectedFontSize;
-            setItemData({
-                item: {
-                    data: {
-                        text,
-                        size:
-                            fontSize === 'custom'
-                                ? {
-                                      fontSize: Math.min(
-                                          MAX_FONT_SIZE,
-                                          Math.max(MIN_FONT_SIZE, resultedCustomFontSize),
-                                      ),
-                                  }
-                                : fontSize,
-                        showInTOC,
-                        autoHeight,
-                        borderRadius,
-                        internalMarginsEnabled,
-                        ...resultedBackgroundSettings,
-                        ...resultTextColorSettings,
-                        hint,
-                    },
+            const item = {
+                data: {
+                    text,
+                    size:
+                        fontSize === 'custom'
+                            ? {
+                                  fontSize: Math.min(
+                                      MAX_FONT_SIZE,
+                                      Math.max(MIN_FONT_SIZE, resultedCustomFontSize),
+                                  ),
+                              }
+                            : fontSize,
+                    showInTOC,
+                    autoHeight,
+                    borderRadius,
+                    internalMarginsEnabled,
+                    ...resultedBackgroundSettings,
+                    ...resultTextColorSettings,
+                    hint,
                 },
+            };
+
+            setItemData({
+                item,
             });
             closeDialog();
         } else {

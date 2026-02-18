@@ -31,14 +31,12 @@ export const getPreparedCopiedSelectorData = ({
     hasTabChanged,
     isWidgetVisible,
     tabId,
-    dispatch,
 }: {
     selectorData: IsWidgetVisibleOnTabArgs['itemData'];
     hasEntryChanged: boolean;
     hasTabChanged: boolean;
     isWidgetVisible: boolean;
     tabId: string;
-    dispatch: DashDispatch;
 }) => {
     const updatedData = {
         ...selectorData,
@@ -84,7 +82,6 @@ export const getPreparedCopiedSelectorData = ({
         });
 
         if (!isWidgetVisibleAfterUpdate) {
-            openFailedCopyGlobalItemDialog(dispatch);
             return null;
         }
         return updatedData;
@@ -121,12 +118,7 @@ const getLinkedImpactFields = ({
     currentTabId?: string;
     sourceTabId?: string;
 }) => {
-    if (
-        !currentTabId ||
-        !sourceTabId ||
-        (originalItem.type !== DashTabItemType.Control &&
-            originalItem.type !== DashTabItemType.GroupControl)
-    ) {
+    if (!currentTabId || !sourceTabId) {
         return originalItem;
     }
 
@@ -147,44 +139,91 @@ const getLinkedImpactFields = ({
         };
 
         return updatedSelector;
-    } else {
-        const originalSingleSelector = originalItem.data.group[0];
-        const isSingleSelector = originalItem.data.group.length === 1;
+    }
 
-        if (!isSingleSelector) {
-            const {impactType, impactTabsIds} = getImpactFields({
-                impactType: originalItem.data.impactType,
-                impactTabsIds: originalItem.data.impactTabsIds,
-                currentTabId,
-                sourceTabId,
-            });
+    const originalSingleSelector = originalItem.data.group[0];
+    const isSingleSelector = originalItem.data.group.length === 1;
 
-            updatedSelector.data = {
-                ...originalItem.data,
-                impactType,
-                impactTabsIds,
-            };
-
-            return updatedSelector;
-        }
+    if (!isSingleSelector) {
+        const {impactType, impactTabsIds} = getImpactFields({
+            impactType: originalItem.data.impactType,
+            impactTabsIds: originalItem.data.impactTabsIds,
+            currentTabId,
+            sourceTabId,
+        });
 
         updatedSelector.data = {
             ...originalItem.data,
-            group: [
-                {
-                    ...originalSingleSelector,
-                    ...getImpactFields({
-                        impactType: originalSingleSelector.impactType,
-                        impactTabsIds: originalSingleSelector.impactTabsIds,
-                        currentTabId,
-                        sourceTabId,
-                    }),
-                },
-            ],
+            impactType,
+            impactTabsIds,
         };
 
         return updatedSelector;
     }
+
+    updatedSelector.data = {
+        ...originalItem.data,
+        group: [
+            {
+                ...originalSingleSelector,
+                ...getImpactFields({
+                    impactType: originalSingleSelector.impactType,
+                    impactTabsIds: originalSingleSelector.impactTabsIds,
+                    currentTabId,
+                    sourceTabId,
+                }),
+            },
+        ],
+    };
+
+    return updatedSelector;
+};
+
+const findOriginalSelector = ({
+    sourceTab,
+    payload,
+}: {
+    sourceTab: DashTab;
+    payload: SetCopiedItemDataPayload;
+}) => {
+    const allSourceItems = getAllTabItems({
+        items: sourceTab.items,
+        globalItems: sourceTab.globalItems,
+    });
+
+    return allSourceItems.find<DashTabItemControl | DashTabItemGroupControl>(
+        (item): item is DashTabItemControl | DashTabItemGroupControl => {
+            if (
+                item.type !== DashTabItemType.Control &&
+                item.type !== DashTabItemType.GroupControl
+            ) {
+                return false;
+            }
+
+            if (item.id === payload.context?.targetId) {
+                return true;
+            }
+
+            const targetIds = payload.context?.targetIds;
+            const hasOtherTargetIds =
+                targetIds &&
+                (targetIds.length > 1 ||
+                    (targetIds.length === 1 && targetIds[0] !== payload.context?.targetId));
+
+            if (!hasOtherTargetIds) {
+                return false;
+            }
+
+            if (
+                item.type === DashTabItemType.GroupControl &&
+                item.data.group.some((groupItem) => targetIds.includes(groupItem.id))
+            ) {
+                return true;
+            }
+
+            return targetIds.includes(item.id);
+        },
+    );
 };
 
 export const handleSelectorLinkingDialog = ({
@@ -212,43 +251,7 @@ export const handleSelectorLinkingDialog = ({
         return null;
     }
 
-    const allSourceItems = getAllTabItems({
-        items: sourceTab.items,
-        globalItems: sourceTab.globalItems,
-    });
-    const originalSelector = allSourceItems.find<DashTabItemControl | DashTabItemGroupControl>(
-        (item): item is DashTabItemControl | DashTabItemGroupControl => {
-            if (
-                item.type !== DashTabItemType.Control &&
-                item.type !== DashTabItemType.GroupControl
-            ) {
-                return false;
-            }
-
-            if (item.id === payload.context?.targetId) {
-                return true;
-            }
-
-            const targetIds = payload.context?.targetIds;
-
-            if (
-                targetIds &&
-                (targetIds.length > 1 ||
-                    (targetIds.length === 1 && targetIds[0] !== payload.context?.targetId))
-            ) {
-                if (
-                    item.type === DashTabItemType.GroupControl &&
-                    item.data.group.some((groupItem) => targetIds.includes(groupItem.id))
-                ) {
-                    return true;
-                }
-
-                return targetIds.includes(item.id);
-            }
-
-            return false;
-        },
-    );
+    const originalSelector = findOriginalSelector({sourceTab, payload});
 
     if (!originalSelector) {
         return null;
@@ -270,7 +273,6 @@ export const handleSelectorLinkingDialog = ({
         originalSelector.data.group.length > 1;
 
     return {
-        showDialog: true,
         dialogConfig: {
             caption: i18n('title_link-selector-to-tab'),
             message: isMultiSelectorGroup
