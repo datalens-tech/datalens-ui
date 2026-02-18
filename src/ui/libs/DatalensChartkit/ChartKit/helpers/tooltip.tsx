@@ -1,6 +1,7 @@
 import React from 'react';
 
 import type {
+    AreaSeries,
     BarXSeries,
     BarXSeriesData,
     BarYSeries,
@@ -201,7 +202,7 @@ export const getTooltipRenderer = ({
     return undefined;
 };
 
-const getBarXYWithPercentRowRenderer = ({
+const getStackedPercentRowRenderer = ({
     valueKey,
 }: {
     valueKey: 'x' | 'y';
@@ -220,8 +221,10 @@ const getBarXYWithPercentRowRenderer = ({
                     acc + Number((item.data as BarXSeriesData | BarYSeriesData)[valueKey] ?? 0),
                 0,
             ) ?? 0;
-        const percentage = value
-            ? formatNumber(Number(value) / total, {format: 'percent', precision: 1})
+        const numericValue = Number(value);
+        const ratio = total === 0 ? 0 : numericValue / total;
+        const percentage = Number.isFinite(numericValue)
+            ? formatNumber(ratio, {format: 'percent', precision: 1})
             : '';
 
         return (
@@ -257,16 +260,23 @@ export const getTooltipRowRenderer = ({
 
     if (seriesTypes.length === 1) {
         switch (seriesTypes[0]) {
+            case 'area': {
+                if (seriesData.some((s) => (s as AreaSeries).stacking === 'percent')) {
+                    return getStackedPercentRowRenderer({valueKey: 'y'});
+                }
+
+                break;
+            }
             case 'bar-x': {
                 if (seriesData.some((s) => (s as BarXSeries).stacking === 'percent')) {
-                    return getBarXYWithPercentRowRenderer({valueKey: 'y'});
+                    return getStackedPercentRowRenderer({valueKey: 'y'});
                 }
 
                 break;
             }
             case 'bar-y': {
                 if (seriesData.some((s) => (s as BarYSeries).stacking === 'percent')) {
-                    return getBarXYWithPercentRowRenderer({valueKey: 'x'});
+                    return getStackedPercentRowRenderer({valueKey: 'x'});
                 }
 
                 break;
