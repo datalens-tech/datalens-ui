@@ -372,7 +372,7 @@ function dash(state = initialState, action) {
                 defaults,
                 contextList,
                 id: itemId,
-                // TODO: removw after up platform
+                // TODO: remove after up platform
             } = 'item' in action.payload ? action.payload.item : action.payload;
 
             let targetTabIndex = tabIndex;
@@ -385,11 +385,19 @@ function dash(state = initialState, action) {
                       return false;
                   })
                 : tab;
+
+            if (!targetTab) {
+                return state;
+            }
+
             const targetTabId = action.payload.tabId ?? tabId;
+
+            // TODO: remove after up platform
+            const itemPayload = 'item' in action.payload ? action.payload.item : action.paylod;
 
             const isGlobal =
                 itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control
-                    ? isItemGlobal(action.payload.item)
+                    ? isItemGlobal(itemPayload)
                     : false;
 
             const tabData = DashKit.setItem({

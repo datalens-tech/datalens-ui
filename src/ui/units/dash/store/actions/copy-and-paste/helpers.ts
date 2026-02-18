@@ -159,8 +159,11 @@ const getLinkedImpactFields = ({
                 sourceTabId,
             });
 
-            updatedSelector.data.impactType = impactType;
-            updatedSelector.data.impactTabsIds = impactTabsIds;
+            updatedSelector.data = {
+                ...originalItem.data,
+                impactType,
+                impactTabsIds,
+            };
 
             return updatedSelector;
         }

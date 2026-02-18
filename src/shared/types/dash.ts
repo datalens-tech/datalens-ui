@@ -270,10 +270,10 @@ export type DashItemControlConnectionBaseSource = {
     connectionQueryContent?: ConnectionQueryContent;
 };
 
-export interface DashTabItemControlConnection extends DashTabItemControlBaseData {
+export type DashTabItemControlConnection = DashTabItemControlBaseData & {
     sourceType: DashTabItemControlSourceType.Connection;
     source: DashItemControlConnectionBaseSource & DashTabItemControlElement;
-}
+};
 
 export type DashItemControlDatasetBaseSource = {
     datasetId: string;
@@ -331,7 +331,7 @@ export type AccentTypeValue = 'info' | null;
 export interface DashTabItemControlElementBase {
     showTitle: boolean;
     titlePlacement?: TitlePlacementOption;
-    elementType: 'select' | 'input' | 'date' | 'checkbox';
+    elementType: DashTabItemControlElementType;
     operation?: Operations;
     showInnerTitle?: boolean;
     innerTitle?: string;
@@ -353,12 +353,12 @@ export interface DashTabItemControlElementSelect
     extends DashTabItemControlElementBase,
         DashTabItemControlElementSelectBase {
     defaultValue: UniversalDefaultValue;
-    elementType: 'select';
+    elementType: DashTabItemControlElementType.Select;
 }
 
 export interface DashTabItemControlElementInput extends DashTabItemControlElementBase {
     defaultValue: StringDefaultValue;
-    elementType: 'input';
+    elementType: DashTabItemControlElementType.Input;
 }
 
 export interface DashTabItemControlElementDateBase {
@@ -368,12 +368,12 @@ export interface DashTabItemControlElementDateBase {
 export interface DashTabItemControlElementDate
     extends DashTabItemControlElementBase,
         DashTabItemControlElementDateBase {
-    elementType: 'date';
+    elementType: DashTabItemControlElementType.Date;
     defaultValue: StringDefaultValue;
 }
 
 export interface DashTabItemControlElementCheckbox extends DashTabItemControlElementBase {
-    elementType: 'checkbox';
+    elementType: DashTabItemControlElementType.Checkbox;
     defaultValue: StringDefaultValue;
 }
 
