@@ -108,7 +108,7 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         const customColorBtn = page.locator(slct(DialogMetricColorsQa.CustomColorButton));
         await customColorBtn.click();
 
-        const colorInput = wizardPage.metricColorsDialog.getPaletteInput();
+        const colorInput = wizardPage.metricColorsDialog.getPaletteInput().first();
         await colorInput.fill(inavlidColorValue);
 
         const colorInputErrorLocator = wizardPage.page.locator(CommonSelectors.TextInputErrorState);

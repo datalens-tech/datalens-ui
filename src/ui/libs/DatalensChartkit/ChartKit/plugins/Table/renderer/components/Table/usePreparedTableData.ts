@@ -88,16 +88,15 @@ function getFooterRows(args: {
                     : formattedValue;
             }
 
-            const cellStyle: React.CSSProperties = {};
+            const cellStyle: React.CSSProperties = {...getCellCustomStyle(cellData, bgColor)};
             if (pinned) {
                 cellStyle.left = leftPositions[originalHeadData?.index ?? -1];
-                cellStyle.backgroundColor = bgColor;
+                cellStyle.backgroundColor = cellStyle.backgroundColor ?? bgColor;
             }
 
             return {
                 id: get(cellData, 'id', String(cellIndex)),
                 style: cellStyle,
-                contentStyle: getCellCustomStyle(cellData),
                 pinned,
                 type: get(originalHeadData, 'type'),
                 content,

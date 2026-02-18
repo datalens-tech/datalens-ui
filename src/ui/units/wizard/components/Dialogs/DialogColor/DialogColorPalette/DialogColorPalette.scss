@@ -7,24 +7,6 @@
         border-top: 1px solid var(--g-color-line-generic);
     }
 
-    &__value-color {
-        flex: 0 0 20px;
-        height: 14px;
-        margin-right: 12px;
-        border-radius: 2px;
-
-        &_default {
-            background-color: var(--g-color-base-generic);
-            border: 1px solid var(--g-color-line-generic);
-            color: var(--g-color-text-hint);
-            font-size: 10px;
-            text-transform: uppercase;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    }
-
     &__palette-container {
         position: relative;
         width: 50%;
@@ -38,11 +20,10 @@
     }
 
     &__row {
-        margin: 0 24px;
+        margin: 20px 24px 0;
     }
 
     &__palette {
-        height: 230px;
         margin: 20px 24px 0;
     }
 

@@ -13,7 +13,6 @@ import {bindActionCreators} from 'redux';
 import type {Shared, VisualizationIconProps, VisualizationWithLayersShared} from 'shared';
 import {WizardPageQa, isVisualizationWithLayers} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {registry} from 'ui/registry';
 import {selectDataset, selectDatasets} from 'units/wizard/selectors/dataset';
 import {selectUpdates} from 'units/wizard/selectors/preview';
 import {selectExtraSettings, selectWidget} from 'units/wizard/selectors/widget';
@@ -125,21 +124,14 @@ class VisualizationSelector extends React.Component<Props> {
 
     private getItems(): DropdownMenuItemMixed<unknown>[] {
         const {visualization, visibleVisualizations} = this.props;
-        const {getVisualSelectorBottomPlaceholder} = registry.chart.functions.getAll();
-        const bottomPlaceholder = getVisualSelectorBottomPlaceholder();
-        const res = visibleVisualizations.map((item, index) => {
+
+        return visibleVisualizations.map((item, index) => {
             return {
                 action: () => this.onItemClick(index),
                 text: this.renderItem(item),
                 active: item.id === visualization.id,
             };
         });
-
-        if (bottomPlaceholder) {
-            return [res, [bottomPlaceholder]];
-        } else {
-            return res;
-        }
     }
 
     private onItemClick = async (index: number) => {
