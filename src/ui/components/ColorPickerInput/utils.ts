@@ -11,11 +11,15 @@ export function isEmptyColor(color?: string): color is undefined {
     return color === '' || color === '#' || color === undefined;
 }
 
+export function isHexColor(color?: string | null): boolean {
+    return Boolean(color?.startsWith('#'));
+}
+
 export function colorMask(color?: string): string {
     if (isEmptyColor(color)) {
         return '';
     } else {
-        return normalizeColor(`${color?.startsWith('#') ? '' : '#'}${color}`);
+        return normalizeColor(`${isHexColor(color) ? '' : '#'}${color}`);
     }
 }
 

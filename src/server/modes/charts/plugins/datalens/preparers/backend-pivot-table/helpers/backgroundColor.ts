@@ -14,7 +14,7 @@ import {
 import {selectServerPalette} from '../../../../../../../constants';
 import type {ChartColorsConfig} from '../../../types';
 import {colorizePivotTableCell} from '../../../utils/color-helpers';
-import {getColor} from '../../../utils/constants';
+import {getMountedColor} from '../../../utils/constants';
 import {getCurrentBackgroundGradient} from '../../helpers/backgroundSettings/misc';
 import type {
     AnnotationsMap,
@@ -57,21 +57,16 @@ const getDiscreteColorValue = (args: {
         return null;
     }
 
-    const colorIndex = mountedColors[colorValue];
-
-    if (!colorIndex) {
-        return null;
-    }
-
-    return getColor(
-        Number(colorIndex),
-        selectServerPalette({
+    return getMountedColor({
+        mountedColors,
+        colors: selectServerPalette({
             palette,
             customColorPalettes,
             availablePalettes,
             defaultColorPaletteId,
         }),
-    );
+        value: colorValue,
+    });
 };
 
 type ColorizePivotTableHeaderByBackgroundSettings = {

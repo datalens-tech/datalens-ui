@@ -107,6 +107,7 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
                 <div className={b('color-input-wrapper')}>
                     <ColorPickerInput
                         required
+                        hasOpacityInput
                         value={currentColorHex}
                         qa={controlQa ? `${controlQa}-palette-input` : undefined}
                         size="m"

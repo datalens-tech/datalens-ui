@@ -1,0 +1,11 @@
+.palette-with-custom-color {
+    &__color-input-wrapper {
+        width: 172px;
+        margin-top: 20px;
+        visibility: hidden;
+
+        &_visible {
+            visibility: visible;
+        }
+    }
+}
