@@ -14,12 +14,12 @@ import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualizat
 import {SMALL_SCREENSHOT_VIEWPORT_SIZE} from '../constants';
 
 datalensTest.describe('Wizard', () => {
-    datalensTest.describe('Bar-x chart', () => {
+    datalensTest.describe('Area chart', () => {
         datalensTest.beforeEach(async ({page, config}) => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.Column);
+            await wizardPage.setVisualization(WizardVisualizationId.Area);
         });
 
         datalensTest('String dataLabels @screenshot', async ({page}) => {
@@ -66,37 +66,21 @@ datalensTest.describe('Wizard', () => {
             await expect(preview.locator(slct(ChartKitQa.Loader))).not.toBeVisible();
             await expect(preview).toHaveScreenshot();
         });
-
-        datalensTest('MeasureValues as dataLabels @screenshot', async ({page}) => {
-            const wizardPage = new WizardPage({page});
-            const preview = page.locator(slct(WizardPageQa.SectionPreview));
-            await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'SalesSum');
-            await wizardPage.createNewFieldWithFormula('orderCount', 'count([order_id])');
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'orderCount');
-            await wizardPage.sectionVisualization.addFieldByClick(
-                PlaceholderName.Labels,
-                'Measure Values',
-            );
-            // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
-            await page.mouse.move(-1, -1);
-            await expect(preview.locator(slct(ChartKitQa.Loader))).not.toBeVisible();
-            await expect(preview).toHaveScreenshot();
-        });
     });
 
-    datalensTest.describe('Bar-x normalised chart', () => {
+    datalensTest.describe('Area normalised chart', () => {
         datalensTest.beforeEach(async ({page, config}) => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.Column100p);
+            await wizardPage.setVisualization(WizardVisualizationId.Area100p);
         });
 
         datalensTest('Percentage as labels @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const preview = page.locator(slct(WizardPageQa.SectionPreview));
             await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'region');
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'SalesSum');
             await wizardPage.sectionVisualization.addFieldByClick(
                 PlaceholderName.Colors,
