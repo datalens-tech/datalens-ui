@@ -202,7 +202,7 @@ export const getTooltipRenderer = ({
     return undefined;
 };
 
-const getBarXYWithPercentRowRenderer = ({
+const getStackedPercentRowRenderer = ({
     valueKey,
 }: {
     valueKey: 'x' | 'y';
@@ -260,23 +260,23 @@ export const getTooltipRowRenderer = ({
 
     if (seriesTypes.length === 1) {
         switch (seriesTypes[0]) {
+            case 'area': {
+                if (seriesData.some((s) => (s as AreaSeries).stacking === 'percent')) {
+                    return getStackedPercentRowRenderer({valueKey: 'y'});
+                }
+
+                break;
+            }
             case 'bar-x': {
                 if (seriesData.some((s) => (s as BarXSeries).stacking === 'percent')) {
-                    return getBarXYWithPercentRowRenderer({valueKey: 'y'});
+                    return getStackedPercentRowRenderer({valueKey: 'y'});
                 }
 
                 break;
             }
             case 'bar-y': {
                 if (seriesData.some((s) => (s as BarYSeries).stacking === 'percent')) {
-                    return getBarXYWithPercentRowRenderer({valueKey: 'x'});
-                }
-
-                break;
-            }
-            case 'area': {
-                if (seriesData.some((s) => (s as AreaSeries).stacking === 'percent')) {
-                    return getBarXYWithPercentRowRenderer({valueKey: 'y'});
+                    return getStackedPercentRowRenderer({valueKey: 'x'});
                 }
 
                 break;

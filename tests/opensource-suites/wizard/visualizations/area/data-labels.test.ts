@@ -28,10 +28,8 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'segment');
             await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'SalesSum');
-            await wizardPage.sectionVisualization.addFieldByClick(
-                PlaceholderName.Labels,
-                'SalesSum',
-            );
+            await wizardPage.createNewFieldWithFormula('label', 'max([segment])');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Labels, 'label');
             // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
             await page.mouse.move(-1, -1);
             await expect(preview.locator(slct(ChartKitQa.Loader))).not.toBeVisible();
