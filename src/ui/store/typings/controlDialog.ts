@@ -20,6 +20,7 @@ import type {
     StringParams,
     TitlePlacement,
     UniversalDefaultValue,
+    DashTabItemControlElementType,
 } from 'shared/types';
 
 import type {DialogTitleWidgetFeatureProps} from 'ui/components/DialogTitleWidget/DialogTitleWidget';
@@ -71,7 +72,7 @@ export type SelectorsGroupDialogState = {
     validation: SelectorsGroupValidation;
 };
 
-export type SelectorElementType = 'select' | 'date' | 'input' | 'checkbox';
+export type SelectorElementType = DashTabItemControlElementType;
 
 export type SelectorSourceType =
     | DashTabItemControlSourceType.Dataset
