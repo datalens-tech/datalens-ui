@@ -15,7 +15,7 @@ const getErrorView = (error: Error | null, onRetry: () => void) => {
     switch (error.code) {
         case DashErrorCode.NOT_FOUND:
             return {
-                title: i18n('label_error-404-message'),
+                description: i18n('label_error-404-message'),
                 retry: onRetry,
             };
         case DashErrorCode.LIMIT_EXCEED:
