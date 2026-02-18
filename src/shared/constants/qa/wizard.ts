@@ -194,6 +194,7 @@ export const enum ChartSettingsDialogQA {
     IndicatorTitleMode = 'indicator-title-mode',
     PreserveWhiteSpace = 'preserve-white-space',
     IndicatorFontSize = 'indicator-font-size',
+    Stacking = 'stacking',
 }
 
 export const enum DialogMetricColorsQa {

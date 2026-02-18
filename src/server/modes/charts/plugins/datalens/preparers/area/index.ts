@@ -116,11 +116,18 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
             seriesName = `${graph.custom.segmentTitle}: ${seriesName}`;
         }
 
+        let stacking: AreaSeries['stacking'];
+        if (shouldUsePercentStacking) {
+            stacking = 'percent';
+        } else if (shared.extraSettings?.stacking !== 'off') {
+            stacking = 'normal';
+        }
+
         return {
             name: seriesName,
             type: 'area',
             stackId: graph.stack,
-            stacking: shouldUsePercentStacking ? 'percent' : 'normal',
+            stacking,
             color: graph.color,
             nullMode: graph.connectNulls ? 'connect' : 'skip',
             data: graph.data.reduce((acc: ExtendedLineSeriesData[], item: any, index: number) => {

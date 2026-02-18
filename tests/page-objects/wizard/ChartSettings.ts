@@ -53,11 +53,11 @@ export default class ChartSettings {
         return classAttribute?.includes('g-switch_disabled');
     }
 
-    async getSettingItem(settingName: ChartSettingsItems) {
+    async getSettingItem(settingQa: string) {
         let settingItem: null | ElementHandle | undefined;
 
         await waitForCondition(async () => {
-            settingItem = await this.page.$(slct(settingName));
+            settingItem = await this.page.$(slct(settingQa));
 
             return settingItem;
         }).catch(() => {
@@ -91,16 +91,16 @@ export default class ChartSettings {
         });
     }
 
-    async toggleSettingItem(settingName: ChartSettingsItems, mode: 'on' | 'off') {
-        const settingItem: ElementHandle = await this.getSettingItem(settingName);
+    async toggleSettingItem(settingQa: string, mode: 'on' | 'off') {
+        const settingItem: ElementHandle = await this.getSettingItem(settingQa);
 
         await settingItem.click();
 
         await this.checkItemAttribute(settingItem, mode);
     }
 
-    async checkSettingMode(settingName: ChartSettingsItems, mode: 'on' | 'off') {
-        const settingItem: ElementHandle = await this.getSettingItem(settingName);
+    async checkSettingMode(settingQa: string, mode: 'on' | 'off') {
+        const settingItem: ElementHandle = await this.getSettingItem(settingQa);
 
         await this.checkItemAttribute(settingItem, mode);
     }
