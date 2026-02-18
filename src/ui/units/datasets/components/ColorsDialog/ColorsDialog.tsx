@@ -130,7 +130,8 @@ export const ColorsDialog = (props: Props) => {
             return;
         }
 
-        const isDefaultColor = !colorsList[colorIndex] || colorsList[colorIndex] === 'auto';
+        const isDefaultColor =
+            !colorsList[colorIndex] || colorsList[colorIndex] === PALETTE_DEFAULT_COLOR;
 
         if (mountedColors[selectedValue] && isDefaultColor) {
             delete newMountedColors[selectedValue];

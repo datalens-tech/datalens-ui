@@ -168,7 +168,8 @@ class ColorSettingsContainer extends React.Component<Props> {
             return;
         }
 
-        const isDefaultColor = !colorsList[colorIndex] || colorsList[colorIndex] === 'auto';
+        const isDefaultColor =
+            !colorsList[colorIndex] || colorsList[colorIndex] === PALETTE_DEFAULT_COLOR;
 
         if (mountedColors[selectedValue] && isDefaultColor) {
             delete mountedColors[selectedValue];
