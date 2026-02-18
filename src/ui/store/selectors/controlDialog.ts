@@ -164,7 +164,7 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
         return undefined;
     }
 
-    let inputOperations;
+    let inputOperations: Operation[] = [];
 
     switch (elementType) {
         case 'select': {
