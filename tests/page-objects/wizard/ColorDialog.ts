@@ -60,7 +60,6 @@ export default class ColorDialog {
 
     async selectCustomColor(colorValue: string, opacityValue?: string) {
         await this.page.click(slct(DialogColorQa.CustomColorButton));
-        await this.page.click(slct(DialogColorQa.CustomColorButton));
 
         const inputs = this.page
             .locator(slct(DialogColorQa.CustomColorInput))
