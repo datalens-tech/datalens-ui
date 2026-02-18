@@ -31,8 +31,9 @@ export const createDashboardV1 = createTypedAction(
 
         const createEntryResult = await typedApi.us._createEntry({
             key: argsEntry.key,
-            meta: argsEntry.meta,
             workbookId: argsEntry.workbookId,
+            name: argsEntry.name,
+            meta: argsEntry.meta,
             annotation: argsEntry.annotation,
             mode: args.mode,
             data,

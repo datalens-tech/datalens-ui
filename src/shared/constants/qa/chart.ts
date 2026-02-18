@@ -31,6 +31,7 @@ export const enum ChartKitQa {
     DrillBreadcrumbs = 'chartkit-drillbreadcrumbs',
     DrillBreadcrumbsItem = 'chartkit-drillbreadcrumbs-item',
     Widget = 'chart-widget',
+    Tooltip = 'chartkit-tooltip',
 }
 
 export const enum ChartQa {
