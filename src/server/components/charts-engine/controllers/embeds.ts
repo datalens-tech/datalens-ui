@@ -20,7 +20,6 @@ import {
     DashTabItemType,
     EntryScope,
     ErrorCode,
-    Feature,
     getAllTabItems,
 } from '../../../../shared';
 import {registry} from '../../../registry';
@@ -247,11 +246,9 @@ function processEntry(
 async function filterParams({
     params = {},
     embeddingInfo,
-    ctx,
 }: {
     params: Record<string, unknown>;
     embeddingInfo: EmbeddingInfo;
-    ctx: AppContext;
 }): Promise<{params: Record<string, unknown>; privateParams?: Set<string>}> {
     if (!params || Object.keys(params).length === 0) {
         return {params: {...embeddingInfo.token.params}};
@@ -297,22 +294,12 @@ async function filterParams({
         Object.keys(embeddingInfo.token.params).forEach((param) => forbiddenParamsSet?.add(param));
     }
 
-    let finalParams;
-    const isSecureParamsV2Enabled = ctx.get('isEnabledServerFeature')(Feature.EnableSecureParamsV2);
-
-    if (isSecureParamsV2Enabled) {
-        finalParams = {
-            // params from token are considered as constant
-            // they have the most priority over incoming params
-            ...filteredParams,
-            ...embeddingInfo.token.params,
-        };
-    } else {
-        finalParams = {
-            ...embeddingInfo.token.params,
-            ...filteredParams,
-        };
-    }
+    const finalParams = {
+        // params from token are considered as constant
+        // they have the most priority over incoming params
+        ...filteredParams,
+        ...embeddingInfo.token.params,
+    };
 
     return {
         params: finalParams,
@@ -490,7 +477,6 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 const {params, privateParams} = await filterParams({
                     params: req.body.params,
                     embeddingInfo,
-                    ctx,
                 });
 
                 req.body.params = params;
