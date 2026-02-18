@@ -1,7 +1,7 @@
 import type {MarkupItem} from '../../../../../../../../../shared';
 import {getDistinctValue, markupToRawString} from '../../../../../../../../../shared';
 import {selectServerPalette} from '../../../../../../../../constants';
-import {getColor} from '../../../../utils/constants';
+import {getMountedColor} from '../../../../utils/constants';
 import {findIndexInOrder} from '../../../../utils/misc-helpers';
 
 import type {
@@ -49,8 +49,6 @@ const getDiscreteBackgroundColorStyle = (args: GetDiscreteBackgroundColorStyle) 
 
     const mountedColors = paletteSettings.mountedColors || {};
 
-    const mountedColorValue = mountedColors[value];
-
     let colors;
     if (paletteSettings?.palette && loadedColorPalettes[paletteSettings.palette]) {
         colors = loadedColorPalettes[paletteSettings.palette].colors;
@@ -62,7 +60,11 @@ const getDiscreteBackgroundColorStyle = (args: GetDiscreteBackgroundColorStyle) 
         });
     }
 
-    const colorValue = getColor(Number(mountedColorValue), colors);
+    const colorValue = getMountedColor({
+        mountedColors,
+        colors,
+        value,
+    });
 
     if (!colorValue) {
         return;
