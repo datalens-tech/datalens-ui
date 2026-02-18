@@ -15,15 +15,16 @@ import {
 import {ColorPaletteSelect} from 'ui/components/ColorPaletteSelect/ColorPaletteSelect';
 import {ColorValueItem} from 'ui/components/ColorValueItem/ColorValueItem';
 import {ValuesList} from 'ui/components/ValuesList/ValuesList';
-import {getTenantDefaultColorPaletteId} from 'ui/constants';
+import {PALETTE_DEFAULT_COLOR, getTenantDefaultColorPaletteId} from 'ui/constants';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {selectColorPalettesDict} from 'ui/store/selectors/colorPaletteEditor';
-import {PaletteWithCustomColor} from 'ui/units/wizard/components/Dialogs/DialogColor/PaletteWithCustomColor/PaletteWithCustomColor';
+import {
+    PaletteWithCustomColor,
+    stripPaletteIndexColors,
+} from 'ui/units/wizard/components/Dialogs/DialogColor/PaletteWithCustomColor/PaletteWithCustomColor';
 import {getPaletteColors} from 'ui/utils';
 
 import './ColorsDialog.scss';
-
-export const DEFAULT_COLOR = 'auto';
 
 // toDo: move to component keyset
 const i18n = I18n.keyset('wizard');
@@ -75,7 +76,7 @@ export const ColorsDialog = (props: Props) => {
     const colorsList: string[] = getPaletteColors(
         selectedPaletteId,
         Object.values(colorPalettes),
-    ).concat([DEFAULT_COLOR]);
+    ).concat([PALETTE_DEFAULT_COLOR]);
 
     React.useEffect(() => {
         setSelectedValue(values?.[0] ?? undefined);
@@ -141,16 +142,8 @@ export const ColorsDialog = (props: Props) => {
     };
 
     const handleSelectPalette = (palettes: string[]) => {
-        const newMountedColors: Record<string, string> = {};
-
-        for (const key in mountedColors) {
-            if (mountedColors[key].startsWith('#')) {
-                newMountedColors[key] = mountedColors[key];
-            }
-        }
-
         setSelectedPalette(palettes[0]);
-        setMountedColors(newMountedColors);
+        setMountedColors(stripPaletteIndexColors(mountedColors));
     };
 
     const handleApply = () => {

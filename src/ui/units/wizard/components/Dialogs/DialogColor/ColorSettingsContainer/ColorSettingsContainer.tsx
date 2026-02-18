@@ -10,7 +10,7 @@ import type {ColorsConfig, Field} from 'shared';
 import {ColorMode} from 'shared';
 import {fetchColorPalettes} from 'store/actions/colorPaletteEditor';
 import {selectColorPalettes} from 'store/selectors/colorPaletteEditor';
-import type {DatalensGlobalState} from 'ui';
+import {type DatalensGlobalState, PALETTE_DEFAULT_COLOR} from 'ui';
 import type {GradientState, PaletteState} from 'units/wizard/actions/dialogColor';
 import {
     prepareDialogColorState,
@@ -33,7 +33,7 @@ import {
 } from '../../../../selectors/dialogColor';
 import type {ExtraSettings} from '../DialogColor';
 import DialogColorGradientBody from '../DialogColorGradient/DialogColorGradient';
-import {DEFAULT_COLOR, PaletteContainer} from '../DialogColorPalette/DialogColorPalette';
+import {PaletteContainer} from '../DialogColorPalette/DialogColorPalette';
 
 import './ColorSettingsContainer.scss';
 
@@ -199,7 +199,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
         colorPalettes: selectColorPalettes(state).filter(
             (item) => item.isGradient === (ownProps.colorMode === ColorMode.GRADIENT),
         ),
-        colorsList: selectClientPaletteColors(state).concat([DEFAULT_COLOR]),
+        colorsList: selectClientPaletteColors(state).concat([PALETTE_DEFAULT_COLOR]),
     };
 };
 

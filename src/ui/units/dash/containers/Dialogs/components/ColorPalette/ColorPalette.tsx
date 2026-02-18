@@ -13,6 +13,7 @@ import {
     CustomPaletteTextColors,
 } from 'shared/constants/widgets';
 import {ColorPickerInput} from 'ui/components/ColorPickerInput/ColorPickerInput';
+import {isHexColor} from 'ui/components/ColorPickerInput/utils';
 
 import {ColorItem} from './ColorItem/ColorItem';
 
@@ -63,12 +64,12 @@ export function ColorPalette(props: ColorPaletteProps) {
     } = props;
 
     const [customColorInputEnabled, setCustomColorInputEnabled] = React.useState(
-        selectedColor.startsWith('#'),
+        isHexColor(selectedColor),
     );
 
     const previewRef = React.useCallback<React.RefCallback<HTMLDivElement>>(
         (previewEl) => {
-            if (previewEl && customColorInputEnabled && !selectedColor.startsWith('#')) {
+            if (previewEl && customColorInputEnabled && !isHexColor(selectedColor)) {
                 const bgColor = getComputedStyle(previewEl).backgroundColor;
                 onSelect(colorStringToHex(bgColor));
             }
@@ -190,7 +191,7 @@ export function ColorPalette(props: ColorPaletteProps) {
                 <ColorPickerInput
                     className={b('color-picker')}
                     hasOpacityInput
-                    value={selectedColor?.startsWith('#') ? selectedColor : ''}
+                    value={isHexColor(selectedColor) ? selectedColor : ''}
                     onUpdate={(val) => {
                         if (val) {
                             onSelect(val);

@@ -3,6 +3,8 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {DialogColorQa} from 'shared';
 import ColorPickerInput from 'ui/components/ColorPickerInput/ColorPickerInput';
+import {isHexColor} from 'ui/components/ColorPickerInput/utils';
+import {PALETTE_DEFAULT_COLOR} from 'ui/constants';
 import {PaletteTypes} from 'ui/units/wizard/constants';
 
 import Palette from '../../../Palette/Palette';
@@ -18,7 +20,6 @@ interface PaletteWithCustomColorProps {
     palleteItemQa?: string;
 }
 
-const DEFAULT_COLOR = 'auto';
 const b = block('palette-with-custom-color');
 
 export function PaletteWithCustomColor({
@@ -29,7 +30,7 @@ export function PaletteWithCustomColor({
     className,
     palleteItemQa,
 }: PaletteWithCustomColorProps) {
-    const isCustomColorSelected = Boolean(currentMountedColor?.startsWith('#'));
+    const isCustomColorSelected = isHexColor(currentMountedColor);
     const currentColorHex = isCustomColorSelected
         ? currentMountedColor
         : colorsList[Number(currentMountedColor)];
@@ -46,7 +47,7 @@ export function PaletteWithCustomColor({
                         return false;
                     }
 
-                    const colorValue = currentMountedColor || DEFAULT_COLOR;
+                    const colorValue = currentMountedColor || PALETTE_DEFAULT_COLOR;
 
                     if (colorValue === String(index)) {
                         return true;
@@ -54,7 +55,7 @@ export function PaletteWithCustomColor({
 
                     return color === colorValue;
                 }}
-                isDefaultItem={(color) => color === DEFAULT_COLOR}
+                isDefaultItem={(color) => color === PALETTE_DEFAULT_COLOR}
                 palette={colorsList}
                 customColor={{
                     enabled: true,
@@ -78,4 +79,18 @@ export function PaletteWithCustomColor({
             </div>
         </div>
     );
+}
+
+export function stripPaletteIndexColors(
+    mountedColors: Record<string, string>,
+): Record<string, string> {
+    const newMountedColors: Record<string, string> = {};
+
+    for (const key in mountedColors) {
+        if (isHexColor(mountedColors[key])) {
+            newMountedColors[key] = mountedColors[key];
+        }
+    }
+
+    return newMountedColors;
 }

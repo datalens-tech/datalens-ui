@@ -15,13 +15,15 @@ import {ColorValueItem} from 'ui/components/ColorValueItem/ColorValueItem';
 
 import ValuesList from '../../../ValuesList/ValuesList';
 import type {ExtraSettings} from '../DialogColor';
-import {PaletteWithCustomColor} from '../PaletteWithCustomColor/PaletteWithCustomColor';
+import {
+    PaletteWithCustomColor,
+    stripPaletteIndexColors,
+} from '../PaletteWithCustomColor/PaletteWithCustomColor';
 
 import './DialogColorPalette.scss';
 
 const b = block('dialog-color-palette');
 
-export const DEFAULT_COLOR = 'auto';
 export const SHOW = 'show';
 const HIDE = 'hide';
 
@@ -100,17 +102,9 @@ export class PaletteContainer extends React.Component<Props> {
                     qa="palette-select"
                     colorPalettes={colorPalettes}
                     onUpdate={([selectedPalette]) => {
-                        const newMountedColors: Record<string, string> = {};
-
-                        for (const key in mountedColors) {
-                            if (mountedColors[key].startsWith('#')) {
-                                newMountedColors[key] = mountedColors[key];
-                            }
-                        }
-
                         this.props.setPaletteState({
                             palette: selectedPalette ?? undefined,
-                            mountedColors: newMountedColors,
+                            mountedColors: stripPaletteIndexColors(mountedColors),
                         });
                     }}
                     value={palette}
