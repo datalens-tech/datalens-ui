@@ -47,5 +47,25 @@ export const mapAndShapeGraph = ({
 
             graph.dashStyle = SHAPES_IN_ORDER[shapeIndex % SHAPES_IN_ORDER.length];
         }
+
+        // Determine line width: use individual line width if set, otherwise fall back to chart-level width
+        let lineWidth: number | undefined;
+
+        if (title && shapesConfig?.mountedShapesLineWidths?.[title]) {
+            // Individual line has a specific width set
+            lineWidth = shapesConfig.mountedShapesLineWidths[title];
+        } else if (shapesConfig?.lineWidth !== undefined) {
+            // Fall back to chart-level line width
+            lineWidth = shapesConfig.lineWidth;
+        }
+
+        if (lineWidth !== undefined) {
+            graph.lineWidth = lineWidth;
+            graph.states = {
+                hover: {
+                    lineWidth: lineWidth + 2,
+                },
+            };
+        }
     });
 };

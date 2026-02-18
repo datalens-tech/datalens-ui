@@ -201,3 +201,12 @@ export const enum DialogMetricColorsQa {
     Palette = 'dialog-metric-settings-palette',
     CustomColorButton = 'dialog-metric-colors-custom-color-btn',
 }
+
+export const enum DialogShapeSettings {
+    LineSettingsGraphScopeTabPanel = 'line-settings-graph-scope-tab-panel',
+    LineSettingsChartScopeTabPanel = 'line-settings-chart-scope-tab-panel',
+    LineSettingsGraphScopeTab = 'line-settings-graph-scope-tab',
+    LineSettingsChartScopeTab = 'line-settings-chart-scope-tab',
+    LineWidthSelectControl = 'line-width-select-control',
+    LineWidthSelectOption = 'line-width-select-option',
+}

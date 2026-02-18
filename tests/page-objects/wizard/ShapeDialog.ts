@@ -1,5 +1,5 @@
 import {Page} from '@playwright/test';
-import {LineShapeType} from '../../../src/shared/constants';
+import {DialogShapeSettings, LineShapeType} from '../../../src/shared/constants';
 
 import {slct} from '../../utils';
 
@@ -39,6 +39,74 @@ export default class ShapeDialog {
 
     async changeLineShapeType(lineShape: LineShapeType) {
         await this.page.click(slct(lineShape));
+    }
+
+    async switchToChartSettingsTab() {
+        await this.page.click(slct(DialogShapeSettings.LineSettingsChartScopeTab));
+    }
+
+    async switchToGraphSettingsTab() {
+        await this.page.click(slct(DialogShapeSettings.LineSettingsGraphScopeTab));
+    }
+
+    async clickLineWidthSelectControl() {
+        await this.page
+            .locator(slct(DialogShapeSettings.LineSettingsGraphScopeTabPanel))
+            .locator(slct(DialogShapeSettings.LineWidthSelectControl))
+            .click();
+    }
+
+    async clickChartLineWidthSelectControl() {
+        await this.page
+            .locator(slct(DialogShapeSettings.LineSettingsChartScopeTabPanel))
+            .locator(slct(DialogShapeSettings.LineWidthSelectControl))
+            .click();
+    }
+
+    async changeLineWidth(width: string) {
+        await this.clickLineWidthSelectControl();
+        await this.page
+            .locator(slct(DialogShapeSettings.LineWidthSelectOption))
+            .locator(`[data-qa="${width}"]`)
+            .click();
+    }
+
+    async changeChartLineWidth(width: string) {
+        await this.clickChartLineWidthSelectControl();
+        await this.page
+            .locator(slct(DialogShapeSettings.LineWidthSelectOption))
+            .locator(`[data-qa="${width}"]`)
+            .click();
+    }
+
+    async selectDefaultLineWidth() {
+        await this.clickLineWidthSelectControl();
+        await this.page.locator(slct(DialogShapeSettings.LineWidthSelectOption)).first().click();
+    }
+
+    async getLineWidthSelectOptions() {
+        return this.page.locator(slct(DialogShapeSettings.LineWidthSelectOption));
+    }
+
+    async getLineWidthSelectControlText() {
+        const control = this.page
+            .locator(slct(DialogShapeSettings.LineSettingsGraphScopeTabPanel))
+            .locator(slct(DialogShapeSettings.LineWidthSelectControl));
+        return control.textContent();
+    }
+
+    getLineWidthSelectControlLine() {
+        return this.page
+            .locator(slct(DialogShapeSettings.LineSettingsGraphScopeTabPanel))
+            .locator(slct(DialogShapeSettings.LineWidthSelectControl))
+            .locator('.dl-line-width-select__option-line');
+    }
+
+    async getLineWidthSelectControlLineHeight() {
+        const line = this.getLineWidthSelectControlLine();
+        const style = await line.getAttribute('style');
+        const match = style?.match(/height:\s*(\d+)px/);
+        return match ? match[1] : null;
     }
 
     async selectValue(value: string) {
