@@ -112,6 +112,10 @@ function DatasetSelectorSettings(props: {
                         elementType,
                         fieldType: undefined,
                         datasetFieldType: undefined,
+                        // show error if field was deleted from dataset
+                        validation: datasetFieldId
+                            ? {datasetFieldId: i18n('validation_field-not-found')}
+                            : {},
                     }),
                 );
                 return;
