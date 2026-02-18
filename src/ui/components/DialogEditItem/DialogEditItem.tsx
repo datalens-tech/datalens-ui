@@ -9,6 +9,7 @@ import {useEffectOnce} from 'ui/hooks';
 import {initControlDialog, resetControlDialog} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectOpenedDialogType} from 'ui/store/selectors/controlDialog';
 import type {DialogEditItemFeaturesProp} from 'ui/store/typings/controlDialog';
+import type {SetItemDataArgs, SetItemDataPayload} from 'ui/units/dash/store/actions/dashTyped';
 
 import type {CommonVisualSettings} from '../DashKit/DashKit';
 import DialogChartWidget from '../DialogChartWidget/DialogChartWidget';
@@ -39,20 +40,17 @@ type ExtendAny<
 type DialogEditTitleProps = ExtendAny<{
     type: DashTabItemType.Title;
     openedItemData: React.ComponentProps<typeof DialogTitleWidget>['openedItemData'];
-    setItemData: React.ComponentProps<typeof DialogTitleWidget>['setItemData'];
 }>;
 
 type DialogEditTextProps = ExtendAny<{
     type: DashTabItemType.Text;
     openedItemData: React.ComponentProps<typeof DialogTextWidgetWrapper>['openedItemData'];
-    setItemData: React.ComponentProps<typeof DialogTextWidgetWrapper>['setItemData'];
 }>;
 
 type DialogEditChartProps = ExtendAny<{
     type: DashTabItemType.Widget;
     openedItemData: React.ComponentProps<typeof DialogChartWidget>['openedItemData'];
     widgetType: WidgetType;
-    setItemData: React.ComponentProps<typeof DialogChartWidget>['setItemData'];
     widgetsCurrentTab: {
         [key: string]: string;
     };
@@ -61,20 +59,17 @@ type DialogEditChartProps = ExtendAny<{
 type DialogEditGroupControlProps = ExtendAny<{
     type: DashTabItemType.GroupControl;
     openedItemData: React.ComponentProps<typeof DialogGroupControl>['openedItemData'];
-    setItemData: React.ComponentProps<typeof DialogGroupControl>['setItemData'];
     selectorsGroupTitlePlaceholder?: string;
 }>;
 
 type DialogEditExternalControlProps = ExtendAny<{
     type: DashTabItemType.Control;
-    setItemData: React.ComponentProps<typeof DialogExternalControl>['setItemData'];
     openedItemDefaults: StringParams;
 }>;
 
 type DialogEditImageProps = ExtendAny<{
     type: DashTabItemType.Image;
     openedItemData: React.ComponentProps<typeof DialogImageWidget>['openedItemData'];
-    setItemData: React.ComponentProps<typeof DialogImageWidget>['onApply'];
 }>;
 
 type DialogEditSpecificProps =
@@ -98,6 +93,7 @@ export type DialogEditItemProps = {
     changeNavigationPath: (newNavigationPath: string) => void;
     features?: DialogEditItemFeaturesProp;
     theme?: RealTheme;
+    setItemData: (args: SetItemDataPayload | SetItemDataArgs) => void;
 } & DialogEditSpecificProps;
 
 export const isDialogEditItemType = (type: string): type is DashTabItemType =>

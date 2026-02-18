@@ -7,7 +7,12 @@ import type {
     StringParams,
 } from 'shared';
 import type {TabsHashStates} from 'ui/units/dash/store/actions/dashTyped';
-import {DashTabItemControlSourceType, DashTabItemType, TitlePlacements} from 'shared';
+import {
+    DashTabItemControlElementType,
+    DashTabItemControlSourceType,
+    DashTabItemType,
+    TitlePlacements,
+} from 'shared';
 import type {
     DialogEditItemFeaturesProp,
     SelectorDialogState,
@@ -109,7 +114,7 @@ export function getSelectorDialogInitialState(
             : DashTabItemControlSourceType.Dataset;
 
     return {
-        elementType: ELEMENT_TYPE.SELECT,
+        elementType: DashTabItemControlElementType.Select,
         validation: {},
         sourceType,
         defaults: {},

@@ -43,7 +43,7 @@ import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
 import type {RealTheme} from '@gravity-ui/uikit';
 import {getPreparedCopyItemOptions, type CopiedConfigContext} from 'ui/units/dash/modules/helpers';
 import type {
-    SetItemDataArgs,
+    SetItemDataPayload,
     SetItemDataExternalControl,
     SetItemDataGroupControl,
     TabsHashStates,
@@ -257,7 +257,7 @@ export const applyGroupControlDialog = ({
     groupTabError,
 }: {
     closeDialog: () => void;
-    setItemData: (newItemData: SetItemDataArgs) => void;
+    setItemData: (newItemData: SetItemDataPayload) => void;
     groupTabError: boolean;
 }) => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
@@ -380,7 +380,7 @@ export const applyGroupControlDialog = ({
                 ? selectorsGroup.updateControlsOnChange
                 : false;
 
-        const contextList: SetItemDataArgs['contextList'] = [];
+        const contextList: SetItemDataPayload['item']['contextList'] = [];
 
         selectorsGroup.group.forEach((selector, index) => {
             if (isSelectorWithContext(selector)) {
@@ -453,11 +453,11 @@ export const applyGroupControlDialog = ({
         };
 
         const getExtendedItemData = getExtendedItemDataAction();
-        const itemData = dispatch(
+        const item = dispatch(
             getExtendedItemData({data, type: DashTabItemType.GroupControl, contextList}),
         );
 
-        setItemData(itemData);
+        setItemData({item});
 
         closeDialog();
     };
@@ -517,6 +517,8 @@ export const copyControlToStorage = (controlIndex: number) => {
             namespace: namespace || DEFAULT_NAMESPACE,
             width: '',
             placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
+            impactType: selectorToCopy.impactType,
+            impactTabsIds: selectorToCopy.impactTabsIds,
         };
 
         const options: PreparedCopyItemOptions<CopiedConfigContext> = {
@@ -556,7 +558,7 @@ export const applyExternalControlDialog = ({
     setItemData,
 }: {
     closeDialog: () => void;
-    setItemData: (newItemData: SetItemDataArgs) => void;
+    setItemData: (newItemData: SetItemDataPayload) => void;
 }) => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
@@ -601,11 +603,9 @@ export const applyExternalControlDialog = ({
             }),
         };
         const getExtendedItemData = getExtendedItemDataAction();
-        const itemData = dispatch(
-            getExtendedItemData({data, defaults, type: DashTabItemType.Control}),
-        );
+        const item = dispatch(getExtendedItemData({data, defaults, type: DashTabItemType.Control}));
 
-        setItemData(itemData);
+        setItemData({item});
         closeDialog();
     };
 };

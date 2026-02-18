@@ -32,7 +32,6 @@ import type {
 import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
-import {collectWidgetItemIds} from 'ui/utils/copyItems';
 
 import {ITEM_TYPE} from '../../../constants/dialogs';
 import type {TabsHashStates} from '../store/actions/dashTyped';
@@ -46,6 +45,7 @@ export type CopiedConfigContext = {
     targetIds?: string[];
     targetEntryId?: string | null;
     targetDashTabId?: string | null;
+    targetId?: string;
 };
 
 export type CopiedConfigData = ConfigItem &
@@ -493,7 +493,6 @@ export const getPreparedCopyItemOptions = (
     if (copyContext) {
         itemToCopy.copyContext = {
             ...copyContext,
-            targetIds: collectWidgetItemIds(itemToCopy),
         };
     }
 
