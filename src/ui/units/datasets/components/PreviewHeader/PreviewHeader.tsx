@@ -5,6 +5,7 @@ import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _debounce from 'lodash/debounce';
+import {DatasetPreviewQA} from 'shared';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
 
 import {VIEW_PREVIEW} from '../../constants';
@@ -46,6 +47,7 @@ class PreviewHeader extends React.Component<Props> {
                         type="number"
                         value={String(amountPreviewRows)}
                         onUpdate={this.changeAmountPreviewRows}
+                        qa={DatasetPreviewQA.RowCountInput}
                     />
                     <span className={b('fade-text')}>
                         {i18n('dataset.dataset-editor.modify', 'label_max-amount-rows', {
@@ -97,6 +99,7 @@ class PreviewHeader extends React.Component<Props> {
                         view="flat"
                         title={i18n('dataset.dataset-editor.modify', 'button_preview-close')}
                         onClick={this.closePreview}
+                        qa={DatasetPreviewQA.ClosePreviewBtn}
                     >
                         <Icon data={Xmark} width={ICON_WIDTH} />
                     </Button>

@@ -15,6 +15,7 @@ import type {
     WorkbookId,
 } from 'shared';
 import {
+    DialogFilterQA,
     Operations,
     TIMEOUT_90_SEC,
     getFieldsApiV2RequestSection,
@@ -211,6 +212,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
                     }
                     this.onApply();
                 }}
+                qa={DialogFilterQA.Dialog}
             >
                 <div className={b()}>
                     {this.renderHeader()}
@@ -321,7 +323,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
                         value={value}
                         options={options}
                         onUpdate={this.onChangeOperation}
-                        qa="operation-select"
+                        qa={DialogFilterQA.OperationSelect}
                     />
                 </div>
             </div>
@@ -404,8 +406,12 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
                 onClickButtonApply={onClickButtonApply}
                 textButtonApply={textButtonApply}
                 textButtonCancel={i18n('button_cancel')}
+                propsButtonCancel={{
+                    qa: DialogFilterQA.CancelButton,
+                }}
                 propsButtonApply={{
                     disabled: this.isApplyButtonDisabled(),
+                    qa: DialogFilterQA.ApplyButton,
                 }}
             >
                 {useSuggest && dimensions.length === VALUES_LOAD_LIMIT && (

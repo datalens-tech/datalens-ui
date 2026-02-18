@@ -23,6 +23,7 @@ import {
     SharedEntriesBaseQa,
     SharedEntriesPermissionsDialogQa,
     ValueOf,
+    DATASET_TAB,
 } from '../../../src/shared';
 import {Page, Response, expect} from '@playwright/test';
 import Revisions from '../common/Revisions';
@@ -105,8 +106,8 @@ class DatasetPage extends BasePage {
         await this.page.dragAndDrop(selector, targetSelector);
     }
 
-    async openSourcesPanel() {
-        await this.page.click('.dataset-panel input[value=sources]');
+    async openTab(tab: ValueOf<typeof DATASET_TAB>) {
+        await this.page.click(`.dataset-panel input[value=${tab}]`);
     }
 
     async createDatasetInWorkbookOrCollection({

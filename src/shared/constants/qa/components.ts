@@ -145,7 +145,16 @@ export enum DialogDashWidgetQA {
 export const enum DialogFieldEditorQA {
     ApplyButton = 'dialog-field-editor-apply-button',
     CancelButton = 'dialog-field-editor-cancel-button',
+    EditNameButton = 'dialog-field-editor-edit-name-button',
 }
+
+export const DialogFilterQA = {
+    Dialog: 'dialog-filter',
+    ApplyButton: 'dialog-filter-apply-button',
+    CancelButton: 'dialog-filter-cancel-button',
+    ListItem: 'dialog-filter-list-item',
+    OperationSelect: 'operation-select',
+} as const;
 
 export const enum NavigationMinimalPlaceSelectQa {
     Connections = 'navigation-minimal-place-connections',

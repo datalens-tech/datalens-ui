@@ -4,6 +4,7 @@ import {Gear} from '@gravity-ui/icons';
 import {Button, Icon, Select, type SelectProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {DatasetEditorTableSettingsItems, DatasetFieldsTabQa} from 'shared';
 
 import type {EditorItemToDisplay} from '../../../store/types';
 
@@ -16,7 +17,13 @@ const renderControl: SelectProps['renderControl'] = (args) => {
     const {triggerProps, ref} = args;
 
     return (
-        <Button {...triggerProps} ref={ref as React.Ref<HTMLButtonElement>} size="s" view="flat">
+        <Button
+            {...triggerProps}
+            ref={ref as React.Ref<HTMLButtonElement>}
+            size="s"
+            view="flat"
+            qa={DatasetFieldsTabQa.TableSettingsBtn}
+        >
             <Icon data={Gear} height={18} width={18} />
         </Button>
     );
@@ -31,10 +38,15 @@ export const DisplaySettings = ({value, onUpdate}: Pick<SelectProps, 'value' | '
             renderControl={renderControl}
             className={b('select-cog')}
         >
-            <Select.Option value={ITEM_HIDDEN_FIELDS}>
+            <Select.Option
+                value={ITEM_HIDDEN_FIELDS}
+                qa={DatasetEditorTableSettingsItems.ShowHidden}
+            >
                 {i18n('label_display-hidden-fields')}
             </Select.Option>
-            <Select.Option value={ITEM_FIELDS_ID}>{i18n('label_display-fields-id')}</Select.Option>
+            <Select.Option value={ITEM_FIELDS_ID} qa={DatasetEditorTableSettingsItems.ShowId}>
+                {i18n('label_display-fields-id')}
+            </Select.Option>
         </Select>
     );
 };

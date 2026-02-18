@@ -3,6 +3,7 @@ import React from 'react';
 import {Pencil} from '@gravity-ui/icons';
 import {Button, Flex, Icon, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {DialogFieldEditorQA} from 'shared';
 
 const b = block('dl-field-editor');
 
@@ -17,7 +18,12 @@ export const NameHeader = ({title, onStartEdit}: NameFieldProps) => {
             <Text variant="subheader-3" ellipsis={true}>
                 {title}
             </Text>
-            <Button view="flat" onClick={onStartEdit} className={b('settings-field-name-icon')}>
+            <Button
+                qa={DialogFieldEditorQA.EditNameButton}
+                view="flat"
+                onClick={onStartEdit}
+                className={b('settings-field-name-icon')}
+            >
                 <Icon data={Pencil} size={16} />
             </Button>
         </Flex>

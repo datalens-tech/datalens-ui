@@ -1,5 +1,5 @@
 import type {DatasetFieldCalcMode} from 'shared';
-import {Feature} from 'shared';
+import {DatasetFieldContextMenuItemsQA, Feature} from 'shared';
 import {Utils} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -24,10 +24,26 @@ export enum BatchFieldAction {
     Aggregation = 'aggregation',
 }
 
-const DUPLICATE: MenuItem = {action: FieldAction.Duplicate, label: 'button_duplicate'};
-const EDIT: MenuItem = {action: FieldAction.Edit, label: 'button_edit'};
-const RLS: MenuItem = {action: FieldAction.Rls, label: 'button_row-level-security'};
-const COPY_GUID: MenuItem = {action: FieldAction.CopyGuid, label: 'button_copy-id'};
+const DUPLICATE: MenuItem = {
+    action: FieldAction.Duplicate,
+    label: 'button_duplicate',
+    qa: DatasetFieldContextMenuItemsQA.DUPLICATE,
+};
+const EDIT: MenuItem = {
+    action: FieldAction.Edit,
+    label: 'button_edit',
+    qa: DatasetFieldContextMenuItemsQA.EDIT,
+};
+const RLS: MenuItem = {
+    action: FieldAction.Rls,
+    label: 'button_row-level-security',
+    qa: DatasetFieldContextMenuItemsQA.RLS,
+};
+const COPY_GUID: MenuItem = {
+    action: FieldAction.CopyGuid,
+    label: 'button_copy-id',
+    qa: DatasetFieldContextMenuItemsQA.COPY_GUID,
+};
 
 export const getCommonMenuItemsData = () => {
     if (isEnabledFeature(Feature.DatasetsRLS)) {
@@ -39,8 +55,22 @@ export const getCommonMenuItemsData = () => {
 
 export const GROUPED_ITEMS: MenuItem[][] = [
     getCommonMenuItemsData(),
-    [{action: FieldAction.Remove, label: 'button_remove', theme: 'danger'}],
-    [{action: FieldAction.Inspect, label: 'button_inspect', hidden: !Utils.isSuperUser()}],
+    [
+        {
+            action: FieldAction.Remove,
+            label: 'button_remove',
+            theme: 'danger',
+            qa: DatasetFieldContextMenuItemsQA.REMOVE,
+        },
+    ],
+    [
+        {
+            action: FieldAction.Inspect,
+            label: 'button_inspect',
+            hidden: !Utils.isSuperUser(),
+            qa: DatasetFieldContextMenuItemsQA.INSPECT,
+        },
+    ],
 ];
 
 export const READONLY_AVAILABLE_ITEMS = [FieldAction.CopyGuid];

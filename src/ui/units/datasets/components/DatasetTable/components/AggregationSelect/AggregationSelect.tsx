@@ -5,6 +5,7 @@ import type {SelectOption, SelectRenderControlProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
 import type {DatasetField, DatasetFieldAggregation} from 'shared';
+import {DatasetFieldsTabQa} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 
 import {getDatasetLabelValue, getSelectedValueForSelect} from '../../../../../../utils/helpers';
@@ -137,6 +138,7 @@ class AggregationSelectComponent extends React.Component<Props> {
                 ref={ref as React.Ref<HTMLButtonElement>}
                 view="flat"
                 className={b('select-control', {[this.type]: true})}
+                qa={DatasetFieldsTabQa.FieldAggregationColumnBtn}
             >
                 <span className={b('selected-value')}>
                     {getDatasetLabelValue(aggregationTitle)}
