@@ -61,4 +61,5 @@ export const ErrorContentTypes = {
     INACCESSIBLE_ON_MOBILE: 'inaccessible-on-mobile',
     NOT_AUTHENTICATED: 'not-authenticated',
     FORBIDDEN_AUTH: 'forbidden-auth',
+    EMBEDDED_DASH_LIMIT_REACHED: 'embedded-dash-limit-reached',
 };

@@ -4,6 +4,7 @@ import {ITEM_TYPE} from '../../../constants/dialogs';
 
 export enum DashErrorCode {
     NOT_FOUND = 'ERR.DASH.NOT_FOUND_ERROR',
+    LIMIT_EXCEED = 'ERR.DASH.LIMIT_EXCEED_ERROR',
 }
 
 export const LOCK_DURATION = 5 * 60 * 1000;

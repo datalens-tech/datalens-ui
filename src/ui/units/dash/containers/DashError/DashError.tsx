@@ -7,6 +7,29 @@ import {DashErrorCode} from '../../modules/constants';
 
 const i18n = I18n.keyset('dash.error.view');
 
+const getErrorView = (error: Error | null, onRetry: () => void) => {
+    if (!error || !('code' in error)) {
+        return {retry: onRetry};
+    }
+
+    switch (error.code) {
+        case DashErrorCode.NOT_FOUND:
+            return {
+                title: i18n('label_error-404-message'),
+                retry: onRetry,
+            };
+        case DashErrorCode.LIMIT_EXCEED:
+            return {
+                title: i18n('label_title-embed-dash-limit-reached'),
+                description: i18n('label_description-embed-dash-limit-reached'),
+            };
+        default:
+            return {
+                retry: onRetry,
+            };
+    }
+};
+
 export const DashError = ({
     error,
     onRetry,
@@ -16,12 +39,15 @@ export const DashError = ({
     onRetry: () => void;
     hideDetails?: boolean;
 }) => {
-    const message =
-        error && 'code' in error && error.code === DashErrorCode.NOT_FOUND
-            ? i18n('label_error-404-message')
-            : '';
+    const {title, description, retry} = getErrorView(error, onRetry);
 
     return (
-        <ViewError description={message} error={error} retry={onRetry} hideDetails={hideDetails} />
+        <ViewError
+            title={title}
+            description={description}
+            error={error}
+            retry={retry}
+            hideDetails={hideDetails}
+        />
     );
 };
