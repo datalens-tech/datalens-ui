@@ -1,6 +1,7 @@
 import React from 'react';
 
 import type {
+    AreaSeries,
     BarXSeries,
     BarXSeriesData,
     BarYSeries,
@@ -220,8 +221,10 @@ const getBarXYWithPercentRowRenderer = ({
                     acc + Number((item.data as BarXSeriesData | BarYSeriesData)[valueKey] ?? 0),
                 0,
             ) ?? 0;
-        const percentage = value
-            ? formatNumber(Number(value) / total, {format: 'percent', precision: 1})
+        const numericValue = Number(value);
+        const ratio = total === 0 ? 0 : numericValue / total;
+        const percentage = Number.isFinite(numericValue)
+            ? formatNumber(ratio, {format: 'percent', precision: 1})
             : '';
 
         return (
@@ -267,6 +270,13 @@ export const getTooltipRowRenderer = ({
             case 'bar-y': {
                 if (seriesData.some((s) => (s as BarYSeries).stacking === 'percent')) {
                     return getBarXYWithPercentRowRenderer({valueKey: 'x'});
+                }
+
+                break;
+            }
+            case 'area': {
+                if (seriesData.some((s) => (s as AreaSeries).stacking === 'percent')) {
+                    return getBarXYWithPercentRowRenderer({valueKey: 'y'});
                 }
 
                 break;
