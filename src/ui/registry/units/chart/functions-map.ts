@@ -15,7 +15,6 @@ import {EXAMPLE_FUNCTION} from '../common/constants/functions';
 import type {GetChartkitHolidaysFn} from './types/functions/get-chartkit-holidays';
 import type {GetDefaultChartMenuArgs} from './types/functions/getDefaultChartMenu';
 import type {GetPanePreviewChartMenuArgs} from './types/functions/getPanePreviewChartMenu';
-import type {GetVisualSelectorBottomPlaceholder} from './types/functions/getVisualSelectorBottomPlaceholder';
 import type {GetWizardChartMenuArgs} from './types/functions/getWizardChartMenu';
 
 export const chartFunctionsMap = {
@@ -44,5 +43,4 @@ export const chartFunctionsMap = {
     postProcessRunResult:
         makeFunctionTemplate<(loaded: ResponseSuccessNode | ResponseSuccessControls) => Object>(),
     getSecureEmbeddingToken: makeFunctionTemplate<() => string>(),
-    getVisualSelectorBottomPlaceholder: makeFunctionTemplate<GetVisualSelectorBottomPlaceholder>(),
 } as const;
