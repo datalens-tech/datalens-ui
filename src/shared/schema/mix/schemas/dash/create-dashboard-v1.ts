@@ -1,6 +1,5 @@
 import z from 'zod';
 
-import {EntryUpdateMode} from '../../../..';
 import {dataSchema} from '../../../../zod-schemas/dash';
 import {keyOrWorkbookIdNameSchema} from '../../../../zod-schemas/entry';
 
@@ -20,7 +19,6 @@ export const createDashV1ArgsSchema = z.strictObject({
                 .optional(),
         })
         .and(keyOrWorkbookIdNameSchema),
-    mode: z.enum(EntryUpdateMode),
 });
 
 export const createDashV1ResultSchema = z.object({
