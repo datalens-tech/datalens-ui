@@ -56,7 +56,7 @@ export const createTypedAction = <TOutput, TParams, TTransformed = TOutput>(
 ) => {
     const schemaValidationObject = {
         paramsSchema: schema.paramsSchema,
-        resultSchema: schema.resultSchema,
+        resultSchema: schema.transformedSchema ?? schema.resultSchema,
     };
 
     return registerValidationSchema(actionConfig, schemaValidationObject);
