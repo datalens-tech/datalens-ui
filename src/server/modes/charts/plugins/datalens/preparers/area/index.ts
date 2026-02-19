@@ -289,6 +289,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
             },
             startOnTick: true,
             endOnTick: true,
+            maxPadding: 0.001,
         },
     );
 

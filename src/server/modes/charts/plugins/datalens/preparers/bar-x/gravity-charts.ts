@@ -364,6 +364,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             },
             startOnTick: true,
             endOnTick: true,
+            maxPadding: 0.001,
         },
     );
 

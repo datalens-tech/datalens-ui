@@ -336,6 +336,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 position: placeholder?.id === PlaceholderId.Y2 ? 'right' : 'left',
                 startOnTick: true,
                 endOnTick: true,
+                maxPadding: 0.001,
             });
         });
     }
