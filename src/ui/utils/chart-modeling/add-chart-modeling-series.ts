@@ -173,6 +173,7 @@ function createTrendSeries({
                     color,
                     dashStyle: (dashStyle ?? 'Dash') as LineSeries['dashStyle'],
                     data: trendData,
+                    dataLabels: {enabled: false},
                     lineWidth,
                 };
 
@@ -267,6 +268,7 @@ function createSmoothingSeries({
                     color,
                     dashStyle: (dashStyle ?? s.dashStyle) as LineSeries['dashStyle'],
                     data: seriesData,
+                    dataLabels: {enabled: false},
                     lineWidth,
                 };
 
