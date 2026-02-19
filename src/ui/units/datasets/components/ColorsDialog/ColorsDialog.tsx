@@ -1,7 +1,6 @@
 import React from 'react';
 
-import type {PaletteOption} from '@gravity-ui/uikit';
-import {Button, Dialog, Palette} from '@gravity-ui/uikit';
+import {Button, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
@@ -14,16 +13,18 @@ import {
     getParametersApiV2RequestSection,
 } from 'shared';
 import {ColorPaletteSelect} from 'ui/components/ColorPaletteSelect/ColorPaletteSelect';
-import {PaletteItem} from 'ui/components/PaletteItem/PaletteItem';
+import {ColorValueItem} from 'ui/components/ColorValueItem/ColorValueItem';
 import {ValuesList} from 'ui/components/ValuesList/ValuesList';
-import {getTenantDefaultColorPaletteId} from 'ui/constants';
+import {PALETTE_DEFAULT_COLOR, getTenantDefaultColorPaletteId} from 'ui/constants';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {selectColorPalettesDict} from 'ui/store/selectors/colorPaletteEditor';
+import {
+    PaletteWithCustomColor,
+    stripPaletteIndexColors,
+} from 'ui/units/wizard/components/Dialogs/DialogColor/PaletteWithCustomColor/PaletteWithCustomColor';
 import {getPaletteColors} from 'ui/utils';
 
 import './ColorsDialog.scss';
-
-export const DEFAULT_COLOR = 'auto';
 
 // toDo: move to component keyset
 const i18n = I18n.keyset('wizard');
@@ -72,7 +73,10 @@ export const ColorsDialog = (props: Props) => {
         fieldUiSettings?.palette ?? defaultPaletteId,
     );
 
-    const colorsList: string[] = getPaletteColors(selectedPaletteId, Object.values(colorPalettes));
+    const colorsList: string[] = getPaletteColors(
+        selectedPaletteId,
+        Object.values(colorPalettes),
+    ).concat([PALETTE_DEFAULT_COLOR]);
 
     React.useEffect(() => {
         setSelectedValue(values?.[0] ?? undefined);
@@ -113,23 +117,34 @@ export const ColorsDialog = (props: Props) => {
         loadValues();
     }, [loadValues]);
 
-    const handleSelectColor = (items: string[]) => {
-        const colorIndex = items[0];
-        if (selectedValue) {
-            const newMountedColors = {...mountedColors};
-            if (colorIndex) {
-                newMountedColors[selectedValue] = colorIndex;
-            } else {
-                delete newMountedColors[selectedValue];
-            }
-
-            setMountedColors(newMountedColors);
+    const handleSelectColor = (color: string, colorIndex?: number) => {
+        if (!selectedValue) {
+            return;
         }
+
+        const newMountedColors = {...mountedColors};
+
+        if (colorIndex === undefined) {
+            newMountedColors[selectedValue] = color;
+            setMountedColors(newMountedColors);
+            return;
+        }
+
+        const isDefaultColor =
+            !colorsList[colorIndex] || colorsList[colorIndex] === PALETTE_DEFAULT_COLOR;
+
+        if (mountedColors[selectedValue] && isDefaultColor) {
+            delete newMountedColors[selectedValue];
+        } else if (mountedColors[selectedValue] !== String(colorIndex) && !isDefaultColor) {
+            newMountedColors[selectedValue] = String(colorIndex);
+        }
+
+        setMountedColors(newMountedColors);
     };
 
     const handleSelectPalette = (palettes: string[]) => {
         setSelectedPalette(palettes[0]);
-        setMountedColors({});
+        setMountedColors(stripPaletteIndexColors(mountedColors));
     };
 
     const handleApply = () => {
@@ -146,22 +161,13 @@ export const ColorsDialog = (props: Props) => {
     };
 
     const renderValueItem = (value: string) => {
-        const mountedColorIndex = mountedColors[value];
-        const style: React.CSSProperties | undefined = mountedColorIndex
-            ? {
-                  backgroundColor: colorsList[Number(mountedColorIndex)],
-              }
-            : undefined;
-
         return (
             <React.Fragment>
-                <div
-                    data-qa={DatasetFieldColorsDialogQa.ValueItemColorIcon}
-                    className={b('value-color', {default: !mountedColorIndex})}
-                    style={style}
-                >
-                    {mountedColorIndex ? null : 'a'}
-                </div>
+                <ColorValueItem
+                    colorsList={colorsList}
+                    color={mountedColors[value]}
+                    qa={DatasetFieldColorsDialogQa.ValueItemColorIcon}
+                />
                 <div
                     data-qa={DatasetFieldColorsDialogQa.ValueItem}
                     className={b('value-label')}
@@ -174,34 +180,6 @@ export const ColorsDialog = (props: Props) => {
     };
 
     const paletteSelectedValue = selectedValue ? mountedColors[selectedValue] : undefined;
-
-    const paletteOptions: PaletteOption[] = React.useMemo(() => {
-        const items = colorsList.map((color, index) => ({
-            content: (
-                <PaletteItem
-                    isSelected={String(index) === paletteSelectedValue}
-                    className={b('palette-item')}
-                    color={color}
-                    qa={DatasetFieldColorsDialogQa.PaleteItem}
-                />
-            ),
-            value: String(index),
-        }));
-        items.push({
-            content: (
-                <PaletteItem
-                    isSelected={paletteSelectedValue === undefined}
-                    className={b('palette-item')}
-                    isDefault={true}
-                    qa={DatasetFieldColorsDialogQa.PaleteItem}
-                >
-                    auto
-                </PaletteItem>
-            ),
-            value: 'auto',
-        });
-        return items;
-    }, [colorsList, paletteSelectedValue]);
 
     return (
         <Dialog
@@ -229,13 +207,13 @@ export const ColorsDialog = (props: Props) => {
                             onUpdate={handleSelectPalette}
                             value={selectedPaletteId}
                         />
-                        <Palette
-                            multiple={false}
+                        <PaletteWithCustomColor
                             className={b('palette')}
-                            size="l"
-                            options={paletteOptions}
-                            value={[paletteSelectedValue ?? 'auto']}
-                            onUpdate={handleSelectColor}
+                            currentMountedColor={paletteSelectedValue}
+                            selectedValue={selectedValue}
+                            colorsList={colorsList}
+                            onPaletteItemClick={handleSelectColor}
+                            palleteItemQa={DatasetFieldColorsDialogQa.PaleteItem}
                         />
                     </div>
                 </div>

@@ -1,7 +1,8 @@
 import {Page} from '@playwright/test';
 
 import {slct} from '../../utils';
-import {PlaceholderActionQa} from '../../../src/shared';
+import {DialogColorQa, PlaceholderActionQa} from '../../../src/shared';
+import {CommonSelectors} from '../constants/common-selectors';
 
 export enum ColorValue {
     Blue = '#4DA2F1',
@@ -55,6 +56,22 @@ export default class ColorDialog {
 
     async selectColor(colorValue: string) {
         await this.page.click(slct(colorValue));
+    }
+
+    async selectCustomColor(colorValue: string, opacityValue?: string) {
+        await this.page.click(slct(DialogColorQa.CustomColorButton));
+
+        const inputs = this.page
+            .locator(slct(DialogColorQa.CustomColorInput))
+            .locator(CommonSelectors.TextInput);
+
+        const colorInput = inputs.first();
+        await colorInput.fill(colorValue);
+
+        if (opacityValue) {
+            const opacityInput = inputs.last();
+            await opacityInput.fill(opacityValue);
+        }
     }
 
     async selectFieldValue(value: string) {

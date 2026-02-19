@@ -13,11 +13,8 @@ import type {ValuesType} from 'utility-types';
 
 import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {selectControlDialogTheme} from '../../../../store/selectors/controlDialog';
-import {
-    type SetItemDataArgs,
-    changeNavigationPath,
-    setItemData,
-} from '../../store/actions/dashTyped';
+import {changeNavigationPath, setItemData} from '../../store/actions/dashTyped';
+import type {SetItemDataArgs, SetItemDataPayload} from '../../store/actions/dashTyped';
 import {closeDialog} from '../../store/actions/dialogs/actions';
 import {
     selectCurrentTabId,
@@ -77,7 +74,7 @@ export function Dialogs() {
     });
 
     const setItemDataHandle = React.useCallback(
-        (newItemData: SetItemDataArgs) => {
+        (newItemData: SetItemDataPayload | SetItemDataArgs) => {
             dispatch(setItemData(newItemData));
         },
         [dispatch],

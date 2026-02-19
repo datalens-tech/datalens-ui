@@ -10,7 +10,7 @@ import type {ColorsConfig, Field} from 'shared';
 import {ColorMode} from 'shared';
 import {fetchColorPalettes} from 'store/actions/colorPaletteEditor';
 import {selectColorPalettes} from 'store/selectors/colorPaletteEditor';
-import type {DatalensGlobalState} from 'ui';
+import {type DatalensGlobalState, PALETTE_DEFAULT_COLOR} from 'ui';
 import type {GradientState, PaletteState} from 'units/wizard/actions/dialogColor';
 import {
     prepareDialogColorState,
@@ -33,7 +33,7 @@ import {
 } from '../../../../selectors/dialogColor';
 import type {ExtraSettings} from '../DialogColor';
 import DialogColorGradientBody from '../DialogColorGradient/DialogColorGradient';
-import {DEFAULT_COLOR, PaletteContainer} from '../DialogColorPalette/DialogColorPalette';
+import {PaletteContainer} from '../DialogColorPalette/DialogColorPalette';
 
 import './ColorSettingsContainer.scss';
 
@@ -149,7 +149,7 @@ class ColorSettingsContainer extends React.Component<Props> {
         );
     };
 
-    private onPaletteItemClick = (_color: string, colorIndex: number) => {
+    private onPaletteItemClick = (color: string, colorIndex?: number) => {
         const {selectedValue} = this.props.paletteState;
         const {colorsList} = this.props;
 
@@ -158,7 +158,18 @@ class ColorSettingsContainer extends React.Component<Props> {
         }
 
         const mountedColors = {...this.props.paletteState.mountedColors};
-        const isDefaultColor = !colorsList[colorIndex] || colorsList[colorIndex] === 'auto';
+
+        if (colorIndex === undefined) {
+            mountedColors[selectedValue] = color;
+            this.props.actions.setDialogColorPaletteState({
+                ...this.props.paletteState,
+                mountedColors,
+            });
+            return;
+        }
+
+        const isDefaultColor =
+            !colorsList[colorIndex] || colorsList[colorIndex] === PALETTE_DEFAULT_COLOR;
 
         if (mountedColors[selectedValue] && isDefaultColor) {
             delete mountedColors[selectedValue];
@@ -189,7 +200,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
         colorPalettes: selectColorPalettes(state).filter(
             (item) => item.isGradient === (ownProps.colorMode === ColorMode.GRADIENT),
         ),
-        colorsList: selectClientPaletteColors(state).concat([DEFAULT_COLOR]),
+        colorsList: selectClientPaletteColors(state).concat([PALETTE_DEFAULT_COLOR]),
     };
 };
 

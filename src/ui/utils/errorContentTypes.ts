@@ -90,7 +90,6 @@ export const getImageNameFromErrorContentType = (
         case ErrorContentTypes.CREDENTIALS:
             return 'identity';
         case ErrorContentTypes.INACCESSIBLE_ON_MOBILE:
-        case ErrorContentTypes.FORBIDDEN_BY_PLAN:
         case ErrorContentTypes.FORBIDDEN_AUTH:
             return 'project';
         default:

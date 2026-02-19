@@ -1,6 +1,9 @@
 import React from 'react';
 
 import type {
+    AreaSeries,
+    BarXSeries,
+    BarXSeriesData,
     BarYSeries,
     BarYSeriesData,
     ChartData,
@@ -199,36 +202,48 @@ export const getTooltipRenderer = ({
     return undefined;
 };
 
-const barYWithPercentRowRenderer: ChartTooltip['rowRenderer'] = ({
-    name,
-    value,
-    formattedValue,
-    hovered,
-    className,
-    color,
-}) => {
-    const total =
-        hovered?.reduce((acc, item) => acc + Number((item.data as BarYSeriesData).x ?? 0), 0) ?? 0;
-    const percentage = value
-        ? formatNumber(Number(value) / total, {format: 'percent', precision: 1})
-        : '';
+const getStackedPercentRowRenderer = ({
+    valueKey,
+}: {
+    valueKey: 'x' | 'y';
+}): ChartTooltip['rowRenderer'] => {
+    return function barXYWithPercentRowRenderer({
+        name,
+        value,
+        formattedValue,
+        hovered,
+        className,
+        color,
+    }) {
+        const total =
+            hovered?.reduce(
+                (acc, item) =>
+                    acc + Number((item.data as BarXSeriesData | BarYSeriesData)[valueKey] ?? 0),
+                0,
+            ) ?? 0;
+        const numericValue = Number(value);
+        const ratio = total === 0 ? 0 : numericValue / total;
+        const percentage = Number.isFinite(numericValue)
+            ? formatNumber(ratio, {format: 'percent', precision: 1})
+            : '';
 
-    return (
-        <div className={b('row', className)}>
-            <div className={b('block')}>
-                <span className={b('color')} style={{backgroundColor: color}} />
+        return (
+            <div className={b('row', className)}>
+                <div className={b('block')}>
+                    <span className={b('color')} style={{backgroundColor: color}} />
+                </div>
+                <div
+                    className={b('block')}
+                    style={DL.IS_MOBILE ? {marginRight: 'auto'} : {}}
+                    dangerouslySetInnerHTML={{__html: name}}
+                />
+                <div style={{marginLeft: 'auto'}} className={b('block')}>
+                    <span style={{marginRight: 12}}>{percentage}</span>
+                    {formattedValue}
+                </div>
             </div>
-            <div
-                className={b('block')}
-                style={DL.IS_MOBILE ? {marginRight: 'auto'} : {}}
-                dangerouslySetInnerHTML={{__html: name}}
-            />
-            <div style={{marginLeft: 'auto'}} className={b('block')}>
-                <span style={{marginRight: 12}}>{percentage}</span>
-                {formattedValue}
-            </div>
-        </div>
-    );
+        );
+    };
 };
 
 export const getTooltipRowRenderer = ({
@@ -245,9 +260,23 @@ export const getTooltipRowRenderer = ({
 
     if (seriesTypes.length === 1) {
         switch (seriesTypes[0]) {
+            case 'area': {
+                if (seriesData.some((s) => (s as AreaSeries).stacking === 'percent')) {
+                    return getStackedPercentRowRenderer({valueKey: 'y'});
+                }
+
+                break;
+            }
+            case 'bar-x': {
+                if (seriesData.some((s) => (s as BarXSeries).stacking === 'percent')) {
+                    return getStackedPercentRowRenderer({valueKey: 'y'});
+                }
+
+                break;
+            }
             case 'bar-y': {
                 if (seriesData.some((s) => (s as BarYSeries).stacking === 'percent')) {
-                    return (args) => barYWithPercentRowRenderer(args);
+                    return getStackedPercentRowRenderer({valueKey: 'x'});
                 }
 
                 break;

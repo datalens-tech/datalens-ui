@@ -21,7 +21,7 @@ import {
     selectOpenedItemData,
     selectSelectorDialog,
 } from 'ui/store/selectors/controlDialog';
-import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
+import type {SetItemDataPayload} from 'ui/units/dash/store/actions/dashTyped';
 
 import {ExternalSelectorSettings} from '../ControlComponents/Sections/CommonSettingsSection/ExternalSelectorSettings/ExternalSelectorSettings';
 
@@ -41,7 +41,7 @@ export type DialogExternalControlFeaturesProps = {
 type OwnProps = {
     dialogIsVisible: boolean;
     closeDialog: () => void;
-    setItemData: (newItemData: SetItemDataArgs) => void;
+    setItemData: (newItemData: SetItemDataPayload) => void;
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
 

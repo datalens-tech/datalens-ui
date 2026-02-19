@@ -37,7 +37,7 @@ import {PaletteText} from 'ui/units/dash/containers/Dialogs/components/PaletteTe
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {useInternalMarginsEnabled} from 'ui/utils/widgets/internalMargins';
 
-import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import type {SetItemDataPayload} from '../../units/dash/store/actions/dashTyped';
 import type {CommonVisualSettings} from '../DashKit/DashKit';
 import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
 
@@ -111,7 +111,7 @@ interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     dialogIsVisible: boolean;
 
     closeDialog: () => void;
-    setItemData: (newItemData: SetItemDataArgs) => void;
+    setItemData: (newItemData: SetItemDataPayload) => void;
 
     theme?: RealTheme;
 }
@@ -301,7 +301,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                 : {textColor: oldTextColor};
         if (Object.values(validationErrors).filter(Boolean).length === 0) {
             const resultedCustomFontSize = customFontSize ?? previousSelectedFontSize;
-            setItemData({
+            const item = {
                 data: {
                     text,
                     size:
@@ -321,6 +321,10 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                     ...resultTextColorSettings,
                     hint,
                 },
+            };
+
+            setItemData({
+                item,
             });
             closeDialog();
         } else {

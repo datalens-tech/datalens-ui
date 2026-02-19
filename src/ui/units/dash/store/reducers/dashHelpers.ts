@@ -1,5 +1,5 @@
 /* eslint-disable complexity */
-import type {Config} from '@gravity-ui/dashkit';
+import type {Config, ConfigLayout} from '@gravity-ui/dashkit';
 import {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
@@ -14,6 +14,7 @@ import type {
 import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
 import type {DashTabConnection, ImpactTabsIds, ImpactType} from 'shared/types/dash';
 
+import type {AddingGlobalItemArgs} from '../actions/dashTyped';
 import type {DashState} from '../typings/dash';
 
 import type {ConnectionsUpdaters} from './dashTypedReducer';
@@ -126,26 +127,46 @@ export function addGlobalItemToTab({
     item,
     layoutItem,
     updatedConnections,
+    addingGlobalItemArgs,
 }: {
     tab: DashTab;
     item: DashTabItem;
     layoutItem?: DashTabLayout;
     updatedConnections?: DashTabConnection[];
+    addingGlobalItemArgs?: AddingGlobalItemArgs;
 }): DashTab {
+    let layout = tab.layout;
+    if (addingGlobalItemArgs?.options?.updateLayout) {
+        const byId = addingGlobalItemArgs?.options?.updateLayout.reduce<
+            Record<string, ConfigLayout>
+        >((memo, t) => {
+            memo[t.i] = t;
+            return memo;
+        }, {});
+
+        layout = tab.layout.map((t) => ({...t, ...(byId[t.i] || {})}));
+    }
+
+    let newLayoutItem = layoutItem
+        ? {...layoutItem, x: 0, y: 0}
+        : {
+              i: item.id,
+              x: 0,
+              y: 0,
+              w: 8,
+              h: 2,
+          };
+
+    if (addingGlobalItemArgs?.itemLayout && addingGlobalItemArgs.itemLayout.x !== undefined) {
+        newLayoutItem = {...addingGlobalItemArgs?.itemLayout, i: item.id};
+    }
     // we need only to update layout as globalItem will be passed in separate field
     // add new global item to top of parent group
     // TODO (global selectors): Need groups
+    // TODO (global selectors): Try replace with setItem
     const reflowedLayout = DashKit.reflowLayout({
-        newLayoutItem: layoutItem
-            ? {...layoutItem, x: 0, y: 0}
-            : {
-                  i: item.id,
-                  x: 0,
-                  y: 0,
-                  w: 8,
-                  h: 2,
-              },
-        layout: tab.layout,
+        newLayoutItem,
+        layout,
         groups: [{id: 'default'}],
     });
 
@@ -185,6 +206,7 @@ export function updateTabsWithGlobalItem({
     currentTabIndex,
     connectionsUpdaters,
     removeFromCurrentTab,
+    addingGlobalItemArgs,
 }: {
     data: DashData;
     addedItem: DashTabItem;
@@ -194,6 +216,7 @@ export function updateTabsWithGlobalItem({
     currentTabIndex: number;
     connectionsUpdaters?: ConnectionsUpdaters;
     removeFromCurrentTab?: boolean;
+    addingGlobalItemArgs?: AddingGlobalItemArgs;
 }): DashTab[] {
     const tabsToProcess = hasAllScope ? data.tabs : data.tabs.filter((tab) => usedTabs.has(tab.id));
     const layoutItem = tabData.layout.find((item) => item.i === addedItem.id);
@@ -265,7 +288,13 @@ export function updateTabsWithGlobalItem({
         }
 
         // Add new item to tab
-        return addGlobalItemToTab({tab, item: addedItem, layoutItem, updatedConnections});
+        return addGlobalItemToTab({
+            tab,
+            item: addedItem,
+            layoutItem,
+            updatedConnections,
+            addingGlobalItemArgs,
+        });
     });
 }
 
@@ -293,6 +322,8 @@ export function getStateForControlWithGlobalLogic({
     itemData,
     isGlobal,
     connectionsUpdaters,
+    itemId,
+    addingGlobalItemArgs,
 }: {
     state: DashState;
     data: DashData;
@@ -302,6 +333,8 @@ export function getStateForControlWithGlobalLogic({
     itemData: DashTabItemControlData | DashTabItemGroupControlData;
     isGlobal: boolean;
     connectionsUpdaters?: ConnectionsUpdaters;
+    itemId?: string;
+    addingGlobalItemArgs?: AddingGlobalItemArgs;
 }): DashState | null {
     const detailedGlobalStatus = getDetailedGlobalStatus(itemType, itemData);
     const {hasAllScope, usedTabs} = detailedGlobalStatus;
@@ -309,11 +342,13 @@ export function getStateForControlWithGlobalLogic({
 
     const preparedTabData = pick(tabData, TAB_PROPERTIES);
 
+    const openedItemId = state.openedItemId || itemId;
+
     // Editing existing control
-    if (state.openedItemId) {
+    if (openedItemId) {
         // find prev state of global item in old date
         const savedGlobalItem = data.tabs[tabIndex].globalItems?.find(
-            (item) => item.id === state.openedItemId,
+            (item) => item.id === openedItemId,
         );
         const wasGlobal = Boolean(savedGlobalItem);
 
@@ -321,7 +356,7 @@ export function getStateForControlWithGlobalLogic({
             // Case: Global item remains global - item data or impactType was changed
 
             // find new state of global item in updated tabData
-            const updatedItem = tabData.globalItems?.find((item) => item.id === state.openedItemId);
+            const updatedItem = tabData.globalItems?.find((item) => item.id === openedItemId);
 
             // impossible case
             if (!updatedItem) {
@@ -339,6 +374,7 @@ export function getStateForControlWithGlobalLogic({
                 currentTabIndex: tabIndex,
                 removeFromCurrentTab,
                 connectionsUpdaters,
+                addingGlobalItemArgs,
             });
             updatedTabs[tabIndex] = preparedTabData;
 
@@ -352,12 +388,12 @@ export function getStateForControlWithGlobalLogic({
             };
         } else if (wasGlobal && !isGlobal) {
             // Case: Global to local - remove from globalItems in all tabs, update in current tab (updating for current tab is made in dashkit)
-            const updatedTabs = removeGlobalItemFromTabs(data, state.openedItemId, tabIndex);
+            const updatedTabs = removeGlobalItemFromTabs(data, openedItemId, tabIndex);
             updatedTabs[tabIndex] = preparedTabData;
 
             return {
                 ...state,
-                lastModifiedItemId: state.openedItemId,
+                lastModifiedItemId: openedItemId,
                 data: update(data, {
                     tabs: {$set: updatedTabs},
                     counter: {$set: tabData.counter},
@@ -367,7 +403,7 @@ export function getStateForControlWithGlobalLogic({
             // Case: Local to global - remove from items in current tab, add to globalItems for appropriate tabs
 
             // find new state of global item in updated tabData
-            const addedItem = tabData.globalItems?.find((item) => item.id === state.openedItemId);
+            const addedItem = tabData.globalItems?.find((item) => item.id === openedItemId);
 
             // impossible case
             if (!addedItem) {
@@ -382,6 +418,7 @@ export function getStateForControlWithGlobalLogic({
                 tabData,
                 currentTabIndex: tabIndex,
                 connectionsUpdaters,
+                addingGlobalItemArgs,
             });
             updatedTabs[tabIndex] = preparedTabData;
 
@@ -397,7 +434,7 @@ export function getStateForControlWithGlobalLogic({
     }
 
     // Creating new global item
-    if (!state.openedItemId && isGlobal && tabData.globalItems) {
+    if (!openedItemId && isGlobal && tabData.globalItems) {
         const addedItem = tabData.globalItems[tabData.globalItems.length - 1];
 
         // impossible case
