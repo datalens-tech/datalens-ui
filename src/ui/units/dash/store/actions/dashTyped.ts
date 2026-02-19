@@ -521,25 +521,6 @@ export type SetItemDataItem = {
     | {type?: DashTabItemType.Image; data: SetItemDataImage}
 );
 
-// TODO: Remove after update platform
-export type SetItemDataArgs = {
-    defaults?: SetItemDataDefaults;
-    namespace?: string;
-    // context for selectors pasted from the buffer
-    contextList?: {
-        index: number;
-        targetId: string;
-        targetEntryId: string;
-        targetDashTabId: string;
-    }[];
-} & (
-    | {type?: DashTabItemType.Control; data: SetItemDataExternalControl}
-    | {type?: DashTabItemType.GroupControl; data: SetItemDataGroupControl}
-    | {type?: DashTabItemType.Text; data: SetItemDataText}
-    | {type?: DashTabItemType.Title; data: SetItemDataTitle}
-    | {type?: DashTabItemType.Image; data: SetItemDataImage}
-);
-
 export type AddingGlobalItemArgs = {
     itemLayout?: Omit<ConfigLayout, 'i'>;
     options?: Omit<AddNewItemOptions, 'reflowLayoutOptions'>;
@@ -553,10 +534,10 @@ export type SetItemDataPayload = {
 
 export type SetItemDataAction = {
     type: typeof actionTypes.SET_ITEM_DATA;
-    payload: SetItemDataPayload | SetItemDataArgs;
+    payload: SetItemDataPayload;
 };
 
-export const setItemData = (data: SetItemDataPayload | SetItemDataArgs) => {
+export const setItemData = (data: SetItemDataPayload) => {
     return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
         dispatch({
             type: actionTypes.SET_ITEM_DATA,

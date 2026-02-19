@@ -35,7 +35,6 @@ export const createDashboardV1 = createTypedAction(
             name: argsEntry.name,
             meta: argsEntry.meta,
             annotation: argsEntry.annotation,
-            mode: args.mode,
             data,
             type: '',
             scope: EntryScope.Dash,
