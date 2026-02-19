@@ -372,8 +372,7 @@ function dash(state = initialState, action) {
                 defaults,
                 contextList,
                 id: itemId,
-                // TODO: remove after up platform
-            } = 'item' in action.payload ? action.payload.item : action.payload;
+            } = action.payload.item;
 
             let targetTab = tab;
             let targetTabIndex = tabIndex;

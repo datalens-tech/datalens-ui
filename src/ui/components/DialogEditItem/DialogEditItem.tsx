@@ -9,7 +9,7 @@ import {useEffectOnce} from 'ui/hooks';
 import {initControlDialog, resetControlDialog} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectOpenedDialogType} from 'ui/store/selectors/controlDialog';
 import type {DialogEditItemFeaturesProp} from 'ui/store/typings/controlDialog';
-import type {SetItemDataArgs, SetItemDataPayload} from 'ui/units/dash/store/actions/dashTyped';
+import type {SetItemDataPayload} from 'ui/units/dash/store/actions/dashTyped';
 
 import type {CommonVisualSettings} from '../DashKit/DashKit';
 import DialogChartWidget from '../DialogChartWidget/DialogChartWidget';
@@ -93,7 +93,7 @@ export type DialogEditItemProps = {
     changeNavigationPath: (newNavigationPath: string) => void;
     features?: DialogEditItemFeaturesProp;
     theme?: RealTheme;
-    setItemData: (args: SetItemDataPayload | SetItemDataArgs) => void;
+    setItemData: (args: SetItemDataPayload) => void;
 } & DialogEditSpecificProps;
 
 export const isDialogEditItemType = (type: string): type is DashTabItemType =>
