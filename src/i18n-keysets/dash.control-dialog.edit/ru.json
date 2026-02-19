@@ -72,6 +72,7 @@
   "validation_empty-parameters-values": "Поле с параметрами должно быть заполнено",
   "validation_field-name-in-parameters": "Имя параметра не должно совпадать с именами параметров из раздела ниже",
   "validation_field-name-unique": "Имена параметров в группе не должны совпадать. Селекторы с одинаковыми именами параметров: {{selectorsNames}}",
+  "validation_field-not-found": "Поле не найдено",
   "validation_need-current-tab-impact": "Должен быть хотя бы один селектор, отображаемый на текущей вкладке",
   "validation_not-combined-with-group-setting": "Значение в настройках селектора не должно превышать значения, указанного в настройках группы селекторов",
   "validation_required": "Поле должно быть заполнено",
