@@ -34,6 +34,7 @@ import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slide
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting, getAxisType, getYAxisPlaceholders} from '../helpers/axis';
+import {DATA_LABEL_DEFAULT_PADDING} from '../helpers/axis/data-labels';
 import {isXAxisReversed} from '../helpers/highcharts';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
@@ -203,6 +204,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 enabled: isDataLabelsEnabled,
                 html: shouldUseHtmlForLabels,
                 format: labelFormatting,
+                padding: DATA_LABEL_DEFAULT_PADDING,
             },
             legend: {
                 symbol: {

@@ -39,6 +39,7 @@ import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {DATA_LABEL_DEFAULT_PADDING} from '../helpers/axis/data-labels';
 import {isXAxisReversed} from '../helpers/highcharts';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import {getSegmentMap} from '../helpers/segments';
@@ -252,6 +253,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 inside: shared.extraSettings?.labelsPosition !== LabelsPositions.Outside,
                 html: shouldUseHtmlForLabels,
                 format: labelFormatting,
+                padding: DATA_LABEL_DEFAULT_PADDING,
             },
             yAxis: graph.yAxis,
             rangeSlider,

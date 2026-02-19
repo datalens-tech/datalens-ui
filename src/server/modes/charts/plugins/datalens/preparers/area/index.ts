@@ -30,6 +30,7 @@ import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {DATA_LABEL_DEFAULT_PADDING} from '../helpers/axis/data-labels';
 import {getSegmentMap} from '../helpers/segments';
 import {prepareLineData} from '../line/prepare-line-data';
 import type {PrepareFunctionArgs} from '../types';
@@ -213,6 +214,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
                 enabled: isDataLabelsEnabled,
                 html: shouldUseHtmlForLabels,
                 format: labelFormatting,
+                padding: DATA_LABEL_DEFAULT_PADDING,
             },
             custom: {
                 ...graph.custom,
