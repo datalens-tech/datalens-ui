@@ -7,7 +7,7 @@ import {dashSchemaV1} from './dash-v1';
 
 const createDashData = dataSchema.omit({schemeVersion: true});
 
-export const createDashV1ArgsSchema = z.strictObject({
+export const createDashV1ArgsSchema = z.object({
     entry: z
         .object({
             data: createDashData,
