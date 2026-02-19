@@ -10,7 +10,6 @@ import {
     FieldEditorQa,
     DatasetFieldTabBatchPanelQa,
     DialogConfirmQA,
-    DatasetPreviewQA,
 } from '../../../src/shared';
 import DatasetPage from '../../page-objects/dataset/DatasetPage';
 import FieldEditor from '../../page-objects/wizard/FieldEditor';
@@ -30,11 +29,6 @@ datalensTest.describe('Dataset history', () => {
         datasetPage = new DatasetPage({page});
         await openTestPage(page, url);
         await page.waitForSelector(slct(DatasetFieldsTabQa.FieldNameColumnInput));
-        // close preview for not wait response for it
-        const previewCloseBtn = page.locator(slct(DatasetPreviewQA.ClosePreviewBtn));
-        await previewCloseBtn.click();
-        const preview = page.locator(DatasetPreviewQA.Preview);
-        await expect(preview).not.toBeVisible();
     });
 
     datalensTest('Undo button is disabled when no changes were made', async ({page}) => {
