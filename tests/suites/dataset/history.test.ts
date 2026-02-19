@@ -29,6 +29,10 @@ datalensTest.describe('Dataset history', () => {
         datasetPage = new DatasetPage({page});
         await openTestPage(page, url);
         await page.waitForSelector(slct(DatasetFieldsTabQa.FieldNameColumnInput));
+        // Wait for initial dataset validation to complete, ensuring the edit history is initialized
+        await page.waitForResponse(
+            (response) => response.url().includes('/validateDataset') && response.ok(),
+        );
     });
 
     datalensTest('Undo button is disabled when no changes were made', async ({page}) => {
@@ -57,6 +61,7 @@ datalensTest.describe('Dataset history', () => {
         expect(undoValue).toBe(originalValue);
 
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
+        await expect(redoBtn).toBeEnabled();
         await redoBtn.click();
 
         const redoValue = await fieldInput.inputValue();
@@ -68,6 +73,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
@@ -101,6 +107,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo the hide
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const rowsCountAfterUndo = await page
@@ -124,10 +131,12 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo the hide
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         // Redo the hide
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
+        await expect(redoBtn).toBeEnabled();
         await redoBtn.click();
 
         const visibleClassAfterRedo = await firstFieldVisibleIcon.getAttribute('title');
@@ -156,6 +165,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo the duplication
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const rowsCountAfterUndo = await page
@@ -165,6 +175,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Redo the duplication
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
+        await expect(redoBtn).toBeEnabled();
         await redoBtn.click();
 
         const rowsCountAfterRedo = await page
@@ -195,6 +206,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo the removal
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const rowsCountAfterUndo = await page
@@ -228,6 +240,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo the description change
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const restoredValue = await descriptionInput.inputValue();
@@ -247,6 +260,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const afterUndo = await descriptionInput.inputValue();
@@ -254,6 +268,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Redo
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
+        await expect(redoBtn).toBeEnabled();
         await redoBtn.click();
 
         const afterRedo = await descriptionInput.inputValue();
@@ -281,6 +296,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo the type change
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const restoredTypeText = await typeSelectBtn.textContent();
@@ -305,6 +321,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const afterUndo = await typeSelectBtn.textContent();
@@ -312,6 +329,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Redo
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
+        await expect(redoBtn).toBeEnabled();
         await redoBtn.click();
 
         const afterRedo = await typeSelectBtn.textContent();
@@ -343,6 +361,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const restoredAggregationText = await aggregationSelectBtn.textContent();
@@ -372,6 +391,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const afterUndo = await aggregationSelectBtn.textContent();
@@ -379,6 +399,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Redo
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
+        await expect(redoBtn).toBeEnabled();
         await redoBtn.click();
 
         const afterRedo = await aggregationSelectBtn.textContent();
@@ -409,6 +430,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const afterUndo = await fieldInput.inputValue();
@@ -416,6 +438,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Redo
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
+        await expect(redoBtn).toBeEnabled();
         await redoBtn.click();
 
         const afterRedo = await fieldInput.inputValue();
@@ -445,6 +468,7 @@ datalensTest.describe('Dataset history', () => {
         expect(rowsCountAfterDelete).toBe(rowsCountBefore - 2);
 
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const rowsCountAfterUndo = await page
@@ -453,6 +477,7 @@ datalensTest.describe('Dataset history', () => {
         expect(rowsCountAfterUndo).toBe(rowsCountBefore);
 
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
+        await expect(redoBtn).toBeEnabled();
         await redoBtn.click();
 
         const rowsCountAfterRedo = await page
@@ -489,6 +514,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo the batch hide
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const rowsCountAfterUndo = await page
@@ -497,6 +523,7 @@ datalensTest.describe('Dataset history', () => {
         expect(rowsCountAfterUndo).toBe(rowsCountBefore);
 
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
+        await expect(redoBtn).toBeEnabled();
         await redoBtn.click();
 
         const rowsCountAfterRedo = await page
@@ -517,22 +544,26 @@ datalensTest.describe('Dataset history', () => {
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
 
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const afterFirstUndo = await fieldInput.inputValue();
         expect(afterFirstUndo).toBe(step1Value);
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const afterUndoAll = await fieldInput.inputValue();
         expect(afterUndoAll).toBe(originalValue);
 
         // Redo first
+        await expect(redoBtn).toBeEnabled();
         await redoBtn.click();
 
         const afterFirstRedo = await fieldInput.inputValue();
         expect(afterFirstRedo).toBe(step1Value);
 
         // Redo second
+        await expect(redoBtn).toBeEnabled();
         await redoBtn.click();
 
         const afterSecondRedo = await fieldInput.inputValue();
@@ -550,6 +581,7 @@ datalensTest.describe('Dataset history', () => {
     datalensTest('Redo button becomes disabled at the end of history', async ({page}) => {
         await datasetPage.renameFirstField();
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
@@ -565,7 +597,7 @@ datalensTest.describe('Dataset history', () => {
         await expect(undoBtn).toBeEnabled();
         // Click outside the input to unfocus before using hotkey
         await page.locator(slct(DatasetFieldsTabQa.DatasetEditor)).click();
-        await page.keyboard.press(`Meta+z`);
+        await page.keyboard.press(`ControlOrMeta+z`);
 
         const restoredValue = await fieldInput.inputValue();
         expect(restoredValue).toBe(originalValue);
@@ -577,13 +609,14 @@ datalensTest.describe('Dataset history', () => {
 
         // Undo via button
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
         await expect(redoBtn).toBeEnabled();
         // Click outside the input to unfocus before using hotkey
         await page.locator(slct(DatasetFieldsTabQa.DatasetEditor)).click();
-        await page.keyboard.press(`Meta+Shift+z`);
+        await page.keyboard.press(`ControlOrMeta+Shift+z`);
 
         const restoredValue = await fieldInput.inputValue();
         expect(restoredValue).toBe(changedValue);
@@ -617,6 +650,7 @@ datalensTest.describe('Dataset history', () => {
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
 
         // Undo step 2 (duplicate)
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
 
         const rowsCountAfterUndoDup = await page
@@ -627,6 +661,7 @@ datalensTest.describe('Dataset history', () => {
         expect(afterUndoFirst).toBe(newValue);
 
         // Undo step 1 (rename)
+        await expect(undoBtn).toBeEnabled();
         await undoBtn.click();
         const afterUndoAll = await fieldInput.inputValue();
         expect(afterUndoAll).toBe(originalValue);
