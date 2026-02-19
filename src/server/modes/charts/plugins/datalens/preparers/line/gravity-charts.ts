@@ -12,7 +12,6 @@ import sortBy from 'lodash/sortBy';
 import type {
     SeriesExportSettings,
     ServerField,
-    ServerPlaceholder,
     WizardVisualizationId,
     WrappedHTML,
     WrappedMarkdown,
@@ -34,7 +33,7 @@ import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slider';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
-import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {getAxisFormatting, getAxisType, getYAxisPlaceholders} from '../helpers/axis';
 import {isXAxisReversed} from '../helpers/highcharts';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
@@ -77,6 +76,8 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const y2Placeholder = placeholders.find((p) => p.id === PlaceholderId.Y2);
     const y2Fields = y2Placeholder?.items || [];
 
+    const isSecondOnlyYAxis = !yFields.length && y2Fields.length;
+
     const labelField = labels?.[0];
     const isDataLabelsEnabled = Boolean(labelField);
     const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
@@ -90,21 +91,23 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         }) === 'category' ||
         disableDefaultSorting;
 
-    const yAxisItems: ServerPlaceholder[] = [];
-    if (yPlaceholder && yFields.length) {
-        yAxisItems.push(yPlaceholder);
-    }
-    if (y2Placeholder && y2Fields.length) {
-        yAxisItems.push(y2Placeholder);
-    }
+    const chartYAxisItems = getYAxisPlaceholders({placeholders, shared});
 
-    if (!xField || !yAxisItems.length) {
+    const isYAxisEmpty = !yFields.length && !y2Fields.length;
+    if (!xField || isYAxisEmpty) {
         return {
             series: {
                 data: [],
             },
         };
     }
+
+    const segmentField = split?.[0];
+    const segmentsMap = getSegmentMap(args);
+    const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
+    const isSplitEnabled = Boolean(segmentField);
+    const isSplitWithHtmlValues = isHtmlField(segmentField);
+    const isMultiAxis = Boolean(yPlaceholder?.items.length && y2Placeholder?.items.length);
 
     const preparedData = prepareLineData(args);
     const xCategories = preparedData.categories;
@@ -160,6 +163,10 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         const labelFormatting = graph.dataLabels
             ? mapToGravityChartValueFormat({field: labelField, formatSettings: graph.dataLabels})
             : undefined;
+        let yAxisIndex = graph.yAxis;
+        if (!isSplitEnabled && isSecondOnlyYAxis && chartYAxisItems.length > 1) {
+            yAxisIndex = 1;
+        }
 
         return {
             name: seriesName,
@@ -212,7 +219,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                       }),
                   }
                 : undefined,
-            yAxis: graph.yAxis,
+            yAxis: yAxisIndex,
             custom: {
                 ...graph.custom,
                 exportSettings,
@@ -220,6 +227,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 shapeValue: graph.shapeValue,
             },
             rangeSlider,
+            graph,
         };
     });
 
@@ -258,13 +266,6 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     if (xAxis && isXAxisReversed(xField, sort, visualizationId as WizardVisualizationId)) {
         xAxis.order = 'reverse';
     }
-
-    const segmentField = split?.[0];
-    const segmentsMap = getSegmentMap(args);
-    const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
-    const isSplitEnabled = Boolean(segmentField);
-    const isSplitWithHtmlValues = isHtmlField(segmentField);
-    const isMultiAxis = Boolean(yPlaceholder?.items.length && y2Placeholder?.items.length);
 
     let yAxis: ChartYAxis[] = [];
     if (isSplitEnabled) {
@@ -313,7 +314,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
             return acc;
         }, [] as ChartYAxis[]);
     } else {
-        yAxis = yAxisItems.map((placeholder) => {
+        yAxis = chartYAxisItems.map((placeholder) => {
             const labelNumberFormat = placeholder
                 ? getAxisFormatting({
                       placeholder,
