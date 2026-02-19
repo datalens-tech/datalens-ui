@@ -1,13 +1,20 @@
 import React from 'react';
 
 import {I18n} from 'i18n';
+import {ErrorContentTypes} from 'shared';
 
 import ViewError from '../../../../components/ViewError/ViewError';
 import {DashErrorCode} from '../../modules/constants';
 
 const i18n = I18n.keyset('dash.error.view');
 
-const getErrorView = (error: Error | null, onRetry: () => void) => {
+type DashErrorProps = {
+    error: Error | null;
+    onRetry: () => void;
+    hideDetails?: boolean;
+};
+
+const getErrorView = ({error, onRetry}: DashErrorProps) => {
     if (!error || !('code' in error)) {
         return {retry: onRetry};
     }
@@ -20,6 +27,7 @@ const getErrorView = (error: Error | null, onRetry: () => void) => {
             };
         case DashErrorCode.LIMIT_EXCEED:
             return {
+                type: ErrorContentTypes.EMBEDDED_DASH_LIMIT_REACHED,
                 title: i18n('label_title-embed-dash-limit-reached'),
                 description: i18n('label_description-embed-dash-limit-reached'),
             };
@@ -30,19 +38,12 @@ const getErrorView = (error: Error | null, onRetry: () => void) => {
     }
 };
 
-export const DashError = ({
-    error,
-    onRetry,
-    hideDetails,
-}: {
-    error: Error | null;
-    onRetry: () => void;
-    hideDetails?: boolean;
-}) => {
-    const {title, description, retry} = getErrorView(error, onRetry);
+export const DashError = ({error, onRetry, hideDetails}: DashErrorProps) => {
+    const {type, title, description, retry} = getErrorView({error, onRetry});
 
     return (
         <ViewError
+            type={type}
             title={title}
             description={description}
             error={error}
