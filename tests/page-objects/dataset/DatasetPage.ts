@@ -343,8 +343,12 @@ class DatasetPage extends BasePage {
         const newValue = value || `${originalValue}_modified`;
 
         await fieldInput.locator('input').fill(newValue);
+        const validatePromise = this.page.waitForResponse((response) => {
+            return response.url().includes('/validateDataset');
+        });
         await this.page.keyboard.press('Enter');
-        await waitForBiValidateDatasetResponses(this.page, 5000);
+        await validatePromise;
+
         return {newValue, originalValue};
     }
 
