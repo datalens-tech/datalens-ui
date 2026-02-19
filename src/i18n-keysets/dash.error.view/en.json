@@ -1,3 +1,5 @@
 {
-  "label_error-404-message": "Object not found"
+  "label_description-embed-dash-limit-reached": "For you to continue viewing the embedded object, the organization's administrator must increase the number of seats",
+  "label_error-404-message": "Object not found",
+  "label_title-embed-dash-limit-reached": "Embedded dashboard limit exceeded"
 }

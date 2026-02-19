@@ -2,6 +2,7 @@ import React from 'react';
 
 import type {PreparedCopyItemOptions} from '@gravity-ui/dashkit';
 import {useSelector} from 'react-redux';
+import {collectWidgetItemIds} from 'ui/utils/copyItems';
 
 import {getPreparedCopyItemOptions} from '../../../../../modules/helpers';
 import type {CopiedConfigContext} from '../../../../../modules/helpers';
@@ -33,6 +34,8 @@ export const usePreparedCopyItemOptions = (): {
                 fromScope: entry.scope,
                 targetEntryId: entryId,
                 targetDashTabId: tabId,
+                targetId: itemToCopy.targetId,
+                targetIds: collectWidgetItemIds(itemToCopy),
             });
         },
         [entryId, entry.scope, tabId, tabData, workbookId],

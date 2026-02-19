@@ -102,5 +102,29 @@ datalensTest.describe('Wizard', () => {
             await expect(previewLoader).not.toBeVisible();
             await expect(preview).toHaveScreenshot();
         });
+
+        datalensTest('Chart starts and ends on data points @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const chart = chartContainer.locator('.chartkit-graph,.gcharts-chart');
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+            await wizardPage.createNewFieldWithFormula('postalCodeInt', `int([postal_code])`);
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.X,
+                'postalCodeInt',
+            );
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'salesSum');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Filters,
+                'Order_date',
+            );
+            await wizardPage.filterEditor.selectRangeDate(['01.01.2018', '10.01.2018']);
+            await wizardPage.filterEditor.apply();
+            await expect(previewLoader).not.toBeVisible();
+            // // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+            await page.mouse.move(-1, -1);
+            await expect(chart).toBeVisible();
+            await expect(chartContainer).toHaveScreenshot();
+        });
     });
 });

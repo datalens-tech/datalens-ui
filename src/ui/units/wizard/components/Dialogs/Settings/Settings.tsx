@@ -1061,6 +1061,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 uncheckedValue={CHART_SETTINGS.STACKING.OFF}
                 onChange={this.handleStackingUpdate}
                 title={i18n('wizard', 'label_stacking')}
+                qa={ChartSettingsDialogQA.Stacking}
             />
         );
     }

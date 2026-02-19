@@ -62,7 +62,7 @@ import {
 import {PaletteBackground} from '../../units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import {isEntryTypeWithFiltering} from '../../units/dash/containers/Dialogs/utils';
 import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../units/dash/modules/constants';
-import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import type {SetItemDataPayload} from '../../units/dash/store/actions/dashTyped';
 import type {CommonVisualSettings} from '../DashKit/DashKit';
 import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
 import {WidgetRoundingsInput} from '../WidgetRoundingsInput/WidgetRoundingsInput';
@@ -126,7 +126,7 @@ export interface DialogChartWidgetProps extends DialogChartWidgetFeatureProps {
 
     changeNavigationPath: (newNavigationPath: string) => void;
     closeDialog: () => void;
-    setItemData: (newItemData: SetItemDataArgs) => void;
+    setItemData: (newItemData: SetItemDataPayload) => void;
 }
 
 type DialogChartWidgetState = {
@@ -359,7 +359,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                     }),
                 };
 
-                setItemData({data: newData});
+                setItemData({item: {data: newData}});
 
                 closeDialog();
             } else {

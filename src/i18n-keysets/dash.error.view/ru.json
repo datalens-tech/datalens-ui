@@ -1,3 +1,5 @@
 {
-  "label_error-404-message": "Объект не найден"
+  "label_description-embed-dash-limit-reached": "Чтобы вы смогли продолжить просматривать встроенный объект, администратор организации должен увеличить число рабочих мест",
+  "label_error-404-message": "Объект не найден",
+  "label_title-embed-dash-limit-reached": "Превышено ограничение на число запросов"
 }

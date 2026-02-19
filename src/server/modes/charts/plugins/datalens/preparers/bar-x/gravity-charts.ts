@@ -33,7 +33,6 @@ import {
 } from '../../../../../../../shared';
 import type {WrappedHTML} from '../../../../../../../shared/types/charts';
 import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
-import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slider';
 import {getRgbColors} from '../../utils/color-helpers';
@@ -45,6 +44,10 @@ import {isXAxisReversed} from '../helpers/highcharts';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
+import {
+    mapChartkitFormatSettingsToGravityChartValueFormat,
+    mapToGravityChartValueFormat,
+} from '../utils';
 
 import {prepareBarX} from './prepare-bar-x';
 
@@ -155,11 +158,21 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             ? `${graph.custom.segmentTitle}: ${graph.title}`
             : graph.title;
 
+        const labelFormatting = graph.dataLabels
+            ? mapToGravityChartValueFormat({field: labelField, formatSettings: graph.dataLabels})
+            : undefined;
+        const shouldUsePercentageAsLabel =
+            labelFormatting &&
+            'labelMode' in labelFormatting &&
+            labelFormatting?.labelMode === 'percent';
+
         let seriesColor = graph.color;
         if (!seriesColor && isGradient) {
             const points = preparedData.graphs
-                .map((graph) =>
-                    (graph.data ?? []).map((d: OldBarXDataItem) => ({colorValue: d?.colorValue})),
+                .map((currentGraph) =>
+                    (currentGraph.data ?? []).map((d: OldBarXDataItem) => ({
+                        colorValue: d?.colorValue,
+                    })),
                 )
                 .flat(2);
             const colorScale = getLegendColorScale({
@@ -172,6 +185,14 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 gradientColors[gradientColors.length - 1],
             ]);
         }
+        const tooltip = graph.tooltip?.chartKitFormatting
+            ? {
+                  ...seriesTooltip,
+                  valueFormat: mapChartkitFormatSettingsToGravityChartValueFormat({
+                      chartkitFormatSettings: graph.tooltip,
+                  }),
+              }
+            : seriesTooltip;
 
         return {
             name: seriesName,
@@ -179,9 +200,21 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             color: seriesColor,
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
-            tooltip: seriesTooltip,
+            tooltip,
             data: graph.data.reduce(
                 (acc: ExtendedBaXrSeriesData[], item: OldBarXDataItem, index: number) => {
+                    const pointX = item?.x;
+                    const total =
+                        preparedData.graphs.reduce(
+                            (sum, currentGraph) =>
+                                sum +
+                                (currentGraph.data.find(
+                                    (point: OldBarXDataItem) => point?.x === pointX,
+                                )?.y ?? 0),
+                            0,
+                        ) ?? 0;
+                    const percentage = ((item?.y ?? 0) / total) * 100;
+                    const label = shouldUsePercentageAsLabel ? percentage : item?.label;
                     const dataItem: ExtendedBaXrSeriesData = {
                         y: item?.y || 0,
                         custom: item?.custom,
@@ -191,10 +224,8 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                     if (isDataLabelsEnabled) {
                         if (item?.y === null) {
                             dataItem.label = '';
-                        } else if (shouldUseHtmlForLabels) {
-                            dataItem.label = item?.label;
                         } else {
-                            dataItem.label = getFormattedLabel(item?.label, labelField);
+                            dataItem.label = label;
                         }
                     }
 
@@ -221,6 +252,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 enabled: isDataLabelsEnabled,
                 inside: shared.extraSettings?.labelsPosition !== LabelsPositions.Outside,
                 html: shouldUseHtmlForLabels,
+                format: labelFormatting,
             },
             yAxis: graph.yAxis,
             rangeSlider,
@@ -258,7 +290,11 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         }
     }
 
-    let xAxis: ChartData['xAxis'] = {};
+    let xAxis: ChartData['xAxis'] = {
+        startOnTick: false,
+        endOnTick: false,
+    };
+
     if (isCategoriesXAxis && xCategories?.length) {
         xAxis = {
             type: 'category',
@@ -281,6 +317,11 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
 
         if (isNumberField(xField)) {
             xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
+
+            if (xAxis.type === 'logarithmic') {
+                xAxis.startOnTick = true;
+                xAxis.endOnTick = true;
+            }
         }
 
         const xAxisLabelNumberFormat = xPlaceholder

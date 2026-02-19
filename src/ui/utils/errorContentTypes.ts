@@ -90,9 +90,10 @@ export const getImageNameFromErrorContentType = (
         case ErrorContentTypes.CREDENTIALS:
             return 'identity';
         case ErrorContentTypes.INACCESSIBLE_ON_MOBILE:
-        case ErrorContentTypes.FORBIDDEN_BY_PLAN:
         case ErrorContentTypes.FORBIDDEN_AUTH:
             return 'project';
+        case ErrorContentTypes.EMBEDDED_DASH_LIMIT_REACHED:
+            return 'badRequest';
         default:
             return 'error';
     }

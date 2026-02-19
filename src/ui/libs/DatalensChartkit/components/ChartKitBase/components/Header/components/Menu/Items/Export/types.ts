@@ -40,5 +40,12 @@ export type ExportMenuActionArgs = {
 };
 
 export type ExportMenuAction = (
+<<<<<<< CHARTS-12419-remove-business
     args: ExportMenuActionArgs,
+=======
+    chartsDataProvider: ChartKitDataProvider,
+    onExportLoading?: ExportChartArgs['onExportLoading'],
+    format?: typeof EXPORT_FORMATS.XLSX | typeof EXPORT_FORMATS.CSV,
+    extraOptions?: Record<string, unknown>,
+>>>>>>> main
 ) => (chartData: ExportActionArgs) => void | MenuActionComponent;

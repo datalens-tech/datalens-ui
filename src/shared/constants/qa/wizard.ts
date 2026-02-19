@@ -131,6 +131,8 @@ export const enum DialogColorQa {
     PaletteSelect = 'palette-select',
     GradientType = 'color-dialog-gradient-type-radio',
     ApplyButton = 'color-dialog-apply-button',
+    CustomColorButton = 'color-dialog-custom-color-button',
+    CustomColorInput = 'color-dialog-custom-color-input',
 }
 
 export const enum SectionVisualizationAddItemQa {
@@ -192,6 +194,7 @@ export const enum ChartSettingsDialogQA {
     IndicatorTitleMode = 'indicator-title-mode',
     PreserveWhiteSpace = 'preserve-white-space',
     IndicatorFontSize = 'indicator-font-size',
+    Stacking = 'stacking',
 }
 
 export const enum DialogMetricColorsQa {

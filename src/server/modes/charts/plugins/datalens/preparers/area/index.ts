@@ -25,8 +25,8 @@ import {
     isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
-import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
@@ -34,9 +34,20 @@ import {getAxisFormatting, getAxisType} from '../helpers/axis';
 import {getSegmentMap} from '../helpers/segments';
 import {prepareLineData} from '../line/prepare-line-data';
 import type {PrepareFunctionArgs} from '../types';
+import {
+    mapChartkitFormatSettingsToGravityChartValueFormat,
+    mapToGravityChartValueFormat,
+} from '../utils';
 
 type ExtendedLineSeriesData = Omit<AreaSeriesData, 'x'> & {
     x?: AreaSeriesData['x'] | WrappedHTML | WrappedMarkdown;
+};
+
+type PreparedAreaPoint = {
+    x?: AreaSeriesData['x'];
+    y?: number | null;
+    label?: AreaSeriesData['label'];
+    custom?: AreaSeriesData['custom'];
 };
 
 type ExtendedLineSeries = Omit<AreaSeries, 'data'> & {
@@ -109,48 +120,92 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
     const shouldUsePercentStacking = visualizationId === WizardVisualizationId.Area100p;
-    const seriesData: ExtendedLineSeries[] = preparedData.graphs.map<AreaSeries>((graph: any) => {
+
+    let seriesTooltip: AreaSeries['tooltip'];
+    if (!yFields.length) {
+        seriesTooltip = {enabled: false};
+    }
+
+    const seriesData: ExtendedLineSeries[] = preparedData.graphs.map<AreaSeries>((graph) => {
+        const labelFormatting = graph.dataLabels
+            ? mapToGravityChartValueFormat({field: labelField, formatSettings: graph.dataLabels})
+            : undefined;
+        const shouldUsePercentageAsLabel =
+            labelFormatting &&
+            'labelMode' in labelFormatting &&
+            labelFormatting?.labelMode === 'percent';
         let seriesName = graph.title;
 
         if (graph.custom?.segmentTitle) {
             seriesName = `${graph.custom.segmentTitle}: ${seriesName}`;
         }
 
+        let stacking: AreaSeries['stacking'];
+        if (shouldUsePercentStacking) {
+            stacking = 'percent';
+        } else if (shared.extraSettings?.stacking !== 'off') {
+            stacking = 'normal';
+        }
+
+        const tooltip = graph.tooltip?.chartKitFormatting
+            ? {
+                  ...seriesTooltip,
+                  valueFormat: mapChartkitFormatSettingsToGravityChartValueFormat({
+                      chartkitFormatSettings: graph.tooltip,
+                  }),
+              }
+            : seriesTooltip;
+
         return {
             name: seriesName,
             type: 'area',
             stackId: graph.stack,
-            stacking: shouldUsePercentStacking ? 'percent' : 'normal',
+            stacking,
             color: graph.color,
             nullMode: graph.connectNulls ? 'connect' : 'skip',
-            data: graph.data.reduce((acc: ExtendedLineSeriesData[], item: any, index: number) => {
-                const dataItem: ExtendedLineSeriesData = {
-                    y: item?.y ?? null,
-                    custom: item.custom,
-                };
+            tooltip,
+            data: graph.data.reduce(
+                (acc: ExtendedLineSeriesData[], item: PreparedAreaPoint, index: number) => {
+                    const pointX = item?.x;
+                    const total =
+                        preparedData.graphs.reduce(
+                            (sum, currentGraph) =>
+                                sum +
+                                (currentGraph.data.find(
+                                    (point: PreparedAreaPoint) => point?.x === pointX,
+                                )?.y ?? 0),
+                            0,
+                        ) ?? 0;
+                    const ratio = total === 0 ? 0 : Number(item?.y ?? 0) / total;
+                    const percentage = ratio * 100;
+                    const labelValue = shouldUsePercentageAsLabel ? percentage : item?.label;
+                    const dataItem: ExtendedLineSeriesData = {
+                        y: item?.y ?? null,
+                        custom: item.custom,
+                    };
 
-                if (isDataLabelsEnabled) {
-                    if (item?.y === null) {
-                        dataItem.label = '';
-                    } else if (shouldUseHtmlForLabels) {
-                        dataItem.label = item?.label;
-                    } else {
-                        dataItem.label = getFormattedLabel(item?.label, labelField);
+                    if (isDataLabelsEnabled) {
+                        if (item?.y === null) {
+                            dataItem.label = '';
+                        } else {
+                            dataItem.label = labelValue;
+                        }
                     }
-                }
 
-                if (isCategoriesXAxis) {
-                    dataItem.x = index;
-                } else if (!item && xCategories) {
-                    dataItem.x = xCategories[index];
-                } else {
-                    dataItem.x = item?.x;
-                }
+                    if (isCategoriesXAxis) {
+                        dataItem.x = index;
+                    } else if (!item && xCategories) {
+                        dataItem.x = xCategories[index];
+                    } else {
+                        dataItem.x = item?.x;
+                    }
 
-                acc.push(dataItem);
+                    acc.push(dataItem);
 
-                return acc;
-            }, []),
+                    return acc;
+                },
+                [],
+            ),
             legend: {
                 groupId: graph.id,
                 itemText: graph.legendTitle,
@@ -158,6 +213,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
             dataLabels: {
                 enabled: isDataLabelsEnabled,
                 html: shouldUseHtmlForLabels,
+                format: labelFormatting,
             },
             custom: {
                 ...graph.custom,
@@ -178,7 +234,11 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         legend.enabled = false;
     }
 
-    let xAxis: ChartData['xAxis'] = {};
+    let xAxis: ChartData['xAxis'] = {
+        startOnTick: false,
+        endOnTick: false,
+    };
+
     if (isCategoriesXAxis) {
         xAxis = {
             type: 'category',
@@ -195,6 +255,11 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
 
         if (isNumberField(xField)) {
             xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
+
+            if (xAxis.type === 'logarithmic') {
+                xAxis.startOnTick = true;
+                xAxis.endOnTick = true;
+            }
         }
     }
 

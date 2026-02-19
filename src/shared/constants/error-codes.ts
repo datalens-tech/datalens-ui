@@ -43,7 +43,6 @@ export enum ErrorCode {
     IncorrectDepsIds = 'INCORRECT_DEPS_IDS_FOR_EMBED',
     IncorrectEntryIdForEmbed = 'ERR.DS_API.US.BAD_REQUEST.INCORRECT_ENTRY_ID_FOR_EMBED',
 
-    ChartEditorNotAvailable = 'ERR.CHARTS.CHART_EDITOR_NOT_AVAILABLE',
     InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
     WorkbookAlreadyExists = 'WORKBOOK_ALREADY_EXISTS',
     MetaManagerWorkbookAlreadyExists = 'META_MANAGER.WORKBOOK_ALREADY_EXISTS',
@@ -61,6 +60,6 @@ export const ErrorContentTypes = {
     AUTH_DENIED: 'auth-denied',
     INACCESSIBLE_ON_MOBILE: 'inaccessible-on-mobile',
     NOT_AUTHENTICATED: 'not-authenticated',
-    FORBIDDEN_BY_PLAN: 'forbidden-by-plan',
     FORBIDDEN_AUTH: 'forbidden-auth',
+    EMBEDDED_DASH_LIMIT_REACHED: 'embedded-dash-limit-reached',
 };

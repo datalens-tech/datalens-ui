@@ -9,6 +9,7 @@ import type {Dataset} from 'shared';
 import {
     DATASET_FIELD_TYPES,
     DATASET_IGNORED_DATA_TYPES,
+    DashTabItemControlElementType,
     DatasetFieldType,
     EntryScope,
 } from 'shared';
@@ -17,7 +18,6 @@ import {
     setLastUsedDatasetId,
     setSelectorDialogItem,
 } from 'ui/store/actions/controlDialog/controlDialog';
-import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {
     selectOpenedItemMeta,
     selectSelectorDialog,
@@ -84,7 +84,7 @@ function DatasetSelectorSettings(props: {
                     setSelectorDialogItem({
                         datasetId: entryId,
                         datasetFieldId: undefined,
-                        elementType: ELEMENT_TYPE.SELECT,
+                        elementType: DashTabItemControlElementType.Select,
                         defaultValue: undefined,
                         useDefaultValue: false,
                     }),
@@ -103,17 +103,21 @@ function DatasetSelectorSettings(props: {
                 datasetFieldType: DatasetFieldType;
             } | null,
         ) => {
-            let elementType: SelectorElementType = ELEMENT_TYPE.INPUT;
+            let elementType: SelectorElementType = DashTabItemControlElementType.Input;
 
             if (data === null) {
-                dispatch(
-                    setSelectorDialogItem({
-                        datasetFieldId: undefined,
-                        elementType,
-                        fieldType: undefined,
-                        datasetFieldType: undefined,
-                    }),
-                );
+                const newItem: SetSelectorDialogItemArgs = {
+                    datasetFieldId: undefined,
+                    elementType,
+                    fieldType: undefined,
+                    datasetFieldType: undefined,
+                };
+                if (datasetFieldId) {
+                    // show error if field was deleted from dataset
+                    newItem.validation = {datasetFieldId: i18n('validation_field-not-found')};
+                }
+
+                dispatch(setSelectorDialogItem(newItem));
                 return;
             }
 
@@ -125,17 +129,17 @@ function DatasetSelectorSettings(props: {
                 data.fieldType === DATASET_FIELD_TYPES.DATE ||
                 data.fieldType === DATASET_FIELD_TYPES.GENERICDATETIME
             ) {
-                elementType = ELEMENT_TYPE.DATE;
+                elementType = DashTabItemControlElementType.Date;
             } else if (data.fieldType === DATASET_FIELD_TYPES.STRING) {
-                elementType = ELEMENT_TYPE.SELECT;
+                elementType = DashTabItemControlElementType.Select;
             }
 
             if (data.datasetFieldType === DatasetFieldType.Measure) {
-                elementType = ELEMENT_TYPE.INPUT;
+                elementType = DashTabItemControlElementType.Input;
             }
 
             if (data.fieldType === DATASET_FIELD_TYPES.BOOLEAN) {
-                elementType = ELEMENT_TYPE.CHECKBOX;
+                elementType = DashTabItemControlElementType.Checkbox;
             }
 
             const args: SetSelectorDialogItemArgs = {

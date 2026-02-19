@@ -11,17 +11,19 @@ import {
     type Update,
 } from 'shared';
 import {ColorPaletteSelect} from 'ui/components/ColorPaletteSelect/ColorPaletteSelect';
+import {ColorValueItem} from 'ui/components/ColorValueItem/ColorValueItem';
 
-import {PaletteTypes} from '../../../../constants';
-import Palette from '../../../Palette/Palette';
 import ValuesList from '../../../ValuesList/ValuesList';
 import type {ExtraSettings} from '../DialogColor';
+import {
+    PaletteWithCustomColor,
+    stripPaletteIndexColors,
+} from '../PaletteWithCustomColor/PaletteWithCustomColor';
 
 import './DialogColorPalette.scss';
 
 const b = block('dialog-color-palette');
 
-export const DEFAULT_COLOR = 'auto';
 export const SHOW = 'show';
 const HIDE = 'hide';
 
@@ -43,7 +45,7 @@ export interface Props {
     options: DatasetOptions;
     datasetId: string;
     paletteState: PaletteState;
-    onPaletteItemClick: (color: string, index: number) => void;
+    onPaletteItemClick: (color: string, index?: number) => void;
     setPaletteState: (newPaletteState: Partial<PaletteState>) => void;
     extra: ExtraSettings;
     colorPalettes: ColorPalette[];
@@ -84,18 +86,9 @@ export class PaletteContainer extends React.Component<Props> {
     renderValueIcon = (value: string) => {
         const {mountedColors} = this.props.paletteState;
         const {colorsList} = this.props;
-
         const mountedColor = mountedColors[value];
-        return (
-            <div
-                className={b('value-color', {default: !mountedColor})}
-                style={{
-                    backgroundColor: colorsList[Number(mountedColor)] || mountedColor,
-                }}
-            >
-                {mountedColor ? null : 'a'}
-            </div>
-        );
+
+        return <ColorValueItem colorsList={colorsList} color={mountedColor} />;
     };
 
     renderPaletteContainer = () => {
@@ -111,28 +104,19 @@ export class PaletteContainer extends React.Component<Props> {
                     onUpdate={([selectedPalette]) => {
                         this.props.setPaletteState({
                             palette: selectedPalette ?? undefined,
-                            mountedColors: {},
+                            mountedColors: stripPaletteIndexColors(mountedColors),
                         });
                     }}
                     value={palette}
                     withAuto={true}
                 />
-                <Palette
+                <PaletteWithCustomColor
                     key={palette}
-                    paletteType={PaletteTypes.Colors}
                     className={b('palette')}
+                    currentMountedColor={mountedColors[selectedValue!]}
+                    selectedValue={selectedValue}
+                    colorsList={colorsList}
                     onPaletteItemClick={this.props.onPaletteItemClick}
-                    isSelectedItem={(color, index) => {
-                        const colorValue = mountedColors[selectedValue!] || DEFAULT_COLOR;
-
-                        if (colorValue === String(index)) {
-                            return true;
-                        }
-
-                        return color === colorValue;
-                    }}
-                    isDefaultItem={(color) => color === DEFAULT_COLOR}
-                    palette={colorsList}
                 />
                 {extra.polygonBorders && (
                     <div className={b('row')}>

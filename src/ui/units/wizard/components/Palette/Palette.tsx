@@ -27,6 +27,7 @@ interface Props {
         onSelect: () => void;
         qa?: string;
     };
+    palleteItemQa?: string;
 }
 
 export const Palette = (props: Props) => {
@@ -39,6 +40,7 @@ export const Palette = (props: Props) => {
         isDefaultItem,
         paletteType,
         itemClassName,
+        palleteItemQa,
     } = props;
 
     const renderPaletteItem = (item: string, index: number) => {
@@ -80,7 +82,7 @@ export const Palette = (props: Props) => {
                 className={itemClassName}
                 color={isDefault ? undefined : item}
                 onClick={onPaletteItemClick.bind(null, item, index)}
-                qa={item}
+                qa={palleteItemQa || item}
                 isDefault={isDefault}
                 isSelected={isSelected}
             >

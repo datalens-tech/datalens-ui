@@ -116,12 +116,14 @@ export function isItemGlobal(item: GlobalItem): boolean {
     return false;
 }
 
+type CheckingItemData = {
+    group?: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds}[];
+    impactType?: ImpactType;
+    impactTabsIds?: ImpactTabsIds;
+};
+
 export type IsWidgetVisibleOnTabArgs = {
-    itemData: {
-        group?: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds}[];
-        impactType?: ImpactType;
-        impactTabsIds?: ImpactTabsIds;
-    };
+    itemData: CheckingItemData;
     tabId: string;
 };
 
@@ -149,4 +151,11 @@ export const isWidgetVisibleOnTab = ({itemData, tabId}: IsWidgetVisibleOnTabArgs
     }
 
     return false;
+};
+
+export const isGlobalSettingsNotSet = ({itemData}: {itemData: CheckingItemData}) => {
+    return (
+        itemData.impactType === undefined &&
+        (!itemData.group || itemData.group.every((groupItem) => groupItem.impactType === undefined))
+    );
 };
