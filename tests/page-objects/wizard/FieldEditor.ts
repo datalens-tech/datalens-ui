@@ -32,10 +32,10 @@ export default class FieldEditor {
 
     async changeName(name: string) {
         await this.page.click(this.fieldNameEditBtnSelector);
-        await this.page.click(this.fieldNameSelector);
-        await this.page.keyboard.press('Meta+A');
-        await this.page.keyboard.press('Backspace');
-        await this.page.keyboard.insertText(name);
+        const input = this.page.locator(this.fieldNameSelector);
+        await input.press('Meta+A');
+        await input.press('Backspace');
+        await input.fill(name);
     }
 
     async setFormula(formula: string) {

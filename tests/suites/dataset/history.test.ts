@@ -561,6 +561,8 @@ datalensTest.describe('Dataset history', () => {
     datalensTest('Keyboard shortcut Cmd/Ctrl+Z triggers undo', async ({page}) => {
         const fieldInput = getFieldNameInput(page);
         const {originalValue} = (await datasetPage.renameFirstField()) ?? {};
+        const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
+        await expect(undoBtn).toBeEnabled();
         // Click outside the input to unfocus before using hotkey
         await page.locator(slct(DatasetFieldsTabQa.DatasetEditor)).click();
         await page.keyboard.press(`Meta+z`);
@@ -576,6 +578,9 @@ datalensTest.describe('Dataset history', () => {
         // Undo via button
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
         await undoBtn.click();
+
+        const redoBtn = page.locator(slct(EditHistoryQA.RedoBtn));
+        await expect(redoBtn).toBeEnabled();
         // Click outside the input to unfocus before using hotkey
         await page.locator(slct(DatasetFieldsTabQa.DatasetEditor)).click();
         await page.keyboard.press(`Meta+Shift+z`);
