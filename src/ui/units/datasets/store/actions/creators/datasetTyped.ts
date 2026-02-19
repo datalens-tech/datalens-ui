@@ -216,6 +216,7 @@ export function clearDatasetPreview() {
     };
 }
 
+// TODO need to remove adding history point when fetch preview
 const dispatchFetchPreviewDataset = async (
     {datasetId, workbookId, resultSchema, limit}: DispatchFetchPreviewParams,
     dispatch: DatasetDispatch,

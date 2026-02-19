@@ -1,7 +1,7 @@
 import {expect} from '@playwright/test';
 
-import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage, slct} from '../../../utils';
+import datalensTest from '../../utils/playwright/globalTestDefinition';
+import {openTestPage, slct} from '../../utils';
 import {
     DatasetFieldsTabQa,
     DatasetEditorTableSettingsItems,
@@ -10,21 +10,31 @@ import {
     FieldEditorQa,
     DatasetFieldTabBatchPanelQa,
     DialogConfirmQA,
-} from '../../../../src/shared';
-import {DatasetsEntities} from '../../../constants/test-entities/datasets';
-import DatasetPage from '../../../page-objects/dataset/DatasetPage';
-import FieldEditor from '../../../page-objects/wizard/FieldEditor';
-import {getFieldNameInput, changeFieldSelect, selectTwoCheckboxes} from './helpers';
-import {GET_PREVIEW_URL} from '../constants';
+    DatasetPreviewQA,
+} from '../../../src/shared';
+import DatasetPage from '../../page-objects/dataset/DatasetPage';
+import FieldEditor from '../../page-objects/wizard/FieldEditor';
+import {
+    getFieldNameInput,
+    changeFieldSelect,
+    selectTwoCheckboxes,
+} from '../../opensource-suites/dataset/base/helpers';
+import {VALIDATE_DATASET_URL} from '../../opensource-suites/dataset/constants';
+import {RobotChartsDatasetUrls} from '../../utils/constants';
 
 datalensTest.describe('Dataset history', () => {
-    const url = `datasets${DatasetsEntities.Basic.url}`;
+    const url = RobotChartsDatasetUrls.DatasetWithCsvConnection;
     let datasetPage: DatasetPage;
 
     datalensTest.beforeEach(async ({page}) => {
         datasetPage = new DatasetPage({page});
         await openTestPage(page, url);
         await page.waitForSelector(slct(DatasetFieldsTabQa.FieldNameColumnInput));
+        // close preview for not wait response for it
+        const previewCloseBtn = page.locator(slct(DatasetPreviewQA.ClosePreviewBtn));
+        await previewCloseBtn.click();
+        const preview = page.locator(DatasetPreviewQA.Preview);
+        await expect(preview).not.toBeVisible();
     });
 
     datalensTest('Undo button is disabled when no changes were made', async ({page}) => {
@@ -88,9 +98,7 @@ datalensTest.describe('Dataset history', () => {
 
         // Hide first field
         const hiddenBtn = page.locator(slct(DatasetFieldsTabQa.FieldVisibleColumnIcon)).first();
-        const hidePromise = datasetPage.waitForSuccessfulResponse(GET_PREVIEW_URL);
         await hiddenBtn.click();
-        await hidePromise;
 
         const rowsCountAfterHide = await page
             .locator(slct(DatasetFieldsTabQa.FieldNameColumnInput))
@@ -115,9 +123,7 @@ datalensTest.describe('Dataset history', () => {
         const visibleClassBefore = await firstFieldVisibleIcon.getAttribute('title');
 
         // Hide first field
-        const hidePromise = datasetPage.waitForSuccessfulResponse(GET_PREVIEW_URL);
         await firstFieldVisibleIcon.click();
-        await hidePromise;
 
         const visibleClassAfterHide = await firstFieldVisibleIcon.getAttribute('title');
         expect(visibleClassAfterHide).not.toBe(visibleClassBefore);
@@ -145,7 +151,7 @@ datalensTest.describe('Dataset history', () => {
         await contextMenuBtn.click();
 
         const duplicateItem = page.locator(slct(DatasetFieldContextMenuItemsQA.DUPLICATE));
-        const duplicatePromise = datasetPage.waitForSuccessfulResponse(GET_PREVIEW_URL);
+        const duplicatePromise = datasetPage.waitForSuccessfulResponse(VALIDATE_DATASET_URL);
         await duplicateItem.click();
         await duplicatePromise;
 
@@ -184,7 +190,7 @@ datalensTest.describe('Dataset history', () => {
         await contextMenuBtn.click();
 
         const removeItem = page.locator(slct(DatasetFieldContextMenuItemsQA.REMOVE));
-        const removePromise = datasetPage.waitForSuccessfulResponse(GET_PREVIEW_URL);
+        const removePromise = datasetPage.waitForSuccessfulResponse(VALIDATE_DATASET_URL);
         await removeItem.click();
         await removePromise;
 
@@ -221,9 +227,7 @@ datalensTest.describe('Dataset history', () => {
         const originalValue = await descriptionInput.inputValue();
 
         await descriptionInput.fill('test description for history');
-        const validatePromise = datasetPage.waitForSuccessfulResponse(GET_PREVIEW_URL);
         await page.keyboard.press('Enter');
-        await validatePromise;
 
         const updatedValue = await descriptionInput.inputValue();
         expect(updatedValue).toBe('test description for history');
@@ -245,9 +249,7 @@ datalensTest.describe('Dataset history', () => {
         const newDescription = 'test description for redo';
 
         await descriptionInput.fill(newDescription);
-        const validatePromise = datasetPage.waitForSuccessfulResponse(GET_PREVIEW_URL);
         await page.keyboard.press('Enter');
-        await validatePromise;
 
         // Undo
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
@@ -276,7 +278,7 @@ datalensTest.describe('Dataset history', () => {
             return;
         }
 
-        const validatePromise = datasetPage.waitForSuccessfulResponse(GET_PREVIEW_URL);
+        const validatePromise = datasetPage.waitForSuccessfulResponse(VALIDATE_DATASET_URL);
         await targetOption.click();
         await validatePromise;
 
@@ -303,7 +305,7 @@ datalensTest.describe('Dataset history', () => {
             return;
         }
 
-        const validatePromise = datasetPage.waitForSuccessfulResponse(GET_PREVIEW_URL);
+        const validatePromise = datasetPage.waitForSuccessfulResponse(VALIDATE_DATASET_URL);
         await targetOption.click();
         await validatePromise;
 
@@ -337,7 +339,7 @@ datalensTest.describe('Dataset history', () => {
         }
 
         const validatePromise = page.waitForResponse((response) =>
-            response.url().includes(GET_PREVIEW_URL),
+            response.url().includes(VALIDATE_DATASET_URL),
         );
         await targetOption.click();
         await validatePromise;
@@ -369,7 +371,7 @@ datalensTest.describe('Dataset history', () => {
         }
 
         const validatePromise = page.waitForResponse((response) =>
-            response.url().includes(GET_PREVIEW_URL),
+            response.url().includes(VALIDATE_DATASET_URL),
         );
         await targetOption.click();
         await validatePromise;
@@ -407,7 +409,7 @@ datalensTest.describe('Dataset history', () => {
         const changedName = `${originalName}_edited`;
         await fieldEditor.changeName(changedName);
 
-        const applyPromise = datasetPage.waitForSuccessfulResponse(GET_PREVIEW_URL);
+        const applyPromise = datasetPage.waitForSuccessfulResponse(VALIDATE_DATASET_URL);
         await fieldEditor.clickToApplyButton();
         await applyPromise;
 
@@ -439,7 +441,7 @@ datalensTest.describe('Dataset history', () => {
         const deleteBtn = actionsPanel.locator(slct(DatasetFieldTabBatchPanelQa.BatchDelete));
         await deleteBtn.click();
         const applyDelete = await page.waitForSelector(slct(DialogConfirmQA.ApplyButton));
-        const deletePromise = datasetPage.waitForSuccessfulResponse(GET_PREVIEW_URL);
+        const deletePromise = datasetPage.waitForSuccessfulResponse(VALIDATE_DATASET_URL);
         await applyDelete.click();
         await deletePromise;
 
@@ -483,9 +485,7 @@ datalensTest.describe('Dataset history', () => {
         const hideBtn = actionsPanel.locator('button').nth(1);
         await hideBtn.click();
         const applyHide = await page.waitForSelector(slct(DialogConfirmQA.ApplyButton));
-        const hidePromise = datasetPage.waitForSuccessfulResponse(GET_PREVIEW_URL);
         await applyHide.click();
-        await hidePromise;
 
         // After hiding, the hidden fields should disappear (Show hidden is off by default)
         const rowsCountAfterHide = await page
@@ -606,7 +606,7 @@ datalensTest.describe('Dataset history', () => {
         await contextMenuBtn.click();
 
         const duplicateItem = page.locator(slct(DatasetFieldContextMenuItemsQA.DUPLICATE));
-        const dupPromise = datasetPage.waitForSuccessfulResponse(GET_PREVIEW_URL);
+        const dupPromise = datasetPage.waitForSuccessfulResponse(VALIDATE_DATASET_URL);
         await duplicateItem.click();
         await dupPromise;
 
