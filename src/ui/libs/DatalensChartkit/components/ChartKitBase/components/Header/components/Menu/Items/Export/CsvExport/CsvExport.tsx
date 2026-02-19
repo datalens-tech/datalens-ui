@@ -8,9 +8,7 @@ import {DEFAULT_CSV_EXPORT_PARAMS} from '../../constants';
 import type {ExportActionArgs, ExportMenuAction} from '../types';
 import {downloadData} from '../utils';
 
-// TODO: remove in next pr
-export type CsvExportAction = ExportMenuAction;
-export const csvExportAction: ExportMenuAction = (_chartsDataProvider, onExportLoading) => {
+export const csvExportAction: ExportMenuAction = ({onExportLoading}) => {
     return (chartData: ExportActionArgs): void | MenuActionComponent => {
         const {loadedData, event} = chartData;
 
