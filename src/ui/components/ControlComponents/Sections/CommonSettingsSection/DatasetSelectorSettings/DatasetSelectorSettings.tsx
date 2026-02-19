@@ -106,14 +106,18 @@ function DatasetSelectorSettings(props: {
             let elementType: SelectorElementType = DashTabItemControlElementType.Input;
 
             if (data === null) {
-                dispatch(
-                    setSelectorDialogItem({
-                        datasetFieldId: undefined,
-                        elementType,
-                        fieldType: undefined,
-                        datasetFieldType: undefined,
-                    }),
-                );
+                const newItem: SetSelectorDialogItemArgs = {
+                    datasetFieldId: undefined,
+                    elementType,
+                    fieldType: undefined,
+                    datasetFieldType: undefined,
+                };
+                if (datasetFieldId) {
+                    // show error if field was deleted from dataset
+                    newItem.validation = {datasetFieldId: i18n('validation_field-not-found')};
+                }
+
+                dispatch(setSelectorDialogItem(newItem));
                 return;
             }
 
