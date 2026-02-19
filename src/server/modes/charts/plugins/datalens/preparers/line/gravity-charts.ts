@@ -299,19 +299,24 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 };
             }
 
-            acc.push(
-                merge(axisBaseConfig, {
-                    title: axisTitle,
-                    plotIndex: d.plotIndex,
-                    labels: {
-                        numberFormat: labelNumberFormat ?? undefined,
-                    },
-                    lineColor: 'transparent',
-                    position: placeholder?.id === PlaceholderId.Y2 ? 'right' : 'left',
-                    startOnTick: true,
-                    endOnTick: true,
-                }),
-            );
+            const chartYAxis = merge(axisBaseConfig, {
+                title: axisTitle,
+                plotIndex: d.plotIndex,
+                labels: {
+                    numberFormat: labelNumberFormat ?? undefined,
+                },
+                position: placeholder?.id === PlaceholderId.Y2 ? 'right' : 'left',
+            });
+
+            if (chartYAxis.min === undefined) {
+                chartYAxis.startOnTick = true;
+            }
+
+            if (chartYAxis.max === undefined) {
+                chartYAxis.endOnTick = true;
+            }
+
+            acc.push(chartYAxis);
 
             return acc;
         }, [] as ChartYAxis[]);
@@ -328,16 +333,24 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 placeholder,
             });
 
-            return merge(axisBaseConfig, {
+            const chartYAxis = merge(axisBaseConfig, {
                 labels: {
                     numberFormat: labelNumberFormat ?? undefined,
                 },
                 lineColor: 'transparent',
                 position: placeholder?.id === PlaceholderId.Y2 ? 'right' : 'left',
-                startOnTick: true,
-                endOnTick: true,
                 maxPadding: 0.001,
             });
+
+            if (chartYAxis.min === undefined) {
+                chartYAxis.startOnTick = true;
+            }
+
+            if (chartYAxis.max === undefined) {
+                chartYAxis.endOnTick = true;
+            }
+
+            return chartYAxis;
         });
     }
 
