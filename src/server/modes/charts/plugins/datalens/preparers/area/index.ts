@@ -3,7 +3,6 @@ import type {
     AreaSeriesData,
     ChartData,
     ChartSeries,
-    ChartYAxis,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
@@ -263,6 +262,14 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         }
     }
 
+    const config: ChartData = {
+        series: {
+            data: seriesData as ChartSeries[],
+        },
+        xAxis,
+        legend,
+    };
+
     const axisLabelNumberFormat = yPlaceholder
         ? getAxisFormatting({
               placeholder: yPlaceholder,
@@ -270,44 +277,42 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
           })
         : undefined;
 
-    const config: ChartData = {
-        series: {
-            data: seriesData as ChartSeries[],
+    const yAxisBaseConfig = merge(
+        getYAxisBaseConfig({
+            placeholder: yPlaceholder,
+        }),
+        {
+            labels: {
+                numberFormat: axisLabelNumberFormat ?? undefined,
+            },
+            startOnTick: true,
+            endOnTick: true,
         },
-        xAxis,
-        yAxis: segments.map((d) => {
-            const baseConfig = getYAxisBaseConfig({
-                placeholder: yPlaceholder,
-            });
-            let axisTitle: ChartYAxis['title'] | null = null;
-            if (isSplitEnabled) {
-                let titleText: string = d.title;
-                if (isSplitWithHtmlValues) {
-                    // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
-                    titleText = wrapHtml(d.title);
-                }
+    );
 
-                axisTitle = {
-                    text: titleText,
-                    rotation: 0,
-                    maxWidth: '25%',
-                    html: isSplitWithHtmlValues,
-                };
+    if (isSplitEnabled) {
+        config.yAxis = segments.map((d) => {
+            let titleText: string = d.title;
+            if (isSplitWithHtmlValues) {
+                // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+                titleText = wrapHtml(d.title);
             }
 
-            return merge(baseConfig, {
-                lineColor: 'transparent',
-                labels: {
-                    numberFormat: axisLabelNumberFormat ?? undefined,
-                },
+            const axisTitle = {
+                text: titleText,
+                rotation: 0,
+                maxWidth: '25%',
+                html: isSplitWithHtmlValues,
+            };
+
+            return merge(yAxisBaseConfig, {
                 plotIndex: d.index,
                 title: axisTitle,
-                startOnTick: isSplitEnabled,
-                endOnTick: isSplitEnabled,
             });
-        }),
-        legend,
-    };
+        });
+    } else {
+        config.yAxis = [{...yAxisBaseConfig, lineColor: 'transparent'}];
+    }
 
     if (isSplitEnabled) {
         config.split = {

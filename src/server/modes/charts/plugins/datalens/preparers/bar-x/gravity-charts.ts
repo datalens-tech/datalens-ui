@@ -3,7 +3,6 @@ import type {
     BarXSeriesData,
     ChartData,
     ChartSeries,
-    ChartYAxis,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
@@ -351,38 +350,44 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         },
         legend,
         xAxis,
-        yAxis: segments.map((d) => {
-            const axisBaseConfig = getYAxisBaseConfig({
-                placeholder: yPlaceholder,
-            });
+    };
 
-            let axisTitle: ChartYAxis['title'] | null = null;
-            if (isSplitEnabled) {
-                let titleText: string = d.title;
-                if (isSplitWithHtmlValues) {
-                    // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
-                    titleText = wrapHtml(d.title);
-                }
+    const yAxisBaseConfig = merge(
+        getYAxisBaseConfig({
+            placeholder: yPlaceholder,
+        }),
+        {
+            labels: {
+                numberFormat: axisLabelNumberFormat ?? undefined,
+            },
+            startOnTick: true,
+            endOnTick: true,
+        },
+    );
 
-                axisTitle = {
-                    text: titleText,
-                    rotation: 0,
-                    maxWidth: '25%',
-                    html: isSplitWithHtmlValues,
-                };
+    if (isSplitEnabled) {
+        config.yAxis = segments.map((d) => {
+            let titleText: string = d.title;
+            if (isSplitWithHtmlValues) {
+                // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+                titleText = wrapHtml(d.title);
             }
 
-            return merge(axisBaseConfig, {
-                labels: {
-                    numberFormat: axisLabelNumberFormat ?? undefined,
-                },
+            const axisTitle = {
+                text: titleText,
+                rotation: 0,
+                maxWidth: '25%',
+                html: isSplitWithHtmlValues,
+            };
+
+            return merge(yAxisBaseConfig, {
                 plotIndex: d.index,
                 title: axisTitle,
-                startOnTick: isSplitEnabled,
-                endOnTick: isSplitEnabled,
             });
-        }),
-    };
+        });
+    } else {
+        config.yAxis = [{...yAxisBaseConfig, lineColor: 'transparent'}];
+    }
 
     if (isSplitEnabled) {
         config.split = {
