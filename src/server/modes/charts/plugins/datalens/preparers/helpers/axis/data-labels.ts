@@ -1,0 +1,1 @@
+export const DATA_LABEL_DEFAULT_PADDING = 3;
