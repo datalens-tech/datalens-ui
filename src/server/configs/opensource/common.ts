@@ -8,6 +8,8 @@ import {
     DL_CONTEXT_HEADER,
     Language,
     PALETTE_ID,
+    US_DYNAMIC_MASTER_TOKEN_HEADER,
+    US_MASTER_TOKEN_HEADER,
     isTrueArg,
 } from '../../../shared';
 import {UserRole} from '../../../shared/components/auth/constants/role';
@@ -18,6 +20,13 @@ import {getEnvCert} from '../../utils/env-utils';
 import controlDashChartTemplate from '../shared/control-dash-chart-template';
 import datalensChartTemplate from '../shared/datalens-chart-template';
 import qlChartTemplate from '../shared/ql-chart-template';
+
+const sensitiveHeaders = [
+    CSP_HEADER,
+    CSP_REPORT_TO_HEADER,
+    US_DYNAMIC_MASTER_TOKEN_HEADER,
+    US_MASTER_TOKEN_HEADER,
+];
 
 export default {
     // DATALENS MODE
@@ -213,8 +222,8 @@ export default {
     },
     defaultColorPaletteId: PALETTE_ID.DEFAULT_20,
 
-    appSensitiveKeys: [CSP_HEADER, CSP_REPORT_TO_HEADER],
-    appSensitiveHeaders: [CSP_HEADER, CSP_REPORT_TO_HEADER],
+    appSensitiveKeys: sensitiveHeaders,
+    appSensitiveHeaders: sensitiveHeaders,
 
     // auth
     isAuthEnabled: isTrueArg(process.env.AUTH_ENABLED),
