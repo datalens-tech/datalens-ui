@@ -3,6 +3,7 @@ import React from 'react';
 import without from 'lodash/without';
 import {useDispatch, useSelector} from 'react-redux';
 import type {DatasetField, DatasetOptions} from 'shared';
+import {FiltersQA} from 'shared';
 import type {ApplyData} from 'ui';
 
 import {openDialogFilter} from '../../../../store/actions/dialog';
@@ -106,6 +107,7 @@ export const useFilterSection = (args: UseFilterSectionArgs): UseFilterSection =
                 deleteFilter(filter.id);
             },
             readonly,
+            qa: FiltersQA.TableDeleteRowBtn,
         };
     }, [deleteFilter, filters, readonly]);
 

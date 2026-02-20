@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
-import {Feature} from 'shared';
+import {DatasetFieldsTabQa, Feature} from 'shared';
 import {registry} from 'ui/registry';
 import {selectDebugMode} from 'ui/store/selectors/user';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -356,7 +356,7 @@ export class DatasetEditor extends React.Component {
         const {renderRLSDialog} = registry.datasets.functions.getAll();
 
         return (
-            <div className={b()}>
+            <div className={b()} data-qa={DatasetFieldsTabQa.DatasetEditor}>
                 <DatasetTable
                     readonly={readonly}
                     permissions={permissions}

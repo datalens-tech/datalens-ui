@@ -6,7 +6,7 @@ import DataTable from '@gravity-ui/react-data-table';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {DatasetField, DatasetSourceAvatar} from 'shared';
+import {type DatasetField, DatasetFieldsTabQa, type DatasetSourceAvatar} from 'shared';
 
 import {FORMULA_CALC_MODE} from '../constants';
 import {getFieldSourceTitle, sortSourceColumn} from '../utils';
@@ -48,6 +48,7 @@ export const getSourceColumn = (args: GetSourceColumnArgs): Column<DatasetField>
                     width="max"
                     disabled={readonly}
                     onClick={() => openDialogFieldEditor(row)}
+                    qa={DatasetFieldsTabQa.FieldSourceColumnBtn}
                 >
                     {isFormulaField ? (
                         <Icon className={b('formula')} data={Function} size={20} />

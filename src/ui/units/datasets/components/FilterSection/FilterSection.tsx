@@ -4,6 +4,7 @@ import {Alert, spacing} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useHistory, useLocation} from 'react-router';
 import type {DatasetField, DatasetOptions} from 'shared';
+import {FiltersQA} from 'shared';
 import type {ApplyData} from 'ui';
 
 import type {ObligatoryFilter} from '../../typings/dataset';
@@ -90,6 +91,7 @@ const FilterSection: React.FC<FilterSectionProps> = (props: FilterSectionProps) 
             isListUpdating={progress}
             controlSettings={controlSettings}
             checkIsRowValid={checkIsRowValid}
+            qa={FiltersQA.FiltersTabSection}
         />
     );
 };

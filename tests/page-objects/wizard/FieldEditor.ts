@@ -11,6 +11,7 @@ export default class FieldEditor {
     private applyButtonSelector = slct(DialogFieldEditorQA.ApplyButton);
     private fieldEditorSelector = FieldEditor.slct('.react-monaco-editor-container');
     private fieldItemSelector = FieldEditor.slct('.g-list__item');
+    private fieldNameEditBtnSelector = slct(DialogFieldEditorQA.EditNameButton);
 
     private page: Page;
 
@@ -27,6 +28,14 @@ export default class FieldEditor {
     async setName(name: string) {
         await this.page.click(this.fieldNameSelector);
         await this.page.keyboard.insertText(name);
+    }
+
+    async changeName(name: string) {
+        await this.page.click(this.fieldNameEditBtnSelector);
+        const input = this.page.locator(this.fieldNameSelector);
+        await input.press('Meta+A');
+        await input.press('Backspace');
+        await input.fill(name);
     }
 
     async setFormula(formula: string) {

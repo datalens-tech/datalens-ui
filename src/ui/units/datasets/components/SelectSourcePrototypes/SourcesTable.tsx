@@ -5,7 +5,7 @@ import {Button, Icon, List, Loader, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import {useDispatch, useSelector} from 'react-redux';
-import {DatasetSourcesLeftPanelQA} from 'shared';
+import {DatasetSourcesLeftPanelQA, DatasetSourcesTableQa} from 'shared';
 import type {BaseSource} from 'shared/schema';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
 import {usePrevious} from 'ui';
@@ -72,7 +72,13 @@ const filterItem = (search: string) => {
 
 const AddSourceButton: React.FC<AddSourceButtonProps> = ({onClick, disabled}) => (
     <div className={b('bottom-section')}>
-        <Button className={b('btn-add-source')} view="flat" disabled={disabled} onClick={onClick}>
+        <Button
+            className={b('btn-add-source')}
+            view="flat"
+            disabled={disabled}
+            onClick={onClick}
+            qa={DatasetSourcesTableQa.SourcesAddItemBtn}
+        >
             <Icon className={b('btn-add-source-ic')} data={iconPlus} width={ICON_PLUS_SIZE} />
             {i18n('button_add-source')}
         </Button>
