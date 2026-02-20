@@ -1,3 +1,4 @@
+import {Page, Response, expect} from '@playwright/test';
 import {v1 as uuidv1} from 'uuid';
 import {
     DialogCreateWorkbookEntryQa,
@@ -8,15 +9,7 @@ import {
     DatasetActionQA,
     DatasetSourcesTableQa,
     DatasetSourcesLeftPanelQA,
-    AvatarQA,
-    DatasetFieldsTabQa,
 } from '../../../src/shared/constants/qa/datasets';
-
-import {deleteEntity, slct} from '../../utils';
-import {BasePage, BasePageProps} from '../BasePage';
-import DialogParameter from '../common/DialogParameter';
-
-import DatasetTabSection from './DatasetTabSection';
 import {
     CollectionFiltersQa,
     DialogCollectionStructureQa,
@@ -25,8 +18,17 @@ import {
     ValueOf,
     DATASET_TAB,
 } from '../../../src/shared';
-import {Page, Response, expect} from '@playwright/test';
+
+import {deleteEntity, slct} from '../../utils';
+import {BasePage, BasePageProps} from '../BasePage';
+import DialogParameter from '../common/DialogParameter';
 import Revisions from '../common/Revisions';
+
+import DatasetTabSection from './DatasetTabSection';
+import DatasetConnectionSection, {SetConnectionProps} from './DatasetConnectionSection';
+import DatasetFieldsTable from './DatasetFiledsTable';
+import {VALIDATE_DATASET_URL} from './constants';
+import {NavigationMinimalPopup} from '../workbook/NavigationMinimalPopup';
 
 export interface DatasetPageProps extends BasePageProps {}
 
@@ -66,20 +68,19 @@ export const waitForBiValidateDatasetResponses = (page: Page, timeout: number): 
     });
 };
 
-export const SET_CONNECTION_METHODS = {
-    ADD: 'add',
-    REPLACE: 'replace',
-    DELETE: 'delete',
-} as const;
-
 class DatasetPage extends BasePage {
     datasetTabSection: DatasetTabSection;
+    datasetConnectionSection: DatasetConnectionSection;
+    datasetFieldsTable: DatasetFieldsTable;
+    workbookNavigationMinimal: NavigationMinimalPopup;
     dialogParameter: DialogParameter;
     revisions: Revisions;
 
     constructor({page}: DatasetPageProps) {
         super({page});
-
+        this.workbookNavigationMinimal = new NavigationMinimalPopup(page);
+        this.datasetConnectionSection = new DatasetConnectionSection(page);
+        this.datasetFieldsTable = new DatasetFieldsTable(page);
         this.datasetTabSection = new DatasetTabSection(page);
         this.dialogParameter = new DialogParameter(page);
         this.revisions = new Revisions(page);
@@ -209,85 +210,14 @@ class DatasetPage extends BasePage {
         return dsName;
     }
 
-    async openCurrentConnection() {
-        const newTabPagePromise: Promise<Page> = new Promise((resolve) =>
-            this.page.context().on('page', resolve),
-        );
-        const contextMenu = await this.page.waitForSelector(
-            slct(DatasetSourcesLeftPanelQA.ConnContextMenuBtn),
-        );
-        await contextMenu.click();
-        const openConnectionBtn = await this.page.waitForSelector(
-            slct(DatasetSourcesLeftPanelQA.ConnContextMenuOpen),
-        );
-        await openConnectionBtn.click();
-        const newPage = await newTabPagePromise;
-        return newPage;
+    async setConnectionInWorkbookDataset({method, connectionName}: SetConnectionProps) {
+        await this.datasetConnectionSection.openConnectionSelectViaMethod(method);
+        await this.workbookNavigationMinimal.fillInput(connectionName);
+        await this.workbookNavigationMinimal.selectListItem({innerText: connectionName});
     }
 
-    async setSharedConnection({
-        connectionName,
-        method,
-    }: {
-        connectionName: string;
-        method: ValueOf<typeof SET_CONNECTION_METHODS>;
-    }) {
-        switch (method) {
-            case SET_CONNECTION_METHODS.ADD: {
-                const connSelectionButton = await this.page.waitForSelector(
-                    slct(DatasetSourcesLeftPanelQA.ConnSelection),
-                );
-                await connSelectionButton.click();
-                break;
-            }
-            case SET_CONNECTION_METHODS.REPLACE: {
-                const contextMenu = await this.page.waitForSelector(
-                    slct(DatasetSourcesLeftPanelQA.ConnContextMenuBtn),
-                );
-                await contextMenu.click();
-                const replaceBtn = await this.page.waitForSelector(
-                    slct(DatasetSourcesLeftPanelQA.ConnContextMenuReplace),
-                );
-                await replaceBtn.click();
-                break;
-            }
-            case SET_CONNECTION_METHODS.DELETE: {
-                await this.page.waitForSelector(slct(AvatarQA.Avatar));
-                await this.page.waitForSelector(slct(DatasetSourcesTableQa.Source));
-                const deleteAvatarSelector = slct(AvatarQA.DeleteButton);
-                const sourceMenuSelector = slct(DatasetSourcesTableQa.SourceContextMenuBtn);
-
-                // delete all avatars
-                while ((await this.page.locator(deleteAvatarSelector).count()) > 0) {
-                    await this.page.locator(deleteAvatarSelector).first().click();
-                    await waitForBiValidateDatasetResponses(this.page, 5000);
-                }
-                // delete all sources
-                while ((await this.page.locator(sourceMenuSelector).count()) > 0) {
-                    await this.page.locator(sourceMenuSelector).first().click();
-                    await this.page
-                        .locator(slct(DatasetSourcesTableQa.SourceContextMenuDelete))
-                        .first()
-                        .click();
-                    await waitForBiValidateDatasetResponses(this.page, 5000);
-                }
-
-                const contextMenu = await this.page.waitForSelector(
-                    slct(DatasetSourcesLeftPanelQA.ConnContextMenuBtn),
-                );
-                await contextMenu.click();
-                const deleteBtn = await this.page.waitForSelector(
-                    slct(DatasetSourcesLeftPanelQA.ConnContextMenuDelete),
-                );
-                await deleteBtn.click();
-                const connSelectionButton = await this.page.waitForSelector(
-                    slct(DatasetSourcesLeftPanelQA.ConnSelection),
-                );
-                await connSelectionButton.click();
-                break;
-            }
-        }
-
+    async setSharedConnection({connectionName, method}: SetConnectionProps) {
+        await this.datasetConnectionSection.openConnectionSelectViaMethod(method);
         await this.page.waitForSelector(slct(CollectionFiltersQa.SearchInput));
         const search = this.page.locator(slct(CollectionFiltersQa.SearchInput)).locator('input');
         await search.press('Meta+A');
@@ -338,14 +268,12 @@ class DatasetPage extends BasePage {
     }
 
     async renameFirstField({value}: {value?: string} = {}) {
-        const fieldInput = this.page.locator(slct(DatasetFieldsTabQa.FieldNameColumnInput)).first();
-        const originalValue = await fieldInput.locator('input').inputValue();
+        const fieldInput = this.datasetFieldsTable.getFieldNameInput();
+        const originalValue = await fieldInput.inputValue();
         const newValue = value || `${originalValue}_modified`;
 
-        await fieldInput.locator('input').fill(newValue);
-        const validatePromise = this.page.waitForResponse((response) => {
-            return response.url().includes('/validateDataset');
-        });
+        await fieldInput.fill(newValue);
+        const validatePromise = this.waitForSuccessfulResponse(VALIDATE_DATASET_URL);
         await this.page.keyboard.press('Enter');
         await validatePromise;
 

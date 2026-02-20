@@ -132,7 +132,12 @@ export function ActionPanelRightItems(props: Props) {
         const {ref, triggerProps} = args;
 
         return (
-            <Button ref={ref as React.Ref<HTMLButtonElement>} view="flat" {...triggerProps}>
+            <Button
+                ref={ref as React.Ref<HTMLButtonElement>}
+                view="flat"
+                qa={DatasetActionQA.SettingsButton}
+                {...triggerProps}
+            >
                 <Icon data={Gear} size={ACTION_PANEL_ICON_SIZE} />
             </Button>
         );
@@ -151,6 +156,7 @@ export function ActionPanelRightItems(props: Props) {
             key={ITEM_SHOW_PREVIEW_BY_DEFAULT}
             value={ITEM_SHOW_PREVIEW_BY_DEFAULT}
             disabled={isLoadingDataset || isValidationLoading}
+            qa={DatasetActionQA.SettingsShowPreviewByDefault}
         >
             {i18n('label_load_preview_by_default')}
         </Select.Option>,

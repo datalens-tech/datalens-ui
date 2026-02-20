@@ -13,13 +13,9 @@ import {
 } from '../../../src/shared';
 import DatasetPage from '../../page-objects/dataset/DatasetPage';
 import FieldEditor from '../../page-objects/wizard/FieldEditor';
-import {
-    getFieldNameInput,
-    changeFieldSelect,
-    selectTwoCheckboxes,
-} from '../../opensource-suites/dataset/base/helpers';
-import {VALIDATE_DATASET_URL} from '../../opensource-suites/dataset/constants';
+import {VALIDATE_DATASET_URL} from '../../page-objects/dataset/constants';
 import {RobotChartsDatasetUrls} from '../../utils/constants';
+import {getValidatePromise} from '../../page-objects/dataset/utils';
 
 datalensTest.describe('Dataset history', () => {
     const url = RobotChartsDatasetUrls.DatasetWithCsvConnection;
@@ -50,7 +46,7 @@ datalensTest.describe('Dataset history', () => {
     datalensTest('Undo and redo reverts a field rename', async ({page}) => {
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
         await expect(undoBtn).toBeDisabled();
-        const fieldInput = getFieldNameInput(page);
+        const fieldInput = datasetPage.datasetFieldsTable.getFieldNameInput();
         const {newValue: changedValue, originalValue} =
             (await datasetPage.renameFirstField()) ?? {};
 
@@ -147,7 +143,7 @@ datalensTest.describe('Dataset history', () => {
         const rowsCountBefore = await page
             .locator(slct(DatasetFieldsTabQa.FieldNameColumnInput))
             .count();
-        const fieldInput = getFieldNameInput(page);
+        const fieldInput = datasetPage.datasetFieldsTable.getFieldNameInput();
         await fieldInput.hover();
         // Duplicate field via context menu
         const contextMenuBtn = page.locator(slct(DatasetFieldsTabQa.FieldContextMenuBtn)).first();
@@ -188,7 +184,7 @@ datalensTest.describe('Dataset history', () => {
         const rowsCountBefore = await page
             .locator(slct(DatasetFieldsTabQa.FieldNameColumnInput))
             .count();
-        const fieldInput = getFieldNameInput(page);
+        const fieldInput = datasetPage.datasetFieldsTable.getFieldNameInput();
         await fieldInput.hover();
         // Remove field via context menu
         const contextMenuBtn = page.locator(slct(DatasetFieldsTabQa.FieldContextMenuBtn)).first();
@@ -281,7 +277,7 @@ datalensTest.describe('Dataset history', () => {
             targetOption,
             selectBtn: typeSelectBtn,
             originalSelectText: originalTypeText,
-        } = await changeFieldSelect(page, typeSelect);
+        } = await datasetPage.datasetFieldsTable.changeFieldSelect(typeSelect);
 
         if (!targetOption || !typeSelectBtn) {
             return;
@@ -310,7 +306,7 @@ datalensTest.describe('Dataset history', () => {
             targetOptionText,
             originalSelectText: originalTypeText,
             selectBtn: typeSelectBtn,
-        } = await changeFieldSelect(page, typeSelect);
+        } = await datasetPage.datasetFieldsTable.changeFieldSelect(typeSelect);
         if (!targetOption || !typeSelectBtn) {
             return;
         }
@@ -344,15 +340,13 @@ datalensTest.describe('Dataset history', () => {
             targetOption,
             selectBtn: aggregationSelectBtn,
             originalSelectText: originalAggregationText,
-        } = await changeFieldSelect(page, aggregationSelectBtns);
+        } = await datasetPage.datasetFieldsTable.changeFieldSelect(aggregationSelectBtns);
 
         if (!targetOption || !aggregationSelectBtn) {
             return;
         }
 
-        const validatePromise = page.waitForResponse((response) =>
-            response.url().includes(VALIDATE_DATASET_URL),
-        );
+        const validatePromise = getValidatePromise(page);
         await targetOption.click();
         await validatePromise;
 
@@ -377,15 +371,13 @@ datalensTest.describe('Dataset history', () => {
             targetOptionText,
             originalSelectText: originalAggregationText,
             selectBtn: aggregationSelectBtn,
-        } = await changeFieldSelect(page, aggregationSelectBtns);
+        } = await datasetPage.datasetFieldsTable.changeFieldSelect(aggregationSelectBtns);
 
         if (!targetOption || !aggregationSelectBtn) {
             return;
         }
 
-        const validatePromise = page.waitForResponse((response) =>
-            response.url().includes(VALIDATE_DATASET_URL),
-        );
+        const validatePromise = getValidatePromise(page);
         await targetOption.click();
         await validatePromise;
 
@@ -407,7 +399,7 @@ datalensTest.describe('Dataset history', () => {
     });
 
     datalensTest('Undo and redo restore field edit via field editor dialog', async ({page}) => {
-        const fieldInput = getFieldNameInput(page);
+        const fieldInput = datasetPage.datasetFieldsTable.getFieldNameInput();
         const originalName = await fieldInput.inputValue();
         await fieldInput.hover();
 
@@ -449,7 +441,7 @@ datalensTest.describe('Dataset history', () => {
         const rowsCountBefore = await page
             .locator(slct(DatasetFieldsTabQa.FieldNameColumnInput))
             .count();
-        await selectTwoCheckboxes(page);
+        await datasetPage.datasetFieldsTable.selectTwoCheckboxes();
 
         // Click batch delete button
         const actionsPanel = page.locator(slct(DatasetFieldsTabQa.BatchActionsPanel));
@@ -496,7 +488,7 @@ datalensTest.describe('Dataset history', () => {
         const rowsCountBefore = await page
             .locator(slct(DatasetFieldsTabQa.FieldNameColumnInput))
             .count();
-        await selectTwoCheckboxes(page);
+        await datasetPage.datasetFieldsTable.selectTwoCheckboxes();
 
         const actionsPanel = page.locator(slct(DatasetFieldsTabQa.BatchActionsPanel));
         await expect(actionsPanel).toBeVisible();
@@ -533,7 +525,7 @@ datalensTest.describe('Dataset history', () => {
     });
 
     datalensTest('Multiple redo steps restore multiple changes', async ({page}) => {
-        const fieldInput = getFieldNameInput(page);
+        const fieldInput = datasetPage.datasetFieldsTable.getFieldNameInput();
         const step1Value = 'step1';
         const step2Value = 'step2';
 
@@ -591,7 +583,7 @@ datalensTest.describe('Dataset history', () => {
     });
 
     datalensTest('Keyboard shortcut Cmd/Ctrl+Z triggers undo', async ({page}) => {
-        const fieldInput = getFieldNameInput(page);
+        const fieldInput = datasetPage.datasetFieldsTable.getFieldNameInput();
         const {originalValue} = (await datasetPage.renameFirstField()) ?? {};
         const undoBtn = page.locator(slct(EditHistoryQA.UndoBtn));
         await expect(undoBtn).toBeEnabled();
@@ -604,7 +596,7 @@ datalensTest.describe('Dataset history', () => {
     });
 
     datalensTest('Keyboard shortcut Cmd/Ctrl+Shift+Z triggers redo', async ({page}) => {
-        const fieldInput = getFieldNameInput(page);
+        const fieldInput = datasetPage.datasetFieldsTable.getFieldNameInput();
         const {newValue: changedValue} = (await datasetPage.renameFirstField()) ?? {};
 
         // Undo via button
@@ -627,7 +619,7 @@ datalensTest.describe('Dataset history', () => {
             .locator(slct(DatasetFieldsTabQa.FieldNameColumnInput))
             .count();
 
-        const fieldInput = getFieldNameInput(page);
+        const fieldInput = datasetPage.datasetFieldsTable.getFieldNameInput();
 
         // // Step 1: Rename a field
         const {newValue, originalValue} = (await datasetPage.renameFirstField()) ?? {};

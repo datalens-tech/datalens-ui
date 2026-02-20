@@ -8,7 +8,7 @@ import {
     DatasetSourceEditorDialogQA,
 } from '../../../../src/shared';
 import {DatasetsEntities} from '../../../constants/test-entities/datasets';
-import {VALIDATE_DATASET_URL} from '../constants';
+import {getValidatePromise} from '../../../page-objects/dataset/utils';
 
 datalensTest.describe('Dataset sources', () => {
     datalensTest('Add source button should add source', async ({page}) => {
@@ -33,9 +33,7 @@ datalensTest.describe('Dataset sources', () => {
         await schemeNameInput.fill('barfoo');
 
         const applyBtn = page.locator(slct(DatasetSourceEditorDialogQA.ApplyBtn));
-        const validatePromise = page.waitForResponse((res) =>
-            res.url().includes(VALIDATE_DATASET_URL),
-        );
+        const validatePromise = getValidatePromise(page);
         await applyBtn.click();
         await validatePromise;
 
@@ -65,9 +63,7 @@ datalensTest.describe('Dataset sources', () => {
         await page.keyboard.insertText('abc');
 
         const applyBtn = page.locator(slct(DatasetSourceEditorDialogQA.ApplyBtn));
-        const validatePromise = page.waitForResponse((res) =>
-            res.url().includes(VALIDATE_DATASET_URL),
-        );
+        const validatePromise = getValidatePromise(page);
         await applyBtn.click();
         await validatePromise;
 

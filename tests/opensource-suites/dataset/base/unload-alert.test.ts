@@ -6,7 +6,6 @@ import {openTestPage, slct} from '../../../utils';
 import {DatasetFieldsTabQa} from '../../../../src/shared';
 import {DatasetsEntities} from '../../../constants/test-entities/datasets';
 import DatasetPage from '../../../page-objects/dataset/DatasetPage';
-import {getFieldNameInput} from './helpers';
 
 datalensTest.describe('Dataset unsaved changes navigation prevention', () => {
     const url = `datasets${DatasetsEntities.Basic.url}`;
@@ -47,7 +46,7 @@ datalensTest.describe('Dataset unsaved changes navigation prevention', () => {
     );
 
     datalensTest('Dismissing beforeunload dialog keeps user on the page', async ({page}) => {
-        const fieldInput = getFieldNameInput(page);
+        const fieldInput = datasetPage.datasetFieldsTable.getFieldNameInput();
         const {newValue} = (await datasetPage.renameFirstField({value: uuidv4()})) ?? {};
 
         const dialogPromise = page.waitForEvent('dialog');
@@ -65,7 +64,7 @@ datalensTest.describe('Dataset unsaved changes navigation prevention', () => {
     });
 
     datalensTest('Accepting beforeunload dialog allows the page to reload', async ({page}) => {
-        const fieldInput = getFieldNameInput(page);
+        const fieldInput = datasetPage.datasetFieldsTable.getFieldNameInput();
         const {originalValue} = (await datasetPage.renameFirstField({value: uuidv4()})) ?? {};
 
         page.once('dialog', (dialog) => dialog.accept());

@@ -5,7 +5,8 @@ import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {DialogFilterQA, FiltersQA, Operations} from '../../../../src/shared';
 import {DatasetsEntities} from '../../../constants/test-entities/datasets';
 import DatasetPage from '../../../page-objects/dataset/DatasetPage';
-import {VALIDATE_DATASET_URL} from '../constants';
+import {VALIDATE_DATASET_URL} from '../../../page-objects/dataset/constants';
+import {getValidatePromise} from '../../../page-objects/dataset/utils';
 
 async function addIsNullFilter(page: Page, datasetPage: DatasetPage) {
     await datasetPage.datasetTabSection.clickAddButton();
@@ -91,9 +92,7 @@ datalensTest.describe('Dataset obligatory filters', () => {
         const row = await datasetPage.datasetTabSection.getRowLocatorByIndex(0);
         const deleteButton = row.locator(slct(FiltersQA.TableDeleteRowBtn));
 
-        const validatePromise = page.waitForResponse((response) => {
-            return response.url().includes(VALIDATE_DATASET_URL);
-        });
+        const validatePromise = getValidatePromise(page);
         await deleteButton.click();
         await validatePromise;
 

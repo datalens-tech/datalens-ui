@@ -103,6 +103,8 @@ export enum DatasetSourcesLeftPanelQA {
 
 export enum DatasetActionQA {
     CreateButton = 'dataset-create-button',
+    SettingsButton = 'dataset-settings-button',
+    SettingsShowPreviewByDefault = 'dataset-settings-show-preview-item',
 }
 
 export const enum DatasetDialogRelationQA {

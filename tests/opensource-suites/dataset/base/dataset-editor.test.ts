@@ -11,8 +11,8 @@ import {
 } from '../../../../src/shared';
 import {DatasetsEntities} from '../../../constants/test-entities/datasets';
 import DatasetPage from '../../../page-objects/dataset/DatasetPage';
-import {GET_PREVIEW_URL, VALIDATE_DATASET_URL} from '../constants';
-import {getFieldNameInput} from './helpers';
+import {GET_PREVIEW_URL} from '../../../page-objects/dataset/constants';
+import {getValidatePromise} from '../../../page-objects/dataset/utils';
 
 datalensTest.describe('Dataset basic ui', () => {
     const url = `datasets${DatasetsEntities.Basic.url}`;
@@ -67,7 +67,7 @@ datalensTest.describe('Dataset basic ui', () => {
         const datasetPage = new DatasetPage({page});
         await openTestPage(page, url);
         await page.waitForSelector(slct(DatasetFieldsTabQa.FieldNameColumnInput));
-        const fieldInput = getFieldNameInput(page);
+        const fieldInput = datasetPage.datasetFieldsTable.getFieldNameInput();
         const {newValue} = await datasetPage.renameFirstField();
 
         const updatedValue = await fieldInput.inputValue();
@@ -231,9 +231,7 @@ datalensTest.describe('Dataset basic ui', () => {
             .locator('input');
 
         await secondField.fill(fieldInputValue);
-        const validatePromise = page.waitForResponse((response) => {
-            return response.url().includes(VALIDATE_DATASET_URL);
-        });
+        const validatePromise = getValidatePromise(page);
         await page.keyboard.press('Enter');
         await validatePromise;
 

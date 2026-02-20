@@ -2,9 +2,19 @@ import {expect} from '@playwright/test';
 
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage, slct} from '../../../utils';
-import {DatasetPreviewQA, DatasetPanelQA, DATASET_TAB} from '../../../../src/shared';
+import {
+    DatasetPreviewQA,
+    DatasetPanelQA,
+    DATASET_TAB,
+    DatasetActionQA,
+    DatasetFieldsTabQa,
+    DatasetSourcesTableQa,
+} from '../../../../src/shared';
 import {DatasetsEntities} from '../../../constants/test-entities/datasets';
 import DatasetPage from '../../../page-objects/dataset/DatasetPage';
+import {SET_CONNECTION_METHODS} from '../../../page-objects/dataset/constants';
+import {ConnectionsNames} from '../../../constants/test-entities/connections';
+import {WorkbookEntities} from '../../../constants/test-entities/workbook';
 
 datalensTest.describe('Dataset basic ui', () => {
     const url = `datasets${DatasetsEntities.Basic.url}`;
@@ -72,5 +82,31 @@ datalensTest.describe('Dataset basic ui', () => {
         await page.waitForLoadState('networkidle');
 
         expect(previewRequested).toBe(false);
+    });
+
+    datalensTest('Global preview disable should work in dataset', async ({page}) => {
+        const datasetPage = new DatasetPage({page});
+        await openTestPage(page, `${WorkbookEntities.Basic.url}/datasets/new`);
+        await datasetPage.setConnectionInWorkbookDataset({
+            method: SET_CONNECTION_METHODS.ADD,
+            connectionName: ConnectionsNames.ConnectionPostgreSQL,
+        });
+        await page.waitForSelector(slct(DatasetSourcesTableQa.Source));
+        await datasetPage.addAvatarByDragAndDrop();
+        await datasetPage.createDatasetInWorkbookOrCollection();
+        const selector = slct(DatasetPreviewQA.Preview);
+        await page.waitForSelector(selector);
+        const preview = page.locator(selector);
+        await expect(preview).toBeVisible();
+        const datasetSettingsBtn = page.locator(slct(DatasetActionQA.SettingsButton));
+        await datasetSettingsBtn.click();
+        const showPreviewSelectItem = await page.waitForSelector(
+            slct(DatasetActionQA.SettingsShowPreviewByDefault),
+        );
+        await showPreviewSelectItem.click();
+        await datasetPage.saveUpdatedDataset();
+        await page.reload();
+        await page.waitForSelector(slct(DatasetFieldsTabQa.FieldNameColumnInput));
+        await expect(preview).not.toBeVisible();
     });
 });
