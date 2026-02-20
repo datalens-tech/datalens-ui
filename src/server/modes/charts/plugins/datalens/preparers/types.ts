@@ -50,6 +50,7 @@ export type PrepareFunctionArgs = {
     disableDefaultSorting?: boolean;
     features: FeatureConfig;
     defaultColorPaletteId: string;
+    categories: Set<string | number>;
 };
 
 export type PrepareFunctionDataRow = (string | null)[];

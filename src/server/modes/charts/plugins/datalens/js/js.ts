@@ -389,6 +389,7 @@ type PrepareSingleResultArgs = {
     features: FeatureConfig;
     plugin?: ChartPlugin;
     defaultColorPaletteId: string;
+    categories: Set<string | number>;
 };
 
 // eslint-disable-next-line complexity
@@ -409,6 +410,7 @@ function prepareSingleResult({
     features,
     plugin,
     defaultColorPaletteId,
+    categories,
 }: PrepareSingleResultArgs) {
     const isVisualizationWithLayers = Boolean(
         (visualization as ServerVisualizationLayer).layerSettings,
@@ -735,6 +737,7 @@ function prepareSingleResult({
         usedColors,
         features,
         defaultColorPaletteId,
+        categories,
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);
@@ -925,6 +928,9 @@ export const buildGraphPrivate = (args: {
             isComboChart: shared.visualization.id === 'combined-chart',
         });
         const usedColors: (string | undefined)[] = [];
+        // an array of categories from all layers:
+        // to use the previous ones and not change the order of the already prepared data.
+        const categories = new Set<string>();
         layers.forEach((layer, layerIndex) => {
             const resultData = mergedData[layerIndex].result;
             const fields = mergedData[layerIndex].fields;
@@ -947,6 +953,7 @@ export const buildGraphPrivate = (args: {
                 features,
                 plugin,
                 defaultColorPaletteId,
+                categories,
             });
 
             if (localResult && localResult[0] && localResult[0].bounds) {
@@ -1020,6 +1027,7 @@ export const buildGraphPrivate = (args: {
             features,
             plugin,
             defaultColorPaletteId,
+            categories: new Set(),
         });
 
         if (result?.[0]?.bounds) {

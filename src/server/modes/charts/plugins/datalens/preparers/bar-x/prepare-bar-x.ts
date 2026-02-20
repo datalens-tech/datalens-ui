@@ -39,6 +39,7 @@ import {
     numericCollator,
 } from '../../utils/misc-helpers';
 import {addActionParamValue} from '../helpers/action-params';
+import {getIsAdditionalLayer} from '../helpers/layers';
 import {getSegmentMap} from '../helpers/segments';
 import {
     getSegmentsIndexInOrder,
@@ -62,6 +63,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         labels,
         idToTitle,
         idToDataType,
+        layerSettings,
         visualizationId,
         datasets = [],
         shared,
@@ -72,10 +74,12 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         ChartEditor,
         disableDefaultSorting = false,
         defaultColorPaletteId,
+        categories: prevLayerCategories,
     } = args;
     const {data, order} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
+    const isAdditionalLayer = getIsAdditionalLayer({shared, layerSettings});
 
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const x: ServerField | undefined = xPlaceholder?.items[0];
@@ -150,11 +154,13 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
     const nullsY1 = placeholders?.[1]?.settings?.nulls;
 
-    const categoriesMap = new Map<string | number, boolean>();
+    const categoriesMap = new Map<string | number, boolean>(
+        Array.from(prevLayerCategories).map((d) => [d, true]),
+    );
     const seriesNameFormatter = getSeriesTitleFormatter({fields: [colorItem]});
 
     if (mergedYSections.length) {
-        let categories: (string | number)[] = [];
+        let categories: (string | number)[] = [...prevLayerCategories];
         const categories2: (string | number)[] = [];
 
         const lines1: LinesRecord = {};
@@ -262,7 +268,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         let lineKeys1 = Object.keys(lines1);
         let lineKeys2 = [];
 
-        if (xIsDate && !disableDefaultSorting) {
+        if (xIsDate && !disableDefaultSorting && !isAdditionalLayer) {
             (categories as number[]).sort(numericCollator);
         }
 
@@ -272,7 +278,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         );
         const isSortableXAxis = !isPercentVisualization(visualizationId);
 
-        if (!disableDefaultSorting) {
+        if (!disableDefaultSorting && !isAdditionalLayer) {
             categories = getSortedCategories({
                 lines,
                 colorItem,
@@ -515,6 +521,12 @@ export function prepareBarX(args: PrepareFunctionArgs) {
             ChartEditor.updateConfig({useHtml: true});
         }
 
+        categoriesMap.forEach((_, key) => {
+            if (!prevLayerCategories.has(key)) {
+                prevLayerCategories.add(key);
+            }
+        });
+
         if (x && isXCategoryAxis) {
             const categoriesFormatter = getCategoryFormatter({
                 field: {...x, data_type: xDataType ?? x.data_type},
@@ -561,7 +573,11 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         });
 
         // Default sorting
-        if ((!isSortItemExists || !isSortCategoriesAvailable) && !disableDefaultSorting) {
+        if (
+            (!isSortItemExists || !isSortCategoriesAvailable) &&
+            !disableDefaultSorting &&
+            !isAdditionalLayer
+        ) {
             if (xIsNumber) {
                 (categories as number[]).sort(numericCollator);
             } else {
