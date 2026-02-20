@@ -383,7 +383,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 html: isSplitWithHtmlValues,
             };
 
-            return merge(yAxisBaseConfig, {
+            return merge({}, yAxisBaseConfig, {
                 plotIndex: d.index,
                 title: axisTitle,
             });
