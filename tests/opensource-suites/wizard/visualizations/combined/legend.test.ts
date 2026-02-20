@@ -201,5 +201,33 @@ datalensTest.describe('Wizard', () => {
                 await expect(preview.locator('.gcharts-legend')).toHaveScreenshot();
             },
         );
+
+        datalensTest.only(
+            'The second empty layer should not affect the visibility of the legend @screenshot',
+            async ({page}) => {
+                const wizardPage = new WizardPage({page});
+                const preview = page.locator(slct(WizardPageQa.SectionPreview));
+                const previewLoader = preview.locator(slct(ChartKitQa.Loader));
+
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.X,
+                    'Order_date',
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Y,
+                    'salesSum',
+                );
+
+                await wizardPage.sectionVisualization.addLayer();
+                await wizardPage.sectionVisualization.selectCombinedChartLayerVisualization(
+                    WizardVisualizationId.Column,
+                );
+
+                // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+                await page.mouse.move(-1, -1);
+                await expect(previewLoader).not.toBeVisible();
+                await expect(preview).toHaveScreenshot();
+            },
+        );
     });
 });

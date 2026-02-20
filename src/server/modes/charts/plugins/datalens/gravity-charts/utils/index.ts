@@ -88,6 +88,10 @@ export function getYAxisBaseConfig({
         },
         title: {
             text: getAxisTitle(placeholderSettings, yItem) || undefined,
+            maxRowCount: 3,
+            style: {
+                fontSize: '13px',
+            },
         },
         grid: {
             enabled: Boolean(yItem) && isGridEnabled(placeholderSettings),
@@ -189,9 +193,14 @@ export function getBaseChartConfig(args: {
                 labels: {
                     enabled: xPlaceholderSettings?.hideLabels !== 'yes',
                     rotation: getAxisLabelsRotationAngle(xPlaceholderSettings),
+                    maxWidth: '20%',
                 },
                 title: {
                     text: getAxisTitle(xPlaceholderSettings, xItem) || undefined,
+                    maxRowCount: 3,
+                    style: {
+                        fontSize: '13px',
+                    },
                 },
                 grid: {
                     enabled: isGridEnabled(xPlaceholderSettings),

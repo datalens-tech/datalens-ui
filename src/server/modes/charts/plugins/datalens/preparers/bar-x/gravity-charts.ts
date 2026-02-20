@@ -38,7 +38,7 @@ import {getRgbColors} from '../../utils/color-helpers';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
-import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {getAxisFormatting, getAxisType, getYAxisPlaceholders} from '../helpers/axis';
 import {DATA_LABEL_DEFAULT_PADDING} from '../helpers/axis/data-labels';
 import {isXAxisReversed} from '../helpers/highcharts';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
@@ -216,7 +216,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                     const percentage = ((item?.y ?? 0) / total) * 100;
                     const label = shouldUsePercentageAsLabel ? percentage : item?.label;
                     const dataItem: ExtendedBaXrSeriesData = {
-                        y: item?.y || 0,
+                        y: item?.y ?? 0,
                         custom: item?.custom,
                         color: item?.color,
                     };
@@ -246,6 +246,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             legend: {
                 groupId: graph.id,
                 itemText: graph.legendTitle,
+                enabled: yField ? undefined : false,
             },
             custom: {...graph.custom, colorValue: graph.colorValue, exportSettings},
             dataLabels: {
@@ -354,9 +355,11 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         xAxis,
     };
 
+    const chartYAxisItems = getYAxisPlaceholders({placeholders, shared});
+    const chartYAxisPlaceholder = chartYAxisItems.find((p) => p.id === PlaceholderId.Y);
     const yAxisBaseConfig = merge(
         getYAxisBaseConfig({
-            placeholder: yPlaceholder,
+            placeholder: chartYAxisPlaceholder,
         }),
         {
             labels: {
