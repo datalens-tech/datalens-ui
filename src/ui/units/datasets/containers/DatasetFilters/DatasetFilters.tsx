@@ -1,8 +1,6 @@
 import React from 'react';
 
-import {connect} from 'react-redux';
-import {compose} from 'recompose';
-import type {DatasetField, DatasetOptions} from 'shared';
+import {type ConnectedProps, connect} from 'react-redux';
 import type {ApplyData, DatalensGlobalState} from 'ui';
 import {
     addObligatoryFilter,
@@ -19,22 +17,12 @@ import {
     obligatoryFiltersSelector,
     optionsSelector,
 } from '../../store/selectors';
-import type {ObligatoryFilter} from '../../typings/dataset';
-import type {UpdateDatasetByValidationData, Validation} from '../../typings/redux';
 
 interface OwnProps {
     readonly: boolean;
 }
-interface DatasetFiltersProps extends OwnProps {
-    fields: DatasetField[];
-    obligatoryFilters: ObligatoryFilter[];
-    validation: Validation;
-    options: DatasetOptions;
-    addObligatoryFilter: (data: ApplyData) => void;
-    updateObligatoryFilter: (data: ApplyData) => void;
-    deleteObligatoryFilter: (filtetId: string) => void;
-    updateDatasetByValidation: (data?: UpdateDatasetByValidationData) => void;
-}
+
+type DatasetFiltersProps = OwnProps & ConnectedProps<typeof connector>;
 
 class DatasetFilters extends React.Component<DatasetFiltersProps> {
     render() {
@@ -87,6 +75,6 @@ const mapDispatchToProps = {
     updateDatasetByValidation,
 };
 
-export default compose<DatasetFiltersProps, OwnProps>(connect(mapStateToProps, mapDispatchToProps))(
-    DatasetFilters,
-);
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+export default connector(DatasetFilters);

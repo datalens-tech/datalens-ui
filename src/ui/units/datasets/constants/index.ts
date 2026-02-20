@@ -1,5 +1,12 @@
 import {i18n} from 'i18n';
-import type {CollectionId, EntryScope, WorkbookId} from 'shared';
+import type {
+    CollectionId,
+    DATASET_CACHE_MODE,
+    DATASET_TAB,
+    EntryScope,
+    ValueOf,
+    WorkbookId,
+} from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
 import {DL} from 'ui';
 
@@ -137,12 +144,8 @@ export const TAB_SOURCES = 'sources';
 export const TAB_FILTERS = 'filters';
 /** @deprecated use `DATASET_TAB` from `src/shared/constants/qa/datasets.ts` */
 export const TAB_PARAMETERS = 'parameters';
-export type DatasetTab =
-    | typeof TAB_DATASET
-    | typeof TAB_SOURCES
-    | typeof TAB_FILTERS
-    | typeof TAB_PARAMETERS;
-export const DATASET_TABS = [TAB_DATASET, TAB_SOURCES, TAB_FILTERS, TAB_PARAMETERS];
+export type DatasetTab = ValueOf<typeof DATASET_TAB>;
+export type DatasetCacheMode = ValueOf<typeof DATASET_CACHE_MODE>;
 
 export const CH_OVER_YT = 'CHYT_TABLE';
 

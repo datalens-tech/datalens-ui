@@ -1,38 +1,27 @@
 import React from 'react';
 
-import {Button, Loader} from '@gravity-ui/uikit';
+import type {ButtonSize} from '@gravity-ui/uikit';
+import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import type {DatasetField} from 'shared';
 import {DatasetTabSectionQA} from 'shared';
 import {Interpolate} from 'ui';
-
-import {DatasetTabFieldList} from '../DatasetTabFieldList/DatasetTabFieldList';
-import type {
-    FieldColumn,
-    FieldListColumn,
-    FieldRowControlSettings,
-} from '../DatasetTabFieldList/types';
 
 import './DatasetTabSection.scss';
 
 const b = block('dataset-tab-section-wrapper');
 
-type DatasetTabSectionWrapperProps = {
+export type DatasetTabSectionWrapperProps = {
     title: string;
-    description: string;
-    onOpenDialogClick: () => void;
-    openDialogButtonText: string;
-    onItemClick?: (item: DatasetField) => void;
-    fields: DatasetField[];
-    headerColumns: FieldColumn[];
-    columns: FieldListColumn[];
-    isListUpdating: boolean;
-    controlSettings?: FieldRowControlSettings;
-    checkIsRowValid?: (item: DatasetField) => boolean;
-    isListLoading?: boolean;
+    description: React.ReactNode;
+    onConfirmClick?: () => void;
+    confirmButtonText: string;
+    isLoading: boolean;
     qa?: string;
-    readonly: boolean;
-    readonlyNotice?: React.ReactNode;
+    children: React.ReactNode;
+    sectionNotice?: React.ReactNode;
+    confirmBtnSize?: ButtonSize;
+    confirmBtnDisabled?: boolean;
+    confirmBtnClassName?: string;
 };
 
 export const DatasetTabSection: React.FC<DatasetTabSectionWrapperProps> = (
@@ -41,58 +30,48 @@ export const DatasetTabSection: React.FC<DatasetTabSectionWrapperProps> = (
     const {
         title,
         description,
-        openDialogButtonText,
-        fields,
-        headerColumns,
-        columns,
-        isListUpdating,
-        controlSettings,
-        isListLoading,
+        onConfirmClick,
+        confirmButtonText,
+        isLoading,
         qa,
-        readonly,
-        readonlyNotice,
+        children,
+        confirmBtnSize,
+        sectionNotice,
+        confirmBtnDisabled,
+        confirmBtnClassName,
     } = props;
 
     return (
         <div className={b(null, 'dataset_tab')} data-qa={qa}>
             <div className={b('content')}>
+                {sectionNotice && sectionNotice}
                 <div className={b('section')}>
                     <div className={b('title')}>{title}</div>
                     <div className={b('description')}>
-                        <Interpolate
-                            text={description}
-                            matches={{
-                                br() {
-                                    return <br />;
-                                },
-                            }}
-                        />
-                    </div>
-                    <div className={b('list')}>
-                        {readonly && readonlyNotice}
-                        {isListLoading ? (
-                            <Loader className={b('loader')} />
-                        ) : (
-                            <DatasetTabFieldList
-                                readonly={readonly}
-                                onItemClick={props.onItemClick}
-                                fields={fields}
-                                headerColumns={headerColumns}
-                                columns={columns}
-                                isLoading={isListUpdating}
-                                controlSettings={controlSettings}
-                                checkIsRowValid={props.checkIsRowValid}
+                        {typeof description === 'string' ? (
+                            <Interpolate
+                                text={description}
+                                matches={{
+                                    br() {
+                                        return <br />;
+                                    },
+                                }}
                             />
+                        ) : (
+                            description
                         )}
                     </div>
-                    {!readonly && (
+                    {children}
+                    {onConfirmClick && (
                         <Button
-                            className={b('add-button')}
-                            disabled={isListUpdating}
-                            onClick={props.onOpenDialogClick}
+                            size={confirmBtnSize}
+                            className={b('confirm-button', null, confirmBtnClassName)}
+                            disabled={confirmBtnDisabled}
+                            loading={isLoading}
+                            onClick={onConfirmClick}
                             qa={DatasetTabSectionQA.AddButton}
                         >
-                            {openDialogButtonText}
+                            {confirmButtonText}
                         </Button>
                     )}
                 </div>

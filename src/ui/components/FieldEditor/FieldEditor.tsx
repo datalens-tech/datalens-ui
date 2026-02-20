@@ -68,6 +68,9 @@ export type FieldEditorProps = {
     dataTypes?: DataTypeConfig[];
     field?: DatasetField;
     onlyFormulaEditor?: boolean;
+    staticTitle?: string;
+    additionalFooterContent?: React.ReactNode;
+    applyBtnText?: string;
 };
 
 type Props = FieldEditorProps & DispatchProps & StateProps;
@@ -127,7 +130,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
     }
 
     render() {
-        const {onlyFormulaEditor} = this.props;
+        const {onlyFormulaEditor, staticTitle} = this.props;
         const {field, errors, dialogConfirmVisible, saveAsNewField} = this.state;
 
         return (
@@ -147,6 +150,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                     data-qa={FieldEditorQa.Dialog}
                 >
                     <Settings
+                        staticTitle={staticTitle}
                         field={field}
                         errors={errors}
                         onlyFormulaEditor={onlyFormulaEditor}
@@ -256,8 +260,12 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
     }
 
     renderFooter() {
-        const {field} = this.props;
+        const {field, additionalFooterContent, applyBtnText} = this.props;
         const {saveAsNewField} = this.state;
+
+        const applyText =
+            applyBtnText ||
+            i18n(`button_${field ? (saveAsNewField ? 'save-as' : 'save') : 'create'}`);
 
         return (
             <Dialog.Footer
@@ -269,11 +277,11 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                 propsButtonCancel={{
                     qa: DialogFieldEditorQA.CancelButton,
                 }}
-                textButtonApply={i18n(
-                    `button_${field ? (saveAsNewField ? 'save-as' : 'save') : 'create'}`,
-                )}
+                textButtonApply={applyText}
                 textButtonCancel={i18n('button_cancel')}
-            />
+            >
+                {additionalFooterContent}
+            </Dialog.Footer>
         );
     }
 
