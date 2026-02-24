@@ -56,7 +56,7 @@ type UseActionsArgs = {
 const openAccessDialog = (
     dispatch: AppDispatch,
     params: {
-        parentId?: string | null;
+        parentId: string | null;
         resourceId: string;
         resourceType: ResourceType;
         resourceTitle?: string;

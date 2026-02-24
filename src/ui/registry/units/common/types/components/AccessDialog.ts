@@ -4,7 +4,7 @@ import type {ResourceType} from './IamAccessDialog';
 
 export type AccessDialogProps = {
     resourceId: string;
-    parentId?: string | null;
+    parentId: string | null;
     resourceType: ResourceType;
     resourceScope?: SharedScope;
     resourceTitle?: string;
