@@ -3,7 +3,6 @@ on:
   workflow_run:
     workflows:
       - 'Publish Platform'
-      - 'Publish Platform Hotfix'
     types:
       - completed
 

@@ -3,9 +3,9 @@ on:
   workflow_run:
     workflows:
       - 'Publish Platform'
-      - 'Publish Platform Hotfix'
     types:
       - completed
+  pull_request:
 
 # concurrency:
 #   group: ${{ github.workflow }}
@@ -66,13 +66,21 @@ jobs:
           tags: |
             type=raw,value=${{ env.BUILD_VERSION }}
             ${{ contains(env.COMMIT_NAME, '[release]') && 'type=raw,value=latest' || '' }}
+      - name: Check if workflow triggered by pull request
+        id: pull_request
+        run: |
+          if [ -n "${{ github.event.pull_request.number }}" ]; then
+            echo "pull_request=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pull_request=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           build-args: |
             app_version=${{ env.BUILD_VERSION }}
           context: .
-          push: true
+          push: ${{ steps.pull_request.outputs.pull_request == 'true' && false || true }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64
