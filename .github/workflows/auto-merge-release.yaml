@@ -1,0 +1,38 @@
+name: Auto Merge Release PR
+
+on:
+  pull_request:
+    types: [opened]
+    branches:
+      - main
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.user.login == 'robot-charts' &&
+      startsWith(github.event.pull_request.head.ref, 'release-')
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Auto merge PR
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          RELEASE_TAG=$(git describe --tags --abbrev=0)
+          
+          # skip hotfix release (tag does not end with .0)
+          if [[ "$RELEASE_TAG" != *".0" ]]; then
+            echo "Skipping hotfix tag"
+            exit 0
+          fi
+
+          gh pr merge ${{ github.event.pull_request.number }} --admin --squash
