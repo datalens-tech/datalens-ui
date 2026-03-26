@@ -1,0 +1,8 @@
+.dataset-cache-grid {
+    display: grid;
+    grid-template-columns: max-content auto;
+    row-gap: 10px;
+    align-items: center;
+    column-gap: var(--g-spacing-4);
+    margin-top: var(--g-spacing-5);
+}

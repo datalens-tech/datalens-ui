@@ -4,6 +4,7 @@ import type {DropdownMenuItem, DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {CopyToClipboard, DropdownMenu} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import type {DatasetField} from 'shared';
+import {DatasetFieldsTabQa} from 'shared';
 
 import {FieldAction, GROUPED_ITEMS, READONLY_AVAILABLE_ITEMS} from '../constants';
 import type {MenuItem} from '../types';
@@ -46,7 +47,7 @@ const getMenuItems = (
 ): DropdownMenuItemMixed<MenuItem>[] => {
     return GROUPED_ITEMS.reduce<DropdownMenuItemMixed<MenuItem>[]>((items, group) => {
         const groupWithoutHidden = group.reduce<DropdownMenuItem<MenuItem>[]>(
-            (group, {action, label, theme, hidden = false}) => {
+            (group, {action, label, theme, hidden = false, qa}) => {
                 if (readonly && !READONLY_AVAILABLE_ITEMS.includes(action)) {
                     return group;
                 }
@@ -57,6 +58,7 @@ const getMenuItems = (
                         hidden,
                         text: <MenuItemText action={action} label={label} field={field} />,
                         action: () => onClick({action, field}),
+                        qa,
                     });
                 }
 
@@ -88,8 +90,12 @@ export function FieldActionsPopup(props: FieldActionsPopupProps) {
             items={getMenuItems(field, onItemClick, readonly)}
             popupProps={{
                 placement: ['bottom-end', 'top-end'],
+                qa: DatasetFieldsTabQa.FieldContextMenuPopup,
             }}
             onOpenToggle={handleMenuToggle}
+            defaultSwitcherProps={{
+                qa: DatasetFieldsTabQa.FieldContextMenuBtn,
+            }}
         />
     );
 }

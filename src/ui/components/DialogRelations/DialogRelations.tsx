@@ -88,7 +88,7 @@ const EmptyState: React.FC = () => {
     );
 };
 
-const DialogRelations = (props: DialogRelationsProps) => {
+export const DialogRelations = (props: DialogRelationsProps) => {
     const {
         dashKitRef,
         dashTabAliases,

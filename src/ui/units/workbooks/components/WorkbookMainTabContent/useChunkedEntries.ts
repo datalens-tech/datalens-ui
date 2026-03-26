@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {EntryScope} from 'shared';
-import type {GetEntryResponse} from 'shared/schema';
+import type {WorkbookEntryBase} from 'shared/schema';
 import Utils from 'utils';
 
 import type {ChunkItem, EntryChunkItem, WorkbookEntry} from '../../types';
@@ -10,7 +10,7 @@ export const useChunkedEntries = ({
     entries,
     availableScopes,
 }: {
-    entries: GetEntryResponse[];
+    entries: WorkbookEntryBase[];
     availableScopes: EntryScope[];
 }): ChunkItem<WorkbookEntry>[][] => {
     const chunks = React.useMemo(() => {

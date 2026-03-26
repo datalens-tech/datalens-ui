@@ -6,8 +6,8 @@ import type {
 import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
 import type {
     DashData,
+    DashGlobalItem,
     DashTab,
-    DashTabItem,
     DashTabItemControlData,
     DashTabItemGroupControlData,
     ImpactType,
@@ -44,7 +44,7 @@ const createMockTab = (id: string, title: string, globalItems: MockedGroupItem[]
     layout: [],
     aliases: {},
     connections: [],
-    globalItems: globalItems as DashTabItem[],
+    globalItems: globalItems as DashGlobalItem[],
 });
 
 const createMockControlItem = (

@@ -8,3 +8,4 @@ export const TIMEOUT_90_SEC = 90000;
 export const TIMEOUT_95_SEC = 95000;
 export const TIMEOUT_100_SEC = 100000;
 export const TIMEOUT_120_SEC = 120000;
+export const TIMEOUT_125_SEC = 125000;

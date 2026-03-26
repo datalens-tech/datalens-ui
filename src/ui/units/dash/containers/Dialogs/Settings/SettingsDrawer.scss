@@ -1,0 +1,136 @@
+@use '~@gravity-ui/uikit/styles/mixins';
+
+.dl-dash-settings-drawer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden auto;
+
+    $class: &;
+    $classSettings: '.dialog-settings';
+    $buttonPadding: var(--g-spacing-4);
+
+    &__drawer-item {
+        --gn-top-alert-height: 40px;
+
+        width: var(--dl-dash-settings-drawer-width, 280px);
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-block-end: 1px solid var(--g-color-line-generic);
+        padding: var(--g-spacing-4) var(--g-spacing-3) var(--g-spacing-4) var(--g-spacing-4);
+        flex-shrink: 0;
+    }
+
+    &__content {
+        flex: 1;
+        overflow: auto;
+    }
+
+    &__section {
+        border-block-end: 1px solid var(--g-color-line-generic);
+
+        &_open #{$class}__section-header-chevron {
+            transform: rotate(180deg);
+        }
+    }
+
+    &__section-header-wrapper {
+        position: relative;
+    }
+
+    &__section-header {
+        --g-button-padding: var(--g-spacing-4);
+        --g-button-height: 56px;
+        --g-button-background-color-hover: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &:active {
+            transform: none;
+        }
+    }
+
+    &__section-header-chevron {
+        transition: transform 0.2s ease-in-out;
+        color: var(--g-color-text-secondary);
+
+        #{$class}__section-header:hover & {
+            color: var(--g-color-text-primary);
+        }
+    }
+
+    &__section-header-content {
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--g-spacing-2);
+        width: 224px;
+    }
+
+    &__section-header-additional {
+        position: absolute;
+        inset-inline-end: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+
+        &_main-icon {
+            inset-inline-end: $buttonPadding;
+        }
+    }
+
+    &__section-header-additional-button {
+        --g-button-height: var(--g-spacing-6);
+        --g-button-padding: 0;
+    }
+
+    &__section-header-counter {
+        display: inline-block;
+        color: var(--g-color-text-secondary);
+
+        margin-inline-start: var(--g-spacing-2);
+    }
+
+    &__section-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--g-spacing-4);
+        margin-block-end: var(--g-spacing-3);
+    }
+
+    & #{$classSettings}__row {
+        display: flex;
+        gap: var(--g-spacing-2);
+        padding: var(--g-spacing-1) var(--g-spacing-4);
+        justify-content: space-between;
+        width: 100%;
+
+        margin: 0;
+
+        #{$classSettings}__sub-row {
+            grid-template-columns: repeat(auto-fill, minmax(90px, 0.5fr));
+        }
+
+        &_direction_column {
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: stretch;
+
+            #{$classSettings}__sub-row {
+                grid-template-columns: 100%;
+            }
+        }
+    }
+
+    & #{$classSettings}__title {
+        padding-right: 0;
+    }
+}

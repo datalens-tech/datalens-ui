@@ -23,6 +23,7 @@ import {
     isDraft,
     isEditMode,
 } from '../../store/selectors/dashTypedSelectors';
+import type {SettingsDrawerFormApiRef} from '../Dialogs/Settings/SettingsDrawer';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -32,6 +33,7 @@ type OwnProps = {
     location: Location;
     handlerEditClick: () => void;
     entryDialoguesRef: React.RefObject<EntryDialogues>;
+    settingsDrawerApiRef?: React.RefObject<SettingsDrawerFormApiRef>;
     isEditModeLoading?: boolean;
 };
 
@@ -77,6 +79,7 @@ class Header extends React.PureComponent<Props, State> {
                 toggleTableOfContent={this.props.toggleTableOfContent}
                 handlerEditClick={this.props.handlerEditClick}
                 entryDialoguesRef={this.props.entryDialoguesRef}
+                settingsDrawerApiRef={this.props.settingsDrawerApiRef}
             />
         );
     }

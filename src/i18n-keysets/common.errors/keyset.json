@@ -1,0 +1,32 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_error-access-message": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-invalid-format-token-message": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-invalid-token-message": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-outdated-message": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-token-not-found-message": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

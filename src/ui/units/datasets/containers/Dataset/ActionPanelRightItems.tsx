@@ -18,6 +18,7 @@ import {
     updateSetting,
 } from '../../store/actions/creators';
 import {
+    avatarsSelector,
     dataExportEnabledSelector,
     datasetIdSelector,
     datasetValidationSelector,
@@ -72,8 +73,11 @@ export function ActionPanelRightItems(props: Props) {
     const dataExportEnabled = useSelector(dataExportEnabledSelector);
     const isValidationLoading = useSelector(datasetValidationSelector).isLoading;
     const rawSqlLevel = useSelector(rawSqlLevelSelector);
+    const avatars = useSelector(avatarsSelector);
     const historyActions = useHistoryActions();
-    const isSaveButtonDisabled = isSavingDatasetDisabled || isDatasetRevisionMismatch || readonly;
+    const hasNoAvatars = !avatars || avatars.length === 0;
+    const isSaveButtonDisabled =
+        isSavingDatasetDisabled || isDatasetRevisionMismatch || readonly || hasNoAvatars;
     const isRawSqlLevelEnableTemplating = RAW_SQL_LEVELS_ALLOW_TEMPLATING.includes(rawSqlLevel);
     const settingsValue = React.useMemo(() => {
         const nextValue: string[] = [];
@@ -94,6 +98,7 @@ export function ActionPanelRightItems(props: Props) {
     }, [isLoadPreviewByDefault, templateEnabled, isRawSqlLevelEnableTemplating, dataExportEnabled]);
 
     const {getRenderDatasetSettingsPopup} = registry.datasets.functions.getAll();
+    const CreateDashboardButton = registry.datasets.components.get('CreateDashboardButton');
 
     const handleUpdateSettings = React.useCallback(
         (value: string[]) => {
@@ -132,7 +137,12 @@ export function ActionPanelRightItems(props: Props) {
         const {ref, triggerProps} = args;
 
         return (
-            <Button ref={ref as React.Ref<HTMLButtonElement>} view="flat" {...triggerProps}>
+            <Button
+                ref={ref as React.Ref<HTMLButtonElement>}
+                view="flat"
+                qa={DatasetActionQA.SettingsButton}
+                {...triggerProps}
+            >
                 <Icon data={Gear} size={ACTION_PANEL_ICON_SIZE} />
             </Button>
         );
@@ -151,6 +161,7 @@ export function ActionPanelRightItems(props: Props) {
             key={ITEM_SHOW_PREVIEW_BY_DEFAULT}
             value={ITEM_SHOW_PREVIEW_BY_DEFAULT}
             disabled={isLoadingDataset || isValidationLoading}
+            qa={DatasetActionQA.SettingsShowPreviewByDefault}
         >
             {i18n('label_load_preview_by_default')}
         </Select.Option>,
@@ -202,6 +213,7 @@ export function ActionPanelRightItems(props: Props) {
                 {settingsSelectOptions}
             </Select>
             <DescriptionButton readonly={readonly} />
+            <CreateDashboardButton datasetId={datasetId} />
             <Button
                 view="normal"
                 size="m"

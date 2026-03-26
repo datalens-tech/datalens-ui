@@ -40,6 +40,7 @@ export function getFieldList(datasetFields: ServerField[], placeholders: ServerP
     return datasetFields.map((field) => {
         const fieldId = field.guid || (field as unknown as {id: string}).id;
         const placeholdersField = placeholdersFields.find(({guid}) => guid === fieldId);
+        const fakeTitle = placeholdersField?.fakeTitle;
 
         return {
             title: field.title,
@@ -48,6 +49,7 @@ export function getFieldList(datasetFields: ServerField[], placeholders: ServerP
             formatting: placeholdersField
                 ? getFormatOptions({...field, ...placeholdersField})
                 : undefined,
+            ...(fakeTitle ? {fakeTitle} : {}),
         };
     });
 }

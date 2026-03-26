@@ -3,7 +3,7 @@ import React from 'react';
 import {CHARTKIT_ERROR_CODE, ChartKitError} from '@gravity-ui/chartkit';
 import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import block from 'bem-cn-lite';
-import {pointer} from 'd3';
+import {pointer} from 'd3-selection';
 import debounce from 'lodash/debounce';
 import pick from 'lodash/pick';
 import throttle from 'lodash/throttle';
@@ -61,7 +61,7 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
 
     const chartState = React.useRef<any>({});
 
-    const render = () => {
+    const render = React.useCallback(() => {
         if (!originalData?.render) {
             return;
         }
@@ -71,7 +71,7 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
             const content = originalData.render.call(context, dimensions);
             contentRef.current.innerHTML = String(content ?? '');
         }
-    };
+    }, [dimensions, generatedId, originalData.render]);
 
     React.useEffect(() => {
         chartStorage.set(generatedId, {
@@ -104,7 +104,7 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
         return () => {
             chartStorage.delete(generatedId);
         };
-    }, [generatedId, dimensions, onChange]);
+    }, [generatedId, dimensions, onChange, render]);
 
     React.useEffect(() => {
         if (dimensions) {

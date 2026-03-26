@@ -4,6 +4,7 @@ export const enum ActionPanelEntryContextMenuQa {
     Copy = 'action-panel-entry-context-menu-item-copy',
     Remove = 'action-panel-entry-context-menu-item-remove',
     TableOfContent = 'action-panel-entry-context-menu-item-table-of-content',
+    RelatedEntities = 'action-panel-entry-context-menu-related-entities',
 }
 
 export const enum ActionPanelDashSaveControlsQa {

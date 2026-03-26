@@ -1,0 +1,92 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_back-to-export": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_begin-export": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel-export": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_close": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_close-export": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_download": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_cancel-export-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_close-export-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_info-documentation": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_info-file": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_info-secrets": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_info-time": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_info-versions": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_success-export": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_cancel-export": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_close-export": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_export": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_export-success": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_fatal-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

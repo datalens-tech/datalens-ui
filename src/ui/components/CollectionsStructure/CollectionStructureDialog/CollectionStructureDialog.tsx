@@ -274,6 +274,7 @@ export const CollectionStructureDialog = React.memo<Props>(
                             contentError={structureItemsError}
                             breadcrumbs={breadcrumbs}
                             items={structureItems}
+                            filters={filters}
                             nextPageToken={nextPageToken}
                             pageSize={PAGE_SIZE}
                             isSelectionAllowed={isSelectionAllowed}

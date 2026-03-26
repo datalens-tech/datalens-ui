@@ -7,6 +7,7 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DatasetField} from 'shared';
+import {DatasetFieldsTabQa} from 'shared';
 
 import {isHiddenSupported} from '../utils';
 
@@ -39,6 +40,7 @@ export const getHiddenColumn = ({
                 title={value ? i18n('button_display-field') : i18n('button_hide-field')}
                 disabled={unsupported || readonly}
                 onClick={() => onUpdate(row)}
+                qa={DatasetFieldsTabQa.FieldVisibleColumnIcon}
             >
                 <Icon
                     className={b('hidden', {hidden: Boolean(value && !unsupported), unsupported})}

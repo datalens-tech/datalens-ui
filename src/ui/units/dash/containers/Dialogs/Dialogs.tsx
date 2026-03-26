@@ -28,6 +28,8 @@ import {
 } from '../../store/selectors/dashTypedSelectors';
 
 import Settings from './Settings/Settings';
+import type {SettingsDrawerFormApiRef} from './Settings/SettingsDrawer';
+import {SettingsDrawer} from './Settings/SettingsDrawer';
 import Tabs from './Tabs/Tabs';
 
 const DASHBOARD_FEATURES = {
@@ -45,7 +47,11 @@ const DASHBOARD_FEATURES = {
 // TODO: to see if dialogs with complex content will slow down due to the fact that mount/unmount is happening
 // TODO: if there are noticeable lags, it will be possible to render the contents of the dialogs as available
 // TODO: however, this content is not really needed by those who are not going to edit the dashboard
-export function Dialogs() {
+export function Dialogs({
+    settingsDrawerApiRef,
+}: {
+    settingsDrawerApiRef?: React.RefObject<SettingsDrawerFormApiRef>;
+} = {}) {
     const dispatch = useDispatch();
 
     const entryId = useSelector(selectEntryId);
@@ -122,6 +128,9 @@ export function Dialogs() {
         case DIALOG_TYPE.TABS:
             return <Tabs />;
         case DIALOG_TYPE.SETTINGS:
+            if (isEnabledFeature(Feature.EnableCommonChartDashSettings)) {
+                return <SettingsDrawer onClose={closeDialogHandle} apiRef={settingsDrawerApiRef} />;
+            }
             return <Settings />;
         case DIALOG_TYPE.SELECT_STATE: {
             const DashSelectStateDialog = registry.dash.components.get('DashSelectStateDialog');

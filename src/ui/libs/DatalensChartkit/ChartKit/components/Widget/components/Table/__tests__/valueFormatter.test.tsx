@@ -1,5 +1,6 @@
 import React from 'react';
 
+import '@testing-library/jest-dom';
 import {cleanup, render} from '@testing-library/react';
 import type {DateTableColumn, NumberTableColumn} from 'shared';
 import {i18nInstance} from 'shared/modules/format-units/i18n/i18n';

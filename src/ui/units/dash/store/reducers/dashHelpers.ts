@@ -12,7 +12,7 @@ import type {
     DashTabLayout,
 } from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
-import type {DashTabConnection, ImpactTabsIds, ImpactType} from 'shared/types/dash';
+import type {DashGlobalItem, DashTabConnection, ImpactTabsIds, ImpactType} from 'shared/types/dash';
 
 import type {AddingGlobalItemArgs} from '../actions/dashTyped';
 import type {DashState} from '../typings/dash';
@@ -130,7 +130,7 @@ export function addGlobalItemToTab({
     addingGlobalItemArgs,
 }: {
     tab: DashTab;
-    item: DashTabItem;
+    item: DashGlobalItem;
     layoutItem?: DashTabLayout;
     updatedConnections?: DashTabConnection[];
     addingGlobalItemArgs?: AddingGlobalItemArgs;
@@ -209,7 +209,7 @@ export function updateTabsWithGlobalItem({
     addingGlobalItemArgs,
 }: {
     data: DashData;
-    addedItem: DashTabItem;
+    addedItem: DashGlobalItem;
     hasAllScope: boolean;
     usedTabs: Set<string>;
     tabData: DashTab;

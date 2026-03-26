@@ -1,7 +1,7 @@
 import z from 'zod';
 
 import {EntryScope} from '../../../..';
-import {dataSchema} from '../../../../zod-schemas/dash';
+import {dashMetaSchema, dataSchema} from '../../../../zod-schemas/dash';
 
 export const DASH_VERSION_1 = 1;
 
@@ -19,7 +19,7 @@ export const dashSchemaV1 = z.object({
     hidden: z.boolean(),
     key: z.union([z.null(), z.string()]),
     links: z.record(z.string(), z.string()).nullable().optional(),
-    meta: z.record(z.string(), z.string()).nullable(),
+    meta: dashMetaSchema,
     public: z.boolean(),
     publishedId: z.string().nullable(),
     revId: z.string(),

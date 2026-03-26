@@ -1,0 +1,11 @@
+.dataset-cache-tab {
+    &__description {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    &__confirm-btn {
+        margin-top: 20px;
+    }
+}

@@ -1,0 +1,72 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_add-user": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_load-more": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_field-email": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_field-first-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_field-id": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_field-last-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_field-login": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_field-roles": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_menu-change-password": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_menu-change-role": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_menu-delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_menu-edit-profile": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_search-placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_user": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_users-empty-message": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

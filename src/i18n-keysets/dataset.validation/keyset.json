@@ -1,0 +1,24 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_duplicated_paths_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_duplicated_titles_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_required-field-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

@@ -1,9 +1,9 @@
 // Usually jest ignores node_modules, since in an ideal world all modules are already correctly assembled
-// Here we add modules that need to be run through the ts-jest transofrmer
+// Here we add modules that need to be run through the ts-jest transformer
 const IGNORE_NODE_MODULES_LIST = [
     '@gravity-ui',
-    '@diplodoc/latex-extension/react',
-    '@diplodoc/mermaid-extension/react',
+    '@diplodoc/latex-extension',
+    '@diplodoc/mermaid-extension',
     'react-dnd',
     'dnd-core',
     'monaco-editor',
@@ -17,9 +17,13 @@ const IGNORE_NODE_MODULES_LIST = [
 ];
 
 export const getIgnoredNodeModulesRegexp = () => {
-    const modulesToTransform = IGNORE_NODE_MODULES_LIST.map(
-        (module) => `${module}(?:[^\\/]+\\/?)*`,
+    // Create pattern that matches module names in both npm/yarn and pnpm structures:
+    // - npm/yarn: node_modules/@scope/package/...
+    // - pnpm: node_modules/.pnpm/@scope+package@version/node_modules/@scope/package/...
+    // We need to handle both / and + as separators (pnpm uses + instead of / in .pnpm folder)
+    const modulesToTransform = IGNORE_NODE_MODULES_LIST.map((module) =>
+        module.replace(/[@/]/g, '[@/+]'),
     ).join('|');
 
-    return `node_modules/(?!(${modulesToTransform}))`;
+    return `node_modules/(?!.*(?:${modulesToTransform}))`;
 };

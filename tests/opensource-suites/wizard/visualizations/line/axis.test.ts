@@ -11,7 +11,12 @@ import {
 } from '../../../../../src/shared';
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
-import {RadioButtons} from '../../../../page-objects/wizard/PlaceholderDialog';
+import {
+    Inputs,
+    RadioButtons,
+    RadioButtonsValues,
+} from '../../../../page-objects/wizard/PlaceholderDialog';
+import {LONG_TEXT} from '../constants';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Line chart', () => {
@@ -120,6 +125,37 @@ datalensTest.describe('Wizard', () => {
             );
             await wizardPage.filterEditor.selectRangeDate(['01.01.2018', '10.01.2018']);
             await wizardPage.filterEditor.apply();
+            await expect(previewLoader).not.toBeVisible();
+            // // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+            await page.mouse.move(-1, -1);
+            await expect(chart).toBeVisible();
+            await expect(chartContainer).toHaveScreenshot();
+        });
+
+        datalensTest('Axis titles with line breaks @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const chart = chartContainer.locator('.chartkit-graph,.gcharts-chart');
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'segment');
+            await wizardPage.placeholderDialog.open(PlaceholderId.X);
+            await wizardPage.placeholderDialog.toggleRadioButton(
+                RadioButtons.Title,
+                RadioButtonsValues.Manual,
+            );
+            await wizardPage.placeholderDialog.fillInput(Inputs.TitleValueInput, LONG_TEXT);
+            await wizardPage.placeholderDialog.apply();
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'salesSum');
+            await wizardPage.placeholderDialog.open(PlaceholderId.Y);
+            await wizardPage.placeholderDialog.toggleRadioButton(
+                RadioButtons.Title,
+                RadioButtonsValues.Manual,
+            );
+            await wizardPage.placeholderDialog.fillInput(Inputs.TitleValueInput, LONG_TEXT);
+            await wizardPage.placeholderDialog.apply();
+
             await expect(previewLoader).not.toBeVisible();
             // // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
             await page.mouse.move(-1, -1);

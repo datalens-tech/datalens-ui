@@ -1,16 +1,8 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import type {
-    DatasetOptions,
-    Field,
-    FilterField,
-    LineShapeType,
-    PointsShapeType,
-    Update,
-} from 'shared';
-import {POINT_SHAPES_IN_ORDER, SHAPES_PALETTE_ORDER} from 'shared';
-import {selectClientAvailableLineShapes} from 'ui';
+import type {DatasetOptions, Field, FilterField, PointsShapeType, Update} from 'shared';
+import {POINT_SHAPES_IN_ORDER} from 'shared';
 
 import IconRenderer from '../../../../../../libs/DatalensChartkit/ChartKit/components/IconRenderer/IconRenderer';
 import {PaletteTypes} from '../../../../constants';
@@ -33,7 +25,6 @@ type Props = {
     options: DatasetOptions;
     updates: Update[];
     filters: FilterField[];
-    paletteType: PaletteTypes;
 };
 
 const DEFAULT_SHAPE = 'auto';
@@ -53,20 +44,12 @@ const DialogShapesPalette: React.FC<Props> = ({
     onPaletteItemClick,
     parameters,
     dashboardParameters,
-    paletteType,
 }: Props) => {
     const {mountedShapes, selectedValue} = shapesState;
 
     const palette = React.useMemo(() => {
-        if (paletteType === PaletteTypes.Points) {
-            return [...POINT_SHAPES_IN_ORDER, 'auto'];
-        }
-
-        const availableLineShapes = selectClientAvailableLineShapes();
-        return availableLineShapes.sort(
-            (shape1, shape2) => SHAPES_PALETTE_ORDER[shape1] - SHAPES_PALETTE_ORDER[shape2],
-        );
-    }, [paletteType]);
+        return [...POINT_SHAPES_IN_ORDER, 'auto'];
+    }, []);
 
     const isDefaultItem = React.useCallback(
         (shape: string) => shape === DEFAULT_SHAPE || !shape,
@@ -94,30 +77,12 @@ const DialogShapesPalette: React.FC<Props> = ({
             if (isDefault) {
                 content = 'A';
             } else {
-                switch (paletteType) {
-                    case PaletteTypes.Lines: {
-                        content = (
-                            <IconRenderer iconType={currentShape as LineShapeType} width="40px" />
-                        );
-                        break;
-                    }
-
-                    case PaletteTypes.Points: {
-                        content = (
-                            <IconRenderer iconType={currentShape as PointsShapeType} width="12px" />
-                        );
-                        break;
-                    }
-                }
+                content = <IconRenderer iconType={currentShape as PointsShapeType} width="12px" />;
             }
 
-            return (
-                <div className={b('value-shape', {default: isDefault, type: paletteType})}>
-                    {content}
-                </div>
-            );
+            return <div className={b('value-shape', {default: isDefault})}>{content}</div>;
         },
-        [mountedShapes, paletteType],
+        [mountedShapes, palette],
     );
 
     return (
@@ -145,9 +110,9 @@ const DialogShapesPalette: React.FC<Props> = ({
                 }}
             />
             <Palette
-                className={b('palette', {type: paletteType})}
-                itemClassName={b('palette-item', {type: paletteType})}
-                paletteType={paletteType}
+                className={b('palette')}
+                itemClassName={b('palette-item')}
+                paletteType={PaletteTypes.Points}
                 palette={palette}
                 onPaletteItemClick={onPaletteItemClick}
                 isSelectedItem={isSelectedItem}

@@ -13,6 +13,7 @@ export type MenuItem = {
     label: string;
     theme?: MenuItemProps['theme'];
     hidden?: boolean;
+    qa?: string;
 };
 
 export type UpdatePayload = {

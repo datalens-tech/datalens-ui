@@ -39,6 +39,7 @@ export const ColorItem = React.forwardRef(function ColorItemWithRef(
                 transparent: isTransparent,
             })}
             data-qa={qa}
+            aria-hidden="true"
         ></span>
     );
     const mods = {

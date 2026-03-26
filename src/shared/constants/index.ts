@@ -32,3 +32,4 @@ export * from './print';
 export * from './charts';
 export * from './chart-modeling';
 export * from './widgets';
+export * from './operations';

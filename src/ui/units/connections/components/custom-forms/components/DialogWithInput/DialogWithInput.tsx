@@ -3,6 +3,7 @@ import React from 'react';
 import type {ButtonProps} from '@gravity-ui/uikit';
 import {Dialog, TextInput} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import {ConnectionsS3BaseQA} from 'shared';
 
 import type {DialogConnWithInputProps} from './types';
 
@@ -14,7 +15,11 @@ export const DialogWithInput = <T extends unknown>(props: DialogConnWithInputPro
     const [updatedValue, setUpdatedValue] = React.useState(value || '');
     const [loading, setLoading] = React.useState(false);
     const propsButtonApply: Partial<ButtonProps> = React.useMemo(() => {
-        return {disabled: !updatedValue, loading};
+        return {
+            disabled: !updatedValue,
+            loading,
+            qa: ConnectionsS3BaseQA.S3_RENAME_DIALOG_SUBMIT_BUTTON,
+        };
     }, [updatedValue, loading]);
 
     const handleUpdate = React.useCallback((nextName: string) => {
@@ -68,6 +73,7 @@ export const DialogWithInput = <T extends unknown>(props: DialogConnWithInputPro
                     autoFocus={true}
                     disabled={loading}
                     onUpdate={handleUpdate}
+                    qa={ConnectionsS3BaseQA.S3_RENAME_DIALOG_NAME_INPUT}
                 />
             </Dialog.Body>
             <Dialog.Footer

@@ -1,0 +1,44 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "aria_choose-color": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "aria_enter-color": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "aria_opacity": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_custom_value": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tooltip_click-to-select": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_base_gray": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_default": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_transparent": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

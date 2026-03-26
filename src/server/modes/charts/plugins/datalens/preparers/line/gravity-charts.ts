@@ -3,7 +3,6 @@ import type {
     ChartSeries,
     ChartYAxis,
     LineSeries,
-    LineSeriesData,
 } from '@gravity-ui/chartkit/gravity-charts';
 import groupBy from 'lodash/groupBy';
 import merge from 'lodash/merge';
@@ -13,12 +12,11 @@ import type {
     SeriesExportSettings,
     ServerField,
     WizardVisualizationId,
-    WrappedHTML,
-    WrappedMarkdown,
 } from '../../../../../../../shared';
 import {
     AxisMode,
     PlaceholderId,
+    getFakeTitleOrTitle,
     getIsNavigatorEnabled,
     getXAxisMode,
     isDateField,
@@ -27,14 +25,21 @@ import {
     isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
+import type {ExtendedChartData} from '../../../../../../../shared/types/chartkit';
 import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
-import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
+import {
+    getBaseChartConfig,
+    getTotalsPrecisionFromSeriesTooltips,
+    getYAxisBaseConfig,
+} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getSeriesRangeSliderConfig} from '../../gravity-charts/utils/range-slider';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
+import {SEGMENT_TITLE_BASE_CONFIG} from '../constants';
 import {getAxisFormatting, getAxisType, getYAxisPlaceholders} from '../helpers/axis';
 import {DATA_LABEL_DEFAULT_PADDING} from '../helpers/axis/data-labels';
+import {concatStringValues} from '../helpers/common';
 import {isXAxisReversed} from '../helpers/highcharts';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
@@ -44,17 +49,7 @@ import {
 } from '../utils';
 
 import {prepareLineData} from './prepare-line-data';
-
-type ExtendedLineSeriesData = Omit<LineSeriesData, 'x'> & {
-    x?: LineSeriesData['x'] | WrappedHTML | WrappedMarkdown;
-};
-
-type ExtendedLineSeries = Omit<LineSeries, 'data'> & {
-    custom?: {
-        exportSettings?: SeriesExportSettings;
-    };
-    data: ExtendedLineSeriesData[];
-};
+import type {ExtendedLineSeries, ExtendedLineSeriesData} from './types';
 
 // eslint-disable-next-line complexity
 export function prepareGravityChartLine(args: PrepareFunctionArgs) {
@@ -70,6 +65,10 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         sort,
         visualizationId,
     } = args;
+    const baseConfig = getBaseChartConfig({
+        shared,
+        visualization: {placeholders, id: visualizationId},
+    });
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
@@ -109,30 +108,17 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const isSplitEnabled = Boolean(segmentField);
     const isSplitWithHtmlValues = isHtmlField(segmentField);
     const isMultiAxis = Boolean(yPlaceholder?.items.length && y2Placeholder?.items.length);
-
     const preparedData = prepareLineData(args);
     const xCategories = preparedData.categories;
 
-    const exportSettings: SeriesExportSettings = {
-        columns: [
-            getExportColumnSettings({path: 'x', field: xField}),
-            getExportColumnSettings({path: 'y', field: yFields[0]}),
-        ],
-    };
-
     const colorItem = colors[0];
-    if (colorItem) {
-        exportSettings.columns.push(
-            getExportColumnSettings({path: 'series.custom.colorValue', field: colorItem}),
-        );
-    }
-
     const shapeItem = shapes[0];
-    if (shapeItem) {
-        exportSettings.columns.push(
-            getExportColumnSettings({path: 'series.custom.shapeValue', field: shapeItem}),
-        );
-    }
+
+    const xValueExportSetting = getExportColumnSettings({
+        path: isCategoriesXAxis ? 'category' : 'x',
+        field: xField,
+    });
+    const yValueExportSetting = getExportColumnSettings({path: 'y', field: yFields[0]});
 
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
@@ -158,7 +144,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         }
 
         if (graph.custom?.segmentTitle) {
-            seriesName = `${graph.custom.segmentTitle}: ${seriesName}`;
+            seriesName = concatStringValues(graph.custom.segmentTitle, ': ', seriesName);
         }
 
         const labelFormatting = graph.dataLabels
@@ -168,6 +154,17 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         if (!isSplitEnabled && isSecondOnlyYAxis && chartYAxisItems.length > 1) {
             yAxisIndex = 1;
         }
+
+        const exportSettings: SeriesExportSettings = {
+            columns: [
+                xValueExportSetting,
+                {
+                    ...yValueExportSetting,
+                    id: seriesName,
+                    name: seriesName,
+                },
+            ],
+        };
 
         return {
             name: seriesName,
@@ -188,13 +185,20 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                     }
                 }
 
+                let x: ExtendedLineSeriesData['x'];
                 if (isCategoriesXAxis) {
-                    dataItem.x = index;
+                    x = index;
                 } else if (!item && xCategories) {
-                    dataItem.x = xCategories[index];
+                    x = xCategories[index];
                 } else {
-                    dataItem.x = item?.x;
+                    x = item?.x;
                 }
+
+                if (!isCategoriesXAxis && !Number.isFinite(x)) {
+                    return acc;
+                }
+
+                dataItem.x = x;
 
                 acc.push(dataItem);
 
@@ -214,6 +218,9 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 itemText: graph.legendTitle,
             },
             dashStyle: graph.dashStyle,
+            lineWidth: graph.lineWidth,
+            linecap: graph.linecap,
+            linejoin: graph.linejoin,
             tooltip: graph.tooltip?.chartKitFormatting
                 ? {
                       valueFormat: mapChartkitFormatSettingsToGravityChartValueFormat({
@@ -227,14 +234,20 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 exportSettings,
                 colorValue: graph.colorValue,
                 shapeValue: graph.shapeValue,
+                drillDownFilterValue: graph.drillDownFilterValue,
             },
             rangeSlider,
-            graph,
         };
     });
 
     const shouldUseHtmlForLegend = [colorItem, shapeItem].some(isHtmlField);
     const legend: ChartData['legend'] = {html: shouldUseHtmlForLegend};
+    const nonEmptyLegendGroups = Array.from(
+        new Set(seriesData.map((s) => s.legend?.groupId).filter(Boolean)),
+    );
+    if (isSplitEnabled && nonEmptyLegendGroups.length <= 1) {
+        legend.enabled = false;
+    }
 
     let xAxis: ChartData['xAxis'] = {
         startOnTick: false,
@@ -263,6 +276,8 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 xAxis.endOnTick = true;
             }
         }
+
+        xAxis.tickMarks = {enabled: Boolean(baseConfig.xAxis?.labels?.enabled)};
     }
 
     if (xAxis && isXAxisReversed(xField, sort, visualizationId as WizardVisualizationId)) {
@@ -292,9 +307,8 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                     titleText = wrapHtml(d.title);
                 }
                 axisTitle = {
+                    ...SEGMENT_TITLE_BASE_CONFIG,
                     text: titleText,
-                    rotation: 0,
-                    maxWidth: '25%',
                     html: isSplitWithHtmlValues,
                 };
             }
@@ -354,13 +368,21 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         });
     }
 
-    const config: ChartData = {
+    const config: ExtendedChartData = {
         series: {
             data: seriesData as ChartSeries[],
         },
         xAxis,
         yAxis,
         legend,
+        custom: {
+            tooltip: {
+                headerLabel:
+                    isDateField(xField) && !isCategoriesXAxis
+                        ? undefined
+                        : getFakeTitleOrTitle(xField),
+            },
+        },
     };
 
     if (isSplitEnabled) {
@@ -374,16 +396,20 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     }
 
     if (yFields[0]) {
+        const valueFormat = getFieldFormatOptions({field: yFields[0]});
         config.tooltip = {
-            valueFormat: getFieldFormatOptions({field: yFields[0]}),
+            valueFormat,
+            totals: {
+                valueFormat:
+                    valueFormat?.type === 'number' && valueFormat.format
+                        ? valueFormat
+                        : {
+                              type: 'number',
+                              precision: getTotalsPrecisionFromSeriesTooltips(seriesData),
+                          },
+            },
         };
     }
 
-    return merge(
-        getBaseChartConfig({
-            shared,
-            visualization: {placeholders, id: visualizationId},
-        }),
-        config,
-    );
+    return merge(baseConfig, config);
 }

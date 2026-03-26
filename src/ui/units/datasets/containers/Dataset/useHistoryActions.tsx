@@ -1,7 +1,10 @@
+import React from 'react';
+
 import {HOTKEYS_SCOPES} from 'ui/constants/misc';
 import {useEditHistoryActions} from 'ui/hooks/useEditHistoryActions';
 import type {DatalensGlobalState} from 'ui/index';
 import {selectCanGoBack, selectCanGoForward} from 'ui/store/selectors/editHistory';
+import {openModalSubscriber} from 'ui/utils';
 
 import {DATASETS_EDIT_HISTORY_UNIT_ID} from '../../constants';
 
@@ -30,11 +33,19 @@ const canGoForwardSelector = (state: DatalensGlobalState) => {
 };
 
 export function useHistoryActions() {
+    const [disabled, setDisabled] = React.useState(false);
+
+    React.useEffect(() => {
+        const unsubscribe = openModalSubscriber(setDisabled);
+        return unsubscribe;
+    }, []);
+
     return useEditHistoryActions({
         unitId: DATASETS_EDIT_HISTORY_UNIT_ID,
         hotkeyScope: HOTKEYS_SCOPES.DATASETS,
         canGoBackSelector,
         canGoForwardSelector,
         iconSize: ACTION_PANEL_ICON_SIZE,
+        disabled,
     });
 }

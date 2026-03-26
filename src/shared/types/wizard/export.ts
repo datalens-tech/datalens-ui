@@ -1,6 +1,7 @@
 import type {ServerFieldFormatting} from '../config/wizard';
 
 export type ColumnExportSettings = {
+    id: string;
     field: string;
     name: string;
     formatter?: ServerFieldFormatting;

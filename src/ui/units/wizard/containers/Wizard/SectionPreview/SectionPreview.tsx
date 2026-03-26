@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {StringParams} from 'shared';
-import {MenuItemsIds, WizardPageQa} from 'shared';
+import {MenuItemsIds, WizardPageQa, WizardType} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
@@ -171,9 +171,18 @@ class SectionPreview extends Component<Props> {
             const params = omit(searchParams, FORBIDDEN_PARAMS);
             const {actionParamsEnabled} = Utils.getOptionsFromSearch(window.location.search);
 
+            let key: string | undefined;
+
+            if (configType === WizardType.GraphWizardNode) {
+                // we have to recreate the chart for each new configuration
+                // (a temporary solution for charts)
+                key = JSON.stringify(config);
+            }
+
             return (
                 <ChartWrapper
                     usageType="chart"
+                    key={key}
                     id={previewEntryId ? previewEntryId : widget ? widget.entryId : ''}
                     revId={revId}
                     params={params}

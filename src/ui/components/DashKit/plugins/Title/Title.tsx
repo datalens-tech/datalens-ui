@@ -58,11 +58,11 @@ const MIN_AVAILABLE_TOP_OFFSET = -5;
 const titlePlugin: PluginTitle = {
     ...pluginTitle,
     setSettings(settings: PluginTitleObjectSettings) {
-        const {hideAnchor, hideHint, globalWidgetSettings} = settings;
+        const {hideAnchor, hideHint, entryWidgetSettings} = settings;
 
         titlePlugin.hideAnchor = hideAnchor;
         titlePlugin.hideHint = hideHint;
-        titlePlugin.globalWidgetSettings = globalWidgetSettings;
+        titlePlugin.entryWidgetSettings = entryWidgetSettings;
         return titlePlugin;
     },
     renderer: function PluginTitleRenderer(
@@ -131,18 +131,10 @@ const titlePlugin: PluginTitle = {
 
         const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
         const withAbsoluteHint = showHint && !isInlineExtraElements;
+
         const {style, hasInternalMargins} = usePreparedWrapSettings({
-            ownWidgetSettings: {
-                background: data.background,
-                backgroundSettings: data.backgroundSettings,
-                borderRadius: data.borderRadius,
-                internalMarginsEnabled: data.internalMarginsEnabled,
-            },
-            dashVisualSettings: {
-                background: undefined,
-                backgroundSettings: undefined,
-                widgetsSettings: titlePlugin.globalWidgetSettings,
-            },
+            data,
+            entryWidgetSettings: titlePlugin.entryWidgetSettings,
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 

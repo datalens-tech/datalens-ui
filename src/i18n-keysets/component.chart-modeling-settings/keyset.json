@@ -1,0 +1,84 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_additional-settings": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_auto": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_cubic": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_linear": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_link-series": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_method": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_null-data-warning": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_null-data-warning-short": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_quadratic": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_shape-and-width": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_simple-moving-average": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_smoothing": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_trend": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_window-size": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_modeling": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tooltip_smoothing-method": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tooltip_smoothing-window-size": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tooltip_trend-method": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

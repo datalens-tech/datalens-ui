@@ -16,7 +16,7 @@ import {computeColorFromToken} from 'ui/utils/widgets/colors';
 import {ColorInputsGroup} from '../ColorInputsGroup/ColorInputsGroup';
 import {ColorPicker} from '../ColorPicker/ColorPicker';
 
-type PaletteBackgroundProps = Pick<ColorPickerInputProps, 'placeholder'> & {
+type PaletteBackgroundProps = Pick<ColorPickerInputProps, 'placeholder' | 'hasOpacityInput'> & {
     color: ColorSettings | undefined;
     oldColor: string | undefined;
     onSelect: (color: ColorSettings | undefined) => void;
@@ -58,6 +58,7 @@ export const PaletteBackground = ({
     direction = 'row',
     placeholder,
     width,
+    hasOpacityInput = true,
 }: PaletteBackgroundProps) => {
     const mainPresetOptions = [
         CustomPaletteBgColors.NONE,
@@ -76,6 +77,7 @@ export const PaletteBackground = ({
     if (isDashColorPickersByThemeEnabled || color) {
         return (
             <ColorInputsGroup
+                hasOpacityInput={hasOpacityInput}
                 theme={theme}
                 placeholder={placeholder}
                 value={color ?? computeColorFromToken(oldColor)}

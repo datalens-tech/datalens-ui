@@ -454,7 +454,10 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                 data: {
                     lockToken,
                     mode: mode,
-                    meta: isPublishing ? {is_release: true} : {},
+                    meta: {
+                        ...prevEntry.meta,
+                        ...(isPublishing ? {is_release: true} : {}),
+                    },
                     annotation: {
                         description: annotation?.description ?? '',
                     },

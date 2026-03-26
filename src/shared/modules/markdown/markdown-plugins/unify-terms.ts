@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import type {MarkdownIt, StateCore} from '@diplodoc/transform/lib/typings';
 
 import {YfmAttributes, YfmTokenTypes} from '../../../constants';

@@ -22,10 +22,18 @@ export const getConnectorIconDataByAlias = (type?: string): IconData | undefined
     }
 };
 
-export const getConnectorIconData = (
+export function getConnectorIconData(
+    type: string | undefined,
+    withoutDefault: true,
+): ConnectorIconData | IconData | undefined;
+export function getConnectorIconData(
+    type?: string,
+    withoutDefault?: false,
+): ConnectorIconData | IconData;
+export function getConnectorIconData(
     type?: string,
     withoutDefault?: boolean,
-): ConnectorIconData | IconData => {
+): ConnectorIconData | IconData | undefined {
     const iconData = getBIConnectorIconData(type);
 
     if (iconData) {
@@ -33,4 +41,4 @@ export const getConnectorIconData = (
     }
 
     return withoutDefault ? undefined : iconUndefined;
-};
+}

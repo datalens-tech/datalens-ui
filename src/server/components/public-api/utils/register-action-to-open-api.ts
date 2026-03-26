@@ -37,7 +37,7 @@ export const registerActionToOpenApi = ({
         throw new Error(`Action schema not found for action: ${actionName}`);
     }
 
-    const {summary, tags, experimental, headers} = openApi;
+    const {summary, description, tags, experimental, headers} = openApi;
 
     openApiRegistry.registerPath({
         method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase() as Lowercase<
@@ -46,6 +46,7 @@ export const registerActionToOpenApi = ({
         path: resolveUrl({actionName}),
         tags,
         summary: experimental ? `🚧 [Experimental] ${summary}` : summary,
+        description,
         request: {
             ...(actionSchema.paramsSchema
                 ? {

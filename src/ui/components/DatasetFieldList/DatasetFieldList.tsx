@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 
 import {I18n} from '../../../i18n';
 import type {DatasetField} from '../../../shared';
-import {DatasetFieldType, isParameter} from '../../../shared';
+import {DatasetFieldType, DialogFilterQA, isParameter} from '../../../shared';
 import DataTypeIcon from '../DataTypeIcon/DataTypeIcon';
 
 import './DatasetFieldList.scss';
@@ -30,7 +30,7 @@ const DatasetFieldList: React.FC<DatasetFieldListProps> = (props) => {
         const fieldType = isParameter(field) ? DatasetFieldType.Parameter : type;
 
         return (
-            <div className={b('field')}>
+            <div className={b('field')} data-qa={DialogFilterQA.ListItem}>
                 <DataTypeIcon
                     className={b('field-icon')}
                     fieldType={fieldType}

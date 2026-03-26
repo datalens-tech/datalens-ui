@@ -41,8 +41,8 @@ docker compose -f docker-compose.dev.yaml up
 # Start datalens ui in dev mode:
 git clone git@github.com:datalens-tech/datalens-ui.git
 cd ui
-npm ci
-npm run dev
+pnpm install --frozen-lockfile
+pnpm run dev
 ```
 
 Now you can open datalens in dev mode at [http://localhost:8080](http://localhost:8080)

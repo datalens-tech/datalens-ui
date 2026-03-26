@@ -29,7 +29,7 @@ export function isPotentiallyUnsafeChart(chartType: string) {
 }
 
 export function getSafeChartWarnings(chartType: string, widgetData?: unknown) {
-    if (isPotentiallyUnsafeChart(chartType)) {
+    if ((EDITOR_UNSAFE_CHART_TYPES as string[]).includes(chartType)) {
         const ignoreAttrs = [WRAPPED_FN_KEY, WRAPPED_HTML_KEY];
         const pathToFunction = isObjectWith(widgetData, isFunction, ignoreAttrs);
         if (pathToFunction) {
@@ -60,7 +60,7 @@ const HC_FORBIDDEN_ATTRS = [
 ] as const;
 const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'state'];
 
-const EVENT_KEYS = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey'];
+const EVENT_KEYS = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey', 'type', 'clientX', 'clientY'];
 
 const MAX_NESTING_LEVEL = 5;
 function removeSVGElements(val: unknown, nestingLevel = 0): unknown {
@@ -153,4 +153,15 @@ export function clearVmProp(prop: unknown): unknown {
     }
 
     return prop;
+}
+
+export function prepareGravityChartArg(value: unknown): unknown {
+    if (value && typeof value === 'object') {
+        // instanceof Event
+        if ('preventDefault' in value) {
+            return pick(value, EVENT_KEYS);
+        }
+    }
+
+    return value;
 }

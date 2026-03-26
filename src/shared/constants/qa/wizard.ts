@@ -135,6 +135,10 @@ export const enum DialogColorQa {
     CustomColorInput = 'color-dialog-custom-color-input',
 }
 
+export const enum DialogLineShapesQa {
+    ValueList = 'dialog-line-shapes-value-list',
+}
+
 export const enum SectionVisualizationAddItemQa {
     NoFieldsErrorTooltip = 'section-visualisation-no-field-error-tooltip',
     LabelsOverflowErrorTooltip = 'section-visualisation-labels-overflow-error-tooltip',
@@ -150,6 +154,7 @@ export const enum DialogPlaceholderQa {
     AxisScaleModeRadioButtons = 'dialog-placeholder-axis-scale-mode',
     AxisMinInput = 'dialog-placeholder-axis-min-input',
     AxisMaxInput = 'dialog-placeholder-axis-max-input',
+    HolidaysRadioButtons = 'holidays-radio-buttons',
 }
 
 export const enum DatasetItemActionsQa {

@@ -30,6 +30,7 @@ import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {ICONS_MENU_DEFAULT_SIZE} from '../../../../libs/DatalensChartkit/menu/MenuItems';
 import navigateHelper from '../../../../libs/navigateHelper';
 import {isEmbeddedMode} from '../../../../utils/embedded';
+import type {SettingsDrawerFormApiRef} from '../../containers/Dialogs/Settings/SettingsDrawer';
 import {WidgetMetaContext} from '../../contexts/WidgetMetaContext';
 import {
     saveDashAsDraft,
@@ -41,6 +42,7 @@ import {
     setPublishDraft,
     updateDeprecatedDashConfig,
 } from '../../store/actions/dashTyped';
+import {closeDialog} from '../../store/actions/dialogs/actions';
 import {isDeprecatedDashData} from '../../store/actions/helpers';
 import {openEmptyDialogRelations} from '../../store/actions/relations/actions';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../../store/constants';
@@ -63,6 +65,8 @@ import './DashActionPanel.scss';
 const b = block('dash-action-panel');
 const i18n = I18n.keyset('dash.action-panel.view');
 
+const isCommonChartsDashSettingsEnabled = isEnabledFeature(Feature.EnableCommonChartDashSettings);
+
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -82,6 +86,7 @@ type OwnProps = {
     openDialog: (dialogType: ValuesType<typeof DIALOG_TYPE>) => void;
     toggleTableOfContent: () => void;
     entryDialoguesRef: React.RefObject<EntryDialogues>;
+    settingsDrawerApiRef?: React.RefObject<SettingsDrawerFormApiRef>;
 };
 
 export type ActionPanelProps = OwnProps & StateProps & DispatchProps;
@@ -160,8 +165,12 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 onSaveAsNewClick={this.handlerSaveAsNewClick}
                 onCancelClick={this.handlerCancelEditClick}
                 onOpenDialogSettingsClick={this.openDialogSettings}
-                onOpenDialogConnectionsClick={this.openDialogConnections}
-                onOpenDialogTabsClick={this.openDialogTabs}
+                onOpenDialogConnectionsClick={
+                    isCommonChartsDashSettingsEnabled ? undefined : this.openDialogConnections
+                }
+                onOpenDialogTabsClick={
+                    isCommonChartsDashSettingsEnabled ? undefined : this.openDialogTabs
+                }
                 entryDialoguesRef={this.props.entryDialoguesRef}
                 isDraft={this.props.isDraft}
                 isRenameWithoutReload={this.props.isRenameWithoutReload}
@@ -187,7 +196,13 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         );
     }
 
-    openDialogSettings = () => this.props.openDialog(DIALOG_TYPE.SETTINGS);
+    openDialogSettings = () => {
+        if (this.props.dashEntry.openedDialog === DIALOG_TYPE.SETTINGS) {
+            this.props.closeDialog();
+        } else {
+            this.props.openDialog(DIALOG_TYPE.SETTINGS);
+        }
+    };
 
     openDialogConnections = () =>
         this.props.openEmptyDialogRelations({
@@ -270,6 +285,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     };
 
     handlerSetActualVersion = () => {
+        this.props.settingsDrawerApiRef?.current?.forceFlushState();
         const isDraftEntry = isDraftVersion(this.props.entry as RevisionEntry);
         if (isDraftEntry) {
             this.props.setPublishDraft();
@@ -277,17 +293,22 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
             this.props.entryDialoguesRef.current.open({
                 dialog: EntryDialogName.SetActualConfirm,
                 dialogProps: {
-                    onConfirm: this.props.setActualDash,
+                    onConfirm: () => {
+                        this.props.settingsDrawerApiRef?.current?.forceFlushState();
+                        this.props.setActualDash();
+                    },
                 },
             });
         }
     };
 
     handlerSaveAsDraftDashClick = () => {
+        this.props.settingsDrawerApiRef?.current?.forceFlushState();
         this.props.saveDashAsDraft();
     };
 
     handlerSaveAndPublishDashClick = () => {
+        this.props.settingsDrawerApiRef?.current?.forceFlushState();
         this.props.setActualDash();
     };
 
@@ -392,6 +413,7 @@ const mapDispatchToProps = {
     openDialogConfirm,
     openEmptyDialogRelations,
     closeDialogConfirm,
+    closeDialog,
     goBack,
     goForward,
 };

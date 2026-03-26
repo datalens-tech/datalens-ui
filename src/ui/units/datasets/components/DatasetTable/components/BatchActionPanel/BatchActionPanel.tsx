@@ -4,6 +4,7 @@ import {Eye, EyeSlash, Pencil, TrashBin} from '@gravity-ui/icons';
 import type {ActionsPanelProps} from '@gravity-ui/uikit';
 import {ActionsPanel, Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import {DatasetFieldTabBatchPanelQa, DatasetFieldsTabQa} from 'shared';
 
 import {BatchFieldAction} from '../../constants';
 
@@ -34,6 +35,7 @@ export const BatchActionPanel = ({
                             <Icon key="icon" data={TrashBin} size="16" />,
                             i18n('button_batch-remove'),
                         ],
+                        qa: DatasetFieldTabBatchPanelQa.BatchDelete,
                         onClick: () => onAction(BatchFieldAction.Remove),
                     },
                 },
@@ -55,6 +57,7 @@ export const BatchActionPanel = ({
                             <Icon key="icon" data={EyeSlash} size="16" />,
                             i18n('button_batch-hide'),
                         ],
+                        qa: DatasetFieldTabBatchPanelQa.BatchHide,
                         onClick: () => onAction(BatchFieldAction.Hide),
                     },
                 },
@@ -76,6 +79,7 @@ export const BatchActionPanel = ({
                             <Icon key="icon" data={Eye} size="16" />,
                             i18n('button_batch-show'),
                         ],
+                        qa: DatasetFieldTabBatchPanelQa.BatchShow,
                         onClick: () => onAction(BatchFieldAction.Show),
                     },
                 },
@@ -97,6 +101,7 @@ export const BatchActionPanel = ({
                             <Icon key="icon" data={Pencil} size="16" />,
                             i18n('button_batch-type'),
                         ],
+                        qa: DatasetFieldTabBatchPanelQa.BatchType,
                         onClick: () => onAction(BatchFieldAction.Type),
                     },
                 },
@@ -118,6 +123,7 @@ export const BatchActionPanel = ({
                             <Icon key="icon" data={Pencil} size="16" />,
                             i18n('button_batch-aggregation'),
                         ],
+                        qa: DatasetFieldTabBatchPanelQa.BatchAggregation,
                         onClick: () => onAction(BatchFieldAction.Aggregation),
                     },
                 },
@@ -139,6 +145,7 @@ export const BatchActionPanel = ({
             className={className}
             onClose={onClose}
             renderNote={() => i18n('label_batch-selected-fields-count', {value: count})}
+            qa={DatasetFieldsTabQa.BatchActionsPanel}
         />
     );
 };

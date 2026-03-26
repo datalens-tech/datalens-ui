@@ -3,6 +3,7 @@ import {deleteCollection} from './delete-collection';
 import {deleteCollections} from './delete-collections';
 import {getCollection} from './get-collection';
 import {getCollectionBreadcrumbs} from './get-collection-breadcrumbs';
+import {getCollectionsByIds} from './get-collections-by-ids';
 import {getRootCollectionPermissions} from './get-root-collection-permissions';
 import {getStructureItems} from './get-structure-items';
 import {moveCollection} from './move-collection';
@@ -13,6 +14,7 @@ export const collectionsActions = {
     getRootCollectionPermissions,
     createCollection,
     getCollection,
+    getCollectionsByIds,
     getStructureItems,
     getCollectionBreadcrumbs,
     deleteCollection,

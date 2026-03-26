@@ -1,0 +1,60 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_admin-notification": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-incorrect-old-password": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-passwords-not-match": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-required-fields": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_new-password": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_old-password": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_password": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_repeat-password": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_success-change": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_change-password": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

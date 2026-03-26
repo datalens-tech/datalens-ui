@@ -42,9 +42,11 @@ export type TabMenuProps<T> = {
 export type TabsWithMenu = {
     enableActionMenu: true;
     onUpdateItem: (title: string) => void;
+    showDefaultTabStar?: boolean;
 };
 
 type TabsWithRemove = {
     enableActionMenu?: false;
     onUpdateItem?: (title: string) => void;
+    showDefaultTabStar: boolean;
 };

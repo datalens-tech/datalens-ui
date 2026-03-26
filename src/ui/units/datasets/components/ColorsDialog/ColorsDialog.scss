@@ -63,4 +63,10 @@ $class: 'colors-dialog';
         width: 50%;
         border-right: 1px solid var(--g-color-line-generic);
     }
+
+    &__value-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }

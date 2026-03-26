@@ -1,0 +1,40 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save-as": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save-as-draft": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save-as-published": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_saved": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_widget-name-copy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_warning-not-latest-version": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

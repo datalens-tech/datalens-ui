@@ -19,7 +19,7 @@ const i18n = I18n.keyset('component.entry-row.view');
 export type RowEntryData = {
     entryId?: string;
     disabled?: boolean;
-    key?: string;
+    key?: string | null;
     name?: string;
     scope: string;
     type?: string;

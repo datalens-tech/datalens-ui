@@ -7,7 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {CollectionItemEntities, CreateEntityButton, EntryScope, Feature} from 'shared';
-import type {GetSharedEntryResponse, WorkbookWithPermissions} from 'shared/schema';
+import type {SharedWorkbookEntry, WorkbookWithPermissions} from 'shared/schema';
 import {DIALOG_SELECT_SHARED_ENTRY} from 'ui/components/DialogSelectSharedEntry/DialogSelectSharedEntry';
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import {registry} from 'ui/registry';
@@ -98,9 +98,7 @@ export const CreateEntry = React.memo<Props>(
                                                         );
 
                                                         const addedEntry = entries?.entries.find(
-                                                            (
-                                                                item,
-                                                            ): item is GetSharedEntryResponse =>
+                                                            (item): item is SharedWorkbookEntry =>
                                                                 item.entryId === entry.entryId,
                                                         );
 

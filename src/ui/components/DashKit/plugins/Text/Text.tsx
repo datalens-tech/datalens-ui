@@ -87,9 +87,9 @@ type PluginText = Plugin<Props> &
 const textPlugin: PluginText = {
     ...pluginText,
     setSettings(settings: PluginTextObjectSettings) {
-        const {apiHandler, globalWidgetSettings} = settings;
+        const {apiHandler, entryWidgetSettings} = settings;
         pluginText._apiHandler = apiHandler;
-        textPlugin.globalWidgetSettings = globalWidgetSettings;
+        textPlugin.entryWidgetSettings = entryWidgetSettings;
         return textPlugin;
     },
     renderer: function Wrapper(
@@ -194,17 +194,8 @@ const textPlugin: PluginText = {
         const data = props.data as DashTabItemText['data'];
 
         const {style, hasInternalMargins} = usePreparedWrapSettings({
-            ownWidgetSettings: {
-                background: data.background,
-                backgroundSettings: data.backgroundSettings,
-                borderRadius: data.borderRadius,
-                internalMarginsEnabled: data.internalMarginsEnabled,
-            },
-            dashVisualSettings: {
-                widgetsSettings: textPlugin.globalWidgetSettings,
-                background: undefined,
-                backgroundSettings: undefined,
-            },
+            data,
+            entryWidgetSettings: textPlugin.entryWidgetSettings,
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 

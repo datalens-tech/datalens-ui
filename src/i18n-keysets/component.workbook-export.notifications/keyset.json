@@ -1,0 +1,96 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_show-details": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_bad-connection-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-export-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-export-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-import-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-import-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_export-check-connection-credentials": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_export-rls": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_import-check-connections-credentials": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_import-check-delegation": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_import-rls": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_info-documentation-notifications": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_invalid-entry-data": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_invalid-entry-scope": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_invalid-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_invalid-version": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_missing-linked-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scope-not-available-for-installation": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unexpected-workflow-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unsupported-objects": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_error-details": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

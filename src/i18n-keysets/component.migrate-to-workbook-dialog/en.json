@@ -15,7 +15,9 @@
     "{{count}} object",
     "{{count}} objects",
     "{{count}} objects",
-    "0 objects"
+    "0 objects",
+    "",
+    ""
   ],
   "label_unknown-error": "An error occured during migration. Please try again later.",
   "md_label_copy-extension-warning": "Objects were detected that do not support copying: connection to Google Sheets or to a file (CSV). Use a transfer",

@@ -22,10 +22,15 @@ export const __createWizardChart__ = createTypedAction(
         paramsSchema,
         resultSchema: z.looseObject({}),
     },
-    async (_, args): Promise<{}> => {
+    async (_, args, {headers}): Promise<{}> => {
         const req = args.req as Request;
         const res = args.res as Response;
         const chartsEngine = args.chartsEngine as ChartsEngine;
+
+        req.headers = {
+            ...req.headers,
+            ...headers,
+        };
 
         await chartsEngine.controllers.charts.create(req, res);
 

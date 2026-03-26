@@ -24,13 +24,14 @@ import {DIALOG_COLUMN_SETTINGS} from '../components/Dialogs/DialogColumnSettings
 import type {ColumnSettingsState} from '../components/Dialogs/DialogColumnSettings/hooks/useDialogColumnSettingsState';
 import type {LabelSettings} from '../components/Dialogs/DialogLabelSettings/DialogLabelSettings';
 import {DIALOG_LABEL_SETTINGS} from '../components/Dialogs/DialogLabelSettings/DialogLabelSettings';
+import {DIALOG_LINE_SHAPES} from '../components/Dialogs/DialogLineShapes/DialogLineShapes';
 import {DIALOG_METRIC_COLORS} from '../components/Dialogs/DialogMetricColors/DialogMetricColors';
 import {DIALOG_MULTIDATASET} from '../components/Dialogs/DialogMultidataset';
 import {DIALOG_PLACEHOLDER} from '../components/Dialogs/DialogPlaceholder/DialogPlaceholder';
 import {DIALOG_POINTS_SIZE} from '../components/Dialogs/DialogPointsSize';
 import {DIALOG_SHAPES} from '../components/Dialogs/DialogShapes/DialogShapes';
 import {DIALOG_CHART_SETTINGS} from '../components/Dialogs/Settings/Settings';
-import {PaletteTypes, VISUALIZATION_IDS} from '../constants';
+import {VISUALIZATION_IDS} from '../constants';
 import type {WizardDispatch} from '../reducers';
 import {getChangedPlaceholderSettings} from '../reducers/utils/getPlaceholdersWithMergedSettings';
 import {selectParameters} from '../selectors/dataset';
@@ -267,12 +268,16 @@ export function openDialogColors({item, onApply, colorSectionFields}: OpenDialog
                 (placeholder) => placeholder.id === 'heatmap',
             );
 
-            const dialogColorItem = isArray
-                ? colors[0] ||
-                  placeholders[1]?.items[0] ||
-                  (y2Placeholder && y2Placeholder.items[0]) ||
-                  (heatmapPlaceholder && heatmapPlaceholder.items[0])
-                : (item as Field);
+            let dialogColorItem: Field;
+            if (isArray) {
+                dialogColorItem =
+                    colors[0] ||
+                    placeholders[1]?.items[0] ||
+                    (y2Placeholder && y2Placeholder.items[0]) ||
+                    (heatmapPlaceholder && heatmapPlaceholder.items[0]);
+            } else {
+                dialogColorItem = item as Field;
+            }
 
             const dialogColorItems =
                 isArray && !isMeasureValue(dialogColorItem) ? (item as Field[]) : undefined;
@@ -314,15 +319,10 @@ export function openDialogColors({item, onApply, colorSectionFields}: OpenDialog
 
 type OpenDialogShapesArguments = {
     item?: Field | Field[];
-    paletteType: PaletteTypes;
     onApply?: () => void;
 };
 
-export function openDialogShapes({
-    item,
-    paletteType = PaletteTypes.Lines,
-    onApply,
-}: OpenDialogShapesArguments) {
+export function openDialogShapes({item, onApply}: OpenDialogShapesArguments) {
     return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const globalState = getState();
         const {dataset: datasetState, preview: previewState} = globalState.wizard;
@@ -352,7 +352,6 @@ export function openDialogShapes({
                         updates,
                         filters,
                         options: dataset && dataset.options,
-                        paletteType,
                         onApply: (config: ShapesConfig) => {
                             dispatch(setShapesConfig({shapesConfig: config}));
 
@@ -365,6 +364,59 @@ export function openDialogShapes({
                             }
                         },
                         onCancel: () => dispatch(closeDialog()),
+                    },
+                }),
+            );
+        }
+    };
+}
+
+export function openDialogLineShapes({
+    item,
+    onApply,
+}: {
+    item?: Field | Field[];
+    onApply?: () => void;
+}) {
+    return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
+        const globalState = getState();
+        const {dataset: datasetState, preview: previewState} = globalState.wizard;
+        const visualization = selectSubVisualization(globalState);
+        const {shapesConfig, shapes, filters, dashboardParameters} =
+            globalState.wizard.visualization;
+        const dataset = datasetState.dataset;
+        const updates = previewState.updates;
+        const parameters = selectParameters(globalState);
+        const distincts = selectDistincts(globalState);
+
+        if (dataset && visualization) {
+            const isArray = Array.isArray(item);
+            dispatch(
+                openDialog({
+                    id: DIALOG_LINE_SHAPES,
+                    props: {
+                        parameters,
+                        dashboardParameters,
+                        item: isArray
+                            ? shapes[0] || getItemForShapeSection(visualization)
+                            : (item as Field),
+                        items: isArray ? (item as Field[]) : undefined,
+                        distincts,
+                        datasetId: dataset.id,
+                        shapesConfig,
+                        updates,
+                        filters,
+                        options: dataset && dataset.options,
+                        onApply: (config: ShapesConfig) => {
+                            dispatch(setShapesConfig({shapesConfig: config}));
+                            dispatch(closeDialog());
+                            dispatch(updatePreviewAndClientChartsConfig({}));
+
+                            if (onApply) {
+                                onApply();
+                            }
+                        },
+                        onClose: () => dispatch(closeDialog()),
                     },
                 }),
             );

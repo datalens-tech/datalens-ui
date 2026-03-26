@@ -12,7 +12,7 @@ import {
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
-import {EntryScope} from 'shared';
+import {DialogRelatedEntitiesQA, EntryScope} from 'shared';
 import type {GetEntryResponse, GetRelationsEntry} from 'shared/schema';
 import {EntitiesList} from 'ui/components/EntitiesList/EntitiesList';
 import {navigateHelper} from 'ui/libs';
@@ -222,7 +222,13 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     const showRelationsCount = Boolean(relationsCount && !isLoading);
 
     return (
-        <Dialog onClose={handleClose} open={visible} className={b()} disableHeightTransition={true}>
+        <Dialog
+            qa={DialogRelatedEntitiesQA.Dialog}
+            onClose={handleClose}
+            open={visible}
+            className={b()}
+            disableHeightTransition={true}
+        >
             <Dialog.Header caption={i18n('label_title')} />
             <Dialog.Body className={b('body')}>
                 <EntitiesList

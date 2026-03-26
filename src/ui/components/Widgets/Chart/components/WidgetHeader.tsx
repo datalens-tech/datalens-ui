@@ -142,7 +142,9 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                         'with-hint': Boolean(widgetTitleHint),
                     })}
                 >
-                    <div className={b('mobile-title-wrap')}>{widgetTitle}</div>
+                    <div className={b('mobile-title-wrap')} title={widgetTitle}>
+                        {widgetTitle}
+                    </div>
                     {Boolean(widgetTitleHint) && (
                         <MarkdownHelpPopover
                             markdown={widgetTitleHint}

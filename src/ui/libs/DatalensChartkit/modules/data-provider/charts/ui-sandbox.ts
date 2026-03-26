@@ -28,7 +28,7 @@ import {getParseHtmlFn} from '../../html-generator/utils';
 
 import type {TargetValue} from './types';
 import {UiSandboxRuntime} from './ui-sandbox-runtime';
-import {clearVmProp} from './utils';
+import {clearVmProp, prepareGravityChartArg} from './utils';
 
 export const UI_SANDBOX_TOTAL_TIME_LIMIT = 3000;
 export const UI_SANDBOX_FN_TIME_LIMIT = 100;
@@ -98,8 +98,9 @@ async function getUnwrappedFunction(args: {
     entryType: string;
     name?: string;
     widgetElement?: Element;
+    path?: string;
 }) {
-    const {sandbox, wrappedFn, options, entryId, entryType, name, widgetElement} = args;
+    const {sandbox, wrappedFn, options, entryId, entryType, path, name, widgetElement} = args;
     const uiSandboxLibs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
     const isAdvancedChart = (
@@ -118,8 +119,12 @@ async function getUnwrappedFunction(args: {
             preparedUserArgs = Array.isArray(wrappedFn.args) ? wrappedFn.args : [wrappedFn.args];
         }
         let fnArgs: unknown[] = [...restArgs];
-        if (entryType === 'graph_node') {
+        if (entryType === EditorType.GraphNode) {
             fnArgs = fnArgs.map((a) => clearVmProp(a));
+        }
+
+        if (entryType === EditorType.GravityChartsNode) {
+            fnArgs = fnArgs.map(prepareGravityChartArg);
         }
 
         fnArgs = [...fnArgs, ...preparedUserArgs];
@@ -127,7 +132,7 @@ async function getUnwrappedFunction(args: {
         // prepare function context
         let fnContext = this;
 
-        if (entryType === 'graph_node') {
+        if (entryType === EditorType.GraphNode) {
             fnContext = clearVmProp(fnContext);
         }
 
@@ -142,6 +147,21 @@ async function getUnwrappedFunction(args: {
             clearTimeout: (timeoutId: number) => clearTimeout(timeoutId),
             ChartEditor: {
                 generateHtml: (value: ChartKitHtmlItem) => wrapHtml(value),
+            },
+        };
+
+        // Extension of the chart API with custom user interaction event handlers (click, hover, etc.)
+        // Deliberately isolated from core chart methods (e.g. render) to prevent open redirect vulnerabilities
+        const userEventsApiExtension = {
+            window: {
+                open: function (url: string, target?: string) {
+                    try {
+                        const href = sanitizeUrl(url);
+                        window.open(href, target === '_self' ? '_self' : '_blank');
+                    } catch (e) {
+                        console.error(e);
+                    }
+                },
             },
         };
 
@@ -241,16 +261,7 @@ async function getUnwrappedFunction(args: {
                             return null;
                         },
                     },
-                    window: {
-                        open: function (url: string, target?: string) {
-                            try {
-                                const href = sanitizeUrl(url);
-                                window.open(href, target === '_self' ? '_self' : '_blank');
-                            } catch (e) {
-                                console.error(e);
-                            }
-                        },
-                    },
+                    ...userEventsApiExtension,
                 });
                 break;
             }
@@ -258,6 +269,8 @@ async function getUnwrappedFunction(args: {
             case LegacyEditorType.BlankChart: {
                 const chartId = get(this, 'chartId');
                 const chartContext = chartStorage.get(chartId);
+                const shouldAddUserEventsApiExtension =
+                    path === 'events' && ['click'].includes(name ?? '');
 
                 merge(globalApi, {
                     Chart: {
@@ -279,6 +292,7 @@ async function getUnwrappedFunction(args: {
                             chartContext?.updateParams(params);
                         },
                     },
+                    ...(shouldAddUserEventsApiExtension ? userEventsApiExtension : {}),
                 });
 
                 if (fnContext && typeof fnContext === 'object' && '__innerHTML' in fnContext) {
@@ -287,12 +301,15 @@ async function getUnwrappedFunction(args: {
                 break;
             }
             case EditorType.GravityChartsNode: {
+                const shouldAddUserEventsApiExtension =
+                    path === 'chart.events' && ['click', 'pointermove'].includes(name ?? '');
                 merge(globalApi, {
                     Chart: {
                         getBoundingClientRect: () => {
                             return widgetElement?.getBoundingClientRect();
                         },
                     },
+                    ...(shouldAddUserEventsApiExtension ? userEventsApiExtension : {}),
                 });
 
                 break;
@@ -360,8 +377,9 @@ export async function unwrapPossibleFunctions(args: {
     target: TargetValue;
     options?: UiSandboxRuntimeOptions;
     widgetElement?: Element;
+    path?: string;
 }) {
-    const {sandbox, target, options, entryId, entryType, widgetElement} = args;
+    const {sandbox, target, options, entryId, entryType, widgetElement, path = ''} = args;
     if (!target || typeof target !== 'object') {
         return;
     }
@@ -384,6 +402,7 @@ export async function unwrapPossibleFunctions(args: {
                     entryType,
                     name: key,
                     widgetElement,
+                    path,
                 });
             } else if (Array.isArray(value)) {
                 await Promise.all(
@@ -395,6 +414,7 @@ export async function unwrapPossibleFunctions(args: {
                             target: item,
                             entryType,
                             widgetElement,
+                            path: [path, key].filter(Boolean).join('.'),
                         }),
                     ),
                 );
@@ -406,6 +426,7 @@ export async function unwrapPossibleFunctions(args: {
                     target: value,
                     entryType,
                     widgetElement,
+                    path: [path, key].filter(Boolean).join('.'),
                 });
             }
         }),

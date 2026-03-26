@@ -5,6 +5,7 @@ $entityIconClassName: '.entity-icon';
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-shrink: 0;
 
         &_size_s {
             height: 24px;

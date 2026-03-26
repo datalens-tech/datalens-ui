@@ -1,0 +1,48 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "add-entry-workbook-toast-message": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "add-entry-workbook-toast-title-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "add-entry-workbook-toast-title-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-shared-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-shared-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "shared-entry-bindings-dropdown-menu-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title-select-shared-entry-dialog-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title-select-shared-entry-dialog-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "workbook-shared-entry-original-link": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

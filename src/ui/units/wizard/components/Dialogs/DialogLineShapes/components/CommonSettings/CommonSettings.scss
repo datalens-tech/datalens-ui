@@ -1,0 +1,14 @@
+.dialog-line-shapes {
+    &__common-settings {
+        padding: 32px;
+    }
+
+    &__form-row {
+        width: 292px;
+    }
+
+    &__line-join-icon,
+    &__line-cap-icon {
+        vertical-align: middle;
+    }
+}

@@ -13,7 +13,6 @@ import table from '@diplodoc/transform/lib/plugins/table';
 import term from '@diplodoc/transform/lib/plugins/term';
 import type {Lang, MarkdownItPluginCb, OptionsType} from '@diplodoc/transform/lib/plugins/typings';
 import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import type MarkdownIt from 'markdown-it';
 import type {PluginWithParams} from 'markdown-it';
 import MarkdownItColor from 'markdown-it-color';

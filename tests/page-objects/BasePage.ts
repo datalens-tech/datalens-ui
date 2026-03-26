@@ -73,8 +73,8 @@ export class BasePage {
     }
 
     getUniqueEntryName(name: string): string {
-        const timestamp = moment(moment.now()).format('DD.MM.YYYY HH:mm:ss.SS');
-        return `${name}__${timestamp}`;
+        const timestamp = moment(moment.now()).format('DD.MM.YYYY HH:mm:ss.SSS');
+        return `${name}__${timestamp}_${Math.random().toString(36).slice(2)}`;
     }
 
     getEntryIdFromUrl() {

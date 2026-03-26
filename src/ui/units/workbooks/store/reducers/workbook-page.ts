@@ -5,10 +5,10 @@ import type {
     DeleteFavoriteResponse,
     EntryFields,
     GetCollectionBreadcrumbsResponse,
-    GetEntryResponse,
     GetWorkbookEntriesResponse,
     GetWorkbookSharedEntriesResponse,
     RenameEntryResponse,
+    WorkbookEntryBase,
     WorkbookPermission,
     WorkbookWithPermissions,
 } from 'shared/schema';
@@ -65,7 +65,7 @@ export type WorkbooksState = {
     };
     getWorkbookSharedEntries: {
         isLoading: boolean;
-        data: GetWorkbookEntriesResponse | null;
+        data: GetWorkbookSharedEntriesResponse | null;
         error: Error | null;
     };
     bindSharedEntryToWorkbook: {
@@ -268,7 +268,7 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
                 }),
             );
 
-            const newEntries: GetEntryResponse[] = [];
+            const newEntries: WorkbookEntryBase[] = [];
 
             action.data.forEach((workbookEntries) => {
                 return workbookEntries?.entries.forEach((entry) => {
@@ -457,7 +457,7 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
                 items: state.items.map((item) => {
                     const renamedEntry = action.data[0];
                     if (renamedEntry.entryId === item.entryId) {
-                        const newItem = {...item} as GetEntryResponse;
+                        const newItem = {...item} as WorkbookEntryBase;
 
                         Object.keys(newItem).forEach((key) => {
                             const typedKey = key as keyof EntryFields;
@@ -509,7 +509,7 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
             const changeFavoriteEntry = Array.isArray(action.data) ? action.data[0] : action.data;
             const mapItemsCallback = (item: WorkbookEntry) => {
                 if (changeFavoriteEntry.entryId === item.entryId) {
-                    const newItem = {...item} as GetEntryResponse;
+                    const newItem = {...item} as WorkbookEntryBase;
 
                     newItem.isFavorite = !newItem.isFavorite;
 

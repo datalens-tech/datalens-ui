@@ -1,10 +1,8 @@
 import React from 'react';
 
-import {Checkbox, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, NumberInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-
-import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';
 
 import {Row} from './Row';
 import {Title} from './Title';
@@ -18,12 +16,13 @@ type AutoRefreshProps = {
     autoUpdateValue: boolean;
     onChangeAutoUpdate: () => void;
     intervalDisabled: boolean;
-    intervalValue: string;
-    onUpdateInterval: (text: string) => void;
+    intervalValue: number | null;
+    onUpdateInterval: (value: number | null) => void;
     onBlurInterval: () => void;
     silentLoadingValue: boolean;
     silentLoadingDisabled: boolean;
-    onChangeSilentLoading: () => void;
+    onChangeSilentLoading: (checked: boolean) => void;
+    view?: 'dialog' | 'drawer';
 };
 
 export const AutoRefresh = ({
@@ -36,9 +35,10 @@ export const AutoRefresh = ({
     silentLoadingValue,
     silentLoadingDisabled,
     onChangeSilentLoading,
+    view = 'dialog',
 }: AutoRefreshProps) => {
     return (
-        <SectionWrapper>
+        <React.Fragment>
             <Row>
                 <Title text={i18n('label_autoupdate')} titleMods="strong" />
                 <Checkbox
@@ -51,9 +51,8 @@ export const AutoRefresh = ({
             <Row>
                 <Title text={`${i18n('label_autoupdate-interval')} (${i18n('field_seconds')})`} />
                 <div className={b('sub-row')}>
-                    <TextInput
-                        className={b('configure-btn')}
-                        type="number"
+                    <NumberInput
+                        className={view === 'drawer' ? undefined : b('configure-btn')}
                         disabled={intervalDisabled}
                         value={intervalValue}
                         onUpdate={onUpdateInterval}
@@ -67,10 +66,10 @@ export const AutoRefresh = ({
                     size="l"
                     checked={!silentLoadingValue}
                     disabled={silentLoadingDisabled}
-                    onChange={onChangeSilentLoading}
+                    onUpdate={onChangeSilentLoading}
                     className={b('box')}
                 />
             </Row>
-        </SectionWrapper>
+        </React.Fragment>
     );
 };

@@ -1,0 +1,28 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_success-edit": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_edit-profile": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

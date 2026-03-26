@@ -12,7 +12,7 @@ import type {ChartkitGlobalSettings} from './chartkit';
 import type {DashData, DashStateData} from './dash';
 import type {EntryPublicAuthor} from './entry';
 import type {FeatureConfig} from './feature';
-import type {MenuItemsIds} from './menu';
+import type {MenuItemsIdsType} from './menu';
 import type {MetricaCounterConfig} from './metrica';
 import type {PushServiceConfig} from './notification';
 import type {WidgetType} from './widget';
@@ -184,15 +184,13 @@ export type DLGlobalData = {
     oauthEndpoint?: string;
     tenantMode?: {
         foldersEnabled: boolean;
-        workbooksEnabled: boolean;
-        collectionsEnabled: boolean;
         features?: Record<string, unknown>;
     };
     userIsOrgAdmin?: boolean;
     tenantSettings?: TenantSettings;
     allowLanguages?: Language[];
     langRegion?: string;
-    widgetMenuGroupConfig?: Array<Array<MenuItemsIds>>;
+    widgetMenuGroupConfig?: Array<Array<MenuItemsIdsType>>;
     title?: string;
     publicAuthor?: EntryPublicAuthor;
     iamResources?: {

@@ -163,6 +163,7 @@ export const enum RobotChartsDatasetUrls {
     DatasetWithDeletedConnection = '/datasets/rupa8kcmvnmil',
     DatasetWithValidationError = '/datasets/mqjnuhmltfs8c',
     DatasetSourcesListing = '/datasets/1ui7gozkkugal',
+    DatasetWithCsvConnection = '/datasets/gd1gjlpr47gc0',
 }
 
 export const mapDatasetToDatasetPath = {

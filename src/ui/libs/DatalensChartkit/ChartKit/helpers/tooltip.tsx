@@ -23,13 +23,14 @@ import type {
     PointCustomData,
     ScatterSeriesCustomData,
 } from '../../../../../shared/types/chartkit';
+import {TooltipWithComments} from '../components';
 
 const b = block('dl-chart-tooltip-content');
 
 type CustomScatterSeries = ScatterSeries<PointCustomData> & {custom: ScatterSeriesCustomData};
 type TooltipRenderer = NonNullable<ChartTooltip['renderer']>;
 
-export const scatterTooltipRenderer = (
+const scatterTooltipRenderer = (
     widgetData: ChartData,
     data: Parameters<TooltipRenderer>[0],
     qa?: string,
@@ -165,12 +166,50 @@ function customTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipRe
     );
 }
 
+function tooltipWithCommentsRenderer(args: {
+    data: Parameters<TooltipRenderer>[0];
+    qa?: string;
+    rowRenderer?: ChartTooltip['rowRenderer'];
+    valueFormat?: ChartTooltip['valueFormat'];
+    totals?: ChartTooltip['totals'];
+}) {
+    const {data, qa, rowRenderer, valueFormat, totals} = args;
+    const {hoveredPlotBands, hoveredPlotLines} = data;
+    const plotBands = (hoveredPlotBands ?? []).filter((d) => get(d.custom, 'tooltip.enabled'));
+    const plotLines = (hoveredPlotLines ?? []).filter((d) => get(d.custom, 'tooltip.enabled'));
+    const hasPlotsBandsOrLInes = plotBands.length > 0 || plotLines.length > 0;
+
+    if (!hasPlotsBandsOrLInes) {
+        return null;
+    }
+
+    return (
+        <React.Suspense fallback={null}>
+            <TooltipWithComments
+                data={data}
+                plotBands={plotBands}
+                plotLines={plotLines}
+                qa={qa}
+                rowRenderer={rowRenderer}
+                valueFormat={valueFormat}
+                totals={totals}
+            />
+        </React.Suspense>
+    );
+}
+
 export const getTooltipRenderer = ({
     widgetData,
     qa,
+    rowRenderer,
+    valueFormat,
+    totals,
 }: {
     widgetData: ChartData;
     qa?: string;
+    rowRenderer?: ChartTooltip['rowRenderer'];
+    valueFormat?: ChartTooltip['valueFormat'];
+    totals?: ChartTooltip['totals'];
 }): TooltipRenderer | undefined => {
     if (widgetData?.tooltip?.renderer) {
         return (...args) => customTooltipRenderer(widgetData, args);
@@ -193,10 +232,15 @@ export const getTooltipRenderer = ({
                 return (data: Parameters<TooltipRenderer>[0]) =>
                     pieTooltipRenderer(widgetData, data, qa);
             }
-            default: {
-                return undefined;
-            }
         }
+    }
+
+    const commentsTypes = new Set(['area', 'bar-x', 'line']);
+
+    if (seriesTypes.some((t) => commentsTypes.has(t))) {
+        return (data: Parameters<TooltipRenderer>[0]) => {
+            return tooltipWithCommentsRenderer({data, qa, rowRenderer, valueFormat, totals});
+        };
     }
 
     return undefined;
@@ -228,20 +272,17 @@ const getStackedPercentRowRenderer = ({
             : '';
 
         return (
-            <div className={b('row', className)}>
-                <div className={b('block')}>
-                    <span className={b('color')} style={{backgroundColor: color}} />
-                </div>
-                <div
-                    className={b('block')}
-                    style={DL.IS_MOBILE ? {marginRight: 'auto'} : {}}
+            <tr className={className}>
+                <td className={b('content-row-color-cell')}>
+                    <div className={b('color')} style={{backgroundColor: color}} />
+                </td>
+                <td
+                    className={b('content-row-label-cell')}
                     dangerouslySetInnerHTML={{__html: name}}
                 />
-                <div style={{marginLeft: 'auto'}} className={b('block')}>
-                    <span style={{marginRight: 12}}>{percentage}</span>
-                    {formattedValue}
-                </div>
-            </div>
+                <td className={b('content-row-percent-cell')}>{percentage}</td>
+                <td className={b('content-row-value-cell')}>{formattedValue}</td>
+            </tr>
         );
     };
 };

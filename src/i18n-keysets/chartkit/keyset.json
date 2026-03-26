@@ -1,0 +1,28 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "categories": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "date": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "smoothing": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "trend": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

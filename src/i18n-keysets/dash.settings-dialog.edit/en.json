@@ -29,6 +29,7 @@
   "label_max-concurrent-requests-placeholder": "Not limited",
   "label_other-settings": "Other settings",
   "label_settings": "Settings",
+  "label_show-tabs": "Show tabs",
   "label_silent-loading": "Hide loading indicator",
   "label_support-description": "Window before contacting support",
   "label_tabs": "Tabs",
@@ -36,5 +37,7 @@
   "label_toc": "Contents",
   "label_widgets-background": "Widget background",
   "value_load-priority-charts": "Charts",
-  "value_load-priority-selectors": "Selectors"
+  "value_load-priority-selectors": "Selectors",
+  "value_theme-dark": "Dark theme",
+  "value_theme-light": "Light theme"
 }

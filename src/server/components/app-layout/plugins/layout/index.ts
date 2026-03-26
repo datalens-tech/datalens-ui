@@ -5,7 +5,7 @@ import {createLayoutPlugin as createLayoutPluginBase} from '@gravity-ui/app-layo
 
 const filename = 'assets-manifest.json';
 
-const manifest = path.resolve(path.parse(require.main!.filename).dir, '../public/build', filename);
+const manifest = path.resolve(process.cwd(), 'dist/public/build', filename);
 const publicPath = '/build/';
 
 export function createLayoutPlugin(): ReturnType<typeof createLayoutPluginBase> {

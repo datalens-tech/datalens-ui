@@ -4,7 +4,7 @@ import {CommonSelectors} from '../../page-objects/constants/common-selectors';
 import {openTestPage, slct} from '../../utils';
 import datalensTest from '../../utils/playwright/globalTestDefinition';
 import {RobotChartsDatasetUrls} from '../../utils/constants';
-import {DatasetSourcesTableQa} from '../../../src/shared';
+import {DatasetSourceEditorDialogQA, DatasetSourcesTableQa} from '../../../src/shared';
 
 const checkSourceType = async (page: Page, expectedSourceType: string) => {
     const promise = page.waitForRequest(/validateDataset/, {
@@ -29,22 +29,30 @@ datalensTest.describe('Datasets - source editor dialog', () => {
 
     datalensTest('Saving name of editing source', async ({page}: {page: Page}) => {
         const ytPath = YT_PATH;
-        const inputLocator = page.locator(`${slct('source-editor-path')} input`);
+        const inputLocator = page.locator(
+            `${slct(DatasetSourceEditorDialogQA.EditPathInput)} input`,
+        );
 
         await inputLocator.fill(ytPath);
         await page.click('.g-dialog-footer__button_action_apply');
         await page.click(`${slct(DatasetSourcesTableQa.Source)} .g-button`);
         await page.click(`${slct(DatasetSourcesTableQa.SourceMenu)} .g-menu__list-item`);
 
-        const titleInputLocator = page.locator(`${slct('source-editor-title')} input`);
+        const titleInputLocator = page.locator(
+            `${slct(DatasetSourceEditorDialogQA.EditTitleInput)} input`,
+        );
 
         await expect(titleInputLocator).toHaveValue('bi_2132_one_col_sorting');
     });
 
     datalensTest('Possible to save same name of existing source', async ({page}: {page: Page}) => {
         const ytPath = YT_PATH;
-        const inputLocator = page.locator(`${slct('source-editor-path')} input`);
-        const titleInputLocator = page.locator(`${slct('source-editor-title')} input`);
+        const inputLocator = page.locator(
+            `${slct(DatasetSourceEditorDialogQA.EditPathInput)} input`,
+        );
+        const titleInputLocator = page.locator(
+            `${slct(DatasetSourceEditorDialogQA.EditTitleInput)} input`,
+        );
 
         await inputLocator.fill(ytPath);
         await titleInputLocator.fill('test name');
@@ -53,7 +61,7 @@ datalensTest.describe('Datasets - source editor dialog', () => {
         await page.click(`${slct(DatasetSourcesTableQa.Source)} .g-button`);
         await page.click(`${slct(DatasetSourcesTableQa.SourceMenu)} .g-menu__list-item`);
 
-        await page.waitForSelector(slct('source-editor-title'));
+        await page.waitForSelector(slct(DatasetSourceEditorDialogQA.EditTitleInput));
 
         // return same name to title
         await titleInputLocator.fill('new name');
@@ -63,12 +71,14 @@ datalensTest.describe('Datasets - source editor dialog', () => {
 
         await page.waitForTimeout(1000);
 
-        const error = page.locator(slct('source-editor-dialog'));
+        const error = page.locator(slct(DatasetSourceEditorDialogQA.Dialog));
         await expect(error).toHaveCount(0);
     });
 
     datalensTest('Possible to change source name', async ({page}: {page: Page}) => {
-        const titleInputLocator = page.locator(`${slct('source-editor-title')} input`);
+        const titleInputLocator = page.locator(
+            `${slct(DatasetSourceEditorDialogQA.EditTitleInput)} input`,
+        );
         await titleInputLocator.fill('Example1');
 
         await expect(titleInputLocator).toHaveValue('Example1');
@@ -81,13 +91,19 @@ datalensTest.describe('Datasets - source editor dialog', () => {
         const inputLocator = page.locator(inputSelector).first();
 
         const tableTab = page
-            .locator(`${slct('datasets-source-switcher')} .g-segmented-radio-group__option`)
+            .locator(
+                `${slct(DatasetSourceEditorDialogQA.SourceEditorSwitch)} .g-segmented-radio-group__option`,
+            )
             .nth(0);
         const listTab = page
-            .locator(`${slct('datasets-source-switcher')} .g-segmented-radio-group__option`)
+            .locator(
+                `${slct(DatasetSourceEditorDialogQA.SourceEditorSwitch)} .g-segmented-radio-group__option`,
+            )
             .nth(1);
         const rangeTab = page
-            .locator(`${slct('datasets-source-switcher')} .g-segmented-radio-group__option`)
+            .locator(
+                `${slct(DatasetSourceEditorDialogQA.SourceEditorSwitch)} .g-segmented-radio-group__option`,
+            )
             .nth(2);
 
         await tableTab.check();

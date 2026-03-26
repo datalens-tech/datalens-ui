@@ -8,6 +8,7 @@ import type {DatalensGlobalState} from 'ui';
 
 import {I18n} from '../../../../../i18n';
 import type {DatasetComponentError} from '../../../../../shared';
+import {DatasetSourceEditorDialogQA} from '../../../../../shared';
 import DialogConfirm from '../../../../components/DialogConfirm/DialogConfirm';
 import type {FormValidationError} from '../../helpers/validation';
 import {VALIDATION_ERROR} from '../../helpers/validation';
@@ -211,7 +212,7 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
 
     return (
         <Dialog
-            qa="source-editor-dialog"
+            qa={DatasetSourceEditorDialogQA.Dialog}
             className={b()}
             open={open}
             onClose={attemptToCloseDialog}
@@ -231,7 +232,7 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
                 )}
                 <InputFormItem
                     {...BASE_TITLE_FORM_OPTIONS}
-                    qa="source-editor-title"
+                    qa={DatasetSourceEditorDialogQA.EditTitleInput}
                     value={source.title}
                     sourceType={source.source_type}
                     field_doc_key={`${source.source_type}/title` as FormOptions['field_doc_key']}
@@ -262,7 +263,11 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
                 loading={loading}
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={isNewSource ? i18n('button_create') : i18n('button_apply')}
-                propsButtonApply={{disabled: !sourceChanged}}
+                propsButtonApply={{
+                    disabled: !sourceChanged,
+                    qa: DatasetSourceEditorDialogQA.ApplyBtn,
+                }}
+                propsButtonCancel={{qa: DatasetSourceEditorDialogQA.CancelBtn}}
                 onClickButtonCancel={attemptToCloseDialog}
                 onClickButtonApply={_onApply}
             />

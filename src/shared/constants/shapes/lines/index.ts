@@ -27,9 +27,27 @@ export const SHAPES_ORDER = {
 
 export const SHAPES_PALETTE_ORDER = {
     ...SHAPES_ORDER,
-    auto: Math.max.apply(null, Object.values(SHAPES_ORDER)) + 1,
+    auto: Infinity,
 };
 
 export const selectShapes = (): LineShapeType[] => Object.values(LineShapeType);
 export const getServerShapesOrder = () =>
     selectShapes().sort((a, b) => SHAPES_ORDER[a] - SHAPES_ORDER[b]);
+
+export const LINE_CAP = {
+    Butt: 'butt',
+    Round: 'round',
+    Square: 'square',
+    None: 'none',
+} as const;
+
+export type LineCap = (typeof LINE_CAP)[keyof typeof LINE_CAP];
+
+export const LINE_JOIN = {
+    Bevel: 'bevel',
+    Round: 'round',
+    Miter: 'miter',
+    None: 'unset',
+} as const;
+
+export type LineJoin = (typeof LINE_JOIN)[keyof typeof LINE_JOIN];

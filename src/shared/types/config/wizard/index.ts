@@ -17,6 +17,7 @@ import type {
     V15HierarchyField,
     V15Layer,
     V15PlaceholderSettings,
+    V15ShapesConfig,
     V15TooltipConfig,
     V15Update,
 } from './v15';
@@ -88,7 +89,7 @@ export type ServerLayerSettings = NonNullable<
 
 export type ServerFieldFormatting = V15Formatting;
 
-export type ServerShapesConfig = ChartsConfig['shapesConfig'];
+export type ServerShapesConfig = V15ShapesConfig;
 
 export type ServerColorsConfig = V15ColorsConfig;
 

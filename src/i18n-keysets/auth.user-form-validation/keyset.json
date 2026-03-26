@@ -1,0 +1,56 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_error-email-invalid": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-first-name-max": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-last-name-max": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-login-email-invalid": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-login-invalid": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-login-max": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-login-min": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-password-invalid": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-password-max": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-password-not-match": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-required-fields": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

@@ -3,13 +3,16 @@ import React from 'react';
 import {PencilToLine} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import type {LineShapeType, PointsShapeType} from 'shared';
+import {I18n} from 'i18n';
+import type {PointsShapeType} from 'shared';
 
 import {PaletteItem} from '../../../../components/PaletteItem/PaletteItem';
 import IconRenderer from '../../../../libs/DatalensChartkit/ChartKit/components/IconRenderer/IconRenderer';
 import {PaletteTypes} from '../../constants';
 
 import './Palette.scss';
+
+const i18n = I18n.keyset('wizard');
 
 const b = block('palette');
 
@@ -53,20 +56,12 @@ export const Palette = (props: Props) => {
         switch (paletteType) {
             case PaletteTypes.Colors: {
                 paletteItemStyles.backgroundColor = isDefault ? item : undefined;
-                content = isDefault ? 'auto' : null;
-                break;
-            }
-            case PaletteTypes.Lines: {
-                content = isDefault ? (
-                    'auto'
-                ) : (
-                    <IconRenderer iconType={item as LineShapeType} width="80px" height="5px" />
-                );
+                content = isDefault ? <span>{i18n('label_auto')}</span> : null;
                 break;
             }
             case PaletteTypes.Points: {
                 content = isDefault ? (
-                    'auto'
+                    <span>{i18n('label_auto')}</span>
                 ) : (
                     <IconRenderer iconType={item as PointsShapeType} width="20" />
                 );

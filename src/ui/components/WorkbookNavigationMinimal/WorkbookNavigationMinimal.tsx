@@ -13,11 +13,11 @@ import moment from 'moment';
 import {EntryScope, Feature, WorkbookNavigationMinimalQa, getEntryNameByKey} from 'shared';
 import type {SharedScope, WorkbookEntry} from 'shared';
 import type {
-    GetEntryResponse,
     GetWorkbookEntriesArgs,
     OrderDirection,
     OrderWorkbookEntriesField,
-    RestrictedSharedEntry,
+    RestrictedSharedWorkbookEntry,
+    WorkbookEntryBase,
 } from 'shared/schema';
 import {DEFAULT_DATE_FORMAT} from 'ui/constants/misc';
 import {getIsNotRestrictedSharedEntry, getIsSharedEntry} from 'ui/utils';
@@ -63,7 +63,7 @@ type Props = {
     anchor: React.RefObject<any>;
     visible: boolean;
     onClose: (event: MouseEvent | KeyboardEvent) => void;
-    onEntryClick: (args: GetEntryResponse) => void;
+    onEntryClick: (args: WorkbookEntryBase) => void;
     hasTail?: boolean;
     popupPlacement?: PopupPlacement;
     workbookId: string;
@@ -250,7 +250,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
         entries,
     }: {
         entries: T[];
-    }): BaseListItem<Exclude<T, RestrictedSharedEntry>>[] => {
+    }): BaseListItem<Exclude<T, RestrictedSharedWorkbookEntry>>[] => {
         const {includeClickableType, excludeClickableType, inactiveEntryIds} = this.props;
 
         const includeType = new Set(

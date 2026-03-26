@@ -10,6 +10,7 @@ import {
     DEFAULT_DASH_MARGINS,
     OLD_DEFAULT_WIDGET_BORDER_RADIUS,
 } from 'ui/components/DashKit/constants';
+import {SectionWrapper} from 'ui/components/SectionWrapper/SectionWrapper';
 import {registry} from 'ui/registry';
 import {openDialog} from 'ui/store/actions/dialog';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -60,7 +61,7 @@ const Settings = () => {
     );
 
     const [autoupdateInterval, setAutoupdateInterval] = React.useState(
-        settings.autoupdateInterval || '',
+        settings.autoupdateInterval || null,
     );
     const [autoupdate, setAutoupdate] = React.useState(
         Boolean(Number(settings.autoupdateInterval)),
@@ -133,12 +134,6 @@ const Settings = () => {
         setLoadPriority(value);
     };
 
-    const handleAutoUpdateIntervalInputChange = (text: string) => {
-        const value = text === '' ? text : parseInt(text, 10);
-
-        setAutoupdateInterval(value);
-    };
-
     const handleUpdateLoadOnlyVisibleCharts = () =>
         setLoadOnlyVisibleCharts(!loadOnlyVisibleCharts);
 
@@ -154,10 +149,7 @@ const Settings = () => {
         ) {
             const newSettings: DashSettings = {
                 ...settings,
-                autoupdateInterval:
-                    (typeof autoupdateInterval === 'string'
-                        ? parseInt(autoupdateInterval)
-                        : autoupdateInterval) || null,
+                autoupdateInterval: autoupdateInterval || null,
                 maxConcurrentRequests: maxConcurrentRequests > 0 ? maxConcurrentRequests : null,
                 loadOnlyVisibleCharts,
                 silentLoading,
@@ -271,22 +263,24 @@ const Settings = () => {
         >
             <Dialog.Header caption={i18n('dash.settings-dialog.edit', 'label_settings')} />
             <Dialog.Body className={b()}>
-                <AutoRefresh
-                    autoUpdateValue={autoupdate}
-                    onChangeAutoUpdate={() => {
-                        const newValue = !autoupdate;
-                        setAutoupdate(newValue);
-                        setSilentLoading(false);
-                        setAutoupdateInterval(newValue ? getMinAutoupdateInterval() : '');
-                    }}
-                    intervalDisabled={!autoupdate}
-                    intervalValue={String(autoupdateInterval)}
-                    onUpdateInterval={handleAutoUpdateIntervalInputChange}
-                    onBlurInterval={() => isValidAutoupdateInterval()}
-                    silentLoadingValue={silentLoading}
-                    silentLoadingDisabled={!autoupdate}
-                    onChangeSilentLoading={() => setSilentLoading(!silentLoading)}
-                />
+                <SectionWrapper>
+                    <AutoRefresh
+                        autoUpdateValue={autoupdate}
+                        onChangeAutoUpdate={() => {
+                            const newValue = !autoupdate;
+                            setAutoupdate(newValue);
+                            setSilentLoading(false);
+                            setAutoupdateInterval(newValue ? getMinAutoupdateInterval() : null);
+                        }}
+                        intervalDisabled={!autoupdate}
+                        intervalValue={autoupdateInterval}
+                        onUpdateInterval={setAutoupdateInterval}
+                        onBlurInterval={() => isValidAutoupdateInterval()}
+                        silentLoadingValue={silentLoading}
+                        silentLoadingDisabled={!autoupdate}
+                        onChangeSilentLoading={(checked: boolean) => setSilentLoading(!checked)}
+                    />
+                </SectionWrapper>
                 <Display
                     margins={margins}
                     onChangeMargins={handleMarginsChange}
@@ -305,22 +299,30 @@ const Settings = () => {
                     widgetsBackgroundSettings={widgetsBackgroundColorSettings}
                     onChangeWidgetsBackgroundSettings={setWidgetsBackgroundColorSettings}
                 />
-                <OtherSettings
-                    showDependentSelectors={showDependentSelectors}
-                    dependentSelectorsValue={dependentSelectors}
-                    onChangeDependentSelectors={() => setDependentSelectors(!dependentSelectors)}
-                    maxConcurrentRequestsValue={maxConcurrentRequests}
-                    onUpdateMaxConcurrentRequestsValue={handleMaxConcurrentRequestsSelectChange}
-                    loadPriorityValue={loadPriority}
-                    onUpdateLoadPriorityValue={handleLoadPrioritySelectChange}
-                    onAccessDescriptionClick={handleButtonSetupAccessDescription}
-                    onSupportDescriptionClick={handleButtonSetupSupportDescription}
-                    loadOnlyVisibleCharts={loadOnlyVisibleCharts}
-                    onUpdateLoadOnlyVisibleCharts={handleUpdateLoadOnlyVisibleCharts}
-                    initialSettings={settings}
-                    settings={otherSettinsState}
-                    onChange={setOtherSettingsState}
-                />
+                <SectionWrapper
+                    title={i18n('dash.settings-dialog.edit', 'label_other-settings')}
+                    titleMods={b('section-title')}
+                >
+                    <OtherSettings
+                        showDependentSelectors={showDependentSelectors}
+                        dependentSelectorsDisabled={false}
+                        dependentSelectorsValue={dependentSelectors}
+                        onChangeDependentSelectors={() =>
+                            setDependentSelectors(!dependentSelectors)
+                        }
+                        maxConcurrentRequestsValue={maxConcurrentRequests}
+                        onUpdateMaxConcurrentRequestsValue={handleMaxConcurrentRequestsSelectChange}
+                        loadPriorityValue={loadPriority}
+                        onUpdateLoadPriorityValue={handleLoadPrioritySelectChange}
+                        onAccessDescriptionClick={handleButtonSetupAccessDescription}
+                        onSupportDescriptionClick={handleButtonSetupSupportDescription}
+                        loadOnlyVisibleCharts={loadOnlyVisibleCharts}
+                        onUpdateLoadOnlyVisibleCharts={handleUpdateLoadOnlyVisibleCharts}
+                        initialSettings={settings}
+                        settings={otherSettinsState}
+                        onChange={setOtherSettingsState}
+                    />
+                </SectionWrapper>
                 <Params
                     paramsData={localParams}
                     onEditParamTitle={handleEditParamTitle}

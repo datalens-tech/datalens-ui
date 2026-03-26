@@ -9,6 +9,7 @@ import type {
 import {NumberInput, Text, TextInput, ThemeProvider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {color as d3Color} from 'd3-color';
+import {I18n} from 'i18n';
 
 import {
     colorMask,
@@ -21,6 +22,8 @@ import {
 } from './utils';
 
 import './ColorPickerInput.scss';
+
+const i18n = I18n.keyset('dash.palette-background');
 
 const b = block('color-picker-input');
 
@@ -193,6 +196,7 @@ export const ColorPickerInput = React.forwardRef<HTMLElement, ColorPickerInputPr
                         setColor(e.target.value);
                     }}
                     onBlur={onBlur}
+                    aria-label={i18n('aria_choose-color')}
                 />
             </div>
         );
@@ -227,6 +231,7 @@ export const ColorPickerInput = React.forwardRef<HTMLElement, ColorPickerInputPr
                         <OpacityInput value={stateValue.opacity} onUpdate={handleOpacityChange} />
                     ) : null
                 }
+                controlProps={{'aria-label': i18n('aria_enter-color')}}
             />
         );
     },
@@ -242,6 +247,7 @@ function OpacityInput({value, onUpdate}: Pick<NumberInputProps, 'value' | 'onUpd
             min={0}
             max={100}
             placeholder="100"
+            controlProps={{'aria-label': i18n('aria_opacity')}}
             endContent={
                 <Text className={b('opacity-end-content')} color="hint">
                     %

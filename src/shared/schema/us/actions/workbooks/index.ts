@@ -4,8 +4,8 @@ import {deleteWorkbook} from './delete-workbook';
 import {deleteWorkbooks} from './delete-workbooks';
 import {getWorkbook} from './get-workbook';
 import {getWorkbookEntries} from './get-workbook-entries';
-import {getWorkbookEntriesTyped} from './get-workbook-entries-typed';
 import {getWorkbookSharedEntries} from './get-workbook-shared-entries';
+import {getWorkbooksByIds} from './get-workbooks-by-ids';
 import {getWorkbooksList} from './get-workbooks-list';
 import {migrateEntriesToWorkbookByCopy} from './migrate-entries-to-workbook-by-copy';
 import {migrateEntriesToWorkbookByTransfer} from './migrate-entries-to-workbook-by-transfer';
@@ -16,6 +16,7 @@ import {updateWorkbook} from './update-workbook';
 export const workbooksActions = {
     createWorkbook,
     getWorkbook,
+    getWorkbooksByIds,
     getWorkbooksList,
     updateWorkbook,
     moveWorkbook,
@@ -24,7 +25,6 @@ export const workbooksActions = {
     copyWorkbook,
     deleteWorkbooks,
     getWorkbookEntries,
-    getWorkbookEntriesTyped,
     getWorkbookSharedEntries,
     migrateEntriesToWorkbookByTransfer,
     migrateEntriesToWorkbookByCopy,

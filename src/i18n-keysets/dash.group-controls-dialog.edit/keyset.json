@@ -1,0 +1,120 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_add-selector": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_join-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_join-selectors": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_paste-selector": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "hint_find-similiar-selectors": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_copy-invalid-control": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_default-tab": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_filtration": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_find-no-similiar-selectors": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_finding-similiar-selectors-progress": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_general": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_group-settings": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_joined-selectors": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-display-on-current-tab": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_representation": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_selector-group": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_selectors-list": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_similiar-selectors": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_similiar-selectors-tab": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_similiar-selectors-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_source": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title-placement": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_title-hidden": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_title-placement-left": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_title-placement-top": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

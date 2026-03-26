@@ -21,13 +21,11 @@ import {
     formSelector,
     innerFormSelector,
     readonlySelector,
-    setValidationErrors,
     submitLoadingSelector,
     updateConnectionWithRevision,
 } from '../../../store';
-import {validateFormBeforeAction} from '../../../store/utils';
 import type {CreateConnectionHandlerArgs} from '../../hooks';
-import {useCreateConnectionHandler} from '../../hooks';
+import {useCreateConnectionHandler, useValidateForm} from '../../hooks';
 
 import {CheckParamsButton} from './CheckParamsButton/CheckParamsButton';
 import {SubmitButton} from './SubmitButton/SubmitButton';
@@ -56,6 +54,7 @@ export const FormActionsComponent = (props: FormActionsProps) => {
     } = props;
     const dispatch = useDispatch();
     const {workbookId, collectionId} = useParams<{workbookId?: string; collectionId?: string}>();
+    const {validateForm} = useValidateForm();
     const {createConnectionHandler} = useCreateConnectionHandler({
         hasWorkbookIdInParams: Boolean(workbookId),
         hasCollectionIdInParams: Boolean(collectionId),
@@ -122,15 +121,14 @@ export const FormActionsComponent = (props: FormActionsProps) => {
 
     const submitHandler = React.useCallback(() => {
         if (newConnection) {
-            const errors = validateFormBeforeAction({
+            const isValid = validateForm({
                 form,
                 innerForm,
                 apiSchemaItem: schema?.apiSchema?.create,
+                rows: schema?.rows,
             });
 
-            if (errors.length) {
-                dispatch(setValidationErrors({errors}));
-            } else {
+            if (isValid) {
                 createConnectionHandler(getOpenDialogArs());
             }
         } else {
@@ -144,21 +142,21 @@ export const FormActionsComponent = (props: FormActionsProps) => {
         dispatch,
         getOpenDialogArs,
         createConnectionHandler,
+        validateForm,
     ]);
 
     const checkHandler = React.useCallback(() => {
-        const errors = validateFormBeforeAction({
+        const isValid = validateForm({
             form,
             innerForm,
             apiSchemaItem: schema?.apiSchema?.check,
+            rows: schema?.rows,
         });
 
-        if (errors.length) {
-            dispatch(setValidationErrors({errors}));
-        } else {
+        if (isValid) {
             dispatch(checkConnection());
         }
-    }, [form, innerForm, schema, dispatch]);
+    }, [form, innerForm, schema, dispatch, validateForm]);
 
     const handlePopupButtonClick = React.useCallback(() => {
         if (!checkData.error) {

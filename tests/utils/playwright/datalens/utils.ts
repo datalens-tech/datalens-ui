@@ -15,10 +15,28 @@ export async function isAuthenticated(args: AuthenticateCheckArgs) {
         updateAuthUrl = `${authUrl}/auth/update?retpath=${baseUrl}`;
     }
 
-    const response = await page.goto(updateAuthUrl, {waitUntil: 'networkidle'});
+    const response = await page.goto(updateAuthUrl, {waitUntil: 'domcontentloaded'});
 
     if (!response) {
         return false;
+    }
+
+    const responseBody = await response.text();
+    if (responseBody?.trim() === '{"status":"ok"}') {
+        await page.goto(baseUrl);
+        return true;
+    }
+
+    const loginLocator = page
+        .locator('h1.p-title')
+        .or(page.locator('div.centered.page-header-text'));
+    const loginLocatorCount = await loginLocator.count();
+    if (loginLocatorCount > 0) {
+        const loginText = await loginLocator.innerText();
+        const loginTextTrimmed = loginText?.trim();
+        if (loginTextTrimmed === 'Login failed' || loginTextTrimmed === 'Something went wrong') {
+            return false;
+        }
     }
 
     const {hostname: targetHostname} = new URL(updateAuthUrl);

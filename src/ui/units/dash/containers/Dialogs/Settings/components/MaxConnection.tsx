@@ -16,9 +16,10 @@ const MAX_CONCURRENT_REQUESTS = 6;
 type MaxConnectionProps = {
     maxValue: number;
     onUpdate: SelectProps['onUpdate'];
+    view?: 'dialog' | 'drawer';
 };
 
-export const MaxConnection = ({maxValue, onUpdate}: MaxConnectionProps) => {
+export const MaxConnection = ({maxValue, onUpdate, view}: MaxConnectionProps) => {
     const getMaxConnectionItems = () => {
         const items = [
             {
@@ -37,7 +38,7 @@ export const MaxConnection = ({maxValue, onUpdate}: MaxConnectionProps) => {
     };
 
     return (
-        <Row alignTop={true}>
+        <Row alignTop={true} direction={view === 'drawer' ? 'column' : 'row'}>
             <Title text={i18n('dash.settings-dialog.edit', 'label_max-concurrent-requests')}>
                 <HelpMark>
                     <YfmWrapper

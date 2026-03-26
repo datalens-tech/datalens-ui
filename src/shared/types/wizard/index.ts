@@ -8,6 +8,7 @@ import type {
     Link,
     ServerCommonSharedExtraSettings,
     ServerDatasetField,
+    ServerShapesConfig,
     ServerTooltipConfig,
     WidgetSizeType,
 } from '../';
@@ -509,10 +510,7 @@ export type Sort = Field & {
     direction: string;
 };
 
-export interface ShapesConfig {
-    mountedShapes?: Record<string, string>;
-    fieldGuid?: string;
-}
+export type ShapesConfig = ServerShapesConfig;
 
 export type ClientChartsConfig = {
     colors: Field[];

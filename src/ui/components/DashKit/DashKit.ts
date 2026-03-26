@@ -1,6 +1,6 @@
 import type {Plugin, PluginDefaultLayout} from '@gravity-ui/dashkit';
 import {DashKit} from '@gravity-ui/dashkit';
-import type {BackgroundSettings, OldBackgroundSettings} from 'shared';
+import type {BackgroundSettings, DashWidgetsSettings, OldBackgroundSettings} from 'shared';
 import {registry} from 'ui/registry';
 
 import {DL} from '../../constants';
@@ -35,18 +35,15 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
     });
 };
 
-export interface CommonWidgetSettings {
+export interface CommonWidgetSettings extends DashWidgetsSettings {
     background?: OldBackgroundSettings;
-    backgroundSettings?: BackgroundSettings;
-    borderRadius?: number;
-    internalMarginsEnabled?: boolean;
 }
 
-export type CommonGlobalWidgetSettings = CommonWidgetSettings;
+export type EntryWidgetSettings = CommonWidgetSettings;
 
 export interface CommonPluginSettings {
     scope?: string;
-    globalWidgetSettings?: CommonGlobalWidgetSettings;
+    entryWidgetSettings?: EntryWidgetSettings;
 }
 
 export interface CommonVisualSettings {
@@ -61,19 +58,19 @@ export const getConfiguredDashKit = (
         disableHashNavigation?: boolean;
         disableTitleHints?: boolean;
         scope?: string;
-        globalWidgetSettings?: CommonGlobalWidgetSettings;
+        entryWidgetSettings?: EntryWidgetSettings;
     },
     shouldReconfigure?: boolean,
 ) => {
     if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured || shouldReconfigure) {
         const commonSettings: CommonPluginSettings = {
             scope: options?.scope,
-            globalWidgetSettings: {
-                background: options?.globalWidgetSettings?.background,
-                backgroundSettings: options?.globalWidgetSettings?.backgroundSettings,
+            entryWidgetSettings: {
+                background: options?.entryWidgetSettings?.background,
+                backgroundSettings: options?.entryWidgetSettings?.backgroundSettings,
                 borderRadius:
-                    options?.globalWidgetSettings?.borderRadius ?? OLD_DEFAULT_WIDGET_BORDER_RADIUS,
-                internalMarginsEnabled: options?.globalWidgetSettings?.internalMarginsEnabled,
+                    options?.entryWidgetSettings?.borderRadius ?? OLD_DEFAULT_WIDGET_BORDER_RADIUS,
+                internalMarginsEnabled: options?.entryWidgetSettings?.internalMarginsEnabled,
             },
         };
         const titleSettings = {

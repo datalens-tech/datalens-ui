@@ -27,6 +27,10 @@ export enum SaveChartControlsQa {
     SaveButton = 'action-panel-save-btn',
 }
 
+export const DialogRelatedEntitiesQA = {
+    Dialog: 'dialog-related-entities',
+} as const;
+
 export enum DialogParameterQA {
     Apply = 'dialog-parameter-apply-btn',
     Cancel = 'dialog-parameter-cancel-btn',
@@ -145,7 +149,16 @@ export enum DialogDashWidgetQA {
 export const enum DialogFieldEditorQA {
     ApplyButton = 'dialog-field-editor-apply-button',
     CancelButton = 'dialog-field-editor-cancel-button',
+    EditNameButton = 'dialog-field-editor-edit-name-button',
 }
+
+export const DialogFilterQA = {
+    Dialog: 'dialog-filter',
+    ApplyButton: 'dialog-filter-apply-button',
+    CancelButton: 'dialog-filter-cancel-button',
+    ListItem: 'dialog-filter-list-item',
+    OperationSelect: 'operation-select',
+} as const;
 
 export const enum NavigationMinimalPlaceSelectQa {
     Connections = 'navigation-minimal-place-connections',
@@ -214,4 +227,8 @@ export enum WysiwygEditorQa {
     Editor = 'wysiwyg-editor',
     SettingsButton = 'g-md-settings-button',
     ModeMarkupItemMenu = 'g-md-settings-mode-markup',
+}
+
+export enum ErrorTextQa {
+    ErrorMessage = 'error-message',
 }

@@ -6,7 +6,13 @@ import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {Field, Shared} from 'shared';
-import {DatasetFieldType, Feature, PlaceholderActionQa, isFieldHierarchy} from 'shared';
+import {
+    DatasetFieldType,
+    Feature,
+    PlaceholderActionQa,
+    WizardVisualizationId,
+    isFieldHierarchy,
+} from 'shared';
 import {isChartSupportMultipleColors} from 'shared/modules/colors/common-helpers';
 import type {DatalensGlobalState} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -132,7 +138,11 @@ class ColorsPlaceholder extends React.Component<Props> {
             isEnabledFeature(Feature.MultipleColorsInVisualization) &&
             isChartSupportMultipleColors(chartType ?? '', visualization.id);
 
-        const item = getDialogItem(colors, placeholders);
+        const item = getDialogItem({
+            items: colors,
+            placeholders,
+            visualizationId: visualization.id,
+        });
 
         this.props.openDialogColors({
             item,
@@ -147,8 +157,12 @@ class ColorsPlaceholder extends React.Component<Props> {
 
     private shouldRenderSettings() {
         const {colors, visualization} = this.props;
-
         const {placeholders} = visualization;
+
+        if (visualization.id === WizardVisualizationId.Funnel) {
+            return colors.length > 0;
+        }
+
         const isHeatmapNotEmpty =
             colors.length &&
             placeholders[0] &&

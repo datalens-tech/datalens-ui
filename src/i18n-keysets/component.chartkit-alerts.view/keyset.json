@@ -1,0 +1,276 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_add": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_close": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_details": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_get": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_retry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_timezone": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_aggregation-function": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_oauth": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_recipients": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_timezone": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_add": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_approve-alert-remove": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_approve-draft": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_condition": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_critical-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_new-alert": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_optional": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_params-absolute-date": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_series": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unsupported-chart": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unsupported-datetime": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unsupported-series-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unsupported-widget-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unsupported-y-axis-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_validation-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_y-axis": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_additional-settings": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_alert-settings": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_general": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_metrics": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_notifications": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_alert-created": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_alert-removed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_alert-updated": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_create-alert-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_existed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_remove-alert-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_update-alert-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "validation_invalid": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "validation_no-recipients": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "validation_not-empty": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "validation_not-number": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "validation_series-max": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "validation_series-selected": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "validation_threshold-error-no-alarm": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_aggregation-AVG": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_aggregation-COUNT": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_aggregation-LAST_NON_NAN": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_aggregation-MAX": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_aggregation-MIN": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_aggregation-SUM": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_all-series": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_condition-EQ": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_condition-GT": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_condition-GTE": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_condition-LT": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_condition-LTE": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_condition-NE": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_select-series": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_y-axis-number": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

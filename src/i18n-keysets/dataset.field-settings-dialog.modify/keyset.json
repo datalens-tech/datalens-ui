@@ -1,0 +1,40 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_colors": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_reset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_colors": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_field-other-colors": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

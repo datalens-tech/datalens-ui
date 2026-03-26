@@ -25,7 +25,7 @@ export const ColorValueItem = ({colorsList, color, qa}: ColorValueItemProps) => 
 
     return (
         <div className={b({default: !color})}>
-            {color ? <div className={b('background')} style={style} data-qa={qa} /> : 'a'}
+            {color ? <div className={b('background')} style={style} data-qa={qa} /> : 'A'}
         </div>
     );
 };

@@ -1,4 +1,3 @@
-import type {Request} from '@gravity-ui/expresskit';
 import {AppError} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
 import isObject from 'lodash/isObject';
@@ -6,10 +5,6 @@ import type z from 'zod';
 import {ZodError} from 'zod';
 
 import {ServerError} from '../../../shared/constants/error';
-import {
-    PUBLIC_API_VERSION_HEADER,
-    PUBLIC_API_VERSION_HEADER_LATEST_VALUE,
-} from '../../components/public-api/constants';
 import {isGatewayError} from '../../utils/gateway';
 
 import {PUBLIC_API_ERRORS, PublicApiError} from './constants';
@@ -124,32 +119,4 @@ export const validateRequestBody = async (schema: z.ZodType, data: unknown): Pro
 
         throw error;
     }
-};
-
-export const parseRequestApiVersion = ({
-    req,
-    versions,
-    latestVersion,
-}: {
-    req: Request;
-    versions: number[];
-    latestVersion: number;
-}): number => {
-    const versionHeader = req.headers[PUBLIC_API_VERSION_HEADER];
-
-    if (versionHeader) {
-        const parsedVersion = Number(versionHeader);
-
-        if (versions.includes(parsedVersion)) {
-            return parsedVersion;
-        }
-
-        if (versionHeader === PUBLIC_API_VERSION_HEADER_LATEST_VALUE) {
-            return latestVersion;
-        }
-    }
-
-    throw new PublicApiError(`Invalid or empty ${PUBLIC_API_VERSION_HEADER} header value`, {
-        code: PUBLIC_API_ERRORS.INVALID_API_VERSION_HEADER,
-    });
 };

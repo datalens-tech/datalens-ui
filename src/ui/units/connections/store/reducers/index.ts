@@ -29,6 +29,7 @@ import {
     SET_REPLACE_SOURCE_ACTION_DATA,
     SET_SCHEMA,
     SET_SCHEMA_LOADING,
+    SET_SOURCES_INFO_LOADING,
     SET_SUBMIT_LOADING,
     SET_UPLOADED_FILES,
     SET_VALIDATION_ERRORS,
@@ -274,6 +275,16 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                 file: {
                     ...state.file,
                     beingDeletedSourceId,
+                },
+            };
+        }
+        case SET_SOURCES_INFO_LOADING: {
+            const {sourcesInfoLoading} = action.payload;
+            return {
+                ...state,
+                file: {
+                    ...state.file,
+                    sourcesInfoLoading,
                 },
             };
         }

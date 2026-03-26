@@ -38,6 +38,10 @@ export const getIsCanShowContextMenu = <T extends WorkbookUnionEntry>(
 };
 
 export const getIsCanUpdateSharedEntryBindings = <T extends WorkbookUnionEntry>(entry: T) => {
+    if (!('fullPermissions' in entry)) {
+        return undefined;
+    }
+
     return (
         entry.fullPermissions?.createEntryBinding ||
         entry.fullPermissions?.createLimitedEntryBinding ||

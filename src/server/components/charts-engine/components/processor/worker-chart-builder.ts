@@ -139,7 +139,7 @@ export const getWizardChartBuilder = async (
 
             addColorPaletteRequest({result, colorPaletteId: defaultColorPaletteId, palettes});
             Object.values(sources).forEach((s) => {
-                return (s.datasetFields ?? []).forEach((d) => {
+                (s.datasetFields ?? []).forEach((d) => {
                     const uiSettings = getFieldUISettings({field: d});
                     const palette = uiSettings?.palette;
 
@@ -200,7 +200,7 @@ export const getWizardChartBuilder = async (
         },
 
         buildChart: async (options) => {
-            const {data, params, actionParams} = options;
+            const {data, sources, params, actionParams} = options;
             const timeStart = process.hrtime();
             const execResult = await wizardWorker
                 .buildChart({
@@ -213,6 +213,7 @@ export const getWizardChartBuilder = async (
                     palettes,
                     features,
                     defaultColorPaletteId,
+                    sources,
                 })
                 .timeout(timeouts.prepare || PREPARE_EXECUTION_TIMEOUT);
 

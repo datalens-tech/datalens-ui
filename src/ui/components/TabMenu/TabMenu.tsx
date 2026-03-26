@@ -38,6 +38,7 @@ export const TabMenu = <T extends unknown>({
     onUpdateItem,
     renderWrapper,
     className,
+    showDefaultTabStar = true,
 }: TabMenuProps<T>) => {
     const [pasteConfig, setPasteConfig] = React.useState<CopiedConfigData | null>(null);
     const workbookId = useSelector(selectDashWorkbookId);
@@ -343,29 +344,31 @@ export const TabMenu = <T extends unknown>({
                     data-qa={TabMenuQA.Item}
                 >
                     <div className={b('item-content')}>
-                        <span
-                            className={b('item-star')}
-                            onClick={onAction({
-                                action: TabActionType.ChangeDefault,
-                                index: itemIndex,
-                            })}
-                        >
-                            {isDefault ? (
-                                <Button view="flat">
-                                    <Icon data={StarFill} className={b('item-star-active')} />
-                                </Button>
-                            ) : (
-                                <Button view="flat">
-                                    <Icon data={Star} className={b('item-star-inactive')} />
-                                </Button>
-                            )}
-                        </span>
+                        {showDefaultTabStar && (
+                            <span
+                                className={b('item-star')}
+                                onClick={onAction({
+                                    action: TabActionType.ChangeDefault,
+                                    index: itemIndex,
+                                })}
+                            >
+                                {isDefault ? (
+                                    <Button view="flat">
+                                        <Icon data={StarFill} className={b('item-star-active')} />
+                                    </Button>
+                                ) : (
+                                    <Button view="flat">
+                                        <Icon data={Star} className={b('item-star-inactive')} />
+                                    </Button>
+                                )}
+                            </span>
+                        )}
                         <span className={b('item-text')}>{title}</span>
                     </div>
                 </div>
             );
         },
-        [onAction],
+        [onAction, showDefaultTabStar],
     );
 
     const renderListWithRemove = React.useCallback(

@@ -10,6 +10,7 @@ import type {DatalensGlobalState} from 'ui';
 import {InnerFieldKey} from '../../../../constants';
 import {changeForm, changeInnerForm} from '../../../../store';
 import {Input, Label, RadioButton} from '../../components';
+import {getPreparedCacheValue} from '../../utils';
 
 const i18n = I18n.keyset('connections.form');
 const CACHE_TTL_MIN = 0;
@@ -27,22 +28,6 @@ const getInitialCacheTtlMode = (value?: string | null) => {
     return value ? CACHE_TTL_MODE.CUSTOMIZABLE : CACHE_TTL_MODE.DEFAULT;
 };
 
-const getPreparedCacheValue = (value: string) => {
-    if (value === '') {
-        return null;
-    }
-
-    let result = Number(value);
-
-    if (result < CACHE_TTL_MIN) {
-        result = CACHE_TTL_MIN;
-    } else if (result > CACHE_TTL_MAX) {
-        result = CACHE_TTL_MAX;
-    }
-
-    return String(result);
-};
-
 const CacheTtlRowComponent = (props: CacheTtlRowProps) => {
     const {actions, form, innerForm, labelText, disabled, name} = props;
     const value = form[name] as string | null;
@@ -57,6 +42,14 @@ const CacheTtlRowComponent = (props: CacheTtlRowProps) => {
         const initialCacheTtlMode = getInitialCacheTtlMode(value);
         actions.changeInnerForm({[InnerFieldKey.CacheTtlMode]: initialCacheTtlMode});
         // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const prepareValue = React.useCallback((inputValue: string) => {
+        return getPreparedCacheValue({
+            value: inputValue,
+            maxValue: CACHE_TTL_MAX,
+            minValue: CACHE_TTL_MIN,
+        });
     }, []);
 
     return (
@@ -76,16 +69,19 @@ const CacheTtlRowComponent = (props: CacheTtlRowProps) => {
                 beforeUpdate={radioButtonBeforeUpdateHandler}
             />
             {cacheTtlMode === CACHE_TTL_MODE.CUSTOMIZABLE && (
-                <Input
-                    name={name}
-                    width="s"
-                    controlProps={{
-                        disabled,
-                        type: 'number',
-                        controlProps: {min: CACHE_TTL_MIN, max: CACHE_TTL_MAX},
-                    }}
-                    prepareValue={getPreparedCacheValue}
-                />
+                <React.Fragment>
+                    <Input
+                        name={name}
+                        width="s"
+                        controlProps={{
+                            disabled,
+                            type: 'number',
+                            controlProps: {min: CACHE_TTL_MIN, max: CACHE_TTL_MAX},
+                        }}
+                        prepareValue={prepareValue}
+                    />
+                    <Label text={i18n('field_cache-ttl-sec_unit')} />
+                </React.Fragment>
             )}
         </React.Fragment>
     );

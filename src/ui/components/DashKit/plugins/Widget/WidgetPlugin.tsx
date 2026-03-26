@@ -29,7 +29,7 @@ const widgetPlugin: PluginWidget = {
     defaultLayout: {w: 12, h: 12},
     setSettings: (settings: PluginWidgetObjectSettings) => {
         widgetPlugin.scope = settings.scope;
-        widgetPlugin.globalWidgetSettings = settings.globalWidgetSettings;
+        widgetPlugin.entryWidgetSettings = settings.entryWidgetSettings;
         return widgetPlugin;
     },
     renderer: function Wrapper(
@@ -54,27 +54,30 @@ const widgetPlugin: PluginWidget = {
             oldWidgetBg = {color: CustomPaletteBgColors.LIKE_CHART};
         }
 
-        const {style, hasInternalMargins: hasInternalMarginsComputed} = usePreparedWrapSettings({
-            ownWidgetSettings: {
+        const ownWidgetSettings = React.useMemo(
+            () => ({
                 background: oldWidgetBg,
                 backgroundSettings: data.backgroundSettings,
                 borderRadius: data.borderRadius,
                 internalMarginsEnabled: data.internalMarginsEnabled,
-            },
-            dashVisualSettings: {
-                background: undefined,
-                backgroundSettings: undefined,
-                widgetsSettings: widgetPlugin.globalWidgetSettings,
-            },
-            defaultOldColor:
-                widgetPlugin.scope === 'dash'
-                    ? CustomPaletteBgColors.LIKE_CHART
-                    : CustomPaletteBgColors.NONE,
+            }),
+            [oldWidgetBg, data.backgroundSettings, data.borderRadius, data.internalMarginsEnabled],
+        );
+
+        const defaultOldColor =
+            widgetPlugin.scope === 'dash'
+                ? CustomPaletteBgColors.LIKE_CHART
+                : CustomPaletteBgColors.NONE;
+
+        const {style, hasInternalMargins: hasInternalMarginsComputed} = usePreparedWrapSettings({
+            ownWidgetSettings,
+            entryWidgetSettings: widgetPlugin.entryWidgetSettings,
+            defaultOldColor,
         });
 
         const hasInternalMargins =
             (data.internalMarginsEnabled === undefined &&
-                widgetPlugin.globalWidgetSettings?.internalMarginsEnabled === undefined) ||
+                widgetPlugin.entryWidgetSettings?.internalMarginsEnabled === undefined) ||
             hasInternalMarginsComputed;
 
         return (

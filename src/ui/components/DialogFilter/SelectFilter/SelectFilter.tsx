@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, List, Loader} from '@gravity-ui/uikit';
+import {Button, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import _ from 'lodash';
@@ -80,6 +80,8 @@ class SelectFilter extends React.Component<SelectFilterProps, SelectFilterState>
         const items = this.leftItems;
 
         const filteredItems = items.filter(({value}) => value !== null && value !== undefined);
+        const resultItems = suggestFetching ? [] : items;
+        const isSelectColumnDisabled = !filteredItems.length || suggestFetching;
 
         return (
             <div className={b('select-column', {[ColumnType.Left]: true})}>
@@ -87,7 +89,7 @@ class SelectFilter extends React.Component<SelectFilterProps, SelectFilterState>
                     {i18n('label_select-column-left-title')}
                     <Button
                         view="flat-secondary"
-                        disabled={!filteredItems.length}
+                        disabled={isSelectColumnDisabled}
                         onClick={() => {
                             const newValues = [...values, ...filteredItems.map(({value}) => value)];
 
@@ -97,14 +99,11 @@ class SelectFilter extends React.Component<SelectFilterProps, SelectFilterState>
                         {i18n('button_left-column-action')}
                     </Button>
                 </div>
-                {suggestFetching && (
-                    <div className={b('select-column-loader')}>
-                        <Loader />
-                    </div>
-                )}
-                <div className={b('select-column-items', {disabled: suggestFetching})}>
+
+                <div className={b('select-column-items')}>
                     <List
-                        items={items}
+                        loading={suggestFetching}
+                        items={resultItems}
                         itemHeight={LIST_ITEM_HEIGHT}
                         filter={leftFilter}
                         filterPlaceholder={i18n('label_filter-placeholder')}

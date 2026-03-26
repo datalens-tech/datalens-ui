@@ -7,7 +7,7 @@ import {AUTH_ROUTE, ROOT_AUTH_ROUTE} from '../../constants/routes';
 import {setAuthPageInited} from '../../store/actions/common';
 
 export const useAuthPageInit = () => {
-    const {pathname} = useLocation();
+    const {pathname, search} = useLocation();
     const history = useHistory();
     const dispatch = useDispatch();
 
@@ -40,7 +40,7 @@ export const useAuthPageInit = () => {
             }
 
             if (redirectPath) {
-                history.replace(redirectPath);
+                history.replace({pathname: redirectPath, search});
             }
 
             dispatch(setAuthPageInited({authPageInited: true, rethPath}));

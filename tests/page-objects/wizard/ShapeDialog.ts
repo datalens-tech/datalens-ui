@@ -1,5 +1,5 @@
 import {Page} from '@playwright/test';
-import {LineShapeType} from '../../../src/shared/constants';
+import {DialogLineShapesQa, LineShapeType} from '../../../src/shared/constants';
 
 import {slct} from '../../utils';
 
@@ -15,9 +15,8 @@ export const DashArrayLineType = {
 export default class ShapeDialog {
     private page: Page;
 
-    private cancelButton = '.dialog-shapes .g-dialog-footer__button_action_cancel';
-    private valueLabelSelector = '.dialog-shapes .values-list__value-label';
-    private applyButton = '.dialog-shapes .g-dialog-footer__button_action_apply';
+    private cancelButton = '.dialog-line-shapes .g-dialog-footer__button_action_cancel';
+    private applyButton = '.dialog-line-shapes .g-dialog-footer__button_action_apply';
 
     constructor(page: Page) {
         this.page = page;
@@ -42,8 +41,9 @@ export default class ShapeDialog {
     }
 
     async selectValue(value: string) {
-        await this.page.waitForSelector(this.valueLabelSelector);
-
-        await this.page.click(`[title='${value}']`);
+        await this.page
+            .locator(slct(DialogLineShapesQa.ValueList))
+            .locator(`[title='${value}']`)
+            .click();
     }
 }

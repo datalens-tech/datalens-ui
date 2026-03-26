@@ -12,7 +12,7 @@ import {workbooksTransferController} from '../../controllers/workbook-transfer';
 import {getConnectorIconsMiddleware} from '../../middlewares';
 import {getTenantSettingsMiddleware} from '../../middlewares/tenant-settings';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
-import {getConfiguredRoute} from '../../utils/routes';
+import {getConfiguredRoute, getDashboardsRedirectPath} from '../../utils/routes';
 import {applyPluginRoutes} from '../charts/init-charts-engine';
 
 export function getRoutes({
@@ -134,8 +134,7 @@ function getDataLensRoutes({
             route: 'GET /dashboards/*',
             beforeAuth,
             afterAuth,
-            handler: (req: Request, res: Response) =>
-                res.redirect(req.originalUrl.replace('/dashboards', '')),
+            handler: (req: Request, res: Response) => res.redirect(getDashboardsRedirectPath(req)),
         },
 
         getWizardAll: getConfiguredRoute('dl-main', {...ui, route: 'GET /wizard/*'}),

@@ -9,6 +9,7 @@ import type {
 } from '../../../../../shared';
 import type {SourceRequests} from '../../../../modes/charts/plugins/datalens/url/types';
 import type {LogItem} from '../processor/console';
+import type {DataFetcherResult} from '../processor/data-fetcher';
 import type {RuntimeMetadata} from '../processor/types';
 
 export type ChartShared = Record<string, object> | Shared | ServerChartsConfig | QlConfig;
@@ -57,6 +58,7 @@ export type BuildChartArgs = {
     features: FeatureConfig;
     palettes: Record<string, Palette>;
     defaultColorPaletteId: string;
+    sources?: Record<string, DataFetcherResult>;
 };
 
 export type WizardWorker = {

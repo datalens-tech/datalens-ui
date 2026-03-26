@@ -5,6 +5,7 @@ import {WizardVisualizationId, isGravityChartsVisualization} from '../../../../.
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {datalensModule} from '../../../../modes/charts/plugins/datalens/private-module';
 import {mapChartsConfigToServerConfig} from '../../../../modes/charts/plugins/datalens/utils/config-helpers';
+import type {ResolvedSource} from '../../../../modes/charts/plugins/types';
 import {createI18nInstance} from '../../../../utils/language';
 import {getChartApiContext} from '../processor/chart-api-context';
 import {Console} from '../processor/console';
@@ -127,6 +128,7 @@ const worker: WizardWorker = {
             palettes,
             defaultColorPaletteId,
             features,
+            sources,
         } = args;
         const context = getChartApiContext({
             name: 'Prepare',
@@ -149,6 +151,16 @@ const worker: WizardWorker = {
             id: serverChartConfig?.visualization?.id,
         });
         const plugin = shouldUseGravityCharts ? 'gravity-charts' : undefined;
+        const resolvedSources: Record<string, ResolvedSource> = {};
+        if (sources) {
+            Object.values(sources).forEach((item) => {
+                resolvedSources[item.datasetId] = {
+                    datasetId: item.datasetId,
+                    datasetFields: item.datasetFields ?? item.source?.datasetFields ?? [],
+                };
+            });
+        }
+
         const result = datalensModule.buildGraph({
             data,
             shared: serverChartConfig,
@@ -157,6 +169,7 @@ const worker: WizardWorker = {
             features,
             plugin,
             defaultColorPaletteId,
+            sources: resolvedSources,
         });
 
         return {

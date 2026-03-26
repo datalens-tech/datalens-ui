@@ -55,7 +55,6 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
     return (
         <Flex className={b({new: newServiceSettingsEnabled})}>
             <TextInput
-                type="search"
                 value={search}
                 onUpdate={handleSearchChange}
                 hasClear={true}

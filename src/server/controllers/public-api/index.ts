@@ -5,12 +5,17 @@ import {AppError, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {getValidationSchema} from '../../../shared/schema/gateway-utils';
 import type {ChartsEngine} from '../../components/charts-engine';
 import {registerActionToOpenApi} from '../../components/public-api';
+import {
+    PUBLIC_API_ACTION_REQ_PARAM,
+    PUBLIC_API_VERSION_HEADER,
+} from '../../components/public-api/constants';
+import {parsePublicApiVersionHeader} from '../../components/public-api/utils';
 import {registry} from '../../registry';
 import type {AnyApiServiceActionConfig} from '../../types/gateway';
 import Utils from '../../utils';
 
 import {PUBLIC_API_ERRORS, PublicApiError} from './constants';
-import {parseRequestApiVersion, prepareError, validateRequestBody} from './utils';
+import {prepareError, validateRequestBody} from './utils';
 
 export const createPublicApiController = (chartsEngine?: ChartsEngine) => {
     const {gatewayApi} = registry.getGatewayApi<SchemasByScope>();
@@ -58,13 +63,22 @@ export const createPublicApiController = (chartsEngine?: ChartsEngine) => {
 
     return async function publicApiController(req: Request, res: Response) {
         try {
-            const {action: actionName} = req.params;
+            const actionName = req.params[PUBLIC_API_ACTION_REQ_PARAM];
 
-            const version = parseRequestApiVersion({
-                req,
+            const version = parsePublicApiVersionHeader({
+                versionHeader: req.headers[PUBLIC_API_VERSION_HEADER],
                 versions: apiVersions,
                 latestVersion: latestApiVersion,
             });
+
+            if (version === null) {
+                throw new PublicApiError(
+                    `Invalid or empty ${PUBLIC_API_VERSION_HEADER} header value`,
+                    {
+                        code: PUBLIC_API_ERRORS.INVALID_API_VERSION_HEADER,
+                    },
+                );
+            }
 
             if (!actionName || !baseConfig[version].actions[actionName]) {
                 throw new PublicApiError(`Endpoint ${req.path} does not exist`, {

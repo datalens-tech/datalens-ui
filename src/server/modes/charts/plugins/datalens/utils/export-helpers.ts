@@ -38,8 +38,9 @@ export function getFieldExportingOptions(field?: ServerField): ExportingColumnOp
 export function getExportColumnSettings(args: {
     path: string;
     field?: ServerField;
+    id?: string;
 }): ColumnExportSettings {
-    const {path, field} = args;
+    const {id, path, field} = args;
 
     let columnType: ColumnExportSettings['type'] = 'text';
     let formatter: ColumnExportSettings['formatter'] = {};
@@ -54,6 +55,7 @@ export function getExportColumnSettings(args: {
     }
 
     return {
+        id: id ?? path,
         name: getFakeTitleOrTitle(field),
         formatter,
         format,

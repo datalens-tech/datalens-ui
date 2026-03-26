@@ -6,9 +6,8 @@ import type {LineShapeType} from 'shared';
 import {SHAPES_PALETTE_ORDER} from 'shared';
 import {selectClientAvailableLineShapes} from 'ui/constants/common';
 
+import {getShapedLineIcon} from '../../../../utils/line-shapes';
 import {i18n} from '../../i18n';
-
-import {getShapedLineIcon} from './utils';
 
 const b = block('chart-modeling-settings');
 

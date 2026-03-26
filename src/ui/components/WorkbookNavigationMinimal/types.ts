@@ -1,4 +1,4 @@
-import type {GetEntryResponse, GetSharedEntryResponse} from 'shared/schema';
+import type {SharedWorkbookEntry, WorkbookEntryBase} from 'shared/schema';
 
 export type BaseListItem<E> = {
     qa: string;
@@ -6,6 +6,6 @@ export type BaseListItem<E> = {
     inactive: boolean;
 };
 
-export type Item = BaseListItem<GetEntryResponse>;
+export type Item = BaseListItem<WorkbookEntryBase>;
 
-export type SharedItem = BaseListItem<GetSharedEntryResponse>;
+export type SharedItem = BaseListItem<SharedWorkbookEntry>;

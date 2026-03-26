@@ -49,4 +49,6 @@ export const CSP_HEADER = 'content-security-policy';
 export const CSP_REPORT_TO_HEADER = 'report-to';
 export const SET_COOKIE_HEADER = 'set-cookie';
 
+export const BACKOFFICE_TENANT_ID_HEADER = 'tenant-id';
+
 export const SCR_USER_AGENT_HEADER_VALUE = 'StatScreenshooter';

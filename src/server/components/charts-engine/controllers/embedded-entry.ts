@@ -6,7 +6,7 @@ import {DL_EMBED_TOKEN_HEADER, EntryScope, ErrorCode} from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 
-export const embeddedEntryController = (req: Request, res: Response) => {
+export const embeddedEntryController = async (req: Request, res: Response) => {
     const {ctx} = req;
 
     const embedToken = Array.isArray(req.headers[DL_EMBED_TOKEN_HEADER])
@@ -57,7 +57,7 @@ export const embeddedEntryController = (req: Request, res: Response) => {
 
     ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {embedId});
 
-    Promise.resolve(configPromise)
+    await Promise.resolve(configPromise)
         .catch((err: unknown) => {
             const error: ResolveConfigError =
                 isObject(err) && 'message' in err ? (err as Error) : new Error(err as string);

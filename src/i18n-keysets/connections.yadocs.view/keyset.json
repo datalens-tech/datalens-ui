@@ -1,0 +1,120 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_add": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_apply": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_auth": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_auth-dialog": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_logout": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_update": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_403-not-authotized-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_access-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_add-file": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_add-input-private-help": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_add-input-private-note": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_add-input-public-help": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_add-input-public-note": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alert-authorized": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alert-not-authorized": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_auto-update": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_auto-update-help": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_form-tile": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_logout": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_logout-dialog-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_logout-dialog-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_private-path": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_public-path": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_radio-value-private": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_radio-value-public": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_workspace-placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

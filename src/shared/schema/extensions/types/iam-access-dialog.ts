@@ -1,9 +1,5 @@
 import type {Lang} from '../../..';
-
-export enum AccessServiceResourceType {
-    Collection = 'datalens.collection',
-    Workbook = 'datalens.workbook',
-}
+import type {AccessServiceResourceType} from '../../../constants/iam';
 
 type ResourcePathItem = {
     type: `${AccessServiceResourceType}`;

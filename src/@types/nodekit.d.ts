@@ -48,6 +48,9 @@ export interface SharedAppConfig {
         maxWorkers?: number;
         includeServicePlan?: boolean;
         includeTenantFeatures?: true;
+        tvmAllowedSources?: Record<string, number>;
+        tvmAllowedSourcesWithoutUserTicket?: Record<string, number>;
+        privateApiPrefixes?: string[];
     };
     // CHARTS ENGINE -- FINISH
 

@@ -35,6 +35,7 @@ import {
     DATASET_FIELD_TYPES,
     DatasetFieldType,
     PlaceholderId,
+    WizardVisualizationId,
     getResultSchemaFromDataset,
     getSortedData,
     isPseudoField,
@@ -379,9 +380,26 @@ export function getDefaultChartName({
     }
 }
 
-export function getDialogItem(items: Field[], placeholders: Placeholder[]) {
+export function getDialogItem({
+    items,
+    placeholders,
+    visualizationId,
+}: {
+    items: Field[];
+    placeholders: Placeholder[];
+    visualizationId: string;
+}) {
     if (items[0] && !isPseudoField(items[0])) {
         return items[0];
+    }
+
+    if (visualizationId === WizardVisualizationId.Funnel) {
+        if (isPseudoField(items[0])) {
+            const measuresPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Measures);
+            return measuresPlaceholder?.items ?? [];
+        }
+
+        return undefined;
     }
 
     let placeholdersItems: Field[] = [];

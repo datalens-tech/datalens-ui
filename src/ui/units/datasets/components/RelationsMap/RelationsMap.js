@@ -9,7 +9,7 @@ import _isEqual from 'lodash/isEqual';
 import _noop from 'lodash/noop';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import {AvatarQA} from 'shared';
+import {AvatarQA, RelationsMapQA} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
 import {JOIN_TYPES_ICONS, SVG_NAMESPACE_URI} from '../../constants';
@@ -355,7 +355,7 @@ class RelationsMap extends React.Component {
                 className={b({
                     over: isOver && !isDisabledDropSource,
                 })}
-                data-qa="ds-relations-map"
+                data-qa={RelationsMapQA.RelationsMap}
             >
                 <div
                     ref={this._treeLevelRef}

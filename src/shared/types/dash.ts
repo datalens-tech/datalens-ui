@@ -143,11 +143,13 @@ export interface DashTab {
     aliases: DashTabAliases;
     connections: DashTabConnection[];
     settings?: DashTabSettings;
-    globalItems?: DashTabItem[];
+    globalItems?: DashGlobalItem[];
 }
 
 export type DashSettingsGlobalParams = Record<string, string | string[]>;
 export type DashWidgetsConfigsMapper = Record<string, ClientChartsConfig>;
+
+export type DashGlobalItem = DashTabItemControl | DashTabItemGroupControl;
 
 export type DashTabItem =
     | DashTabItemText
@@ -238,18 +240,18 @@ export interface DashTabItemWidgetTab {
 
 export interface DashTabItemControl extends DashTabItemBase {
     type: DashTabItemType.Control;
-    data: DashTabItemControlData;
+    data: Omit<DashTabItemControlData, 'id' | 'namespace'>;
     defaults: StringParams;
 }
 
 export interface DashTabItemControlBaseData {
-    id: string;
+    id?: string;
     title: string;
     placementMode?: 'auto' | '%' | 'px';
     autoHeight?: boolean;
     width?: string;
     defaults?: StringParams;
-    namespace: string;
+    namespace?: string;
     impactType?: ImpactType;
     impactTabsIds?: ImpactTabsIds;
 }
@@ -262,7 +264,10 @@ export interface DashTabItemControlData extends DashTabItemControlBaseData {
         | DashTabItemControlExternal['source'];
 }
 
-export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
+export type DashTabItemControlSingle = (DashTabItemControlDataset | DashTabItemControlManual) & {
+    id: string;
+    namespace: string;
+};
 
 export type DashItemControlConnectionBaseSource = {
     connectionId?: string;
@@ -288,8 +293,7 @@ export interface DashTabItemControlDataset extends DashTabItemControlData {
 
 export type DashItemControlManualBaseSource = {
     fieldName: string;
-    fieldType: string;
-    acceptableValues:
+    acceptableValues?:
         | {
               // elementType: select
               value: string;
@@ -352,13 +356,13 @@ export interface DashTabItemControlElementSelectBase {
 export interface DashTabItemControlElementSelect
     extends DashTabItemControlElementBase,
         DashTabItemControlElementSelectBase {
-    defaultValue: UniversalDefaultValue;
     elementType: DashTabItemControlElementType.Select;
+    defaultValue?: UniversalDefaultValue;
 }
 
 export interface DashTabItemControlElementInput extends DashTabItemControlElementBase {
-    defaultValue: StringDefaultValue;
     elementType: DashTabItemControlElementType.Input;
+    defaultValue?: StringDefaultValue;
 }
 
 export interface DashTabItemControlElementDateBase {
@@ -369,7 +373,7 @@ export interface DashTabItemControlElementDate
     extends DashTabItemControlElementBase,
         DashTabItemControlElementDateBase {
     elementType: DashTabItemControlElementType.Date;
-    defaultValue: StringDefaultValue;
+    defaultValue?: StringDefaultValue;
 }
 
 export interface DashTabItemControlElementCheckbox extends DashTabItemControlElementBase {
@@ -389,7 +393,6 @@ export interface DashTabItemControlExternal extends DashTabItemControlData {
 export interface DashTabItemGroupControl extends DashTabItemBase {
     type: DashTabItemType.GroupControl;
     data: DashTabItemGroupControlData;
-    defaults: StringParams;
 }
 
 export interface DashTabItemGroupControlBaseData {

@@ -158,6 +158,12 @@ export type CacheTtlRowItem = Omit<BaseItem, 'inner'> & {
     disabled?: boolean;
 };
 
+export type EarlyInvalidationCacheRowItem = Omit<BaseItem, 'inner'> & {
+    type: 'cache_invalidation_throttling_interval_sec';
+    labelText?: string;
+    disabled?: boolean;
+};
+
 export type CollapseRowItem = BaseItem & {
     type: 'collapse';
     text: string;
@@ -173,7 +179,11 @@ export type RawSQLLevelRowItem = Omit<BaseItem, 'inner'> & {
     disabled?: boolean;
 };
 
-export type PreparedRow = CacheTtlRowItem | CollapseRowItem | RawSQLLevelRowItem;
+export type PreparedRow =
+    | EarlyInvalidationCacheRowItem
+    | CacheTtlRowItem
+    | CollapseRowItem
+    | RawSQLLevelRowItem;
 
 export type Row = CustomizableRow | PreparedRow;
 

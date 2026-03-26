@@ -47,7 +47,9 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
             return {
                 ...state,
                 getUsersList: {
-                    ...initialState.getUsersList,
+                    ...state.getUsersList,
+                    isInitialLoading: false,
+                    isLoadingMore: false,
                     users: action.payload.isLoadMore
                         ? [...state.getUsersList.users, ...action.payload.data.users]
                         : action.payload.data.users,

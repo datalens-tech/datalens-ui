@@ -7,7 +7,7 @@ const SHAPES_IN_ORDER = getServerShapesOrder();
 
 type MapAndShapeGraphArgs = {
     graphs: ExtendedSeriesLineOptions[];
-    shapesConfig: ServerShapesConfig;
+    shapesConfig: ServerShapesConfig | undefined;
     isSegmentsExists: boolean;
     isShapesDefault: boolean;
 };
@@ -19,14 +19,32 @@ export const mapAndShapeGraph = ({
     isShapesDefault,
 }: MapAndShapeGraphArgs) => {
     const knownValues: (string | undefined)[] = [];
+    const defaultLineWidth = shapesConfig?.commonLineSettings?.lineWidth;
+    const linecap = shapesConfig?.commonLineSettings?.linecap;
+    const linejoin = shapesConfig?.commonLineSettings?.linejoin;
 
     graphs.forEach((graph, i) => {
         const value = graph.shapeValue;
         const title = value || graph.legendTitle || graph.name;
 
+        const currentLineWidth = title ? shapesConfig?.lineSettings?.[title]?.lineWidth : 'auto';
+        if (currentLineWidth && currentLineWidth !== 'auto') {
+            graph.lineWidth = currentLineWidth;
+        } else if (defaultLineWidth && defaultLineWidth !== 'auto') {
+            graph.lineWidth = defaultLineWidth;
+        }
+
+        if (linecap) {
+            graph.linecap = linecap;
+        }
+
+        if (linejoin) {
+            // @ts-ignore
+            graph.linejoin = linejoin;
+        }
+
         if (
-            shapesConfig &&
-            shapesConfig.mountedShapes &&
+            shapesConfig?.mountedShapes &&
             title &&
             shapesConfig.mountedShapes[title] &&
             shapesConfig.mountedShapes[title] !== 'auto'

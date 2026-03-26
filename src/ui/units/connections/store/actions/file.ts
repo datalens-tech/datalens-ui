@@ -1,14 +1,14 @@
 import {I18n} from 'i18n';
 import {clone, get} from 'lodash';
 import {batch} from 'react-redux';
-import {ConnectorType, Feature} from 'shared';
+import {ConnectorType} from 'shared';
 import {showToast} from 'ui/store/actions/toaster';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {UpdateFileSourceArgs} from '../../../../../shared/schema';
 import logger from '../../../../libs/logger';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import type {DataLensApiError} from '../../../../typings';
+import {getListItemId} from '../../components/custom-forms/File/utils';
 import {DIALOG_CONN_S3_SOURCES} from '../../components/dialogs';
 import {FieldKey} from '../../constants';
 import type {FormDict} from '../../typings';
@@ -34,9 +34,11 @@ import {api} from './api';
 import {
     setBeingDeletedSourceId,
     setFileReplaceSources,
+    setFileSelectedItemId,
     setFileSources,
     setForm,
     setInitialForm,
+    setSourcesInfoLoading,
     setUploadedFiles,
 } from './base';
 
@@ -126,6 +128,9 @@ export const sourcesInfoToSources = (fileId: string, sourcesId: string[]) => {
         let uploadedFiles = get(getState().connections, ['file', 'uploadedFiles']);
         const beingDeletedSourceId = get(getState().connections, ['file', 'beingDeletedSourceId']);
         const uploadedFile = uploadedFiles.find((file) => file.id === fileId);
+
+        dispatch(setSourcesInfoLoading({sourcesInfoLoading: true}));
+
         const response = await Promise.all(sourcesId.map((id) => api.updateFileSource(fileId, id)));
         const sources = response.reduce((acc, item) => {
             if ('error' in item) {
@@ -176,6 +181,8 @@ export const sourcesInfoToSources = (fileId: string, sourcesId: string[]) => {
                 setFileAndFormSources({sources: [...prevSources, ...sources], replaceSources}),
             );
             dispatch(setBeingDeletedSourceId({beingDeletedSourceId: undefined}));
+            dispatch(setFileSelectedItemId({selectedItemId: getListItemId(sources[0])}));
+            dispatch(setSourcesInfoLoading({sourcesInfoLoading: false}));
         });
     };
 };
@@ -292,22 +299,7 @@ const removeUploadedFile = (file: File) => {
     };
 };
 
-const uploadFileViaUploader = (file: File) => {
-    return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        // To show the loader without waiting for the file to be uploaded to the uploader
-        dispatch(updateUploadedFiles({file, id: ''}));
-
-        const uploadedFile = await api.uploadFile(file);
-
-        dispatch(updateUploadedFiles(uploadedFile));
-
-        if (uploadedFile.id) {
-            pollFileStatus({fileId: uploadedFile.id, dispatch, getState});
-        }
-    };
-};
-
-const uploadFileViaPresignedUrl = (file: File) => {
+export const uploadFile = (file: File) => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         if (file.size > FILE_MAX_SIZE) {
             dispatch(
@@ -321,7 +313,10 @@ const uploadFileViaPresignedUrl = (file: File) => {
         }
 
         // To show the loader without waiting for the file to be uploaded to the uploader
-        dispatch(updateUploadedFiles({file, id: ''}));
+        batch(() => {
+            dispatch(setFileSelectedItemId({selectedItemId: file.name}));
+            dispatch(updateUploadedFiles({file, id: ''}));
+        });
 
         const {fields, url, error: getPresignedUrlError} = await api.getPresignedUrl();
 
@@ -356,17 +351,16 @@ const uploadFileViaPresignedUrl = (file: File) => {
             key: fields.key,
         });
 
-        dispatch(updateUploadedFiles({file, id, error}));
+        batch(() => {
+            dispatch(setFileSelectedItemId({selectedItemId: id}));
+            dispatch(updateUploadedFiles({file, id, error}));
+        });
 
         if (id) {
             pollFileStatus({fileId: id, dispatch, getState});
         }
     };
 };
-
-export const uploadFile = isEnabledFeature(Feature.EnableFileUploadingByPresignedUrl)
-    ? uploadFileViaPresignedUrl
-    : uploadFileViaUploader;
 
 export const updateFileSource = (
     fileId: string,
@@ -399,6 +393,16 @@ export const updateFileSource = (
                 return 'source' in prevSource ? prevSource.source.source_id === sourceId : false;
             });
             source = response.source;
+            const prevSource = prevSources[alreadyExistedSourceIndex];
+            if (prevSource && 'source' in prevSource) {
+                source = {
+                    ...source,
+                    source: {
+                        ...source.source,
+                        title: prevSource.source.title,
+                    },
+                };
+            }
         }
 
         if ('source' in source && resultColumnTypes.length) {
@@ -573,6 +577,7 @@ export const setDataFileFormData = () => {
             dispatch(setInitialForm({updates: form}));
 
             if (sources.length) {
+                dispatch(setFileSelectedItemId({selectedItemId: getListItemId(sources[0])}));
                 dispatch(setFileSources({sources}));
             }
         });

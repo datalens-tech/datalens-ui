@@ -30,26 +30,15 @@ export const pluginImage: PluginImage = {
     type: DashTabItemType.Image,
     defaultLayout: {w: 12, h: 12, minH: 1, minW: 1},
     setSettings: (settings: PluginImageObjectSettings) => {
-        pluginImage.globalWidgetSettings = settings.globalWidgetSettings;
+        pluginImage.entryWidgetSettings = settings.entryWidgetSettings;
         return pluginImage;
     },
     renderer: PluginImageRenderer,
 };
 
 function PluginImageRenderer(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
-    const {
-        id,
-        data: {
-            alt,
-            background,
-            backgroundSettings,
-            borderRadius,
-            internalMarginsEnabled,
-            src,
-            preserveAspectRatio,
-        },
-        layout,
-    } = props;
+    const {id, data, layout} = props;
+    const {alt, src, preserveAspectRatio} = data;
 
     const rootNodeRef = React.useRef<HTMLDivElement>(null);
     useWidgetContext({
@@ -66,17 +55,8 @@ function PluginImageRenderer(props: Props, _ref?: React.LegacyRef<HTMLDivElement
     };
 
     const {style} = usePreparedWrapSettings({
-        ownWidgetSettings: {
-            background: background,
-            backgroundSettings: backgroundSettings,
-            borderRadius: borderRadius,
-            internalMarginsEnabled: internalMarginsEnabled,
-        },
-        dashVisualSettings: {
-            background: undefined,
-            backgroundSettings: undefined,
-            widgetsSettings: pluginImage.globalWidgetSettings,
-        },
+        data,
+        entryWidgetSettings: pluginImage.entryWidgetSettings,
         defaultOldColor: CustomPaletteBgColors.NONE,
     });
 

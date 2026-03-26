@@ -1,5 +1,5 @@
 import {I18n} from 'i18n';
-import type {EntryNotification} from 'shared/types/meta-manager';
+import type {EntryNotification} from 'shared/schema';
 
 import type {PreparedNotificationType} from './types';
 

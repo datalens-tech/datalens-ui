@@ -12,8 +12,10 @@ import type {
 import type {moveWorkbookResultSchema} from '../actions/workbooks/move-workbook';
 import type {moveWorkbooksResultSchema} from '../actions/workbooks/move-workbooks';
 import type {updateWorkbookResultSchema} from '../actions/workbooks/update-workbook';
+import type {workbookEntrySchema} from '../schemas/workbooks/get-workbook-entries';
 
-import type {GetEntryResponse, GetSharedEntryResponse, RestrictedSharedEntry} from './entries';
+import type {GetEntryResponse} from './entries';
+import type {SharedEntryPermissions} from './fields';
 import type {GetDatalensOperationResponse} from './operations';
 import type {OrderDirection, OrderWorkbookEntriesField} from './sort';
 
@@ -85,13 +87,37 @@ export type GetWorkbookEntriesArgs = {
     };
 };
 
+export type WorkbookEntryBase = z.infer<typeof workbookEntrySchema>;
+
+export interface SharedWorkbookEntry extends WorkbookEntryBase {
+    isDelegated: boolean;
+    fullPermissions?: SharedEntryPermissions;
+    isRestricted?: false;
+}
+
+export interface RestrictedSharedWorkbookEntry
+    extends Pick<
+        SharedWorkbookEntry,
+        | 'entryId'
+        | 'collectionId'
+        | 'isDelegated'
+        | 'isLocked'
+        | 'scope'
+        | 'type'
+        | 'workbookId'
+        | 'permissions'
+        | 'fullPermissions'
+    > {
+    isRestricted: true;
+}
+
 export type GetWorkbookEntriesResponse = {
-    entries: GetEntryResponse[]; // TODO: Take into account permishins
+    entries: WorkbookEntryBase[];
     nextPageToken?: string;
 };
 
 export type GetWorkbookSharedEntriesResponse = {
-    entries: (GetSharedEntryResponse | RestrictedSharedEntry)[];
+    entries: (SharedWorkbookEntry | RestrictedSharedWorkbookEntry)[];
     nextPageToken?: string;
 };
 

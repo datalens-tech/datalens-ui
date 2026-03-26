@@ -31,29 +31,37 @@ RUN useradd -m -u 1001 app && mkdir /opt/app && chown app:app /opt/app
 # install package dependencies for production
 FROM base-stage AS install-stage
 
-# install system dependencies
-RUN apt-get update && apt-get -y install g++ make
+ARG TARGETARCH
+ARG PNPM_VERSION=10.17.1
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    CI=1 \
+    HUSKY=0
 
 WORKDIR /opt/app
 
-COPY package.json package-lock.json .npmrc /opt/app/
+# install system dependencies
+RUN apt-get update && apt-get -y install g++ make && \
+    npm i -g pnpm@${PNPM_VERSION}
 
-RUN npm ci
+COPY package.json pnpm-lock.yaml .npmrc /opt/app/
+
+RUN pnpm install --frozen-lockfile
 
 # production running stage
 FROM base-stage AS runtime-stage
 
-ARG app_version
+ARG PLAYWRIGHT_VERSION=1.48.2
 
-ENV TMPDIR=/tmp
+USER root
 
 WORKDIR /opt/app
 
-COPY --from=install-stage /opt/app/package.json /opt/app/package-lock.json /opt/app/
+COPY --from=install-stage /opt/app/package.json /opt/app/pnpm-lock.yaml /opt/app/
 COPY --from=install-stage /opt/app/node_modules /opt/app/node_modules
 
 # split install playwright deps and browser
-RUN npx playwright install chromium ffmpeg --with-deps --dry-run | grep --color=never 'sh -c' | sed 's|sh -c "||' | sed 's|"||' > ./deps.sh && chmod +x ./deps.sh && ./deps.sh && rm -rf ./deps.sh
+RUN npx playwright@${PLAYWRIGHT_VERSION} install chromium ffmpeg --with-deps --dry-run | grep --color=never 'sh -c' | sed 's|sh -c "||' | sed 's|"||' > ./deps.sh && chmod +x ./deps.sh && ./deps.sh && rm -rf ./deps.sh
 
 # remove DejaVuSans fonts
 RUN apt purge -y fonts-dejavu-core fonts-dejavu-mono
@@ -61,23 +69,22 @@ RUN apt purge -y fonts-dejavu-core fonts-dejavu-mono
 ENV PLAYWRIGHT_DOWNLOAD_HOST=https://storage.yandexcloud.net/playwright
 ENV PLAYWRIGHT_BROWSERS_PATH=/opt/app/pw-browsers
 
-RUN npx playwright install chromium ffmpeg && rm -rf /var/lib/apt/lists/*
+RUN npx playwright@${PLAYWRIGHT_VERSION} install chromium ffmpeg && rm -rf /var/lib/apt/lists/*
 
 # copy sources
-
 COPY ./src/shared /opt/app/src/shared
 COPY ./tests /opt/app/tests
 
 RUN mkdir -p /opt/app/tests/artifacts && chown -R app:app /opt/app/tests
 
+ARG app_version
+ENV APP_VERSION=$app_version \
+    TMPDIR=/tmp \
+    NODE_ENV=production \
+    E2E_DOMAIN="http://localhost:8080" \
+    E2E_RETRY_TIMES=1 \
+    E2E_NO_AUTH=false
+
 USER app
-
-ENV NODE_ENV=production
-
-ENV APP_VERSION=$app_version
-
-ENV E2E_DOMAIN="http://localhost:8080" 
-ENV E2E_RETRY_TIMES=1
-ENV E2E_NO_AUTH=false
 
 ENTRYPOINT ["npm", "run", "test:e2e:opensource"]

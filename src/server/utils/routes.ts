@@ -1,3 +1,5 @@
+import type {Request} from '@gravity-ui/expresskit';
+
 import {
     apiControllers,
     dlMainController,
@@ -45,3 +47,7 @@ export const getConfiguredRoute = (
             return null as never;
     }
 };
+
+export function getDashboardsRedirectPath(req: Request): string {
+    return req.originalUrl.replace('/dashboards', '').replace(/^\/\/+/, '/');
+}

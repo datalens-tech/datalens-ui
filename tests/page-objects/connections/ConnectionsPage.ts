@@ -15,8 +15,13 @@ import {v1 as uuidv1} from 'uuid';
 import {slct, waitForCondition} from '../../utils';
 import {BasePage} from '../BasePage';
 import type {BasePageProps} from '../BasePage';
-import type {ConsoleMessage, Request} from '@playwright/test';
+import type {ConsoleMessage, Request, FileChooser} from '@playwright/test';
 import Revisions from '../common/Revisions';
+import XLSX from '@datalens-tech/xlsx';
+import {CSV_FILE, XLSX_FILE} from '../../constants/mock-data';
+import os from 'os';
+import path from 'path';
+import fs from 'fs';
 
 type ConnectionsPageProps = BasePageProps;
 type FillInputArgs = {name: string; value: string};
@@ -208,6 +213,47 @@ class ConnectionsPage extends BasePage {
             slct(ConnectionsFormQA.AUTO_CREATE_DASH_CHECKBOX),
         );
         await checkbox.click();
+    }
+
+    async uploadCsvFile({
+        fileName = `${uuidv1()}.csv`,
+        file = CSV_FILE,
+    }: {fileName?: string; file?: string[][]} = {}) {
+        // make file
+        os.tmpdir();
+        const csvFile = path.join(os.tmpdir(), fileName);
+        fs.writeFileSync(csvFile, file.map((row) => row.join(',')).join('\n'));
+
+        await this.uploadS3File(csvFile);
+
+        return {fileName, file};
+    }
+
+    async uploadXlsxFile({
+        fileName = `${uuidv1()}.xlsx`,
+        sheets = XLSX_FILE,
+    }: {fileName?: string; sheets?: Record<string, string[][]>} = {}) {
+        // make file
+        const workbook = XLSX.utils.book_new();
+
+        for (const [sheetName, data] of Object.entries(sheets)) {
+            const worksheet = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+        }
+        const xlsxFile = path.join(os.tmpdir(), fileName);
+        XLSX.writeFile(workbook, xlsxFile);
+
+        await this.uploadS3File(xlsxFile);
+        return {fileName, sheets};
+    }
+
+    private async uploadS3File(file: string) {
+        const onFileChoose = (fileChooser: FileChooser) => {
+            fileChooser.setFiles([file]);
+        };
+        this.page.on('filechooser', onFileChoose);
+        await this.page.click(slct(ConnectionsBaseQA.S3_UPLOAD_BUTTON));
+        this.page.off('filechooser', onFileChoose);
     }
 }
 

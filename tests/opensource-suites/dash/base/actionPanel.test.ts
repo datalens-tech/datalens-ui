@@ -16,8 +16,12 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         // some page need to be loaded so we can get data of feature flag from DL var
         await openTestPage(page, '/');
-        const isEnabledCollections = await isEnabledFeature(page, Feature.CollectionsEnabled);
-        const createDashUrl = isEnabledCollections
+
+        const isCollectionsE2ETestsMode = await isEnabledFeature(
+            page,
+            Feature.CollectionsE2ETestsMode,
+        );
+        const createDashUrl = isCollectionsE2ETestsMode
             ? `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`
             : '/dashboards/new';
         await openTestPage(page, createDashUrl);

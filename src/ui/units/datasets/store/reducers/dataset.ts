@@ -1,7 +1,7 @@
 import _has from 'lodash/has';
 import _xorBy from 'lodash/xorBy';
-import type {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
 import {Feature} from 'shared';
+import type {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
 import {DatasetSDK} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {v1 as uuidv1} from 'uuid';
@@ -54,6 +54,7 @@ import {
     SET_CONNECTIONS_DB_NAMES,
     SET_CURRENT_DB_NAME,
     SET_CURRENT_TAB,
+    SET_DATASET_CACHE_MODE,
     SET_DATASET_DELEGATION,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
@@ -95,11 +96,7 @@ import {
 import {getCurrentTab, initialState} from '../constants';
 import type {ConnectionEntry, DatasetReduxAction, DatasetReduxState, Update} from '../types';
 
-import {
-    getAvatarsAndRelationsToDelete,
-    getFilteredSources,
-    isSourceTypeConteinesInFreeformSources,
-} from './utils';
+import {getAvatarsAndRelationsToDelete, getFilteredSources, isFreeformSource} from './utils';
 
 const getGuidsMap = (fields: Partial<DatasetField>[]) =>
     fields.reduce<Record<string, Partial<DatasetField>>>((memo, field) => {
@@ -764,7 +761,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         }
         case AVATAR_DELETE: {
             const {avatarId} = action.payload;
-            const {updates, freeformSources} = state;
+            const {updates, freeformSources, sourcePrototypes} = state;
             const content = state.content as DatasetReduxState['content'];
             const sourceAvatars = content.source_avatars as DatasetSourceAvatar[];
             const avatarRelations = content.avatar_relations as DatasetAvatarRelation[];
@@ -803,18 +800,23 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             const sourceBeingDeleted = sourcesNext.find(
                 ({id}) => id === sourceIdDeletedAvatar,
             ) as DatasetSource;
-            const sourceNotInInUse = !avatarsNext.some(
+            const sourceNotInUse = !avatarsNext.some(
                 ({source_id}) => source_id === sourceBeingDeleted.id,
             );
-            const attemptToDeleteFreeformSource = isSourceTypeConteinesInFreeformSources(
+            const attemptToDeleteFreeformSource = isFreeformSource(
                 freeformSources,
-                sourceBeingDeleted?.source_type,
+                sourcePrototypes,
+                sourceBeingDeleted,
             );
 
-            if (sourceNotInInUse && !attemptToDeleteFreeformSource) {
+            if (sourceNotInUse) {
                 if (isRoot) {
                     const prevSourcesNext = [...sourcesNext];
-                    sourcesNext = getFilteredSources(prevSourcesNext, freeformSources);
+                    sourcesNext = getFilteredSources(
+                        prevSourcesNext,
+                        freeformSources,
+                        sourcePrototypes,
+                    );
                     _xorBy(prevSourcesNext, sourcesNext).forEach(({id: sourceId}) => {
                         updatesNext.push({
                             action: 'delete_source',
@@ -823,7 +825,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                             },
                         });
                     });
-                } else {
+                } else if (!attemptToDeleteFreeformSource) {
                     sourcesNext = sourcesNext.filter(({id}) => id !== sourceIdDeletedAvatar);
 
                     const sourceDeleteAction: Update = {
@@ -1536,6 +1538,15 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             return {
                 ...state,
                 isDelegated: action.payload,
+            };
+        }
+        case SET_DATASET_CACHE_MODE: {
+            return {
+                ...state,
+                cacheInvalidationSource: {
+                    ...state.cacheInvalidationSource,
+                    mode: action.payload,
+                },
             };
         }
         default: {

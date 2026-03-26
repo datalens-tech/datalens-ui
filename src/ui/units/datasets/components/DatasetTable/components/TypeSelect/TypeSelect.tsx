@@ -5,6 +5,7 @@ import type {SelectOption, SelectRenderControlProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
 import type {DATASET_FIELD_TYPES, DatasetField} from 'shared';
+import {DatasetFieldsTabQa} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {DataTypeIcon} from 'ui';
 
@@ -54,6 +55,7 @@ class TypeSelectComponent extends React.Component<Props> {
                     value: type,
                     content: getDatasetLabelValue(type),
                     disabled: validation.isLoading,
+                    qa: `${DatasetFieldsTabQa.FieldTypeColumnItem}-${type}`,
                 };
             })
             .sort((current, next) => {
@@ -98,6 +100,7 @@ class TypeSelectComponent extends React.Component<Props> {
                 ref={ref as React.Ref<HTMLButtonElement>}
                 view="flat"
                 className={b('select-control')}
+                qa={DatasetFieldsTabQa.FieldTypeColumnBtn}
             >
                 {this.renderSelectOption({value, content: getDatasetLabelValue(value)})}
             </Button>

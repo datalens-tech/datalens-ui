@@ -205,8 +205,8 @@ export function getSelectorDialogFromData(
         placementMode: data.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
         width: data.width || '',
 
-        id: data.id,
-        namespace: data.namespace,
+        id: 'id' in data ? data.id : undefined,
+        namespace: 'namespace' in data ? data.namespace : undefined,
         impactType: data.impactType,
         impactTabsIds: data.impactTabsIds,
     };

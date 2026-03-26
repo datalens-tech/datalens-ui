@@ -3,7 +3,7 @@ import React from 'react';
 import type {ListItemData} from '@gravity-ui/uikit';
 import {List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {ConnectorType} from 'shared';
+import {ConnectionsS3BaseQA, ConnectorType} from 'shared';
 
 import {FormTitle} from '../../../';
 import type {ListItemProps} from '../../../../store';
@@ -78,7 +78,7 @@ export const FilesList = ({
             );
         }
 
-        return <ListItem {...item} />;
+        return <ListItem {...item} qa={ConnectionsS3BaseQA.LIST_ITEM} />;
     }, []);
 
     React.useEffect(() => {
@@ -105,6 +105,7 @@ export const FilesList = ({
                 virtualized={false}
                 onItemClick={handleItemClick}
                 renderItem={renderItem}
+                qa={ConnectionsS3BaseQA.LIST}
             />
         </div>
     );

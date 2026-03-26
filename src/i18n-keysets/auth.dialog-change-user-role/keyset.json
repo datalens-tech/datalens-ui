@@ -1,0 +1,44 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "action_user-roles-change-apply": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_user-roles-change-cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_base-role": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_includes-permissions-from": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_roles-change-failure": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_roles-change-success": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_select-role": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_update-role": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

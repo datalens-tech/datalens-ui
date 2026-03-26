@@ -32,5 +32,22 @@ datalensTest.describe('Wizard', () => {
             await expect(chart).toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });
+
+        datalensTest('Split with few values @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const chart = chartContainer.locator('.chartkit-graph,.gcharts-chart');
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'Category');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Segments,
+                'segment',
+            );
+
+            await expect(chart).toBeVisible();
+            await expect(chartContainer).toHaveScreenshot();
+        });
     });
 });

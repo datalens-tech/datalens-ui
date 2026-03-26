@@ -1,4 +1,4 @@
-import type {ChartStateSettings} from 'shared';
+import type {ChartStateSettings, MenuItemsIdsType} from 'shared';
 import {MenuItemsIds} from 'shared';
 import type {GetDefaultChartMenuArgs} from 'ui/registry/units/chart/types/functions/getDefaultChartMenu';
 import type {GetPanePreviewChartMenuArgs} from 'ui/registry/units/chart/types/functions/getPanePreviewChartMenu';
@@ -31,7 +31,7 @@ export const getWidgetChartMenu = ({
     extraOptions,
 }: {
     chartsDataProvider: ChartKitDataProvider;
-    customOptions: Record<MenuItemsIds, Partial<MenuItemConfig>>;
+    customOptions: Record<MenuItemsIdsType, Partial<MenuItemConfig>>;
     canEdit: boolean;
     extraOptions?: Record<string, unknown>;
 }) => {
@@ -121,6 +121,7 @@ export const getDefaultChartMenu = ({
         getChartModelingMenuItem({
             chartState: extraOptions?.chartStateData as ChartStateSettings,
             widgetName: extraOptions?.widgetTitle as string,
+            customConfig: customOptions[MenuItemsIds.CHART_MODELING],
         }),
         getOpenAsTableMenuItem({
             chartsDataProvider,

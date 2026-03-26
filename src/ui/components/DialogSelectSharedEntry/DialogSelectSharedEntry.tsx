@@ -155,6 +155,7 @@ export const DialogSelectSharedEntry = ({
                     contentError={structureItemsError}
                     breadcrumbs={breadcrumbs}
                     items={isLoading ? [] : structureItems}
+                    filters={filters}
                     nextPageToken={nextPageToken}
                     pageSize={PAGE_SIZE}
                     isSelectionAllowed={true}

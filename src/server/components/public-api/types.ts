@@ -9,6 +9,7 @@ import type {SecuritySchemeObject} from '../api-docs';
 
 export type PublicApiActionOpenApi = {
     summary: string;
+    description?: string;
     tags?: string[];
     headers?: z.ZodObject<{[k: string]: z.ZodType}>;
     experimental?: boolean;

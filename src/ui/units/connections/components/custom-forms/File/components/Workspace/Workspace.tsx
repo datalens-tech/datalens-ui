@@ -4,6 +4,7 @@ import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import get from 'lodash/get';
+import {useSelector} from 'react-redux';
 import type {NonNullableBy} from 'shared';
 import {ConnectionsWorkspaceQA} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
@@ -18,6 +19,7 @@ import type {
     StandaloneFileSource,
     UploadedFile,
 } from '../../../../../store';
+import {fileSourcesInfoLoadingSelector} from '../../../../../store';
 import {ErrorView} from '../../../../ErrorView/ErrorView';
 import {useFileSourceTableWidgetData} from '../../../hooks/useFileSourceTableWidgetData';
 import {getFileSourcePreviewTableColumns} from '../../../utils/render';
@@ -60,12 +62,14 @@ const EmptyWorkspace = () => {
 };
 
 const FileWorkspace = ({item}: {item: UploadedFile}) => {
+    const sourcesInfoLoading = useSelector(fileSourcesInfoLoadingSelector);
+
     if (item.error) {
         return <ErrorView error={item.error} title={i18n('label_file-download-failure')} />;
     }
 
     // Case: the user skipped the dialog for selecting sheets from an xlsx file
-    if (item.sourcesInfo) {
+    if (item.sourcesInfo && !sourcesInfoLoading) {
         return null;
     }
 

@@ -1,4 +1,4 @@
-import type {ChartData, ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
+import type {ChartData, ChartSeries, ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
 import {CustomShapeRenderer} from '@gravity-ui/chartkit/gravity-charts';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
@@ -21,13 +21,18 @@ import {
     setSeriesSelectState,
 } from './utils';
 
+const SERIES_TYPES_WITH_CROSSHAIR: ChartSeries['type'][] = ['area', 'bar-x', 'line'];
+const CROSSHAIR_COLOR = '#a63eb2';
+
 export function getGravityChartsChartKitData(args: {
     loadedData: ChartKitAdapterProps['loadedData'];
+    chartkitHolidays?: ChartKitHolidays;
     onChange?: ChartKitAdapterProps['onChange'];
     runActivity?: ChartKitAdapterProps['runActivity'];
-    chartkitHolidays: ChartKitHolidays | undefined;
+    splitTooltip?: boolean;
+    lang?: string;
 }) {
-    const {loadedData, chartkitHolidays, runActivity, onChange} = args;
+    const {loadedData, chartkitHolidays, runActivity, onChange, splitTooltip, lang} = args;
     const widgetData = loadedData?.data as ExtendedChartData;
     const chartId = loadedData?.entryId;
 
@@ -57,6 +62,12 @@ export function getGravityChartsChartKitData(args: {
         },
         tooltip: {
             pin: {enabled: true, modifierKey: 'altKey'},
+            sorting: {key: 'value', direction: 'desc'},
+            dateTimeLabelFormats: {
+                day: `D MMMM YYYY ${lang === 'en' ? 'ddd' : 'dd'}`,
+                week: 'D MMMM YYYY',
+                month: 'MMMM YYYY',
+            },
         },
         series: getStyledSeries(loadedData),
     };
@@ -73,20 +84,23 @@ export function getGravityChartsChartKitData(args: {
 
     const tooltipQa = `chartkit-tooltip-entry-${chartId}`;
     result.tooltip.qa = tooltipQa;
+
+    const rowRenderer = getTooltipRowRenderer({widgetData});
     result.tooltip.renderer = getTooltipRenderer({
-        widgetData,
+        rowRenderer,
         qa: tooltipQa,
-    });
-    result.tooltip.rowRenderer = getTooltipRowRenderer({
+        totals: result.tooltip?.totals,
+        valueFormat: result.tooltip?.valueFormat,
         widgetData,
     });
+    result.tooltip.rowRenderer = rowRenderer;
     result.tooltip.headerFormat = getTooltipHeaderFormat({
         widgetData,
     });
 
     result.series?.data.forEach((s) => {
         set(s, 'legend.symbol', {
-            padding: 8,
+            padding: 7,
             width: 10,
             height: 10,
             ...s.legend?.symbol,
@@ -127,8 +141,8 @@ export function getGravityChartsChartKitData(args: {
 
     const isHolidaysEnabled = getIsHolidaysEnabled({widgetData: loadedData});
     const holidaysPlotBands = isHolidaysEnabled
-        ? []
-        : convertHolidaysToPlotBands({holidays: chartkitHolidays, loadedData});
+        ? convertHolidaysToPlotBands({holidays: chartkitHolidays, loadedData})
+        : [];
 
     if (shouldUseCommentsOnYAxis(result)) {
         set(result, 'yAxis[0].plotBands', [...(result.yAxis?.[0]?.plotBands ?? []), ...plotBands]);
@@ -140,6 +154,21 @@ export function getGravityChartsChartKitData(args: {
             ...plotBands,
         ]);
         set(result, 'xAxis.plotLines', [...(result.xAxis?.plotLines ?? []), ...plotLines]);
+    }
+
+    if (splitTooltip) {
+        set(result, 'chart.zoom.enabled', false);
+        set(result, 'legend.enabled', false);
+        set(result, 'series.options.area.states.hover.marker.enabled', false);
+        set(result, 'series.options.line.states.hover.marker.enabled', false);
+
+        const hasSeriesWithCrosshair = result.series?.data.some((s) =>
+            SERIES_TYPES_WITH_CROSSHAIR.includes(s.type),
+        );
+
+        if (hasSeriesWithCrosshair) {
+            set(result, 'xAxis.crosshair', {enabled: true, color: CROSSHAIR_COLOR});
+        }
     }
 
     return result;

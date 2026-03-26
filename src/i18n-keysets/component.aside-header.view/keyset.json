@@ -1,0 +1,64 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_about": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_account": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_app-version": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_collections": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_docs": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_gallery": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_github": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_logout": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_main": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_profile-settings": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_settings": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "switch_collections": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "switch_service-settings": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

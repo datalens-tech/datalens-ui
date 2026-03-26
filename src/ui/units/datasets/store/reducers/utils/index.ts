@@ -1,18 +1,30 @@
 import type {DatasetAvatarRelation, DatasetSource} from '../../../../../../shared';
-import type {FreeformSource} from '../../types';
+import {getSourceHashTitleId} from '../../selectors';
+import type {FreeformSource, SourcePrototype} from '../../types';
 
-export const isSourceTypeConteinesInFreeformSources = (
+export const isFreeformSource = (
     freeformSources: FreeformSource[],
-    sourceType?: string,
+    sourcePrototypes: SourcePrototype[],
+    source: DatasetSource,
 ) => {
-    return freeformSources.some(
-        ({source_type: freeformSourceType}) => freeformSourceType === sourceType,
+    return (
+        freeformSources.some(
+            ({source_type: freeformSourceType}) => freeformSourceType === source.source_type,
+        ) &&
+        !sourcePrototypes.find(
+            (sourcePrototype) =>
+                getSourceHashTitleId(sourcePrototype) === getSourceHashTitleId(source),
+        )
     );
 };
 
-export const getFilteredSources = (sources: DatasetSource[], freeformSources: FreeformSource[]) => {
+export const getFilteredSources = (
+    sources: DatasetSource[],
+    freeformSources: FreeformSource[],
+    sourcePrototypes: SourcePrototype[],
+) => {
     return sources.filter((source) => {
-        return isSourceTypeConteinesInFreeformSources(freeformSources, source.source_type);
+        return isFreeformSource(freeformSources, sourcePrototypes, source);
     });
 };
 

@@ -232,8 +232,11 @@ class DashboardPage extends BasePage {
     }) {
         // some page need to be loaded so we can get data of feature flag from DL var
         await openTestPage(this.page, '/');
-        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
-        const createDashUrl = isEnabledCollections
+        const isCollectionsE2ETestsMode = await isEnabledFeature(
+            this.page,
+            Feature.CollectionsE2ETestsMode,
+        );
+        const createDashUrl = isCollectionsE2ETestsMode
             ? `/workbooks/${workbookId ?? WorkbookIds.E2EWorkbook}/dashboards`
             : '/dashboards/new';
         await openTestPage(this.page, createDashUrl);
@@ -253,7 +256,7 @@ class DashboardPage extends BasePage {
             : null;
 
         // waiting for the dialog to open, specify the name, save
-        if (isEnabledCollections) {
+        if (isCollectionsE2ETestsMode) {
             await this.dialogCreateEntry.createEntryWithName(dashName);
         } else {
             await entryDialogFillAndSave(this.page, dashName);
@@ -268,9 +271,12 @@ class DashboardPage extends BasePage {
     async duplicateDashboard({dashId, useUserFolder}: {dashId?: string; useUserFolder?: boolean}) {
         const newDashName = `e2e-test-dash-copy-${getUniqueTimestamp()}`;
 
-        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
+        const isCollectionsE2ETestsMode = await isEnabledFeature(
+            this.page,
+            Feature.CollectionsE2ETestsMode,
+        );
 
-        if (isEnabledCollections) {
+        if (isCollectionsE2ETestsMode) {
             await this.duplicateDashboardFromWorkbook(dashId as string, newDashName);
             return;
         }
@@ -388,14 +394,18 @@ class DashboardPage extends BasePage {
         options?: {autoHeight?: boolean};
     }) {
         await this.clickAddText();
-        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
+
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
 
         if (markup) {
             await this.chooseMarkupText();
         }
 
-        if (isEnabledCollections) {
+        const isCollectionsE2ETestsMode = await isEnabledFeature(
+            this.page,
+            Feature.CollectionsE2ETestsMode,
+        );
+        if (isCollectionsE2ETestsMode) {
             await this.page.fill(`${slct(WysiwygEditorQa.Editor)} [contenteditable=true]`, text);
         } else {
             await this.page.fill(
@@ -726,8 +736,11 @@ class DashboardPage extends BasePage {
 
     async deleteDash(args?: {workbookId?: string}) {
         const {workbookId = WorkbooksUrls.E2EWorkbook} = args ?? {};
-        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
-        const urlOnDelete = isEnabledCollections ? workbookId : '/dashboards';
+        const isCollectionsE2ETestsMode = await isEnabledFeature(
+            this.page,
+            Feature.CollectionsE2ETestsMode,
+        );
+        const urlOnDelete = isCollectionsE2ETestsMode ? workbookId : '/dashboards';
 
         await deleteEntity(this.page, urlOnDelete);
     }
@@ -988,7 +1001,8 @@ class DashboardPage extends BasePage {
     }
 
     async waitForSomeChartItemVisible() {
-        await this.page.waitForSelector(DashboardPage.selectors.chartGridItemContainer);
+        const chartItemLocator = this.page.locator(DashboardPage.selectors.chartGridItemContainer);
+        await expect(chartItemLocator).toBeVisible();
     }
 
     async shouldNotContainsChartItems() {

@@ -1,0 +1,48 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "apply_button_text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "date_and_time_input_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "date_input_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "default_date_placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "default_ru_date_placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "relative_input_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "time_input_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "time_placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "time_with_sec_placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

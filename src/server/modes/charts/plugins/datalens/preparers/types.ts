@@ -42,7 +42,7 @@ export type PrepareFunctionArgs = {
 
     visualizationId: string;
     shapes: ServerShape[];
-    shapesConfig: ServerShapesConfig;
+    shapesConfig: ServerShapesConfig | undefined;
     segments: ServerField[];
     datasets: string[];
     layerChartMeta?: LayerChartMeta;

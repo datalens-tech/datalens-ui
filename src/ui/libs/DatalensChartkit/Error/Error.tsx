@@ -213,7 +213,15 @@ const ChartKitError: React.FC<any> = (props) => {
                     iconData = CircleXmark;
                     showSourceDetails = false;
                 } else if (I18n.has('component.chartkit-error.codes', errorCode)) {
-                    errorDetails.push(i18n('component.chartkit-error.codes', errorCode));
+                    // For generic ERR.DS_API (no sub-code), prefer HTTP status translation
+                    // to show "Data source not found" instead of "Datasets internal error" for 404s
+                    const i18nCode =
+                        errorCode === 'ERR.DS_API' &&
+                        source.status &&
+                        I18n.has('component.chartkit-error.codes', source.status)
+                            ? source.status
+                            : errorCode;
+                    errorDetails.push(i18n('component.chartkit-error.codes', i18nCode));
                     detailsString = '';
                 }
             });
@@ -302,6 +310,7 @@ const ChartKitError: React.FC<any> = (props) => {
                             onClick={() =>
                                 dispatch(openDialogErrorWithTabs({error, title: error.message}))
                             }
+                            qa={ChartkitMenuDialogsQA.errorButtonDetails}
                         >
                             {i18n('component.chartkit-error.view', 'button_details')}
                         </Button>

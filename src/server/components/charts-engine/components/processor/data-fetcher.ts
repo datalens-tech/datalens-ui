@@ -157,6 +157,7 @@ const isFetchLimitError = (errorMessage: string) =>
 export type DataFetcherResult = {
     sourceId: string;
     sourceType: string;
+    source?: Source;
     body: unknown;
     responseHeaders: IncomingHttpHeaders;
     status: number;
@@ -996,6 +997,7 @@ export class DataFetcher {
                             status: error.statusCode,
                             sourceId: sourceName,
                             sourceType,
+                            source,
                             message: `${error.statusCode}`.replace(
                                 'ECONNABORTED',
                                 'Network error (source processing timed out)',
@@ -1028,6 +1030,7 @@ export class DataFetcher {
                             fetchResolve({
                                 sourceId: sourceName,
                                 sourceType,
+                                source,
                                 code: errorCode,
                                 responseHeaders: (error.response && error.response.headers) || null,
                                 uiUrl: userTargetUriUi,
@@ -1041,6 +1044,7 @@ export class DataFetcher {
                             fetchResolve({
                                 sourceId: sourceName,
                                 sourceType,
+                                source,
                                 message: errorMessage,
                                 code: errorCode,
                                 status: (error.response && error.response.statusCode) || null,
@@ -1077,6 +1081,7 @@ export class DataFetcher {
                             fetchResolve({
                                 sourceId: sourceName,
                                 sourceType,
+                                source,
                                 status: response.statusCode,
                                 code: EMPTY_RESPONSE,
                                 responseHeaders: response.headers,
@@ -1095,6 +1100,7 @@ export class DataFetcher {
                             fetchResolve({
                                 sourceId: sourceName,
                                 sourceType,
+                                source,
                                 status: response.statusCode,
                                 code: REDIRECT,
                                 body: data,
@@ -1138,6 +1144,7 @@ export class DataFetcher {
                     fetchResolve({
                         sourceId: sourceName,
                         sourceType,
+                        source,
                         code: UNHANDLED_INTERNAL_SERVER_ERROR,
                         uiUrl: userTargetUriUi,
                         dataUrl: publicTargetUri,
@@ -1154,6 +1161,7 @@ export class DataFetcher {
                         fetchResolve({
                             sourceId: sourceName,
                             sourceType,
+                            source,
                             code,
                             uiUrl: userTargetUriUi,
                             dataUrl: publicTargetUri,

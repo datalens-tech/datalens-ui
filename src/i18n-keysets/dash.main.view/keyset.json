@@ -1,0 +1,148 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_apply-remove-global-item": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_close": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_create-new": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_edit-panel-chart": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_edit-panel-editor-selector": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_edit-panel-image": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_edit-panel-paste": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_edit-panel-selector": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_edit-panel-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_edit-panel-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_link": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_links": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_details": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_failed-copy-global-item": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_fixed-collapsed-default": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_link-group-selector-to-tab": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_link-selector-to-tab": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_loading": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_pin": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_remove-global-selector": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unpin": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unpin-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_updating": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_failed-copy-global-item": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_link-selector-to-tab": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_remove-global-selector": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_paste-invalid-workbook-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_unsaved": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tooltip_collapse-fixed-group": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tooltip_expand-fixed-group": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_state-limit-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_state-limit-error-message": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "warning_paste-invalid-workbook-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

@@ -4,7 +4,7 @@ export {
     GatewayApiErrorResponse,
 } from '../../src/server/utils/gateway';
 export {getUtilsAxios} from '../../src/server/utils/axios';
-export {getConfiguredRoute} from '../../src/server/utils/routes';
+export {getConfiguredRoute, getDashboardsRedirectPath} from '../../src/server/utils/routes';
 export {addTranslationsScript} from '../../src/server/utils/language';
 export {getEnvCert} from '../../src/server/utils/env-utils';
 

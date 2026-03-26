@@ -1,38 +1,13 @@
-import type {EntryNotification, ProcessStatus} from '../../../types/meta-manager';
+import type z from 'zod';
 
-export type StartWorkbookExportArgs = {
-    workbookId: string;
-};
+import type {
+    getWorkbookExportResultResultSchema,
+    getWorkbookExportStatusResultSchema,
+    startWorkbookExportResultSchema,
+} from '../schemas/export';
 
-export type StartWorkbookExportResponse = {
-    exportId: string;
-};
+export type StartWorkbookExportResponse = z.infer<typeof startWorkbookExportResultSchema>;
 
-export type GetWorkbookExportStatusArgs = {
-    exportId: string;
-};
+export type GetWorkbookExportStatusResponse = z.infer<typeof getWorkbookExportStatusResultSchema>;
 
-export type GetWorkbookExportStatusResponse = {
-    exportId: string;
-    status: ProcessStatus;
-    progress: number;
-    notifications?: EntryNotification[] | null;
-};
-
-export type GetWorkbookExportResultArgs = {
-    exportId: string;
-};
-
-export type GetWorkbookExportResultResponse = {
-    exportId: string;
-    data: {export: Record<string, unknown>; hash: string};
-    status: ProcessStatus;
-};
-
-export type CancelWorkbookExportArgs = {
-    exportId: string;
-};
-
-export type CancelWorkbookExportResponse = {
-    exportId: string;
-};
+export type GetWorkbookExportResultResponse = z.infer<typeof getWorkbookExportResultResultSchema>;

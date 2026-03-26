@@ -13,6 +13,13 @@ export const entriesActions = {
             headers,
         }),
     }),
+    _getEntry: createAction<GetEntryResponse, PrivateGetEntryArgs>({
+        method: 'GET',
+        path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${entryId}`,
+        params: (_, headers) => ({
+            headers,
+        }),
+    }),
     _proxyGetEntry: createAction<GetEntryResponse, PrivateGetEntryArgs>({
         method: 'GET',
         path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,

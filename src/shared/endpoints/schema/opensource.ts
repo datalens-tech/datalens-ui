@@ -6,10 +6,6 @@ export const opensourceEndpoints = {
             endpoint: endpoints.development.api.bi,
             datasetDataApiEndpoint: endpoints.development.api.biData,
         },
-        biConverter: {
-            endpoint: endpoints.development.api.biConverter,
-            csvConverter: endpoints.development.api.csvConverter,
-        },
         us: {
             endpoint: endpoints.development.api.us,
         },
@@ -24,10 +20,6 @@ export const opensourceEndpoints = {
         bi: {
             endpoint: endpoints.production.api.bi,
             datasetDataApiEndpoint: endpoints.production.api.biData,
-        },
-        biConverter: {
-            endpoint: endpoints.production.api.biConverter,
-            csvConverter: endpoints.production.api.csvConverter,
         },
         us: {
             endpoint: endpoints.production.api.us,

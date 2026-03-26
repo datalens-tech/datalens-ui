@@ -36,6 +36,7 @@ import type {
     SetPageLoading,
     SetReplaceSourceActionData,
     SetSchemaLoading,
+    SetSourcesInfoLoading,
     SetSubmitLoading,
     SetUploadedFiles,
     SetValidationErrors,
@@ -70,6 +71,7 @@ export const SET_FILE_SOURCES = Symbol('connections/SET_FILE_SOURCES');
 export const SET_FILE_SELECTED_ITEM_ID = Symbol('connections/SET_FILE_SELECTED_ITEM_ID');
 export const SET_FILE_COLUMN_FILTER = Symbol('connections/SET_FILE_COLUMN_FILTER');
 export const SET_BEING_DELETED_SOURCE_ID = Symbol('connections/SET_BEING_DELETED_SOURCE_ID');
+export const SET_SOURCES_INFO_LOADING = Symbol('connections/SET_SOURCES_INFO_LOADING');
 export const SET_FILE_REPLACE_SOURCES = Symbol('connections/SET_FILE_REPLACE_SOURCES');
 export const SET_REPLACE_SOURCE_ACTION_DATA = Symbol('connections/SET_REPLACE_SOURCE_ACTION_DATA');
 export const RESET_S3_BASED_DATA = Symbol('connections/RESET_S3_BASED_DATA');
@@ -245,6 +247,15 @@ export function setBeingDeletedSourceId(
 ): SetBeingDeletedSourceId {
     return {
         type: SET_BEING_DELETED_SOURCE_ID,
+        payload,
+    };
+}
+
+export function setSourcesInfoLoading(
+    payload: SetSourcesInfoLoading['payload'],
+): SetSourcesInfoLoading {
+    return {
+        type: SET_SOURCES_INFO_LOADING,
         payload,
     };
 }
