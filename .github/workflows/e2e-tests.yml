@@ -28,25 +28,22 @@ jobs:
         with:
           node-version: 22
       - name: check docker compose config
-        run: npm run test:e2e:docker:check &>dev/null
+        run: pnpm run test:e2e:docker:check &>dev/null
       - name: up docker compose
         run: |
-          npm run test:e2e:docker:up-no-ui
-          npm run test:e2e:docker:up-nginx
+          pnpm run test:e2e:docker:up-no-ui
+          pnpm run test:e2e:docker:up-nginx
         env:
           US_PORT: '3033'
-      - run: npm run deps
-        env:
-          # folder in docker container
-          NPM_CACHE_ROOT: /home/github/actions-runner/_work/.cache/npm-cache
+      - run: pnpm install --frozen-lockfile
       - name: run build
-        run: npm run build
+        run: pnpm run build
       - name: run tests local from repo
         run: |
           mkdir -p ./tests/logs
           node dist/server 1>./tests/logs/ui.stdout.log 2>./tests/logs/ui.stderr.log &
           echo $! > ./tests/logs/ui.pid
-          npm run test:e2e:opensource
+          pnpm run test:e2e:opensource
         env:
           E2E_NO_AUTH: 'false'
           E2E_RETRY_TIMES: '2'
@@ -89,13 +86,13 @@ jobs:
         if: always()
         run: |
           mkdir -p ./tests/logs
-          npm run test:e2e:docker:logs > ./tests/logs/docker-compose.log
-          npm run test:e2e:docker:logs-nginx > ./tests/logs/docker-compose.nginx.log
+          pnpm run test:e2e:docker:logs > ./tests/logs/docker-compose.log
+          pnpm run test:e2e:docker:logs-nginx > ./tests/logs/docker-compose.nginx.log
       - name: run docker compose down
         if: always()
         run: |
-          npm run test:e2e:docker:down
-          npm run test:e2e:docker:down-nginx
+          pnpm run test:e2e:docker:down
+          pnpm run test:e2e:docker:down-nginx
       - name: save report link and pr number
         if: always()
         run: |
