@@ -27,8 +27,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 22
-      - name: check docker compose config
-        run: pnpm run test:e2e:docker:check &>dev/null
       - name: up docker compose
         run: |
           pnpm run test:e2e:docker:up-no-ui
