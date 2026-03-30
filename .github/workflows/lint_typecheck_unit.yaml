@@ -14,12 +14,15 @@ jobs:
     name: Lint, Typecheck, Unit tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.17.1
       - uses: actions/setup-node@v3
         with:
           node-version: 22
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm run test:jest
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+      - run: pnpm run typecheck
+      - run: pnpm run test:jest
