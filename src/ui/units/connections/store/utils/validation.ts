@@ -39,8 +39,8 @@ const getResultValidatedItems = (args: PartialBy<ValidationArgs, 'innerForm'>) =
 
 const createValidationSchema = (args: PartialBy<ValidationArgs, 'innerForm'>) => {
     const {apiSchemaItem, form, innerForm} = args;
-    const vaildationItems = getResultValidatedItems({apiSchemaItem, form, innerForm});
-    const schemaOptions = vaildationItems.reduce<SchemaOptions>((acc, item) => {
+    const validationItems = getResultValidatedItems({apiSchemaItem, form, innerForm});
+    const schemaOptions = validationItems.reduce<SchemaOptions>((acc, item) => {
         const {name, type = 'string', required, nullable, length} = item;
 
         switch (type) {

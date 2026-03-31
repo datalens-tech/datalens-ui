@@ -35,7 +35,7 @@ export default class Utils {
         return pathBefore === '/' ? '/' : pathBefore + '/';
     }
 
-    static getEntryNameFromKey(key: string, withFolders = false) {
+    static getEntryNameFromKey(key: string | null, withFolders = false) {
         if (!key) {
             return '';
         }

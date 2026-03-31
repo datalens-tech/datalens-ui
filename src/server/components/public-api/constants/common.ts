@@ -8,6 +8,8 @@ export enum ApiTag {
     Workbook = 'Workbook',
     Collection = 'Collection',
     Entries = 'Entries',
+    WorkbookImport = 'WorkbookImport',
+    WorkbookExport = 'WorkbookExport',
 }
 
 export const PUBLIC_API_VERSION_HEADER = 'x-dl-api-version';
@@ -17,7 +19,8 @@ export const PUBLIC_API_VERSION_HEADER_LATEST_VALUE = 'latest';
 export const OPEN_API_VERSION_HEADER_COMPONENT_NAME = 'ApiVersionHeader';
 
 export const PUBLIC_API_HTTP_METHOD = 'POST';
-export const PUBLIC_API_URL = '/rpc/:action';
+export const PUBLIC_API_ACTION_REQ_PARAM = 'action';
+export const PUBLIC_API_URL = `/rpc/:${PUBLIC_API_ACTION_REQ_PARAM}`;
 export const PUBLIC_API_ROUTE = `${PUBLIC_API_HTTP_METHOD} ${PUBLIC_API_URL}`;
 
 export const PUBLIC_API_VERSION = {

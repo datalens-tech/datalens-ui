@@ -131,3 +131,5 @@ export const SET_SELECTED_CONNECTION_DELEGATION = Symbol(
 );
 
 export const SET_DATASET_DELEGATION = Symbol('dataset/SET_DATASET_DELEGATION');
+
+export const SET_DATASET_CACHE_MODE = Symbol('dataset/SET_DATASET_CACHE_MODE');

@@ -24,11 +24,13 @@ import {
 } from '../actions/dash';
 import {
     CHANGE_NAVIGATION_PATH,
+    PARTIAL_UPDATE_SETTINGS,
     REMOVE_GLOBAL_ITEMS,
     RESET_CONNECTIONS_UPDATERS,
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
     SET_DASH_DESCRIPTION,
+    SET_DASH_ENTRY_META,
     SET_DASH_KEY,
     SET_DASH_OPENED_DESC,
     SET_DASH_SUPPORT_DESCRIPTION,
@@ -265,6 +267,7 @@ export function dashTypedReducer(
                     ...state.data,
                     tabs: newTabs,
                 },
+                tabId: tabIndex === -1 ? newTabs[0].id : tabId,
                 initialTabsSettings: null,
             };
         }
@@ -356,6 +359,26 @@ export function dashTypedReducer(
                     ...state.entry,
                     key: action.payload,
                 },
+            };
+        }
+
+        case SET_DASH_ENTRY_META: {
+            return {
+                ...state,
+                entry: {
+                    ...state.entry,
+                    meta: {
+                        ...state.entry.meta,
+                        ...action.payload,
+                    },
+                },
+            };
+        }
+
+        case PARTIAL_UPDATE_SETTINGS: {
+            return {
+                ...state,
+                data: update(data, {settings: {$merge: action.payload}}),
             };
         }
 

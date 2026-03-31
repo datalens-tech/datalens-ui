@@ -13,7 +13,7 @@ import {
     isMarkupField,
 } from '../../../../../../../shared';
 import type {ExtendedChartData} from '../../../../../../../shared/types/chartkit';
-import {getBaseChartConfig} from '../../gravity-charts/utils';
+import {getBaseChartConfig, getTotalsPrecisionFromSeriesTooltips} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {colorizeByColorValues} from '../../utils/color-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
@@ -159,6 +159,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             custom: {
                 ...graph.custom,
                 colorValue: graph.colorValue,
+                drillDownFilterValue: graph.drillDownFilterValue,
                 exportSettings,
             },
         } as BarYSeries);
@@ -224,9 +225,18 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     }
 
     if (xField) {
+        const valueFormat = getFieldFormatOptions({field: xField});
         config.tooltip = {
-            ...config.tooltip,
-            valueFormat: getFieldFormatOptions({field: xField}),
+            valueFormat,
+            totals: {
+                valueFormat:
+                    valueFormat?.type === 'number' && valueFormat.format
+                        ? valueFormat
+                        : {
+                              type: 'number',
+                              precision: getTotalsPrecisionFromSeriesTooltips(series),
+                          },
+            },
         };
     }
 

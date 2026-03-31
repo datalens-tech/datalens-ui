@@ -16,11 +16,8 @@ export function convertChartCommentsToPlotBandsAndLines({comments}: {comments: C
                     color: String(comment.meta.color),
                     opacity: 0.5,
                     layerPlacement: comment.meta.zIndex === 0 ? 'before' : 'after',
-                    label: {
-                        text: comment.text,
-                        qa: ChartQa.CommentLabel,
-                    },
-                };
+                    custom: {text: comment.text, tooltip: {enabled: true}},
+                } as AxisPlotBand;
                 plotBands.push(item);
                 break;
             }
@@ -32,11 +29,12 @@ export function convertChartCommentsToPlotBandsAndLines({comments}: {comments: C
                     dashStyle: String(comment.meta.dashStyle) as AxisPlotLine['dashStyle'],
                     opacity: 1,
                     layerPlacement: comment.meta.zIndex === 0 ? 'before' : 'after',
+                    custom: {text: comment.text, tooltip: {enabled: true}},
                     label: {
                         text: comment.text,
                         qa: ChartQa.CommentLabel,
                     },
-                });
+                } as AxisPlotLine);
                 break;
             }
         }

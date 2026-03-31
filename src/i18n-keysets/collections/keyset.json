@@ -1,0 +1,124 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "action_access": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_clear-filters": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_connect-your-data": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_copy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create-collection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create-collection-hint": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create-workbook": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create-workbook-hint": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_edit": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_export": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_move": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_reset-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_select": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_select-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_empty-list": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_last-modified": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_not-found": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_root-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_status-deleting": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_status-importing": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_create-first": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_incorrect-filters": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "shared-actions-menu-notice": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "shared-actions-menu-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

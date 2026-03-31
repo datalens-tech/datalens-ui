@@ -27,7 +27,7 @@ type EditControlsProps = {
     onOpenDialogSettingsClick: () => void;
     onOpenDialogConnectionsClick?: () => void;
     onCancelClick: () => void;
-    onOpenDialogTabsClick: () => void;
+    onOpenDialogTabsClick?: () => void;
     entryDialoguesRef: React.RefObject<EntryDialogues>;
     isDraft: boolean;
     isRenameWithoutReload?: boolean;
@@ -152,9 +152,16 @@ export const EditControls = (props: EditControlsProps) => {
                     {i18n('button_connections')}
                 </Button>
             )}
-            <Button view="normal" size="m" onClick={onOpenDialogTabsClick} qa="action-button-tabs">
-                {i18n('button_tabs')}
-            </Button>
+            {Boolean(onOpenDialogTabsClick) && (
+                <Button
+                    view="normal"
+                    size="m"
+                    onClick={onOpenDialogTabsClick}
+                    qa="action-button-tabs"
+                >
+                    {i18n('button_tabs')}
+                </Button>
+            )}
             {savingControls}
             <NavigationPrompt key="navigation-prompt" when={isDraft && !isRenameWithoutReload} />
             <EntryDialogues ref={entryDialoguesRef} />

@@ -1,0 +1,28 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "apply": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "close": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "close-confirm": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_undefined": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

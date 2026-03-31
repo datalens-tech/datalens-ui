@@ -44,11 +44,14 @@ export const __getWizardChart__ = createTypedAction(
         }
 
         if (getEntryResponse.data) {
-            const mappedData = mapChartsConfigToLatestVersion(
-                JSON.parse(getEntryResponse.data.shared as string),
-            );
+            const shared = getEntryResponse.data.shared;
 
-            getEntryResponse.data.shared = JSON.stringify(mappedData);
+            const mappedData =
+                shared && typeof shared === 'string'
+                    ? mapChartsConfigToLatestVersion(JSON.parse(shared))
+                    : null;
+
+            getEntryResponse.data = mappedData;
         }
 
         return getEntryResponse;

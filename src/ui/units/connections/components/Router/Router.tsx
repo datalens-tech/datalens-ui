@@ -148,7 +148,8 @@ export const Router = ({flattenConnectors, groupedConnectors, connectionData}: R
                             />
                             <Route
                                 path={getPaths('newType')}
-                                render={(props: NewFormRouteProps) => {
+                                render={(routeProps) => {
+                                    const props = routeProps as NewFormRouteProps;
                                     const type = get(props.match.params, 'connectorType');
                                     const connector = getConnItemByType({
                                         connectors: flattenConnectors,
@@ -171,7 +172,8 @@ export const Router = ({flattenConnectors, groupedConnectors, connectionData}: R
                 />
                 <Route
                     path={getPaths('exist')}
-                    render={(props: ExistedFormRouteProps) => {
+                    render={(routeProps) => {
+                        const props = routeProps as ExistedFormRouteProps;
                         const connectionId = get(props.match.params, 'connectionId');
                         const workbookId = get(props.match.params, 'workbookId');
                         const collectionId = get(props.match.params, 'collectionId');

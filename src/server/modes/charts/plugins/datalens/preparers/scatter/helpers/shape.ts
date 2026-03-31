@@ -8,7 +8,7 @@ import {
 } from '../../../../../../../../shared';
 import type {ExtendedSeriesScatterOptions} from '../../../utils/color-helpers';
 
-function getShapeByFieldValueSelector(shapeConfig: ServerShapesConfig) {
+function getShapeByFieldValueSelector(shapeConfig: ServerShapesConfig | undefined) {
     const shapeSymbolsByValue = new Map<string, string>();
 
     return (shapeValue: string) => {

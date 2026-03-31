@@ -49,7 +49,9 @@ const isControlDisabled = (
     const controlParam =
         'datasetFieldId' in controlSource ? controlSource.datasetFieldId : controlSource.fieldName;
 
-    const tabAliases = controlTab.aliases[controlData.namespace];
+    const tabAliases = controlData.namespace
+        ? controlTab.aliases[controlData.namespace]
+        : undefined;
 
     const aliasesParamsList = tabAliases?.find((alias) => alias.includes(controlParam));
 
@@ -459,7 +461,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {embedId});
 
-        Promise.resolve(configPromise)
+        await Promise.resolve(configPromise)
             .catch((err: unknown) => {
                 handleError(
                     err,

@@ -2,20 +2,22 @@
 
 .palette-item {
     position: relative;
-    border-radius: 4px;
+    border-radius: 6px;
     display: flex;
     justify-content: center;
     align-items: center;
 
     &_default {
-        background-color: var(--g-color-base-generic);
-        border: 1px solid var(--g-color-base-generic-medium);
-        color: var(--g-color-text-hint);
-        font-size: 10px;
-        text-transform: uppercase;
+        color: var(--g-color-text-secondary);
+        font-size: 11px;
+        font-weight: 500;
         display: flex;
         justify-content: center;
         align-items: center;
+
+        &::before {
+            @include palette-item-border(var(--g-color-line-generic), 1, 1px, 6px);
+        }
     }
 
     &_disabled {
@@ -32,32 +34,12 @@
     &_selectable {
         cursor: pointer;
 
-        &:not(.palette-item_selected):not(.palette-item_default):hover::before {
-            @include palette-item-border(var(--g-color-line-generic), -3px, -3px, 42px, 42px);
+        &:not(.palette-item_selected):hover::before {
+            @include palette-item-border(var(--g-color-line-generic), 3);
         }
 
-        &.palette-item_default:not(.palette-item_selected):hover::before {
-            @include palette-item-border(var(--g-color-line-generic), -4px, -4px, 42px, 42px);
-        }
-
-        &.palette-item_selected:not(.palette-item_default)::before {
-            @include palette-item-border(
-                var(--g-color-base-generic-medium),
-                -3px,
-                -3px,
-                42px,
-                42px
-            );
-        }
-
-        &.palette-item_selected.palette-item_default::before {
-            @include palette-item-border(
-                var(--g-color-base-generic-medium),
-                -4px,
-                -4px,
-                42px,
-                42px
-            );
+        &.palette-item_selected::before {
+            @include palette-item-border(var(--g-color-line-brand), 3);
         }
     }
 }

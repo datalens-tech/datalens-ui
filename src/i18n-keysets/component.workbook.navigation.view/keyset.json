@@ -1,0 +1,36 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "entries-list-title-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "entries-list-title-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-data": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_placeholder-filter-by-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "shared-list-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "workbook-list-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

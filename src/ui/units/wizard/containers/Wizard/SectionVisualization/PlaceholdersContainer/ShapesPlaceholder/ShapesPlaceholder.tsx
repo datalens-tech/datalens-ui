@@ -8,7 +8,6 @@ import {bindActionCreators} from 'redux';
 import type {Field} from 'shared';
 import {SectionVisualizationAddItemQa, WizardVisualizationId, isFieldHierarchy} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {PaletteTypes} from 'ui/units/wizard/constants';
 import {selectDataset} from 'units/wizard/selectors/dataset';
 import {
     selectFilters,
@@ -16,7 +15,7 @@ import {
     selectShapesConfig,
 } from 'units/wizard/selectors/visualization';
 
-import {openDialogShapes} from '../../../../../actions/dialog';
+import {openDialogLineShapes, openDialogShapes} from '../../../../../actions/dialog';
 import {updateShapes} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
 import {getDialogItem} from '../../../../../utils/helpers';
@@ -45,7 +44,14 @@ class ShapesPlaceholder extends React.Component<Props> {
 
         const onActionIconClick = shapesContainsHierarchies
             ? undefined
-            : () => this.openShapesDialog(getDialogItem(shapes, placeholders));
+            : () =>
+                  this.openShapesDialog(
+                      getDialogItem({
+                          items: shapes,
+                          placeholders,
+                          visualizationId: visualization.id,
+                      }),
+                  );
 
         return (
             <PlaceholderComponent
@@ -96,19 +102,26 @@ class ShapesPlaceholder extends React.Component<Props> {
 
     private openShapesDialog = (item?: Field | Field[]) => {
         const {visualization} = this.props;
-        const paletteType =
-            visualization.id === WizardVisualizationId.Scatter
-                ? PaletteTypes.Points
-                : PaletteTypes.Lines;
-        this.props.openDialogShapes({
-            item,
-            paletteType,
-            onApply: () => {
-                if (this.props.onUpdate) {
-                    this.props.onUpdate();
-                }
-            },
-        });
+
+        if (visualization.id === WizardVisualizationId.Scatter) {
+            this.props.openDialogShapes({
+                item,
+                onApply: () => {
+                    if (this.props.onUpdate) {
+                        this.props.onUpdate();
+                    }
+                },
+            });
+        } else {
+            this.props.openDialogLineShapes({
+                item,
+                onApply: () => {
+                    if (this.props.onUpdate) {
+                        this.props.onUpdate();
+                    }
+                },
+            });
+        }
     };
 }
 
@@ -118,6 +131,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
             updateShapes,
             updatePreviewAndClientChartsConfig,
             openDialogShapes,
+            openDialogLineShapes,
         },
         dispatch,
     );

@@ -1,0 +1,76 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "apply_button_text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "empty_string": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error_details_button_text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "item_except": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "item_only": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "items_add_new": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "items_fetch_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "items_not_found": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "items_prompt": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "items_show_more": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "null": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "refresh_button_text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "search_clear": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "search_placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "search_select_all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "selected_popup_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

@@ -16,7 +16,7 @@ type ChartData = {
     graphs?: any[];
 };
 
-export function convertChartToTable(options: ConvertChartToTableArgs) {
+export function convertChartToTable(options: ConvertChartToTableArgs): string[] {
     const {widget, widgetData} = options;
     const chartData = prepareValues({
         widget,

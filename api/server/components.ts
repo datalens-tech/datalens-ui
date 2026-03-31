@@ -27,6 +27,8 @@ export {
     PUBLIC_API_ROUTE,
     PUBLIC_API_VERSION,
     PUBLIC_API_VERSION_HEADER,
+    PUBLIC_API_ACTION_REQ_PARAM,
+    PUBLIC_API_ACTION_NAME,
 } from '../../src/server/components/public-api';
 export {getPublicApiActionsV1} from '../../src/server/components/public-api/config';
 export type {
@@ -35,6 +37,9 @@ export type {
     PublicApiSecuritySchemes,
 } from '../../src/server/components/public-api/types';
 export {ApiTag as PublicApiTag} from '../../src/server/components/public-api/constants';
-export {preparePublicApiBaseConfig} from '../../src/server/components/public-api/utils';
+export {
+    preparePublicApiBaseConfig,
+    parsePublicApiVersionHeader,
+} from '../../src/server/components/public-api/utils';
 
 export {createAuthArgsMiddleware} from '../../src/server/components';

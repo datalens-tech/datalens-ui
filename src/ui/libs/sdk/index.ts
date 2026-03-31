@@ -140,27 +140,6 @@ class SDK {
 
         return axiosInstance(requestConfig).then((response) => response.data);
     }
-
-    sendFileInConnectionUploaderV2(
-        {formData, useComEndpoint = false}: {formData: FormData; useComEndpoint?: boolean},
-        options: OptionsMethodGateway,
-    ): Promise<{file_id: string; operation_id: string}> {
-        const {uploaderV2, uploaderComV2} = this.config.endpoints;
-        const endpoint = useComEndpoint && uploaderComV2 ? uploaderComV2 : uploaderV2;
-
-        const requestConfig: AxiosRequestConfig = {
-            method: 'post',
-            url: `${endpoint}/api/v2/files`,
-            headers: {
-                ...this.getHeaders(),
-                'Content-Type': 'multipart/form-data',
-                'x-request-id': `dl.${(DL.REQUEST_ID || '').slice(0, 6)}_conn`,
-            },
-            data: formData,
-        };
-
-        return this.sendRequest({requestConfig, options});
-    }
 }
 
 interface SDK {

@@ -24,7 +24,7 @@ export const __updateWizardChart__ = createTypedAction(
         paramsSchema,
         resultSchema: z.looseObject({}),
     },
-    async (api, args): Promise<{}> => {
+    async (api, args, {headers}): Promise<{}> => {
         const req = args.req as Request;
         const res = args.res as Response;
         const chartsEngine = args.chartsEngine as ChartsEngine;
@@ -45,6 +45,10 @@ export const __updateWizardChart__ = createTypedAction(
         }
 
         req.params.entryId = req.body.entryId;
+        req.headers = {
+            ...req.headers,
+            ...headers,
+        };
 
         await chartsEngine.controllers.charts.update(req, res);
 

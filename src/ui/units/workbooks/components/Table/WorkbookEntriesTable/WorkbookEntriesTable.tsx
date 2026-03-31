@@ -15,8 +15,10 @@ import {showToast} from 'ui/store/actions/toaster';
 import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
 import {copyTextWithToast} from 'ui/utils/copyText';
 
-import type {GetEntryResponse} from '../../../../../../shared/schema';
-import type {WorkbookWithPermissions} from '../../../../../../shared/schema/us/types';
+import type {
+    WorkbookEntryBase,
+    WorkbookWithPermissions,
+} from '../../../../../../shared/schema/us/types';
 import {registry} from '../../../../../registry';
 import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
@@ -37,7 +39,7 @@ const b = block('dl-workbook-entries-table');
 
 type WorkbookEntriesTableProps = {
     workbook: WorkbookWithPermissions;
-    entries: GetEntryResponse[];
+    entries: WorkbookEntryBase[];
     refreshEntries: (scope: EntryScope) => void;
     refreshSharedEntries: (scope?: EntryScope) => void;
     loadMoreEntries?: (entryScope: EntryScope) => void;

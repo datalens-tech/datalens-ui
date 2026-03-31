@@ -155,7 +155,9 @@ function prepareValues({widget, data, widgetType, extra, options = {}}) {
 
     switch (widgetType) {
         case WidgetKind.GravityCharts: {
-            const chartAsTable = chartToTable({chartData: data});
+            // Historically, dates in charts are exported without using formats other than xlsx.
+            const dateFormat = format !== EXPORT_FORMATS.XLSX ? 'YYYY-MM-DD HH:mm:ss' : undefined;
+            const chartAsTable = chartToTable({chartData: data, dateFormat});
             return prepareValues({
                 widget: {},
                 data: chartAsTable,

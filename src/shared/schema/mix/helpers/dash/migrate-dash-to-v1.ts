@@ -4,6 +4,8 @@ import {ServerError} from '../../../../constants/error';
 import type {DashV1, GetEntryResponse} from '../../../types';
 import {DASH_VERSION_1} from '../../schemas/dash/dash-v1';
 
+import {normalizeDashData} from './normalize-dash-data';
+
 export const migrateDashToV1 = ({
     version,
     scope,
@@ -56,6 +58,8 @@ export const migrateDashToV1 = ({
         migratedData = DashSchemeConverter.update(data as unknown as DashData);
     }
 
+    const normalizedData = normalizeDashData(migratedData);
+
     return {
         version: DASH_VERSION_1,
         scope,
@@ -76,6 +80,6 @@ export const migrateDashToV1 = ({
         annotation: migratedAnnotation,
         links,
         type,
-        data: migratedData,
+        data: normalizedData,
     } as DashV1;
 };

@@ -22,6 +22,7 @@ export const ChartkitMenuDialogsQA = {
     chartError: 'chartkit-error',
     chartPreview: 'chart-preview',
     errorButtonRetry: 'chartkit-error-actions',
+    errorButtonDetails: 'chartkit-error-details',
     widgetTab: 'widget-chart-tab',
     chartWidget: 'chart-widget',
 };
@@ -32,6 +33,7 @@ export const enum ChartKitQa {
     DrillBreadcrumbsItem = 'chartkit-drillbreadcrumbs-item',
     Widget = 'chart-widget',
     Tooltip = 'chartkit-tooltip',
+    Error = 'chartkit-error',
 }
 
 export const enum ChartQa {

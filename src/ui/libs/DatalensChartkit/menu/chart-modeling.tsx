@@ -30,9 +30,11 @@ const dispatchAction = (action: any) => {
 export const getChartModelingMenuItem = ({
     chartState,
     widgetName,
+    customConfig,
 }: {
     chartState: ChartStateSettings | undefined;
     widgetName?: string;
+    customConfig?: Partial<MenuItemConfig>;
 }): MenuItemConfig => {
     const hasTrendsOnChart = chartState?.trends?.enabled ?? false;
     const hasSmoothingLinesOnChart = chartState?.smoothing?.enabled ?? false;
@@ -48,7 +50,12 @@ export const getChartModelingMenuItem = ({
             </React.Fragment>
         ),
         icon: <ChartKitIcon data={ChartLine} />,
-        isVisible: ({loadedData}) => {
+        isVisible: (args) => {
+            if (typeof customConfig?.isVisible === 'function') {
+                return customConfig?.isVisible(args);
+            }
+
+            const {loadedData} = args;
             return !DL.IS_MOBILE && isChartModelingAvailable({loadedData});
         },
         items: [

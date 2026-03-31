@@ -7,8 +7,6 @@ import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import type {DatasetOptions, Field, FilterField, ShapesConfig, Update} from 'shared';
 
-import type {PaletteTypes} from '../../../constants';
-
 import DialogShapesPalette from './DialogShapesPalette/DialogShapesPalette';
 
 import './DialogShapes.scss';
@@ -30,7 +28,6 @@ type Props = {
     onApply: (shapesConfig: ShapesConfig) => void;
     onCancel: () => void;
     shapesConfig: ShapesConfig;
-    paletteType: PaletteTypes;
 };
 
 export type OpenDialogShapesArgs = {
@@ -56,7 +53,6 @@ const DialogShapes: React.FC<Props> = ({
     parameters,
     dashboardParameters,
     onCancel,
-    paletteType,
 }: Props) => {
     const [shapesState, setShapesState] = React.useState<ShapesState>({
         selectedValue: null,
@@ -100,11 +96,10 @@ const DialogShapes: React.FC<Props> = ({
     }, [onClose]);
 
     const onApplyButtonClick = React.useCallback(() => {
-        const shapesConfig: ShapesConfig = {
+        onApply({
             mountedShapes: shapesState.mountedShapes,
             fieldGuid: item.guid,
-        };
-        onApply(shapesConfig);
+        });
         onClose();
     }, [item.guid, onApply, onClose, shapesState.mountedShapes]);
 
@@ -135,7 +130,6 @@ const DialogShapes: React.FC<Props> = ({
                         updates={updates}
                         filters={filters}
                         options={options}
-                        paletteType={paletteType}
                     />
                 </Dialog.Body>
                 <Dialog.Footer

@@ -588,7 +588,7 @@ export const applyExternalControlDialog = ({
             type: DashTabItemType.Control,
         });
 
-        const data: SetItemDataExternalControl = {
+        const data = {
             title,
             sourceType,
             autoHeight,
@@ -601,7 +601,7 @@ export const applyExternalControlDialog = ({
                 isSingleControl: true,
                 isGlobal,
             }),
-        };
+        } as SetItemDataExternalControl;
         const getExtendedItemData = getExtendedItemDataAction();
         const item = dispatch(getExtendedItemData({data, defaults, type: DashTabItemType.Control}));
 

@@ -3,7 +3,6 @@ import React from 'react';
 import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {registry} from 'ui/registry';
 
 import type {
     ConnectorItem,
@@ -35,8 +34,6 @@ const UncategorizedList = (props: {
         return null;
     }
 
-    const {getConnectionItemRender} = registry.connections.functions.getAll();
-
     return (
         <div className={b('list')}>
             {connectors.map((connector) => (
@@ -45,7 +42,6 @@ const UncategorizedList = (props: {
                     connector={connector}
                     workbookId={workbookId}
                     collectionId={collectionId}
-                    render={getConnectionItemRender}
                 />
             ))}
         </div>

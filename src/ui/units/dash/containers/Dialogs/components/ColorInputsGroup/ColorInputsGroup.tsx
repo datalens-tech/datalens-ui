@@ -13,7 +13,8 @@ import {isColorByTheme} from '../../../../../../../shared/utils';
 import './ColorInputsGroup.scss';
 const b = block('color-inputs-group');
 
-export interface ColorInputsGroupProps extends Pick<ColorPickerInputProps, 'placeholder'> {
+export interface ColorInputsGroupProps
+    extends Pick<ColorPickerInputProps, 'placeholder' | 'hasOpacityInput'> {
     theme?: RealTheme;
     value: ColorSettings | undefined;
     onUpdate: (value: ColorSettings | undefined) => void;
@@ -38,6 +39,7 @@ export function ColorInputsGroup({
     paletteOptions,
     placeholder,
     width,
+    hasOpacityInput = true,
 }: ColorInputsGroupProps) {
     const {light, dark, common} = isColorByTheme(value)
         ? {...value, common: undefined}
@@ -55,7 +57,7 @@ export function ColorInputsGroup({
                     value={common}
                     onUpdate={(color) => onUpdate(color ?? undefined)}
                     onBlur={onBlur}
-                    hasOpacityInput
+                    hasOpacityInput={hasOpacityInput}
                 />
             ) : (
                 <React.Fragment>
@@ -69,7 +71,7 @@ export function ColorInputsGroup({
                             theme="light"
                             onUpdate={(color) => onUpdate({light: color ?? undefined, dark})}
                             onBlur={onBlur}
-                            hasOpacityInput
+                            hasOpacityInput={hasOpacityInput}
                         />
                     </div>
                     <div className={b('item')}>
@@ -82,7 +84,7 @@ export function ColorInputsGroup({
                             theme="dark"
                             onUpdate={(color) => onUpdate({dark: color ?? undefined, light})}
                             onBlur={onBlur}
-                            hasOpacityInput
+                            hasOpacityInput={hasOpacityInput}
                         />
                     </div>
                 </React.Fragment>

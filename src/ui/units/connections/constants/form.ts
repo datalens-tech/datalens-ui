@@ -37,6 +37,7 @@ export enum FieldKey {
 export enum InnerFieldKey {
     Authorized = 'authorized',
     CacheTtlMode = 'cache_ttl_mode',
+    EarlyInvalidationCache = 'early_invalidation_cache',
     isAutoCreateDashboard = 'is_auto_create_dashboard',
 }
 

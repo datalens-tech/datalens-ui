@@ -5,6 +5,7 @@ import DataTable from '@gravity-ui/react-data-table';
 import {Checkbox} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {DatasetField, DatasetSelectionMap} from 'shared';
+import {DatasetFieldsTabQa} from 'shared';
 
 const b = block('dataset-table');
 
@@ -40,6 +41,7 @@ export const getIndexColumn = ({
             indeterminate={indeterminate}
             onUpdate={onSelectAllChange}
             disabled={readonly}
+            qa={DatasetFieldsTabQa.FieldIndexHeaderColumnCheckbox}
         />
     ),
     render: function IndexColumnItem({index, row}) {
@@ -66,6 +68,7 @@ export const getIndexColumn = ({
                     size={'l'}
                     disabled={readonly}
                     onChange={handleCheckboxChange}
+                    qa={DatasetFieldsTabQa.FieldIndexColumnCheckbox}
                 />
                 <div className={b('title-index')}>{index + 1}</div>
             </React.Fragment>

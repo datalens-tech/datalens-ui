@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {MermaidRuntime} from '@diplodoc/mermaid-extension/react';
+import {useMermaid} from '@diplodoc/mermaid-extension/react';
 import {
     MarkdownEditorView,
     configure as configureMarkdownEditor,
@@ -17,7 +17,10 @@ import type {
     UseMarkdownEditorProps,
 } from '@gravity-ui/markdown-editor';
 import {WysiwygEditorQa} from 'shared';
+import {YFM_MERMAID_CLASSNAME} from 'ui/constants';
 import {DL} from 'ui/constants/common';
+import {useMermaidTheme} from 'ui/hooks/useMermaidTheme';
+import {MERMAID_DOMPURIFY_CONFIG} from 'ui/utils/mermaid-sanitize';
 
 import {
     COMMAND_MENU_ACTIONS,
@@ -178,19 +181,44 @@ const MarkdownEditorDefault = React.forwardRef<MarkdownEditorRef, MarkdownEditor
             };
         }, [onSubmit, self]);
 
+        const mermaidTheme = useMermaidTheme();
+        const renderMermaid = useMermaid();
+
+        // no deps, since mermaid must be rendered each time
+        // copied behavior from @diplodoc/mermaid-extension (MermaidRuntime)
+        React.useEffect(() => {
+            const element = viewRef.current;
+
+            if (!element) {
+                return;
+            }
+
+            const mermaidNodes = [
+                ...element.querySelectorAll<HTMLElement>(`.${YFM_MERMAID_CLASSNAME}`),
+            ];
+
+            if (mermaidNodes.length) {
+                renderMermaid(
+                    {
+                        theme: mermaidTheme,
+                        dompurifyConfig: MERMAID_DOMPURIFY_CONFIG,
+                        securityLevel: 'strict',
+                    },
+                    {nodes: mermaidNodes},
+                );
+            }
+        });
+
         return (
-            <React.Fragment>
-                <MarkdownEditorView
-                    ref={viewRef}
-                    editor={editor}
-                    autofocus={autofocus}
-                    className={className}
-                    stickyToolbar={true}
-                    toolbarsPreset={extendedToolbarsPreset}
-                    qa={WysiwygEditorQa.Editor}
-                />
-                <MermaidRuntime />
-            </React.Fragment>
+            <MarkdownEditorView
+                ref={viewRef}
+                editor={editor}
+                autofocus={autofocus}
+                className={className}
+                stickyToolbar={true}
+                toolbarsPreset={extendedToolbarsPreset}
+                qa={WysiwygEditorQa.Editor}
+            />
         );
     },
 );

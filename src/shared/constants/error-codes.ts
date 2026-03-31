@@ -43,7 +43,6 @@ export enum ErrorCode {
     IncorrectDepsIds = 'INCORRECT_DEPS_IDS_FOR_EMBED',
     IncorrectEntryIdForEmbed = 'ERR.DS_API.US.BAD_REQUEST.INCORRECT_ENTRY_ID_FOR_EMBED',
 
-    InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
     WorkbookAlreadyExists = 'WORKBOOK_ALREADY_EXISTS',
     MetaManagerWorkbookAlreadyExists = 'META_MANAGER.WORKBOOK_ALREADY_EXISTS',
     CollectionAlreadyExists = 'COLLECTION_ALREADY_EXISTS',

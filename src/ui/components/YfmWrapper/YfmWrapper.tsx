@@ -2,13 +2,14 @@ import React from 'react';
 
 import {useLatex} from '@diplodoc/latex-extension/react';
 import {useMermaid} from '@diplodoc/mermaid-extension/react';
-import {getThemeType, useThemeValue} from '@gravity-ui/uikit';
 import dompurify from 'dompurify';
 import type {DebouncedFunc} from 'lodash';
 import debounce from 'lodash/debounce';
 import {YfmMetaScripts} from 'shared/constants/yfm';
 import {YFM_LATEX_CLASSNAME, YFM_MERMAID_CLASSNAME} from 'ui/constants';
+import {useMermaidTheme} from 'ui/hooks/useMermaidTheme';
 import {registry} from 'ui/registry';
+import {MERMAID_DOMPURIFY_CONFIG} from 'ui/utils/mermaid-sanitize';
 
 import type {YfmWrapperProps} from '../../registry/units/common/types/components/YfmWrapper';
 
@@ -17,20 +18,7 @@ let hasMermaidImported = false;
 
 const PLUGINS_REDRAW_TIMEOUT = 100;
 
-const dompurifyConfig = {
-    ALLOWED_TAGS: [],
-    ALLOWED_ATTRIBUTES: [],
-    ALLOW_ARIA_ATTR: false,
-    ALLOW_DATA_ATTR: false,
-};
-
-const MERMAID_THEMES = ['light', 'dark'];
-
-const getMermaidTheme = (theme: string) => {
-    const currentThemeType = getThemeType(theme);
-
-    return MERMAID_THEMES.includes(currentThemeType) ? currentThemeType : MERMAID_THEMES[0];
-};
+const dompurifyConfig = MERMAID_DOMPURIFY_CONFIG;
 
 /**
  * Check latex and mermaid containers
@@ -68,7 +56,7 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
 
         const renderLatex = useLatex();
         const renderMermaid = useMermaid();
-        const currentMermaidTheme = getMermaidTheme(useThemeValue());
+        const currentMermaidTheme = useMermaidTheme();
 
         const renderLatexAndMermaid = () => {
             const element = elementRef?.current;
@@ -94,15 +82,18 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
 
             if (hasMermaidScript) {
                 const mermaidNodes = [
-                    ...element.querySelectorAll(`.${YFM_MERMAID_CLASSNAME}`),
+                    ...element.querySelectorAll<HTMLElement>(`.${YFM_MERMAID_CLASSNAME}`),
                 ].filter(isNeedToUpdateNode);
 
                 if (mermaidNodes.length) {
-                    renderMermaid({
-                        theme: currentMermaidTheme,
-                        nodes: mermaidNodes,
-                        dompurifyConfig,
-                    }).then(() => {
+                    renderMermaid(
+                        {
+                            theme: currentMermaidTheme,
+                            dompurifyConfig,
+                            securityLevel: 'strict',
+                        },
+                        {nodes: mermaidNodes},
+                    ).then(() => {
                         props.onRenderCallback?.();
                     });
                 }

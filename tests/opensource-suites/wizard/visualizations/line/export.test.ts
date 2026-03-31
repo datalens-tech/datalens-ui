@@ -50,5 +50,58 @@ datalensTest.describe('Wizard', () => {
             ];
             expect(xlsxContent).toEqual(expected);
         });
+
+        datalensTest('Colored by measure field - export to xlsx', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.createNewFieldWithFormula('order_year', `YEAR([Order_date])`);
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'order_year');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Colors, 'region');
+
+            await expect(previewLoader).not.toBeVisible();
+
+            const downloadPromise = wizardPage.page.waitForEvent('download');
+            await wizardPage.chartkit.openExportMenuAndClickSubItem(slct(MenuItemsIds.EXPORT_XLSX));
+            const xlsxContent = await getDownloadedXlsx(await downloadPromise);
+
+            const expected = [
+                ['order_year', 'Central', 'East', 'South', 'West'],
+                ['2015', '102920.5206', '127652.819', '103374.9055', '145907.963'],
+                ['2016', '102425.1724', '153225.183', '70076.0825', '133709.5675'],
+                ['2017', '145673.88', '178511.538', '93535.9035', '182471.2285'],
+                ['2018', '141627.3402', '210129.186', '122164.5675', '248130.9255'],
+            ];
+            expect(xlsxContent).toEqual(expected);
+        });
+
+        datalensTest('Export to csv', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Filters,
+                'Order_date',
+            );
+            await wizardPage.filterEditor.selectRangeDate(['03.01.2015', '05.01.2015']);
+            await wizardPage.filterEditor.apply();
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'Order_date');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
+
+            await expect(previewLoader).not.toBeVisible();
+
+            const content = await wizardPage.chartkit.exportCsv();
+            const expected =
+                '"Order_date";"Sales"\n' +
+                '"2015-01-03 00:00:00";16.448\n' +
+                '"2015-01-04 00:00:00";288.06\n' +
+                '"2015-01-05 00:00:00";19.536';
+
+            await expect(content).toEqual(expected);
+        });
     });
 });

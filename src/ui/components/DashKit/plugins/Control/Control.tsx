@@ -49,7 +49,7 @@ import {
     addOperationForValue,
     unwrapFromArrayAndSkipOperation,
 } from '../../../../units/dash/modules/helpers';
-import type {CommonGlobalWidgetSettings} from '../../DashKit';
+import type {EntryWidgetSettings} from '../../DashKit';
 import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout, getControlHint} from '../../utils';
@@ -94,7 +94,7 @@ export interface PluginControlProps
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: ControlSettings['getDistincts'];
-    globalWidgetSettings?: CommonGlobalWidgetSettings;
+    entryWidgetSettings?: EntryWidgetSettings;
 }
 
 const b = block('dashkit-plugin-control');
@@ -714,14 +714,14 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     render() {
-        const {data, editMode, id, workbookId, globalWidgetSettings} = this.props;
+        const {data, editMode, id, workbookId, entryWidgetSettings} = this.props;
         const controlData = data as unknown as
             | DashTabItemControlExternal
             | DashTabItemControlManual
             | DashTabItemControlDataset;
         const {sourceType, source} = controlData;
 
-        const borderRadius = globalWidgetSettings?.borderRadius;
+        const borderRadius = entryWidgetSettings?.borderRadius;
 
         const style = borderRadius ? {borderRadius} : undefined;
 
@@ -862,7 +862,7 @@ const plugin: PluginControl = {
 
         // TODO: remove this. use basic ChartKit abilities
         plugin.getDistincts = getDistincts;
-        plugin.globalWidgetSettings = settings.globalWidgetSettings;
+        plugin.entryWidgetSettings = settings.entryWidgetSettings;
 
         return plugin;
     },
@@ -876,7 +876,7 @@ const plugin: PluginControl = {
                 workbookId={workbookId}
                 getDistincts={plugin.getDistincts}
                 ref={forwardedRef}
-                globalWidgetSettings={plugin.globalWidgetSettings}
+                entryWidgetSettings={plugin.entryWidgetSettings}
             />
         );
     },

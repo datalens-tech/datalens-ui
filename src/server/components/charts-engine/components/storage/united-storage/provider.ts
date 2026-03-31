@@ -149,6 +149,8 @@ function formatPassedHeaders(
 
         headersMap.folderId,
         headersMap.subjectToken,
+        headersMap.serviceTicket,
+        headersMap.userTicket,
         PROJECT_ID_HEADER,
         TENANT_ID_HEADER,
         ...(extraAllowedHeaders || []),

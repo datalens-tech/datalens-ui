@@ -2,6 +2,7 @@ import type {OpenDialogMetricColorsArgs} from 'ui/units/wizard/components/Dialog
 import type {OpenDialogColorArgs} from '../../units/wizard/components/Dialogs/DialogColor/DialogColor';
 import type {OpenDialogFieldInspectorArgs} from '../../units/wizard/components/Dialogs/DialogFieldInspector/DialogFieldInspector';
 import type {OpenDialogShapesArgs} from '../../units/wizard/components/Dialogs/DialogShapes/DialogShapes';
+import type {OpenDialogLineShapesArgs} from '../../units/wizard/components/Dialogs/DialogLineShapes/DialogLineShapes';
 import type {OpenDialogFieldArgs} from '../../units/wizard/components/Dialogs/DialogField/DialogField';
 import type {OpenDialogFilterArgs} from '../../index';
 import type {OpenDialogPlaceholderArgs} from '../../units/wizard/components/Dialogs/DialogPlaceholder/DialogPlaceholder';
@@ -72,6 +73,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogColorArgs
     | OpenDialogFieldInspectorArgs
     | OpenDialogShapesArgs
+    | OpenDialogLineShapesArgs
     | OpenDialogFieldArgs
     | OpenDialogFilterArgs
     | OpenDialogQLParameterArgs

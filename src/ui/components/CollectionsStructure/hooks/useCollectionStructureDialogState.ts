@@ -58,11 +58,18 @@ export const useCollectionStructureDialogState = ({
     const [targetCollectionId, setTargetCollectionId] = React.useState(initialCollectionId);
     const [targetWorkbookId, setTargetWorkbookId] = React.useState<string | null>(null);
 
+    const requestIdRef = React.useRef(0);
+
     const getStructureItemsRecursively = React.useCallback(
         (args: GetStructureItemsArgs): CancellablePromise<GetStructureItemsResponse | null> => {
+            const currentRequestId = requestIdRef.current;
             let curPage = args.page;
 
             return dispatch(getStructureItems({...args, includePermissionsInfo})).then((result) => {
+                if (requestIdRef.current !== currentRequestId) {
+                    return null;
+                }
+
                 if (result?.items.length === 0 && result.nextPageToken !== null) {
                     curPage = result.nextPageToken;
 
@@ -90,6 +97,8 @@ export const useCollectionStructureDialogState = ({
     }, []);
 
     const fetchData = React.useCallback(() => {
+        requestIdRef.current++;
+
         const promises: CancellablePromise[] = [];
 
         dispatch(resetStructureItems());

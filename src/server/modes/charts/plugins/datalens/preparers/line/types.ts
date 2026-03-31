@@ -1,7 +1,11 @@
+import type {LineSeries, LineSeriesData} from '@gravity-ui/chartkit/gravity-charts';
+
 import type {
+    SeriesExportSettings,
     ServerField,
     ServerPlaceholderSettings,
     WrappedHTML,
+    WrappedMarkdown,
 } from '../../../../../../../shared';
 import type {ChartKitFormatSettings} from '../types';
 
@@ -42,4 +46,15 @@ export type LineData = {
     // colorValue for a specific point.
     // So far, it is used only for coloring by indicators.
     colorValue?: number;
+};
+
+export type ExtendedLineSeriesData = Omit<LineSeriesData, 'x'> & {
+    x?: LineSeriesData['x'] | WrappedHTML | WrappedMarkdown;
+};
+
+export type ExtendedLineSeries = Omit<LineSeries, 'data'> & {
+    custom?: {
+        exportSettings?: SeriesExportSettings;
+    };
+    data: ExtendedLineSeriesData[];
 };

@@ -13,9 +13,11 @@ import type {EntryContentAction} from '../../../../store/actions/entryContent';
 import type {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
 import type {
     ChangeNavigationPathAction,
+    PartialUpdateSettingsAction,
     RemoveGlobalItemsAction,
     ResetConnectionsUpdatersAction,
     SetAccessDescriptionAction,
+    SetDashEntryMetaAction,
     SetDashKeyAction,
     SetDashKitRefAction,
     SetDashOpenedDescKeyAction,
@@ -78,12 +80,14 @@ export type DashAction<T = unknown> =
     | CloseDialogAction
     | SaveDashSuccessAction
     | SaveDashErrorAction
+    | PartialUpdateSettingsAction
     | SetSettingsAction
     | SetHistoryStateAction
     | EditHistoryAction
     | RemoveGlobalItemsAction
     | UpdateTabsWithGlobalStateAction
     | UpdateConnectionsUpdatersAction
-    | ResetConnectionsUpdatersAction;
+    | ResetConnectionsUpdatersAction
+    | SetDashEntryMetaAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

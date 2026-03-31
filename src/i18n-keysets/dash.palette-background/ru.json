@@ -1,4 +1,7 @@
 {
+  "aria_choose-color": "Выбрать цвет",
+  "aria_enter-color": "HEX-код цвета",
+  "aria_opacity": "Прозрачность",
   "button_custom_value": "Указать значение",
   "tooltip_click-to-select": "Выберите значение",
   "value_base_gray": "Базовый серый фон",

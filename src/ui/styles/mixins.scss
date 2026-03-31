@@ -179,13 +179,13 @@
     text-transform: uppercase;
 }
 
-@mixin palette-item-border($borderColor, $top, $left, $width, $height) {
+@mixin palette-item-border($borderColor, $margin, $borderWidth: 2px, $borderRadius: 9px) {
     content: '';
     position: absolute;
-    top: $top;
-    left: $left;
-    width: $width;
-    height: $height;
-    border: 2px solid $borderColor;
-    border-radius: 6px;
+    top: -#{$margin}px;
+    left: -#{$margin}px;
+    width: calc(100% + #{$margin}px * 2);
+    height: calc(100% + #{$margin}px * 2);
+    border: $borderWidth solid $borderColor;
+    border-radius: $borderRadius;
 }

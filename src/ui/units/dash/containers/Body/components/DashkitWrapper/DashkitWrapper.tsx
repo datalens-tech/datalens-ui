@@ -264,7 +264,7 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
         {
             disableHashNavigation,
             scope: 'dash',
-            globalWidgetSettings: settings.widgetsSettings,
+            entryWidgetSettings: settings.widgetsSettings,
         },
         shouldReconfigureDashkit,
     );

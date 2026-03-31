@@ -1,5 +1,6 @@
 import type {ThunkDispatch} from 'redux-thunk';
 import {DL, type DatalensGlobalState} from 'index';
+import {DATALENS_OPERATION} from '../../../shared/constants/operations';
 
 import {showToast} from './toaster';
 import {waitOperation} from '../../utils/waitOperation';
@@ -236,10 +237,26 @@ export const updateAccessBindings = ({
 
         const thenWaitOperation = async (operation: GetDatalensOperationResponse) => {
             if (operation && operation.id) {
+                const operationTypeByResourceType = {
+                    [ResourceType.Collection]: DATALENS_OPERATION.UPDATE_COLLECTION_ACCESS_BINDINGS,
+                    [ResourceType.Workbook]: DATALENS_OPERATION.UPDATE_WORKBOOK_ACCESS_BINDINGS,
+                    [ResourceType.SharedEntry]:
+                        DATALENS_OPERATION.UPDATE_SHARED_ENTRY_ACCESS_BINDINGS,
+                };
+
                 await waitOperation({
                     operation,
                     loader: ({concurrentId}) =>
-                        getSdk().sdk.us.getOperation({operationId: operation.id}, {concurrentId}),
+                        getSdk().sdk.us.fetchOperation(
+                            {
+                                operationId: operation.id,
+                                meta: {
+                                    type: operationTypeByResourceType[resourceType],
+                                    deltas,
+                                },
+                            },
+                            {concurrentId},
+                        ),
                 }).promise;
             }
             return operation;

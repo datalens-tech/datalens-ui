@@ -13,13 +13,13 @@ import {connect} from 'react-redux';
 import SplitPane from 'react-split-pane';
 import {createStructuredSelector} from 'reselect';
 import type {DatasetSource, DatasetSourceAvatar} from 'shared';
-import {EntryScope, ErrorCode, ErrorContentTypes, SharedEntriesBaseQa} from 'shared';
+import {EntryScope, ErrorCode, ErrorContentTypes, Feature, SharedEntriesBaseQa} from 'shared';
 import type {GetRevisionsEntry} from 'shared/schema';
 import type {DataLensApiError, SDK} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import type {DialogUnlockProps} from 'ui/components/EntryDialogues/DialogUnlock';
 import {SharedEntryIcon} from 'ui/components/SharedEntryIcon/SharedEntryIcon';
-import {DL, SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'ui/constants/common';
+import {SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'ui/constants/common';
 import {HOTKEYS_SCOPES} from 'ui/constants/misc';
 import {withHotkeysContext} from 'ui/hoc/withHotkeysContext';
 import {
@@ -29,6 +29,7 @@ import {
     openDialogSaveDraftChartAsActualConfirm,
 } from 'ui/store/actions/dialog';
 import {initEditHistoryUnit} from 'ui/store/actions/editHistory';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {
     addAvatar,
     addSource,
@@ -409,12 +410,12 @@ class Dataset extends React.Component<Props, State> {
                     return {
                         type: 'no-access',
                         title: i18n('label_error-403-title'),
-                        action: !DL.IS_WORKBOOKS_ENABLED
-                            ? {
+                        action: isEnabledFeature(Feature.CollectionsEnabled)
+                            ? undefined
+                            : {
                                   text: i18n('button_ask-access-rights'),
                                   handler: this.askAccessRights,
-                              }
-                            : undefined,
+                              },
                     };
                 }
             case 404:

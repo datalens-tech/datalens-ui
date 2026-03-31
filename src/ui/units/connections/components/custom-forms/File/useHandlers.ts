@@ -36,6 +36,7 @@ import type {
     OpenRenameSourceDialog,
     OpenSourcesDialog,
 } from './types';
+import {getListItemId} from './utils';
 
 const i18n = I18n.keyset('connections.file.view');
 
@@ -109,6 +110,7 @@ export const useHandlers = (args: {
     const deleteUploadedFile: DeleteUploadedFile = React.useCallback(
         (fileName) => {
             const nextUploadedFiles = uploadedFiles.filter(({file}) => file.name !== fileName);
+            dispatch(setFileSelectedItemId({selectedItemId: getListItemId(nextUploadedFiles[0])}));
             dispatch(setUploadedFiles({uploadedFiles: nextUploadedFiles}));
         },
         [dispatch, uploadedFiles],
@@ -140,6 +142,7 @@ export const useHandlers = (args: {
             }
 
             batch(() => {
+                dispatch(setFileSelectedItemId({selectedItemId: getListItemId(nextSources[0])}));
                 dispatch(setFileAndFormSources(updates));
 
                 if (replaceSourcesChanged) {

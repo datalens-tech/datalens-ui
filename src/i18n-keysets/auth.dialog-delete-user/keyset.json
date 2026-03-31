@@ -1,0 +1,36 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "action_user-profile-deletion-cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_user-profile-deletion-confirm": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-user-confirmation": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-user-failure": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-user-success": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_delete-user": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

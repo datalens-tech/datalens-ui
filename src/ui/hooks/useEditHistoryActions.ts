@@ -3,6 +3,7 @@ import React from 'react';
 import {ArrowUturnCcwLeft, ArrowUturnCwRight} from '@gravity-ui/icons';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {EditHistoryQA} from 'shared';
 import type {AdditionalButtonTemplate} from 'ui/components/ActionPanel/components/ChartSaveControls/types';
 import {useAdditionalItems} from 'ui/components/ActionPanel/components/ChartSaveControls/useAdditionalItems';
 import {REDO_HOTKEY, UNDO_HOTKEY} from 'ui/constants/misc';
@@ -70,6 +71,7 @@ export function useEditHistoryActions(options: UseEditHistoryActionsOptions) {
                 disabled: !canGoBack,
                 title: i18n('button_undo'),
                 hotkey: UNDO_HOTKEY.join('+'),
+                qa: EditHistoryQA.UndoBtn,
             },
             {
                 key: 'redo',
@@ -79,6 +81,7 @@ export function useEditHistoryActions(options: UseEditHistoryActionsOptions) {
                 disabled: !canGoForward,
                 title: i18n('button_redo'),
                 hotkey: REDO_HOTKEY.join('+'),
+                qa: EditHistoryQA.RedoBtn,
             },
         ];
     }, [canGoBack, canGoForward, handleGoBack, handleGoForward, iconSize]);

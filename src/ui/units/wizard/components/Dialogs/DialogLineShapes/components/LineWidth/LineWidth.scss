@@ -1,0 +1,12 @@
+.dialog-line-shapes {
+    &__line-width-select-icon {
+        display: flex;
+    }
+
+    &__line-width-input {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-top: 8px;
+    }
+}

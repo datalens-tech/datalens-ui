@@ -1,0 +1,32 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_autoheight-checkbox": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_background-checkbox": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_border-radius": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_internal-margins": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_like-dash": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

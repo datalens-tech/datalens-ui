@@ -31,7 +31,7 @@ import {
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 
 import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
-import type {CommonGlobalWidgetSettings} from '../../DashKit';
+import type {EntryWidgetSettings} from '../../DashKit';
 import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout} from '../../utils';
@@ -64,7 +64,7 @@ type OwnProps = ControlSettings &
 type PluginGroupControlProps = OwnProps;
 
 type PluginGroupControl = Plugin<PluginGroupControlProps, Record<string, StringParams>> & {
-    globalWidgetSettings?: CommonGlobalWidgetSettings;
+    entryWidgetSettings?: EntryWidgetSettings;
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: ControlSettings['getDistincts'];
 };
@@ -268,7 +268,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.state.quickActionLoader ||
             this.state.localUpdateLoader;
 
-        const borderRadius = this.props?.globalWidgetSettings?.borderRadius;
+        const borderRadius = this.props?.entryWidgetSettings?.borderRadius;
 
         const style: React.CSSProperties | undefined = borderRadius ? {borderRadius} : undefined;
 
@@ -973,7 +973,7 @@ const plugin: PluginGroupControl = {
 
         // TODO: remove this. use basic ChartKit abilities
         plugin.getDistincts = getDistincts;
-        plugin.globalWidgetSettings = settings.globalWidgetSettings;
+        plugin.entryWidgetSettings = settings.entryWidgetSettings;
         return plugin;
     },
     renderer(props, forwardedRef) {
@@ -985,7 +985,7 @@ const plugin: PluginGroupControl = {
                 getDistincts={plugin.getDistincts}
                 workbookId={workbookId}
                 ref={forwardedRef}
-                globalWidgetSettings={plugin.globalWidgetSettings}
+                entryWidgetSettings={plugin.entryWidgetSettings}
             />
         );
     },

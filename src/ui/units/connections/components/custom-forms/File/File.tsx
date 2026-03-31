@@ -10,7 +10,7 @@ import {newConnectionSelector} from '../../../store';
 import {FilesList, Workspace} from './components';
 import {FileContext} from './context';
 import {useHandlers} from './useHandlers';
-import {getListItemById, getListItemId} from './utils';
+import {getListItemById} from './utils';
 
 import './File.scss';
 
@@ -46,15 +46,6 @@ const FileComponent = (props: FileProps) => {
         setInitialFormData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    React.useEffect(() => {
-        const {item} = getListItemById(items, selectedItemId);
-
-        if (!item && items.length) {
-            const nextSelectedItemId = getListItemId(items[0]);
-            setSelectedItemId(nextSelectedItemId);
-        }
-    }, [setSelectedItemId, items, selectedItemId]);
 
     return (
         <FileContext.Provider value={contextValue}>

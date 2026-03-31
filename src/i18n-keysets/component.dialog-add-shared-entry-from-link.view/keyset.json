@@ -1,0 +1,52 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "apply-btn": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "cancel-btn": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "dialog-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "documentation-link-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "entry-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "info-message": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "input-label": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "link-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "no-access-for-binding-create": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "required-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

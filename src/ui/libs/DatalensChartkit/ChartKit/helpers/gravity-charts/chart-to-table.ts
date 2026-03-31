@@ -1,10 +1,11 @@
 import type {ChartData, ChartSeries} from '@gravity-ui/chartkit/gravity-charts';
 import get from 'lodash/get';
-import type {ColumnExportSettings, SeriesExportSettings, TableRow} from 'shared';
+import type {ColumnExportSettings, SeriesExportSettings, TableCellsRow} from 'shared';
 import type {TableData} from 'ui/libs/DatalensChartkit/types';
 
 type ChartToTableArgs = {
     chartData?: ChartData;
+    dateFormat?: string;
 };
 
 function getSeriesDataForExport(series: ChartSeries) {
@@ -23,6 +24,7 @@ function getDefaultExportSettings(series: ChartSeries): SeriesExportSettings {
     const point = series.data?.[0];
     const pointFields = Object.keys(point).map((key) => {
         return {
+            id: key,
             field: key,
             name: key,
         };
@@ -31,6 +33,7 @@ function getDefaultExportSettings(series: ChartSeries): SeriesExportSettings {
     return {
         columns: [
             {
+                id: 'series.name',
                 field: 'series.name',
                 name: 'name',
             },
@@ -40,16 +43,15 @@ function getDefaultExportSettings(series: ChartSeries): SeriesExportSettings {
 }
 
 export function chartToTable(args: ChartToTableArgs): TableData | null {
-    const {chartData} = args;
+    const {chartData, dateFormat} = args;
 
     if (!chartData) {
         return null;
     }
 
-    const rows: TableData['rows'] = [];
-
-    const columns = new Map<string, ColumnExportSettings>();
-    chartData.series.data.forEach((s) => {
+    const series = chartData.series.data;
+    const columns = new Map<string, ColumnExportSettings & {index: number}>();
+    series.forEach((s) => {
         const exportSettings: SeriesExportSettings = get(
             s,
             'custom.exportSettings',
@@ -57,7 +59,9 @@ export function chartToTable(args: ChartToTableArgs): TableData | null {
         );
 
         exportSettings?.columns.forEach((col) => {
-            columns.set(col.field, col);
+            if (!columns.has(col.id)) {
+                columns.set(col.id, {...col, index: columns.size});
+            }
         });
     });
 
@@ -69,17 +73,32 @@ export function chartToTable(args: ChartToTableArgs): TableData | null {
         id: key,
         name: value.name,
         formatter: value.formatter,
-        format: value.format,
+        format: value.type === 'date' && dateFormat ? dateFormat : value.format,
         type: value.type,
     })) as TableData['head'];
 
-    chartData.series.data.forEach((s) => {
-        const points = getSeriesDataForExport(s);
-        points.forEach((d) => {
-            const row: TableRow = {cells: []};
+    // The series should be grouped by the first field, so that rows with the same x values are not duplicated in the table.
+    // Series with different names make up columns such as x, name1, name2, ..., nameD
+    const shouldMergeSeries = series.every((s) => ['line', 'bar-x', 'area'].includes(s.type));
 
-            columns.forEach((col) => {
+    const rows = new Map<number, TableCellsRow>();
+    series.forEach((s, seriesIndex) => {
+        const points = getSeriesDataForExport(s);
+        points.forEach((d, pointIndex) => {
+            const key = shouldMergeSeries ? get(d, 'x') : `${seriesIndex}_${pointIndex}`;
+            const row: TableCellsRow = rows.get(key) ?? {
+                cells: new Array(columns.size).fill(null).map(() => ({value: ''})),
+            };
+
+            const exportSettings: SeriesExportSettings = get(
+                s,
+                'custom.exportSettings',
+                getDefaultExportSettings(s),
+            );
+
+            exportSettings?.columns.forEach((col) => {
                 let value = '';
+
                 if (col.field.startsWith('series.')) {
                     const fieldPath = col.field.replace('series.', '');
                     value = get(s, fieldPath);
@@ -106,15 +125,18 @@ export function chartToTable(args: ChartToTableArgs): TableData | null {
                     value = get(d, fieldPath, '');
                 }
 
-                row.cells.push({value});
+                const column = columns.get(col.id);
+                const cellIndex = column?.index ?? 0;
+
+                row.cells[cellIndex] = {value};
             });
 
-            rows.push(row);
+            rows.set(key, row);
         });
     });
 
     return {
         head,
-        rows,
+        rows: Array.from(rows.values()),
     };
 }

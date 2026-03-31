@@ -61,7 +61,6 @@
     &__color {
         align-self: center;
         border-radius: 1px;
-        display: inline-block;
         height: 6px;
         width: 12px;
     }
@@ -73,5 +72,30 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+
+    &__content-row-color-cell {
+        padding: 2px 4px 2px 14px;
+        width: 1px;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    &__content-row-label-cell {
+        max-width: 400px;
+        overflow: hidden;
+        padding: 2px 4px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__content-row-percent-cell {
+        padding: 2px 4px;
+        text-align: end;
+    }
+
+    &__content-row-value-cell {
+        padding: 2px 14px 2px 4px;
+        text-align: end;
     }
 }

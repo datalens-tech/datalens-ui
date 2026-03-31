@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Gear} from '@gravity-ui/icons';
-import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {IconById} from 'components/IconById/IconById';
@@ -122,7 +122,7 @@ class VisualizationSelector extends React.Component<Props> {
         );
     }
 
-    private getItems(): DropdownMenuItemMixed<unknown>[] {
+    private getItems(): DropdownMenuItem[] {
         const {visualization, visibleVisualizations} = this.props;
 
         return visibleVisualizations.map((item, index) => {

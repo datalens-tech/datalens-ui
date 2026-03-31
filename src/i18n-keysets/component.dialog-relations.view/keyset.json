@@ -1,0 +1,228 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_apply": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_clear-alias": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_delete-alias": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_disconnect": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_incoming": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_not-linked": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_outcoming": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_show-related-widgets": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_add-alias": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alias-already-exists": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alias-detail-1": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alias-detail-2": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alias-same-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alias-same-dataset-field": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_both": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_by-alias": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_by-aliases": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_by-dataset-fields": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_by-field": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_by-fields": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_by-parameter": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_by-parameters": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_charts": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_choose-field-for-alias": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_choose-fields-from-list": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_datasets": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_empty-state": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_ignore": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_input": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_invalid-alias": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_invalid-alias-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_invalid-alias-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_need-default-editor-chart": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_need-default-external-control": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-connections": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-widget-info": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_output": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_placeholder-search": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_relation-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_selectors": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unknown": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_widget": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_empty-selected-widgets": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_links": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_link-affect": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_link-both": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_link-ignore": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_link-unknown": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_quote-left": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_quote-right": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

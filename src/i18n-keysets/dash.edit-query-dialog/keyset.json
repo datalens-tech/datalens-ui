@@ -1,0 +1,40 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_apply": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error_invalid-typed-query-response": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_database-response": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_edit-query": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_invalid-sql-query": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_sent-query": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

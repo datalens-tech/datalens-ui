@@ -1,0 +1,40 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_sign-in": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-incorrect-fields": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-required-fields": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_login-placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_password-placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_sign-up-hint": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_sing-up-link": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

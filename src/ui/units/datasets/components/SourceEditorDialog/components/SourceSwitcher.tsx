@@ -2,6 +2,7 @@ import React from 'react';
 
 import type {SegmentedRadioGroupProps as RadioButtonProps} from '@gravity-ui/uikit';
 import {SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
+import {DatasetSourceEditorDialogQA} from 'shared';
 
 import type {FreeformSource} from '../../../store/types';
 import {getTranslate} from '../utils';
@@ -28,7 +29,7 @@ export const SourceSwitcher: React.FC<SourceSwitcherProps> = (props) => {
 
     return (
         <RadioButton
-            qa="datasets-source-switcher"
+            qa={DatasetSourceEditorDialogQA.SourceEditorSwitch}
             defaultValue={selectedFreeformSource?.source_type}
             onChange={onChange}
         >

@@ -282,6 +282,7 @@ export type TableWidgetData = WidgetBaseWithData &
             preserveWhiteSpace?: boolean;
         };
         unresolvedParams?: StringParams;
+        runActivity?: RunActivityFn;
     };
 
 // for backward compatibility

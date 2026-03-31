@@ -21,7 +21,6 @@ import {getOverridedTheme} from 'ui/utils/getOverridedTheme';
 import {HOTKEYS_SCOPES} from '../constants/misc';
 
 import '@gravity-ui/uikit/styles/styles.scss';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import 'katex/dist/katex.min.css';
 import 'ui/styles/base.scss';
 import 'ui/styles/variables.scss';

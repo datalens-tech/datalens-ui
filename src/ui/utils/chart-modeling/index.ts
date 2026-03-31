@@ -13,6 +13,7 @@ export function isChartModelingAvailable({
     if (!isEnabledFeature(Feature.ChartModeling)) {
         return false;
     }
+
     switch (loadedData.type) {
         case WidgetKind.GravityCharts: {
             const chartData = loadedData.data as ChartData;

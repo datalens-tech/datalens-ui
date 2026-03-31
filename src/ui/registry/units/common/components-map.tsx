@@ -9,6 +9,7 @@ import {makeDefaultEmpty} from '../../components/DefaultEmpty';
 
 import {Example} from './components/Example/Example';
 import {EXAMPLE_COMPONENT} from './constants/components';
+import type {AIChatSupportFormProps} from './types/components/AIChatSupportForm';
 import type {AccessRightsProps} from './types/components/AccessRights';
 import type {AccessRightsUrlOpenProps} from './types/components/AccessRightsUrlOpen';
 import type {AclSubjectProps} from './types/components/AclSubject';
@@ -66,4 +67,5 @@ export const commonComponentsMap = {
     WorkbookEntriesTableTabs: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
     WorkbookEntryExtended: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
     DialogEntryDescription: makeDefaultEmpty<DialogEntryDescriptionProps>(),
+    AIChatSupportForm: makeDefaultEmpty<AIChatSupportFormProps>(),
 } as const;

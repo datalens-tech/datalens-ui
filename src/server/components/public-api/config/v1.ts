@@ -3,6 +3,7 @@ import type {BaseSchema} from '@gravity-ui/gateway';
 import {Feature} from '../../../../shared';
 import type {AnyApiServiceActionConfig, DatalensGatewaySchemas} from '../../../types/gateway';
 import {ApiTag} from '../constants';
+import {PUBLIC_API_ACTION_NAME} from '../constants/action-names';
 import type {PublicApiVersionActions} from '../types';
 
 type OverrideActions<T extends BaseSchema> = {
@@ -15,7 +16,9 @@ type OverrideActions<T extends BaseSchema> = {
 
 export const getPublicApiActionsV1 = <
     TSchema extends {
-        root: OverrideActions<Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix' | 'us'>>;
+        root: OverrideActions<
+            Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix' | 'us' | 'metaManager'>
+        >;
     },
 >() => {
     return {
@@ -56,6 +59,14 @@ export const getPublicApiActionsV1 = <
             resolve: (api) => api.us.getCollection,
             openApi: {
                 summary: 'Get collection',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        getCollectionsByIds: {
+            resolve: (api) => api.us.getCollectionsByIds,
+            openApi: {
+                summary: 'Get collections list by ids',
                 tags: [ApiTag.Collection],
             },
             features: [Feature.CollectionsEnabled],
@@ -330,6 +341,14 @@ export const getPublicApiActionsV1 = <
             },
             features: [Feature.CollectionsEnabled],
         },
+        getWorkbooksByIds: {
+            resolve: (api) => api.us.getWorkbooksByIds,
+            openApi: {
+                summary: 'Get workbook list by ids',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
         moveWorkbook: {
             resolve: (api) => api.us.moveWorkbook,
             openApi: {
@@ -355,12 +374,64 @@ export const getPublicApiActionsV1 = <
             features: [Feature.CollectionsEnabled],
         },
         getWorkbookEntries: {
-            resolve: (api) => api.us.getWorkbookEntriesTyped,
+            resolve: (api) => api.us.getWorkbookEntries,
             openApi: {
                 summary: 'Get workbook entries',
                 tags: [ApiTag.Workbook],
             },
             features: [Feature.CollectionsEnabled],
+        },
+
+        // Workbook Export
+        [PUBLIC_API_ACTION_NAME.START_WORKBOOK_EXPORT]: {
+            resolve: (api) => api.metaManager.startWorkbookExport,
+            openApi: {
+                summary: 'Start workbook export',
+                tags: [ApiTag.WorkbookExport],
+            },
+            features: [Feature.EnableExportWorkbookFile, Feature.CollectionsEnabled],
+        },
+        getWorkbookExportStatus: {
+            resolve: (api) => api.metaManager.getWorkbookExportStatus,
+            openApi: {
+                summary: 'Get workbook export status',
+                tags: [ApiTag.WorkbookExport],
+            },
+            features: [Feature.EnableExportWorkbookFile, Feature.CollectionsEnabled],
+        },
+        getWorkbookExportResult: {
+            resolve: (api) => api.metaManager.getWorkbookExportResult,
+            openApi: {
+                summary: 'Get workbook export result',
+                tags: [ApiTag.WorkbookExport],
+            },
+            features: [Feature.EnableExportWorkbookFile, Feature.CollectionsEnabled],
+        },
+        cancelWorkbookExport: {
+            resolve: (api) => api.metaManager.cancelWorkbookExport,
+            openApi: {
+                summary: 'Cancel workbook export',
+                tags: [ApiTag.WorkbookExport],
+            },
+            features: [Feature.EnableExportWorkbookFile, Feature.CollectionsEnabled],
+        },
+
+        // Workbook Import
+        [PUBLIC_API_ACTION_NAME.START_WORKBOOK_IMPORT]: {
+            resolve: (api) => api.metaManager.startWorkbookImport,
+            openApi: {
+                summary: 'Start workbook import',
+                tags: [ApiTag.WorkbookImport],
+            },
+            features: [Feature.EnableExportWorkbookFile, Feature.CollectionsEnabled],
+        },
+        getWorkbookImportStatus: {
+            resolve: (api) => api.metaManager.getWorkbookImportStatus,
+            openApi: {
+                summary: 'Get workbook import status',
+                tags: [ApiTag.WorkbookImport],
+            },
+            features: [Feature.EnableExportWorkbookFile, Feature.CollectionsEnabled],
         },
     } satisfies PublicApiVersionActions<TSchema, Feature>;
 };

@@ -75,6 +75,7 @@ import {
     handleSelectorLinkingDialog,
     openFailedCopyGlobalItemDialog,
 } from './copy-and-paste/helpers';
+import {closeDialog} from './dash';
 import {getUpdatedTabsWithGlobalState, migrateDataSettings} from './helpers';
 
 import type {DashDispatch} from './index';
@@ -595,6 +596,14 @@ export const setDashAccessDescription = (
     payload,
 });
 
+export const updateDashAccessDescription =
+    (description: SetAccessDescriptionAction['payload']) => (dispatch: DashDispatch) => {
+        return batch(() => {
+            dispatch(setDashAccessDescription(description));
+            dispatch(addDashEditHistoryPoint());
+        });
+    };
+
 export const SET_DASH_SUPPORT_DESCRIPTION = Symbol('dash/SET_DASH_SUPPORT_DESCRIPTION');
 export type SetSupportDescriptionAction = {
     type: typeof SET_DASH_SUPPORT_DESCRIPTION;
@@ -606,6 +615,14 @@ export const setDashSupportDescription = (
     type: SET_DASH_SUPPORT_DESCRIPTION,
     payload,
 });
+
+export const updateDashSupportDescription =
+    (description: SetSupportDescriptionAction['payload']) => (dispatch: DashDispatch) => {
+        return batch(() => {
+            dispatch(setDashSupportDescription(description));
+            dispatch(addDashEditHistoryPoint());
+        });
+    };
 
 export const SET_LOADING_EDIT_MODE = Symbol('dash/SET_LOADING_EDIT_MODE');
 export type SetLoadingEditModeAction = {
@@ -1030,6 +1047,37 @@ export const updateCurrentTabData = (data: {
     };
 };
 
+export const PARTIAL_UPDATE_SETTINGS = Symbol('dash/PARTIAL_UPDATE_SETTINGS');
+export type PartialUpdateSettingsAction = {
+    type: typeof PARTIAL_UPDATE_SETTINGS;
+    payload: Partial<DashSettings>;
+};
+export const partialUpdateSettings =
+    (payload: PartialUpdateSettingsAction['payload']) => (dispatch: DashDispatch) => {
+        return batch(() => {
+            dispatch({
+                type: PARTIAL_UPDATE_SETTINGS,
+                payload,
+            });
+            dispatch(addDashEditHistoryPoint());
+        });
+    };
+
+export const UPDATE_EXPAND_TOC_SETTING = Symbol('dash/UPDATE_EXPAND_TOC_SETTING');
+export type UpdateExpandTocSettingAction = {
+    type: typeof UPDATE_EXPAND_TOC_SETTING;
+    payload: boolean;
+};
+export const updateExpandTocSetting = (payload: UpdateExpandTocSettingAction['payload']) => {
+    return (dispatch: DashDispatch) => {
+        batch(() => {
+            dispatch(partialUpdateSettings({expandTOC: payload}));
+            dispatch(toggleTableOfContent(payload));
+            dispatch(addDashEditHistoryPoint());
+        });
+    };
+};
+
 export const SET_SETTINGS = Symbol('dash/SET_SETTINGS');
 export type SetSettingsAction = {
     type: typeof SET_SETTINGS;
@@ -1176,6 +1224,7 @@ export const setCopiedItemData = (payload: SetCopiedItemDataPayload) => {
 export const setDefaultViewState = () => {
     return (dispatch: AppDispatch) => {
         batch(() => {
+            dispatch(closeDialog());
             dispatch(setDashViewMode());
             dispatch(setPageDefaultTabItems());
         });
@@ -1190,6 +1239,18 @@ export type SetDashKeyAction = {
 export const renameDash = (key: string): SetDashKeyAction => ({
     type: SET_DASH_KEY,
     payload: key,
+});
+
+export const SET_DASH_ENTRY_META = Symbol('dash/SET_DASH_ENTRY_META');
+
+export type SetDashEntryMetaAction = {
+    type: typeof SET_DASH_ENTRY_META;
+    payload: Record<string, string>;
+};
+
+export const setDashEntryMeta = (meta: Record<string, string>): SetDashEntryMetaAction => ({
+    type: SET_DASH_ENTRY_META,
+    payload: meta,
 });
 
 export const SET_DASH_OPENED_DESC = Symbol('dash/SET_DASH_OPENED_DESC');

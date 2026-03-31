@@ -81,9 +81,12 @@ datalensTest.describe('Dashboards - Versioning', () => {
 
             await dashboardPage.clickSaveChangesAsNewDash();
 
-            const isEnabledCollections = await isEnabledFeature(page, Feature.CollectionsEnabled);
+            const isCollectionsE2ETestsMode = await isEnabledFeature(
+                page,
+                Feature.CollectionsE2ETestsMode,
+            );
 
-            if (isEnabledCollections) {
+            if (isCollectionsE2ETestsMode) {
                 await workbookPO.dialogCreateEntry.createEntryWithName(
                     `e2e-test-dash-revisions-copy-${getUniqueTimestamp()}`,
                 );

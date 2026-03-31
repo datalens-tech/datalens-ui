@@ -1,0 +1,132 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "action_add-user": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_choose-user": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_choose-user-or-group": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_close": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_revoke-access": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_bindings-list-retry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_access_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_groups": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_invitee": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-data": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_object": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_revoke-access": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_role": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_user": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_user-accounts": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "placeholder_search": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "role-entry-binding-creator": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "role-limited-entry-binding-creator": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "role_admin": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "role_editor": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "role_limited-viewer": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "role_viewer": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_direct_accesses": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_inherited_accesses": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_revoke-access": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_access-list": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_add-user": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

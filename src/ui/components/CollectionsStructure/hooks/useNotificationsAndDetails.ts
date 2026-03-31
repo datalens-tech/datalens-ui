@@ -2,7 +2,7 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
-import type {EntryNotification} from 'shared/types/meta-manager';
+import type {EntryNotification} from 'shared/schema';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 
 import {transformNotifications} from '../components/EntriesNotificationCut/helpers';

@@ -17,7 +17,7 @@
   "label_expand-toc": "Раскрыть оглавление",
   "label_experimental": "Эксперимент",
   "label_global-params": "Параметры дашборда",
-  "label_hide-tabs": "Скрыть табы",
+  "label_hide-tabs": "Скрыть вкладки",
   "label_hide-title": "Скрыть заголовок",
   "label_internal-margins": "Отступы внутри виджетов",
   "label_load-only-visible-charts": "Загружать только видимые чарты",
@@ -29,6 +29,7 @@
   "label_max-concurrent-requests-placeholder": "Не ограничено",
   "label_other-settings": "Прочие настройки",
   "label_settings": "Настройки",
+  "label_show-tabs": "Показать вкладки",
   "label_silent-loading": "Скрывать индикацию загрузки",
   "label_support-description": "Окно перед обращением в поддержку",
   "label_tabs": "Табы",
@@ -36,5 +37,7 @@
   "label_toc": "Оглавление",
   "label_widgets-background": "Фон виджетов",
   "value_load-priority-charts": "Чарты",
-  "value_load-priority-selectors": "Селекторы"
+  "value_load-priority-selectors": "Селекторы",
+  "value_theme-dark": "Тёмная тема",
+  "value_theme-light": "Светлая тема"
 }

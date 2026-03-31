@@ -1,0 +1,44 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "caption": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_already_exists": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "help_tooltip": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "name-placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "new_hierarchy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "selector_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

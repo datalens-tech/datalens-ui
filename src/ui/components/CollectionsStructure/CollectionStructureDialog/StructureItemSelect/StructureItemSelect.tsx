@@ -16,6 +16,7 @@ import type {
     StructureItem,
 } from '../../../../../shared/schema/us/types/collections';
 import {CollectionsStructureBreadcrumbs} from '../../../Breadcrumbs/CollectionsStructureBreadcrumbs/CollectionsStructureBreadcrumbs';
+import type {StructureItemsFilters} from '../../../CollectionFilters';
 import {SmartLoader} from '../../../SmartLoader/SmartLoader';
 
 import {Item} from './Item';
@@ -35,6 +36,7 @@ export type Props = {
     contentError: Error | null;
     breadcrumbs: GetCollectionBreadcrumbsResponse;
     items: StructureItem[];
+    filters: StructureItemsFilters;
     nextPageToken: string | null;
     pageSize: number;
     isSelectionAllowed: boolean;
@@ -58,6 +60,7 @@ export const StructureItemSelect = React.memo<Props>(
         contentError,
         breadcrumbs,
         items,
+        filters,
         nextPageToken,
         pageSize,
         isSelectionAllowed,
@@ -71,6 +74,8 @@ export const StructureItemSelect = React.memo<Props>(
         onSelectEntry = () => {},
     }) => {
         const [waypointDisabled, setWaypointDisabled] = React.useState(false);
+        const waypointPromiseRef =
+            React.useRef<CancellablePromise<GetStructureItemsResponse | null> | null>(null);
 
         React.useEffect(() => {
             if (contentError) {
@@ -78,20 +83,33 @@ export const StructureItemSelect = React.memo<Props>(
             }
         }, [contentError]);
 
+        React.useEffect(() => {
+            return () => {
+                waypointPromiseRef.current?.cancel();
+                waypointPromiseRef.current = null;
+            };
+        }, [collectionId]);
+
         const onWaypointEnter = React.useCallback(() => {
             if (nextPageToken) {
-                getStructureItemsRecursively({
+                waypointPromiseRef.current?.cancel();
+
+                const promise = getStructureItemsRecursively({
                     collectionId,
                     page: nextPageToken,
                     pageSize,
-                }).then((res) => {
+                    ...filters,
+                });
+                waypointPromiseRef.current = promise;
+
+                promise.then((res) => {
                     if (res?.nextPageToken && res?.nextPageToken === nextPageToken) {
                         setWaypointDisabled(true);
                     }
                     return res;
                 });
             }
-        }, [collectionId, getStructureItemsRecursively, nextPageToken, pageSize]);
+        }, [collectionId, getStructureItemsRecursively, nextPageToken, pageSize, filters]);
 
         return (
             <div

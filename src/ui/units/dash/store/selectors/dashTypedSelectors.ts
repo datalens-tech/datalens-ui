@@ -1,6 +1,7 @@
 import type {DatalensGlobalState} from 'index';
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
+import type {DashSettings} from 'shared';
 import {getAllTabItems} from 'shared/utils/dash';
 
 import {ITEM_TYPE} from '../../../../constants/dialogs';
@@ -32,7 +33,7 @@ export const selectEntryTitle = (state: DatalensGlobalState) =>
 export const selectEntryData = (state: DatalensGlobalState) =>
     state.dash.convertedEntryData || state.dash.entry?.data || null;
 
-export const selectSettings = (state: DatalensGlobalState) =>
+export const selectSettings = (state: DatalensGlobalState): DashSettings =>
     state.dash?.data?.settings || Object.create(null);
 
 export const selectVisualSettings = createSelector([selectSettings], (settings) => ({
@@ -130,6 +131,11 @@ const selectDashChanged = createSelector(
             )
         );
     },
+);
+
+export const selectDependentSelectorsSavedValue = createSelector(
+    [selectDashEntry],
+    (entry) => entry?.data?.settings?.dependentSelectors,
 );
 
 export const isDraft = createSelector(

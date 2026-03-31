@@ -32,8 +32,12 @@ const b = block('dialog-tabs');
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
+interface OwnProps {
+    closeDialog?: VoidFunction;
+    visible?: boolean;
+}
 
-type Props = StateProps & DispatchProps;
+type Props = StateProps & DispatchProps & OwnProps;
 
 type State = {
     prevVisible: boolean;
@@ -289,4 +293,14 @@ const mapDispatchToProps = {
     setTabs,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Tabs);
+const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => {
+    return {
+        ...stateProps,
+        ...dispatchProps,
+        ...ownProps,
+        closeDialog: ownProps.closeDialog ?? dispatchProps.closeDialog,
+        visible: ownProps.visible ?? stateProps.visible,
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Tabs);

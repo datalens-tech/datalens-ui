@@ -163,6 +163,7 @@ export const getChartSimpleLoadedData = ({
     return {queries, data};
 };
 
+// Builds metadata for a single dashboard tab widget (chart).
 export const getTabMeta = ({
     id,
     tabWidget,
@@ -182,6 +183,8 @@ export const getTabMeta = ({
 }) => {
     let loadedData: WidgetLoadedData = null;
     let loadedWithError = false;
+
+    // Pick the matching data source: prefer freshly loaded data, fall back to saved (cached) data.
     if (loadData?.entryId === tabWidget.chartId) {
         const loadDataError = (loadData as unknown as AxiosResponse<ResponseError>)?.data?.error;
 
@@ -193,6 +196,8 @@ export const getTabMeta = ({
         loadedWithError = Boolean(savedDataError);
     }
 
+    // For the currently active tab (or when no specific tab is targeted),
+    // propagate external errors unless the error code is explicitly allowed.
     if (currentTabChartId === tabWidget.chartId || !currentTabChartId) {
         const errorCode = (error as DatalensChartkitCustomError)?.code;
 
@@ -201,6 +206,11 @@ export const getTabMeta = ({
             Boolean(
                 error && (typeof errorCode !== 'string' || !ALLOWED_ERRORS.includes(errorCode)),
             );
+    }
+
+    // No data resolved at all — treat as an error state (only for active tab)
+    if (!loadedData && currentTabChartId === tabWidget.chartId) {
+        loadedWithError = true;
     }
 
     const metaInfo: Omit<DashkitMetaDataItemBase, 'defaultParams'> = {
@@ -292,7 +302,9 @@ export const getWidgetSelectorMeta = ({
     data: WidgetPluginDataWithTabs | ConfigItemData;
 }) => {
     const loadedWithError = Boolean(
-        (loadedData as unknown as AxiosResponse<ResponseError>)?.data?.error || error,
+        (loadedData as unknown as AxiosResponse<ResponseError>)?.data?.error ||
+            error ||
+            !loadedData,
     );
 
     let title = '';

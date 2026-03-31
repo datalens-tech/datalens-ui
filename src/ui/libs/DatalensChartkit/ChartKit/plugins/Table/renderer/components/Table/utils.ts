@@ -9,8 +9,10 @@ import type {
     SortingFnOption,
 } from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
-import {ascending, rgb} from 'd3';
-import type {Primitive, RGBColor} from 'd3';
+import type {Primitive} from 'd3-array';
+import {ascending} from 'd3-array';
+import type {RGBColor} from 'd3-color';
+import {rgb} from 'd3-color';
 import get from 'lodash/get';
 import round from 'lodash/round';
 import {

@@ -1,0 +1,45 @@
+.chartkit-dl-tooltip-with-comments {
+    display: flex;
+
+    &__comments-section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 150px;
+        min-width: 0;
+        border-left: 1px solid var(--g-color-line-generic);
+        padding-left: 10px;
+        padding-top: 5px;
+        margin-top: 21px;
+        margin-right: 14px;
+    }
+
+    &__plot-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    &__plot-band-indicator {
+        height: 3px;
+    }
+
+    &__plot-line-indicator {
+        position: relative;
+        height: 3px;
+
+        & > svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+
+    &__plot-text {
+        font-size: 10px;
+        line-height: 13px;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        white-space: normal;
+    }
+}

@@ -2,7 +2,6 @@ import React from 'react';
 
 import {SquareDashed} from '@gravity-ui/icons';
 import type {NumberInputProps} from '@gravity-ui/uikit';
-import {Icon, NumberInput, Slider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import {
@@ -10,6 +9,7 @@ import {
     MAX_DASH_BORDER_RADIUS,
     MIN_DASH_BORDER_RADIUS,
 } from '../DashKit/constants';
+import {NumberInputWithSlider} from '../NumberInputWithSlider/NumberInputWithSlider';
 
 import './WidgetRoundingsInput.scss';
 
@@ -21,11 +21,13 @@ export type WidgetRoundingsInputProps = Omit<
 > & {
     value: number | undefined;
     onUpdate: (value: number | undefined) => void;
+    sliderAriaLabel?: string;
 };
 
 export const WidgetRoundingsInput = ({
     value,
     onUpdate,
+    sliderAriaLabel,
     ...numberInputProps
 }: WidgetRoundingsInputProps) => {
     const valueNormalized = typeof value === 'number' ? value : null;
@@ -34,7 +36,7 @@ export const WidgetRoundingsInput = ({
     };
 
     return (
-        <NumberInput
+        <NumberInputWithSlider
             className={b()}
             {...numberInputProps}
             value={valueNormalized}
@@ -42,21 +44,8 @@ export const WidgetRoundingsInput = ({
             min={MIN_DASH_BORDER_RADIUS}
             max={MAX_DASH_BORDER_RADIUS}
             step={DASH_BORDER_RADIUS_STEP}
-            hiddenControls
-            hasClear
-            startContent={<Icon size={16} data={SquareDashed} className={b('icon')} />}
-            endContent={
-                <Slider
-                    className={b('slider')}
-                    min={MIN_DASH_BORDER_RADIUS}
-                    max={MAX_DASH_BORDER_RADIUS}
-                    step={DASH_BORDER_RADIUS_STEP}
-                    size="s"
-                    marks={0}
-                    value={valueNormalized ?? MIN_DASH_BORDER_RADIUS}
-                    onUpdate={onUpdateNormalized}
-                />
-            }
+            icon={SquareDashed}
+            sliderAriaLabel={sliderAriaLabel}
         />
     );
 };

@@ -1,5 +1,7 @@
 import type {
     GradientNullMode,
+    LineCap,
+    LineJoin,
     MapCenterModes,
     MarkupType,
     MetricFontSettings,
@@ -309,9 +311,17 @@ export type V15ColorsConfig = {
     nullMode?: GradientNullMode;
 };
 
+export type LineShapeSettings = {
+    lineWidth?: number | 'auto';
+    linecap?: LineCap;
+    linejoin?: LineJoin;
+};
+
 export type V15ShapesConfig = {
-    mountedShapes?: Record<string, string>;
     fieldGuid?: string;
+    mountedShapes?: Record<string, string>;
+    lineSettings?: Record<string, LineShapeSettings>;
+    commonLineSettings?: LineShapeSettings;
 };
 
 export type V15TooltipConfig = {

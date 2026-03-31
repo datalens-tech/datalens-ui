@@ -195,6 +195,7 @@ export type DatasetFieldsListItem = {
     dataType: string;
     fieldType: DatasetFieldType;
     calc_mode?: DatasetFieldCalcMode;
+    fakeTitle?: string;
 };
 
 export interface LogItem {

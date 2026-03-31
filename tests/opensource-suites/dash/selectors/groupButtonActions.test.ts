@@ -48,7 +48,7 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
     });
 
     datalensTest(
-        '`Apply` button of the group selector applies the selected values',
+        "'Apply' button of the group selector applies the selected values",
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
@@ -159,7 +159,7 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
     );
 
     datalensTest(
-        "The `Reset` button of the group selector resets the values to default and doesn't apply the values if `Apply` button is enabled",
+        "The 'Reset' button of the group selector resets the values to default and doesn't apply the values if 'Apply' button is enabled",
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
             let stateUpdatesCount = 0;

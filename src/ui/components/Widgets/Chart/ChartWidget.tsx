@@ -520,30 +520,34 @@ export const ChartWidget = (props: ChartWidgetProps) => {
 
     const adaptiveTabsItems = React.useMemo(
         () =>
-            tabs.map((item: CurrentTab) => ({
-                id: item.id,
-                title: item.title.trim() || '\u2014',
-                displayedTitle: (
-                    <span className={b('chart-title-wrap')}>
-                        <span
-                            className={b('chart-title-text', {
-                                'with-hint': Boolean(item.hint && item.enableHint),
-                            })}
-                        >
-                            {(typeof item.title === 'string' ? item.title.trim() : item.title) ||
-                                '\u2014'}
+            tabs.map((item: CurrentTab) => {
+                const title = item.title.trim() || '\u2014';
+
+                return {
+                    id: item.id,
+                    title,
+                    displayedTitle: (
+                        <span className={b('chart-title-wrap')}>
+                            <span
+                                className={b('chart-title-text', {
+                                    'with-hint': Boolean(item.hint && item.enableHint),
+                                })}
+                                title={title}
+                            >
+                                {title}
+                            </span>
+                            {item.enableHint && item.hint && (
+                                <MarkdownHelpPopover
+                                    markdown={item.hint}
+                                    className={b('chart-title-hint')}
+                                    onClick={handleClickHint}
+                                />
+                            )}
                         </span>
-                        {item.enableHint && item.hint && (
-                            <MarkdownHelpPopover
-                                markdown={item.hint}
-                                className={b('chart-title-hint')}
-                                onClick={handleClickHint}
-                            />
-                        )}
-                    </span>
-                ),
-                disabled: Boolean(isLoading),
-            })),
+                    ),
+                    disabled: Boolean(isLoading),
+                };
+            }),
         [tabs, isLoading],
     );
 

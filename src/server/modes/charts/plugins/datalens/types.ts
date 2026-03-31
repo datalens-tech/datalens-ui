@@ -6,6 +6,7 @@ import type {
     PayloadFilter,
     ServerColorsConfig,
     ServerField,
+    ServerFieldFormatting,
     TableBarsSettings,
     Update,
 } from '../../../../../shared';
@@ -98,4 +99,15 @@ export type AxisOptions = {
         useHTML?: boolean;
     };
     labels?: any[];
+};
+
+export type DatasetMeta = {
+    id: string;
+    fields: Record<string, string>;
+    fieldsList: {
+        title: string;
+        guid: string;
+        dataType: string;
+        formatting?: ServerFieldFormatting;
+    }[];
 };

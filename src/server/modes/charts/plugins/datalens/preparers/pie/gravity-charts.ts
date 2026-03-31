@@ -79,6 +79,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
             exportSettings: {
                 columns: [
                     {
+                        id: 'categories',
                         name: ChartEditor.getTranslation('chartkit.data-provider', 'categories'),
                         field: 'name',
                     },

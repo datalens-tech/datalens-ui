@@ -1,0 +1,220 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "action_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_copy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create-collection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create-workbook": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_edit-collection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_edit-workbook": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_exit": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_move": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_stay": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_choose-file": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_deploy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_collection-already-exists-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_copy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_copy-denied-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_create-denied-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_create-entry-in-workbook": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_dashboard": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-collection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-collections-for-delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-collections-workbooks": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-connections-for-delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-datasets-for-delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-workbook": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-workbooks-for-delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_deploy-denied-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_empty-collection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-file-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_help-import-hint": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_import-exit-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_import-from-file": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_move": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_move-denied-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_ql": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_report": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_wizard": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_workbook-already-exists-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_delete-collection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_delete-workbook": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_deploy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_import-exit": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_collection-already-exists-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_get-gallery-file-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_get-json-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_outdated-workbook-info": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_workbook-already-exists-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

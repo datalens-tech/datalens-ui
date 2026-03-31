@@ -8,7 +8,7 @@ import type {Split} from 'react-split-pane';
 import type {
     ChartStateSettings,
     DashTabItemControlSourceType,
-    MenuItemsIds,
+    MenuItemsIdsType,
     StringParams,
 } from 'shared';
 import type {OnWidgetLoadDataHandler} from 'ui/components/DashKit/context/WidgetContext';
@@ -96,12 +96,7 @@ type ChartKitBaseWrapperProps = ChartsProps & {
      * custom options for wrapping action in chartkit menu option
      * ex. used for custom screenshort wrap action in wizard
      */
-    customMenuOptions?: Record<
-        MenuItemsIds,
-        {
-            actionWrapper?: (args: MenuItemConfig['action']) => void;
-        }
-    >;
+    customMenuOptions?: Partial<Record<MenuItemsIdsType, Partial<MenuItemConfig>>>;
     /**
      * common chartkit menu prepare config
      */

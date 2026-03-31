@@ -74,11 +74,13 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
             return {
                 type: chartkitType,
                 data: getOpensourceChartKitData({
-                    type: chartkitType,
+                    chartkitHolidays,
                     loadedData,
                     onChange,
                     runActivity,
-                    chartkitHolidays,
+                    splitTooltip,
+                    type: chartkitType,
+                    lang,
                 }),
                 lang,
                 splitTooltip,
@@ -102,6 +104,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
             onRender,
             onError,
             renderPluginLoader,
+            runActivity,
             lang,
             loadedData,
             splitTooltip,

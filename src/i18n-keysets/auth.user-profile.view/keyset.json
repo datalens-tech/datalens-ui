@@ -1,0 +1,68 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "action_assign-role": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_change-password": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_delete-user": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_edit-profile": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_email": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_failed-to-load-user": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_first-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_last-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_login": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_role": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_user-id": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_administration": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_permissions": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_profile": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

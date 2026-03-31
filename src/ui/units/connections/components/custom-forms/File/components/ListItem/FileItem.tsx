@@ -79,5 +79,12 @@ export const FileItem = (item: ListItemData<UploadedFile>) => {
         return resultActions;
     }, [handleErrorClick, handleDeleteClick, file, status]);
 
-    return <ListItem actions={actions} title={file.name} description={getDescription(status)} />;
+    return (
+        <ListItem
+            actions={actions}
+            title={file.name}
+            description={getDescription(status)}
+            qa={item.qa}
+        />
+    );
 };

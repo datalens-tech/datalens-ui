@@ -266,7 +266,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                 title={i18n('wizard', 'label_holidays')}
                 setting={
                     <DialogRadioButtons
-                        qa="holidays-radio-buttons"
+                        qa={DialogPlaceholderQa.HolidaysRadioButtons}
                         items={HOLIDAYS_RADIO_BUTTON_OPTIONS}
                         value={selectedValue}
                         onUpdate={this.handleHolidaysRadioButtonUpdate}

@@ -3,7 +3,6 @@ import {getTypedApiFactory} from '@gravity-ui/gateway';
 import auth from './auth';
 import type {authSchema} from './auth-schema';
 import bi from './bi';
-import biConverter from './bi-converter';
 import extensions from './extensions';
 import metaManager from './meta-manager';
 import mix from './mix';
@@ -16,7 +15,6 @@ export const schema = {
     us,
     usPrivate,
     bi,
-    biConverter,
     extensions,
     auth,
     metaManager,

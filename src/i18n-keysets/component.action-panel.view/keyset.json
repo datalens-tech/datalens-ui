@@ -1,0 +1,40 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_open-navigation": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_redo": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_switch-public": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_undo": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_history-changes": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_history-changes-date-limit": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_history-changes-date-limit-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

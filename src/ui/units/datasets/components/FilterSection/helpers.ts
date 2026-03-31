@@ -1,8 +1,7 @@
 import {I18n} from 'i18n';
-import type {DatasetField} from 'shared';
+import type {DatasetField, ObligatoryFilter} from 'shared';
 import type {Filter} from 'ui';
 
-import type {ObligatoryFilter} from '../../typings/dataset';
 import {DatasetFieldListColumnType} from '../DatasetTabFieldList/constants';
 import type {ColumnWidth, FieldHeaderColumn, FieldListColumn} from '../DatasetTabFieldList/types';
 

@@ -1,0 +1,220 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "apply_button_text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error_date": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error_dates_range": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_long_1": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_long_10": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_long_11": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_long_12": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_long_2": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_long_3": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_long_4": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_long_5": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_long_6": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_long_7": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_long_8": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_long_9": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_short_1": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_short_10": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_short_11": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_short_12": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_short_2": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_short_3": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_short_4": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_short_5": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_short_6": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_short_7": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_short_8": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "month_short_9": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "placeholder_letter_H": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "placeholder_letter_M": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "placeholder_letter_S": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "placeholder_letter_d": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "placeholder_letter_h": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "placeholder_letter_m": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "placeholder_letter_s": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "placeholder_letter_y": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "preset_current": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "preset_day_30": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "preset_day_365": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "preset_day_7": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "preset_day_90": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "preset_day_today": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "preset_day_two_days_ago": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "preset_day_yesterday": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "preset_past": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "preset_week_current": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "preset_week_past": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tab_day": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tab_month": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tab_quarter": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tab_week": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tab_year": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_required": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

@@ -17,3 +17,4 @@ export * from './markdown';
 export * from './markup';
 export * from './palettes';
 export * from './shared-entries';
+export * from './openModalSubscriber';

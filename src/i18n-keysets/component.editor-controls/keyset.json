@@ -1,0 +1,24 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_diff": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_docs": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_search": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

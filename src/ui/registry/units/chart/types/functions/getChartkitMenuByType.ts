@@ -1,5 +1,5 @@
 import type {Dispatch} from 'redux';
-import type {MenuItemsIds} from 'shared';
+import type {MenuItemsIdsType} from 'shared';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {MenuItemConfig} from 'ui/libs/DatalensChartkit/menu/Menu';
 import type {MenuType} from 'ui/libs/DatalensChartkit/menu/constants';
@@ -18,7 +18,7 @@ export type GetChartkitMenuItems = {
     config?: {
         canEdit?: boolean;
     };
-    customOptions?: Record<MenuItemsIds, Partial<MenuItemConfig>>;
+    customOptions?: Record<MenuItemsIdsType, Partial<MenuItemConfig>>;
     chartsDataProvider: ChartKitDataProvider;
     extraOptions?: Record<string, unknown>;
 };

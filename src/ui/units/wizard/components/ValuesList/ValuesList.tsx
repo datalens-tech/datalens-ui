@@ -63,12 +63,14 @@ interface OwnProps {
     options: DatasetOptions;
     datasetId: string;
     selectedValue: string | null;
-    renderValueIcon: (value: string) => React.ReactNode;
+    renderValueIcon?: (value: string) => React.ReactNode;
+    renderValueItem?: (value: string) => React.ReactNode;
     onChangeSelectedValue: (selectedValue: string | null, shouldClearPalette?: boolean) => void;
     extra?: ExtraSettings;
     distincts?: Record<string, string[]>;
     // this prop is only used when section supports handling of multiple fields; otherwise it must be only undefined.
     sectionFields?: Field[];
+    qa?: string;
 }
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -129,11 +131,11 @@ class ValuesList extends React.Component<Props, State> {
     }
 
     render() {
-        const {error, searchValue, suggestFetching} = this.state;
-        const {fetching} = this.state;
+        const {error, fetching, searchValue, suggestFetching} = this.state;
+        const {qa} = this.props;
 
         return (
-            <div className={b('values-container')}>
+            <div className={b('values-container')} data-qa={qa}>
                 {error ? (
                     <Alert
                         theme="danger"
@@ -177,7 +179,25 @@ class ValuesList extends React.Component<Props, State> {
     };
 
     renderValueItem = (value: string) => {
-        const {selectedValue, renderValueIcon} = this.props;
+        const {selectedValue, renderValueIcon, renderValueItem} = this.props;
+
+        const content = (() => {
+            const icon = renderValueIcon ? renderValueIcon(value) : null;
+
+            if (renderValueItem) {
+                return renderValueItem(value);
+            }
+
+            return (
+                <React.Fragment>
+                    {icon}
+                    <div className={b('value-label')} title={value}>
+                        {value}
+                    </div>
+                </React.Fragment>
+            );
+        })();
+
         return (
             <div
                 key={value}
@@ -186,10 +206,7 @@ class ValuesList extends React.Component<Props, State> {
                     this.props.onChangeSelectedValue(value);
                 }}
             >
-                {renderValueIcon(value)}
-                <div className={b('value-label')} title={value}>
-                    {value}
-                </div>
+                {content}
             </div>
         );
     };

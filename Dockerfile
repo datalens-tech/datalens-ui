@@ -3,7 +3,9 @@ ARG UBUNTU_VERSION=24.04
 # use native build platform for build js files only once
 FROM --platform=${BUILDPLATFORM} ubuntu:${UBUNTU_VERSION} AS native-build-stage
 
+ARG BUILDARCH
 ARG NODE_MAJOR=22
+ARG PNPM_VERSION=10.17.1
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -16,23 +18,30 @@ RUN mkdir -p /etc/apt/keyrings && \
 
 RUN apt-get update && apt-get -y install nodejs g++ make
 
+RUN npm install -g pnpm@${PNPM_VERSION}
+
 RUN useradd -m -u 1001 app && mkdir /opt/app && chown app:app /opt/app
 
 WORKDIR /opt/app
 
-COPY package.json package-lock.json .npmrc /opt/app/
-RUN npm ci
+COPY package.json pnpm-lock.yaml .npmrc /opt/app/
+RUN --mount=type=cache,id=pnpm-store-${BUILDARCH},target=/pnpm_store \
+    pnpm config set store-dir=/pnpm_store --location=project && \
+    pnpm config set cache-dir=/pnpm_cache --location=project && \
+    pnpm config delete virtual-store-dir --location=project && \
+    pnpm install --frozen-lockfile --prefer-offline
 
 COPY ./dist /opt/app/dist
 COPY ./src /opt/app/src
 COPY app-builder.config.ts tsconfig.json /opt/app/
 
-RUN npm run build && chown app /opt/app/dist/run
+RUN pnpm run build && chown app /opt/app/dist/run
 
 # runtime base image for both platform
 FROM ubuntu:${UBUNTU_VERSION} AS base-stage
 
 ARG NODE_MAJOR=22
+ARG PNPM_VERSION=10.17.1
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -44,6 +53,8 @@ RUN mkdir -p /etc/apt/keyrings && \
     echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
 RUN apt-get update && apt-get -y install nginx supervisor nodejs
+
+RUN npm install -g pnpm@${PNPM_VERSION}
 
 # remove unnecessary packages
 RUN apt-get -y purge curl gnupg gnupg2 && \
@@ -63,14 +74,20 @@ RUN useradd -m -u 1001 app && mkdir /opt/app && chown app:app /opt/app
 # install package dependencies for production
 FROM base-stage AS install-stage
 
+ARG TARGETARCH
+
 # install system dependencies
 RUN apt-get update && apt-get -y install g++ make
 
 WORKDIR /opt/app
 
-COPY package.json package-lock.json .npmrc /opt/app/
+COPY package.json pnpm-lock.yaml .npmrc /opt/app/
 
-RUN npm ci && npm prune --production
+RUN --mount=type=cache,id=pnpm-store-${TARGETARCH},target=/pnpm_store \
+    pnpm config set store-dir=/pnpm_store --location=project && \
+    pnpm config set cache-dir=/pnpm_cache --location=project && \
+    pnpm config delete virtual-store-dir --location=project && \
+    pnpm install --frozen-lockfile --prefer-offline --prod
 
 # production running stage
 FROM base-stage AS runtime-stage
@@ -93,7 +110,7 @@ ENV TMPDIR=/tmp
 
 WORKDIR /opt/app
 
-COPY --from=install-stage /opt/app/package.json /opt/app/package-lock.json /opt/app/
+COPY --from=install-stage /opt/app/package.json /opt/app/pnpm-lock.yaml /opt/app/
 COPY --from=install-stage /opt/app/node_modules /opt/app/node_modules
 COPY --from=native-build-stage /opt/app/dist /opt/app/dist
 

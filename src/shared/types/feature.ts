@@ -56,10 +56,10 @@ export enum Feature {
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
+    /** E2E tests mode with collections */
+    CollectionsE2ETestsMode = 'CollectionsE2ETestsMode',
     /** Disable the use of html and function in chart configs */
     DisableFnAndHtml = 'DisableFnAndHtml',
-    /** Enable using of presigned urls for uploading files to S3 */
-    EnableFileUploadingByPresignedUrl = 'EnableFileUploadingByPresignedUrl',
     /** Enables export menu item for downloading workbook config and import button
      * when creating a workbook */
     EnableExportWorkbookFile = 'EnableExportWorkbookFile',
@@ -105,6 +105,8 @@ export enum Feature {
     ChartModeling = 'ChartModeling',
     /** Route legacy HTTP sources through API Connector */
     UseSourceAlias = 'UseSourceAlias',
+    /** Enable early cache invalidation in datasets */
+    EnableDatasetEarlyInvalidationCache = 'EnableDatasetEarlyInvalidationCache',
 }
 
 export type FeatureConfig = Record<string, boolean>;

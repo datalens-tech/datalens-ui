@@ -1,4 +1,4 @@
-import type {MenuItemsIds} from 'shared';
+import type {MenuItemsIdsType} from 'shared';
 
 import type {ChartKitDataProvider} from '../../../../../libs/DatalensChartkit/components/ChartKitBase/types';
 import type {MenuItemConfig} from '../../../../../libs/DatalensChartkit/menu/Menu';
@@ -6,6 +6,6 @@ import type {MenuItemConfig} from '../../../../../libs/DatalensChartkit/menu/Men
 export type GetDefaultChartMenuArgs = {
     type?: string;
     chartsDataProvider: ChartKitDataProvider;
-    customOptions: Record<MenuItemsIds, Partial<MenuItemConfig>>;
+    customOptions: Record<MenuItemsIdsType, Partial<MenuItemConfig>>;
     extraOptions?: Record<string, unknown>;
 };

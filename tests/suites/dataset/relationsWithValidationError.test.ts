@@ -2,7 +2,7 @@ import {Page} from '@playwright/test';
 
 import DatasetPage from '../../page-objects/dataset/DatasetPage';
 import datalensTest from '../../utils/playwright/globalTestDefinition';
-import {DatasetActionQA, DatasetDialogRelationQA} from '../../../src/shared';
+import {DATASET_TAB, DatasetActionQA, DatasetDialogRelationQA} from '../../../src/shared';
 import {openTestPage, slct} from '../../utils';
 import {RobotChartsDatasetUrls} from '../../utils/constants';
 
@@ -25,7 +25,7 @@ datalensTest.describe('Datasets - validation error does not break the communicat
             const datasetPage = new DatasetPage({page});
             await openTestPage(page, RobotChartsDatasetUrls.DatasetWithValidationError);
 
-            await datasetPage.openSourcesPanel();
+            await datasetPage.openTab(DATASET_TAB.SOURCES);
 
             // waiting for the validation error to appear
             await datasetPage.waitForSelector(SELECTORS.TOAST_VALIDATION_ERROR);

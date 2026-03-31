@@ -14,7 +14,7 @@ import {getPointActionParams, isPointSelected} from './utils';
 type OnClickHandlerArgs = {
     widgetData: LoadedWidgetData;
     point: unknown;
-    series: unknown;
+    series: ChartSeries | undefined;
     event: PointerEvent;
     onChange?: ChartKitAdapterProps['onChange'];
     runActivity?: RunActivityFn;
@@ -40,7 +40,12 @@ export function handleClick(args: OnClickHandlerArgs) {
 
         const drillDownFilters = filters.map((filter, index) => {
             if (level === index) {
-                return get(point, 'drillDownFilterValue', '');
+                const drillDownFilterValue =
+                    get(point, 'drillDownFilterValue') ??
+                    get(series, 'drillDownFilterValue') ??
+                    get(series, 'custom.drillDownFilterValue') ??
+                    '';
+                return drillDownFilterValue;
             }
 
             return filter;
@@ -79,7 +84,7 @@ export function handleClick(args: OnClickHandlerArgs) {
                         clickScope,
                         chartData: widgetData?.data as ChartData,
                         point: point as ChartSeriesData,
-                        series: series as ChartSeries,
+                        series,
                     });
                     break;
                 }

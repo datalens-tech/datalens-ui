@@ -34,7 +34,7 @@ export default {
 
     expressCookieSecret: process.env.COOKIE_SECRET,
 
-    appAuthPolicy: 'redirect',
+    appAuthPolicy: 'required',
     runResponseWhitelist: [
         'sourceId',
         'sourceType',

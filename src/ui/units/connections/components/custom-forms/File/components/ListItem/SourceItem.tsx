@@ -44,6 +44,7 @@ const SourceInfoItem = (item: ListItemData<FileSourceInfoItem>) => {
             actions={actions}
             title={title}
             description={i18n(error ? 'label_list-item-no-data' : 'label_list-item-downloading')}
+            qa={item.qa}
         />
     );
 };
@@ -73,6 +74,7 @@ const CreatingSourceItem = (item: ListItemData<FileSourceItem>) => {
             actions={disabled ? undefined : actions}
             title={item.source.title}
             description={description}
+            qa={item.qa}
         />
     );
 };
@@ -100,6 +102,7 @@ const CreatedSourceItem = (item: ListItemData<StandaloneFileSource>) => {
             actions={item.disabled ? undefined : actions}
             title={item.title}
             description={description}
+            qa={item.qa}
         />
     );
 };

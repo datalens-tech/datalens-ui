@@ -11,6 +11,8 @@ import {
     isSavingDatasetDisabledSelector,
 } from 'ui/units/datasets/store/selectors';
 
+import {isCreationProcess} from '../../helpers/utils';
+
 export const UnloadConfirmation = () => {
     const currentLocation = useLocation();
     const isRenameWithoutReload = useSelector(selectIsRenameWithoutReload);
@@ -29,6 +31,10 @@ export const UnloadConfirmation = () => {
             setIsAlreadyConfirmed(true);
             setTimeout(() => setIsAlreadyConfirmed(false), 0);
             if (location.pathname !== currentLocation.pathname) {
+                return i18n('component.navigation-prompt', 'label_prompt-message');
+            }
+
+            if (isCreationProcess(currentLocation.pathname)) {
                 return i18n('component.navigation-prompt', 'label_prompt-message');
             }
 

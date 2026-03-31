@@ -46,8 +46,7 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
     isOnlyCollectionsMode = false,
     buttonView = 'action',
 }) => {
-    const {checkCreateEntryButtonVisibility, getNavigationPlacesConfig} =
-        registry.common.functions.getAll();
+    const {getNavigationPlacesConfig} = registry.common.functions.getAll();
     const withMenu =
         place === PLACE.ROOT ||
         place === PLACE.FAVORITES ||
@@ -65,10 +64,6 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
             isOnlyCollectionsMode,
         });
     }, [withMenu, place, onClick, isOnlyCollectionsMode]);
-
-    if (!checkCreateEntryButtonVisibility(place)) {
-        return null;
-    }
 
     const placesConfig = getNavigationPlacesConfig();
     const targetPlace = placesConfig.find((placeConfig) => {

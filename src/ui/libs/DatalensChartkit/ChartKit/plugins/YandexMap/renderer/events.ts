@@ -2,7 +2,7 @@ import {
     pickActionParamsFromParams,
     transformParamsToActionParams,
 } from '@gravity-ui/dashkit/helpers';
-import {gray, lab} from 'd3';
+import {gray, lab} from 'd3-color';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import type {StringParams} from 'shared';

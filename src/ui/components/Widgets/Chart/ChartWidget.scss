@@ -151,4 +151,11 @@ $hintOffset: 3px;
         justify-content: center;
         z-index: 3; // to overlay Datepicker
     }
+
+    // Safari bug: multiple SVG icons use the same clipPath id ("#a"),
+    // which causes id collisions and makes the icon disappear.
+    // Removing clip-path here prevents the conflict.
+    &__icon-chart-modeling [clip-path] {
+        clip-path: none;
+    }
 }

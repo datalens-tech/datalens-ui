@@ -35,7 +35,6 @@ import type {AppThunkAction} from '../../../store';
 
 import {EXAMPLE_FUNCTION} from './constants/functions';
 import type {GetUsersById} from './types/functions/GetUsersById';
-import type {CheckCreateEntryButtonVisibility} from './types/functions/checkCreateEntryButtonVisibility';
 import type {
     FetchDocumentationArgs,
     FetchDocumentationResponse,
@@ -161,7 +160,6 @@ export const commonFunctionsMap = {
                 toScope: EntryScope;
             }) => CopiedConfigData
         >(),
-    checkCreateEntryButtonVisibility: makeFunctionTemplate<CheckCreateEntryButtonVisibility>(),
     getBasicActionPanelItems: makeFunctionTemplate<GetBasicActionPanelItems>(),
     getListMembersFilter:
         makeFunctionTemplate<({search, tabId}: {search: string; tabId: string}) => string | null>(),

@@ -95,7 +95,6 @@ export const registerCommonPlugins = () => {
         requestCollectDashStats,
         requestCollectChartkitStats,
         migrateItemDataOnPaste,
-        checkCreateEntryButtonVisibility: () => true,
         getBasicActionPanelItems,
         getListMembersFilter: () => null,
         getAllEntryScopes,

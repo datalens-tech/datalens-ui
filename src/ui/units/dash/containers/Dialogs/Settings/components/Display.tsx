@@ -5,7 +5,12 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {ColorSettings} from 'shared';
 import {Feature} from 'shared';
-import {DASH_MARGIN_STEP, MAX_DASH_MARGIN, MIN_DASH_MARGIN} from 'ui/components/DashKit/constants';
+import {
+    DASH_MARGIN_STEP,
+    DEFAULT_DASH_MARGINS,
+    MAX_DASH_MARGIN,
+    MIN_DASH_MARGIN,
+} from 'ui/components/DashKit/constants';
 import {WidgetRoundingsInput} from 'ui/components/WidgetRoundingsInput/WidgetRoundingsInput';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -21,10 +26,9 @@ const b = block('dialog-settings');
 const i18n = I18n.keyset('dash.settings-dialog.edit');
 
 const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
-const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
 
 type DisplayProps = {
-    margins: [number, number];
+    margins?: [number, number];
     onChangeMargins: (newMargins: number | [number, number]) => void;
     internalMarginsEnabled: boolean;
     onChangeInternalMarginsEnabled: (newInternalMarginsEnabled: boolean) => void;
@@ -43,7 +47,7 @@ type DisplayProps = {
 };
 
 export const Display = ({
-    margins,
+    margins = DEFAULT_DASH_MARGINS,
     onChangeMargins,
     internalMarginsEnabled,
     onChangeInternalMarginsEnabled,
@@ -95,10 +99,11 @@ export const Display = ({
                     className={b('box')}
                 />
             </Row>
-            {isDashColorPickersByThemeEnabled && (
+            {isNewDashSettingsEnabled && (
                 <Row alignTop>
                     <Title text={i18n('label_dash-background')} />
                     <PaletteBackground
+                        hasOpacityInput={false}
                         color={backgroundSettings}
                         oldColor={undefined}
                         onSelect={onChangeBackgroundSettings}
@@ -110,10 +115,11 @@ export const Display = ({
                     />
                 </Row>
             )}
-            {isDashColorPickersByThemeEnabled && (
+            {isNewDashSettingsEnabled && (
                 <Row alignTop>
                     <Title text={i18n('label_widgets-background')} />
                     <PaletteBackground
+                        hasOpacityInput={false}
                         color={widgetsBackgroundSettings}
                         oldColor={undefined}
                         onSelect={onChangeWidgetsBackgroundSettings}

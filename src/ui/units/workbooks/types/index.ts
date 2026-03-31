@@ -1,6 +1,6 @@
 import type {SharedScope, WorkbookEntry as WorkbookEntity} from 'shared';
+import type {RestrictedSharedWorkbookEntry, SharedWorkbookEntry} from 'shared/schema';
 
-import type {GetSharedEntryResponse, RestrictedSharedEntry} from '../../../../shared/schema';
 import type {
     OrderDirection,
     OrderWorkbookEntriesField,
@@ -15,9 +15,9 @@ export type WorkbookEntriesFilters = {
 export type WorkbookUnionEntry = WorkbookEntity & {name: string};
 export type WorkbookEntry = Exclude<
     WorkbookUnionEntry,
-    GetSharedEntryResponse | RestrictedSharedEntry
+    SharedWorkbookEntry | RestrictedSharedWorkbookEntry
 >;
-export type WorkbookSharedEntry = Exclude<WorkbookUnionEntry, RestrictedSharedEntry> & {
+export type WorkbookSharedEntry = Exclude<WorkbookUnionEntry, RestrictedSharedWorkbookEntry> & {
     isDelegated?: boolean;
     scope: SharedScope;
 };

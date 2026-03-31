@@ -1,7 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import _get from 'lodash/get';
+import {DatasetSourceEditorDialogQA} from 'shared';
 
 import type {FormValidationError} from '../../../helpers/validation';
 import type {FreeformSource} from '../../../store/types';
@@ -60,7 +60,7 @@ export const Form = ({
                 case 'textarea': {
                     return (
                         <InputFormItem
-                            qa="source-editor-path"
+                            qa={DatasetSourceEditorDialogQA.EditPathInput}
                             key={key}
                             value={value}
                             sourceType={source.source_type}

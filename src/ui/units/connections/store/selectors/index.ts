@@ -22,6 +22,7 @@ export {
     gsheetUpdatingSelector,
 } from './gsheet';
 export * from './yadocs';
+export * from './file';
 
 export const newConnectionSelector = (state: DatalensGlobalState) => {
     return !state.connections.entry?.entryId;

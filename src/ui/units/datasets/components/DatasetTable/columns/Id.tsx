@@ -4,6 +4,7 @@ import type {Column} from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DatasetField} from 'shared';
+import {DatasetFieldsTabQa} from 'shared';
 
 import {TableTextInput} from '../components';
 import type {ColumnItem} from '../types';
@@ -44,6 +45,7 @@ export const getIdColumn = (args: GetIdColumnArgs) => {
                     setActiveRow={setActiveRow}
                     onUpdate={getUpdateHandler(row)}
                     disabled={readonly}
+                    qa={DatasetFieldsTabQa.FieldIdColumnInput}
                 />
             );
         },

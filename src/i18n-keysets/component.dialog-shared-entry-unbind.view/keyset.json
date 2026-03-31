@@ -1,0 +1,80 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "apply-btn": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "cancel-btn": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "dialog-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "entries-list-title-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-current-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-of-shared-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-relation-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-relation-entity": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-relation-workbook": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-shared-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-shared-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-workbook": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "message-alert": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "message-relation-alert": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "message-relations-alert": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "open-relation": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title-alert": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

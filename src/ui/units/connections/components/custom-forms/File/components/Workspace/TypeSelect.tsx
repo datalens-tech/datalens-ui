@@ -10,6 +10,7 @@ import {
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {CommonFieldType, DATASET_FIELD_TYPES} from 'shared';
+import {ConnectionsWorkspaceQA} from 'shared';
 import {DataTypeIcon} from 'ui';
 
 const b = block('conn-form-file');
@@ -56,6 +57,7 @@ export const TypeSelect = ({onUpdate, types, value}: TypeSelectProps) => {
                 view={view}
                 size="s"
                 selected={open}
+                qa={ConnectionsWorkspaceQA.TABLE_HEADER_FILE_FORM_TYPE_SELECT}
             >
                 <DataTypeIcon className={b('type-select-icon')} dataType={selectedValue[0]} />
             </Button>

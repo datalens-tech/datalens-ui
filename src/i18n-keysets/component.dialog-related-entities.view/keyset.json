@@ -1,0 +1,64 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_button-retry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_current-object": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_entities-count": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-relatives": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_request-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scope-chart": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scope-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scope-dash": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scope-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scope-other": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_includes": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_where-contained": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

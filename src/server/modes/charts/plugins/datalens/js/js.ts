@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep';
 import moment from 'moment';
 
 import type {
@@ -11,7 +12,6 @@ import type {
     Palette,
     ServerChartsConfig,
     ServerField,
-    ServerFieldFormatting,
     ServerLink,
     ServerShape,
     ServerVisualization,
@@ -29,6 +29,7 @@ import {
 } from '../../../../../../shared';
 import {extractColorPalettesFromData} from '../../helpers/color-palettes';
 import {getDatasetIdAndLayerIdFromKey, getFieldList} from '../../helpers/misc';
+import type {ResolvedSource} from '../../types';
 import {prepareGravityChartArea} from '../preparers/area';
 import prepareBackendPivotTableData from '../preparers/backend-pivot-table';
 import type {PivotData} from '../preparers/backend-pivot-table/types';
@@ -55,7 +56,7 @@ import type {
     PrepareFunctionResultData,
     ResultDataOrderItem,
 } from '../preparers/types';
-import type {ChartPlugin} from '../types';
+import type {ChartPlugin, DatasetMeta} from '../types';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 import {LAT, LONG} from '../utils/constants';
 import {preprocessHierarchies} from '../utils/hierarchy-helpers';
@@ -740,6 +741,29 @@ function prepareSingleResult({
     return (prepare as PrepareFunction)(prepareFunctionArgs);
 }
 
+function updateItemsFromDatasetFields(
+    item: unknown,
+    datasetFields: Record<string, ResolvedSource>,
+) {
+    if (item && typeof item === 'object') {
+        if ('guid' in item && 'datasetId' in item) {
+            const field = item as ServerField;
+            const datasetField = datasetFields?.[String(field.datasetId)]?.datasetFields?.find(
+                (d) => d.guid === String(field.guid),
+            );
+            if (!datasetField) {
+                return;
+            }
+
+            if ('ui_settings' in field || 'ui_settings' in datasetField) {
+                field['ui_settings'] = datasetField['ui_settings'];
+            }
+        } else {
+            Object.values(item).forEach((val) => updateItemsFromDatasetFields(val, datasetFields));
+        }
+    }
+}
+
 type V1ServerResponse = any;
 
 export const buildGraphPrivate = (args: {
@@ -750,6 +774,7 @@ export const buildGraphPrivate = (args: {
     features: FeatureConfig;
     plugin?: ChartPlugin;
     defaultColorPaletteId: string;
+    sources?: Record<string, ResolvedSource>;
 }) => {
     const {
         shared: chartSharedConfig,
@@ -759,12 +784,16 @@ export const buildGraphPrivate = (args: {
         features,
         plugin,
         defaultColorPaletteId,
+        sources = {},
     } = args;
 
     log('LOADED DATA:');
     log(data);
 
-    const shared = mapChartsConfigToServerConfig(chartSharedConfig);
+    const sharedServerConfig = mapChartsConfigToServerConfig(chartSharedConfig);
+
+    const shared = cloneDeep(sharedServerConfig);
+    updateItemsFromDatasetFields(shared, sources);
 
     const {colorPalettes: loadedColorPalettes, loadedData} = extractColorPalettesFromData(data);
 
@@ -793,19 +822,7 @@ export const buildGraphPrivate = (args: {
     const idToDataType: Record<string, DATASET_FIELD_TYPES> = {};
 
     const layers = (shared as ServerChartsConfig).visualization.layers;
-    let datasetsMeta: (
-        | {
-              id: string;
-              fields: Record<string, string>;
-              fieldsList: {
-                  title: string;
-                  guid: string;
-                  dataType: string;
-                  formatting?: ServerFieldFormatting;
-              }[];
-          }
-        | []
-    )[] = [];
+    let datasetsMeta: DatasetMeta[] = [];
     let mergedData: MergedData[];
     const datasetsSchemaFields = shared.datasetsPartialFields;
     const datasetsIds = shared.datasetsIds;
@@ -841,13 +858,13 @@ export const buildGraphPrivate = (args: {
 
             mergedData.push(layerMergedData);
 
-            datasetsMeta = datasetsIds.map((id, datasetIndex) => {
+            datasetsMeta = datasetsIds.reduce((acc, id, datasetIndex) => {
                 if (datasetsMeta[datasetIndex]) {
-                    return datasetsMeta[datasetIndex];
+                    return acc;
                 }
 
                 if (!layerMergedData.fieldsByDataset[id]) {
-                    return [];
+                    return acc;
                 }
 
                 const fields: Record<string, string> = {};
@@ -858,15 +875,16 @@ export const buildGraphPrivate = (args: {
                     fields[item.guid] = idToTitle[item.guid];
                 });
 
-                return {
+                acc.push({
                     id,
                     fields,
                     fieldsList: getFieldList(
                         layerMergedData.fieldsByDataset[id],
                         layer.placeholders,
                     ),
-                };
-            });
+                });
+                return acc;
+            }, [] as DatasetMeta[]);
         });
     } else {
         mergedData = [
@@ -886,9 +904,9 @@ export const buildGraphPrivate = (args: {
             idToDataType[fieldId] = field.data_type;
         });
 
-        datasetsMeta = datasetsIds.map((id, datasetIndex) => {
+        datasetsMeta = datasetsIds.reduce((acc, id, datasetIndex) => {
             if (!mergedData[0].fieldsByDataset[id]) {
-                return [];
+                return acc;
             }
 
             const fields: Record<string, string> = {};
@@ -899,15 +917,16 @@ export const buildGraphPrivate = (args: {
                 fields[item.guid] = idToTitle[item.guid];
             });
 
-            return {
+            acc.push({
                 id,
                 fields,
                 fieldsList: getFieldList(
                     mergedData[0].fieldsByDataset[id],
                     shared.visualization.placeholders,
                 ),
-            };
-        });
+            });
+            return acc;
+        }, [] as DatasetMeta[]);
     }
 
     ChartEditor.updateParams(newParams);

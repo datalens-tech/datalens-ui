@@ -114,6 +114,11 @@ $actionPanelDefaultBottom: 20px;
         overflow-y: unset;
     }
 
+    &_split-pane &__content {
+        display: flex;
+        flex-direction: column;
+    }
+
     &__content-container {
         position: relative;
         display: flex;

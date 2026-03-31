@@ -20,7 +20,7 @@ describe('Datasets store/reducers utils', () => {
 
     describe('getFilteredSources', () => {
         test('returns an array with FAKE_SRC_SUBSELECT', () => {
-            const result = getFilteredSources(fakeSources, fakeFreeformSources);
+            const result = getFilteredSources(fakeSources, fakeFreeformSources, []);
             expect(result).toEqual([FAKE_SRC_SUBSELECT]);
         });
     });

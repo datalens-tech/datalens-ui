@@ -22,6 +22,7 @@
   "field_title": "Title",
   "field_widget": "Chart",
   "label_autoheight-enable": "Enable",
+  "label_default-tab": "Default tab",
   "label_empty-list": "List is empty",
   "label_filtering-other-charts": "Filtering",
   "label_new-param": "New parameter",

@@ -1,10 +1,12 @@
 import React from 'react';
 
 import type {CollectionId} from 'shared';
+import {DATASET_TAB, Feature} from 'shared';
 import type {SDK} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {DatasetTab} from '../../constants';
-import {TAB_DATASET, TAB_FILTERS, TAB_PARAMETERS, TAB_SOURCES} from '../../constants';
+import {DatasetCache} from '../DatasetCache/DatasetCache';
 import DatasetEditor from '../DatasetEditor/DatasetEditor';
 import DatasetFilters from '../DatasetFilters/DatasetFilters';
 import {DatasetParameters} from '../DatasetParameters/DatasetParameters';
@@ -35,7 +37,7 @@ function DatasetTabViewer(props: Props) {
     } = props;
 
     switch (tab) {
-        case TAB_SOURCES:
+        case DATASET_TAB.SOURCES:
             return (
                 <DatasetSources
                     ref={forwardedRef as React.LegacyRef<DS>}
@@ -46,11 +48,16 @@ function DatasetTabViewer(props: Props) {
                     bindedWorkbookId={bindedWorkbookId}
                 />
             );
-        case TAB_FILTERS:
+        case DATASET_TAB.FILTERS:
             return <DatasetFilters readonly={readonly} />;
-        case TAB_PARAMETERS:
+        case DATASET_TAB.PARAMETERS:
             return <DatasetParameters readonly={readonly} />;
-        case TAB_DATASET:
+        case DATASET_TAB.CACHE:
+            if (isEnabledFeature(Feature.EnableDatasetEarlyInvalidationCache)) {
+                return <DatasetCache readonly={readonly} />;
+            }
+            return null;
+        case DATASET_TAB.DATASET:
         default:
             return (
                 <DatasetEditor

@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import type {RealTheme} from '@gravity-ui/uikit';
 import {
     Checkbox,
     Dialog,
@@ -9,6 +8,7 @@ import {
     HelpMark,
     Link,
     Popup,
+    Select,
     Tab,
     TabList,
     TabPanel,
@@ -16,6 +16,7 @@ import {
     Text,
     TextInput,
 } from '@gravity-ui/uikit';
+import type {RealTheme, SelectOption} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
 import type {CustomCommands, Spec} from 'immutability-helper';
@@ -154,6 +155,7 @@ const INPUT_DESCRIPTION_ID = 'chartDescriptionField';
 const INPUT_AUTOHEIGHT_ID = 'chartAutoheightField';
 const INPUT_HINT_ID = 'chartHintField';
 const INPUT_BORDER_RADIUS_ID = 'chartBorderRadiusField';
+const INPUT_DEFAULT_TAB_ID = 'chartDefaultTabField';
 
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableCommonChartDashSettings);
 const isNewDashSettingsEnabled = isEnabledFeature(Feature.EnableNewDashSettings);
@@ -564,6 +566,20 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
         }));
     }, []);
 
+    const handleSetDefaultTabIndex = React.useCallback((tabIndex: number) => {
+        setState((prevState) => ({
+            ...prevState,
+            data: update(prevState.data, {
+                tabs: {
+                    $set: prevState.data.tabs.map((tab, index) => ({
+                        ...tab,
+                        isDefault: index === tabIndex,
+                    })),
+                },
+            }),
+        }));
+    }, []);
+
     const handleSetSelectedWidgetType = React.useCallback(
         ({
             selectedWidgetType,
@@ -644,9 +660,36 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
         );
     };
 
+    let defaultTabIndex = state.data.tabs.findIndex((tab) => tab.isDefault);
+    if (defaultTabIndex < 0) {
+        defaultTabIndex = 0;
+    }
+
+    const defaultTabOptions: SelectOption[] = state.data.tabs.map((tab, index) => ({
+        value: String(index),
+        content:
+            tab.title?.trim() ||
+            i18n('dash.widget-dialog.edit', 'value_title-default', {index: index + 1}),
+    }));
+
     const renderVisualSettings = () => {
         return (
             <React.Fragment>
+                {state.data.tabs.length > 1 && (
+                    <FormRow
+                        className={b('row')}
+                        fieldId={INPUT_DEFAULT_TAB_ID}
+                        label={i18n('dash.widget-dialog.edit', 'label_default-tab')}
+                    >
+                        <Select
+                            size="m"
+                            width="max"
+                            options={defaultTabOptions}
+                            value={[String(defaultTabIndex)]}
+                            onUpdate={(value) => handleSetDefaultTabIndex(Number(value[0]))}
+                        />
+                    </FormRow>
+                )}
                 {enableBackgroundColor ? (
                     <FormRow
                         className={b('row')}
@@ -666,6 +709,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                             onSelect={setBackgroundColorSettings}
                             enableCustomBgColorSelector={enableCustomBgColorSelector}
                             enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
+                            direction="column"
                         />
                     </FormRow>
                 ) : null}
@@ -888,8 +932,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
         );
     };
 
-    const shouldRenderTabs =
-        isEnabledFeature(Feature.EnableCommonChartDashSettings) && !withoutSidebar;
+    const shouldRenderTabs = isEnabledFeature(Feature.EnableNewDashSettings) && !withoutSidebar;
     const tabsTabContent = (
         <div className={b('tab-content', {'with-sidebar': !withoutSidebar})}>
             {!withoutSidebar && (
@@ -899,6 +942,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                         items={state.data.tabs}
                         selectedItemIndex={state.tabIndex}
                         onUpdate={updateTabMenu}
+                        showDefaultTabStar={!shouldRenderTabs}
                     />
                     <Divider orientation="vertical" className={b('divider')} />
                 </React.Fragment>
@@ -947,7 +991,7 @@ function DialogChartWidget(props: DialogChartWidgetProps) {
                             {tabsTabContent}
                         </TabPanel>
                         <TabPanel value={TAB_TYPE.SETTINGS} className={b('tab-panel')}>
-                            <div className={b('tab-content')}>{settingsTabContent}</div>
+                            {settingsTabContent}
                         </TabPanel>
                     </TabProvider>
                 ) : (

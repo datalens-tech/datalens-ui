@@ -1,7 +1,7 @@
 import type React from 'react';
 
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import type {MenuItemsIds, StringParams} from 'shared';
+import type {MenuItemsIdsType, StringParams} from 'shared';
 
 import type {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
 import type DatalensChartkitCustomError from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
@@ -9,7 +9,7 @@ import type DatalensChartkitCustomError from '../modules/datalens-chartkit-custo
 import type {Widget as TWidget, WidgetData} from './widget';
 
 export interface MenuItem<TProviderData, TProviderProps> {
-    id: MenuItemsIds;
+    id: MenuItemsIdsType;
     title: (() => string) | string;
     icon: React.ReactNode;
     isVisible: (

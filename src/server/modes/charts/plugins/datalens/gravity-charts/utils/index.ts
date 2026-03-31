@@ -21,6 +21,8 @@ import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../../utils/axi
 
 import {getRangeSliderConfig} from './range-slider';
 
+export {getTotalsPrecisionFromSeriesTooltips} from './tooltip';
+
 export function getChartTitle(settings?: ServerCommonSharedExtraSettings): ChartTitle | undefined {
     if (settings?.titleMode !== 'hide' && settings?.title) {
         return {
@@ -88,6 +90,10 @@ export function getYAxisBaseConfig({
         },
         title: {
             text: getAxisTitle(placeholderSettings, yItem) || undefined,
+            maxRowCount: 3,
+            style: {
+                fontSize: '13px',
+            },
         },
         grid: {
             enabled: Boolean(yItem) && isGridEnabled(placeholderSettings),
@@ -140,7 +146,6 @@ export function getBaseChartConfig(args: {
                     groupPadding: 0.4,
                     dataSorting: {
                         direction: 'desc',
-                        key: 'name',
                     },
                 },
                 line: {
@@ -189,9 +194,14 @@ export function getBaseChartConfig(args: {
                 labels: {
                     enabled: xPlaceholderSettings?.hideLabels !== 'yes',
                     rotation: getAxisLabelsRotationAngle(xPlaceholderSettings),
+                    maxWidth: '20%',
                 },
                 title: {
                     text: getAxisTitle(xPlaceholderSettings, xItem) || undefined,
+                    maxRowCount: 3,
+                    style: {
+                        fontSize: '13px',
+                    },
                 },
                 grid: {
                     enabled: isGridEnabled(xPlaceholderSettings),
@@ -202,7 +212,7 @@ export function getBaseChartConfig(args: {
                 lineColor: 'var(--g-color-line-generic)',
                 min: xMin,
                 max: xMax,
-                rangeSlider: getRangeSliderConfig({extraSettings, visualization}),
+                rangeSlider: getRangeSliderConfig({extraSettings, shared}),
             },
             yAxis: [getYAxisBaseConfig({placeholder: yPlaceholder})],
         };

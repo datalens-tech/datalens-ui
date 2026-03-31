@@ -1,0 +1,88 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "alert-message-info": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "alert-message-warning": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "alert-title-info": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "alert-title-warning": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "apply-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "cancel-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "dialog-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "dialog-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-current-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-shared-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-shared-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "refresh-btn": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "related-entities-list-empty": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "relation-chart": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "relation-dash": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "relation-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "relations": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "retry-btn": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title-dialog-delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

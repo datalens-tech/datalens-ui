@@ -3,22 +3,18 @@ import type {
     ChartSeriesRangeSliderOptions,
 } from '@gravity-ui/chartkit/gravity-charts';
 
-import {
-    NavigatorLinesMode,
-    NavigatorModes,
-    getIsNavigatorAvailable,
-    getNavigatorMode,
+import {NavigatorLinesMode, getIsNavigatorEnabled} from '../../../../../../../shared';
+import type {
+    ServerChartsConfig,
+    ServerCommonSharedExtraSettings,
 } from '../../../../../../../shared';
-import type {ServerCommonSharedExtraSettings, ServerPlaceholder} from '../../../../../../../shared';
 
 export function getRangeSliderConfig(args: {
     extraSettings?: ServerCommonSharedExtraSettings;
-    visualization: {id: string; placeholders: ServerPlaceholder[]};
+    shared: ServerChartsConfig;
 }): ChartAxisRangeSlider | undefined {
-    const {extraSettings, visualization} = args;
-    const navigatorMode = getNavigatorMode(extraSettings);
-    const isNavigatorEnabled =
-        navigatorMode === NavigatorModes.Show && getIsNavigatorAvailable(visualization);
+    const {extraSettings, shared} = args;
+    const isNavigatorEnabled = getIsNavigatorEnabled(shared);
 
     if (!isNavigatorEnabled) {
         return undefined;

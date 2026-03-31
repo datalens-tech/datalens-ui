@@ -136,6 +136,7 @@ const visualizationsWithLegendDict = (
         VISUALIZATION_IDS.COMBINED_CHART,
 
         VISUALIZATION_IDS.POLYLINE,
+        WizardVisualizationId.Funnel,
     ] as string[]
 ).reduce((acc: Record<string, boolean>, item) => {
     acc[item] = true;

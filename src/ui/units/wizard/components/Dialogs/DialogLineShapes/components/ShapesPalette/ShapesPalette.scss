@@ -1,0 +1,44 @@
+.dialog-line-shapes {
+    &__palette {
+        display: grid;
+        grid-template-columns: repeat(3, 90px);
+        grid-gap: 12px;
+        flex-grow: 1;
+    }
+
+    &__palette-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        border: 1px solid var(--g-color-line-generic);
+        padding: 12px 20px;
+        cursor: pointer;
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: calc(100% + 2px);
+            height: calc(100% + 2px);
+            border-radius: 8px;
+            margin: -1px;
+        }
+
+        &_selected {
+            border-color: transparent;
+
+            &::before {
+                border: 2px solid var(--g-color-line-brand);
+            }
+        }
+
+        &:not(&_selected):hover {
+            border-color: transparent;
+
+            &::before {
+                border: 2px solid var(--g-color-line-generic);
+            }
+        }
+    }
+}

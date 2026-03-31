@@ -53,17 +53,17 @@ const controlElementTypeSchema = z
         z.discriminatedUnion('elementType', [
             z.object({
                 elementType: z.literal(DashTabItemControlElementType.Select),
-                defaultValue: z.union([z.string(), z.array(z.string())]),
+                defaultValue: z.union([z.string(), z.array(z.string())]).optional(),
                 multiselectable: z.boolean(),
             }),
             z.object({
                 elementType: z.literal(DashTabItemControlElementType.Date),
-                defaultValue: z.string(),
+                defaultValue: z.string().optional(),
                 isRange: z.boolean(),
             }),
             z.object({
                 elementType: z.literal(DashTabItemControlElementType.Input),
-                defaultValue: z.string(),
+                defaultValue: z.string().optional(),
             }),
             z.object({
                 elementType: z.literal(DashTabItemControlElementType.Checkbox),
@@ -84,21 +84,22 @@ const controlSourceDatasetSchema = controlElementTypeSchema.and(
 const controlSourceManualSchema = controlElementTypeSchema.and(
     z.object({
         fieldName: z.string().min(1),
-        fieldType: z.string(),
-        acceptableValues: z.union([
-            // elementType: select
-            z.array(
+        acceptableValues: z
+            .union([
+                // elementType: select
+                z.array(
+                    z.object({
+                        value: z.string(),
+                        title: z.string(),
+                    }),
+                ),
+                // elementType: date
                 z.object({
-                    value: z.string(),
-                    title: z.string(),
+                    from: z.string(),
+                    to: z.string(),
                 }),
-            ),
-            // elementType: date
-            z.object({
-                from: z.string(),
-                to: z.string(),
-            }),
-        ]),
+            ])
+            .optional(),
     }),
 );
 
@@ -112,8 +113,6 @@ const controlSourceExternalSchema = z.object({
 // Control definition
 const controlSchema = z
     .object({
-        id: z.string().min(1),
-        namespace: z.literal(DASH_DEFAULT_NAMESPACE),
         title: z.string().min(1),
         sourceType: z.enum(DashTabItemControlSourceType),
         // 'allTabs' = global selectors
@@ -148,6 +147,8 @@ const controlSchema = z
         ]),
     );
 
+const stringDefaultsSchema = z.record(z.string(), z.union([z.string(), z.array(z.string())]));
+
 // Group control items definition
 const groupControlItemsSchema = z
     .object({
@@ -158,7 +159,7 @@ const groupControlItemsSchema = z
             z.literal(DashTabItemControlSourceType.Dataset),
             z.literal(DashTabItemControlSourceType.Manual),
         ]),
-        defaults: z.record(z.any(), z.any()),
+        defaults: stringDefaultsSchema,
         placementMode: z.enum(CONTROLS_PLACEMENT_MODE).optional(),
         width: z.string().optional(),
         // 'allTabs' = global selectors
@@ -216,39 +217,45 @@ const connectionSchema = z.object({
     kind: z.enum(DashTabConnectionKind),
 });
 
+const tabItemSharedSchema = z.object({
+    id: z.string().min(1),
+    namespace: z.literal(DASH_DEFAULT_NAMESPACE),
+});
+
+const tabControlItemSchema = z.object({
+    type: z.literal(DashTabItemType.Control),
+    data: controlSchema,
+    defaults: stringDefaultsSchema,
+});
+
+const tabGroupControlItemSchema = z.object({
+    type: z.literal(DashTabItemType.GroupControl),
+    data: groupControlSchema,
+});
+
 // Tab item definition
-const tabItemSchema = z
-    .object({
-        id: z.string().min(1),
-        namespace: z.literal(DASH_DEFAULT_NAMESPACE),
-        type: z.enum(DashTabItemType),
-    })
-    .and(
-        z.discriminatedUnion('type', [
-            z.object({
-                type: z.literal(DashTabItemType.Text),
-                data: textSchema,
-            }),
-            z.object({
-                type: z.literal(DashTabItemType.Title),
-                data: titleSchema,
-            }),
-            z.object({
-                type: z.literal(DashTabItemType.Widget),
-                data: widgetSchema,
-            }),
-            z.object({
-                type: z.literal(DashTabItemType.Control),
-                data: controlSchema,
-                defaults: z.record(z.any(), z.any()),
-            }),
-            z.object({
-                type: z.literal(DashTabItemType.GroupControl),
-                data: groupControlSchema,
-                defaults: z.record(z.any(), z.union([z.string(), z.array(z.string())])),
-            }),
-        ]),
-    );
+const tabItemSchema = tabItemSharedSchema.and(
+    z.discriminatedUnion('type', [
+        z.object({
+            type: z.literal(DashTabItemType.Text),
+            data: textSchema,
+        }),
+        z.object({
+            type: z.literal(DashTabItemType.Title),
+            data: titleSchema,
+        }),
+        z.object({
+            type: z.literal(DashTabItemType.Widget),
+            data: widgetSchema,
+        }),
+        tabControlItemSchema,
+        tabGroupControlItemSchema,
+    ]),
+);
+
+const globalItemSchema = tabItemSharedSchema.and(
+    z.discriminatedUnion('type', [tabControlItemSchema, tabGroupControlItemSchema]),
+);
 
 // Alias definition
 const aliasRecordSchema = z.array(z.string().min(1)).max(2).min(2);
@@ -266,6 +273,7 @@ const tabSchema = z
                 [DASH_DEFAULT_NAMESPACE]: z.array(aliasRecordSchema).optional(),
             })
             .strict(),
+        globalItems: z.array(globalItemSchema).optional(),
     })
     .strict();
 
@@ -293,3 +301,5 @@ export const dataSchema = z.object({
     supportDescription: z.string().optional(),
     accessDescription: z.string().optional(),
 });
+
+export const dashMetaSchema = z.record(z.string(), z.union([z.string(), z.boolean()])).nullable();

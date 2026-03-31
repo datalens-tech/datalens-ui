@@ -2,6 +2,7 @@ import {getSdk, isSdkError} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
 import {waitOperation} from '../../../utils/waitOperation';
 import {showToast} from 'store/actions/toaster';
+import {DATALENS_OPERATION} from '../../../../shared/constants/operations';
 
 import type {GET_ROOT_COLLECTION_PERMISSIONS_FAILED} from '../../constants/collectionsStructure';
 import {
@@ -402,8 +403,11 @@ export const createCollection = (
                     await waitOperation({
                         operation,
                         loader: ({concurrentId}) =>
-                            getSdk().sdk.us.getOperation(
-                                {operationId: operation.id},
+                            getSdk().sdk.us.fetchOperation(
+                                {
+                                    operationId: operation.id,
+                                    meta: {type: DATALENS_OPERATION.CREATE_COLLECTION},
+                                },
                                 {concurrentId},
                             ),
                     }).promise;
@@ -484,8 +488,11 @@ export const createWorkbook = (
                     await waitOperation({
                         operation,
                         loader: ({concurrentId}) =>
-                            getSdk().sdk.us.getOperation(
-                                {operationId: operation.id},
+                            getSdk().sdk.us.fetchOperation(
+                                {
+                                    operationId: operation.id,
+                                    meta: {type: DATALENS_OPERATION.CREATE_WORKBOOK},
+                                },
                                 {concurrentId},
                             ),
                     }).promise;
@@ -1113,8 +1120,11 @@ export const copyWorkbook = ({
                     await waitOperation({
                         operation,
                         loader: ({concurrentId}) =>
-                            getSdk().sdk.us.getOperation(
-                                {operationId: operation.id},
+                            getSdk().sdk.us.fetchOperation(
+                                {
+                                    operationId: operation.id,
+                                    meta: {type: DATALENS_OPERATION.COPY_WORKBOOK},
+                                },
                                 {concurrentId},
                             ),
                     }).promise;

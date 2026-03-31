@@ -1,4 +1,7 @@
 {
+  "aria_choose-color": "Select color",
+  "aria_enter-color": "HEX color code",
+  "aria_opacity": "Opacity",
   "button_custom_value": "Enter value",
   "tooltip_click-to-select": "Select value",
   "value_base_gray": "Basic gray background",

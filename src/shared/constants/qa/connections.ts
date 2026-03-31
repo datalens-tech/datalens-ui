@@ -6,6 +6,7 @@ export const ConnectionsBaseQA = {
 
 export const ConnectionsWorkspaceQA = {
     WORKSPACE: 'conn-workspace',
+    TABLE_HEADER_FILE_FORM_TYPE_SELECT: 'conn-workspace-table-header-file-form-type-select',
 };
 
 export const ConnectionsFormQA = {
@@ -20,6 +21,7 @@ export const ConnectionsActionPanelControls = {
 };
 
 export const ConnectionsS3BaseQA = {
+    LIST: 'conn-s3-list',
     LIST_ITEM: 'conn-s3-list-item',
     LIST_ITEM_ACTION_MORE: 'conn-s3-list-item-action-more',
     LIST_ITEM_ACTION_MORE_DELETE: 'conn-s3-list-item-action-more-delete',
@@ -28,6 +30,8 @@ export const ConnectionsS3BaseQA = {
     S3_SOURCE_DIALOG_BATCH_CHECKBOX: 'conn-s3-source-dialog-batch-checkbox',
     S3_SOURCE_DIALOG_LIST_ITEM: 'conn-s3-source-dialog-list-item',
     S3_SOURCE_DIALOG_SUBMIT_BUTTON: 'conn-s3-source-dialog-submit-button',
+    S3_RENAME_DIALOG_NAME_INPUT: 'conn-s3-rename-dialog-name-input',
+    S3_RENAME_DIALOG_SUBMIT_BUTTON: 'conn-s3-rename-dialog-submit-button',
 };
 
 export const ConnectionsYadocsQA = {

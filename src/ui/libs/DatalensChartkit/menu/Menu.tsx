@@ -1,6 +1,6 @@
 import type React from 'react';
 
-import type {MenuItemsIds} from 'shared';
+import type {MenuItemsIdsType} from 'shared';
 import {registry} from 'ui/registry';
 import type {GetChartkitMenuItems} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 
@@ -29,7 +29,7 @@ export type MenuLoadedData = null | (ExportableWidget & ChartsData);
 export type MenuItemData = {loadedData: MenuLoadedData};
 
 export type MenuItemConfig = {
-    id: MenuItemsIds;
+    id: MenuItemsIdsType;
     title: string | (() => string | React.ReactNode) | ((data: MenuItemArgs) => string);
     icon?: React.ReactNode | ((data: MenuItemArgs) => React.ReactNode);
     items?: MenuItemConfig[];
@@ -42,7 +42,7 @@ export type MenuItemConfig = {
     onFullscreenClick?: () => void;
 };
 
-type MenuOptionsConfig = Record<MenuItemsIds, MenuItemConfig>;
+type MenuOptionsConfig = Record<MenuItemsIdsType, MenuItemConfig>;
 
 export const getChartkitMenuItems = (props: GetChartkitMenuItems) => {
     const {type, config, chartsDataProvider, extraOptions} = props;

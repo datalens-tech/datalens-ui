@@ -114,15 +114,19 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
 export const getOpensourceChartKitData = <T extends ChartKitType>({
     type,
     loadedData,
+    chartkitHolidays,
     onChange,
     runActivity,
-    chartkitHolidays,
+    splitTooltip,
+    lang,
 }: {
     type: T;
     loadedData: ChartKitAdapterProps['loadedData'];
+    chartkitHolidays?: ChartKitHolidays;
     onChange?: ChartKitAdapterProps['onChange'];
     runActivity?: ChartKitAdapterProps['runActivity'];
-    chartkitHolidays: ChartKitHolidays | undefined;
+    splitTooltip?: boolean;
+    lang?: string;
 }) => {
     switch (type) {
         case 'indicator': {
@@ -224,11 +228,16 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
         case 'gravity-charts': {
             const data = cloneDeep(loadedData) as GraphWidget;
             return getGravityChartsChartKitData({
+                chartkitHolidays,
                 loadedData: data,
                 onChange,
                 runActivity,
-                chartkitHolidays,
+                splitTooltip,
+                lang,
             });
+        }
+        case 'table': {
+            return {...loadedData, runActivity};
         }
         default: {
             return loadedData as ChartKitProps<T>['data'];

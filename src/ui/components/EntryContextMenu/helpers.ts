@@ -6,7 +6,7 @@ import type {DialogShareProps} from 'ui/registry/units/common/types/components/D
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import Utils from 'ui/utils/utils';
 
-import type {DashData} from '../../../shared';
+import type {DashData, MenuItemsIdsType} from '../../../shared';
 import {EntryScope, Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
 import type {GetEntryResponse} from '../../../shared/schema';
 import {DL, URL_OPTIONS, URL_QUERY} from '../../constants';
@@ -221,7 +221,7 @@ export type EntryContextMenuIDType<T = unknown> = unknown extends T
     ? EntryContextMenuIDTypeBase
     : EntryContextMenuIDTypeBase | T;
 
-export type MenuGroupConfigIds<T = unknown> = EntryContextMenuIDType<T> | MenuItemsIds;
+export type MenuGroupConfigIds<T = unknown> = EntryContextMenuIDType<T> | MenuItemsIdsType;
 
 export type MenuGroup<T = unknown> = Array<MenuGroupConfigIds<T>>;
 
@@ -251,7 +251,7 @@ export type EntryContextMenuItem<T = unknown> = {
 
 // In the Dropdown component, menu groups are formed as Array<Array<Item>>, so the config has the same structure
 // Widget config only (on dashboard, preview, wizard, etc.)
-const MENU_GROUP_CONFIG: Array<Array<MenuItemsIds>> = [
+const MENU_GROUP_CONFIG: Array<Array<MenuItemsIdsType>> = [
     [MenuItemsIds.FULLSCREEEN, MenuItemsIds.EXPORT, MenuItemsIds.OPEN_AS_TABLE],
     [MenuItemsIds.MOVE, MenuItemsIds.DUPLICATE, MenuItemsIds.COPY],
     [MenuItemsIds.NEW_WINDOW, MenuItemsIds.GET_LINK],

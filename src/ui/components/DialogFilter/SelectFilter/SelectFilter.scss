@@ -52,10 +52,6 @@ $baseClass: '.dl-dialog-filter';
         & .g-list .g-list__filter {
             margin: 0 30px 10px;
         }
-
-        &_disabled .g-list__items::after {
-            @include veil(1);
-        }
     }
 
     &__select-column-item {
@@ -88,17 +84,5 @@ $baseClass: '.dl-dialog-filter';
         flex: 0 0 110px;
         text-align: center;
         color: var(--g-color-text-secondary);
-    }
-
-    &__select-column-loader {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: calc(100% - 86px);
-        z-index: 1;
     }
 }

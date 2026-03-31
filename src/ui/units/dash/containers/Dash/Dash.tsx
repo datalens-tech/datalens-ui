@@ -62,6 +62,7 @@ import {getTabId} from '../../utils/getTabId';
 import {getUrlGlobalParams} from '../../utils/url';
 import {DashHotkeys} from '../DashHotkes/DashHotkeys';
 import Dialogs from '../Dialogs/Dialogs';
+import type {SettingsDrawerFormApiRef} from '../Dialogs/Settings/SettingsDrawer';
 import Header from '../Header/Header';
 
 const i18n = I18n.keyset('dash.main.view');
@@ -89,6 +90,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
     };
 
     private entryDialoguesRef = React.createRef<EntryDialogues>();
+    private settingsDrawerApiRef = React.createRef<SettingsDrawerFormApiRef>();
 
     async componentDidMount() {
         const {extractEntryId} = registry.common.functions.getAll();
@@ -280,6 +282,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     <AccessRightsUrlOpen history={history} />
                     <Header
                         entryDialoguesRef={this.entryDialoguesRef}
+                        settingsDrawerApiRef={this.settingsDrawerApiRef}
                         handlerEditClick={this.handlerEditClick}
                         history={history}
                         location={location}
@@ -294,7 +297,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                         dashkitSettings={this.getDashkitSettings(settings)}
                         onlyView={DL.IS_MOBILE}
                     />
-                    <Dialogs />
+                    <Dialogs settingsDrawerApiRef={this.settingsDrawerApiRef} />
                 </DashHotkeys>
             </WidgetMetaProvider>
         );

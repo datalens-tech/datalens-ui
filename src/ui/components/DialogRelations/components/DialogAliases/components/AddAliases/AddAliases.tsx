@@ -36,6 +36,13 @@ type AddAliasesProps = {
 
 const b = block('dialog-aliases-add');
 
+const isGuidInDefaults = (guid: string, metaData: DashkitMetaDataItem) => {
+    const defaultParams = metaData.defaultParams || {};
+    const widgetParams = metaData.widgetParams || {};
+    // defaultParams for manual dataset controls & widgetParams for external controls
+    return guid in defaultParams || guid in widgetParams;
+};
+
 const getList = (data: DashkitMetaDataItem) => {
     const dataset = data.datasets?.length ? data.datasets[0] : null;
 
@@ -43,7 +50,7 @@ const getList = (data: DashkitMetaDataItem) => {
 
     if (dataset?.fieldsList && !data.isQL) {
         res = dataset?.fieldsList
-            .filter((item) => (isControl(data) ? item.guid in (data.defaultParams || {}) : true))
+            .filter((item) => (isControl(data) ? isGuidInDefaults(item.guid, data) : true))
             .map((item) => ({
                 content: item.title,
                 value: item.guid,

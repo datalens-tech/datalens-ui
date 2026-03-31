@@ -13,7 +13,10 @@ import {isMacintosh} from '../../../../../../../../utils';
 import type {TableWidgetData} from '../../../../../../types';
 import Paginator from '../../../../../components/Widget/components/Table/Paginator/Paginator';
 import {hasGroups} from '../../../../../components/Widget/components/Table/utils';
-import {isCellSelected} from '../../../../../components/Widget/components/Table/utils/action-params';
+import {
+    getNormalizedEvents,
+    isCellSelected,
+} from '../../../../../components/Widget/components/Table/utils/action-params';
 import {SNAPTER_HTML_CLASSNAME} from '../../../../../components/Widget/components/constants';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../../helpers/constants';
 import {i18n} from '../../../../../modules/i18n/i18n';
@@ -60,7 +63,13 @@ export const Table = React.memo<Props>((props: Props) => {
         disableCellFormatting = false,
         emptyDataMessage,
     } = props;
-    const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
+    const {
+        config,
+        data: originalData,
+        unresolvedParams,
+        params: currentParams,
+        runActivity,
+    } = widgetData;
     const title = getTableTitle(config);
     const isPaginationEnabled = Boolean(config?.paginator?.enabled);
     const size: WidgetSizeType = get(config, 'size', DEFAULT_WIDGET_SIZE);
@@ -235,15 +244,34 @@ export const Table = React.memo<Props>((props: Props) => {
                     changeParams({...cellActionParams});
                 }
             }
+
+            const clickEvents = getNormalizedEvents(config?.events);
+            if (runActivity && clickEvents) {
+                const runActivityEvent = clickEvents.find((e) => {
+                    const handlers = Array.isArray(e?.handler) ? e.handler : [e?.handler];
+                    return handlers.some((h) => h?.type === 'runActivity');
+                });
+
+                if (runActivityEvent) {
+                    const row = body.rows.find((r) => r.id === rowId);
+                    const normalizedRow = row ? {cells: row.cells.map((c) => c.data)} : undefined;
+                    const params =
+                        runActivityEvent.scope === 'cell' ? tableCommonCell : normalizedRow;
+                    runActivity({params: params as StringParams});
+                }
+            }
         },
         [
             actionParams,
+            body.rows,
             canDrillDown,
             changeParams,
+            config?.events,
             currentParams,
             data,
             drillDownFilters,
             drillDownLevel,
+            runActivity,
         ],
     );
 

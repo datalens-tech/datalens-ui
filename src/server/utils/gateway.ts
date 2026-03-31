@@ -1,4 +1,4 @@
-import type {IncomingHttpHeaders} from 'http';
+import type {IncomingHttpHeaders} from 'node:http';
 
 import type {Request, Response} from '@gravity-ui/expresskit';
 import type {Headers as DebugHeaders, GatewayConfig, GatewayError} from '@gravity-ui/gateway';

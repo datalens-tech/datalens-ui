@@ -18,6 +18,7 @@ import {resetDatasetState} from 'units/datasets/store/actions/creators';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import withInaccessibleOnMobile from '../../../../hoc/withInaccessibleOnMobile';
 import DatasetPage from '../../containers/DatasetPage/DatasetPage';
+import {isCreationProcess} from '../../helpers/utils';
 import {datasetKeySelector} from '../../store/selectors/dataset';
 
 import {UnloadConfirmation} from './UnloadConfirmation';
@@ -44,7 +45,14 @@ const getDatasetPaths = (end: string) => {
     return routes;
 };
 
-const DatasetRouter = ({sdk, datasetKey, setCurrentPageEntry, resetDatasetState, match}: Props) => {
+const DatasetRouter = ({
+    sdk,
+    datasetKey,
+    setCurrentPageEntry,
+    resetDatasetState,
+    match,
+    location,
+}: Props) => {
     const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
     const {extractEntryId} = registry.common.functions.getAll();
     const possibleEntryId = extractEntryId(window.location.pathname);
@@ -65,6 +73,19 @@ const DatasetRouter = ({sdk, datasetKey, setCurrentPageEntry, resetDatasetState,
             resetDatasetState();
         }
     }, [prevMatch.url, match.url, extractEntryId, resetDatasetState]);
+
+    const initialLocationKeyRef = React.useRef(location.key);
+
+    React.useEffect(() => {
+        if (initialLocationKeyRef.current !== location.key) {
+            initialLocationKeyRef.current = location.key;
+            const currentEntryId = extractEntryId(match.url);
+
+            if (!currentEntryId && isCreationProcess(location.pathname)) {
+                resetDatasetState();
+            }
+        }
+    }, [location.key, match.url, extractEntryId, resetDatasetState, location.pathname]);
 
     React.useEffect(() => {
         if (!isAsideHeaderEnabled || !possibleEntryId || !datasetKey) {

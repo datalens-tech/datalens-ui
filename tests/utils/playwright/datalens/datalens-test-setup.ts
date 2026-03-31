@@ -31,8 +31,10 @@ export async function datalensTestSetup({
     if (fs.existsSync(ARTIFACTS_PATH) && process.env.CI !== 'true') {
         await fs.rmSync(ARTIFACTS_PATH, {recursive: true});
     }
+    const headful = isTrueArg(process.env.E2E_HEADFUL);
     const browser = await chromium.launch({
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--ignore-certificate-errors'],
+        headless: !headful,
     });
     const context = await browser.newContext({
         recordVideo: {

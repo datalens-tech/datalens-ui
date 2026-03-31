@@ -22,11 +22,12 @@ const items = Object.values(DashLoadPriority).map((value) => ({
 type LoadPriorityProps = {
     value: DashLoadPriority;
     onUpdate: (value: DashLoadPriority) => void;
+    view?: 'dialog' | 'drawer';
 };
 
-export const LoadPriority = ({value, onUpdate}: LoadPriorityProps) => {
+export const LoadPriority = ({value, onUpdate, view}: LoadPriorityProps) => {
     return (
-        <Row>
+        <Row direction={view === 'drawer' ? 'column' : 'row'}>
             <Title text={i18n('dash.settings-dialog.edit', 'label_load-priority')}>
                 <HelpMark>
                     <YfmWrapper

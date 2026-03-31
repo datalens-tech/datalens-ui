@@ -41,6 +41,7 @@ import type {
     SET_REPLACE_SOURCE_ACTION_DATA,
     SET_SCHEMA,
     SET_SCHEMA_LOADING,
+    SET_SOURCES_INFO_LOADING,
     SET_SUBMIT_LOADING,
     SET_UPLOADED_FILES,
     SET_VALIDATION_ERRORS,
@@ -105,6 +106,7 @@ export type ConnectionsReduxState = {
             showFileSelection?: boolean;
         };
         beingDeletedSourceId?: string;
+        sourcesInfoLoading: boolean;
     };
     gsheet: {
         items: GSheetItem[];
@@ -285,6 +287,13 @@ export type SetBeingDeletedSourceId = {
     };
 };
 
+export type SetSourcesInfoLoading = {
+    type: typeof SET_SOURCES_INFO_LOADING;
+    payload: {
+        sourcesInfoLoading: boolean;
+    };
+};
+
 export type SetFileReplaceSources = {
     type: typeof SET_FILE_REPLACE_SOURCES;
     payload: {
@@ -389,6 +398,7 @@ export type ConnectionsReduxAction =
     | SetFileSelectedItemId
     | SetFileColumnFilter
     | SetBeingDeletedSourceId
+    | SetSourcesInfoLoading
     | SetFileReplaceSources
     | SetReplaceSourceActionData
     | ResetS3BasedData

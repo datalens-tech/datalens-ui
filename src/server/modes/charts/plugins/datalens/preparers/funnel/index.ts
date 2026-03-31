@@ -6,13 +6,16 @@ import {
     WizardVisualizationId,
     getFakeTitleOrTitle,
     getFormatOptions,
+    isMeasureName,
     isMeasureValue,
     isNumberField,
     isPseudoField,
 } from '../../../../../../../shared';
+import {getColorsSettings} from '../../../helpers/color-palettes';
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import type {ColorValue} from '../../utils/color-helpers';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
+import {getColor, getMountedColor} from '../../utils/constants';
 import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
@@ -22,6 +25,32 @@ import {getFormattedValue} from '../helpers/get-formatted-value';
 import {getLegendColorScale} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
+function getSegmentColor({
+    colorValue,
+    usedColors,
+    colors,
+    mountedColors,
+}: {
+    colorValue: string | undefined;
+    usedColors: Map<any, string>;
+    colors: string[];
+    mountedColors: Record<string, string>;
+}) {
+    if (!usedColors.has(colorValue)) {
+        usedColors.set(colorValue, getColor(usedColors.size, colors));
+    }
+
+    if (colorValue && mountedColors[colorValue]) {
+        return getMountedColor({
+            mountedColors,
+            colors,
+            value: colorValue,
+        });
+    }
+
+    return usedColors.get(colorValue);
+}
+
 export function prepareFunnel({
     shared,
     idToTitle,
@@ -29,13 +58,14 @@ export function prepareFunnel({
     resultData,
     placeholders,
     labels,
-    colors,
+    colors: colorItems,
     colorsConfig,
+    defaultColorPaletteId,
 }: PrepareFunctionArgs): Partial<ChartData> {
     const {data, order} = resultData;
     const measures = placeholders.find((p) => p.id === PlaceholderId.Measures)?.items ?? [];
 
-    const colorItem = colors?.[0];
+    const colorItem = colorItems?.[0];
     const colorField = colorItem
         ? {...colorItem, data_type: idToDataType[colorItem.guid]}
         : colorItem;
@@ -108,7 +138,9 @@ export function prepareFunnel({
         colorsConfig,
     });
 
-    let legend: ChartData['legend'] = {};
+    const legend: ChartData['legend'] = {
+        enabled: shared?.extraSettings?.legendMode !== 'hide',
+    };
 
     if (isColoringByMeasure) {
         const points = series.data.map((d) => ({colorValue: d.custom.colorValue as unknown}));
@@ -134,13 +166,29 @@ export function prepareFunnel({
             colorsConfig,
             points,
         });
-        legend = {
-            enabled: true,
+
+        Object.assign(legend, {
             type: 'continuous',
             colorScale,
-        };
-    } else {
-        legend.enabled = series.data.length > 1;
+        });
+    } else if (isMeasureName(colorItem)) {
+        const {mountedColors, colors} = getColorsSettings({
+            field: colorField,
+            colorsConfig: colorsConfig,
+            defaultColorPaletteId,
+            availablePalettes: colorsConfig.availablePalettes,
+            customColorPalettes: colorsConfig.loadedColorPalettes,
+        });
+
+        const usedColors = new Map();
+        series.data.forEach((d) => {
+            d.color = getSegmentColor({
+                colorValue: d.name,
+                colors,
+                usedColors,
+                mountedColors,
+            });
+        });
     }
 
     return merge(

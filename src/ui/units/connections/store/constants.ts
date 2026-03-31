@@ -35,6 +35,7 @@ export const initialState: ConnectionsReduxState = {
         columnFilter: '',
         selectedItemId: '',
         beingDeletedSourceId: undefined,
+        sourcesInfoLoading: false,
         replaceSourceActionData: {
             replaceSourceId: '',
             showFileSelection: false,

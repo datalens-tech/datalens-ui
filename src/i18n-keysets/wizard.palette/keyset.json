@@ -1,0 +1,44 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_classic20": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_datalens-neo-20": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_default20": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_emerald20": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_golden20": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_neutral20": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_oceanic20": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_traffic-light9": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

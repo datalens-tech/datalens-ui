@@ -1,8 +1,8 @@
 import type {
-    GetEntryResponse,
-    GetSharedEntryResponse,
-    RestrictedSharedEntry,
-} from '../schema/us/types/entries';
+    RestrictedSharedWorkbookEntry,
+    SharedWorkbookEntry,
+    WorkbookEntryBase,
+} from '../schema';
 import type {EntryMetaFields} from '../schema/us/types/fields';
 
 export type MinimumEntryFields = Pick<EntryMetaFields, 'entryId' | 'key' | 'type' | 'scope'>;
@@ -20,4 +20,4 @@ export type TransferNotification = {
     details?: object;
 };
 
-export type WorkbookEntry = GetEntryResponse | GetSharedEntryResponse | RestrictedSharedEntry;
+export type WorkbookEntry = WorkbookEntryBase | SharedWorkbookEntry | RestrictedSharedWorkbookEntry;

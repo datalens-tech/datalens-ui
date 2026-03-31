@@ -162,9 +162,10 @@ export class Row extends React.Component<RowProps> {
     }
 
     private renderCheckBox() {
+        const isBulkDisabled = this.isWorkbookEntry() || this.isSharedEntry();
         return (
             <div className={b('selection-checkbox')} onClick={this.onClickCheckBox}>
-                {this.isWorkbookEntry() ? (
+                {isBulkDisabled ? (
                     <Tooltip content={i18n('tooltip_table-move-denied')}>
                         <div>
                             <Checkbox size="l" disabled />
@@ -349,6 +350,10 @@ export class Row extends React.Component<RowProps> {
 
     private isWorkbookEntry() {
         return Boolean(this.props.entry.workbookId);
+    }
+
+    private isSharedEntry() {
+        return Boolean(this.props.entry.collectionId);
     }
 
     private isCheckedEntry() {

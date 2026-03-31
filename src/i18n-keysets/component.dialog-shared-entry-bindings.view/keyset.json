@@ -1,0 +1,116 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "alert-message-info": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "alert-message-warning": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "alert-title-info": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "alert-title-warning": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "apply-delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "cancel-delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "dialog-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-attachment-source": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-attachment-target": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-current-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "list-action-change-permissions": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "list-action-unbind": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "list-empty": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "list-search-placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "list-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "list-title-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "list-title-workbook": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "refresh-btn": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "relation-dataset-delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "relation-workbook-delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "relations-delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "retry-btn": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title-dialog": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title-dialog-delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

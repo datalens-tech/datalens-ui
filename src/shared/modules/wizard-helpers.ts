@@ -31,8 +31,8 @@ import {getFieldUISettings} from '../utils';
 
 import {isMeasureField} from './helpers';
 
-export const isMeasureName = (field: {type: string; title: string}) =>
-    field.type === 'PSEUDO' &&
+export const isMeasureName = (field: {type: string; title: string} | undefined) =>
+    field?.type === 'PSEUDO' &&
     (field.title === PseudoFieldTitle.MeasureNames || field.title === PseudoFieldTitle.ColumnNames);
 
 export const isMeasureValue = (field?: {type: string; title: string}) =>

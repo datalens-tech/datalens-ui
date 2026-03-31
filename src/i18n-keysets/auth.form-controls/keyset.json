@@ -1,0 +1,44 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_generate-password": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_email": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_first-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_last-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_login": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_password": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_repeat-password": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_roles": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

@@ -1,6 +1,8 @@
 import type {WorkbookEntry} from 'shared';
-import type {GetSharedEntryResponse} from 'shared/schema';
+import type {GetEntryResponse, SharedWorkbookEntry} from 'shared/schema';
 
-export const getIsSharedEntry = (entry: WorkbookEntry): entry is GetSharedEntryResponse => {
+export const getIsSharedEntry = (
+    entry: WorkbookEntry | GetEntryResponse,
+): entry is SharedWorkbookEntry => {
     return 'isDelegated' in entry;
 };

@@ -1,0 +1,56 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "apply-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "cancel-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "delegate-message": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "delegate-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "documentation-link-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-current-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label-relation-entity": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "not-delegate-message": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "not-delegate-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "notice-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title-dialog": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

@@ -4,6 +4,7 @@ import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {WorkbookId} from '../../../../shared';
+import type {PartialDatasetField} from '../../../../shared/schema/bi/types';
 import type {CacheClient} from '../../../components/cache-client';
 import type {AuthParams} from '../../../components/charts-engine/components/processor/data-fetcher';
 
@@ -75,3 +76,8 @@ export interface PluginProcessorHook {
 export type MiddlewareUrlType =
     | typeof CHARTS_MIDDLEWARE_URL_TYPE
     | typeof CONTROL_MIDDLEWARE_URL_TYPE;
+
+export type ResolvedSource = {
+    datasetId: string;
+    datasetFields?: PartialDatasetField[];
+};

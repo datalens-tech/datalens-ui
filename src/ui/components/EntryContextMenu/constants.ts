@@ -251,6 +251,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
         {
             id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
             action: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+            qa: ActionPanelEntryContextMenuQa.RelatedEntities,
             icon: CodeTrunk,
             text: 'value_show-related-entities',
             enable: () => true,

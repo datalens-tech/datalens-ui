@@ -23,7 +23,7 @@ import {
     CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
 } from '../../libs/DatalensChartkit/ChartKit/helpers/constants';
 
-import type {CommonVisualSettings} from './DashKit';
+import type {EntryWidgetSettings} from './DashKit';
 import {MAX_AUTO_HEIGHT_PX, MIN_AUTO_HEIGHT_PX} from './constants';
 
 /*
@@ -284,7 +284,7 @@ export function getControlHint(source: DashTabItemControlElement) {
 
 interface GetPreparedWrapSettingsArgs {
     ownWidgetSettings: WidgetVisualSettings;
-    dashVisualSettings: CommonVisualSettings;
+    entryWidgetSettings?: EntryWidgetSettings;
     additionalStyle?: CSSProperties;
     defaultOldColor: string;
     theme: ThemeType;
@@ -292,17 +292,15 @@ interface GetPreparedWrapSettingsArgs {
 
 function getPreparedWrapSettings({
     ownWidgetSettings,
-    dashVisualSettings,
+    entryWidgetSettings,
     additionalStyle,
     defaultOldColor,
     theme,
 }: GetPreparedWrapSettingsArgs) {
-    const borderRadius =
-        ownWidgetSettings.borderRadius ?? dashVisualSettings.widgetsSettings?.borderRadius;
+    const borderRadius = ownWidgetSettings.borderRadius ?? entryWidgetSettings?.borderRadius;
 
     const hasInternalMarginsFromConfigs =
-        ownWidgetSettings.internalMarginsEnabled ??
-        dashVisualSettings.widgetsSettings?.internalMarginsEnabled;
+        ownWidgetSettings.internalMarginsEnabled ?? entryWidgetSettings?.internalMarginsEnabled;
 
     const bgColorFromConfigs =
         getResultedBgColor(
@@ -315,7 +313,7 @@ function getPreparedWrapSettings({
             undefined,
             theme,
             defaultOldColor,
-            dashVisualSettings.widgetsSettings?.backgroundSettings,
+            entryWidgetSettings?.backgroundSettings,
         );
 
     const hexBgColor = bgColorFromConfigs ? computeColorFromToken(bgColorFromConfigs) : undefined;
@@ -325,8 +323,8 @@ function getPreparedWrapSettings({
         hasInternalMarginsFromConfigs ??
         calculateInternalMarginsEnabled({
             resultedHexWidgetColor: hexBgColor,
-            dashBackground: dashVisualSettings.background,
-            dashBackgroundSettings: dashVisualSettings.backgroundSettings,
+            dashBackground: undefined,
+            dashBackgroundSettings: undefined,
             themeType: theme,
         });
 
@@ -369,24 +367,51 @@ interface WidgetVisualSettings {
     internalMarginsEnabled?: boolean;
 }
 
+type UsePreparedWrapSettingsArgs = Omit<
+    GetPreparedWrapSettingsArgs,
+    'theme' | 'ownWidgetSettings'
+> &
+    (
+        | {ownWidgetSettings: WidgetVisualSettings; data?: never}
+        | {data: WidgetVisualSettings; ownWidgetSettings?: never}
+    );
+
 export function usePreparedWrapSettings({
     ownWidgetSettings,
+    data,
     additionalStyle,
     defaultOldColor,
-    dashVisualSettings,
-}: Omit<GetPreparedWrapSettingsArgs, 'theme'>) {
+    entryWidgetSettings,
+}: UsePreparedWrapSettingsArgs) {
     const theme = useThemeType();
+
+    const preparedOwnWidgetSettings = React.useMemo(
+        () =>
+            ownWidgetSettings ?? {
+                background: data?.background,
+                backgroundSettings: data?.backgroundSettings,
+                borderRadius: data?.borderRadius,
+                internalMarginsEnabled: data?.internalMarginsEnabled,
+            },
+        [
+            ownWidgetSettings,
+            data?.background,
+            data?.backgroundSettings,
+            data?.borderRadius,
+            data?.internalMarginsEnabled,
+        ],
+    );
 
     return React.useMemo(
         () =>
             getPreparedWrapSettings({
-                ownWidgetSettings,
+                ownWidgetSettings: preparedOwnWidgetSettings,
                 additionalStyle,
                 defaultOldColor,
                 theme,
-                dashVisualSettings,
+                entryWidgetSettings,
             }),
-        [ownWidgetSettings, additionalStyle, defaultOldColor, theme, dashVisualSettings],
+        [preparedOwnWidgetSettings, additionalStyle, defaultOldColor, theme, entryWidgetSettings],
     );
 }
 
