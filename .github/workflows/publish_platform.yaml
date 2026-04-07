@@ -22,7 +22,7 @@ jobs:
       startsWith(github.ref, 'refs/heads/release-') &&
       github.event.head_commit.author.username == 'robot-charts'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           sparse-checkout: .
           fetch-depth: 0
@@ -31,7 +31,7 @@ jobs:
           set -e
           RELEASE_TAG=$(git describe --tags --abbrev=0)
           echo "RELEASE_TAG=$RELEASE_TAG" >> "$GITHUB_ENV"
-      - uses: actions/create-release@v1
+      - uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e # v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -46,7 +46,7 @@ jobs:
           mkdir -p ./workflow_ref
           echo "${{ github.ref }}" > ./workflow_ref/ref
           echo "${{ env.RELEASE_TAG }}" > ./workflow_ref/release_tag
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: workflow_ref
           path: ./workflow_ref/
