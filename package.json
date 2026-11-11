@@ -270,7 +270,8 @@
       "react-router": "^5.3.4",
       "react-router-dom": "^5.3.4",
       "@gravity-ui/uikit>react-virtualized-auto-sizer": "1.0.24",
-      "@gravity-ui/gateway>@grpc/grpc-js": "^1.13.2"
+      "@gravity-ui/gateway>@grpc/grpc-js": "^1.13.2",
+      "fast-xml-parser": "4.5.4"
     }
   },
   "deploy": {
